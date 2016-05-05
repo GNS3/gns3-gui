@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/new_appliance_dialog.ui'
 #
-# Created: Thu May  5 16:44:51 2016
+# Created: Thu May  5 17:18:11 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,12 @@ class Ui_NewApplianceDialog(object):
     def setupUi(self, NewApplianceDialog):
         NewApplianceDialog.setObjectName("NewApplianceDialog")
         NewApplianceDialog.setWindowModality(QtCore.Qt.WindowModal)
-        NewApplianceDialog.resize(549, 325)
+        NewApplianceDialog.resize(487, 326)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(NewApplianceDialog.sizePolicy().hasHeightForWidth())
+        NewApplianceDialog.setSizePolicy(sizePolicy)
         NewApplianceDialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(NewApplianceDialog)
         self.verticalLayout.setObjectName("verticalLayout")

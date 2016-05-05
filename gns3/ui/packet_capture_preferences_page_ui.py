@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
 #
-# Created: Wed May  4 23:50:34 2016
+# Created: Thu May  5 17:20:58 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PacketCapturePreferencesPageWidget(object):
     def setupUi(self, PacketCapturePreferencesPageWidget):
         PacketCapturePreferencesPageWidget.setObjectName("PacketCapturePreferencesPageWidget")
-        PacketCapturePreferencesPageWidget.resize(446, 336)
+        PacketCapturePreferencesPageWidget.resize(446, 321)
         self.gridLayout = QtWidgets.QGridLayout(PacketCapturePreferencesPageWidget)
         self.gridLayout.setObjectName("gridLayout")
         self.uiSettingsGroupBox = QtWidgets.QGroupBox(PacketCapturePreferencesPageWidget)

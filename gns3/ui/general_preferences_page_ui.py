@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Wed May  4 23:59:34 2016
+# Created: Thu May  5 17:27:52 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,10 +12,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(522, 632)
+        GeneralPreferencesPageWidget.resize(511, 576)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiMiscTabWidget.sizePolicy().hasHeightForWidth())
+        self.uiMiscTabWidget.setSizePolicy(sizePolicy)
         self.uiMiscTabWidget.setObjectName("uiMiscTabWidget")
         self.uiGeneralTab = QtWidgets.QWidget()
         self.uiGeneralTab.setObjectName("uiGeneralTab")
@@ -230,9 +235,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiVNCConsolePreconfiguredCommandPushButton.setObjectName("uiVNCConsolePreconfiguredCommandPushButton")
         self.horizontalLayout_8.addWidget(self.uiVNCConsolePreconfiguredCommandPushButton)
         self.verticalLayout_8.addLayout(self.horizontalLayout_8)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_8.addItem(spacerItem3)
         self.verticalLayout_6.addWidget(self.uiVNCConsoleSettingsGroupBox)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 294, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_6.addItem(spacerItem3)
         self.uiMiscTabWidget.addTab(self.uiVNCTab, "")
         self.uiSceneTab = QtWidgets.QWidget()
         self.uiSceneTab.setObjectName("uiSceneTab")
@@ -280,8 +285,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem4)
         self.gridLayout_8.addLayout(self.horizontalLayout_5, 9, 0, 1, 2)
-        spacerItem5 = QtWidgets.QSpacerItem(20, 201, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_8.addItem(spacerItem5, 10, 1, 1, 1)
         self.uiSceneHeightSpinBox = QtWidgets.QSpinBox(self.uiSceneTab)
         self.uiSceneHeightSpinBox.setMinimum(500)
         self.uiSceneHeightSpinBox.setMaximum(1000000)
@@ -296,6 +299,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSceneWidthSpinBox.setProperty("value", 2000)
         self.uiSceneWidthSpinBox.setObjectName("uiSceneWidthSpinBox")
         self.gridLayout_8.addWidget(self.uiSceneWidthSpinBox, 1, 0, 1, 2)
+        spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_8.addItem(spacerItem5, 10, 0, 1, 1)
         self.uiMiscTabWidget.addTab(self.uiSceneTab, "")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
@@ -333,7 +338,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSlowStartAllSpinBox.setProperty("value", 0)
         self.uiSlowStartAllSpinBox.setObjectName("uiSlowStartAllSpinBox")
         self.verticalLayout_2.addWidget(self.uiSlowStartAllSpinBox)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 318, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem6)
         self.uiMiscTabWidget.addTab(self.tab, "")
         self.verticalLayout.addWidget(self.uiMiscTabWidget)

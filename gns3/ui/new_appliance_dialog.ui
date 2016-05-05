@@ -9,9 +9,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>549</width>
-    <height>325</height>
+    <width>487</width>
+    <height>326</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>New appliance template</string>

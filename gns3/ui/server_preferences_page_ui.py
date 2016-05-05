@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Wed May  4 23:59:34 2016
+# Created: Thu May  5 17:27:52 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
