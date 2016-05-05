@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
 #
-# Created: Fri Mar 25 14:43:13 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -166,6 +165,8 @@ class Ui_DockerVMWizard(object):
         self.uiConsoleTypeComboBox.setObjectName("uiConsoleTypeComboBox")
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
+        self.uiConsoleTypeComboBox.addItem("")
+        self.uiConsoleTypeComboBox.addItem("")
         self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.uiConsoleTypeComboBox)
         DockerVMWizard.addPage(self.uiConsoleWizardPage)
         self.uiEnvironmentWizardPage = QtWidgets.QWizardPage()
@@ -222,6 +223,8 @@ class Ui_DockerVMWizard(object):
         self.label_6.setText(_translate("DockerVMWizard", "Console type:"))
         self.uiConsoleTypeComboBox.setItemText(0, _translate("DockerVMWizard", "telnet"))
         self.uiConsoleTypeComboBox.setItemText(1, _translate("DockerVMWizard", "vnc"))
+        self.uiConsoleTypeComboBox.setItemText(2, _translate("DockerVMWizard", "http"))
+        self.uiConsoleTypeComboBox.setItemText(3, _translate("DockerVMWizard", "https"))
         self.uiEnvironmentWizardPage.setTitle(_translate("DockerVMWizard", "Environment"))
         self.uiEnvironmentWizardPage.setSubTitle(_translate("DockerVMWizard", "This variables will be passed to the container. Please report to the container documentation for the available variables."))
         self.label_3.setText(_translate("DockerVMWizard", "You need to put one pair by line example: "))

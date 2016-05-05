@@ -440,6 +440,8 @@ class Ui_MainWindow(object):
         icon34.addPixmap(QtGui.QPixmap(":/icons/edit.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiEditReadmeAction.setIcon(icon34)
         self.uiEditReadmeAction.setObjectName("uiEditReadmeAction")
+        self.uiAcademyAction = QtWidgets.QAction(MainWindow)
+        self.uiAcademyAction.setObjectName("uiAcademyAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -461,7 +463,7 @@ class Ui_MainWindow(object):
         self.uiHelpMenu.addAction(self.uiOnlineHelpAction)
         self.uiHelpMenu.addAction(self.uiCheckForUpdateAction)
         self.uiHelpMenu.addAction(self.uiSetupWizard)
-        self.uiHelpMenu.addAction(self.uiLabInstructionsAction)
+        self.uiHelpMenu.addAction(self.uiAcademyAction)
         self.uiHelpMenu.addAction(self.uiDoctorAction)
         self.uiHelpMenu.addAction(self.uiExportDebugInformationAction)
         self.uiHelpMenu.addAction(self.uiAboutQtAction)
@@ -700,6 +702,7 @@ class Ui_MainWindow(object):
         self.uiExportProjectAction.setText(_translate("MainWindow", "Export project"))
         self.uiImportProjectAction.setText(_translate("MainWindow", "Import project"))
         self.uiEditReadmeAction.setText(_translate("MainWindow", "Edit readme"))
+        self.uiAcademyAction.setText(_translate("MainWindow", "GNS3 &Academy"))
 
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView

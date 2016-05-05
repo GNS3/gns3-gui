@@ -64,6 +64,8 @@ class DockerVMConfigurationPage(
         self.uiEnvironmentTextEdit.setText(settings["environment"])
         self.uiConsoleTypeComboBox.setCurrentIndex(self.uiConsoleTypeComboBox.findText(settings["console_type"]))
         self.uiConsoleResolutionComboBox.setCurrentIndex(self.uiConsoleResolutionComboBox.findText(settings["console_resolution"]))
+        self.uiConsoleHttpPortSpinBox.setValue(settings["console_http_port"])
+        self.uiHttpConsolePathLineEdit.setText(settings["console_http_path"])
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -133,6 +135,8 @@ class DockerVMConfigurationPage(
         settings["environment"] = self.uiEnvironmentTextEdit.toPlainText()
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText()
         settings["console_resolution"] = self.uiConsoleResolutionComboBox.currentText()
+        settings["console_http_port"] = self.uiConsoleHttpPortSpinBox.value()
+        settings["console_http_path"] = self.uiHttpConsolePathLineEdit.text()
 
         if not group:
             adapters = self.uiAdapterSpinBox.value()

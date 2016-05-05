@@ -539,8 +539,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         if event.modifiers() == QtCore.Qt.ControlModifier:
-            # event.delta() added for Qt4 compatibility
-            delta = event.angleDelta() if hasattr(event, 'angleDelta') else event.delta()
+            delta = event.angleDelta()
             if delta is not None and delta.x() == 0:
                 # CTRL is pressed then use the mouse wheel to zoom in or out.
                 self.scaleView(pow(2.0, delta.y() / 240.0))
@@ -1064,6 +1063,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         console_type = "telnet"
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
+                if item.node().consoleType() not in ("telnet", "serial", "vnc"):
+                    continue
                 current_cmd = item.node().consoleCommand()
                 console_type = item.node().consoleType()
 
@@ -1072,6 +1073,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             for item in self.scene().selectedItems():
                 if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
                     node = item.node()
+                    if node.consoleType() not in ("telnet", "serial", "vnc"):
+                        continue
                     try:
                         node.openConsole(command=cmd)
                     except (OSError, ValueError) as e:

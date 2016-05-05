@@ -43,6 +43,8 @@ def test_docker_vm_setup(project, local_server):
             'environment': '',
             'console_type': 'telnet',
             'console_resolution': '1024x768',
+            'console_http_path': '/',
+            'console_http_port': 80,
             'aux': None
         }
         assert mock.called
@@ -79,7 +81,9 @@ def test_dump(project, local_server):
             'adapters': 1,
             'name': 'ubuntu-1',
             'console_type': 'telnet',
-            'console_resolution': '1024x768'
+            'console_resolution': '1024x768',
+            'console_http_path': '/',
+            'console_http_port': 80
         },
         'server_id': 0,
         'type': 'DockerVM',

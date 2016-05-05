@@ -45,10 +45,10 @@ import time
 import locale
 import argparse
 import signal
-import re
+import psutil
 
 try:
-    from gns3.qt import QtCore, QtGui, QtWidgets, DEFAULT_BINDING
+    from gns3.qt import QtCore, QtGui, QtWidgets
 except ImportError:
     raise SystemExit("Can't import Qt modules: Qt and/or PyQt is probably not installed correctly...")
 from gns3.main_window import MainWindow
@@ -57,6 +57,7 @@ from gns3.logger import init_logger
 from gns3.crash_report import CrashReport
 from gns3.local_config import LocalConfig
 from gns3.application import Application
+from gns3.utils import parse_version
 
 
 import logging
@@ -188,22 +189,10 @@ def main():
     if sys.version_info < (3, 4):
         raise SystemExit("Python 3.4 or higher is required")
 
-    def version(version_string):
-        result = []
-        for i in re.split(r'[^0-9]', version_string):
-            if len(i):
-                result.append(int(i))
-        return result
-
-    # 4.8.3 because of QSettings (http://pyqt.sourceforge.net/Docs/PyQt4/pyqt_qsettings.html)
-    if DEFAULT_BINDING == "PyQt4" and version(QtCore.BINDING_VERSION_STR) < version("4.8.3"):
-        raise SystemExit("Requirement is PyQt version 4.8.3 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
-
-    if DEFAULT_BINDING == "PyQt5" and version(QtCore.BINDING_VERSION_STR) < version("5.0.0"):
+    if parse_version(QtCore.BINDING_VERSION_STR) < parse_version("5.0.0"):
         raise SystemExit("Requirement is PyQt5 version 5.0.0 or higher, got version {}".format(QtCore.BINDING_VERSION_STR))
 
-    import psutil
-    if version(psutil.__version__) < version("2.2.1"):
+    if parse_version(psutil.__version__) < parse_version("2.2.1"):
         raise SystemExit("Requirement is psutil version 2.2.1 or higher, got version {}".format(psutil.__version__))
 
     # check for the correct locale
@@ -273,6 +262,8 @@ def main():
     exit_code = app.exec_()
     delattr(MainWindow, "_instance")
 
+    # We force deleting the app object otherwise it's segfault on Fedora
+    del app
     # We force a full garbage collect before exit
     # for unknow reason otherwise Qt Segfault on OSX in some
     # conditions

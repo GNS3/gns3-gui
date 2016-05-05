@@ -260,6 +260,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
         self.uiDoctorAction.triggered.connect(self._doctorSlot)
+        self.uiAcademyAction.triggered.connect(self._academyActionSlot)
         self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
         # New appliance button
         self.uiNewAppliancePushButton.clicked.connect(self._newApplianceActionSlot)
@@ -393,8 +394,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open appliance",
                                                         directory,
-                                                        "All files (*.*);;GNS3 appliance (*.gns3a)",
-                                                        "GNS3 appliance (*.gns3a)")
+                                                        "All files (*.*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
+                                                        "GNS3 Appliance (*.gns3appliance *.gns3a)")
         if path:
             self.loadPath(path)
 
@@ -406,8 +407,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
-                                                        "All files (*.*);;GNS3 project files (*.gns3);;GNS3 topology (*.gns3z);;NET files (*.net)",
-                                                        "GNS3 project files (*.gns3)")
+                                                        "All files (*.*);;GNS3 Topology (*.gns3);;GNS3 Project (*.gns3project *.gns3p);;NET files (*.net)",
+                                                        "GNS3 Topology (*.gns3)")
         if path:
             self.loadPath(path)
 
@@ -443,14 +444,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._project_dialog.reject()
                 self._project_dialog = None
 
-            if path.endswith(".gns3z"):
+            if path.endswith(".gns3project") or path.endswith(".gns3p"):
                 import_worker = ImportProjectWorker(self, path)
                 import_worker.imported.connect(self.loadPath)
-
-                progress_dialog = ProgressDialog(import_worker, "Import project", "Importing project files...", "Cancel", parent=self)
+                progress_dialog = ProgressDialog(import_worker, "Import project", "Importing project...", "Cancel", parent=self)
                 progress_dialog.show()
                 progress_dialog.exec_()
-            elif path.endswith(".gns3a"):
+
+            elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
                 try:
                     self._appliance_wizard = ApplianceWizard(self, path)
                 except ApplianceError as e:
@@ -931,6 +932,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec_()
 
+    def _academyActionSlot(self):
+        """
+        Slot to launch a browser pointing to the courses page.
+        """
+
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://academy.gns3.com/"))
+
     def _showNodesDockWidget(self, title, category):
         """
         Makes the NodesDockWidget appear with the appropriate title and the devices
@@ -1173,11 +1181,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         servers = Servers.instance()
         # start the GNS3 VM
         gns3_vm = GNS3VM.instance()
-        if gns3_vm.autoStart() and not gns3_vm.isRunning():
+        if not gns3_vm.isRunning():
             servers.initVMServer()
             if gns3_vm.isRemote():
                 gns3_vm.setRunning(True)
-            else:
+            elif gns3_vm.autoStart():
                 worker = WaitForVMWorker()
                 progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
                 progress_dialog.show()
@@ -1626,10 +1634,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if len(directory) == 0:
             directory = self.projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                        "Open topology",
+                                                        "Open project",
                                                         directory,
-                                                        "All files (*.*);;GNS3 topology (*.gns3z)",
-                                                        "GNS3 topology (*.gns3z)")
+                                                        "All files (*.*);;GNS3 Project (*.gns3project *.gns3p)",
+                                                        "GNS3 Project (*.gns3project *.gns3p)")
         if not path:
             return
         self.loadPath(path)
@@ -1742,21 +1750,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Sets the charcoal GUI style.
         """
 
-        style = """QWidget {background-color: #535353}
-QToolBar {border:0px}
-QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QListWidget, QLineEdit, QSpinBox, QComboBox {background-color: #dedede}
-QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget {color: #dedede; font: bold 11px}
-QLabel, QMenu, QStatusBar, QRadioButton, QCheckBox {color: #dedede}
-QMenuBar::item {background-color: #535353}
-QMenu::item:selected {color: white; background-color: #5f5f5f}
-QToolButton:hover {background-color: #5f5f5f}
-QGroupBox {color: #dedede; font: bold 12px; padding: 15px; border-style: none}
-QAbstractScrollArea::corner {background: #535353}
-QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {background: none}
-QComboBox {selection-color: black; selection-background-color: #dedede}
-QComboBox QAbstractItemView {background-color: #dedede}
-"""
-
+        stylefile = QtCore.QFile(":/styles/charcoal.css")
+        stylefile.open(QtCore.QFile.ReadOnly)
+        style = QtCore.QTextStream(stylefile).readAll()
         if sys.platform.startswith("darwin"):
             style += "QDockWidget::title {text-align: center; background-color: #535353}"
 

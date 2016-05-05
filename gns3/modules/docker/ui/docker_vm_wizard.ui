@@ -301,6 +301,16 @@
         <string>vnc</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>http</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>https</string>
+       </property>
+      </item>
      </widget>
     </item>
    </layout>

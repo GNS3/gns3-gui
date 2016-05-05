@@ -68,7 +68,8 @@ class NodesView(QtWidgets.QTreeWidget):
                 image.fill(0x00000000)
                 svg_renderer = QImageSvgRenderer(node["symbol"])
                 svg_renderer.render(QtGui.QPainter(image))
-                icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
+                icon = QtGui.QIcon()
+                icon.addPixmap(QtGui.QPixmap.fromImage(image))
                 item.setIcon(0, icon)
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)

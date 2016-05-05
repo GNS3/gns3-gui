@@ -40,15 +40,3 @@ Or start the app with --debug flag.
 Due to the fact PyQT intercept you can use a web debugger for inspecting stuff:
 https://github.com/Kozea/wdb
 
-
-Test with PyQT4
-~~~~~~~~~~~~~~~~
-
-If you want to simulate a user with PyQT4:
-
-.. code:: bash
-   
-    export GNS3_QT4=1
-    python gns3/main.py
-
-

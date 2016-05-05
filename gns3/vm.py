@@ -22,6 +22,7 @@ Base class for VM classes.
 import os
 from gns3.servers import Servers
 from gns3.packet_capture import PacketCapture
+from gns3.qt import QtGui, QtCore
 
 from .node import Node
 
@@ -226,6 +227,9 @@ class VM(Node):
         if error:
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
+            # To avoid block the client if the node no longer exists or server doesn't answer we consider node as stopped
+            if not "status" in result or result["status"] == 404:
+                self.setStatus(Node.stopped)
         else:
             log.info("{} has stopped".format(self.name()))
             self.setStatus(Node.stopped)
@@ -487,6 +491,8 @@ class VM(Node):
         elif console_type == "vnc":
             from .vnc_console import vncConsole
             vncConsole(self.server().host(), console_port, command)
+        elif console_type == "http" or console_type == "https":
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl("{console_type}://{host}:{port}{path}".format(console_type=console_type, host=self.server().host(), port=console_port, path=self.consoleHttpPath())))
 
     def _updatePortSettings(self):
         """
