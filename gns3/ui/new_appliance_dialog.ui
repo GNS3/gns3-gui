@@ -9,91 +9,85 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>617</width>
-    <height>538</height>
+    <width>549</width>
+    <height>325</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New appliance</string>
+   <string>New appliance template</string>
   </property>
   <property name="modal">
    <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="rightMargin">
-    <number>12</number>
-   </property>
-   <item>
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;Create a new appliance&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This dialog will help you to create new appliance in GNS3. In all cases you will need to provide your own images. &lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:x-large; font-weight:600;&quot;&gt;Create an appliance from a template&lt;/span&gt;&lt;/p&gt;&lt;p&gt;You can download appliances template from the the GNS3 website:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://gns3.com/marketplace/appliances&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://gns3.com/marketplace/appliances&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This template will provide you tested configuration from the community. The template extension .gns3a&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::RichText</enum>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item>
     <widget class="QPushButton" name="uiImportApplianceTemplatePushButton">
      <property name="text">
-      <string>Import appliance template</string>
+      <string>Import an appliance template file</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:x-large; font-weight:600;&quot;&gt;Manual creation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;You will need to configure everything by hand.&lt;/p&gt;&lt;p&gt;Please select the emulator you want to configure:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:x-large; font-weight:600;&quot;&gt;OR&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QRadioButton" name="uiAddIOSRouterRadioButton">
      <property name="text">
-      <string>Dynamips (old IOS images)</string>
+      <string>&amp;Add an IOS router using a real IOS image (supported by Dynamips)</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QRadioButton" name="uiAddIOUDeviceRadioButton">
      <property name="text">
-      <string>IOU</string>
+      <string>&amp;Add an IOU (IOS on UNIX) device using a L3 or L2 IOU image</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QRadioButton" name="uiAddQemuVMRadioButton">
      <property name="text">
-      <string>Qemu</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QRadioButton" name="uiAddDockerVMRadioButton">
-     <property name="text">
-      <string>Docker</string>
+      <string>&amp;Add a Qemu virtual machine</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QRadioButton" name="uiAddVirtualBoxVMRadioButton">
      <property name="text">
-      <string>VirtualBox</string>
+      <string>&amp;Add a VirtualBox virtual machine</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QRadioButton" name="uiAddVMwareVMRadioButton">
      <property name="text">
-      <string>VMware</string>
+      <string>&amp;Add a VMware virtual machine</string>
      </property>
     </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="uiAddDockerVMRadioButton">
+     <property name="text">
+      <string>&amp;Add a Docker container</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -114,18 +108,12 @@
       </spacer>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="uiOkButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="QDialogButtonBox" name="uiButtonBox">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
        </property>
       </widget>
      </item>

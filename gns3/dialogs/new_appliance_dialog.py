@@ -34,30 +34,44 @@ class NewApplianceDialog(QtWidgets.QDialog, Ui_NewApplianceDialog):
 
         super().__init__(parent)
         self.setupUi(self)
-        self.uiOkButton.clicked.connect(self._okButtonClickedSlot)
         self.uiImportApplianceTemplatePushButton.clicked.connect(self._importApplianceTemplatePushButtonClickedSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Ok).clicked.connect(self._okButtonClickedSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel).clicked.connect(self.reject)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).clicked.connect(self._helpButtonClickedSlot)
 
     def _importApplianceTemplatePushButtonClickedSlot(self):
+
         self.accept()
         from gns3.main_window import MainWindow
         MainWindow.instance().openApplianceActionSlot()
 
     def _okButtonClickedSlot(self):
+
         self.accept()
         dialog = PreferencesDialog(self.parent())
+        preferences_pane = None
         if self.uiAddIOSRouterRadioButton.isChecked():
-            self._setPreferencesPane(dialog, "Dynamips").uiNewIOSRouterPushButton.clicked.emit(False)
+            preferences_pane = self._setPreferencesPane(dialog, "Dynamips").uiNewIOSRouterPushButton.clicked.emit(False)
         elif self.uiAddIOUDeviceRadioButton.isChecked():
-            self._setPreferencesPane(dialog, "IOS on UNIX").uiNewIOUDevicePushButton.clicked.emit(False)
+            preferences_pane = self._setPreferencesPane(dialog, "IOS on UNIX").uiNewIOUDevicePushButton.clicked.emit(False)
         elif self.uiAddQemuVMRadioButton.isChecked():
-            self._setPreferencesPane(dialog, "QEMU").uiNewQemuVMPushButton.clicked.emit(False)
+            preferences_pane = self._setPreferencesPane(dialog, "QEMU").uiNewQemuVMPushButton.clicked.emit(False)
         elif self.uiAddVirtualBoxVMRadioButton.isChecked():
-            self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit(False)
+            preferences_pane = self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit(False)
         elif self.uiAddVMwareVMRadioButton.isChecked():
-            self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
+            preferences_pane = self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
         elif self.uiAddDockerVMRadioButton.isChecked():
-            self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
-        dialog.show()
+            preferences_pane = self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
+        if preferences_pane is not None:
+            dialog.exec_()
+
+    def _helpButtonClickedSlot(self):
+
+        help_text = """<html><p>This dialog helps you to add an appliance template in GNS3. In all cases you must provide your own images.</p>
+        <p>You can download appliance template files (.gns3appliance) from <a href="https://gns3.com/marketplace/appliances">the GNS3 website</a></p>
+        <p>A template file provides community tested settings to run a specific appliance in GNS3.</p></html>
+        """
+        QtWidgets.QMessageBox.information(self, "Help for adding a new appliance template", help_text)
 
     def _setPreferencesPane(self, dialog, name):
         """

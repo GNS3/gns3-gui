@@ -272,46 +272,87 @@
    <property name="subTitle">
     <string>Now that you have configured the server type you can choose to add one or more virtual machines (VMs) of different types.</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
-     <widget class="QCheckBox" name="uiAddIOSRouterCheckBox">
-      <property name="text">
-       <string>&amp;Add an IOS router using a real IOS image</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="uiAddIOUDeviceCheckBox">
-      <property name="text">
-       <string>&amp;Add an IOU device (router or switch) using an IOU image</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QCheckBox" name="uiAddQemuVMcheckBox">
-      <property name="text">
-       <string>&amp;Add a Qemu virtual machine</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QCheckBox" name="uiAddVirtualBoxVMcheckBox">
-      <property name="text">
-       <string>&amp;Add a VirtualBox virtual machine</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QCheckBox" name="uiAddVMwareVMcheckBox">
-      <property name="text">
-       <string>&amp;Add a VMware virtual machine</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   <widget class="QCheckBox" name="uiAddIOSRouterCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>9</y>
+      <width>469</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&amp;Add an IOS router using a real IOS image (supported by Dynamips)</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="uiAddIOUDeviceCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>37</y>
+      <width>426</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&amp;Add an IOU (IOS on UNIX) device using a L3 or L2 IOU image</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="uiAddQemuVMcheckBox">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>65</y>
+      <width>219</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&amp;Add a Qemu virtual machine</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="uiAddVirtualBoxVMcheckBox">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>93</y>
+      <width>249</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&amp;Add a VirtualBox virtual machine</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="uiAddVMwareVMcheckBox">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>121</y>
+      <width>233</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&amp;Add a VMware virtual machine</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="uiAddDockerVMCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>150</y>
+      <width>233</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&amp;Add a Docker container</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources>
