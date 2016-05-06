@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "GNS3 topology",
+    "title": "GNS3 project",
 
     "definitions": {
 

@@ -73,7 +73,7 @@ class ExportProjectWorker(QtCore.QObject):
 
         QtWidgets.QMessageBox.information(self.parent(), "Export", "Remember to check the licence of the material used in the topology before sharing it with someone else.", QtWidgets.QMessageBox.Ok)
 
-        self._path, _ = QtWidgets.QFileDialog.getSaveFileName(self.parent(), "Export project", None, "GNS3 Project (*.gns3project *.gns3p)", "GNS3 Project (*.gns3project *.gns3p)")
+        self._path, _ = QtWidgets.QFileDialog.getSaveFileName(self.parent(), "Export portable project", None, "GNS3 Portable Project (*.gns3project *.gns3p)", "GNS3 Portable Project (*.gns3project *.gns3p)")
         if self._path is None or len(self._path) == 0:
             self.finished.emit()
             return

@@ -407,8 +407,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
-                                                        "All files (*.*);;GNS3 Topology (*.gns3);;GNS3 Project (*.gns3project *.gns3p);;NET files (*.net)",
-                                                        "GNS3 Topology (*.gns3)")
+                                                        "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
+                                                        "GNS3 Project (*.gns3)")
         if path:
             self.loadPath(path)
 
@@ -1610,34 +1610,38 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtCore.QTimer.singleShot(counter, callback)
 
     def _exportProjectActionSlot(self):
+        """
+        Slot called to export a portable project
+        """
+
         running_nodes = self._running_nodes()
         if running_nodes:
             nodes = "\n".join(running_nodes)
-            MessageBox(self, "Export project", "Please stop the following nodes before exporting the project", nodes)
+            MessageBox(self, "Export portable project", "Please stop the following nodes before exporting the project", nodes)
             return
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
-            MessageBox(self, "Export project", "Please save the project before exporting it")
+            MessageBox(self, "Export portable project", "Please save the project before exporting it")
             return
 
         export_worker = ExportProjectWorker(self, self._project)
-        progress_dialog = ProgressDialog(export_worker, "Export project", "Exporting project files...", "Cancel", parent=self)
+        progress_dialog = ProgressDialog(export_worker, "Export portable project", "Exporting project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
 
     def _importProjectActionSlot(self):
         """
-        Slot called to import a project
+        Slot called to import a portable project
         """
 
         directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
         if len(directory) == 0:
             directory = self.projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                        "Open project",
+                                                        "Import portable project",
                                                         directory,
-                                                        "All files (*.*);;GNS3 Project (*.gns3project *.gns3p)",
-                                                        "GNS3 Project (*.gns3project *.gns3p)")
+                                                        "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
+                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
         if not path:
             return
         self.loadPath(path)
