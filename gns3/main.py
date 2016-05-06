@@ -254,12 +254,17 @@ def main():
         log.info("Signal received exiting the application")
         mainwindow.setSoftExit(False)
         app.closeAllWindows()
-    signal.signal(signal.SIGINT, sigint_handler)
-    signal.signal(signal.SIGTERM, sigint_handler)
+    orig_sigint = signal.signal(signal.SIGINT, sigint_handler)
+    orig_sigterm = signal.signal(signal.SIGTERM, sigint_handler)
 
     mainwindow.show()
 
     exit_code = app.exec_()
+
+    signal.signal(signal.SIGINT, orig_sigint)
+    signal.signal(signal.SIGTERM, orig_sigterm)
+
+
     delattr(MainWindow, "_instance")
 
     # We force deleting the app object otherwise it's segfault on Fedora
