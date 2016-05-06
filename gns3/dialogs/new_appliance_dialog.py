@@ -49,21 +49,21 @@ class NewApplianceDialog(QtWidgets.QDialog, Ui_NewApplianceDialog):
 
         self.accept()
         dialog = PreferencesDialog(self.parent())
-        preferences_pane = None
         if self.uiAddIOSRouterRadioButton.isChecked():
-            preferences_pane = self._setPreferencesPane(dialog, "Dynamips").uiNewIOSRouterPushButton.clicked.emit(False)
+            self._setPreferencesPane(dialog, "Dynamips").uiNewIOSRouterPushButton.clicked.emit(False)
         elif self.uiAddIOUDeviceRadioButton.isChecked():
-            preferences_pane = self._setPreferencesPane(dialog, "IOS on UNIX").uiNewIOUDevicePushButton.clicked.emit(False)
+            self._setPreferencesPane(dialog, "IOS on UNIX").uiNewIOUDevicePushButton.clicked.emit(False)
         elif self.uiAddQemuVMRadioButton.isChecked():
-            preferences_pane = self._setPreferencesPane(dialog, "QEMU").uiNewQemuVMPushButton.clicked.emit(False)
+            self._setPreferencesPane(dialog, "QEMU").uiNewQemuVMPushButton.clicked.emit(False)
         elif self.uiAddVirtualBoxVMRadioButton.isChecked():
-            preferences_pane = self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit(False)
+            self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit(False)
         elif self.uiAddVMwareVMRadioButton.isChecked():
-            preferences_pane = self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
+            self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
         elif self.uiAddDockerVMRadioButton.isChecked():
-            preferences_pane = self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
-        if preferences_pane is not None:
-            dialog.exec_()
+            self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
+        else:
+            return
+        dialog.exec_()
 
     def _helpButtonClickedSlot(self):
 

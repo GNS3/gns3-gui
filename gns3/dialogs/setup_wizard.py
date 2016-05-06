@@ -215,21 +215,19 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             VPCS.instance().setSettings({"use_local_server": use_local_server})
 
             dialog = PreferencesDialog(self)
-            preferences_pane = None
             if self.uiAddIOSRouterCheckBox.isChecked():
-                preferences_pane = self._setPreferencesPane(dialog, "Dynamips").uiNewIOSRouterPushButton.clicked.emit(False)
+                self._setPreferencesPane(dialog, "Dynamips").uiNewIOSRouterPushButton.clicked.emit(False)
             if self.uiAddIOUDeviceCheckBox.isChecked():
-                preferences_pane = self._setPreferencesPane(dialog, "IOS on UNIX").uiNewIOUDevicePushButton.clicked.emit(False)
+                self._setPreferencesPane(dialog, "IOS on UNIX").uiNewIOUDevicePushButton.clicked.emit(False)
             if self.uiAddQemuVMcheckBox.isChecked():
-                preferences_pane = self._setPreferencesPane(dialog, "QEMU").uiNewQemuVMPushButton.clicked.emit(False)
+                self._setPreferencesPane(dialog, "QEMU").uiNewQemuVMPushButton.clicked.emit(False)
             if self.uiAddVirtualBoxVMcheckBox.isChecked():
-                preferences_pane = self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit(False)
+                self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit(False)
             if self.uiAddVMwareVMcheckBox.isChecked():
-                preferences_pane = self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
+                self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
             if self.uiAddDockerVMCheckBox.isChecked():
-                preferences_pane = self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
-            if preferences_pane is not None:
-                dialog.exec_()
+                self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
+            dialog.exec_()
         return True
 
     def _refreshVMListSlot(self):
