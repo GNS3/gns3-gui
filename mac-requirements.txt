@@ -1,5 +1,2 @@
 -rrequirements.txt
 
-PyQt5==5.6
-
-
