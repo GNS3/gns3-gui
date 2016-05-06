@@ -94,7 +94,7 @@ class ServerSummaryView(QtWidgets.QTreeWidget):
 
         super().__init__(parent)
 
-        self._servers = set()
+        self._servers = {}
 
         Servers.instance().server_added_signal.connect(self._serverAddedSlot)
         for server in Servers.instance().servers():
@@ -107,9 +107,15 @@ class ServerSummaryView(QtWidgets.QTreeWidget):
         :params url: URL of the server
         """
 
-        if url in self._servers:
-            return
-        self._servers.add(url)
         server = Servers.instance().getServerFromString(url)
-        ServerItem(self, server)
+        url = server.url()
+        # We can get twice an url in case of GNS3 VM remote server
+        # to avoid duplicate desynchronized informations we removed one
+        # version
+        if url in self._servers:
+            if not server.isGNS3VM():
+                return
+            else:
+                self.takeTopLevelItem(self.indexOfTopLevelItem(self._servers[url]))
+        self._servers[url] = ServerItem(self, server)
 
