@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created: Thu May  5 18:51:18 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_VirtualBoxPreferencesPageWidget(object):
-
     def setupUi(self, VirtualBoxPreferencesPageWidget):
         VirtualBoxPreferencesPageWidget.setObjectName("VirtualBoxPreferencesPageWidget")
-        VirtualBoxPreferencesPageWidget.resize(450, 250)
+        VirtualBoxPreferencesPageWidget.resize(450, 228)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VirtualBoxPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiTabWidget = QtWidgets.QTabWidget(VirtualBoxPreferencesPageWidget)
@@ -45,7 +44,7 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
         self.uiVboxManagePathToolButton.setObjectName("uiVboxManagePathToolButton")
         self.horizontalLayout_5.addWidget(self.uiVboxManagePathToolButton)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
-        spacerItem = QtWidgets.QSpacerItem(390, 193, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, "")
         self.verticalLayout_2.addWidget(self.uiTabWidget)
@@ -70,3 +69,4 @@ class Ui_VirtualBoxPreferencesPageWidget(object):
         self.uiVboxManagePathToolButton.setText(_translate("VirtualBoxPreferencesPageWidget", "&Browse..."))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VirtualBoxPreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VirtualBoxPreferencesPageWidget", "Restore defaults"))
+

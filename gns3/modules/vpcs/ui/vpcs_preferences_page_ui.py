@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created: Thu May  5 00:03:12 2016
+# Created: Thu May  5 18:48:24 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_VPCSPreferencesPageWidget(object):
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName("VPCSPreferencesPageWidget")
-        VPCSPreferencesPageWidget.resize(469, 392)
+        VPCSPreferencesPageWidget.resize(469, 261)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VPCSPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiTabWidget = QtWidgets.QTabWidget(VPCSPreferencesPageWidget)
@@ -44,7 +44,7 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiVPCSPathToolButton.setObjectName("uiVPCSPathToolButton")
         self.horizontalLayout_5.addWidget(self.uiVPCSPathToolButton)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
-        spacerItem = QtWidgets.QSpacerItem(390, 193, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, "")
         self.uiVPCSTabWidget = QtWidgets.QWidget()
@@ -85,7 +85,7 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.uiCategoryComboBox = QtWidgets.QComboBox(self.uiVPCSTabWidget)
         self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
         self.gridLayout.addWidget(self.uiCategoryComboBox, 5, 1, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 387, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem1, 6, 0, 1, 2)
         self.uiScriptFileLabel = QtWidgets.QLabel(self.uiVPCSTabWidget)
         self.uiScriptFileLabel.setObjectName("uiScriptFileLabel")

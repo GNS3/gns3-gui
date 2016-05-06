@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Thu May  5 17:27:52 2016
+# Created: Thu May  5 18:26:47 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ServerPreferencesPageWidget(object):
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
-        ServerPreferencesPageWidget.resize(526, 631)
+        ServerPreferencesPageWidget.resize(526, 596)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -145,7 +145,7 @@ class Ui_ServerPreferencesPageWidget(object):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem1)
         self.gridLayout_6.addWidget(self.uiUDPPortRangeGroupBox, 3, 0, 1, 2)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_6.addItem(spacerItem2, 4, 0, 1, 1)
         self.uiServerPreferenceTabWidget.addTab(self.uiLocalTabWidget, "")
         self.uiGNS3VMTabWidget = QtWidgets.QWidget()
@@ -244,7 +244,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiAddServerPushButton.setObjectName("uiAddServerPushButton")
         self.horizontalLayout_4.addWidget(self.uiAddServerPushButton)
         self.verticalLayout.addWidget(self.uiRemoteGNS3VMSettingsGroupBox)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem4 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem4)
         self.uiServerPreferenceTabWidget.addTab(self.uiGNS3VMTabWidget, "")
         self.uiRemoteTabWidget = QtWidgets.QWidget()
@@ -280,7 +280,7 @@ class Ui_ServerPreferencesPageWidget(object):
         spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem5)
         self.gridLayout_5.addLayout(self.horizontalLayout_3, 1, 0, 1, 2)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem6 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_5.addItem(spacerItem6, 2, 0, 1, 1)
         self.uiServerPreferenceTabWidget.addTab(self.uiRemoteTabWidget, "")
         self.verticalLayout_2.addWidget(self.uiServerPreferenceTabWidget)

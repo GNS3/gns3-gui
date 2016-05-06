@@ -2,19 +2,17 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
 #
-# Created: Tue Sep  8 09:02:23 2015
+# Created: Thu May  5 18:51:18 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_VMwarePreferencesPageWidget(object):
-
     def setupUi(self, VMwarePreferencesPageWidget):
         VMwarePreferencesPageWidget.setObjectName("VMwarePreferencesPageWidget")
-        VMwarePreferencesPageWidget.resize(462, 532)
+        VMwarePreferencesPageWidget.resize(464, 255)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VMwarePreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiTabWidget = QtWidgets.QTabWidget(VMwarePreferencesPageWidget)
@@ -37,7 +35,7 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiHostTypeComboBox = QtWidgets.QComboBox(self.uiGeneralSettingsTabWidget)
         self.uiHostTypeComboBox.setObjectName("uiHostTypeComboBox")
         self.gridLayout_2.addWidget(self.uiHostTypeComboBox, 4, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(390, 193, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem, 5, 0, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
@@ -94,7 +92,7 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.horizontalLayout_3.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.verticalLayout_3.addWidget(self.uiManagedVMnetRangeGroupBox)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 359, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem2)
         self.uiTabWidget.addTab(self.uiNetworkTab, "")
         self.verticalLayout_2.addWidget(self.uiTabWidget)
@@ -127,3 +125,4 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiResetVmnetPushButton.setText(_translate("VMwarePreferencesPageWidget", "&Reset"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiNetworkTab), _translate("VMwarePreferencesPageWidget", "Network"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
+

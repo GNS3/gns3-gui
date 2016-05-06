@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Thu May  5 00:06:03 2016
+# Created: Thu May  5 18:51:18 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DynamipsPreferencesPageWidget(object):
     def setupUi(self, DynamipsPreferencesPageWidget):
         DynamipsPreferencesPageWidget.setObjectName("DynamipsPreferencesPageWidget")
-        DynamipsPreferencesPageWidget.resize(435, 225)
+        DynamipsPreferencesPageWidget.resize(435, 242)
         self.vboxlayout = QtWidgets.QVBoxLayout(DynamipsPreferencesPageWidget)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiTabWidget = QtWidgets.QTabWidget(DynamipsPreferencesPageWidget)
@@ -46,7 +46,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiAllocateAuxConsolePortsCheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsTabWidget)
         self.uiAllocateAuxConsolePortsCheckBox.setObjectName("uiAllocateAuxConsolePortsCheckBox")
         self.verticalLayout_2.addWidget(self.uiAllocateAuxConsolePortsCheckBox)
-        spacerItem = QtWidgets.QSpacerItem(390, 193, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, "")
         self.uiAdvancedSettingsTabWidget = QtWidgets.QWidget()
@@ -70,7 +70,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiSparseMemorySupportCheckBox.setObjectName("uiSparseMemorySupportCheckBox")
         self.verticalLayout.addWidget(self.uiSparseMemorySupportCheckBox)
         self.verticalLayout_3.addWidget(self.uiMemoryUsageOptimisationGroupBox)
-        spacerItem1 = QtWidgets.QSpacerItem(390, 12, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem1)
         self.uiTabWidget.addTab(self.uiAdvancedSettingsTabWidget, "")
         self.vboxlayout.addWidget(self.uiTabWidget)

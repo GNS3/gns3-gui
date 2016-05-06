@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/preferences_dialog.ui'
 #
-# Created: Thu May  5 00:03:11 2016
+# Created: Thu May  5 18:54:22 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,13 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PreferencesDialog(object):
     def setupUi(self, PreferencesDialog):
         PreferencesDialog.setObjectName("PreferencesDialog")
-        PreferencesDialog.resize(800, 700)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(2)
-        sizePolicy.setVerticalStretch(2)
-        sizePolicy.setHeightForWidth(PreferencesDialog.sizePolicy().hasHeightForWidth())
-        PreferencesDialog.setSizePolicy(sizePolicy)
-        PreferencesDialog.setSizeGripEnabled(False)
+        PreferencesDialog.resize(980, 680)
         PreferencesDialog.setModal(True)
         self.horizontalLayout = QtWidgets.QHBoxLayout(PreferencesDialog)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -64,7 +58,7 @@ class Ui_PreferencesDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 394, 616))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 486, 596))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout.setObjectName("verticalLayout")

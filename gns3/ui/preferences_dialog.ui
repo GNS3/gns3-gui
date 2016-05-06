@@ -6,21 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>700</height>
+    <width>980</width>
+    <height>680</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>2</horstretch>
-    <verstretch>2</verstretch>
-   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Preferences</string>
-  </property>
-  <property name="sizeGripEnabled">
-   <bool>false</bool>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -90,8 +81,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>394</width>
-            <height>616</height>
+            <width>486</width>
+            <height>596</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">

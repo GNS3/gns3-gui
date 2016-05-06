@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
 #
-# Created: Thu May  5 17:20:58 2016
+# Created: Thu May  5 18:26:46 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,7 +57,7 @@ class Ui_PacketCapturePreferencesPageWidget(object):
         self.uiRestoreDefaultsPushButton = QtWidgets.QPushButton(PacketCapturePreferencesPageWidget)
         self.uiRestoreDefaultsPushButton.setObjectName("uiRestoreDefaultsPushButton")
         self.gridLayout.addWidget(self.uiRestoreDefaultsPushButton, 1, 1, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 101, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem1, 2, 0, 1, 2)
 
         self.retranslateUi(PacketCapturePreferencesPageWidget)
