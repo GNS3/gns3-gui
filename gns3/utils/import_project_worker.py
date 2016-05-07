@@ -17,15 +17,12 @@
 
 import pathlib
 import zipfile
-import shutil
 import uuid
-import json
 import os
 import sys
 
 
-from ..qt import QtCore, QtWidgets
-from ..dialogs.new_project_dialog import NewProjectDialog
+from ..qt import QtCore
 from ..servers import Servers
 
 
@@ -40,25 +37,19 @@ class ImportProjectWorker(QtCore.QObject):
     updated = QtCore.pyqtSignal(int)
     imported = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent, source):
-        super().__init__(parent)
+    def __init__(self, source, new_project_settings):
+        super().__init__()
         self._source = source
-
-    def run(self):
+        self._new_project_settings = new_project_settings
         self._project_uuid = str(uuid.uuid4())
 
-        project_name = os.path.basename(self._source).split('.')[0]
-        self._project_dialog = NewProjectDialog(self.parent(), default_project_name=project_name)
-        self._project_dialog.show()
-        self._project_dialog.accepted.connect(self._newProjectDialodAcceptedSlot)
+    def run(self):
 
-    def _newProjectDialodAcceptedSlot(self):
-        new_project_settings = self._project_dialog.getNewProjectSettings()
-
-        self._dst = new_project_settings['project_files_dir']
-        name = new_project_settings['project_name']
-        self._project_file = new_project_settings['project_path']
-        Servers.instance().localServer().post("/projects", self._createProjectCallback, body={"project_id": self._project_uuid, "name": name, "path": self._dst})
+        self._dst = self._new_project_settings['project_files_dir']
+        name = self._new_project_settings['project_name']
+        self._project_file = self._new_project_settings['project_path']
+        Servers.instance().localServer().post("/projects", self._createProjectCallback,
+                                              body={"project_id": self._project_uuid, "name": name, "path": self._dst})
 
     def _createProjectCallback(self, content, error=False, server=None, context={}, **kwargs):
         if error:
@@ -83,7 +74,7 @@ class ImportProjectWorker(QtCore.QObject):
 
         if os.path.exists(os.path.join(self._dst, "servers", "vm")):
             if Servers.instance().vmServer() is None:
-                self.error.emit("You need to configure the GNS3 VM to import this project", True)
+                self.error.emit("You must configure the GNS3 VM in order to import this project", True)
                 self.finished.emit()
                 return
 
