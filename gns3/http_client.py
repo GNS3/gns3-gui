@@ -656,6 +656,7 @@ class HTTPClient(QtCore.QObject):
     def _requestCanceled(self, response, context):
 
         if response.isRunning():
+            log.warn("Aborting request for {}".format(response.url()))
             response.abort()
         if "query_id" in context:
             self.notify_progress_end_query(context["query_id"])
