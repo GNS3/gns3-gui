@@ -72,8 +72,10 @@ class DockerVMPreferencesPage(
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", str(docker_image["console_type"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_image["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(docker_image["adapters"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Start command:", str(docker_image["start_command"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Environment:", str(docker_image["environment"])])
+        if docker_image["start_command"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Start command:", str(docker_image["start_command"])])
+        if docker_image["environment"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Environment:", str(docker_image["environment"])])
 
         self.uiDockerVMInfoTreeWidget.expandAll()
         self.uiDockerVMInfoTreeWidget.resizeColumnToContents(0)

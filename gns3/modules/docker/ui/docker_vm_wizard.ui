@@ -93,7 +93,7 @@
     <string>Docker Virtual Machine</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a Docker virtual machine from the list. Or provide an image name on docker hub.</string>
+    <string>Please choose a Docker virtual machine from the list or provide an image name on Docker hub.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
@@ -236,7 +236,7 @@
     <string>Start command</string>
    </property>
    <property name="subTitle">
-    <string>Please enter the start command. If you leave it empty the default command will be used.</string>
+    <string>Please enter a start command for the container. The default command will be used if you leave this field empty.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -276,7 +276,7 @@
     <string>Console type</string>
    </property>
    <property name="subTitle">
-    <string>Please choose the console type. If you choose VNC your container should have a VNC server listening on port 5900.</string>
+    <string>Please choose the console type. Choosing VNC for your container will run a VNC server listening on a port between 5900 and 6000</string>
    </property>
    <layout class="QFormLayout" name="formLayout_3">
     <item row="0" column="0">
@@ -320,13 +320,13 @@
     <string>Environment</string>
    </property>
    <property name="subTitle">
-    <string>This variables will be passed to the container. Please report to the container documentation for the available variables.</string>
+    <string>These variables will be passed to the container. Please read the container documentation to find what variables are used.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QLabel" name="label_3">
       <property name="text">
-       <string>You need to put one pair by line example: </string>
+       <string>There must be one pair by line, example: </string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
