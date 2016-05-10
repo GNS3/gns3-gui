@@ -258,9 +258,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
         self.uiDoctorAction.triggered.connect(self._doctorSlot)
         self.uiAcademyAction.triggered.connect(self._academyActionSlot)
-        self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
-        # New appliance button
-        self.uiNewAppliancePushButton.clicked.connect(self._newApplianceActionSlot)
 
         # browsers tool bar connections
         self.uiBrowseRoutersAction.triggered.connect(self._browseRoutersActionSlot)
@@ -269,6 +266,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiBrowseSecurityDevicesAction.triggered.connect(self._browseSecurityDevicesActionSlot)
         self.uiBrowseAllDevicesAction.triggered.connect(self._browseAllDevicesActionSlot)
         self.uiAddLinkAction.triggered.connect(self._addLinkActionSlot)
+
+        # new appliance button
+        self.uiNewAppliancePushButton.clicked.connect(self._newApplianceActionSlot)
 
         # connect the signal to the view
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
@@ -363,26 +363,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._createTemporaryProject()
             self._project_dialog = None
 
-<<<<<<< HEAD
-=======
     def _newApplianceActionSlot(self):
         """
         Called when user want to create a new appliance
         """
         dialog = NewApplianceDialog(self)
         dialog.show()
+        dialog.exec_()
 
-    def _IOUVMConverterActionSlot(self):
-        command = shutil.which("gns3-iouvm-converter")
-        if command is None:
-            QtWidgets.QMessageBox.critical(self, "GNS3 IOU VM Converter", "gns3-iouvm-converter not found")
-            return
-        try:
-            subprocess.Popen([command])
-        except (OSError, subprocess.SubprocessError) as e:
-            QtWidgets.QMessageBox.critical(self, "GNS3 IOU VM Converter", "Error when running gns3-iouvm-converter {}".format(e))
-
->>>>>>> 1.5
     def openApplianceActionSlot(self):
         """
         Slot called to open an appliance.
@@ -407,13 +395,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
-<<<<<<< HEAD
-                                                        "All files (*.*);;GNS3 project files (*.gns3);;GNS3 topology (*.gns3z)",
-                                                        "GNS3 project files (*.gns3)")
-=======
                                                         "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
                                                         "GNS3 Project (*.gns3)")
->>>>>>> 1.5
         if path:
             self.loadPath(path)
 
