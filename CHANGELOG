@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.5.0a1 10/05/2016
+
+* Rebase the qcow2 when starting the VM if needed
+* Docker support
+* Import / Export topologies
+
 ## 1.4.6 28/04/2016
 
 * Fix a typo in qemu preferences
