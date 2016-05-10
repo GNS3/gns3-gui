@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/docker/ui/docker_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created: Thu May  5 18:51:18 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_DockerPreferencesPageWidget(object):
-
     def setupUi(self, DockerPreferencesPageWidget):
         DockerPreferencesPageWidget.setObjectName("DockerPreferencesPageWidget")
-        DockerPreferencesPageWidget.resize(200, 200)
+        DockerPreferencesPageWidget.resize(330, 200)
         self.verticalLayout = QtWidgets.QVBoxLayout(DockerPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(DockerPreferencesPageWidget)
@@ -27,7 +26,7 @@ class Ui_DockerPreferencesPageWidget(object):
         self.uiUseLocalServercheckBox.setChecked(True)
         self.uiUseLocalServercheckBox.setObjectName("uiUseLocalServercheckBox")
         self.verticalLayout_2.addWidget(self.uiUseLocalServercheckBox)
-        spacerItem = QtWidgets.QSpacerItem(20, 455, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
         self.uiTabWidget.addTab(self.uiServerSettingsTabWidget, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
@@ -50,3 +49,4 @@ class Ui_DockerPreferencesPageWidget(object):
         self.uiUseLocalServercheckBox.setText(_translate("DockerPreferencesPageWidget", "Use the local server"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("DockerPreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("DockerPreferencesPageWidget", "Restore defaults"))
+

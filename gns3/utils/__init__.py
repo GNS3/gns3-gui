@@ -36,7 +36,7 @@ def md5_hash_file(path):
 
 def parse_version(version):
     """
-    Return a comparable tuple from a version string.
+    Return a comparable tuple from a version string. We try to force tuple to semver with version like 1.2.0
 
     Replace pkg_resources.parse_version which now display a warning when use for comparing version with tuple
 
@@ -51,14 +51,26 @@ def parse_version(version):
             continue
         try:
             info = int(info)
-            version.append(info)
+            # We pad with zero to compare only on string
+            # This avoid issue when comparing version with different length
+            version.append("%06d" % (info,))
         except ValueError:
+            # Force to a version with three number
+            if len(version) == 1:
+                version.append("00000")
+            if len(version) == 2:
+                version.append("000000")
             # We want rc to be at lower level than dev version
             if info == 'rc':
                 info = 'c'
             version.append(info)
             release_type_found = True
     if release_type_found is False:
+        # Force to a version with three number
+        if len(version) == 1:
+            version.append("00000")
+        if len(version) == 2:
+            version.append("000000")
         version.append("final")
     return tuple(version)
 

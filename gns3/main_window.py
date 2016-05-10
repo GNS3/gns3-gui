@@ -66,6 +66,7 @@ from .progress import Progress
 from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
+from .dialogs.new_appliance_dialog import NewApplianceDialog
 from .registry.appliance import ApplianceError
 
 log = logging.getLogger(__name__)
@@ -124,6 +125,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiServerSummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
+        # Make sure the dock widget is not open
+        self.uiNodesDockWidget.setVisible(False)
 
         # default directories for QFileDialog
         self._import_configs_from_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
@@ -254,6 +257,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
         self.uiDoctorAction.triggered.connect(self._doctorSlot)
+        self.uiAcademyAction.triggered.connect(self._academyActionSlot)
+        self.uiIOUVMConverterAction.triggered.connect(self._IOUVMConverterActionSlot)
+        # New appliance button
+        self.uiNewAppliancePushButton.clicked.connect(self._newApplianceActionSlot)
 
         # browsers tool bar connections
         self.uiBrowseRoutersAction.triggered.connect(self._browseRoutersActionSlot)
@@ -270,6 +277,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.project_new_signal.connect(self.project_created)
 
         self.ready_signal.connect(self._readySlot)
+
 
     def project(self):
         """
@@ -355,6 +363,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._createTemporaryProject()
             self._project_dialog = None
 
+<<<<<<< HEAD
+=======
+    def _newApplianceActionSlot(self):
+        """
+        Called when user want to create a new appliance
+        """
+        dialog = NewApplianceDialog(self)
+        dialog.show()
+
+    def _IOUVMConverterActionSlot(self):
+        command = shutil.which("gns3-iouvm-converter")
+        if command is None:
+            QtWidgets.QMessageBox.critical(self, "GNS3 IOU VM Converter", "gns3-iouvm-converter not found")
+            return
+        try:
+            subprocess.Popen([command])
+        except (OSError, subprocess.SubprocessError) as e:
+            QtWidgets.QMessageBox.critical(self, "GNS3 IOU VM Converter", "Error when running gns3-iouvm-converter {}".format(e))
+
+>>>>>>> 1.5
     def openApplianceActionSlot(self):
         """
         Slot called to open an appliance.
@@ -366,8 +394,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open appliance",
                                                         directory,
-                                                        "All files (*.*);;GNS3 appliance (*.gns3a)",
-                                                        "GNS3 appliance (*.gns3a)")
+                                                        "All files (*.*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
+                                                        "GNS3 Appliance (*.gns3appliance *.gns3a)")
         if path:
             self.loadPath(path)
 
@@ -379,8 +407,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         "Open project",
                                                         self.projectsDirPath(),
+<<<<<<< HEAD
                                                         "All files (*.*);;GNS3 project files (*.gns3);;GNS3 topology (*.gns3z)",
                                                         "GNS3 project files (*.gns3)")
+=======
+                                                        "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
+                                                        "GNS3 Project (*.gns3)")
+>>>>>>> 1.5
         if path:
             self.loadPath(path)
 
@@ -416,18 +449,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._project_dialog.reject()
                 self._project_dialog = None
 
-            if path.endswith(".gns3z"):
-                import_worker = ImportProjectWorker(self, path)
-                import_worker.imported.connect(self.loadPath)
+            if path.endswith(".gns3project") or path.endswith(".gns3p"):
+                project_name = os.path.basename(path).split('.')[0]
+                self._project_dialog = NewProjectDialog(self, default_project_name=project_name)
+                self._project_dialog.show()
+                if self._project_dialog.exec_():
+                    new_project_settings = self._project_dialog.getNewProjectSettings()
+                    import_worker = ImportProjectWorker(path, new_project_settings)
+                    import_worker.imported.connect(self.loadPath)
+                    progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self)
+                    progress_dialog.show()
+                    progress_dialog.exec_()
 
-                progress_dialog = ProgressDialog(import_worker, "Import project", "Importing project files...", "Cancel", parent=self)
-                progress_dialog.show()
-                progress_dialog.exec_()
-            elif path.endswith(".gns3a"):
+                self._project_dialog = None
+
+            elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
                 try:
                     self._appliance_wizard = ApplianceWizard(self, path)
                 except ApplianceError as e:
-                    QtWidgets.QMessageBox.critical(self, "Appliance", "Error when importing appliance {}: {}".format(path, str(e)))
+                    QtWidgets.QMessageBox.critical(self, "Appliance", "Error while importing appliance {}: {}".format(path, str(e)))
                     return
                 self._appliance_wizard.show()
                 self._appliance_wizard.exec_()
@@ -904,6 +944,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec_()
 
+    def _academyActionSlot(self):
+        """
+        Slot to launch a browser pointing to the courses page.
+        """
+
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://academy.gns3.com/"))
+
     def _showNodesDockWidget(self, title, category):
         """
         Makes the NodesDockWidget appear with the appropriate title and the devices
@@ -1146,11 +1193,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         servers = Servers.instance()
         # start the GNS3 VM
         gns3_vm = GNS3VM.instance()
-        if gns3_vm.autoStart() and not gns3_vm.isRunning():
+        if not gns3_vm.isRunning():
             servers.initVMServer()
             if gns3_vm.isRemote():
                 gns3_vm.setRunning(True)
-            else:
+            elif gns3_vm.autoStart():
                 worker = WaitForVMWorker()
                 progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
                 progress_dialog.show()
@@ -1520,6 +1567,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtCore.QTimer.singleShot(counter, callback)
 
     def _exportProjectActionSlot(self):
+        """
+        Slot called to export a portable project
+        """
+
         running_nodes = self._running_nodes()
         if running_nodes:
             nodes = "\n".join(running_nodes)
@@ -1527,27 +1578,86 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
-            MessageBox(self, "Export project", "Please save the project before exporting it")
+            QtWidgets.QMessageBox.critical(self, "Export project", "Please save the project before exporting it")
             return
 
-        export_worker = ExportProjectWorker(self, self._project)
-        progress_dialog = ProgressDialog(export_worker, "Export project", "Exporting project files...", "Cancel", parent=self)
+        if self._project.temporary():
+            QtWidgets.QMessageBox.critical(self, "Export project", "A temporary project cannot be exported")
+            return
+
+        topology = Topology.instance()
+        for node in topology.nodes():
+            if node.__class__.__name__ in ["VirtualBoxVM", "VMwareVM"]:
+                QtWidgets.QMessageBox.critical(self, "Export portable project" "A project containing VMware or VirtualBox VMs cannot be exported because the VMs are managed by these software.")
+                return
+
+        include_image_question = """Would you like to include any base image?
+
+The project will not require additional images to run on another host, however the resulting file will be much bigger.
+
+It is your responsability to check if you have the right to distribute the image(s) as part of the project.
+        """
+
+        reply = QtWidgets.QMessageBox.question(self, "Export project", include_image_question,
+                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
+        include_images = int(reply == QtWidgets.QMessageBox.Yes)
+
+        if not os.path.exists(self._project.readmePathFile()):
+            text, ok = QtWidgets.QInputDialog.getMultiLineText(self, "Export project",
+                                                               "Please provide a description for the project, especially if you want to share it. \nThe description will be saved in README.txt inside the project file",
+                                                               "Project title\n\nAuthor: Grace Hopper <grace@hopper.com>\n\nThis project is about...")
+            if not ok:
+                return
+            try:
+                with open(self._project.readmePathFile(), 'w+') as f:
+                    f.write(text)
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(self, "Export project", "Could not create {}: {}".format(self._project.readmePathFile(), e))
+                return
+
+        for server in self._project.servers():
+            if not server.isLocal() and not server.isGNS3VM():
+                QtWidgets.QMessageBox.critical(self, "Export project", "Projects running on a remote server cannot be exported. Only projects running locally or in the GNS3 VM are supported.")
+                return
+
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        if len(directory) == 0:
+            directory = self.projectsDirPath()
+
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export portable project", directory,
+                                                        "GNS3 Portable Project (*.gns3project *.gns3p)",
+                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
+        if path is None or len(path) == 0:
+            return
+
+        if not path.endswith(".gns3project") or not path.endswith(".gns3p"):
+            path += ".gns3project"
+
+        try:
+            open(path, 'wb+').close()
+        except OSError as e:
+            QtWidgets.QMessageBox.critical(self, "Export project", "Could not write {}: {}".format(path, e))
+            return
+
+        export_worker = ExportProjectWorker(self._project, path, include_images)
+        progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self)
         progress_dialog.show()
         progress_dialog.exec_()
 
     def _importProjectActionSlot(self):
         """
-        Slot called to import a project
+        Slot called to import a portable project
         """
 
         directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
         if len(directory) == 0:
             directory = self.projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                        "Open topology",
+                                                        "Import project",
                                                         directory,
-                                                        "All files (*.*);;GNS3 topology (*.gns3z)",
-                                                        "GNS3 topology (*.gns3z)")
+                                                        "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
+                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
         if not path:
             return
         self.loadPath(path)
@@ -1660,21 +1770,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Sets the charcoal GUI style.
         """
 
-        style = """QWidget {background-color: #535353}
-QToolBar {border:0px}
-QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QListWidget, QLineEdit, QSpinBox, QComboBox {background-color: #dedede}
-QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget {color: #dedede; font: bold 11px}
-QLabel, QMenu, QStatusBar, QRadioButton, QCheckBox {color: #dedede}
-QMenuBar::item {background-color: #535353}
-QMenu::item:selected {color: white; background-color: #5f5f5f}
-QToolButton:hover {background-color: #5f5f5f}
-QGroupBox {color: #dedede; font: bold 12px; padding: 15px; border-style: none}
-QAbstractScrollArea::corner {background: #535353}
-QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {background: none}
-QComboBox {selection-color: black; selection-background-color: #dedede}
-QComboBox QAbstractItemView {background-color: #dedede}
-"""
-
+        stylefile = QtCore.QFile(":/styles/charcoal.css")
+        stylefile.open(QtCore.QFile.ReadOnly)
+        style = QtCore.QTextStream(stylefile).readAll()
         if sys.platform.startswith("darwin"):
             style += "QDockWidget::title {text-align: center; background-color: #535353}"
 

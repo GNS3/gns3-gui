@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
 #
-# Created: Fri Mar 25 14:43:13 2016
+# Created: Sun May  8 10:33:23 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -166,6 +166,8 @@ class Ui_DockerVMWizard(object):
         self.uiConsoleTypeComboBox.setObjectName("uiConsoleTypeComboBox")
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
+        self.uiConsoleTypeComboBox.addItem("")
+        self.uiConsoleTypeComboBox.addItem("")
         self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.uiConsoleTypeComboBox)
         DockerVMWizard.addPage(self.uiConsoleWizardPage)
         self.uiEnvironmentWizardPage = QtWidgets.QWizardPage()
@@ -203,7 +205,7 @@ class Ui_DockerVMWizard(object):
         self.uiRemoteServersGroupBox.setTitle(_translate("DockerVMWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("DockerVMWizard", "Run on:"))
         self.uiImageWizardPage.setTitle(_translate("DockerVMWizard", "Docker Virtual Machine"))
-        self.uiImageWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a Docker virtual machine from the list. Or provide an image name on docker hub."))
+        self.uiImageWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a Docker virtual machine from the list or provide an image name on Docker hub."))
         self.uiExistingImageRadioButton.setText(_translate("DockerVMWizard", "Existing image"))
         self.uiNewImageRadioButton.setText(_translate("DockerVMWizard", "New image"))
         self.uiImageListLabel.setText(_translate("DockerVMWizard", "Image list:"))
@@ -215,16 +217,18 @@ class Ui_DockerVMWizard(object):
         self.uiAdaptersWizardPage.setSubTitle(_translate("DockerVMWizard", "Number of adapters attached to the container."))
         self.label_2.setText(_translate("DockerVMWizard", "Adapters:"))
         self.uiStartCommandWizardPage.setTitle(_translate("DockerVMWizard", "Start command"))
-        self.uiStartCommandWizardPage.setSubTitle(_translate("DockerVMWizard", "Please enter the start command. If you leave it empty the default command will be used."))
+        self.uiStartCommandWizardPage.setSubTitle(_translate("DockerVMWizard", "Please enter a start command for the container. The default command will be used if you leave this field empty."))
         self.label.setText(_translate("DockerVMWizard", "Start command:"))
         self.uiConsoleWizardPage.setTitle(_translate("DockerVMWizard", "Console type"))
-        self.uiConsoleWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose the console type. If you choose VNC your container should have a VNC server listening on port 5900."))
+        self.uiConsoleWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose the console type. Choosing VNC for your container will run a VNC server listening on a port between 5900 and 6000"))
         self.label_6.setText(_translate("DockerVMWizard", "Console type:"))
         self.uiConsoleTypeComboBox.setItemText(0, _translate("DockerVMWizard", "telnet"))
         self.uiConsoleTypeComboBox.setItemText(1, _translate("DockerVMWizard", "vnc"))
+        self.uiConsoleTypeComboBox.setItemText(2, _translate("DockerVMWizard", "http"))
+        self.uiConsoleTypeComboBox.setItemText(3, _translate("DockerVMWizard", "https"))
         self.uiEnvironmentWizardPage.setTitle(_translate("DockerVMWizard", "Environment"))
-        self.uiEnvironmentWizardPage.setSubTitle(_translate("DockerVMWizard", "This variables will be passed to the container. Please report to the container documentation for the available variables."))
-        self.label_3.setText(_translate("DockerVMWizard", "You need to put one pair by line example: "))
+        self.uiEnvironmentWizardPage.setSubTitle(_translate("DockerVMWizard", "These variables will be passed to the container. Please read the container documentation to find what variables are used."))
+        self.label_3.setText(_translate("DockerVMWizard", "There must be one pair by line, example: "))
         self.label_4.setText(_translate("DockerVMWizard", "MYSQL_HOST=localhost"))
         self.label_5.setText(_translate("DockerVMWizard", "MYSQL_USER=root"))
 

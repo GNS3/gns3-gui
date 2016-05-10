@@ -178,7 +178,7 @@ class WaitForVMWorker(QtCore.QObject):
 
         log.info("GNS3 VM is started and server is running on {}:{}".format(vm_server.host(), vm_server.port()))
         try:
-            status, json_data = self._waitForServer(vm_server, "version", retry=120)
+            status, json_data = self._waitForServer(vm_server, "version", retry=40)
             if status == 401:
                 self.error.emit("Wrong user or password for the GNS3 VM".format(status), True)
                 return
@@ -239,7 +239,7 @@ class WaitForVMWorker(QtCore.QObject):
             self.error.emit("Could not execute vmrun: {}".format(e), True)
             return False
         except subprocess.SubprocessError as e:
-            self.error.emit("Could not execute vmrun: {} with output '{}'".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
+            self.error.emit("Could not execute vmrun: {} with output '{}'\n\nMake sure the correct product (Fusion, Workstation or Player) is selected in Preferences / VMware".format(e, e.output.decode("utf-8", errors="ignore").strip()), True)
             return False
         except subprocess.TimeoutExpired:
             self.error.emit("vmrun timeout expired", True)

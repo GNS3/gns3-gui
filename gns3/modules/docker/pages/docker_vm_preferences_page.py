@@ -52,8 +52,6 @@ class DockerVMPreferencesPage(
             self._dockerImageDeleteSlot)
         self.uiDockerVMsTreeWidget.itemSelectionChanged.connect(
             self._dockerImageChangedSlot)
-        self.uiDockerVMsTreeWidget.itemPressed.connect(
-            self._dockerImagePressedSlot)
 
     def _createSectionItem(self, name):
         section_item = QtWidgets.QTreeWidgetItem(self.uiDockerVMInfoTreeWidget)
@@ -70,11 +68,14 @@ class DockerVMPreferencesPage(
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Image name:", docker_image["image"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", str(docker_image["server"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", str(docker_image["console_type"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_image["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(docker_image["adapters"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Start command:", str(docker_image["start_command"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Environment:", str(docker_image["environment"])])
+        if docker_image["start_command"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Start command:", str(docker_image["start_command"])])
+        if docker_image["environment"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Environment:", str(docker_image["environment"])])
 
         self.uiDockerVMInfoTreeWidget.expandAll()
         self.uiDockerVMInfoTreeWidget.resizeColumnToContents(0)
@@ -154,48 +155,6 @@ class DockerVMPreferencesPage(
                 self.uiDockerVMsTreeWidget.takeTopLevelItem(
                     self.uiDockerVMsTreeWidget.indexOfTopLevelItem(item))
 
-    def _dockerImagePressedSlot(self, item, column):
-        """Slot for item pressed.
-
-        :param item: ignored
-        :param column: ignored
-        """
-        if QtWidgets.QApplication.mouseButtons() & QtCore.Qt.RightButton:
-            self._showContextualMenu()
-
-    def _showContextualMenu(self):
-        """Contextual menu."""
-        menu = QtWidgets.QMenu()
-
-        change_symbol_action = QtWidgets.QAction("Change symbol", menu)
-        change_symbol_action.setIcon(QtGui.QIcon(":/icons/node_conception.svg"))
-        change_symbol_action.setEnabled(len(self.uiDockerVMsTreeWidget.selectedItems()) == 1)
-        change_symbol_action.triggered.connect(self._changeSymbolSlot)
-        menu.addAction(change_symbol_action)
-
-        delete_action = QtWidgets.QAction("Delete", menu)
-        delete_action.triggered.connect(self._dockerImageDeleteSlot)
-        menu.addAction(delete_action)
-
-        menu.exec_(QtGui.QCursor.pos())
-
-    def _changeSymbolSlot(self):
-        """Change a symbol for a Docker image."""
-        item = self.uiDockerVMsTreeWidget.currentItem()
-        if item:
-            key = item.data(0, QtCore.Qt.UserRole)
-            docker_image = self._docker_containers[key]
-            dialog = SymbolSelectionDialog(
-                self, symbol=docker_image["symbol"],
-                category=docker_image["category"])
-            dialog.show()
-            if dialog.exec_():
-                normal_symbol, selected_symbol = dialog.getSymbols()
-                category = dialog.getCategory()
-                item.setIcon(0, QtGui.QIcon(normal_symbol))
-                docker_image["symbol"] = normal_symbol
-                docker_image["category"] = category
-
     def loadPreferences(self):
         """Loads the Docker VM preferences."""
 
@@ -206,7 +165,9 @@ class DockerVMPreferencesPage(
         for key, docker_image in self._docker_containers.items():
             item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
             item.setText(0, docker_image["name"])
-            item.setIcon(0, QtGui.QIcon(docker_image["symbol"]))
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(docker_image["symbol"]))
+            item.setIcon(0, icon)
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

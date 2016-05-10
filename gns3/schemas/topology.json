@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "GNS3 topology",
+    "title": "GNS3 project",
 
     "definitions": {
 
@@ -335,6 +335,14 @@
                 "console_resolution": {
                   "type": "string",
                   "pattern": "^[0-9]+x[0-9]+$"
+                },
+                "console_http_port": {
+                    "description": "Internal port in the container of the HTTP server",
+                    "type": "integer"
+                },
+                "console_http_path": {
+                    "description": "Path of the web interface",
+                    "type": "string"
                 }
             },
             "required": [

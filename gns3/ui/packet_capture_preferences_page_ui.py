@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created: Thu May  5 18:26:46 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_PacketCapturePreferencesPageWidget(object):
-
     def setupUi(self, PacketCapturePreferencesPageWidget):
         PacketCapturePreferencesPageWidget.setObjectName("PacketCapturePreferencesPageWidget")
-        PacketCapturePreferencesPageWidget.resize(400, 250)
+        PacketCapturePreferencesPageWidget.resize(446, 321)
         self.gridLayout = QtWidgets.QGridLayout(PacketCapturePreferencesPageWidget)
         self.gridLayout.setObjectName("gridLayout")
         self.uiSettingsGroupBox = QtWidgets.QGroupBox(PacketCapturePreferencesPageWidget)
@@ -58,7 +57,7 @@ class Ui_PacketCapturePreferencesPageWidget(object):
         self.uiRestoreDefaultsPushButton = QtWidgets.QPushButton(PacketCapturePreferencesPageWidget)
         self.uiRestoreDefaultsPushButton.setObjectName("uiRestoreDefaultsPushButton")
         self.gridLayout.addWidget(self.uiRestoreDefaultsPushButton, 1, 1, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 101, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem1, 2, 0, 1, 2)
 
         self.retranslateUi(PacketCapturePreferencesPageWidget)
@@ -75,3 +74,4 @@ class Ui_PacketCapturePreferencesPageWidget(object):
         self.uiPreconfiguredCaptureReaderCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Preconfigured packet capture reader commands:"))
         self.uiPreconfiguredCaptureReaderCommandPushButton.setText(_translate("PacketCapturePreferencesPageWidget", "&Set"))
         self.uiRestoreDefaultsPushButton.setText(_translate("PacketCapturePreferencesPageWidget", "Restore defaults"))
+

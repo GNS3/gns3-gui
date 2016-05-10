@@ -96,6 +96,7 @@
         <file>icons/snapshot.svg</file>
         <file>icons/plus.svg</file>
         <file>icons/minus.svg</file>
+        <file>icons/reset.svg</file>
         <file>icons/horizontally.svg</file>
         <file>icons/vertically.svg</file>
         <file>icons/export_config.svg</file>
@@ -254,5 +255,6 @@
         <file>charcoal_icons/quit-hover.svg</file>
         <file>images/vmware_fusion_banner.jpg</file>
         <file>images/vmware_workstation_banner.jpg</file>
+        <file>styles/charcoal.css</file>
     </qresource>
 </RCC>

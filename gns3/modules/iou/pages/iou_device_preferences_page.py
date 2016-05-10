@@ -187,7 +187,9 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         for key, iou_device in self._iou_devices.items():
             item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, iou_device["name"])
-            item.setIcon(0, QtGui.QIcon(iou_device["symbol"]))
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(iou_device["symbol"]))
+            item.setIcon(0, icon)
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

@@ -20,7 +20,7 @@ import time
 from contextlib import contextmanager
 
 from .utils import human_filesize
-from .qt import QtCore, QtWidgets, Qt, QtNetwork
+from .qt import QtCore, QtWidgets, QtNetwork
 
 log = logging.getLogger(__name__)
 
@@ -106,7 +106,7 @@ class Progress(QtCore.QObject):
             progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self.parent())
             progress_dialog.canceled.connect(self._cancelSlot)
             progress_dialog.rejected.connect(self._rejectSlot)
-            progress_dialog.setWindowModality(Qt.Qt.ApplicationModal)
+            progress_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
             progress_dialog.setWindowTitle("Please wait")
             progress_dialog.setAutoReset(False)
             progress_dialog.setMinimumDuration(self._minimum_duration)

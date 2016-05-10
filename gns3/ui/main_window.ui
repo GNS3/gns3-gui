@@ -100,7 +100,7 @@ background-none;
     <addaction name="uiOnlineHelpAction"/>
     <addaction name="uiCheckForUpdateAction"/>
     <addaction name="uiSetupWizard"/>
-    <addaction name="uiLabInstructionsAction"/>
+    <addaction name="uiAcademyAction"/>
     <addaction name="uiDoctorAction"/>
     <addaction name="uiExportDebugInformationAction"/>
     <addaction name="uiAboutQtAction"/>
@@ -257,6 +257,23 @@ background-none;
          <string>1</string>
         </property>
        </column>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="uiNewAppliancePushButton">
+       <property name="text">
+        <string>New appliance template</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/resources.qrc">
+         <normaloff>:/icons/plus.svg</normaloff>:/icons/plus.svg</iconset>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -1172,18 +1189,13 @@ background-none;
     <string>GNS3 &amp;Doctor</string>
    </property>
   </action>
-  <action name="actionExport_project">
-   <property name="text">
-    <string>Export project</string>
-   </property>
-  </action>
   <action name="uiExportProjectAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/export_config.svg</normaloff>:/icons/export_config.svg</iconset>
    </property>
    <property name="text">
-    <string>Export project</string>
+    <string>Export portable project</string>
    </property>
   </action>
   <action name="uiImportProjectAction">
@@ -1192,7 +1204,7 @@ background-none;
      <normaloff>:/icons/import_config.svg</normaloff>:/icons/import_config.svg</iconset>
    </property>
    <property name="text">
-    <string>Import project</string>
+    <string>Import portable project</string>
    </property>
   </action>
   <action name="uiEditReadmeAction">
@@ -1202,6 +1214,11 @@ background-none;
    </property>
    <property name="text">
     <string>Edit readme</string>
+   </property>
+  </action>
+  <action name="uiAcademyAction">
+   <property name="text">
+    <string>GNS3 &amp;Academy</string>
    </property>
   </action>
  </widget>

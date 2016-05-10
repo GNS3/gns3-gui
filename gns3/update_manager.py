@@ -216,7 +216,7 @@ class UpdateManager(QtCore.QObject):
             self._extractTgz(gui_tgz)
             server_tgz = os.path.join(self._update_directory, 'gns3-server.tar.gz')
             self._extractTgz(server_tgz)
-            shutil.rmtree(self._update_directory)
+            shutil.rmtree(self._update_directory, ignore_errors=True)
             return True
         return False
 

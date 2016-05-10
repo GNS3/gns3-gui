@@ -52,7 +52,7 @@ class Node(QtCore.QObject):
     server_error_signal = QtCore.Signal(int, str)
 
     _instance_count = 1
-    _allocated_names = []
+    _allocated_names = set()
 
     # node statuses
     stopped = 0
@@ -105,7 +105,7 @@ class Node(QtCore.QObject):
             else:
                 name = base_name + str(number)
             if name not in self._allocated_names:
-                self._allocated_names.append(name)
+                self._allocated_names.add(name)
                 return name
         return None
 
@@ -125,7 +125,7 @@ class Node(QtCore.QObject):
         """
 
         self.removeAllocatedName()
-        self._allocated_names.append(name)
+        self._allocated_names.add(name)
 
     def setName(self, name):
         """
@@ -134,8 +134,7 @@ class Node(QtCore.QObject):
         :param name: node name
         """
 
-        if name not in self._allocated_names:
-            self._allocated_names.append(name)
+        self._allocated_names.add(name)
 
     def hasAllocatedName(self, name):
         """

@@ -19,6 +19,7 @@
 import sys
 
 from .qt import QtWidgets, QtGui, QtCore
+from gns3.utils import parse_version
 from .version import __version__
 
 import logging
@@ -29,12 +30,22 @@ class Application(QtWidgets.QApplication):
     file_open_signal = QtCore.pyqtSignal(str)
 
     def __init__(self, argv):
+
+        self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
+        if parse_version(QtCore.BINDING_VERSION_STR) >= parse_version("5.6"):
+            # only available starting Qt version 5.6
+            self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+        self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
+
         super().__init__(argv)
+
         # this info is necessary for QSettings
         self.setOrganizationName("GNS3")
         self.setOrganizationDomain("gns3.net")
         self.setApplicationName("GNS3")
         self.setApplicationVersion(__version__)
+
+
 
         # File path if we have received the path to
         # a file on system via an OSX event

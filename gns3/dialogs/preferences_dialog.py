@@ -47,11 +47,12 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         height = QtWidgets.QDesktopWidget().screenGeometry().height() - 100
         width = QtWidgets.QDesktopWidget().screenGeometry().width() - 100
 
-        self.setMaximumSize(QtCore.QSize(width, height))
-        if width > 900 and self.width() < 900:
-            self.resize(900, self.height())
-        if height > 768 and self.height() < 768:
-            self.resize(self.width(), 768)
+        # 980 is the default width
+        if self.width() > width:
+            self.resize(width, self.height())
+        # 680 is the default height
+        if self.height() > height:
+            self.resize(self.width(), height)
 
         self.uiTreeWidget.currentItemChanged.connect(self._showPreferencesPageSlot)
         self._applyButton = self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply)

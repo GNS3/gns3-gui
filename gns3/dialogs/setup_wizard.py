@@ -225,6 +225,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit(False)
             if self.uiAddVMwareVMcheckBox.isChecked():
                 self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
+            if self.uiAddDockerVMCheckBox.isChecked():
+                self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
             dialog.exec_()
         return True
 

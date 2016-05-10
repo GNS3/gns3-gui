@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/setup_wizard.ui'
 #
-# Created: Fri Mar 25 15:53:55 2016
+# Created: Thu May  5 16:41:20 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -120,24 +120,25 @@ class Ui_SetupWizard(object):
         SetupWizard.addPage(self.uiVMWizardPage)
         self.uiAddVMsWizardPage = QtWidgets.QWizardPage()
         self.uiAddVMsWizardPage.setObjectName("uiAddVMsWizardPage")
-        self.gridLayout_3 = QtWidgets.QGridLayout(self.uiAddVMsWizardPage)
-        self.gridLayout_3.setObjectName("gridLayout_3")
         self.uiAddIOSRouterCheckBox = QtWidgets.QCheckBox(self.uiAddVMsWizardPage)
+        self.uiAddIOSRouterCheckBox.setGeometry(QtCore.QRect(9, 9, 469, 22))
         self.uiAddIOSRouterCheckBox.setChecked(True)
         self.uiAddIOSRouterCheckBox.setObjectName("uiAddIOSRouterCheckBox")
-        self.gridLayout_3.addWidget(self.uiAddIOSRouterCheckBox, 0, 0, 1, 1)
         self.uiAddIOUDeviceCheckBox = QtWidgets.QCheckBox(self.uiAddVMsWizardPage)
+        self.uiAddIOUDeviceCheckBox.setGeometry(QtCore.QRect(9, 37, 426, 22))
         self.uiAddIOUDeviceCheckBox.setObjectName("uiAddIOUDeviceCheckBox")
-        self.gridLayout_3.addWidget(self.uiAddIOUDeviceCheckBox, 1, 0, 1, 1)
         self.uiAddQemuVMcheckBox = QtWidgets.QCheckBox(self.uiAddVMsWizardPage)
+        self.uiAddQemuVMcheckBox.setGeometry(QtCore.QRect(9, 65, 219, 22))
         self.uiAddQemuVMcheckBox.setObjectName("uiAddQemuVMcheckBox")
-        self.gridLayout_3.addWidget(self.uiAddQemuVMcheckBox, 2, 0, 1, 1)
         self.uiAddVirtualBoxVMcheckBox = QtWidgets.QCheckBox(self.uiAddVMsWizardPage)
+        self.uiAddVirtualBoxVMcheckBox.setGeometry(QtCore.QRect(9, 93, 249, 22))
         self.uiAddVirtualBoxVMcheckBox.setObjectName("uiAddVirtualBoxVMcheckBox")
-        self.gridLayout_3.addWidget(self.uiAddVirtualBoxVMcheckBox, 3, 0, 1, 1)
         self.uiAddVMwareVMcheckBox = QtWidgets.QCheckBox(self.uiAddVMsWizardPage)
+        self.uiAddVMwareVMcheckBox.setGeometry(QtCore.QRect(9, 121, 233, 22))
         self.uiAddVMwareVMcheckBox.setObjectName("uiAddVMwareVMcheckBox")
-        self.gridLayout_3.addWidget(self.uiAddVMwareVMcheckBox, 4, 0, 1, 1)
+        self.uiAddDockerVMCheckBox = QtWidgets.QCheckBox(self.uiAddVMsWizardPage)
+        self.uiAddDockerVMCheckBox.setGeometry(QtCore.QRect(10, 150, 233, 22))
+        self.uiAddDockerVMCheckBox.setObjectName("uiAddDockerVMCheckBox")
         SetupWizard.addPage(self.uiAddVMsWizardPage)
 
         self.retranslateUi(SetupWizard)
@@ -168,10 +169,11 @@ class Ui_SetupWizard(object):
         self.uiRAMSpinBox.setSuffix(_translate("SetupWizard", " MB"))
         self.uiAddVMsWizardPage.setTitle(_translate("SetupWizard", "Add virtual machines"))
         self.uiAddVMsWizardPage.setSubTitle(_translate("SetupWizard", "Now that you have configured the server type you can choose to add one or more virtual machines (VMs) of different types."))
-        self.uiAddIOSRouterCheckBox.setText(_translate("SetupWizard", "&Add an IOS router using a real IOS image"))
-        self.uiAddIOUDeviceCheckBox.setText(_translate("SetupWizard", "&Add an IOU device (router or switch) using an IOU image"))
+        self.uiAddIOSRouterCheckBox.setText(_translate("SetupWizard", "&Add an IOS router using a real IOS image (supported by Dynamips)"))
+        self.uiAddIOUDeviceCheckBox.setText(_translate("SetupWizard", "&Add an IOU (IOS on UNIX) device using a L3 or L2 IOU image"))
         self.uiAddQemuVMcheckBox.setText(_translate("SetupWizard", "&Add a Qemu virtual machine"))
         self.uiAddVirtualBoxVMcheckBox.setText(_translate("SetupWizard", "&Add a VirtualBox virtual machine"))
         self.uiAddVMwareVMcheckBox.setText(_translate("SetupWizard", "&Add a VMware virtual machine"))
+        self.uiAddDockerVMCheckBox.setText(_translate("SetupWizard", "&Add a Docker container"))
 
 from . import resources_rc

@@ -183,8 +183,8 @@ class HTTPClient(QtCore.QObject):
         try:
             url = "{protocol}://{host}:{port}/v2/{endpoint}".format(protocol=self._protocol, host=self._host, port=self._port, endpoint=endpoint)
 
-            log.debug("Synchronous get %s with user %s", url, self._user)
             if self._user is not None and len(self._user) > 0:
+                log.debug("Synchronous get {} with user '{}'".format(url, self._user))
                 auth_handler = urllib.request.HTTPBasicAuthHandler()
                 auth_handler.add_password(realm="GNS3 server",
                                           uri=url,
@@ -192,6 +192,8 @@ class HTTPClient(QtCore.QObject):
                                           passwd=self._password)
                 opener = urllib.request.build_opener(auth_handler)
                 urllib.request.install_opener(opener)
+            else:
+                log.debug("Synchronous get {} (no authentication)".format(url))
 
             response = urllib.request.urlopen(url, timeout=timeout)
             content_type = response.getheader("CONTENT-TYPE")
@@ -368,7 +370,7 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
-    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=5, **kwargs):
+    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, **kwargs):
         """
         Call the remote server
 
@@ -482,6 +484,7 @@ class HTTPClient(QtCore.QObject):
     def _requestCanceled(self, response, context):
 
         if response.isRunning():
+            log.warn("Aborting request for {}".format(response.url()))
             response.abort()
         if "query_id" in context:
             self._notify_progress_end_query(context["query_id"])

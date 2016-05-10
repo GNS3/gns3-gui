@@ -533,8 +533,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         if event.modifiers() == QtCore.Qt.ControlModifier:
-            # event.delta() added for Qt4 compatibility
-            delta = event.angleDelta() if hasattr(event, 'angleDelta') else event.delta()
+            delta = event.angleDelta()
             if delta is not None and delta.x() == 0:
                 # CTRL is pressed then use the mouse wheel to zoom in or out.
                 self.scaleView(pow(2.0, delta.y() / 240.0))
@@ -845,6 +844,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             show_in_file_manager_action.triggered.connect(self.getCommandLineSlot)
             menu.addAction(show_in_file_manager_action)
 
+        if True in list(map(lambda item: isinstance(item, NoteItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
+            # action only for port labels
+            reset_label_position_action = QtWidgets.QAction("Reset position", menu)
+            reset_label_position_action.setIcon(QtGui.QIcon(':/icons/reset.svg'))
+            reset_label_position_action.triggered.connect(self.resetLabelPositionActionSlot)
+            menu.addAction(reset_label_position_action)
+
         # item must have no parent
         if True in list(map(lambda item: item.parentItem() is None, items)):
 
@@ -1045,6 +1051,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         console_type = "telnet"
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
+                if item.node().consoleType() not in ("telnet", "serial", "vnc"):
+                    continue
                 current_cmd = item.node().consoleCommand()
                 console_type = item.node().consoleType()
 
@@ -1053,6 +1061,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             for item in self.scene().selectedItems():
                 if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
                     node = item.node()
+                    if node.consoleType() not in ("telnet", "serial", "vnc"):
+                        continue
                     try:
                         node.openConsole(command=cmd)
                     except (OSError, ValueError) as e:
@@ -1356,6 +1366,24 @@ class GraphicsView(QtWidgets.QGraphicsView):
             text_edit_dialog = TextEditorDialog(self._main_window, items)
             text_edit_dialog.show()
             text_edit_dialog.exec_()
+
+    def resetLabelPositionActionSlot(self):
+        """
+        Slot to receive events from the reset label position action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NoteItem) and item.parentItem():
+                links = item.parentItem().links()
+                for port in item.parentItem().node().ports():
+                    # find the correct port associated with the label
+                    if port.label() == item:
+                        port.deleteLabel()
+                        break
+                # adjust all node links to force to re-display the label
+                for link in links:
+                    link.adjust()
 
     def horizontalAlignmentSlot(self):
         """

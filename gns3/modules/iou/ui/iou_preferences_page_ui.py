@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created: Thu May  5 18:51:18 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_IOUPreferencesPageWidget(object):
-
     def setupUi(self, IOUPreferencesPageWidget):
         IOUPreferencesPageWidget.setObjectName("IOUPreferencesPageWidget")
-        IOUPreferencesPageWidget.resize(400, 300)
+        IOUPreferencesPageWidget.resize(413, 361)
         self.vboxlayout = QtWidgets.QVBoxLayout(IOUPreferencesPageWidget)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiTabWidget = QtWidgets.QTabWidget(IOUPreferencesPageWidget)
@@ -76,7 +75,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.horizontalLayout_5.addWidget(self.uiIOURCPathToolButton)
         self.gridLayout_4.addLayout(self.horizontalLayout_5, 1, 0, 1, 1)
         self.verticalLayout.addWidget(self.uiAnyServerGroupBox)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, "")
         self.vboxlayout.addWidget(self.uiTabWidget)
@@ -106,3 +105,4 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiIOURCPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("IOUPreferencesPageWidget", "Restore defaults"))
+

@@ -55,7 +55,9 @@ class DockerVM(VM):
             "console": None,
             "aux": None,
             "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
-            "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"]
+            "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"],
+            "console_http_port": DOCKER_CONTAINER_SETTINGS["console_http_port"],
+            "console_http_path": DOCKER_CONTAINER_SETTINGS["console_http_path"]
         }
 
     def _addAdapters(self, adapters):
@@ -89,6 +91,7 @@ class DockerVM(VM):
             self.error_signal.emit(self.id(), "could not allocate a name for this container")
             return
 
+        self.setName(name)
         self._settings["name"] = name
         self._settings["image"] = image
         params = {
@@ -302,6 +305,14 @@ class DockerVM(VM):
         :returns: port (integer)
         """
         return self._settings["console"]
+
+    def consoleHttpPath(self):
+        """
+        Returns the path of the web ui
+
+        :returns: string
+        """
+        return self._settings["console_http_path"]
 
     def auxConsole(self):
         """

@@ -136,7 +136,10 @@ class Config:
 
         if new_config.get("symbol") is None:
             if appliance_config["category"] == "guest":
-                new_config["symbol"] = ":/symbols/qemu_guest.svg"
+                if "docker" in appliance_config:
+                    new_config["symbol"] = ":/symbols/docker_guest.svg"
+                else:
+                    new_config["symbol"] = ":/symbols/qemu_guest.svg"
             elif appliance_config["category"] == "router":
                 new_config["symbol"] = ":/symbols/router.svg"
             elif appliance_config["category"] == "switch":
@@ -169,6 +172,9 @@ class Config:
         new_config["image"] = appliance_config["docker"]["image"]
         new_config["environment"] = appliance_config["docker"].get("environment", "")
         new_config["start_command"] = appliance_config["docker"].get("start_command", "")
+        new_config["console_type"] = appliance_config["docker"].get("console_type", "telnet")
+        new_config["console_http_port"] = appliance_config["docker"].get("console_http_port", 80)
+        new_config["console_http_path"] = appliance_config["docker"].get("console_http_path", "/")
         self._config["Docker"]["containers"].append(new_config)
 
     def _add_dynamips_config(self, new_config, appliance_config):

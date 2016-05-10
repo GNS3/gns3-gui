@@ -120,6 +120,9 @@ class VMware(Module):
                 output, _ = winreg.QueryValueEx(hkey, "Core")
                 winreg.CloseKey(hkey)
             except OSError:
+                vmrun = VMware.findVmrun()
+                if "VIX" in vmrun:
+                    return "player"
                 return "ws"
         elif sys.platform.startswith("darwin"):
             return "fusion"
