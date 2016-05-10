@@ -517,7 +517,7 @@ background-none;
      <normaloff>:/icons/open.svg</normaloff>:/icons/open.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Project</string>
+    <string>&amp;Open project</string>
    </property>
    <property name="toolTip">
     <string>Open project</string>

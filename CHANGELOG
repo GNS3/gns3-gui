@@ -2,9 +2,9 @@
 
 ## 1.5.0a1 10/05/2016
 
-* Rebase the qcow2 when starting the VM if needed
+* Rebase Qcow2 disks when starting a VM if needed
 * Docker support
-* Import / Export topologies
+* import / export portable projects (.gns3project)
 
 ## 1.4.6 28/04/2016
 
@@ -17,7 +17,7 @@
 * Improve the vmrun error message
 * If we can not read the registry try to guess vmware type from vmrun path
 * Ensure that you can not duplicate an interface in a cloud
-* Dissallow removal of link of running emulator without support of hotlink
+* Disallow removal of link of running emulator without support of hotlink
 * Check PyQT version support dev version
 * Show server CPU usage if it's 0
 * Clear warnings about using linked clones with VMware Player.
@@ -87,7 +87,7 @@
 
 ## 1.4.2 17/02/2016
 
-* Allow gif image (not animated) since pattent expire in 2004
+* Allow gif image (not animated) since patent expire in 2004
 * Countdown before starting the GNS3 VM
 * Prevent IOU GNS3A install on Windows
 * Set timeout from 1 to 3 seconds when waiting for GNS3 VM server. Ref #1034.
@@ -107,7 +107,7 @@
 * Check if GNS3 is not installed twice in doctor
 * Allow to add custom command to the list
 * Update Readme Python 3.4 is require
-* Allow to import unknow files via GNS3A
+* Allow to import unknown files via GNS3A
 * Fix a problem with gns3 running in background after exit
 * Move common code for ports dump to vm.py
 * Move common code _updatePortSettings to vm.py
@@ -115,7 +115,7 @@
 * Fix a crash with corrupted topology from 1.0
 * Remove all the docker code from 1.4 gui to avoid confusion
 * Create a dialog for choosing the console command.
-* Catch error if dynamips is disabled for local and no remote available
+* Catch error if Dynamips is disabled for local and no remote available
 * Put a link for the GNS3 VM in the setup wizard
 * When importing appliance explain why options is gray
 * User configurable default name format for VMware and VirtualBox. Ref #748
@@ -125,10 +125,10 @@
 * Fixes ValueError: cannot mmap an empty file. Fixes #723.
 * Saves the "show port names" state in topology files. Fixes #778.
 * Fix KeyError: 'midplane' when loading 7200 in some cases
-* Hide the server select box for builtin switch if dynamips local is off
-* Fix an issue where the Existing image button can disapear from wizard
+* Hide the server select box for builtin switch if Dynamips local is off
+* Fix an issue where the Existing image button can disappear from wizard
 * Fix a race condition when you ask for image list but close the windows
-* Fix alignements of VMware and VirtualBox in VM choice type
+* Fix alignments of VMware and VirtualBox in VM choice type
 * Better explanation during server choice
 * Disabled remote button when we have no remote in server wizard
 * Improved lookup for VMware host type. Fixes #970.
