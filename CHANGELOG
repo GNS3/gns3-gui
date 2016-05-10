@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.5.0a2 10/05/2016
+
+* Fix issue with PyPi
+
 ## 1.5.0a1 10/05/2016
 
 * Rebase Qcow2 disks when starting a VM if needed
