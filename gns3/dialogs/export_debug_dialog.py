@@ -86,6 +86,7 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
 OS: {os}
 Python: {python}
 Qt: {qt}
+PyQt: {pyqt}
 CPU: {cpu}
 Memory: {memory}
 
@@ -98,7 +99,8 @@ Open connections:
 Processus:
 """.format(
             version=__version__,
-            qt=QtCore.BINDING_VERSION_STR,
+            qt=QtCore.QT_VERSION_STR,
+            pyqt=QtCore.PYQT_VERSION_STR,
             os=platform.platform(),
             python=platform.python_version(),
             memory=psutil.virtual_memory(),

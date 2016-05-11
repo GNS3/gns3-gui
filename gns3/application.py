@@ -32,10 +32,10 @@ class Application(QtWidgets.QApplication):
     def __init__(self, argv):
 
         self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
-        if parse_version(QtCore.BINDING_VERSION_STR) >= parse_version("5.6"):
+        if parse_version(QtCore.QT_VERSION_STR) >= parse_version("5.6"):
             # only available starting Qt version 5.6
             self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
-        self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
+            self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
         super().__init__(argv)
 
