@@ -417,7 +417,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             new_gns3vm_settings["virtualization"] = "VMware"
         elif self.uiVirtualBoxRadioButton.isChecked():
             new_gns3vm_settings["virtualization"] = "VirtualBox"
-        elif self.uiRemoteRadioButton.isChecked():
+        elif self.uiRemoteRadioButton.isChecked() and self.uiEnableVMCheckBox.isChecked():
             if self.uiServersComboBox.currentData() is None:
                 QtWidgets.QMessageBox.critical(self, "Remote GNS3 VM host", "The remote GNS3 VM cannot be empty")
                 return

@@ -45,12 +45,11 @@ QComboBox QAbstractItemView {
     background-color: #dedede;
 }
 
-QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget {
+QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget, QHeaderView::section {
     color: #dedede;
     font: bold 11px;
 }
 
 QTabBar {
-    color: white;
+    color: #dedede;
 }
-

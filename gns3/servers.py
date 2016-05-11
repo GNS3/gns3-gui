@@ -58,6 +58,7 @@ class Servers(QtCore.QObject):
     """
 
     server_added_signal = QtCore.Signal(str)
+    server_removed_signal = QtCore.Signal(str)
 
     def __init__(self):
 
@@ -274,12 +275,20 @@ class Servers(QtCore.QObject):
         Saves the server settings to a persistent settings file.
         """
 
-        # save the remote servers
+        # Save the remote servers
+        # And emit signal for each server removed
+        old_server_urls = [ s["url"] for s in self._settings["remote_servers"] ]
         self._settings["remote_servers"] = []
         for server in self._remote_servers.values():
             settings = server.settings()
             settings["url"] = server.url()
             self._settings["remote_servers"].append(settings)
+            if settings["url"] in old_server_urls:
+                old_server_urls.remove(settings["url"])
+
+        for old_server_url in old_server_urls:
+            self.server_removed_signal.emit(old_server_url)
+        old_server_urls = []
 
         # save the settings
         LocalConfig.instance().saveSectionSettings("Servers", self._settings)

@@ -97,6 +97,7 @@ class ServerSummaryView(QtWidgets.QTreeWidget):
         self._servers = {}
 
         Servers.instance().server_added_signal.connect(self._serverAddedSlot)
+        Servers.instance().server_removed_signal.connect(self._serverRemovedSlot)
         for server in Servers.instance().servers():
             self._serverAddedSlot(server.url())
 
@@ -119,3 +120,13 @@ class ServerSummaryView(QtWidgets.QTreeWidget):
                 self.takeTopLevelItem(self.indexOfTopLevelItem(self._servers[url]))
         self._servers[url] = ServerItem(self, server)
 
+    def _serverRemovedSlot(self, url):
+        """
+        Called when a server is removed to the list of servers
+
+        :params url: URL of the server
+        """
+
+        if url in self._servers:
+            self.takeTopLevelItem(self.indexOfTopLevelItem(self._servers[url]))
+            del self._servers[url]
