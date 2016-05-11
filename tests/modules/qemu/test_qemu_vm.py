@@ -20,7 +20,7 @@ from unittest.mock import patch, Mock, ANY
 from gns3.modules.qemu.qemu_vm import QemuVM
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
-from gns3.node import Node
+from gns3.base_node import BaseNode
 
 
 def test_qemu_vm_init(local_server, project):
@@ -33,8 +33,8 @@ def test_qemu_vm_setup(qemu_vm, project):
     with patch('gns3.project.Project.post') as mock:
         qemu_vm.setup("/bin/fake", name="VMNAME")
         mock.assert_called_with(ANY,
-                                "/vms",
-                                qemu_vm._setupVMCallback,
+                                "/nodes",
+                                qemu_vm._setupNodeCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'properties': {
@@ -43,7 +43,7 @@ def test_qemu_vm_setup(qemu_vm, project):
                                     },
                                     'console_type': 'telnet',
                                     'compute_id': 'local',
-                                    'vm_type': 'qemu'
+                                    'node_type': 'qemu'
                                 },
                                 context={},
                                 timeout=120)
@@ -53,13 +53,13 @@ def test_qemu_vm_setup(qemu_vm, project):
             "name": "QEMU1",
             "vmname": "VMNAME",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "vm_directory": "/tmp/test",
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661"
         }
-        qemu_vm._setupVMCallback(params)
-        assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
-        assert qemu_vm.vmDir() == "/tmp/test"
+        qemu_vm._setupNodeCallback(params)
+        assert qemu_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert qemu_vm.nodeDir() == "/tmp/test"
 
 
 def test_qemu_vm_setup_command_line(qemu_vm, project):
@@ -67,8 +67,8 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
     with patch('gns3.project.Project.post') as mock:
         qemu_vm.setup("/bin/fake", name="VMNAME")
         mock.assert_called_with(ANY,
-                                "/vms",
-                                qemu_vm._setupVMCallback,
+                                "/nodes",
+                                qemu_vm._setupNodeCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'properties': {
@@ -77,7 +77,7 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
                                     },
                                     'console_type': 'telnet',
                                     'compute_id': 'local',
-                                    'vm_type': 'qemu'
+                                    'node_type': 'qemu'
                                 },
                                 context={},
                                 timeout=120)
@@ -87,13 +87,13 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
             "name": "QEMU1",
             "vmname": "VMNAME",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "vm_directory": "/tmp/test",
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661",
             "command_line": "/bin/fake"
         }
-        qemu_vm._setupVMCallback(params)
-        assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        qemu_vm._setupNodeCallback(params)
+        assert qemu_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
         assert qemu_vm.commandLine() == "/bin/fake"
 
 
@@ -102,8 +102,8 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
     with patch('gns3.project.Project.post') as mock:
         qemu_vm.setup("/bin/fake", name="VMNAME")
         mock.assert_called_with(ANY,
-                                "/vms",
-                                qemu_vm._setupVMCallback,
+                                "/nodes",
+                                qemu_vm._setupNodeCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'properties': {
@@ -111,7 +111,7 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
                                         'qemu_path': '/bin/fake'
                                     },
                                     'compute_id': 'local',
-                                    'vm_type': 'qemu',
+                                    'node_type': 'qemu',
                                     'console_type': 'telnet'
                                 },
                                 context={},
@@ -122,14 +122,14 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
             "name": "QEMU1",
             "vmname": "VMNAME",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661"
         }
         with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            qemu_vm._setupVMCallback(params)
+            qemu_vm._setupNodeCallback(params)
             assert mock.called
 
-        assert qemu_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert qemu_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_update(qemu_vm):
@@ -138,12 +138,12 @@ def test_update(qemu_vm):
         "name": "QEMU2",
     }
 
-    with patch('gns3.node.Node.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.httpPut') as mock:
         qemu_vm.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/qemu/vms/{vm_id}".format(vm_id=qemu_vm.vm_id())
+        assert args[0] == "/qemu/nodes/{node_id}".format(node_id=qemu_vm.node_id())
         assert kwargs["body"] == new_settings
 
         # Callback

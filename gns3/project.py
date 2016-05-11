@@ -355,13 +355,13 @@ class Project(QtCore.QObject):
     def _event_received(self, result, server=None, **kwargs):
 
         log.debug("Event received: %s", result)
-        if result["action"] in ["vm.started", "vm.stopped"]:
-            vm = Topology.instance().getVM(result["event"]["vm_id"])
+        if result["action"] in ["node.started", "node.stopped"]:
+            vm = Topology.instance().getVM(result["event"]["node_id"])
             if vm is not None:
-                if result["action"] == "vm.started":
+                if result["action"] == "node.started":
                     vm.setStatus(Node.started)
                     vm.started_signal.emit()
-                elif result["action"] == "vm.stopped":
+                elif result["action"] == "node.stopped":
                     vm.setStatus(Node.stopped)
                     vm.stopped_signal.emit()
         elif result["action"] == "log.error":

@@ -23,7 +23,7 @@ from unittest.mock import patch, Mock, ANY
 from gns3.modules.iou.iou_device import IOUDevice
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
-from gns3.node import Node
+from gns3.base_node import BaseNode
 from gns3.utils.normalize_filename import normalize_filename
 from gns3.modules.iou import IOU
 
@@ -56,14 +56,14 @@ def test_iou_device_setup(iou_device, project, fake_iourc):
 
         iou_device.setup("/tmp/iou.bin", name="PC 1")
         mock.assert_called_with(ANY,
-                                "/vms",
-                                iou_device._setupVMCallback,
+                                "/nodes",
+                                iou_device._setupNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
                                           'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
                                       },
-                                      'vm_type': 'iou',
+                                      'node_type': 'iou',
                                       'console_type': 'telnet',
                                       'compute_id': 'local'
                                 },
@@ -75,13 +75,13 @@ def test_iou_device_setup(iou_device, project, fake_iourc):
             "console": 2000,
             "name": "PC1",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        iou_device._setupVMCallback(params)
+        iou_device._setupNodeCallback(params)
 
-        assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
@@ -99,15 +99,15 @@ def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
             "console": 2000,
             "name": "PC1",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "path": "iou.bin",
         }
 
         with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            iou_device._setupVMCallback(params)
+            iou_device._setupNodeCallback(params)
             assert mock.called
 
-        assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
@@ -118,18 +118,18 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
     with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
-        iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c")
+        iou_device.setup("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c")
         mock.assert_called_with(ANY,
-                                "/vms",
-                                iou_device._setupVMCallback,
+                                "/nodes",
+                                iou_device._setupNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
                                           'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
                                       },
                                       'console_type': 'telnet',
-                                      'vm_type': 'iou',
-                                      'vm_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
+                                      'node_type': 'iou',
+                                      'node_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'compute_id': 'local'
                                 },
                                 context={},
@@ -140,14 +140,14 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
             "console": 2000,
             "name": "PC1",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        iou_device._setupVMCallback(params)
+        iou_device._setupNodeCallback(params)
 
 
-        assert iou_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_iourc):
@@ -162,10 +162,10 @@ def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_
     with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
-        iou_device.setup("/tmp/iou.bin", name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_config": startup_config})
+        iou_device.setup("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_config": startup_config})
         mock.assert_called_with(ANY,
-                                "/vms",
-                                iou_device._setupVMCallback,
+                                "/nodes",
+                                iou_device._setupNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
@@ -173,8 +173,8 @@ def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_
                                           'startup_config_content': 'hostname %h'
                                       },
                                       'console_type': 'telnet',
-                                      'vm_type': 'iou',
-                                      'vm_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
+                                      'node_type': 'iou',
+                                      'node_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'compute_id': 'local'
                                 },
                                 context={},
@@ -187,12 +187,12 @@ def test_update(iou_device):
         "name": "Unreal IOU",
     }
 
-    with patch('gns3.node.Node.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.httpPut') as mock:
         iou_device.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms/{vm_id}".format(vm_id=iou_device.vm_id())
+        assert args[0] == "/iou/nodes/{node_id}".format(node_id=iou_device.node_id())
         assert kwargs["body"] == new_settings
 
         # Callback
@@ -210,12 +210,12 @@ def test_update_startup_config(iou_device, tmpdir):
         "startup_config": startup_config
     }
 
-    with patch('gns3.node.Node.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.httpPut') as mock:
         iou_device.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms/{vm_id}".format(vm_id=iou_device.vm_id())
+        assert args[0] == "/iou/nodes/{node_id}".format(node_id=iou_device.node_id())
         assert kwargs["body"]["name"] == "Unreal IOU"
         assert kwargs["body"]["startup_config_content"] == "hostname %h"
 
@@ -321,7 +321,7 @@ def test_dump(local_server, project):
         },
         "server_id": local_server.id(),
         "type": "IOUDevice",
-        "vm_id": None
+        "node_id": None
     }
 
 
@@ -348,7 +348,7 @@ def test_load(local_server, project, fake_bin):
         },
         "server_id": 1,
         "type": "IOUDevice",
-        "vm_id": uuid
+        "node_id": uuid
     }
     with patch("gns3.modules.iou.iou_device.IOUDevice.setup") as mock:
 
@@ -356,11 +356,11 @@ def test_load(local_server, project, fake_bin):
         iou_device._addAdapters(1, 0)
 
         assert mock.called
-        (path, name, vm_id, settings), kwargs = mock.call_args
+        (path, name, node_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
         assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "startup_config": "/tmp"}
-        assert vm_id == uuid
+        assert node_id == uuid
 
     iou_device.loaded_signal.emit()
     assert iou_device._ports[0].name() == "Hyper Ethernet0/0"
@@ -389,18 +389,18 @@ def test_load_1_2(local_server, project, fake_bin):
         },
         "server_id": 1,
         "type": "IOUDevice",
-        "vm_id": uuid
+        "node_id": uuid
     }
     with patch("gns3.modules.iou.iou_device.IOUDevice.setup") as mock:
         iou_device.load(nio_node)
         iou_device._addAdapters(1, 0)
 
         assert mock.called
-        (path, name, vm_id, settings), kwargs = mock.call_args
+        (path, name, node_id, settings), kwargs = mock.call_args
         assert path == fake_bin
         assert name == "IOU 1"
         assert settings == {"ethernet_adapters": 1, "serial_adapters": 0, "startup_config": "/tmp"}
-        assert vm_id == uuid
+        assert node_id == uuid
 
     iou_device.loaded_signal.emit()
     assert iou_device._ports[0].name() == "Hyper Ethernet0/0"
@@ -412,11 +412,11 @@ def test_startPacketCapture(iou_device):
     port.setAdapterNumber(2)
     port.setPortNumber(1)
 
-    with patch("gns3.node.Node.httpPost") as mock:
+    with patch("gns3.base_node.BaseNode.httpPost") as mock:
         iou_device.startPacketCapture(port, "test.pcap", "DLT_EN10MB")
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms/{vm_id}/adapters/2/ports/1/start_capture".format(vm_id=iou_device.vm_id())
+        assert args[0] == "/iou/nodes/{node_id}/adapters/2/ports/1/start_capture".format(node_id=iou_device.node_id())
         assert kwargs["body"] == {
             "data_link_type": "DLT_EN10MB",
             "capture_file_name": "test.pcap"
@@ -436,11 +436,11 @@ def test_stopPacketCapture(iou_device):
     port.setAdapterNumber(2)
     port.setPortNumber(1)
 
-    with patch("gns3.node.Node.httpPost") as mock:
+    with patch("gns3.base_node.BaseNode.httpPost") as mock:
         iou_device.stopPacketCapture(port)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms/{vm_id}/adapters/2/ports/1/stop_capture".format(vm_id=iou_device.vm_id())
+        assert args[0] == "/iou/nodes/{node_id}/adapters/2/ports/1/stop_capture".format(node_id=iou_device.node_id())
 
         with patch("gns3.ports.port.Port.stopPacketCapture") as port_mock:
 
@@ -455,11 +455,11 @@ def test_exportConfig(iou_device, tmpdir):
     startup_path = str(tmpdir / "startup_config.cfg")
     private_path = str(tmpdir / "private_config.cfg")
 
-    with patch("gns3.node.Node.httpGet") as mock:
+    with patch("gns3.base_node.BaseNode.httpGet") as mock:
         iou_device.exportConfig(startup_path, private_path)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms/{vm_id}/configs".format(vm_id=iou_device.vm_id())
+        assert args[0] == "/iou/nodes/{node_id}/configs".format(node_id=iou_device.node_id())
 
         # Callback
         args[1]({"startup_config_content": "TEST", "private_config_content": "PRIVATE"}, context=kwargs["context"])
@@ -475,11 +475,11 @@ def test_exportConfigToDirectory(iou_device, tmpdir):
 
     path = str(tmpdir)
 
-    with patch("gns3.node.Node.httpGet") as mock:
+    with patch("gns3.base_node.BaseNode.httpGet") as mock:
         iou_device.exportConfigToDirectory(path)
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/vms/{vm_id}/configs".format(vm_id=iou_device.vm_id())
+        assert args[0] == "/iou/nodes/{node_id}/configs".format(node_id=iou_device.node_id())
 
         # Callback
         args[1]({"startup_config_content": "TEST"}, context=kwargs["context"])

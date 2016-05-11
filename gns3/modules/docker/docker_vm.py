@@ -19,21 +19,15 @@
 Docker VM implementation.
 """
 
-from gns3.vm import VM
 from gns3.node import Node
-from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
-from gns3.nios.nio_generic_ethernet import NIOGenericEthernet
-from gns3.nios.nio_linux_ethernet import NIOLinuxEthernet
-from gns3.nios.nio_udp import NIOUDP
 from .settings import DOCKER_CONTAINER_SETTINGS
 
 import logging
-import re
 log = logging.getLogger(__name__)
 
 
-class DockerVM(VM):
+class DockerVM(Node):
     """
     Docker Image.
 
@@ -76,7 +70,7 @@ class DockerVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} has been added".format(adapter_name))
 
-    def setup(self, image, name=None, base_name=None, vm_id=None, additional_settings={}, default_name_format="{name}-{0}"):
+    def setup(self, image, name=None, base_name=None, node_id=None, additional_settings={}, default_name_format="{name}-{0}"):
         """Sets up this Docker container.
 
         :param image: image name
@@ -99,8 +93,8 @@ class DockerVM(VM):
             "image": image,
             "adapters": self._settings["adapters"]
         }
-        if vm_id:
-            params["vm_id"] = vm_id
+        if node_id:
+            params["node_id"] = node_id
         params.update(additional_settings)
         self._create(params, timeout=None)
 
@@ -186,7 +180,7 @@ class DockerVM(VM):
         """
         docker = super().dump()
         docker["id"] = self.id()
-        docker["vm_id"] = self._vm_id
+        docker["node_id"] = self._node_id
 
         # add the properties
         for name, value in self._settings.items():
@@ -212,10 +206,10 @@ class DockerVM(VM):
             state = "stopped"
 
         info = """Docker container {name} is {state}
-  Node ID is {id}, server's Docker container ID is {vm_id}
+  Node ID is {id}, server's Docker container ID is {node_id}
 """.format(name=self.name(),
            id=self.id(),
-           vm_id=self._vm_id,
+           node_id=self._node_id,
            state=state
            )
 
@@ -244,9 +238,13 @@ class DockerVM(VM):
         settings = node_info["properties"]
         name = settings.pop("name")
         image = settings.pop("image")
-        vm_id = node_info["vm_id"]
+        node_id = node_info.get("node_id")
+        if not node_id:
+            # for backward compatibility
+            node_id = node_info.get("vm_id")
+
         log.info("Docker container {} is loading".format(name))
-        self.setup(image, name=name, vm_id=vm_id, additional_settings=settings)
+        self.setup(image, name=name, node_id=node_id, additional_settings=settings)
 
     def _updatePortSettings(self):
         """
@@ -342,7 +340,7 @@ class DockerVM(VM):
         """
         Return path of the /etc/network/interfaces
         """
-        return "/project-files/docker/{}/etc/network/interfaces".format(self._vm_id)
+        return "/project-files/docker/{}/etc/network/interfaces".format(self._node_id)
 
     @staticmethod
     def symbolName():

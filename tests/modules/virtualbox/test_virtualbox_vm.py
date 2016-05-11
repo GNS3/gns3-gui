@@ -20,7 +20,7 @@ from unittest.mock import patch, Mock, ANY
 from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
-from gns3.node import Node
+from gns3.base_node import BaseNode
 
 
 def test_virtualbox_vm_init(local_server, project):
@@ -33,12 +33,12 @@ def test_virtualbox_vm_setup(virtualbox_vm, project):
     with patch('gns3.project.Project.post') as mock:
         virtualbox_vm.setup("VMNAME")
         mock.assert_called_with(ANY,
-                                "/vms",
-                                virtualbox_vm._setupVMCallback,
+                                "/nodes",
+                                virtualbox_vm._setupNodeCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'compute_id': 'local',
-                                    'vm_type': 'virtualbox',
+                                    'node_type': 'virtualbox',
                                     'console_type': 'telnet',
                                     'properties': {
                                         'linked_clone': False,
@@ -55,10 +55,10 @@ def test_virtualbox_vm_setup(virtualbox_vm, project):
             "linked_clone": False,
             "adapters": 0,
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
-        virtualbox_vm._setupVMCallback(params)
-        assert virtualbox_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        virtualbox_vm._setupNodeCallback(params)
+        assert virtualbox_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_update(virtualbox_vm):
@@ -67,12 +67,12 @@ def test_update(virtualbox_vm):
         "name": "VBOX2",
     }
 
-    with patch('gns3.node.Node.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.httpPut') as mock:
         virtualbox_vm.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/vms/{vm_id}".format(vm_id=virtualbox_vm.vm_id())
+        assert args[0] == "/virtualbox/nodes/{node_id}".format(node_id=virtualbox_vm.node_id())
         assert kwargs["body"] == new_settings
 
         # Callback

@@ -23,9 +23,7 @@ import sys
 import os
 import tempfile
 
-from gns3.vm import VM
 from gns3.node import Node
-from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
 from .settings import VBOX_VM_SETTINGS
 
@@ -33,7 +31,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class VirtualBoxVM(VM):
+class VirtualBoxVM(Node):
 
     """
     VirtualBox VM.
@@ -95,14 +93,14 @@ class VirtualBoxVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self, vmname, name=None, vm_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
+    def setup(self, vmname, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
               first_port_name="", linked_clone=False, additional_settings={}, default_name_format=None):
         """
         Setups this VirtualBox VM.
 
         :param vmname: VM name in VirtualBox
         :param name: optional name
-        :param vm_id: VM identifier
+        :param node_id: VM identifier
         :param linked_clone: either the VM is a linked clone
         :param additional_settings: additional settings for this VM
         """
@@ -125,8 +123,8 @@ class VirtualBoxVM(VM):
                   "vmname": vmname,
                   "linked_clone": linked_clone}
 
-        if vm_id:
-            params["vm_id"] = vm_id
+        if node_id:
+            params["node_id"] = node_id
 
         self._port_name_format = port_name_format
         self._port_segment_size = port_segment_size
@@ -225,13 +223,13 @@ class VirtualBoxVM(VM):
 
         info = """VirtualBox VM {name} is {state}
   Local node ID is {id}
-  Server's VirtualBox VM ID is {vm_id}
+  Server's node ID is {node_id}
   VirtualBox name is "{vmname}"
   RAM is {ram} MB
   VirtualBox VM's server runs on {host}:{port}, console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
-           vm_id=self._vm_id,
+           node_id=self._node_id,
            state=state,
            vmname=self._settings["vmname"],
            ram=self._settings["ram"],
@@ -258,7 +256,7 @@ class VirtualBoxVM(VM):
         """
 
         vbox_vm = super().dump()
-        vbox_vm["vm_id"] = self._vm_id
+        vbox_vm["node_id"] = self._node_id
         vbox_vm["linked_clone"] = self._linked_clone
         vbox_vm["port_name_format"] = self._port_name_format
 
@@ -285,9 +283,12 @@ class VirtualBoxVM(VM):
         super().load(node_info)
 
         # for backward compatibility
-        vm_id = node_info.get("vbox_id")
-        if not vm_id:
-            vm_id = node_info.get("vm_id")
+        node_id = node_info.get("vbox_id")
+        if not node_id:
+            node_id = node_info.get("node_id")
+            if not node_id:
+                node_id = node_info.get("vm_id")
+
         linked_clone = node_info.get("linked_clone", False)
         port_name_format = node_info.get("port_name_format", "Ethernet{0}")
         port_segment_size = node_info.get("port_segment_size", 0)
@@ -303,7 +304,7 @@ class VirtualBoxVM(VM):
 
         log.info("VirtualBox VM {} is loading".format(name))
         self.setName(name)
-        self.setup(vmname, name, vm_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
+        self.setup(vmname, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
     def name(self):
         """
@@ -351,9 +352,9 @@ class VirtualBoxVM(VM):
         """
 
         if sys.platform.startswith("win"):
-            pipe_name = r"\\.\pipe\gns3_vbox\{}".format(self._vm_id)
+            pipe_name = r"\\.\pipe\gns3_vbox\{}".format(self._node_id)
         else:
-            pipe_name = os.path.join(tempfile.gettempdir(), "gns3_vbox", "{}".format(self._vm_id))
+            pipe_name = os.path.join(tempfile.gettempdir(), "gns3_vbox", "{}".format(self._node_id))
             os.makedirs(os.path.dirname(pipe_name), exist_ok=True)
         return pipe_name
 

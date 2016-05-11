@@ -70,7 +70,7 @@ def test_dump(vpcs_device, project, local_server):
                     },
                     "server_id": local_server.id(),
                     "type": "VPCSDevice",
-                    "vm_id": vpcs_device.vm_id()
+                    "node_id": vpcs_device.node_id()
                 }
             ],
             "servers": [
@@ -130,7 +130,7 @@ def test_dump_http_auth(vpcs_device, project, remote_server):
                     },
                     "server_id": remote_server.id(),
                     "type": "VPCSDevice",
-                    "vm_id": None
+                    "node_id": None
                 }
             ],
             "servers": [
@@ -162,10 +162,10 @@ def test_randomize_id(project, tmpdir):
         "topology": {
             "nodes": [
                 {
-                    "vm_id": vm_uuid1,
+                    "node_id": vm_uuid1,
                 },
                 {
-                    "vm_id": vm_uuid2
+                    "node_id": vm_uuid2
                 }
             ]
         }
@@ -174,13 +174,13 @@ def test_randomize_id(project, tmpdir):
     topology.project = project
     top = topology._randomize_id(orig_topology)
     assert top["project_id"] != project_uuid
-    assert top["topology"]["nodes"][0]["vm_id"] != vm_uuid1
+    assert top["topology"]["nodes"][0]["node_id"] != vm_uuid1
 
     assert not os.path.exists(str(tmpdir / "project-files" / "vpcs" / vm_uuid1 / "test.log"))
-    assert os.path.exists(str(tmpdir / "project-files" / "vpcs" / top["topology"]["nodes"][0]["vm_id"] / "test.log"))
+    assert os.path.exists(str(tmpdir / "project-files" / "vpcs" / top["topology"]["nodes"][0]["node_id"] / "test.log"))
 
-    assert top["topology"]["nodes"][1]["vm_id"] != vm_uuid2
-    assert top["topology"]["nodes"][0]["vm_id"] != top["topology"]["nodes"][1]["vm_id"]
+    assert top["topology"]["nodes"][1]["node_id"] != vm_uuid2
+    assert top["topology"]["nodes"][0]["node_id"] != top["topology"]["nodes"][1]["node_id"]
 
 
 def test_dump_random_id(vpcs_device, project, local_server):
@@ -215,7 +215,7 @@ def test_dump_random_id(vpcs_device, project, local_server):
                         },
                         "server_id": local_server.id(),
                         "type": "VPCSDevice",
-                        "vm_id": fake_uuid}
+                        "node_id": fake_uuid}
                 ],
                 "servers": [
                     {
@@ -298,7 +298,7 @@ def test_load(project, monkeypatch, main_window, tmpdir):
                     "server_id": 1,
                     "type": "VPCSDevice",
                     "vpcs_id": 1,
-                    "vm_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cb8",
+                    "node_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cb8",
                     "x": -349.5,
                     "y": -206.5
                 },
@@ -329,7 +329,7 @@ def test_load(project, monkeypatch, main_window, tmpdir):
                     },
                     "server_id": 1,
                     "type": "VPCSDevice",
-                    "vm_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cba",
+                    "node_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cba",
                     "vpcs_id": 2,
                     "x": 69.5,
                     "y": -190.5
@@ -358,7 +358,7 @@ def test_load(project, monkeypatch, main_window, tmpdir):
         elif path[-14:] == "/notifications":
             pass
         else:
-            callback({"vm_id": uuid.uuid4()})
+            callback({"node_id": uuid.uuid4()})
 
     monkeypatch.setattr("gns3.http_client.HTTPClient.createHTTPQuery", http_loader)
 
@@ -424,7 +424,7 @@ def test_load_invalid_server(project, monkeypatch, main_window, tmpdir):
                     "server_id": 1,
                     "type": "VPCSDevice",
                     "vpcs_id": 1,
-                    "vm_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cb8",
+                    "node_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cb8",
                     "x": -349.5,
                     "y": -206.5
                 },
@@ -455,7 +455,7 @@ def test_load_invalid_server(project, monkeypatch, main_window, tmpdir):
                     },
                     "server_id": 1,
                     "type": "VPCSDevice",
-                    "vm_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cba",
+                    "node_id": "2b5476de-6e79-4eb5-b0eb-8c54c7821cba",
                     "vpcs_id": 2,
                     "x": 69.5,
                     "y": -190.5
@@ -483,7 +483,7 @@ def test_load_invalid_server(project, monkeypatch, main_window, tmpdir):
         elif path[-14:] == "/notifications":
             pass
         else:
-            callback({"vm_id": uuid.uuid4()})
+            callback({"node_id": uuid.uuid4()})
 
     monkeypatch.setattr("gns3.http_client.HTTPClient.createHTTPQuery", http_loader)
 
@@ -610,7 +610,7 @@ def test_load_1_2_topology(project, monkeypatch, main_window, tmpdir):
         elif path[-14:] == "/notifications":
             pass
         else:
-            callback({"vm_id": uuid.uuid4()})
+            callback({"node_id": uuid.uuid4()})
 
     monkeypatch.setattr("gns3.http_client.HTTPClient.createHTTPQuery", http_loader)
 

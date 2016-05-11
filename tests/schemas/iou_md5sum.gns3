@@ -131,7 +131,7 @@
                 },
                 "server_id": 1,
                 "type": "IOUDevice",
-                "vm_id": "27cd6f8e-6968-4623-aec0-b400d447c0f4",
+                "node_id": "27cd6f8e-6968-4623-aec0-b400d447c0f4",
                 "x": -33.0,
                 "y": -85.0
             }

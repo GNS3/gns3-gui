@@ -20,6 +20,7 @@ NIO implementation on the client side (in the form of a pseudo node represented 
 """
 
 import re
+from gns3.base_node import BaseNode
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.nios.nio_generic_ethernet import NIOGenericEthernet
@@ -35,7 +36,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class Cloud(Node):
+class Cloud(BaseNode):
 
     """
     Dynamips cloud.
@@ -478,7 +479,7 @@ This is a pseudo-device for external connections
         :returns: list of node category (integer)
         """
 
-        return [Node.end_devices]
+        return [BaseNode.end_devices]
 
     def __str__(self):
 

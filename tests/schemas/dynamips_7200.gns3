@@ -87,7 +87,7 @@
                 },
                 "server_id": 1,
                 "type": "C7200",
-                "vm_id": "e98bf526-d379-4e90-a0d3-2d36dd9a11df",
+                "node_id": "e98bf526-d379-4e90-a0d3-2d36dd9a11df",
                 "x": -115.0,
                 "y": -66.0
             }

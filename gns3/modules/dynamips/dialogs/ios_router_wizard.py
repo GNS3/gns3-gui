@@ -242,20 +242,20 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
             # self.uiNameLineEdit.setEnabled(True)
 
-    def createdSlot(self, node_id):
+    def createdSlot(self, base_node_id):
         """
         The node for the auto Idle-PC has been created.
 
-        :param node_id: not used
+        :param base_node_id: not used
         """
 
         self._router.computeAutoIdlepc(self._computeAutoIdlepcCallback)
 
-    def serverErrorSlot(self, node_id, message):
+    def serverErrorSlot(self, base_node_id, message):
         """
         The auto idle-pc node could not be created.
 
-        :param node_id: not used
+        :param base_node_id: not used
         :param message: error message from the server.
         """
 

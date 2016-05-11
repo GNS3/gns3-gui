@@ -286,6 +286,12 @@
                         { "type": "null" }
                     ]
                 },
+                "node_id": {
+                    "oneOf": [
+                        { "$ref": "#/definitions/uuid" },
+                        { "type": "null" }
+                    ]
+                },
                 "linked_clone": { "type" : "boolean" },
                 "x": { "type": "number" },
                 "y": { "type": "number" },
@@ -312,7 +318,7 @@
                     "label",
                     "ports",
                     "server_id",
-                    "vm_id",
+                    "node_id",
                     "x",
                     "y",
                     "properties"

@@ -24,9 +24,7 @@ import sys
 import tempfile
 
 from gns3.qt import QtCore
-from gns3.vm import VM
 from gns3.node import Node
-from gns3.ports.port import Port
 from gns3.nios.nio_vmnet import NIOVMNET
 from gns3.ports.ethernet_port import EthernetPort
 from .settings import VMWARE_VM_SETTINGS
@@ -35,7 +33,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class VMwareVM(VM):
+class VMwareVM(Node):
 
     """
     VirtualBox VM.
@@ -101,14 +99,14 @@ class VMwareVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self, vmx_path, name=None, vm_id=None, port_name_format="Ethernet{0}",
+    def setup(self, vmx_path, name=None, node_id=None, port_name_format="Ethernet{0}",
               port_segment_size=0, first_port_name="", linked_clone=False, additional_settings={}, default_name_format=None):
         """
         Setups this VMware VM.
 
         :param vmx_path: path to the vmx file
         :param name: optional name
-        :param vm_id: VM identifier
+        :param node_id: VM identifier
         :param linked_clone: either the VM is a linked clone
         :param additional_settings: additional settings for this VM
         """
@@ -128,8 +126,8 @@ class VMwareVM(VM):
                   "vmx_path": vmx_path,
                   "linked_clone": linked_clone}
 
-        if vm_id:
-            params["vm_id"] = vm_id
+        if node_id:
+            params["node_id"] = node_id
 
         self._port_name_format = port_name_format
         self._port_segment_size = port_segment_size
@@ -231,11 +229,11 @@ class VMwareVM(VM):
 
         info = """VMware VM {name} is {state}
   Local node ID is {id}
-  Server's VMware VM ID is {vm_id}
+  Server's node ID is {node_id}
   VMware VM's server runs on {host}:{port}, console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
-           vm_id=self._vm_id,
+           node_id=self._node_id,
            state=state,
            host=self._server.host(),
            port=self._server.port(),
@@ -265,7 +263,7 @@ class VMwareVM(VM):
         """
 
         vmware_vm = super().dump()
-        vmware_vm["vm_id"] = self._vm_id
+        vmware_vm["node_id"] = self._node_id
         vmware_vm["linked_clone"] = self._linked_clone
         vmware_vm["port_name_format"] = self._port_name_format
 
@@ -291,7 +289,11 @@ class VMwareVM(VM):
 
         super().load(node_info)
 
-        vm_id = node_info["vm_id"]
+        node_id = node_info.get("node_id")
+        if not node_id:
+            # for backward compatibility
+            node_id = node_info.get("vm_id")
+
         linked_clone = node_info.get("linked_clone", False)
         port_name_format = node_info.get("port_name_format", "Ethernet{0}")
         port_segment_size = node_info.get("port_segment_size", 0)
@@ -306,7 +308,7 @@ class VMwareVM(VM):
 
         log.info("VMware VM {} is loading".format(name))
         self.setName(name)
-        self.setup(vmx_path, name, vm_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
+        self.setup(vmx_path, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
     def allocateVMnetInterface(self, port_id):
         """
@@ -316,7 +318,7 @@ class VMwareVM(VM):
         """
 
         log.debug("{} is requesting a VMnet interface allocation".format(self.name()))
-        self.httpPost("/vmware/vms/{vm_id}/interfaces/vmnet".format(vm_id=self._vm_id), self._allocateVMnetInterfaceCallback, context={"port_id": port_id})
+        self.httpPost("/vmware/nodes/{node_id}/interfaces/vmnet".format(node_id=self._node_id), self._allocateVMnetInterfaceCallback, context={"port_id": port_id})
 
     def _allocateVMnetInterfaceCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -381,9 +383,9 @@ class VMwareVM(VM):
         """
 
         if sys.platform.startswith("win"):
-            pipe_name = r"\\.\pipe\gns3_vmware\{}".format(self._vm_id)
+            pipe_name = r"\\.\pipe\gns3_vmware\{}".format(self._node_id)
         else:
-            pipe_name = os.path.join(tempfile.gettempdir(), "gns3_vmware", "{}".format(self._vm_id))
+            pipe_name = os.path.join(tempfile.gettempdir(), "gns3_vmware", "{}".format(self._node_id))
             os.makedirs(os.path.dirname(pipe_name), exist_ok=True)
         return pipe_name
 

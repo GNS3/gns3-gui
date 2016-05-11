@@ -91,7 +91,7 @@ def vpcs_device(local_server, project):
     from gns3.modules.vpcs import VPCS
 
     device = VPCSDevice(VPCS(), local_server, project)
-    device._vm_id = str(uuid.uuid4())
+    device._node_id = str(uuid.uuid4())
     device._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
     device.setInitialized(True)
     return device

@@ -180,15 +180,15 @@ class ConsoleView(PyCutExt, ConsoleCmd):
             self.write(details)
             self.write("\n")
 
-    def writeError(self, node_id, message):
+    def writeError(self, base_node_id, message):
         """
         Write error messages.
 
-        :param node_id: node identifier
+        :param base_node_id: base node identifier
         :param message: error message
         """
 
-        node = Topology.instance().getNode(node_id)
+        node = Topology.instance().getNode(base_node_id)
         name = ""
         if node and node.name():
             name = " {}:".format(node.name())
@@ -198,15 +198,15 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         self.write(text, error=True)
         self.write("\n")
 
-    def writeWarning(self, node_id, message):
+    def writeWarning(self, base_node_id, message):
         """
         Write warning messages.
 
-        :param node_id: node identifier
+        :param base_node_id: base node identifier
         :param message: warning message
         """
 
-        node = Topology.instance().getNode(node_id)
+        node = Topology.instance().getNode(base_node_id)
         name = ""
         if node and node.name():
             name = " {}:".format(node.name())
@@ -216,16 +216,16 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         self.write(text, warning=True)
         self.write("\n")
 
-    def writeServerError(self, node_id, message):
+    def writeServerError(self, base_node_id, message):
         """
         Write server error messages coming from the server.
 
-        :param node_id: node identifier
+        :param base_node_id: Base node identifier
         :param code: error code
         :param message: error message
         """
 
-        node = Topology.instance().getNode(node_id)
+        node = Topology.instance().getNode(base_node_id)
         server = name = ""
         if node:
             if node.name():

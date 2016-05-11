@@ -72,9 +72,9 @@ class Link(QtCore.QObject):
         self._capture_file_path = None
 
         body = {
-            "vms": [
-                {"vm_id": source_node.vm_id(), "adapter_number": source_port.adapterNumber(), "port_number": source_port.portNumber()},
-                {"vm_id": destination_node.vm_id(), "adapter_number": destination_port.adapterNumber(), "port_number": destination_port.portNumber()}
+            "nodes": [
+                {"node_id": source_node.node_id(), "adapter_number": source_port.adapterNumber(), "port_number": source_port.portNumber()},
+                {"node_id": destination_node.node_id(), "adapter_number": destination_port.adapterNumber(), "port_number": destination_port.portNumber()}
             ]
         }
 

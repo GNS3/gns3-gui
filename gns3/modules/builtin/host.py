@@ -63,11 +63,11 @@ class Host(Cloud):
 
         self._server.get("/interfaces", self._setupCallback)
 
-    def _autoConfigure(self, node_id):
+    def _autoConfigure(self, base_node_id):
         """
         Auto adds all Ethernet and TAP interfaces.
 
-        :param node_id: ignored
+        :param base_node_id: ignored
         """
 
         new_settings = {"nios": []}

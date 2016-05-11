@@ -22,9 +22,7 @@ Base class for Dynamips router implementation on the client side.
 import os
 import re
 
-from gns3.vm import VM
 from gns3.node import Node
-from gns3.ports.port import Port
 from gns3.utils.normalize_filename import normalize_filename
 from gns3.image_manager import ImageManager
 
@@ -36,7 +34,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class Router(VM):
+class Router(Node):
 
     """
     Dynamips router (client implementation).
@@ -215,14 +213,14 @@ class Router(VM):
                 self._addWICPorts(wic, wic_slot_number)
         self._updateWICNumbering()
 
-    def setup(self, image, ram, name=None, vm_id=None, dynamips_id=None, additional_settings={}, default_name_format="R{0}"):
+    def setup(self, image, ram, name=None, node_id=None, dynamips_id=None, additional_settings={}, default_name_format="R{0}"):
         """
         Setups this router.
 
         :param image: IOS image path
         :param ram: amount of RAM
         :param name: optional name for this router
-        :param vm_id: VM identifier on the server
+        :param node_id: VM identifier on the server
         :param dynamips_id: Dynamips identifier on the server
         :param additional_settings: other additional and not mandatory settings
         """
@@ -247,21 +245,21 @@ class Router(VM):
                   "ram": ram,
                   "image": image}
 
-        if vm_id:
-            params["vm_id"] = vm_id
+        if node_id:
+            params["node_id"] = node_id
 
         if dynamips_id:
             params["dynamips_id"] = dynamips_id
 
         # push the startup-config
-        if not vm_id and "startup_config" in additional_settings:
+        if not node_id and "startup_config" in additional_settings:
             base_config_content = self._readBaseConfig(additional_settings["startup_config"])
             if base_config_content is not None:
                 params["startup_config_content"] = base_config_content
             del additional_settings["startup_config"]
 
         # push the private-config
-        if not vm_id and "private_config" in additional_settings:
+        if not node_id and "private_config" in additional_settings:
             base_config_content = self._readBaseConfig(additional_settings["private_config"])
             if base_config_content is not None:
                 params["private_config_content"] = base_config_content
@@ -381,8 +379,8 @@ class Router(VM):
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.httpGet("/dynamips/vms/{vm_id}/idlepc_proposals".format(
-            vm_id=self._vm_id),
+        self.httpGet("/dynamips/nodes/{node_id}/idlepc_proposals".format(
+            node_id=self._node_id),
             callback,
             timeout=240,
             context={"router": self},
@@ -394,8 +392,8 @@ class Router(VM):
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.httpGet("/dynamips/vms/{vm_id}/auto_idlepc".format(
-            vm_id=self._vm_id),
+        self.httpGet("/dynamips/nodes/{node_id}/auto_idlepc".format(
+            node_id=self._node_id),
             callback,
             timeout=240,
             context={"router": self},
@@ -528,7 +526,7 @@ class Router(VM):
 
         info = """Router {name} is {state}
   Local node ID is {id}
-  Server's VM ID is {vm_id}
+  Server's node ID is {node_id}
   Dynamips ID is {dynamips_id}
   Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
   Router's server runs on {host}:{port}, console is on port {console}, aux is on port {aux}
@@ -537,7 +535,7 @@ class Router(VM):
   {disk0} MB disk0 size, {disk1} MB disk1 size
 """.format(name=self.name(),
            id=self.id(),
-           vm_id=self._vm_id,
+           node_id=self._node_id,
            dynamips_id=self._dynamips_id,
            state=state,
            platform=platform,
@@ -566,7 +564,7 @@ class Router(VM):
         """
 
         router = super().dump()
-        router["vm_id"] = self._vm_id
+        router["node_id"] = self._node_id
         router["dynamips_id"] = self._dynamips_id
 
         # add the properties
@@ -587,10 +585,12 @@ class Router(VM):
         super().load(node_info)
 
         # for backward compatibility
-        vm_id = dynamips_id = node_info.get("router_id")
-        if not vm_id:
-            vm_id = node_info.get("vm_id")
+        node_id = dynamips_id = node_info.get("router_id")
+        if not node_id:
+            node_id = node_info.get("node_id")
             dynamips_id = node_info.get("dynamips_id")
+            if not node_id:
+                node_id = node_info.get("vm_id")
 
         vm_settings = {}
         for name, value in node_info["properties"].items():
@@ -615,14 +615,14 @@ class Router(VM):
 
         log.info("router {} is loading".format(name))
         self.setName(name)
-        self.setup(image, ram, name, vm_id, dynamips_id, vm_settings)
+        self.setup(image, ram, name, node_id, dynamips_id, vm_settings)
 
     def saveConfig(self):
         """
         Save the configs
         """
 
-        self.httpPost("/dynamips/vms/{vm_id}/configs/save".format(vm_id=self._vm_id), self._saveConfigCallback)
+        self.httpPost("/dynamips/nodes/{node_id}/configs/save".format(node_id=self._node_id), self._saveConfigCallback)
 
     def _saveConfigCallback(self, result, error=False, context={}, **kwargs):
 
@@ -640,7 +640,7 @@ class Router(VM):
         :param private_config_export_path: export path for the private-config
         """
 
-        self.httpGet("/dynamips/vms/{vm_id}/configs".format(vm_id=self._vm_id),
+        self.httpGet("/dynamips/nodes/{node_id}/configs".format(node_id=self._node_id),
                      self._exportConfigCallback,
                      context={"startup_config_path": startup_config_export_path,
                               "private_config_path": private_config_export_path})
@@ -684,7 +684,7 @@ class Router(VM):
         :param directory: destination directory path
         """
 
-        self.httpGet("/dynamips/vms/{vm_id}/configs".format(vm_id=self._vm_id),
+        self.httpGet("/dynamips/nodes/{node_id}/configs".format(node_id=self._node_id),
                      self._exportConfigToDirectoryCallback,
                      context={"directory": directory})
 

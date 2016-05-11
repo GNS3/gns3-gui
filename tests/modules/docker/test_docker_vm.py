@@ -20,7 +20,6 @@ from gns3.modules.docker.docker_vm import DockerVM
 from gns3.modules.docker import Docker
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
-from gns3.node import Node
 
 
 def test_docker_vm_init(local_server, project):
@@ -47,11 +46,11 @@ def test_docker_vm_setup(project, local_server):
             'aux': None
         }
         mock.assert_called_with(ANY,
-                                "/vms",
-                                docker_vm._setupVMCallback,
+                                "/nodes",
+                                docker_vm._setupNodeCallback,
                                 body={
                                     "compute_id": "local",
-                                    "vm_type": "docker",
+                                    "node_type": "docker",
                                     "console_type": "telnet",
                                     "properties": {
                                         "adapters": 1,
@@ -69,11 +68,11 @@ def test_setupCallback(project, local_server):
     # Callback
     params = {
         "name": "DOCKER1",
-        "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+        "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
     }
-    docker_vm._setupVMCallback(params)
+    docker_vm._setupNodeCallback(params)
 
-    assert docker_vm.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+    assert docker_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
     assert docker_vm.name() == "DOCKER1"
 
 
@@ -93,7 +92,7 @@ def test_dump(project, local_server):
         },
         'server_id': local_server.id(),
         'type': 'DockerVM',
-        'vm_id': None
+        'node_id': None
     }
 
 
@@ -125,7 +124,7 @@ def test_load(project, local_server):
         },
         "server_id": 1,
         "type": "DockerVM",
-        "vm_id": "ec35076f-f6e5-4c72-a594-e94a47419710",
+        "node_id": "ec35076f-f6e5-4c72-a594-e94a47419710",
         "x": -102.5,
         "y": -229.5
     }
@@ -135,14 +134,14 @@ def test_load(project, local_server):
         docker_vm.load(node)
         mock.assert_called_with(
             ANY,
-            "/vms",
-            docker_vm._setupVMCallback,
+            "/nodes",
+            docker_vm._setupNodeCallback,
             body={'compute_id': 'local',
                   'name': 'mysql:latest-1',
                   'console': 6000,
                   'console_type': 'telnet',
-                  'vm_type': 'docker',
-                  'vm_id': 'ec35076f-f6e5-4c72-a594-e94a47419710',
+                  'node_type': 'docker',
+                  'node_id': 'ec35076f-f6e5-4c72-a594-e94a47419710',
                   'properties': {'start_command': '/bin/ls',
                                  'adapters': 1,
                                  'image': 'mysql:latest'}},

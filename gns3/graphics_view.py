@@ -740,7 +740,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             change_symbol_action.triggered.connect(self.changeSymbolActionSlot)
             menu.addAction(change_symbol_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "vmDir"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "nodeDir"), items)):
             # Action: Show in file manager
             show_in_file_manager_action = QtWidgets.QAction("Show in file manager", menu)
             show_in_file_manager_action.setIcon(QtGui.QIcon(':/icons/open.svg'))
@@ -972,20 +972,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "vmDir") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "nodeDir") and item.node().initialized():
                 node = item.node()
-                vm_dir = node.vmDir()
-                if vm_dir is None:
-                    QtWidgets.QMessageBox.critical(self, "Show in file manager", "This VM has no working directory")
+                node_dir = node.nodeDir()
+                if node_dir is None:
+                    QtWidgets.QMessageBox.critical(self, "Show in file manager", "This node has no working directory")
                     break
 
-                if os.path.exists(vm_dir):
+                if os.path.exists(node_dir):
                     log.debug("Open %s in file manage")
-                    if QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(vm_dir)) is False:
-                        QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(vm_dir))
+                    if QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(node_dir)) is False:
+                        QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(node_dir))
                         break
                 else:
-                    QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}".format(vm_dir, node.server().url()))
+                    QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}".format(node_dir, node.server().url()))
                     break
 
     def consoleToNode(self, node, aux=False):

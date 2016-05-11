@@ -20,13 +20,13 @@ Base class for Device classes.
 """
 
 
-from gns3.node import Node
+from gns3.base_node import BaseNode
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class Device(Node):
+class Device(BaseNode):
 
     URL_PREFIX = "dynamips"
 

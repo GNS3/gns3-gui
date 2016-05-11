@@ -34,7 +34,7 @@
                 },
                 "server_id": 1,
                 "type": "DockerVM",
-                "vm_id": "b0de95a2-e03a-494a-83d2-a1620f8d9db6",
+                "node_id": "b0de95a2-e03a-494a-83d2-a1620f8d9db6",
                 "x": -260.5,
                 "y": -96.5
             }

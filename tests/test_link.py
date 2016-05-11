@@ -49,9 +49,9 @@ def link(devices, controller, project):
     link = Link(devices[0], devices[0].ports()[0], devices[1], devices[1].ports()[0])
 
     data = {
-        "vms": [
-            {"vm_id": devices[0].vm_id(), "adapter_number": 0, "port_number": 0},
-            {"vm_id": devices[1].vm_id(), "adapter_number": 0, "port_number": 0}
+        "nodes": [
+            {"node_id": devices[0].node_id(), "adapter_number": 0, "port_number": 0},
+            {"node_id": devices[1].node_id(), "adapter_number": 0, "port_number": 0}
         ]
     }
 
@@ -71,9 +71,9 @@ def test_create_link(devices, project, controller):
     link = Link(devices[0], devices[0].ports()[0], devices[1], devices[1].ports()[0])
 
     data = {
-        "vms": [
-            {"vm_id": devices[0].vm_id(), "adapter_number": 0, "port_number": 0},
-            {"vm_id": devices[1].vm_id(), "adapter_number": 0, "port_number": 0}
+        "nodes": [
+            {"node_id": devices[0].node_id(), "adapter_number": 0, "port_number": 0},
+            {"node_id": devices[1].node_id(), "adapter_number": 0, "port_number": 0}
         ]
     }
 

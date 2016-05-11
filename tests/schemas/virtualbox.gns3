@@ -39,7 +39,7 @@
                 },
                 "server_id": 1,
                 "type": "VirtualBoxVM",
-                "vm_id": "c90c9d69-3ad1-44a5-894f-092b21c8bff2",
+                "node_id": "c90c9d69-3ad1-44a5-894f-092b21c8bff2",
                 "x": -41.5,
                 "y": -152.5
             }

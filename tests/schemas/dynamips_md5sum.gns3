@@ -52,7 +52,7 @@
                 },
                 "server_id": 2,
                 "type": "C1700",
-                "vm_id": "78b3f036-4b1b-4fff-a421-9b63c2a1cda4",
+                "node_id": "78b3f036-4b1b-4fff-a421-9b63c2a1cda4",
                 "x": -51.0,
                 "y": -255.0
             }

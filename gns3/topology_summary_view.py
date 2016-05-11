@@ -181,20 +181,20 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                 continue
             child.refreshLinks()
 
-    def _createdNodeSlot(self, node_id):
+    def _createdNodeSlot(self, base_node_id):
         """
         Received events for node creation.
 
-        :param node_id: node identifier
+        :param base_node_id: base node identifier
         """
 
-        if not node_id:
+        if not base_node_id:
             log.error("node ID is null")
             return
 
-        node = self._topology.getNode(node_id)
+        node = self._topology.getNode(base_node_id)
         if not node:
-            log.error("could not find node with ID {}".format(node_id))
+            log.error("could not find node with ID {}".format(base_node_id))
             return
 
         TopologyNodeItem(self, node)

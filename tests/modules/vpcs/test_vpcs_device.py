@@ -20,7 +20,7 @@ from unittest.mock import patch, Mock
 from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.ports.port import Port
 from gns3.nios.nio_udp import NIOUDP
-from gns3.node import Node
+from gns3.base_node import BaseNode
 from gns3.utils.normalize_filename import normalize_filename
 
 
@@ -31,15 +31,15 @@ def test_vpcs_device_init(local_server, project):
 
 def test_vpcs_device_setup(vpcs_device, project, local_server):
 
-    with patch('gns3.node.Node.controllerHttpPost') as mock:
+    with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
         vpcs_device.setup(name="PC 1", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vms"
+        assert args[0] == "/nodes"
         assert kwargs["body"] == {
             "name": "PC 1",
             "compute_id": local_server.server_id(),
-            "vm_type": "vpcs",
+            "node_type": "vpcs",
             "console_type": "telnet",
             "properties": {
                 "startup_script": "echo TEST"
@@ -50,16 +50,16 @@ def test_vpcs_device_setup(vpcs_device, project, local_server):
         params = {
             "console": 2000,
             "name": "PC1",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "properties": {
                 "script_file": None,
                 "startup_script": None,
             }
         }
-        vpcs_device._setupVMCallback(params)
+        vpcs_device._setupNodeCallback(params)
 
-        assert vpcs_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
@@ -67,16 +67,16 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
     If we have an ID that mean the VM already exits and we should not send startup_script
     """
 
-    with patch('gns3.node.Node.controllerHttpPost') as mock:
-        vpcs_device.setup(name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_script": "echo TEST"})
+    with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
+        vpcs_device.setup(name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vms"
+        assert args[0] == "/nodes"
         assert kwargs["body"] == {
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
             "compute_id": local_server.server_id(),
-            "vm_type": "vpcs",
+            "node_type": "vpcs",
             "console_type": "telnet",
             "properties": {}
         }
@@ -86,15 +86,15 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
             "console": 2000,
             "name": "PC1",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "properties": {
                 "script_file": None,
                 "startup_script": None,
             }
         }
-        vpcs_device._setupVMCallback(params)
+        vpcs_device._setupNodeCallback(params)
 
-        assert vpcs_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_server):
@@ -107,16 +107,16 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
     with open(path, 'w+') as f:
         f.write("echo TEST")
 
-    with patch('gns3.node.Node.controllerHttpPost') as mock:
-        vpcs_device.setup(name="PC 1", vm_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"script_file": path})
+    with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
+        vpcs_device.setup(name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"script_file": path})
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vms"
+        assert args[0] == "/nodes"
         assert kwargs["body"] == {
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
             "compute_id": local_server.server_id(),
-            "vm_type": "vpcs",
+            "node_type": "vpcs",
             "console_type": "telnet",
             "properties": {}
         }
@@ -126,27 +126,27 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
             "console": 2000,
             "name": "PC1",
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "vm_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "properties": {
                 "script_file": None,
                 "startup_script": "echo TEST",
             }
         }
-        vpcs_device._setupVMCallback(params)
+        vpcs_device._setupNodeCallback(params)
 
-        assert vpcs_device.vm_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
+        assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
 def test_exportConfig(tmpdir, vpcs_device):
 
     path = tmpdir / 'startup.vpcs'
 
-    with patch('gns3.node.Node.httpGet') as mock:
+    with patch('gns3.base_node.BaseNode.httpGet') as mock:
         vpcs_device.exportConfig(str(path))
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/nodes/{node_id}".format(node_id=vpcs_device.node_id())
 
         # Callback
         args[1]({"startup_script": "echo TEST"}, context={"path": str(path)})
@@ -161,12 +161,12 @@ def test_exportConfigToDirectory(tmpdir, vpcs_device):
 
     path = tmpdir / normalize_filename(vpcs_device.name()) + '_startup.vpc'
 
-    with patch('gns3.node.Node.httpGet') as mock:
+    with patch('gns3.base_node.BaseNode.httpGet') as mock:
         vpcs_device.exportConfigToDirectory(str(tmpdir))
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/nodes/{node_id}".format(node_id=vpcs_device.node_id())
 
         # Callback
         args[1]({"startup_script": "echo TEST"}, context={"directory": str(tmpdir)})
@@ -184,12 +184,12 @@ def test_update(vpcs_device):
         "script_file": "echo TEST"
     }
 
-    with patch('gns3.node.Node.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.httpPut') as mock:
         vpcs_device.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/nodes/{node_id}".format(node_id=vpcs_device.node_id())
         assert kwargs["body"] == new_settings
 
         # Callback
@@ -204,10 +204,10 @@ def test_importConfig(vpcs_device, tmpdir):
     with open(path, 'w+') as f:
         f.write(content)
 
-    with patch('gns3.node.Node.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.httpPut') as mock:
         vpcs_device.importConfig(path)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/vms/{vm_id}".format(vm_id=vpcs_device.vm_id())
+        assert args[0] == "/vpcs/nodes/{node_id}".format(node_id=vpcs_device.node_id())
         assert kwargs["body"] == {"startup_script": content}

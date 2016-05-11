@@ -21,7 +21,6 @@ IOU device implementation.
 
 import os
 import re
-from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
@@ -33,7 +32,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class IOUDevice(VM):
+class IOUDevice(Node):
 
     """
     IOU device.
@@ -49,7 +48,7 @@ class IOUDevice(VM):
         super().__init__(module, server, project)
 
         log.info("IOU instance is being created")
-        self._vm_id = None
+        self._node_id = None
         self._settings = {"name": "",
                           "path": "",
                           "md5sum": "",
@@ -101,7 +100,7 @@ class IOUDevice(VM):
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
-    def setup(self, iou_path, name=None, vm_id=None, additional_settings={}, default_name_format="IOU{0}"):
+    def setup(self, iou_path, name=None, node_id=None, additional_settings={}, default_name_format="IOU{0}"):
         """
         Setups this IOU device.
 
@@ -122,8 +121,8 @@ class IOUDevice(VM):
         params = {"name": name,
                   "path": iou_path}
 
-        if vm_id:
-            params["vm_id"] = vm_id
+        if node_id:
+            params["node_id"] = node_id
 
         # push the startup-config
         if "startup_config" in additional_settings:
@@ -183,7 +182,7 @@ class IOUDevice(VM):
         params = self._addIourcContentToParams(params)
 
         log.debug("{} is starting".format(self.name()))
-        self.httpPost("/{prefix}/vms/{vm_id}/start".format(prefix=self.URL_PREFIX, vm_id=self._vm_id), self._startCallback, body=params, progressText="{} is starting".format(self.name()))
+        self.httpPost("/{prefix}/nodes/{node_id}/start".format(prefix=self.URL_PREFIX, node_id=self._node_id), self._startCallback, body=params, progressText="{} is starting".format(self.name()))
 
     def _addIourcContentToParams(self, params):
         """
@@ -283,14 +282,14 @@ class IOUDevice(VM):
                                                                        nvram=self._settings["nvram"])
 
         info = """Device {name} is {state}
-  Node ID is {id}, server's IOU device ID is {vm_id}
+  Node ID is {id}, server's IOU device ID is {node_id}
   Hardware is Cisco IOU generic device with {memories_info}
   Device's server runs on {host}:{port}, console is on port {console}
   Image is {image_name}
   {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
 """.format(name=self.name(),
            id=self.id(),
-           vm_id=self._vm_id,
+           node_id=self._node_id,
            state=state,
            memories_info=memories_info,
            host=self._server.host(),
@@ -319,7 +318,7 @@ class IOUDevice(VM):
         """
 
         iou = super().dump()
-        iou["vm_id"] = self._vm_id
+        iou["node_id"] = self._node_id
 
         # add the properties
         for name, value in self._settings.items():
@@ -339,9 +338,11 @@ class IOUDevice(VM):
         super().load(node_info)
 
         # for backward compatibility
-        vm_id = node_info.get("iou_id")
-        if not vm_id:
-            vm_id = node_info.get("vm_id")
+        node_id = node_info.get("iou_id")
+        if not node_id:
+            node_id = node_info.get("node_id")
+            if not node_id:
+                node_id = node_info.get("vm_id")
 
         vm_settings = {}
         for name, value in node_info["properties"].items():
@@ -367,14 +368,14 @@ class IOUDevice(VM):
         self._loading = True
         self._node_info = node_info
         self.loaded_signal.connect(self._updatePortSettings)
-        self.setup(path, name, vm_id, vm_settings)
+        self.setup(path, name, node_id, vm_settings)
 
     def saveConfig(self):
         """
         Save the configs
         """
 
-        self.httpPost("/iou/vms/{vm_id}/configs/save".format(vm_id=self._vm_id), self._saveConfigCallback)
+        self.httpPost("/iou/nodes/{node_id}/configs/save".format(node_id=self._node_id), self._saveConfigCallback)
 
     def _saveConfigCallback(self, result, error=False, context={}, **kwargs):
 
@@ -392,7 +393,7 @@ class IOUDevice(VM):
         :param private_config_export_path: export path for the private-config
         """
 
-        self.httpGet("/iou/vms/{vm_id}/configs".format(vm_id=self._vm_id),
+        self.httpGet("/iou/nodes/{node_id}/configs".format(node_id=self._node_id),
                      self._exportConfigCallback,
                      context={"startup_config_path": startup_config_export_path,
                               "private_config_path": private_config_export_path})
@@ -436,7 +437,7 @@ class IOUDevice(VM):
         :param directory: destination directory path
         """
 
-        self.httpGet("/iou/vms/{vm_id}/configs".format(vm_id=self._vm_id),
+        self.httpGet("/iou/nodes/{node_id}/configs".format(node_id=self._node_id),
                      self._exportConfigToDirectoryCallback,
                      context={"directory": directory})
 

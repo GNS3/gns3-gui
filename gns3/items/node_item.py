@@ -141,12 +141,12 @@ class NodeItem():
 
         return self._links
 
-    def createdSlot(self, node_id):
+    def createdSlot(self, base_node_id):
         """
         Slot to receive events from the attached Node instance
         when a the node has been created/initialized.
 
-        :param node_id: node identifier (integer)
+        :param base_node_id: base node identifier (integer)
         """
 
         self._initialized = True
@@ -221,24 +221,24 @@ class NodeItem():
             self.scene().removeItem(self)
         self.setUnsavedState()
 
-    def serverErrorSlot(self, node_id, message):
+    def serverErrorSlot(self, base_node_id, message):
         """
         Slot to receive events from the attached Node instance
         when the node has received an error from the server.
 
-        :param node_id: node identifier
+        :param base_node_id: base node identifier
         :param message: error message
         """
 
         if self:
             self._last_error = "{message}".format(message=message)
 
-    def errorSlot(self, node_id, message):
+    def errorSlot(self, base_node_id, message):
         """
         Slot to receive events from the attached Node instance
         when the node wants to report an error.
 
-        :param node_id: node identifier
+        :param base_node_id: base node identifier
         :param message: error message
         """
 

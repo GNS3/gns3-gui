@@ -26,7 +26,6 @@ import struct
 import sip
 import json
 from .qt import QtCore
-from .node import Node
 from .version import __version__
 
 
@@ -273,21 +272,21 @@ class ConsoleCmd(cmd.Cmd):
             params.pop(0)
             for param in params:
                 node_name = param
-                node_id = None
+                base_node_id = None
 
                 # get the node ID
                 for node in self._topology.nodes():
                     if node.name() == node_name:
-                        node_id = node.id()
+                        base_node_id = node.id()
                         break
 
-                if node_id is None:
+                if base_node_id is None:
                     print("{}: no such device".format(node_name))
                     continue
 
                 if "nodes" in topology["topology"]:
                     for node in topology["topology"]["nodes"]:
-                        if node["id"] == node_id:
+                        if node["id"] == base_node_id:
                             print(json.dumps(node, sort_keys=True, indent=4))
                             break
 

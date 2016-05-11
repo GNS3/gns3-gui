@@ -44,7 +44,7 @@
                 },
                 "server_id": 1,
                 "type": "VPCSDevice",
-                "vm_id": "120d95af-5181-4fe2-b9d1-e941e800461d",
+                "node_id": "120d95af-5181-4fe2-b9d1-e941e800461d",
                 "x": -124.5,
                 "y": -205.5
             },
@@ -76,7 +76,7 @@
                 },
                 "server_id": 1,
                 "type": "VPCSDevice",
-                "vm_id": "6a2ccbc4-3fec-4ad2-ab94-5b289ef9e733",
+                "node_id": "6a2ccbc4-3fec-4ad2-ab94-5b289ef9e733",
                 "x": 19.5,
                 "y": -116.5
             }

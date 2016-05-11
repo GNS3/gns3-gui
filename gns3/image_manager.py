@@ -31,7 +31,7 @@ class ImageManager:
         # Remember if we already ask the user about this image for this server
         self._asked_for_this_image = {}
 
-    def askCopyUploadImage(self, parent, path, server, vm_type):
+    def askCopyUploadImage(self, parent, path, server, node_type):
         """
         Ask user for copying the image to the default directory or upload
         it to remote server.
@@ -39,14 +39,14 @@ class ImageManager:
         :param parent: Parent window
         :param path: File path on computer
         :param server: The server where the images should be located
-        :param vm_type: Remote upload endpoint
+        :param node_type: Remote upload endpoint
         :returns path: Final path
         """
 
         if server and not server.isLocal():
-            return self._uploadImageToRemoteServer(path, server, vm_type)
+            return self._uploadImageToRemoteServer(path, server, node_type)
         else:
-            destination_directory = self.getDirectoryForType(vm_type)
+            destination_directory = self.getDirectoryForType(node_type)
             if os.path.normpath(os.path.dirname(path)) != destination_directory:
                 # the IOS image is not in the default images directory
                 reply = QtWidgets.QMessageBox.question(parent,
@@ -73,35 +73,35 @@ class ImageManager:
                         path = destination_path
             return path
 
-    def _uploadImageToRemoteServer(self, path, server, vm_type):
+    def _uploadImageToRemoteServer(self, path, server, node_type):
         """
         Upload image to remote server
 
         :param path: File path on computer
         :param server: The server where the images should be located
-        :param vm_type: Image vm_type
+        :param node_type: Image node_type
         :returns path: Final path
         """
 
-        if vm_type == 'QEMU':
+        if node_type == 'QEMU':
             upload_endpoint = '/qemu/vms'
-        elif vm_type == 'IOU':
+        elif node_type == 'IOU':
             upload_endpoint = '/iou/vms'
-        elif vm_type == 'DYNAMIPS':
+        elif node_type == 'DYNAMIPS':
             upload_endpoint = '/dynamips/vms'
         else:
-            raise Exception('Invalid image vm_type')
+            raise Exception('Invalid image node_type')
 
-        filename = self._getRelativeImagePath(path, vm_type).replace("\\", "/")
+        filename = self._getRelativeImagePath(path, node_type).replace("\\", "/")
         server.post('{}/{}'.format(upload_endpoint, filename), None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
         return filename
 
-    def addMissingImage(self, filename, server, vm_type):
+    def addMissingImage(self, filename, server, node_type):
         """
         Add a missing image to the queue of images require to be upload on remote server
         :param filename: Filename of the image
         :param server: Server where image should be uploaded
-        :param vm_type: Type of the image
+        :param node_type: Type of the image
         """
 
         if self._asked_for_this_image.setdefault(server.id(), {}).setdefault(filename, False):
@@ -110,7 +110,7 @@ class ImageManager:
 
         if server.isLocal():
             return
-        path = os.path.join(self.getDirectoryForType(vm_type), filename)
+        path = os.path.join(self.getDirectoryForType(node_type), filename)
         if os.path.exists(path):
             if self._askForUploadMissingImage(filename, server):
 
@@ -118,9 +118,9 @@ class ImageManager:
                     # A vmdk file could be split in multiple vmdk file
                     search = glob.escape(path).replace(".vmdk", "-*.vmdk")
                     for file in glob.glob(search):
-                        self._uploadImageToRemoteServer(file, server, vm_type)
+                        self._uploadImageToRemoteServer(file, server, node_type)
 
-                self._uploadImageToRemoteServer(path, server, vm_type)
+                self._uploadImageToRemoteServer(path, server, node_type)
                 del self._asked_for_this_image[server.id()][filename]
 
     def _askForUploadMissingImage(self, filename, server):
@@ -135,20 +135,20 @@ class ImageManager:
             return True
         return False
 
-    def _getRelativeImagePath(self, path, vm_type):
+    def _getRelativeImagePath(self, path, node_type):
         """
         Get a path relative to images directory path
         or just filename if the path is not located inside
         image directory
 
         :param path: file path
-        :param vm_type: Type of vm
+        :param node_type: Type of vm
         :return: file path
         """
 
         if not path:
             return ""
-        img_directory = self.getDirectoryForType(vm_type)
+        img_directory = self.getDirectoryForType(node_type)
         path = os.path.abspath(path)
         if os.path.commonprefix([img_directory, path]) == img_directory:
             return os.path.relpath(path, img_directory)
@@ -163,17 +163,17 @@ class ImageManager:
 
         return Servers.instance().localServerSettings()['images_path']
 
-    def getDirectoryForType(self, vm_type):
+    def getDirectoryForType(self, node_type):
         """
         Return the path of local directory of the images
-        of a specific vm_type
+        of a specific node_type
 
-        :param vm_type: Type of vm
+        :param node_type: Type of vm
         """
-        if vm_type == 'DYNAMIPS':
+        if node_type == 'DYNAMIPS':
             return os.path.join(self.getDirectory(), 'IOS')
         else:
-            return os.path.join(self.getDirectory(), vm_type)
+            return os.path.join(self.getDirectory(), node_type)
 
     @staticmethod
     def instance():

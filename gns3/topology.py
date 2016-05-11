@@ -149,27 +149,27 @@ class Topology:
         if node in self._nodes:
             self._nodes.remove(node)
 
-    def getVM(self, vm_id):
+    def getVM(self, node_id):
         """
-        Lookups for a vm using its identifier.
+        Lookups for a node using its identifier.
 
         :returns: Node instance or None
         """
 
         for node in self._nodes:
-            if hasattr(node, "vm_id") and node.vm_id() == vm_id:
+            if hasattr(node, "node_id") and node.node_id() == node_id:
                 return node
         return None
 
-    def getNode(self, node_id):
+    def getNode(self, base_node_id):
         """
-        Lookups for a node using its vm_id.
+        Lookups for a node using its base bode id.
 
         :returns: Node instance or None
         """
 
         for node in self._nodes:
-            if node.id() == node_id:
+            if node.id() == base_node_id:
                 return node
         return None
 
@@ -555,9 +555,9 @@ class Topology:
         topology["project_id"] = str(uuid.uuid4())
         if "nodes" in topology["topology"]:
             for key, node in enumerate(topology["topology"]["nodes"]):
-                old_uuid = topology["topology"]["nodes"][key].get("vm_id", None)
+                old_uuid = topology["topology"]["nodes"][key].get("node_id", None)
                 new_uuid = str(uuid.uuid4())
-                topology["topology"]["nodes"][key]["vm_id"] = new_uuid
+                topology["topology"]["nodes"][key]["node_id"] = new_uuid
                 if old_uuid:
                     if self.project.filesDir():
                         for path in glob.glob(os.path.join(glob.escape(self.project.filesDir()), "project-files", "*", old_uuid)):
@@ -864,27 +864,27 @@ class Topology:
             errors = "\n".join(topology_file_errors)
             MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
 
-    def _nodeCreatedSlot(self, topology, node_id):
+    def _nodeCreatedSlot(self, topology, base_node_id):
         """
         Slot to know when a node has been created.
         When all nodes have initialized, links can be created.
 
-        :param node_id: node identifier
+        :param base_node_id: base node identifier
         """
 
-        node = self.getNode(node_id)
+        node = self.getNode(base_node_id)
         if not node or not node.initialized():
-            log.warn("Cannot find node {node_id} or node not initialized".format(node_id=node_id))
+            log.warn("Cannot find node {base_node_id} or node not initialized".format(base_node_id=base_node_id))
             return
 
         from .main_window import MainWindow
         main_window = MainWindow.instance()
         view = main_window.uiGraphicsView
         log.debug("node {} has initialized".format(node.name()))
-        self._initialized_nodes.append(node_id)
+        self._initialized_nodes.append(base_node_id)
 
-        if node_id in self._node_to_links_mapping:
-            topology_link = self._node_to_links_mapping[node_id]
+        if base_node_id in self._node_to_links_mapping:
+            topology_link = self._node_to_links_mapping[base_node_id]
             for link in topology_link:
                 source_node_id = link["source_node_id"]
                 destination_node_id = link["destination_node_id"]

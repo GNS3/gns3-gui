@@ -20,7 +20,6 @@ VPCS device implementation.
 """
 
 import os
-from gns3.vm import VM
 from gns3.node import Node
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.utils.normalize_filename import normalize_filename
@@ -29,7 +28,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class VPCSDevice(VM):
+class VPCSDevice(Node):
 
     """
     VPCS device.
@@ -44,7 +43,7 @@ class VPCSDevice(VM):
         super().__init__(module, server, project)
 
         log.info("VPCS instance is being created")
-        self._vm_id = None
+        self._node_id = None
         self._settings = {"name": "",
                           "startup_script": None,
                           "startup_script_path": None,
@@ -61,12 +60,12 @@ class VPCSDevice(VM):
         self._ports.append(port)
         log.debug("port {} has been added".format(port_name))
 
-    def setup(self, name=None, vm_id=None, additional_settings={}, default_name_format="PC{0}"):
+    def setup(self, name=None, node_id=None, additional_settings={}, default_name_format="PC{0}"):
         """
         Setups this VPCS device.
 
         :param name: optional name
-        :param vm_id: VM identifier
+        :param node_id: VM identifier
         :param additional_settings: additional settings for this device
         """
 
@@ -81,8 +80,8 @@ class VPCSDevice(VM):
         self._settings["name"] = name
         params = {"name": name}
 
-        if vm_id:
-            params["vm_id"] = vm_id
+        if node_id:
+            params["node_id"] = node_id
 
         if "script_file" in additional_settings:
             if os.path.isfile(additional_settings["script_file"]):
@@ -95,7 +94,7 @@ class VPCSDevice(VM):
             del additional_settings["startup_script_path"]
 
         # If we have an vm id that mean the VM already exits and we should not send startup_script
-        if "startup_script" in additional_settings and vm_id is not None:
+        if "startup_script" in additional_settings and node_id is not None:
             del additional_settings["startup_script"]
 
         params.update(additional_settings)
@@ -187,11 +186,11 @@ class VPCSDevice(VM):
 
         info = """Device {name} is {state}
   Local node ID is {id}
-  Server's VPCS device ID is {vm_id}
+  Server's VPCS device ID is {node_id}
   VPCS's server runs on {host}:{port}, console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
-           vm_id=self._vm_id,
+           node_id=self._node_id,
            state=state,
            host=self._server.host(),
            port=self._server.port(),
@@ -216,7 +215,7 @@ class VPCSDevice(VM):
         """
 
         vpcs_device = super().dump()
-        vpcs_device["vm_id"] = self._vm_id
+        vpcs_device["node_id"] = self._node_id
 
         # add the properties
         for name, value in self._settings.items():
@@ -239,9 +238,12 @@ class VPCSDevice(VM):
         super().load(node_info)
 
         # for backward compatibility
-        vm_id = node_info.get("vpcs_id")
-        if not vm_id:
-            vm_id = node_info.get("vm_id")
+        node_id = node_info.get("vpcs_id")
+        if not node_id:
+            node_id = node_info.get("node_id")
+            if not node_id:
+                # for backward compatibility
+                node_id = node_info.get("vm_id")
 
         # prepare the VM settings
         vm_settings = {}
@@ -252,7 +254,7 @@ class VPCSDevice(VM):
 
         log.info("VPCS device {} is loading".format(name))
         self.setName(name)
-        self.setup(name, vm_id, vm_settings)
+        self.setup(name, node_id, vm_settings)
 
     def exportConfig(self, config_export_path):
         """
@@ -261,7 +263,7 @@ class VPCSDevice(VM):
         :param config_export_path: export path for the script file
         """
 
-        self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id),
+        self.httpGet("/vpcs/nodes/{node_id}".format(node_id=self._node_id),
                      self._exportConfigCallback,
                      context={"path": config_export_path})
 
@@ -293,7 +295,7 @@ class VPCSDevice(VM):
         :param directory: destination directory path
         """
 
-        self.httpGet("/vpcs/vms/{vm_id}".format(vm_id=self._vm_id),
+        self.httpGet("/vpcs/nodes/{node_id}".format(node_id=self._node_id),
                      self._exportConfigToDirectoryCallback,
                      context={"directory": directory})
 

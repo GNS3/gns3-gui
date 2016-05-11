@@ -19,10 +19,8 @@
 QEMU VM implementation.
 """
 
-from gns3.vm import VM
 from gns3.node import Node
 from gns3.image_manager import ImageManager
-from gns3.ports.port import Port
 from gns3.ports.ethernet_port import EthernetPort
 from .settings import QEMU_VM_SETTINGS
 
@@ -31,7 +29,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class QemuVM(VM):
+class QemuVM(Node):
 
     """
     QEMU VM.
@@ -118,13 +116,13 @@ class QemuVM(VM):
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self, qemu_path, name=None, vm_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
+    def setup(self, qemu_path, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
               first_port_name="", linked_clone=True, additional_settings={}, default_name_format=None):
         """
         Setups this QEMU VM.
 
         :param name: optional name
-        :param vm_id: VM identifier
+        :param node_id: VM identifier
         """
 
         # let's create a unique name if none has been chosen
@@ -142,8 +140,8 @@ class QemuVM(VM):
                   "qemu_path": qemu_path,
                   "linked_clone": linked_clone}
 
-        if vm_id:
-            params["vm_id"] = vm_id
+        if node_id:
+            params["node_id"] = node_id
 
         self._port_name_format = port_name_format
         self._port_segment_size = port_segment_size
@@ -238,7 +236,7 @@ class QemuVM(VM):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self.httpPost("/qemu/vms/{vm_id}/reload".format(vm_id=self._vm_id), self._reloadCallback)
+        self.httpPost("/qemu/nodes/{node_id}/reload".format(node_id=self._node_id), self._reloadCallback)
 
     def _reloadCallback(self, result, error=False, **kwargs):
         """
@@ -263,7 +261,7 @@ class QemuVM(VM):
         """
 
         qemu_vm = super().dump()
-        qemu_vm["vm_id"] = self._vm_id
+        qemu_vm["node_id"] = self._node_id
         qemu_vm["linked_clone"] = self._linked_clone
         qemu_vm["port_name_format"] = self._port_name_format
 
@@ -292,12 +290,12 @@ class QemuVM(VM):
             state = "stopped"
 
         info = """QEMU VM {name} is {state}
-  Node ID is {id}, server's QEMU VM ID is {vm_id}
+  Node ID is {id}, server's node ID is {node_id}
   QEMU VM's server runs on {host}:{port}
   Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
-           vm_id=self._vm_id,
+           node_id=self._node_id,
            state=state,
            host=self._server.host(),
            port=self._server.port(),
@@ -327,9 +325,12 @@ class QemuVM(VM):
 
         super().load(node_info)
         # for backward compatibility
-        vm_id = node_info.get("qemu_id")
-        if not vm_id:
-            vm_id = node_info.get("vm_id")
+        node_id = node_info.get("qemu_id")
+        if not node_id:
+            node_id = node_info.get("node_id")
+            if not node_id:
+                node_id = node_info.get("vm_id")
+
         linked_clone = node_info.get("linked_clone", True)
         port_name_format = node_info.get("port_name_format", "Ethernet{0}")
         port_segment_size = node_info.get("port_segment_size", 0)
@@ -344,7 +345,7 @@ class QemuVM(VM):
         qemu_path = vm_settings.pop("qemu_path")
         log.info("QEMU VM {} is loading".format(name))
         self.setName(name)
-        self.setup(qemu_path, name, vm_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
+        self.setup(qemu_path, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
     def name(self):
         """
