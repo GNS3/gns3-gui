@@ -187,16 +187,16 @@ def test_update(iou_device):
         "name": "Unreal IOU",
     }
 
-    with patch('gns3.base_node.BaseNode.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.controllerHttpPut') as mock:
         iou_device.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/nodes/{node_id}".format(node_id=iou_device.node_id())
+        assert args[0] == "/nodes/{node_id}".format(node_id=iou_device.node_id())
         assert kwargs["body"] == new_settings
 
         # Callback
-        args[1]({})
+        args[1]({"properties": {}})
 
 
 def test_update_startup_config(iou_device, tmpdir):
@@ -210,17 +210,17 @@ def test_update_startup_config(iou_device, tmpdir):
         "startup_config": startup_config
     }
 
-    with patch('gns3.base_node.BaseNode.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.controllerHttpPut') as mock:
         iou_device.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/iou/nodes/{node_id}".format(node_id=iou_device.node_id())
+        assert args[0] == "/nodes/{node_id}".format(node_id=iou_device.node_id())
         assert kwargs["body"]["name"] == "Unreal IOU"
         assert kwargs["body"]["startup_config_content"] == "hostname %h"
 
         # Callback
-        args[1]({})
+        args[1]({"properties": {}})
 
 
 def test_dump(local_server, project):
@@ -404,50 +404,6 @@ def test_load_1_2(local_server, project, fake_bin):
 
     iou_device.loaded_signal.emit()
     assert iou_device._ports[0].name() == "Hyper Ethernet0/0"
-
-
-def test_startPacketCapture(iou_device):
-
-    port = Port("test")
-    port.setAdapterNumber(2)
-    port.setPortNumber(1)
-
-    with patch("gns3.base_node.BaseNode.httpPost") as mock:
-        iou_device.startPacketCapture(port, "test.pcap", "DLT_EN10MB")
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/iou/nodes/{node_id}/adapters/2/ports/1/start_capture".format(node_id=iou_device.node_id())
-        assert kwargs["body"] == {
-            "data_link_type": "DLT_EN10MB",
-            "capture_file_name": "test.pcap"
-        }
-
-        with patch("gns3.ports.port.Port.startPacketCapture") as port_mock:
-
-            # Callback
-            args[1]({"pcap_file_path": "/tmp/test.pcap"}, context=kwargs["context"])
-
-            assert port_mock.called_with("/tmp/test.pcap")
-
-
-def test_stopPacketCapture(iou_device):
-
-    port = Port("test")
-    port.setAdapterNumber(2)
-    port.setPortNumber(1)
-
-    with patch("gns3.base_node.BaseNode.httpPost") as mock:
-        iou_device.stopPacketCapture(port)
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/iou/nodes/{node_id}/adapters/2/ports/1/stop_capture".format(node_id=iou_device.node_id())
-
-        with patch("gns3.ports.port.Port.stopPacketCapture") as port_mock:
-
-            # Callback
-            args[1]({}, context=kwargs["context"])
-
-            assert port_mock.called
 
 
 def test_exportConfig(iou_device, tmpdir):

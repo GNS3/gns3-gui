@@ -67,12 +67,12 @@ def test_update(virtualbox_vm):
         "name": "VBOX2",
     }
 
-    with patch('gns3.base_node.BaseNode.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.controllerHttpPut') as mock:
         virtualbox_vm.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/virtualbox/nodes/{node_id}".format(node_id=virtualbox_vm.node_id())
+        assert args[0] == "/nodes/{node_id}".format(node_id=virtualbox_vm.node_id())
         assert kwargs["body"] == new_settings
 
         # Callback

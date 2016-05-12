@@ -256,8 +256,9 @@ class Node(BaseNode):
             self._command_line = result["command_line"]
 
         # For compatibility with old API
-        result.update(result["properties"])
-        del result["properties"]
+        if "properties" in result:
+            result.update(result["properties"])
+            del result["properties"]
 
         return True
 

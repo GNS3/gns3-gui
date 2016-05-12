@@ -20,11 +20,11 @@ from gns3.utils import parse_version
 
 
 def test_parse_version():
-    assert parse_version('1') == (1, 'final')
-    assert parse_version('1.3') == (1, 3, 'final')
-    assert parse_version('1.3.dev3') == (1, 3, 'dev', 3)
-    assert parse_version('1.3a1') == (1, 3, 'a', 1)
-    assert parse_version('1.3rc1') == (1, 3, 'c', 1)
+    assert parse_version('1') == ('000001', '00000', '000000', 'final')
+    assert parse_version('1.3') == ('000001', '000003', '000000', 'final')
+    assert parse_version('1.3.dev3') == ('000001', '000003', '000000', 'dev', '000003')
+    assert parse_version('1.3a1') == ('000001', '000003', '000000', 'a', '000001')
+    assert parse_version('1.3rc1') == ('000001', '000003', '000000', 'c', '000001')
 
     assert parse_version('1.2.3') > parse_version('1.2.2')
     assert parse_version('1.3') > parse_version('1.2.2')
@@ -32,3 +32,4 @@ def test_parse_version():
     assert parse_version('1.3') > parse_version('1.3rc1')
     assert parse_version('1.3rc1') > parse_version('1.3alpha3')
     assert parse_version('1.3dev1') > parse_version('1.3rc1')
+    assert parse_version('1.2.3') > parse_version('1.2')

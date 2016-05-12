@@ -184,12 +184,12 @@ def test_update(vpcs_device):
         "script_file": "echo TEST"
     }
 
-    with patch('gns3.base_node.BaseNode.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.controllerHttpPut') as mock:
         vpcs_device.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/nodes/{node_id}".format(node_id=vpcs_device.node_id())
+        assert args[0] == "/nodes/{node_id}".format(node_id=vpcs_device.node_id())
         assert kwargs["body"] == new_settings
 
         # Callback
@@ -204,10 +204,10 @@ def test_importConfig(vpcs_device, tmpdir):
     with open(path, 'w+') as f:
         f.write(content)
 
-    with patch('gns3.base_node.BaseNode.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.controllerHttpPut') as mock:
         vpcs_device.importConfig(path)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/nodes/{node_id}".format(node_id=vpcs_device.node_id())
+        assert args[0] == "/nodes/{node_id}".format(node_id=vpcs_device.node_id())
         assert kwargs["body"] == {"startup_script": content}

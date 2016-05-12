@@ -138,12 +138,12 @@ def test_update(qemu_vm):
         "name": "QEMU2",
     }
 
-    with patch('gns3.base_node.BaseNode.httpPut') as mock:
+    with patch('gns3.base_node.BaseNode.controllerHttpPut') as mock:
         qemu_vm.update(new_settings)
 
         assert mock.called
         args, kwargs = mock.call_args
-        assert args[0] == "/qemu/nodes/{node_id}".format(node_id=qemu_vm.node_id())
+        assert args[0] == "/nodes/{node_id}".format(node_id=qemu_vm.node_id())
         assert kwargs["body"] == new_settings
 
         # Callback

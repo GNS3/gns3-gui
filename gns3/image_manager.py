@@ -84,11 +84,11 @@ class ImageManager:
         """
 
         if node_type == 'QEMU':
-            upload_endpoint = '/qemu/vms'
+            upload_endpoint = '/qemu/nodes'
         elif node_type == 'IOU':
-            upload_endpoint = '/iou/vms'
+            upload_endpoint = '/iou/nodes'
         elif node_type == 'DYNAMIPS':
-            upload_endpoint = '/dynamips/vms'
+            upload_endpoint = '/dynamips/nodes'
         else:
             raise Exception('Invalid image node_type')
 
