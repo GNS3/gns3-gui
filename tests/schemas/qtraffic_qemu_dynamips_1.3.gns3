@@ -69,7 +69,7 @@
                 },
                 "server_id": 1,
                 "type": "C3725",
-                "node_id": "7a3fc749-0796-4e22-9d9c-467e6df35915",
+                "vm_id": "7a3fc749-0796-4e22-9d9c-467e6df35915",
                 "x": -34.0,
                 "y": -43.0
             },
@@ -127,7 +127,7 @@
                 },
                 "server_id": 1,
                 "type": "QemuVM",
-                "node_id": "c206ddb0-1bdb-418e-828a-9db97f2a41d7",
+                "vm_id": "c206ddb0-1bdb-418e-828a-9db97f2a41d7",
                 "x": -172.5,
                 "y": -54.5
             },
@@ -185,7 +185,7 @@
                 },
                 "server_id": 1,
                 "type": "QemuVM",
-                "node_id": "ce76a02c-6c35-43ef-9460-e4718d6f7089",
+                "vm_id": "ce76a02c-6c35-43ef-9460-e4718d6f7089",
                 "x": 125.5,
                 "y": -58.5
             }

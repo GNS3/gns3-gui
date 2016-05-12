@@ -57,7 +57,7 @@
                 },
                 "server_id": 1,
                 "type": "QemuVM",
-                "node_id": "3377e5b5-eeb9-460e-8110-b9790e8117ce",
+                "vm_id": "3377e5b5-eeb9-460e-8110-b9790e8117ce",
                 "x": -111.5,
                 "y": -117.5
             },
@@ -94,7 +94,7 @@
                 },
                 "server_id": 1,
                 "type": "QemuVM",
-                "node_id": "1d02b4f2-5c8e-45ae-8649-974f7b0bf20f",
+                "vm_id": "1d02b4f2-5c8e-45ae-8649-974f7b0bf20f",
                 "x": 117.5,
                 "y": -114.5
             },
