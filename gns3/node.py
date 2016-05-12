@@ -203,8 +203,8 @@ class Node(BaseNode):
             self.error_signal.emit(self.id(), "returned ID from server is null")
             return False
 
-        if "vm_directory" in result:
-            self._node_directory = result["vm_directory"]
+        if "node_directory" in result:
+            self._node_directory = result["node_directory"]
 
         if "command_line" in result:
             self._command_line = result["command_line"]
