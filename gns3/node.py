@@ -152,9 +152,9 @@ class Node(BaseNode):
         """
         :returns: Body for Create and update
         """
-        body = {"properties": {}}
-        body["node_type"] = self.URL_PREFIX
-        body["compute_id"] = self._server.server_id()
+        body = {"properties": {},
+                "node_type": self.URL_PREFIX,
+                "compute_id": self._server.server_id()}
 
         # We have two kind of properties. The general properties common to all
         # node and the specific that we need to put in the properties field

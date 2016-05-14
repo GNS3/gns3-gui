@@ -23,7 +23,6 @@ import pickle
 from .qt import QtCore, QtGui, QtWidgets, qpartial
 from .qt.qimage_svg_renderer import QImageSvgRenderer
 from .modules import MODULES
-from .node import Node
 from .dialogs.configuration_dialog import ConfigurationDialog
 
 
