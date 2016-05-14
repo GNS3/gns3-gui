@@ -84,13 +84,13 @@ class ImageManager:
         """
 
         if node_type == 'QEMU':
-            upload_endpoint = '/qemu/nodes'
+            upload_endpoint = '/qemu/images'
         elif node_type == 'IOU':
-            upload_endpoint = '/iou/nodes'
+            upload_endpoint = '/iou/images'
         elif node_type == 'DYNAMIPS':
-            upload_endpoint = '/dynamips/nodes'
+            upload_endpoint = '/dynamips/images'
         else:
-            raise Exception('Invalid image node_type')
+            raise Exception('Invalid node type')
 
         filename = self._getRelativeImagePath(path, node_type).replace("\\", "/")
         server.post('{}/{}'.format(upload_endpoint, filename), None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
