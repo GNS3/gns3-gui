@@ -164,11 +164,47 @@ class Project(QtCore.QObject):
     def commit(self):
         """Save project on remote servers"""
 
-        # If current project doesn't exist on remote server
+        # Don't do anything if the project doesn't exist on the server
         if self._id is None:
             return
 
         Servers.instance().controllerServer().post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
+
+    def start_all_nodes(self):
+        """Start all nodes belonging to this project"""
+
+        # Don't do anything if the project doesn't exist on the server
+        if self._id is None:
+            return
+
+        Servers.instance().controllerServer().post("/projects/{project_id}/nodes/start".format(project_id=self._id), None, body={})
+
+    def stop_all_nodes(self):
+        """Stop all nodes belonging to this project"""
+
+        # Don't do anything if the project doesn't exist on the server
+        if self._id is None:
+            return
+
+        Servers.instance().controllerServer().post("/projects/{project_id}/nodes/stop".format(project_id=self._id), None, body={})
+
+    def suspend_all_nodes(self):
+        """Suspend all nodes belonging to this project"""
+
+        # Don't do anything if the project doesn't exist on the server
+        if self._id is None:
+            return
+
+        Servers.instance().controllerServer().post("/projects/{project_id}/nodes/suspend".format(project_id=self._id), None, body={})
+
+    def reload_all_nodes(self):
+        """Reload all nodes belonging to this project"""
+
+        # Don't do anything if the project doesn't exist on the server
+        if self._id is None:
+            return
+
+        Servers.instance().controllerServer().post("/projects/{project_id}/nodes/reload".format(project_id=self._id), None, body={})
 
     def get(self, server, path, callback, **kwargs):
         """
@@ -356,14 +392,14 @@ class Project(QtCore.QObject):
 
         log.debug("Event received: %s", result)
         if result["action"] in ["node.started", "node.stopped"]:
-            vm = Topology.instance().getVM(result["event"]["node_id"])
-            if vm is not None:
+            node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
+            if node is not None:
                 if result["action"] == "node.started":
-                    vm.setStatus(Node.started)
-                    vm.started_signal.emit()
+                    node.setStatus(Node.started)
                 elif result["action"] == "node.stopped":
-                    vm.setStatus(Node.stopped)
-                    vm.stopped_signal.emit()
+                    node.setStatus(Node.stopped)
+                elif result["action"] == "node.suspended":
+                    node.setStatus(Node.suspended)
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":

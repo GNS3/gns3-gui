@@ -149,7 +149,7 @@ class Topology:
         if node in self._nodes:
             self._nodes.remove(node)
 
-    def getVM(self, node_id):
+    def getNodeFromUuid(self, node_id):
         """
         Lookups for a node using its identifier.
 

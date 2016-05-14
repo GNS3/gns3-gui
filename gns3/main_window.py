@@ -19,7 +19,6 @@
 Main window for the GUI.
 """
 
-import traceback
 import sys
 import os
 import time
@@ -27,7 +26,6 @@ import shutil
 import json
 import glob
 import logging
-import subprocess
 
 from .local_config import LocalConfig
 from .modules import MODULES
@@ -277,7 +275,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.project_new_signal.connect(self.project_created)
 
         self.ready_signal.connect(self._readySlot)
-
 
     def project(self):
         """
@@ -695,36 +692,36 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when starting all the nodes.
         """
 
-        for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "start") and item.node().initialized():
-                item.node().start()
+        project = self.project()
+        if project is not None:
+            project.start_all_nodes()
 
     def _suspendAllActionSlot(self):
         """
         Slot called when suspending all the nodes.
         """
 
-        for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "suspend") and item.node().initialized():
-                item.node().suspend()
+        project = self.project()
+        if project is not None:
+            project.suspend_all_nodes()
 
     def _stopAllActionSlot(self):
         """
         Slot called when stopping all the nodes.
         """
 
-        for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "stop") and item.node().initialized():
-                item.node().stop()
+        project = self.project()
+        if project is not None:
+            project.stop_all_nodes()
 
     def _reloadAllActionSlot(self):
         """
         Slot called when reloading all the nodes.
         """
 
-        for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "reload") and item.node().initialized():
-                item.node().reload()
+        project = self.project()
+        if project is not None:
+            project.reload_all_nodes()
 
     def _deviceMenuActionSlot(self):
         """
