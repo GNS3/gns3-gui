@@ -57,7 +57,7 @@ def test_uploadImageToRemoteServer(image_manager, remote_server, images_dir):
         filename = image_manager._uploadImageToRemoteServer(str(images_dir / "QEMU" / "test"), remote_server, 'QEMU')
         assert filename == 'test'
         args, kwargs = mock.call_args
-        assert args[0] == '/qemu/nodes/test'
+        assert args[0] == '/qemu/images/test'
         assert kwargs['body'] == pathlib.Path(str(images_dir / "QEMU" / "test"))
 
 
