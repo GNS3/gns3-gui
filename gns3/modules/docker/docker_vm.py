@@ -197,7 +197,7 @@ class DockerVM(Node):
     def info(self):
         """Returns information about this Docker container.
 
-        :returns: formated string
+        :returns: formatted string
         :rtype: string
         """
         if self.status() == Node.started:
