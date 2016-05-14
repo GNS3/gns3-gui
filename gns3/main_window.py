@@ -23,7 +23,6 @@ import sys
 import os
 import time
 import shutil
-import json
 import glob
 import logging
 
@@ -37,6 +36,7 @@ from .gns3_vm import GNS3VM
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
 from .style import Style
+from .project_manager import ProjectManager
 from .dialogs.about_dialog import AboutDialog
 from .dialogs.new_project_dialog import NewProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
@@ -46,19 +46,15 @@ from .dialogs.doctor_dialog import DoctorDialog
 from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .utils.progress_dialog import ProgressDialog
-from .utils.process_files_worker import ProcessFilesWorker
+from .utils.import_project_worker import ImportProjectWorker
 from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.wait_for_vm_worker import WaitForVMWorker
-from .utils.export_project_worker import ExportProjectWorker
-from .utils.import_project_worker import ImportProjectWorker
-from .utils.message_box import MessageBox
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
 from .items.note_item import NoteItem
 from .topology import Topology
-from .project import Project
 from .http_client import HTTPClient
 from .progress import Progress
 from .update_manager import UpdateManager
@@ -81,9 +77,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     # signal to tell the view if the user is adding a link or not
     adding_link_signal = QtCore.pyqtSignal(bool)
 
-    # signal to tell a new project was created
-    project_new_signal = QtCore.pyqtSignal(str)
-
     # signal to tell the windows is ready to load his first project
     ready_signal = QtCore.pyqtSignal()
 
@@ -96,9 +89,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings = {}
         HTTPClient.setProgressCallback(Progress.instance(self))
 
-        self._project = None
-        self._createTemporaryProject()
+        self._project_manager = ProjectManager(self)
         self._first_file_load = True
+        self._open_project_path = None
         self._loadSettings()
         self._connections()
         self._ignore_unsaved_state = False
@@ -123,7 +116,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiDocksMenu.addAction(self.uiServerSummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
-        # Make sure the dock widget is not open
+
+        # make sure the dock widget is not open
         self.uiNodesDockWidget.setVisible(False)
 
         # default directories for QFileDialog
@@ -141,7 +135,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiFileMenu.insertActions(self.uiQuitAction, self._recent_file_actions)
         self._recent_file_actions_separator = self.uiFileMenu.insertSeparator(self.uiQuitAction)
         self._recent_file_actions_separator.setVisible(False)
-        self._updateRecentFileActions()
+        self.updateRecentFileActions()
 
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
@@ -153,43 +147,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
-
-    def _loadSettings(self):
-        """
-        Loads the settings from the persistent settings file.
-        """
-
-        local_config = LocalConfig.instance()
-        self._settings = local_config.loadSectionSettings(self.__class__.__name__, GENERAL_SETTINGS)
-
-    def settings(self):
-        """
-        Returns the general settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
-
-    def setSettings(self, new_settings):
-        """
-        Set new general settings.
-
-        :param new_settings: settings dictionary
-        """
-
-        # change the GUI style
-        style = new_settings.get("style")
-        if style and new_settings["style"] != self._settings["style"]:
-            self._setStyle(style)
-
-        self._settings.update(new_settings)
-        # save the settings
-        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
-
-    def setSoftExit(self, softExit):
-        """If True warn user before exiting app if unsaved data"""
-        self._soft_exit = softExit
 
     def _connections(self):
         """
@@ -269,27 +226,59 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # connect the signal to the view
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
 
-        # project
-        self.project_new_signal.connect(self.project_created)
-
+        # temporary project created, the application is ready
         self.ready_signal.connect(self._readySlot)
 
-    def project(self):
+    def _loadSettings(self):
         """
-        Return current project
-        """
-
-        return self._project
-
-    def setProject(self, project):
-        """
-        Set current project
-
-        :param project: Project instance
+        Loads the settings from the persistent settings file.
         """
 
-        self._project = project
-        self._setCurrentFile(project.topologyFile())
+        local_config = LocalConfig.instance()
+        self._settings = local_config.loadSectionSettings(self.__class__.__name__, GENERAL_SETTINGS)
+
+    def settings(self):
+        """
+        Returns the general settings.
+
+        :returns: settings dictionary
+        """
+
+        return self._settings
+
+    def setSettings(self, new_settings):
+        """
+        Set new general settings.
+
+        :param new_settings: settings dictionary
+        """
+
+        # change the GUI style
+        style = new_settings.get("style")
+        if style and new_settings["style"] != self._settings["style"]:
+            self._setStyle(style)
+
+        self._settings.update(new_settings)
+        # save the settings
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
+
+    def setSoftExit(self, softExit):
+        """If True warn user before exiting app if unsaved data"""
+        self._soft_exit = softExit
+
+    def projectManager(self):
+        """
+        Return the project manager.
+        """
+
+        return self._project_manager
+
+    def analyticsClient(self):
+        """
+        Return the analytics client
+        """
+
+        return self._analytics_client
 
     def setUnsavedState(self):
         """
@@ -309,34 +298,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self._ignore_unsaved_state = value
 
-    def _createNewProject(self, new_project_settings):
-        """
-        Creates a new project.
-
-        :param new_project_settings: project settings (dict)
-        """
-
-        self._project.close()
-        self._project = Project()
-        self.uiGraphicsView.reset()
-        # create the destination directory for project files
-        try:
-            os.makedirs(new_project_settings["project_files_dir"], exist_ok=True)
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self, "New project", "Could not create project files directory {}: {}".format(new_project_settings["project_files_dir"], e))
-            self._createTemporaryProject()
-
-        # let all modules know about the new project files directory
-        # self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
-
-        topology = Topology.instance()
-        topology.project = self._project
-
-        self._project.setName(new_project_settings["project_name"])
-        self._project.setTopologyFile(new_project_settings["project_path"])
-        self.saveProject(new_project_settings["project_path"])
-        self.project_new_signal.emit(self._project.topologyFile())
-
     def _newProjectActionSlot(self):
         """
         Slot called to create a new project.
@@ -346,16 +307,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._project_dialog = NewProjectDialog(self)
             self._project_dialog.show()
             create_new_project = self._project_dialog.exec_()
-            # Close the device dock so it repopulates.  Done in case switching
-            # between cloud and local.
+            # Close the device dock so it repopulates.  Done in case switching between cloud and local.
             self.uiNodesDockWidget.setVisible(False)
             self.uiNodesDockWidget.setWindowTitle("")
 
             if create_new_project:
-                new_project_settings = self._project_dialog.getNewProjectSettings()
-                self._createNewProject(new_project_settings)
+                self._project_manager.createNewProject(self._project_dialog.getNewProjectSettings())
             else:
-                self._createTemporaryProject()
+                self._project_manager.createTemporaryProject()
             self._project_dialog = None
 
     def _newApplianceActionSlot(self):
@@ -374,9 +333,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
         if len(directory) == 0:
             directory = self.projectsDirPath()
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                        "Open appliance",
-                                                        directory,
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
                                                         "All files (*.*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
                                                         "GNS3 Appliance (*.gns3appliance *.gns3a)")
         if path:
@@ -387,9 +344,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to open a project.
         """
 
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                        "Open project",
-                                                        self.projectsDirPath(),
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", self.projectsDirPath(),
                                                         "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
                                                         "GNS3 Project (*.gns3)")
         if path:
@@ -412,8 +367,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """Loads a snapshot"""
 
         self._open_project_path = path
-        self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
-        self._project.close()
+        self._project_manager.project().project_closed_signal.connect(self._projectClosedContinueLoadPath)
+        self._project_manager.project().close()
 
     def loadPath(self, path):
         """Open a file and close the previous project"""
@@ -428,6 +383,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._project_dialog = None
 
             if path.endswith(".gns3project") or path.endswith(".gns3p"):
+                # Portable GNS3 project
                 project_name = os.path.basename(path).split('.')[0]
                 self._project_dialog = NewProjectDialog(self, default_project_name=project_name)
                 self._project_dialog.show()
@@ -438,10 +394,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self)
                     progress_dialog.show()
                     progress_dialog.exec_()
-
                 self._project_dialog = None
 
             elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
+                # GNS3 appliance
                 try:
                     self._appliance_wizard = ApplianceWizard(self, path)
                 except ApplianceError as e:
@@ -451,16 +407,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._appliance_wizard.exec_()
             elif self.checkForUnsavedChanges():
                 self._open_project_path = path
-                if self._project.closed():
+                project = self._project_manager.project()
+                if project.closed():
                     self._projectClosedContinueLoadPath()
                 else:
-                    self._project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
-                    self._project.close()
+                    project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
+                    project.close()
 
     def _projectClosedContinueLoadPath(self):
 
         path = self._open_project_path
-        if self._loadProject(path):
+        if self._project_manager.loadProject(path):
+            self._labInstructionsActionSlot(silent=True)
             self.project_new_signal.emit(path)
 
     def _saveProjectActionSlot(self):
@@ -468,20 +426,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to save a project.
         """
 
-        if self._project.temporary():
+        project = self._project_manager.project()
+        if project.temporary():
             return self.saveProjectAs()
         else:
-            if not self._project.filesDir():
+            if not project.filesDir():
                 QtWidgets.QMessageBox.critical(self, "Project", "Sorry, no project has been created or initialized")
                 return
-            return self.saveProject(self._project.topologyFile())
+            return self.saveProject(project.topologyFile())
 
     def _saveProjectAsActionSlot(self):
         """
         Slot called to save a project to another location/name.
         """
 
-        self.saveProjectAs()
+        self._project_manager.saveProjectAs()
 
     def _importExportConfigsActionSlot(self):
         """
@@ -523,7 +482,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if hasattr(instance, "importConfigs"):
                     instance.importConfigs(path)
 
-    def _createScreenshot(self, path):
+    def createScreenshot(self, path):
         """
         Create a screenshot of the scene.
 
@@ -561,7 +520,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not path.endswith(file_format):
             path += file_format
 
-        if not self._createScreenshot(path):
+        if not self.createScreenshot(path):
             QtWidgets.QMessageBox.critical(self, "Screenshot", "Could not create screenshot file {}".format(path))
 
     def _snapshotActionSlot(self):
@@ -569,7 +528,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to open the snapshot dialog.
         """
 
-        if self._project.temporary():
+        project = self._project_manager.project()
+        if project.temporary():
             QtWidgets.QMessageBox.critical(self, "Snapshots", "Sorry, snapshots are not supported with temporary projects")
             return
 
@@ -584,9 +544,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QtWidgets.QMessageBox.warning(self, "Snapshots", "Sorry, snapshots can only be created when all nodes are stopped")
             return
 
-        dialog = SnapshotsDialog(self,
-                                 self._project.topologyFile(),
-                                 self._project.filesDir())
+        dialog = SnapshotsDialog(self, project.topologyFile(), project.filesDir())
         dialog.show()
         dialog.exec_()
 
@@ -690,7 +648,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when starting all the nodes.
         """
 
-        project = self.project()
+        project = self._project_manager.project()
         if project is not None:
             project.start_all_nodes()
 
@@ -699,7 +657,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when suspending all the nodes.
         """
 
-        project = self.project()
+        project = self._project_manager.project()
         if project is not None:
             project.suspend_all_nodes()
 
@@ -708,7 +666,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when stopping all the nodes.
         """
 
-        project = self.project()
+        project = self._project_manager.project()
         if project is not None:
             project.stop_all_nodes()
 
@@ -717,7 +675,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when reloading all the nodes.
         """
 
-        project = self.project()
+        project = self._project_manager.project()
         if project is not None:
             project.reload_all_nodes()
 
@@ -749,13 +707,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         vpcs_module = VPCS.instance()
-
-        if self._project.filesDir() is None:
+        if self._project_manager.project().filesDir() is None:
             QtWidgets.QMessageBox.critical(self, "VPCS", "Sorry, the project hasn't been initialized yet")
             return
 
         try:
-            working_dir = os.path.join(self._project.filesDir(), "project-files", "vpcs", "multi-host")
+            working_dir = os.path.join(self._project_manager.project().filesDir(), "project-files", "vpcs", "multi-host")
             os.makedirs(working_dir, exist_ok=True)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "VPCS", "Could not create the VPCS working directory: {}".format(e))
@@ -785,7 +742,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when inserting an image on the scene.
         """
 
-        files_dir = self._project.filesDir()
+        files_dir = self._project_manager.project().filesDir()
         if files_dir is None:
             QtWidgets.QMessageBox.critical(self, "Image", "Please create a node first")
             return
@@ -874,11 +831,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to open lab instructions.
         """
 
-        if self._project.temporary():
+        if self._project_manager.project().temporary():
             QtWidgets.QMessageBox.critical(self, "Lab instructions", "Sorry, lab instructions are not supported with temporary projects")
             return
 
-        project_dir = glob.escape(os.path.dirname(self._project.topologyFile()))
+        project_dir = glob.escape(os.path.dirname(self._project_manager.project().topologyFile()))
         instructions_files = glob.glob(project_dir + os.sep + "instructions.*")
         instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
         if len(instructions_files):
@@ -909,7 +866,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to display a window for exporting debug information
         """
 
-        dialog = ExportDebugDialog(self, self._project)
+        dialog = ExportDebugDialog(self, self._project_manager.project())
         dialog.show()
         dialog.exec_()
 
@@ -1020,20 +977,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to edit the README file
         """
 
-        if self._project.temporary():
+        project = self._project_manager.project()
+        if project.temporary():
             QtWidgets.QMessageBox.critical(self, "README", "Sorry, README file is not supported with temporary projects")
             return
 
-        log.debug("Opened %s", self._project.readmePathFile())
-        if not os.path.exists(self._project.readmePathFile()):
+        log.debug("Opened %s", project.readmePathFile())
+        if not os.path.exists(project.readmePathFile()):
             try:
-                with open(self._project.readmePathFile(), "w+") as f:
+                with open(project.readmePathFile(), "w+") as f:
                     f.write("Title: My lab\nAuthor: Grass Hopper <grass@hopper.com>\n\nThis lab is about...")
             except OSError as e:
-                QtWidgets.QMessageBox.critical(self, "README", "Could not create {}".format(self._project.readmePathFile()))
+                QtWidgets.QMessageBox.critical(self, "README", "Could not create {}".format(project.readmePathFile()))
                 return
-        if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + self._project.readmePathFile(), QtCore.QUrl.TolerantMode)) is False:
-            QtWidgets.QMessageBox.critical(self, "README", "Could not open {}".format(self._project.readmePathFile()))
+        if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + project.readmePathFile(), QtCore.QUrl.TolerantMode)) is False:
+            QtWidgets.QMessageBox.critical(self, "README", "Could not open {}".format(project.readmePathFile()))
 
     def keyPressEvent(self, event):
         """
@@ -1061,20 +1019,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         progress.setAllowCancelQuery(True)
         progress.setCancelButtonText("Force quit")
 
-        log.debug("Close the main Windows")
-
+        log.debug("Close the Main Window")
         self._analytics_client.sendScreenView("Main Window", session_start=False)
 
-        servers = Servers.instance()
-        if self._project.closed():
+        project = self._project_manager.project()
+        if project.closed():
             log.debug("Project is closed killing server and closing main windows")
             self._finish_application_closing(close_windows=False)
             event.accept()
             self.uiConsoleTextEdit.closeIO()
         elif not self._soft_exit or self.checkForUnsavedChanges():
             log.debug("Project is not closed asking for project closing")
-            self._project.project_closed_signal.connect(self._finish_application_closing)
-            self._project.close(local_server_shutdown=True)
+            project.project_closed_signal.connect(self._finish_application_closing)
+            project.close(local_server_shutdown=True)
             event.ignore()
         else:
             event.ignore()
@@ -1112,8 +1069,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         # check if any node is running
         topology = Topology.instance()
-        topology.project = self._project
-        running_node = False
+        topology.project = self._project_manager.project()
         for node in topology.nodes():
             if hasattr(node, "start") and node.status() == Node.started:
                 return True
@@ -1127,20 +1083,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         if self._nodeRunning():
-            QtWidgets.QMessageBox.warning(self, "Closing project", "A device is still running, please stop it before closing your project")
+            QtWidgets.QMessageBox.warning(self, "Closing project", "A node is still running, please stop it before closing your project")
             return False
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
-            if self._project.temporary():
+            project = self._project_manager.project()
+            if project.temporary():
                 destination_file = "untitled.gns3"
             else:
-                destination_file = os.path.basename(self._project.topologyFile())
+                destination_file = os.path.basename(project.topologyFile())
             reply = QtWidgets.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
                                                   QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Cancel)
             if reply == QtWidgets.QMessageBox.Save:
-                if self._project.temporary():
-                    return self.saveProjectAs()
-                return self.saveProject(self._project.topologyFile())
+                if project.temporary():
+                    return self._project_manager.saveProjectAs()
+                return self._project_manager.saveProject(project.topologyFile())
             elif reply == QtWidgets.QMessageBox.Cancel:
                 return False
         return True
@@ -1206,7 +1163,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 setup_wizard.exec_()
 
         self._analytics_client.sendScreenView("Main Window")
-        self._createTemporaryProject()
+        self._project_manager.createTemporaryProject()
         self.ready_signal.emit()
 
         if self._settings["check_for_update"]:
@@ -1224,225 +1181,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         if self._settings["auto_launch_project_dialog"] and self._first_file_load:
             self._project_dialog = NewProjectDialog(self, showed_from_startup=True)
-            self._project_dialog.accepted.connect(self._newProjectDialodAcceptedSlot)
+            self._project_dialog.accepted.connect(self._newProjectDialogAcceptedSlot)
             self._project_dialog.show()
 
-    def _newProjectDialodAcceptedSlot(self):
+    def _newProjectDialogAcceptedSlot(self):
         """
         Called when user accept the new project dialog
         """
         if self._project_dialog:
-            new_project_settings = self._project_dialog.getNewProjectSettings()
-            self._createNewProject(new_project_settings)
+            self._project_manager.createNewProject(self._project_dialog.getNewProjectSettings())
             self._project_dialog = None
 
-    def _running_nodes(self):
-        """
-        :returns: Return the list of running nodes
-        """
-        topology = Topology.instance()
-        running_nodes = []
-        for node in topology.nodes():
-            if hasattr(node, "start") and node.status() == Node.started:
-                running_nodes.append(node.name())
-        return running_nodes
-
-    def _isTopologyOnRemoteServer(self):
-        """
-        :returns: Boolean True if topology run on a remote server
-        """
-        topology = Topology.instance()
-        running_nodes = []
-        for node in topology.nodes():
-            if not node.server().isLocal():
-                return True
-        return False
-
-    def saveProjectAs(self):
-        """
-        Saves a project to another location/name.
-
-        :returns: GNS3 project file (.gns3)
-        """
-
-        if self._nodeRunning():
-            QtWidgets.QMessageBox.warning(self, "Save As", "All devices must be stopped before saving to another location")
-            return False
-
-        if self._isTopologyOnRemoteServer() and not self._project.temporary():
-            MessageBox(self, "Save project", "You can not use the save as function on a remote project for the moment.")
-            return
-
-        if self._project.temporary():
-            default_project_name = "untitled"
-        else:
-            default_project_name = self._project.name()
-
-        projects_dir_path = os.path.normpath(os.path.expanduser(self.projectsDirPath()))
-        file_dialog = QtWidgets.QFileDialog(self)
-        file_dialog.setWindowTitle("Save project")
-        file_dialog.setNameFilters(["Directories"])
-        file_dialog.setDirectory(projects_dir_path)
-        file_dialog.setFileMode(QtWidgets.QFileDialog.AnyFile)
-        file_dialog.setLabelText(QtWidgets.QFileDialog.FileName, "Project name:")
-        file_dialog.selectFile(default_project_name)
-        file_dialog.setOptions(QtWidgets.QFileDialog.ShowDirsOnly)
-        file_dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
-        if file_dialog.exec_() == QtWidgets.QFileDialog.Rejected:
-            return
-
-        project_dir = file_dialog.selectedFiles()[0]
-        project_name = os.path.basename(project_dir)
-        topology_file_path = os.path.join(project_dir, project_name + ".gns3")
-        old_topology_file_path = os.path.join(project_dir, default_project_name + ".gns3")
-
-        # create the destination directory for project files
-        try:
-            os.makedirs(project_dir, exist_ok=True)
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self, "Save project", "Could not create project directory {}: {}".format(project_dir, e))
-            return
-
-        if self._project.temporary():
-            # move files if saving from a temporary project
-            log.info("Moving project files from {} to {}".format(self._project.filesDir(), project_dir))
-            worker = ProcessFilesWorker(self._project.filesDir(), project_dir, move=True, skip_files=[".gns3_temporary"])
-            progress_dialog = ProgressDialog(worker, "Project", "Moving project files...", "Cancel", parent=self)
-        else:
-            # else, just copy the files
-            log.info("Copying project files from {} to {}".format(self._project.filesDir(), project_dir))
-            worker = ProcessFilesWorker(self._project.filesDir(), project_dir)
-            progress_dialog = ProgressDialog(worker, "Project", "Copying project files...", "Cancel", parent=self)
-        progress_dialog.show()
-        progress_dialog.exec_()
-
-        errors = progress_dialog.errors()
-        if errors:
-            errors = "\n".join(errors)
-            MessageBox(self, "Save project", "Errors detected while saving the project", errors, icon=QtWidgets.QMessageBox.Warning)
-
-        self._project.setName(project_name)
-        if self._project.temporary():
-            self._project.moveFromTemporaryToPath(project_dir)
-            return self.saveProject(topology_file_path)
-        else:
-            # We save the topology and use the standard restore process to reinitialize everything
-            self._project.setTopologyFile(topology_file_path)
-            self.saveProject(topology_file_path, random_id=True)
-
-            if os.path.exists(old_topology_file_path):
-                try:
-                    os.remove(old_topology_file_path)
-                except OSError as e:
-                    MessageBox(self, "Save project", "Errors detected while saving the project", str(e), icon=QtWidgets.QMessageBox.Warning)
-            return self.loadPath(topology_file_path)
-
-    def saveProject(self, path, random_id=False):
-        """
-        Saves a project.
-
-        :param path: path to project file
-        :param random_id: Randomize project and vm id (use for save as)
-        """
-
-        topology = Topology.instance()
-        topology.project = self._project
-        try:
-            self._project.commit()
-            topo = topology.dump(random_id=random_id)
-            log.info("Saving project: {}".format(path))
-            content = json.dumps(topo, sort_keys=True, indent=4)
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(content)
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self, "Save", "Could not save project to {}: {}".format(path, e))
-            return False
-
-        if self._settings["auto_screenshot"]:
-            self._createScreenshot(os.path.join(os.path.dirname(path), "screenshot.png"))
-        self.uiStatusBar.showMessage("Project saved to {}".format(path), 2000)
-        self._project.setTopologyFile(path)
-        self._setCurrentFile(path)
-
-        self._analytics_client.sendScreenView("Main Window")
-
-        return True
-
-    def _loadProject(self, path):
-        """
-        Loads a project into GNS3.
-
-        :param path: path to project file
-        """
-
-        self._project = Project()
-        self.uiGraphicsView.reset()
-        topology = Topology.instance()
-        try:
-            QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
-
-            extension = os.path.splitext(path)[1]
-            topology.loadFile(path, self._project)
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
-            # log.error("exception {type}".format(type=type(e)), exc_info=1)
-            self._createTemporaryProject()
-            return False
-        except ValueError as e:
-            QtWidgets.QMessageBox.critical(self, "Load", "Invalid or corrupted file: {}".format(e))
-            self._createTemporaryProject()
-            return False
-        finally:
-            QtWidgets.QApplication.restoreOverrideCursor()
-
-        self.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
-        self._setCurrentFile(path)
-        self._labInstructionsActionSlot(silent=True)
-
-        return True
-
-    def _createTemporaryProject(self):
-        """
-        Creates a temporary project.
-        """
-
-        if self._project:
-            self._project.close()
-        self._project = Project()
-        self._project.setTemporary(True)
-        self._project.setName("unsaved")
-        self.uiGraphicsView.reset()
-        self._setCurrentFile()
-
-    def isTemporaryProject(self):
-        """
-        Returns either this is a temporary project or not.
-
-        :returns: boolean
-        """
-
-        return self._project.temporary()
-
-    def _setCurrentFile(self, path=None):
-        """
-        Sets the current project file path.
-
-        :param path: path to project file
-        """
-
-        if not path:
-            self.setWindowFilePath("Unsaved project")
-            self.setWindowTitle("Unsaved project[*] - GNS3")
-        else:
-            path = os.path.normpath(path)
-            self.setWindowFilePath(path)
-            self.setWindowTitle("{path}[*] - GNS3".format(path=os.path.basename(path)))
-            self._updateRecentFileSettings(path)
-            self._updateRecentFileActions()
-
-        self.setWindowModified(False)
-
-    def _updateRecentFileSettings(self, path):
+    def updateRecentFileSettings(self, path):
         """
         Updates the recent file settings.
 
@@ -1467,7 +1217,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings["recent_files"] = recent_files
         self.setSettings(self._settings)
 
-    def _updateRecentFileActions(self):
+    def updateRecentFileActions(self):
         """
         Updates recent file actions.
         """
@@ -1501,38 +1251,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :returns: path to the default projects directory
         """
 
-        return Servers.instance().localServerSettings()["projects_path"]
-
-    @staticmethod
-    def instance():
-        """
-        Singleton to return only one instance of MainWindow.
-
-        :returns: instance of MainWindow
-        """
-
-        if not hasattr(MainWindow, "_instance"):
-            MainWindow._instance = MainWindow()
-        return MainWindow._instance
-
-    def project_created(self, project):
-        """
-        This slot is invoked when a project is created or opened
-
-        :param project: path to gns3 project file currently opened
-        """
-
-        if self._project.temporary():
-            # do nothing if project is temporary
-            return
-
-        try:
-            with open(project, encoding="utf-8") as f:
-                json_topology = json.load(f)
-                if not isinstance(json_topology, dict):
-                    raise ValueError("Not a GNS3 project")
-        except (OSError, ValueError) as e:
-            QtWidgets.QMessageBox.critical(self, "Project", "Could not read project: {}".format(e))
+        return ProjectManager.projectsDirPath()
 
     def run_later(self, counter, callback):
         """
@@ -1549,96 +1268,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to export a portable project
         """
 
-        running_nodes = self._running_nodes()
-        if running_nodes:
-            nodes = "\n".join(running_nodes)
-            MessageBox(self, "Export project", "Please stop the following nodes before exporting the project", nodes)
-            return
-
-        if self.testAttribute(QtCore.Qt.WA_WindowModified):
-            QtWidgets.QMessageBox.critical(self, "Export project", "Please save the project before exporting it")
-            return
-
-        if self._project.temporary():
-            QtWidgets.QMessageBox.critical(self, "Export project", "A temporary project cannot be exported")
-            return
-
-        topology = Topology.instance()
-        for node in topology.nodes():
-            if node.__class__.__name__ in ["VirtualBoxVM", "VMwareVM"]:
-                QtWidgets.QMessageBox.critical(self, "Export portable project" "A project containing VMware or VirtualBox VMs cannot be exported because the VMs are managed by these software.")
-                return
-
-        include_image_question = """Would you like to include any base image?
-
-The project will not require additional images to run on another host, however the resulting file will be much bigger.
-
-It is your responsability to check if you have the right to distribute the image(s) as part of the project.
-        """
-
-        reply = QtWidgets.QMessageBox.question(self, "Export project", include_image_question,
-                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-                                               QtWidgets.QMessageBox.No)
-        include_images = int(reply == QtWidgets.QMessageBox.Yes)
-
-        if not os.path.exists(self._project.readmePathFile()):
-            text, ok = QtWidgets.QInputDialog.getMultiLineText(self, "Export project",
-                                                               "Please provide a description for the project, especially if you want to share it. \nThe description will be saved in README.txt inside the project file",
-                                                               "Project title\n\nAuthor: Grace Hopper <grace@hopper.com>\n\nThis project is about...")
-            if not ok:
-                return
-            try:
-                with open(self._project.readmePathFile(), 'w+') as f:
-                    f.write(text)
-            except OSError as e:
-                QtWidgets.QMessageBox.critical(self, "Export project", "Could not create {}: {}".format(self._project.readmePathFile(), e))
-                return
-
-        for server in self._project.servers():
-            if not server.isLocal() and not server.isGNS3VM():
-                QtWidgets.QMessageBox.critical(self, "Export project", "Projects running on a remote server cannot be exported. Only projects running locally or in the GNS3 VM are supported.")
-                return
-
-        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-        if len(directory) == 0:
-            directory = self.projectsDirPath()
-
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export portable project", directory,
-                                                        "GNS3 Portable Project (*.gns3project *.gns3p)",
-                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
-        if path is None or len(path) == 0:
-            return
-
-        if not path.endswith(".gns3project") or not path.endswith(".gns3p"):
-            path += ".gns3project"
-
-        try:
-            open(path, 'wb+').close()
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self, "Export project", "Could not write {}: {}".format(path, e))
-            return
-
-        export_worker = ExportProjectWorker(self._project, path, include_images)
-        progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self)
-        progress_dialog.show()
-        progress_dialog.exec_()
+        self._project_manager.exportProject()
 
     def _importProjectActionSlot(self):
         """
         Slot called to import a portable project
         """
 
-        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-        if len(directory) == 0:
-            directory = self.projectsDirPath()
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                        "Import project",
-                                                        directory,
-                                                        "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
-                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
-        if not path:
-            return
-        self.loadPath(path)
+        self._project_manager.importProject()
 
     def _setStyle(self, style_name):
         """
@@ -1654,3 +1291,15 @@ It is your responsability to check if you have the right to distribute the image
             style.setClassicStyle()
         else:
             style.setLegacyStyle()
+
+    @staticmethod
+    def instance():
+        """
+        Singleton to return only one instance of MainWindow.
+
+        :returns: instance of MainWindow
+        """
+
+        if not hasattr(MainWindow, "_instance"):
+            MainWindow._instance = MainWindow()
+        return MainWindow._instance

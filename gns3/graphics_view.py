@@ -1119,7 +1119,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     item.node().importConfigFromDirectory(path)
         else:
             if not self._import_config_dir:
-                self._import_config_dir = self._main_window.project().filesDir()
+                self._import_config_dir = self._main_window.projectManager().project().filesDir()
 
             item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):
@@ -1189,7 +1189,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     item.node().exportConfigToDirectory(path)
         else:
             if not self._export_config_dir:
-                self._export_config_dir = self._main_window.project().filesDir()
+                self._export_config_dir = self._main_window.projectManager().project().filesDir()
 
             item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):
@@ -1524,7 +1524,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if server is None:
                 return
 
-            node = node_module.createNode(node_class, server, self._main_window.project())
+            node = node_module.createNode(node_class, server, self._main_window.projectManager().project())
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)

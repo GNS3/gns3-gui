@@ -608,7 +608,7 @@ class Topology:
 
         from .main_window import MainWindow
         main_window = MainWindow.instance()
-        main_window.setProject(self._project)
+        main_window.projectManager().setProject(self._project)
         view = main_window.uiGraphicsView
 
         topology_file_errors = []
