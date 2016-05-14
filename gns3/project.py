@@ -391,7 +391,7 @@ class Project(QtCore.QObject):
     def _event_received(self, result, server=None, **kwargs):
 
         log.debug("Event received: %s", result)
-        if result["action"] in ["node.started", "node.stopped"]:
+        if result["action"] in ("node.started", "node.stopped", "node.suspended"):
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
                 if result["action"] == "node.started":
