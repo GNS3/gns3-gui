@@ -72,8 +72,6 @@ class PacketCapture:
             self._autostart[link] = dialog.commandAutoStart()
             link.startCapture(dialog.dataLink(), dialog.fileName() + ".pcap")
 
-
-
     def _updatedLinkSlot(self, link_id):
         link = self.topology().getLink(link_id)
 
@@ -120,7 +118,7 @@ class PacketCapture:
         capture_file_path = link.capture_file_path()
 
         if not os.path.isfile(capture_file_path):
-            log.error("The %s capture file does not exist on this host".format(capture_file_path))
+            log.error("The {} capture file does not exist on this host".format(capture_file_path))
 
         if link in self._tail_process and self._tail_process[link].poll() is None:
             self._tail_process[link].kill()
