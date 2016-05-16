@@ -391,14 +391,14 @@ class Project(QtCore.QObject):
     def _event_received(self, result, server=None, **kwargs):
 
         log.debug("Event received: %s", result)
-        if result["action"] in ("node.started", "node.stopped", "node.suspended"):
+        if result["action"] == "node.updated":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
-                if result["action"] == "node.started":
+                if result["event"]["status"] == "started":
                     node.setStatus(Node.started)
-                elif result["action"] == "node.stopped":
+                elif result["event"]["status"] == "stopped":
                     node.setStatus(Node.stopped)
-                elif result["action"] == "node.suspended":
+                elif result["event"]["status"] == "suspended":
                     node.setStatus(Node.suspended)
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
