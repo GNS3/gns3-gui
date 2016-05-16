@@ -140,13 +140,14 @@ class DockerVMConfigurationPage(
 
         if not group:
             adapters = self.uiAdapterSpinBox.value()
-            if settings["adapters"] != adapters:
-                # check if the adapters settings have changed
-                node_ports = node.ports()
-                for node_port in node_ports:
-                    if not node_port.isFree():
-                        QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
-                        raise ConfigurationError()
+            if node:
+                if settings["adapters"] != adapters:
+                    # check if the adapters settings have changed
+                    node_ports = node.ports()
+                    for node_port in node_ports:
+                        if not node_port.isFree():
+                            QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
+                            raise ConfigurationError()
 
             settings["adapters"] = adapters
 
