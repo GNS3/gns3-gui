@@ -675,13 +675,14 @@ class Topology:
                     server_id = topology_server.pop("id")
                     self._servers[server_id] = server_manager.findRemoteServer(protocol, host, port, user, topology_server)
 
-                    reply = QtWidgets.QMessageBox.warning(main_window,
-                                                          "Remote server not found",
-                                                          "Remote server {}://{}:{} doesn't exist in your preferences, do you want to select another server?\n\nIt is recommended to backup your project first.".format(protocol, host, port),
-                                                          QtWidgets.QMessageBox.Yes,
-                                                          QtWidgets.QMessageBox.No)
-                    if reply == QtWidgets.QMessageBox.Yes:
-                        self._servers[server_id] = server_select(main_window)
+                    if self._servers[server_id] is None:
+                        reply = QtWidgets.QMessageBox.warning(main_window,
+                                                              "Remote server not found",
+                                                              "Remote server {}://{}:{} doesn't exist in your preferences, do you want to select another server?\n\nIt is recommended to backup your project first.".format(protocol, host, port),
+                                                              QtWidgets.QMessageBox.Yes,
+                                                              QtWidgets.QMessageBox.No)
+                        if reply == QtWidgets.QMessageBox.Yes:
+                            self._servers[server_id] = server_select(main_window)
 
                     if self._servers[server_id] is None:
                         # The user has not changed the server, let's create the server from the topology
