@@ -174,10 +174,6 @@ class Node(BaseNode):
             else:
                 body["properties"][key] = value
 
-        # FIXME: review this
-        if "console" in params and "console_type" not in body:
-            body["console_type"] = "telnet"
-
         return body
 
     def _create(self, params, timeout=120):

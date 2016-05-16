@@ -51,7 +51,6 @@ def test_docker_vm_setup(project, local_server):
                                 body={
                                     "compute_id": "local",
                                     "node_type": "docker",
-                                    "console_type": "telnet",
                                     "properties": {
                                         "adapters": 1,
                                         "image": "ubuntu",
@@ -118,6 +117,7 @@ def test_load(project, local_server):
         "properties": {
             "adapters": 1,
             "console": 6000,
+            "console_type": "telnet",
             "image": "mysql:latest",
             "name": "mysql:latest-1",
             "start_command": "/bin/ls"

@@ -39,7 +39,6 @@ def test_virtualbox_vm_setup(virtualbox_vm, project):
                                     'name': 'VMNAME',
                                     'compute_id': 'local',
                                     'node_type': 'virtualbox',
-                                    'console_type': 'telnet',
                                     'properties': {
                                         'linked_clone': False,
                                         'vmname': 'VMNAME'
@@ -73,7 +72,7 @@ def test_update(virtualbox_vm):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=virtualbox_vm.node_id())
-        assert kwargs["body"] == new_settings
+        assert kwargs["body"] == {'compute_id': 'local', 'node_type': 'virtualbox', 'properties': {}, 'name': 'VBOX2'}
 
         # Callback
         args[1]({"name": "VBOX2"})

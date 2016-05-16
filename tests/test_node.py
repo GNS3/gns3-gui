@@ -34,7 +34,6 @@ def test_create(vpcs_device, local_server):
         assert kwargs["body"] == {
             "name": "PC 1",
             "compute_id": local_server.server_id(),
-            "console_type": "telnet",
             "node_type": "vpcs",
             "properties": {
                 "startup_script": "echo TEST"

@@ -41,7 +41,6 @@ def test_qemu_vm_setup(qemu_vm, project):
                                         'linked_clone': True,
                                         'qemu_path': '/bin/fake'
                                     },
-                                    'console_type': 'telnet',
                                     'compute_id': 'local',
                                     'node_type': 'qemu'
                                 },
@@ -75,7 +74,6 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
                                         'linked_clone': True,
                                         'qemu_path': '/bin/fake'
                                     },
-                                    'console_type': 'telnet',
                                     'compute_id': 'local',
                                     'node_type': 'qemu'
                                 },
@@ -111,8 +109,7 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
                                         'qemu_path': '/bin/fake'
                                     },
                                     'compute_id': 'local',
-                                    'node_type': 'qemu',
-                                    'console_type': 'telnet'
+                                    'node_type': 'qemu'
                                 },
                                 context={},
                                 timeout=120)
@@ -144,7 +141,7 @@ def test_update(qemu_vm):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=qemu_vm.node_id())
-        assert kwargs["body"] == new_settings
+        assert kwargs["body"] == {'compute_id': 'local', 'name': 'QEMU2', 'node_type': 'qemu', 'properties': {}}
 
         # Callback
         args[1]({"name": "QEMU2"})

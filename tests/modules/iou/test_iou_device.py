@@ -64,7 +64,6 @@ def test_iou_device_setup(iou_device, project, fake_iourc):
                                           'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
                                       },
                                       'node_type': 'iou',
-                                      'console_type': 'telnet',
                                       'compute_id': 'local'
                                 },
                                 context={},
@@ -127,7 +126,6 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
                                           'path': '/tmp/iou.bin',
                                           'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
                                       },
-                                      'console_type': 'telnet',
                                       'node_type': 'iou',
                                       'node_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'compute_id': 'local'
@@ -172,7 +170,6 @@ def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_
                                           'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n',
                                           'startup_config_content': 'hostname %h'
                                       },
-                                      'console_type': 'telnet',
                                       'node_type': 'iou',
                                       'node_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'compute_id': 'local'
@@ -193,7 +190,7 @@ def test_update(iou_device):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=iou_device.node_id())
-        assert kwargs["body"] == new_settings
+        assert kwargs["body"] == {'name': 'Unreal IOU', 'compute_id': 'local', 'node_type': 'iou', 'properties': {}}
 
         # Callback
         args[1]({"properties": {}})
@@ -217,7 +214,7 @@ def test_update_startup_config(iou_device, tmpdir):
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=iou_device.node_id())
         assert kwargs["body"]["name"] == "Unreal IOU"
-        assert kwargs["body"]["startup_config_content"] == "hostname %h"
+        assert kwargs["body"]["properties"]["startup_config_content"] == "hostname %h"
 
         # Callback
         args[1]({"properties": {}})

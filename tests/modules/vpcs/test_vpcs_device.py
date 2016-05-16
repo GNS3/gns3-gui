@@ -40,7 +40,6 @@ def test_vpcs_device_setup(vpcs_device, project, local_server):
             "name": "PC 1",
             "compute_id": local_server.server_id(),
             "node_type": "vpcs",
-            "console_type": "telnet",
             "properties": {
                 "startup_script": "echo TEST"
             }
@@ -77,7 +76,6 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
             "name": "PC 1",
             "compute_id": local_server.server_id(),
             "node_type": "vpcs",
-            "console_type": "telnet",
             "properties": {}
         }
 
@@ -117,7 +115,6 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
             "name": "PC 1",
             "compute_id": local_server.server_id(),
             "node_type": "vpcs",
-            "console_type": "telnet",
             "properties": {}
         }
 
@@ -190,7 +187,7 @@ def test_update(vpcs_device):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=vpcs_device.node_id())
-        assert kwargs["body"] == new_settings
+        assert kwargs["body"] == {'name': 'Unreal VPCS', 'compute_id': 'local', 'node_type': 'vpcs', 'properties': {}}
 
         # Callback
         args[1]({"startup_script": "echo TEST", "name": "Unreal VPCS"})
@@ -210,4 +207,6 @@ def test_importConfig(vpcs_device, tmpdir):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=vpcs_device.node_id())
-        assert kwargs["body"] == {"startup_script": content}
+        assert kwargs["body"] == {'compute_id': 'local',
+              'node_type': 'vpcs',
+              'properties': {'startup_script': 'echo TEST'}}
