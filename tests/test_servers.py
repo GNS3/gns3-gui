@@ -115,6 +115,18 @@ def test_getRemoteServer():
     assert http_server.user() is None
 
 
+def test_getRemoteServerWithRamLimit():
+    """
+    Should ignore ram limit
+    """
+    servers = Servers.instance()
+    http_server = servers.getRemoteServer("http", "localhost", 3080, None, {"ram_limit": 0})
+    assert http_server.protocol() == "http"
+    assert http_server.host() == "localhost"
+    assert http_server.port() == 3080
+    assert http_server.user() is None
+
+
 def test_getServerFromString():
 
     servers = Servers.instance()

@@ -48,7 +48,6 @@ except ImportError:
 QtCore.Signal = QtCore.pyqtSignal
 QtCore.Slot = QtCore.pyqtSlot
 QtCore.Property = QtCore.pyqtProperty
-QtCore.BINDING_VERSION_STR = QtCore.PYQT_VERSION_STR
 
 from PyQt5.QtWidgets import QFileDialog as OldFileDialog
 

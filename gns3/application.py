@@ -32,10 +32,11 @@ class Application(QtWidgets.QApplication):
     def __init__(self, argv):
 
         self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
-        if parse_version(QtCore.BINDING_VERSION_STR) >= parse_version("5.6"):
+        # both Qt and PyQt must be version >= 5.6 in order to enable high DPI scaling
+        if parse_version(QtCore.QT_VERSION_STR) >= parse_version("5.6") and parse_version(QtCore.PYQT_VERSION_STR) >= parse_version("5.6"):
             # only available starting Qt version 5.6
             self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
-        self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
+            self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
         super().__init__(argv)
 
@@ -44,8 +45,6 @@ class Application(QtWidgets.QApplication):
         self.setOrganizationDomain("gns3.net")
         self.setApplicationName("GNS3")
         self.setApplicationVersion(__version__)
-
-
 
         # File path if we have received the path to
         # a file on system via an OSX event

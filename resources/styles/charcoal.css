@@ -6,9 +6,12 @@ QToolBar {
     border:0px;
 }
 
-QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QListWidget, QLineEdit, QSpinBox, QComboBox {background-color: #dedede}
-QLabel, QMenu, QStatusBar, QRadioButton, QCheckBox {
-    color: #dedede
+QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QListWidget, QLineEdit, QSpinBox, QComboBox {
+  background-color: #dedede
+}
+
+QLabel, QMenu, QStatusBar {
+  color: #dedede;
 }
 
 QMenuBar::item {
@@ -35,7 +38,10 @@ QAbstractScrollArea::corner {
     background: #535353;
 }
 
-QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {background: none}
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal, QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+  background: none
+}
+
 QComboBox {
     selection-color: black;
     selection-background-color: #dedede;
@@ -53,3 +59,12 @@ QDockWidget, QMenuBar, QPushButton, QToolButton, QTabWidget, QHeaderView::sectio
 QTabBar {
     color: #dedede;
 }
+
+QRadioButton, QCheckBox {
+  color: #dedede
+}
+
+QRadioButton::disabled, QCheckBox::disabled {
+  color: gray;
+}
+

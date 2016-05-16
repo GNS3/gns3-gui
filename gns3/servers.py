@@ -766,6 +766,11 @@ class Servers(QtCore.QObject):
         settings['protocol'] = protocol
         settings['host'] = host
         settings['port'] = port
+
+        # Feature dropped in 1.5
+        if 'ram_limit' in settings:
+            del settings['ram_limit']
+
         return self._addRemoteServer(**settings)
 
     def getServerFromString(self, server_name):
