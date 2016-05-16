@@ -108,7 +108,7 @@ class Node(BaseNode):
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
         if self._node_id and self._server.connected():
-            self.controllerHttpDelete("/{prefix}/nodes/{node_id}".format(prefix=self.URL_PREFIX, node_id=self._node_id), self._deleteCallback)
+            self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
