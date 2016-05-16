@@ -411,7 +411,7 @@ class Dynamips(Module):
         :returns: list of classes
         """
 
-        return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EtherSwitchRouter, EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]
+        return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EtherSwitchRouter, EthernetSwitch, FrameRelaySwitch, ATMSwitch]
 
     def nodes(self):
         """
@@ -420,7 +420,7 @@ class Dynamips(Module):
         """
 
         nodes = []
-        for node_class in [EthernetSwitch, EthernetHub, FrameRelaySwitch, ATMSwitch]:
+        for node_class in [EthernetSwitch, FrameRelaySwitch, ATMSwitch]:
             nodes.append(
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),

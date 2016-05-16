@@ -1071,7 +1071,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.project = self._project_manager.project()
         for node in topology.nodes():
-            if hasattr(node, "start") and node.status() == Node.started:
+            if not node.isAlwaysOn() and node.status() == Node.started:
                 return True
         return False
 

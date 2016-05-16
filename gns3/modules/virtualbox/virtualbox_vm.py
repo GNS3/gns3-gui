@@ -100,7 +100,7 @@ class VirtualBoxVM(Node):
 
         :param vmname: VM name in VirtualBox
         :param name: optional name
-        :param node_id: VM identifier
+        :param node_id: Node identifier
         :param linked_clone: either the VM is a linked clone
         :param additional_settings: additional settings for this VM
         """
@@ -256,7 +256,6 @@ class VirtualBoxVM(Node):
         """
 
         vbox_vm = super().dump()
-        vbox_vm["node_id"] = self._node_id
         vbox_vm["linked_clone"] = self._linked_clone
         vbox_vm["port_name_format"] = self._port_name_format
 

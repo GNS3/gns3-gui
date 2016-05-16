@@ -113,8 +113,7 @@ class DockerVM(Node):
             self.loaded_signal.emit()
         else:
             self.setInitialized(True)
-            log.info(
-                "Docker container {} has been created".format(self.name()))
+            log.info("Docker container {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
@@ -179,8 +178,6 @@ class DockerVM(Node):
         :returns: representation of the node (dictionary)
         """
         docker = super().dump()
-        docker["id"] = self.id()
-        docker["node_id"] = self._node_id
 
         # add the properties
         for name, value in self._settings.items():
@@ -210,8 +207,7 @@ class DockerVM(Node):
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state
-           )
+           state=state)
 
         port_info = ""
         for port in self._ports:

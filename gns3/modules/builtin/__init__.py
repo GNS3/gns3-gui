@@ -23,6 +23,7 @@ from gns3.qt import QtWidgets
 from ..module import Module
 from .cloud import Cloud
 from .host import Host
+from .ethernet_hub import EthernetHub
 
 
 import logging
@@ -136,7 +137,7 @@ class Builtin(Module):
         :returns: list of classes
         """
 
-        return [Cloud, Host]
+        return [Cloud, Host, EthernetHub]
 
     def nodes(self):
         """

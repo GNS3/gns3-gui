@@ -65,7 +65,7 @@ class VPCSDevice(Node):
         Setups this VPCS device.
 
         :param name: optional name
-        :param node_id: VM identifier
+        :param node_id: Node identifier
         :param additional_settings: additional settings for this device
         """
 
@@ -215,7 +215,6 @@ class VPCSDevice(Node):
         """
 
         vpcs_device = super().dump()
-        vpcs_device["node_id"] = self._node_id
 
         # add the properties
         for name, value in self._settings.items():

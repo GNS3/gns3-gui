@@ -72,7 +72,7 @@ class ProjectManager(QtCore.QObject):
         topology = Topology.instance()
         running_nodes = []
         for node in topology.nodes():
-            if hasattr(node, "start") and node.status() == Node.started:
+            if not node.isAlwaysOn() and node.status() == Node.started:
                 running_nodes.append(node.name())
         return running_nodes
 

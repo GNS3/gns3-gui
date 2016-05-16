@@ -122,7 +122,7 @@ class QemuVM(Node):
         Setups this QEMU VM.
 
         :param name: optional name
-        :param node_id: VM identifier
+        :param node_id: Node identifier
         """
 
         # let's create a unique name if none has been chosen
@@ -230,28 +230,6 @@ class QemuVM(Node):
             log.info("QEMU VM {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
-    def reload(self):
-        """
-        Reloads this QEMU VM instance.
-        """
-
-        log.debug("{} is being reloaded".format(self.name()))
-        self.httpPost("/qemu/nodes/{node_id}/reload".format(node_id=self._node_id), self._reloadCallback)
-
-    def _reloadCallback(self, result, error=False, **kwargs):
-        """
-        Callback for reload.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while reloading {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has reloaded".format(self.name()))
-
     def dump(self):
         """
         Returns a representation of this QEMU VM instance.
@@ -261,7 +239,6 @@ class QemuVM(Node):
         """
 
         qemu_vm = super().dump()
-        qemu_vm["node_id"] = self._node_id
         qemu_vm["linked_clone"] = self._linked_clone
         qemu_vm["port_name_format"] = self._port_name_format
 

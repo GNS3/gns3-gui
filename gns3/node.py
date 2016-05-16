@@ -37,6 +37,15 @@ class Node(BaseNode):
         self._node_directory = None
         self._command_line = None
 
+    def isAlwaysOn(self):
+        """
+        Whether the node is always on.
+
+        :returns: boolean
+        """
+
+        return False
+
     def consoleCommand(self, console_type=None):
         """
         :returns: The console command for this host
@@ -157,7 +166,7 @@ class Node(BaseNode):
                 "compute_id": self._server.server_id()}
 
         # We have two kind of properties. The general properties common to all
-        # node and the specific that we need to put in the properties field
+        # nodes and the specific that we need to put in the properties field
         node_general_properties = ("name", "node_id", "console", "console_type")
         for key, value in params.items():
             if key in node_general_properties:
@@ -165,8 +174,10 @@ class Node(BaseNode):
             else:
                 body["properties"][key] = value
 
-        if "console_type" not in body:
+        # FIXME: review this
+        if "console" in params and "console_type" not in body:
             body["console_type"] = "telnet"
+
         return body
 
     def _create(self, params, timeout=120):
@@ -182,7 +193,7 @@ class Node(BaseNode):
         """
         log.debug("{} is updating settings: {}".format(self.name(), params))
         body = self._prepareBody(params)
-        self.controllerHttpPut("/nodes/{node_id}".format(project_id=self._project.id(), node_id=self._node_id), self._updateCallback, body=params, timeout=timeout)
+        self.controllerHttpPut("/nodes/{node_id}".format(project_id=self._project.id(), node_id=self._node_id), self._updateCallback, body=body, timeout=timeout)
 
     def _setupNodeCallback(self, result, error=False, **kwargs):
         """
@@ -340,7 +351,7 @@ class Node(BaseNode):
         """
 
         if error:
-            log.error("error while suspending {}: {}".format(self.name(), result["message"]))
+            log.error("error while reloading {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
             log.info("{} has reloaded".format(self.name()))
@@ -375,7 +386,6 @@ class Node(BaseNode):
         except UnicodeDecodeError as e:
             self.error_signal.emit(self.id(), "Invalid configuration file {}: {}".format(config_path, e))
             return None
-        return ""
 
     def dump(self):
         """
@@ -390,7 +400,8 @@ class Node(BaseNode):
             "type": self.__class__.__name__,
             "description": str(self),
             "properties": {},
-            "server_id": self._server.id()
+            "server_id": self._server.id(),
+            "node_id": self.node_id(),
         }
 
         # add the ports

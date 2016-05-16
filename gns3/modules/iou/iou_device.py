@@ -318,7 +318,6 @@ class IOUDevice(Node):
         """
 
         iou = super().dump()
-        iou["node_id"] = self._node_id
 
         # add the properties
         for name, value in self._settings.items():

@@ -106,7 +106,7 @@ class VMwareVM(Node):
 
         :param vmx_path: path to the vmx file
         :param name: optional name
-        :param node_id: VM identifier
+        :param node_id: Node identifier
         :param linked_clone: either the VM is a linked clone
         :param additional_settings: additional settings for this VM
         """
@@ -263,7 +263,6 @@ class VMwareVM(Node):
         """
 
         vmware_vm = super().dump()
-        vmware_vm["node_id"] = self._node_id
         vmware_vm["linked_clone"] = self._linked_clone
         vmware_vm["port_name_format"] = self._port_name_format
 

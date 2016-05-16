@@ -220,7 +220,7 @@ class Router(Node):
         :param image: IOS image path
         :param ram: amount of RAM
         :param name: optional name for this router
-        :param node_id: VM identifier on the server
+        :param node_id: Node identifier on the server
         :param dynamips_id: Dynamips identifier on the server
         :param additional_settings: other additional and not mandatory settings
         """
@@ -564,7 +564,6 @@ class Router(Node):
         """
 
         router = super().dump()
-        router["node_id"] = self._node_id
         router["dynamips_id"] = self._dynamips_id
 
         # add the properties
