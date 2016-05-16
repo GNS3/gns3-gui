@@ -433,7 +433,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if not project.filesDir():
                 QtWidgets.QMessageBox.critical(self, "Project", "Sorry, no project has been created or initialized")
                 return
-            return self.saveProject(project.topologyFile())
+            return self._project_manager.saveProject(project.topologyFile())
 
     def _saveProjectAsActionSlot(self):
         """
