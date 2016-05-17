@@ -493,3 +493,12 @@ https://github.com/allanlei/python-zipstream/blob/master/LICENSE
 
 Source code is available here:
 https://pypi.python.org/pypi/zipstream
+
+
+Licence notice for aiohttp_cors
+-------------------------------
+Copyright 2015 Vladimir Rutsky <vladimir@rutsky.org>.
+
+Licensed under the Apache License, Version 2.0, see LICENSE file for details.
+
+https://github.com/aio-libs/aiohttp_cors
