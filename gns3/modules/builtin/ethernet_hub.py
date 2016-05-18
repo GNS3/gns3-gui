@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import uuid
 from gns3.node import Node
 from gns3.ports.ethernet_port import EthernetPort
 
@@ -33,42 +34,33 @@ class EthernetHub(Node):
     URL_PREFIX = "ethernet_hub"
 
     def __init__(self, module, server, project):
-        super().__init__(module, server, project)
 
-        log.info("Ethernet hub instance is being created")
+        super().__init__(module, server, project)
         self.setStatus(Node.started)  # this is an always-on node
         self._ports = []
         self._settings = {"name": "",
                           "ports": []}
 
-        # port_name = EthernetPort.longNameType() + str(0)
-        # short_name = EthernetPort.shortNameType() + str(0)
-        #
-        # # VPCS devices have only one fixed Ethernet port
-        # port = EthernetPort(port_name)
-        # port.setShortName(short_name)
-        # port.setAdapterNumber(0)
-        # port.setPortNumber(0)
-        # self._ports.append(port)
-        # log.debug("port {} has been added".format(port_name))
-
     def isAlwaysOn(self):
+        """
+        Indicates that this node is always running and cannot be stopped.
+
+        :returns: boolean
+        """
 
         return True
 
-    #def setup(self, name=None, node_id=None, additional_settings={}, default_name_format="Hub{0}"):
-    def setup(self, name=None, device_id=None, initial_ports=[]):
+    def setup(self, name=None, node_id=None, initial_ports=[], default_name_format="Hub{0}"):
         """
         Setups this hub.
 
         :param name: optional name for this hub
-        :param device_id: device identifier on the server
         :param initial_ports: ports to automatically be added when creating this hub
         """
 
         # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName("HUB")
+            name = self.allocateName(default_name_format)
 
         if not name:
             self.error_signal.emit(self.id(), "could not allocate a name for this Ethernet hub")
@@ -85,6 +77,7 @@ class EthernetHub(Node):
         # add the initial ports
         for initial_port in initial_ports:
             port = EthernetPort(initial_port["name"])
+            port.setAdapterNumber(0)  # adapter number is always 0
             port.setPortNumber(initial_port["port_number"])
             if "id" in initial_port:
                 port.setId(initial_port["id"])
@@ -93,10 +86,9 @@ class EthernetHub(Node):
             self._settings["ports"].append(port.portNumber())
 
         params = {"name": name}
-        if device_id:
-            params["device_id"] = device_id
+        if node_id:
+            params["node_id"] = node_id
         self._create(params)
-        #self.httpPost("/dynamips/devices", self._setupCallback, body=params)
 
     def _setupCallback(self, result, error=False, **kwargs):
         """
@@ -179,25 +171,6 @@ class EthernetHub(Node):
             log.info("{} has been updated".format(self.name()))
             self.updated_signal.emit()
 
-    def addNIO(self, port, nio):
-        """
-        Adds a new NIO on the specified port for this Ethernet hub.
-
-        :param port: Port instance
-        :param nio: NIO instance
-        """
-
-        params = {}
-        params["nio"] = self.getNIOInfo(nio)
-        log.debug("{} is adding an {}: {}".format(self.name(), nio, params))
-        self.httpPost("/{prefix}/devices/{device_id}/ports/{port}/nio".format(
-            port=port.portNumber(),
-            prefix=self.URL_PREFIX,
-            device_id=self._device_id),
-            self._addNIOCallback,
-            context={"port_id": port.id()},
-            body=params)
-
     def info(self):
         """
         Returns information about this Ethernet hub.
@@ -208,7 +181,6 @@ class EthernetHub(Node):
         info = """Ethernet hub {name} is always-on
       Local node ID is {id}
       Server's node ID is {node_id}
-      Hardware is Dynamips emulated simple Ethernet hub
       Hub's server runs on {host}:{port}
     """.format(name=self.name(),
                id=self.id(),
@@ -234,19 +206,8 @@ class EthernetHub(Node):
         :returns: representation of the node (dictionary)
         """
 
-        hub = {"id": self.id(),
-               "device_id": self._device_id,
-               "type": self.__class__.__name__,
-               "description": str(self),
-               "properties": {"name": self.name()},
-               "server_id": self._server.id()}
-
-        # add the ports
-        if self._ports:
-            ports = hub["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
-
+        hub = super().dump()
+        hub["properties"]["name"] = self.name()
         return hub
 
     def load(self, node_info):
@@ -260,9 +221,8 @@ class EthernetHub(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
 
-        # pre-1.3 projects have no device id, set to 1 to have
-        # a proper project conversion on the server side
-        device_id = node_info.get("device_id", 1)
+        # Ethernet hubs do not have an UUID before version 2.0
+        node_id = settings.get("node_id", str(uuid.uuid4()))
 
         # create the ports with the correct port numbers and IDs
         ports = []
@@ -271,7 +231,7 @@ class EthernetHub(Node):
 
         log.info("Ethernet hub {} is loading".format(name))
         self.setName(name)
-        self.setup(name, device_id, ports)
+        self.setup(name, node_id, ports)
 
     def name(self):
         """
