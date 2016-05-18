@@ -184,11 +184,11 @@ class ProjectManager(QtCore.QObject):
             QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
             topology.loadFile(path, self._project)
         except OSError as e:
-            QtWidgets.QMessageBox.critical(self, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
+            QtWidgets.QMessageBox.critical(self._main_window, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
             self.createTemporaryProject()
             return False
         except ValueError as e:
-            QtWidgets.QMessageBox.critical(self, "Load", "Invalid or corrupted file: {}".format(e))
+            QtWidgets.QMessageBox.critical(self._main_window, "Load", "Invalid or corrupted file: {}".format(e))
             self.createTemporaryProject()
             return False
         finally:
@@ -210,7 +210,7 @@ class ProjectManager(QtCore.QObject):
             return False
 
         if self._isProjectOnRemoteServer() and not self._project.temporary():
-            MessageBox(self, "Save project", "You can not use the save as function on a remote project for the moment.")
+            MessageBox(self._main_window, "Save project", "You can not use the save as function on a remote project for the moment.")
             return
 
         if self._project.temporary():
@@ -219,7 +219,7 @@ class ProjectManager(QtCore.QObject):
             default_project_name = self._project.name()
 
         projects_dir_path = os.path.normpath(os.path.expanduser(self.projectsDirPath()))
-        file_dialog = QtWidgets.QFileDialog(self)
+        file_dialog = QtWidgets.QFileDialog(self._main_window)
         file_dialog.setWindowTitle("Save project")
         file_dialog.setNameFilters(["Directories"])
         file_dialog.setDirectory(projects_dir_path)

@@ -419,7 +419,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path = self._open_project_path
         if self._project_manager.loadProject(path):
             self._labInstructionsActionSlot(silent=True)
-            self.project_new_signal.emit(path)
+            self._project_manager.project_new_signal.emit(path)
 
     def _saveProjectActionSlot(self):
         """
@@ -428,7 +428,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         project = self._project_manager.project()
         if project.temporary():
-            return self.saveProjectAs()
+            return self._project_manager.saveProjectAs()
         else:
             if not project.filesDir():
                 QtWidgets.QMessageBox.critical(self, "Project", "Sorry, no project has been created or initialized")

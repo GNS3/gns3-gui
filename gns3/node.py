@@ -391,7 +391,7 @@ class Node(BaseNode):
         :returns: representation of the node (dictionary)
         """
 
-        device = {
+        node = {
             "id": self.id(),
             "type": self.__class__.__name__,
             "description": str(self),
@@ -406,7 +406,7 @@ class Node(BaseNode):
             # https://github.com/GNS3/gns3-gui/issues/992
             initialized_port_name = set()
 
-            ports = device["ports"] = []
+            ports = node["ports"] = []
             for port in self._ports:
                 if port.name() in initialized_port_name:
                     msg = "Duplicate port name {} in {}.".format(port.name(), self.name())
@@ -415,7 +415,7 @@ class Node(BaseNode):
                     ports.append(port.dump())
                     initialized_port_name.add(port.name())
 
-        return device
+        return node
 
     def load(self, node_info):
         """

@@ -52,6 +52,7 @@ class Project(QtCore.QObject):
         self._images_dir = None
         self._name = "untitled"
         self._project_instances.add(self)
+        self._created_servers = set()
 
         # We queue query in order to ensure the project is only created once on remote server
         self._callback_finish_creating_on_server = None
@@ -379,9 +380,7 @@ class Project(QtCore.QObject):
             params = {"name": self._name, "temporary": False}
             if server.isLocal():
                 params["path"] = new_path
-            server.put("/projects/{project_id}".format(project_id=self._id),
-                       None,
-                       body=params)
+            server.put("/projects/{project_id}".format(project_id=self._id), None, body=params)
 
     def _startListenNotifications(self):
 
