@@ -22,7 +22,6 @@ from .qt import QtCore, qpartial
 
 from gns3.servers import Servers
 from gns3.topology import Topology
-from gns3.node import Node
 
 import logging
 log = logging.getLogger(__name__)
@@ -393,12 +392,7 @@ class Project(QtCore.QObject):
         if result["action"] == "node.updated":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
-                if result["event"]["status"] == "started":
-                    node.setStatus(Node.started)
-                elif result["event"]["status"] == "stopped":
-                    node.setStatus(Node.stopped)
-                elif result["event"]["status"] == "suspended":
-                    node.setStatus(Node.suspended)
+                node.updateCallback(result["event"])
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":

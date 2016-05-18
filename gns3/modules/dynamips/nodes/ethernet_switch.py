@@ -147,7 +147,7 @@ class EthernetSwitch(Device):
         if updated:
             self._update(params)
 
-    def _updateCallback(self, result, error=False, **kwargs):
+    def updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 

@@ -117,7 +117,7 @@ class DockerVM(Node):
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
-    def _updateCallback(self, result, error=False, **kwargs):
+    def updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 

@@ -196,7 +196,7 @@ class QemuVM(Node):
 
         self._update(params)
         
-    def _updateCallback(self, result, error=False, **kwargs):
+    def updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 
@@ -204,7 +204,7 @@ class QemuVM(Node):
         :param error: indicates an error (boolean)
         """
 
-        if not super()._updateCallback(result, error=error, **kwargs):
+        if not super().updateCallback(result, error=error, **kwargs):
             return False
 
         updated = False

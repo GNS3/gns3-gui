@@ -154,7 +154,7 @@ class Node(BaseNode):
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
             if result:
-                self._updateCallback(result)
+                self.updateCallback(result)
 
     def _prepareBody(self, params):
         """
@@ -188,7 +188,7 @@ class Node(BaseNode):
         """
         log.debug("{} is updating settings: {}".format(self.name(), params))
         body = self._prepareBody(params)
-        self.controllerHttpPut("/nodes/{node_id}".format(project_id=self._project.id(), node_id=self._node_id), self._updateCallback, body=body, timeout=timeout)
+        self.controllerHttpPut("/nodes/{node_id}".format(project_id=self._project.id(), node_id=self._node_id), self.updateCallback, body=body, timeout=timeout)
 
     def _setupNodeCallback(self, result, error=False, **kwargs):
         """
@@ -245,7 +245,7 @@ class Node(BaseNode):
         """
         return True
 
-    def _updateCallback(self, result, error=False, **kwargs):
+    def updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 
@@ -260,6 +260,14 @@ class Node(BaseNode):
 
         if "command_line" in result:
             self._command_line = result["command_line"]
+
+        if "status" in result:
+            if result["status"] == "started":
+                self.setStatus(Node.started)
+            elif result["status"] == "stopped":
+                self.setStatus(Node.stopped)
+            elif result["status"] == "suspended":
+                self.setStatus(Node.suspended)
 
         # For compatibility with old API
         if "properties" in result:
