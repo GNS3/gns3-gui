@@ -103,11 +103,10 @@ class Node(BaseNode):
         """
         Deletes this node instance.
         """
-
-        log.debug("{} is being deleted".format(self.name()))
+        log.info("{} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        if self._node_id and self._server.connected():
+        if self._node_id:
             self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()
