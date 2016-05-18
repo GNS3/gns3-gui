@@ -533,27 +533,27 @@ def test_relative_image_path(empty_config, images_dir, tmpdir):
         assert empty_config._relative_image_path("QEMU", "h", os.path.join(images_dir, "QEMU", "a")) == "a"
         assert not mock.called
 
-    # Image outside image directory we need to copy it
+    # Image outside image directory we need to copy it
     open(str(tmpdir / "b"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
         assert empty_config._relative_image_path("QEMU", "b", str(tmpdir / "b")) == "b"
         assert mock.called
 
-    # OVA in images directory no need to copy
+    # OVA in images directory no need to copy
     os.makedirs(os.path.join(images_dir, "QEMU", "c.ova"))
     open(os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
         assert empty_config._relative_image_path("QEMU", "c.ova/c.vmdk", os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk")) == os.path.join("c.ova", "c.vmdk")
         assert not mock.called
 
-    # OVA outside images directory need to copy
+    # OVA outside images directory need to copy
     os.makedirs(os.path.join(str(tmpdir), "QEMU", "d.ova"))
     open(os.path.join(str(tmpdir), "QEMU", "d.ova", "d.vmdk"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:
         assert empty_config._relative_image_path("QEMU", "d.ova/d.vmdk", os.path.join(str(tmpdir), "QEMU", "d.ova", "d.vmdk")) == "d.ova/d.vmdk"
         assert mock.called
 
-    # OVA in images directory no need to copy but with a different file name
+    # OVA in images directory no need to copy but with a different file name
     os.makedirs(os.path.join(images_dir, "QEMU", "e.ova"))
     open(os.path.join(images_dir, "QEMU", "e.ova", "c.vmdk"), "w+").close()
     with patch("gns3.registry.image.Image.copy") as mock:

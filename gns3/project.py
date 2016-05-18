@@ -54,7 +54,7 @@ class Project(QtCore.QObject):
 
         # Manage project creations on multiple servers
         self._created_servers = set()
-        # We need to wait the first server
+        # We need to wait the first server
         self._creating_first_server = None
         # We queue query in order to ensure the project is only created once on remote server
         self._callback_finish_creating_on_server = {}

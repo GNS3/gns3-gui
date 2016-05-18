@@ -51,7 +51,7 @@ class Application(QtWidgets.QApplication):
         self.open_file_at_startup = None
 
     def event(self, event):
-        # When you double click file you receive an event
+        # When you double click file you receive an event
         # and not the file as command line parameter
         if sys.platform.startswith("darwin"):
             if isinstance(event, QtGui.QFileOpenEvent):

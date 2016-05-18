@@ -314,8 +314,8 @@ class VPCS(Module):
                 server = remote_server.url()
             else:
                 # If user has no server configured and has uncheck the checkbox
-                # it's a mistake. We use the GNS3VM in order to show a correct
-                # error message
+                # it's a mistake. We use the GNS3VM in order to show a correct
+                # error message
                 server = "vm"
 
         nodes = []

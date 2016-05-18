@@ -62,7 +62,7 @@ class Registry:
                                 if filename == os.path.basename(path):
                                     return Image(path)
                             else:
-                                # We take all the file with almost the size of the image
+                                # We take all the file with almost the size of the image
                                 # Almost to avoid round issue with system.
                                 file_size = os.stat(path).st_size
                                 if size is None or (file_size - 10 < size and file_size + 10 > size):

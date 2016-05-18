@@ -260,7 +260,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         item = self.uiRemoteServersTreeWidget.currentItem()
         if item:
-            assert item.server_id in self._remote_servers, "Missing {} in {}".format(item.server_id, self._remote_servers)
+            assert item.server_id in self._remote_servers, "Missing {} in {}".format(item.server_id, self._remote_servers)
             del self._remote_servers[item.server_id]
             self.uiRemoteServersTreeWidget.takeTopLevelItem(self.uiRemoteServersTreeWidget.indexOfTopLevelItem(item))
 

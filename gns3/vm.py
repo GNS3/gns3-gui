@@ -478,7 +478,7 @@ class VM(Node):
             console_port = self.auxConsole()
             if console_port is None:
                 raise ValueError("AUX console port not allocated for {}".format(self.name()))
-            # Aux console is always telnet
+            # Aux console is always telnet
             console_type = "telnet"
         else:
             console_port = self.console()

@@ -149,7 +149,7 @@ class Config:
             elif appliance_config["category"] == "firewall":
                 new_config["symbol"] = ":/symbols/firewall.svg"
 
-        # Raise error if VM already exists
+        # Raise error if VM already exists
         if not self.is_name_available(new_config["name"]):
             raise ConfigException("{} already exists".format(new_config["name"]))
 

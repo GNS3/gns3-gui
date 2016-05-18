@@ -58,7 +58,7 @@ class WaitForLambdaWorker(QtCore.QObject):
             self._lambda_runner()
         except Exception as e:
             # This exceptions will only show an error dialog
-            # it's a normal application behavior like a file permission denied
+            # it's a normal application behavior like a file permission denied
             for ex in self._allowed_exceptions:
                 if isinstance(e, ex):
                     self.error.emit(str(e), True)

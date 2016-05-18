@@ -48,7 +48,7 @@ class MultipleRedirection(QtCore.QObject):
         self.console.flush()
         try:
             self.stdout.flush()
-        # On OSX when frozen flush raise a BrokenPipeError
+        # On OSX when frozen flush raise a BrokenPipeError
         except BrokenPipeError:
             pass
 

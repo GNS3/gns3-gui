@@ -35,7 +35,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-# Dev build
+# Dev build
 if __version_info__[3] != 0:
     import faulthandler
     # Display a traceback in case of segfault crash. Usefull when frozen

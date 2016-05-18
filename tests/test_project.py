@@ -207,7 +207,7 @@ def test_project_post_non_created_project_remote_server_two_query_two_server(rem
         assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
         assert kwargs["body"] == {"test": "test"}
 
-        # Call to the create project on second server
+        # Call to the create project on second server
         name, args, kwargs = calls[4]
         assert args[0] == "POST"
         assert args[1] == "/projects".format(uuid=uuid)

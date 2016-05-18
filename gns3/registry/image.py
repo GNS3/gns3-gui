@@ -126,7 +126,7 @@ class Image:
             dst = os.path.join(directory, base_file)
 
             # is_tarfile can have false positive if file start with 00000 like ISO
-            # we check if we have file in the tar
+            # we check if we have file in the tar
             tar = tarfile.open(self.path)
             if len(tar.getnames()) > 0:
                 is_tar = True

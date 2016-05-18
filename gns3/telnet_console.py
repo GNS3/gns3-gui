@@ -69,7 +69,7 @@ class ConsoleThread(QtCore.QThread):
         command = command.replace("%d", self._name)
 
         # If the console use an apple script we lock to avoid multiple console
-        # to interact at the same time
+        # to interact at the same time
         if sys.platform.startswith("darwin") and "osascript" in command:
             console_mutex.lock()
 

@@ -76,7 +76,7 @@ class ExportProjectWorker(QtCore.QObject):
         with zipfile.ZipFile(self._path) as myzip:
             myzip.extractall(vm_path)
 
-        # We reset the content of the file
+        # We reset the content of the file
         try:
             open(self._path, 'wb+').close()
         except OSError as e:

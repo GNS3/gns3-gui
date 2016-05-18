@@ -28,11 +28,11 @@ def test_getDefaultIdlePC(tmpdir):
     # Unknow image
     assert Dynamips.getDefaultIdlePC(fake_img) is None
 
-    # Know image with full path
+    # Know image with full path
     with patch('gns3.modules.dynamips.Dynamips._md5sum', return_value='7f4ae12a098391bc0edcaf4f44caaf9d'):
         assert Dynamips.getDefaultIdlePC(fake_img) == '0x80358a60'
 
-    # Know image with relative path
+    # Know image with relative path
     with patch('gns3.image_manager.ImageManager.getDirectoryForType', return_value=str(tmpdir)):
         with patch('gns3.modules.dynamips.Dynamips._md5sum', return_value='7f4ae12a098391bc0edcaf4f44caaf9d'):
             assert Dynamips.getDefaultIdlePC('fake') == '0x80358a60'

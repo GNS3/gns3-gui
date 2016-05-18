@@ -45,13 +45,13 @@ class Progress(QtCore.QObject):
         self._rtimer.timeout.connect(self.update)
         self._rtimer.start(250)
 
-        # When in millisecond we start to show the progress dialog
+        # When in millisecond we start to show the progress dialog
         self._display_start_time = 0
 
         self._finished_query_during_display = 0
         self._queries = {}
         # QtCore.Qt.QueuedConnection warranty that we execute the slot
-        # in the current thread and not emitter thread.
+        # in the current thread and not emitter thread.
         # This fix an issue with Qt 5.5
         self.add_query_signal.connect(self._addQuerySlot, QtCore.Qt.QueuedConnection)
         self.remove_query_signal.connect(self._removeQuerySlot, QtCore.Qt.QueuedConnection)
@@ -142,8 +142,8 @@ class Progress(QtCore.QObject):
                 query = list(self._queries.values())[0]
                 if query["maximum"] == query["current"]:
 
-                    # We animate the bar. In theory Qt should be able to do it but
-                    # due to all the manipulation of the dialog he is getting lost
+                    # We animate the bar. In theory Qt should be able to do it but
+                    # due to all the manipulation of the dialog he is getting lost
                     bar_speed = 8
                     if progress_dialog.maximum() != bar_speed:
                         progress_dialog.setMaximum(bar_speed)

@@ -115,7 +115,7 @@ class ImageManager:
             if self._askForUploadMissingImage(filename, server):
 
                 if filename.endswith(".vmdk"):
-                    # A vmdk file could be split in multiple vmdk file
+                    # A vmdk file could be split in multiple vmdk file
                     search = glob.escape(path).replace(".vmdk", "-*.vmdk")
                     for file in glob.glob(search):
                         self._uploadImageToRemoteServer(file, server, vm_type)

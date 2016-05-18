@@ -162,7 +162,7 @@ def main():
 
     # We force a full garbage collect before exit
     # for unknow reason otherwise Qt Segfault on OSX in some
-    # conditions
+    # conditions
     import gc
     gc.collect()
 
@@ -179,7 +179,7 @@ def main():
 
     # We force a full garbage collect before exit
     # for unknow reason otherwise Qt Segfault on OSX in some
-    # conditions
+    # conditions
     import gc
     gc.collect()
 

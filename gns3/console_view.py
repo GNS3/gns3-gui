@@ -41,7 +41,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         # Set introduction message
         bitness = struct.calcsize("P") * 8
         current_year = datetime.date.today().year
-        self.intro = "GNS3 management console.\nRunning GNS3 version {} on {} ({}-bit) with Python {} Qt {}.\n" \
+        self.intro = "GNS3 management console.\nRunning GNS3 version {} on {} ({}-bit) with Python {} Qt {}.\n" \
                      "Copyright (c) 2006-{} GNS3 Technologies.\n" \
                      "Use Help -> GNS3 Doctor to detect common issues." \
                      "".format(__version__, platform.system(), bitness, platform.python_version(), QtCore.QT_VERSION_STR, current_year)
