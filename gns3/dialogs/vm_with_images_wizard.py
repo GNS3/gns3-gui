@@ -31,7 +31,7 @@ class VMWithImagesWizard(VMWizard):
     """
 
     def __init__(self, devices, use_local_server, parent):
-        # The list of images combo box (Qemu support multiple images)
+        # The list of images combo box (Qemu support multiple images)
         self._images_combo_boxes = set()
 
         # The list of radio button for existing image or new images

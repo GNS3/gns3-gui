@@ -57,7 +57,7 @@ class Port:
         Port._instance_count += 1
 
         # In 1.3.3 and 1.3.4 we have issue with port name not a string
-        # see: https://github.com/gns3/gns3-gui/issues/393
+        # see: https://github.com/gns3/gns3-gui/issues/393
         assert isinstance(name, str)
 
         self._name = name

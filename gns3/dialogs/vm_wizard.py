@@ -97,7 +97,7 @@ class VMWizard(QtWidgets.QWizard):
         """
         super().setStartId(index)
         # If we skip the initial page (choosing a server)
-        # we check the settings
+        # we check the settings
         if index != 0:
             self.uiLocalRadioButton.setChecked(True)
 

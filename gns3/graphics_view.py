@@ -985,7 +985,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                         QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(node_dir))
                         break
                 else:
-                    QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}".format(node_dir, node.server().url()))
+                    QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}".format(node_dir, node.server().url()))
                     break
 
     def consoleToNode(self, node, aux=False):
@@ -1530,7 +1530,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
             node_item = SvgNodeItem(node, node_data["symbol"])
             node_module.setupNode(node, node_data["name"])
-        # If no server is available a ValueError is raised
+        # If no server is available a ValueError is raised
         except (ModuleError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
             return

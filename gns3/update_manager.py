@@ -225,7 +225,7 @@ class UpdateManager(QtCore.QObject):
             log.info('Extract update %s', tgz)
             with tarfile.open(tgz, 'r:gz') as tar:
                 # Tar add a folder with the name of archive in first position
-                # we need to drop it
+                # we need to drop it
                 members = tar.getmembers()[1:]
                 for member in members:
                     # Path separator is always / even on windows

@@ -18,13 +18,13 @@ it on https://github.com/GNS3/gns3-gui we will take care of the triage.
 
 For bugs specific to the GNS3 VM, please report on https://github.com/GNS3/gns3-vm
 
-## Asking for new features
+## Asking for new features
 
 The best is to start a discussion on the community website in order to get feedback
 from the whole community.
 
 
-## Contributing code
+## Contributing code
 
 We welcome code contribution from everyone including beginners.
 Don't be afraid to submit a half finished or mediocre contribution and we will help you.
@@ -45,6 +45,6 @@ The reason we do this is to ensure, to the extent possible, that we don’t “t
 
 More information there: https://github.com/GNS3/cla
 
-### Pull requests
+### Pull requests
 
 Creating a pull request is the easiest way to contribute code. Do not hesitate to create one early when  contributing for new feature in order to get our feedback.

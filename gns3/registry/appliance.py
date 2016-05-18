@@ -94,7 +94,7 @@ class Appliance(collections.Mapping):
                         break
 
                 if not found:
-                    raise ApplianceError("Broken appliance missing file {} for version {}".format(filename, version["name"]))
+                    raise ApplianceError("Broken appliance missing file {} for version {}".format(filename, version["name"]))
 
     def create_new_version(self, version_name):
         """

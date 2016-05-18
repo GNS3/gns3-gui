@@ -165,7 +165,7 @@ class Node(BaseNode):
                 "node_type": self.URL_PREFIX,
                 "compute_id": self._server.server_id()}
 
-        # We have two kind of properties. The general properties common to all
+        # We have two kind of properties. The general properties common to all
         # nodes and the specific that we need to put in the properties field
         node_general_properties = ("name", "node_id", "console", "console_type")
         for key, value in params.items():
@@ -233,7 +233,7 @@ class Node(BaseNode):
                                                                                       self._settings[name],
                                                                                       value))
                     self._settings[name] = value
-            # For compatibility with old API
+            # For compatibility with old API
             result.update(result["properties"])
             del result["properties"]
         return self._setupCallback(result, error=error, **kwargs)
@@ -262,7 +262,7 @@ class Node(BaseNode):
         if "command_line" in result:
             self._command_line = result["command_line"]
 
-        # For compatibility with old API
+        # For compatibility with old API
         if "properties" in result:
             result.update(result["properties"])
             del result["properties"]
@@ -446,7 +446,7 @@ class Node(BaseNode):
             console_port = self.auxConsole()
             if console_port is None:
                 raise ValueError("AUX console port not allocated for {}".format(self.name()))
-            # Aux console is always telnet
+            # Aux console is always telnet
             console_type = "telnet"
         else:
             console_port = self.console()

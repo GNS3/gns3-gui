@@ -60,7 +60,7 @@ def parse_version(version):
                 version.append("00000")
             if len(version) == 2:
                 version.append("000000")
-            # We want rc to be at lower level than dev version
+            # We want rc to be at lower level than dev version
             if info == 'rc':
                 info = 'c'
             version.append(info)

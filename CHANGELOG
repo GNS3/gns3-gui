@@ -1,4 +1,4 @@
-# Change Log
+# Change Log
 
 ## 1.5.0a2 10/05/2016
 
@@ -63,7 +63,7 @@
 * Allow to show a message box for test without starting GNS3
 * Drop licence for paramiko since we no longer use it
 
-## 1.4.4 23/02/2016
+## 1.4.4 23/02/2016
 
 * Fix crash when selecting no image in GNS3A but clicking on Download
 * Fix crash when you have a file size None (testing a new gns3a)
@@ -89,7 +89,7 @@
 * Make VM configuration dialog modal
 * Cannot take GIF screenshots (write is not supported by Qt).
 
-## 1.4.2 17/02/2016
+## 1.4.2 17/02/2016
 
 * Allow gif image (not animated) since patent expire in 2004
 * Countdown before starting the GNS3 VM
@@ -146,7 +146,7 @@
 * Fix a crash with doctor on windows
 * Fix crash in doctor if ubridge path is empty
 
-## 1.4.1 01/02/2016
+## 1.4.1 01/02/2016
 
 * Improvement to detect VMware Player on Linux. Ref #970.
 * You can move Dock widgets everywhere
@@ -189,7 +189,7 @@
 * Fix crash on Windows when a gui is already running
 * Add default idle-pc value for c7200-adventerprisek9-mz.155-2.XB. Fixes #389.
 
-## 1.4.0rc3 05/01/2016
+## 1.4.0rc3 05/01/2016
 
 * Add information about antivirus and firewall in case of connection fail
 * Change link to doc for missing router image
@@ -281,7 +281,7 @@
 * Change text for export debug information.
 * Add informations about GNS3 VM
 
-## 1.4.0rc1 12/15/2015
+## 1.4.0rc1 12/15/2015
 
 * Rename an appliance if the default name is already taken
 * Existing image option should be hidden when none is available
@@ -293,7 +293,7 @@
 * Log to console the Qt Message Boxes
 * Drops securecrt.vbs
 
-## 1.4.0b5 02/11/2015
+## 1.4.0b5 02/11/2015
 
 * Fix crash when loading invalid appliance file
 * Show a message is starting or is stopping in progress dialog
@@ -315,7 +315,7 @@
 * Fix crash when using an old version of 1.4 server
 * Ensure default settings are saved when starting the app
 
-## 1.4.0b4 19/10/2015
+## 1.4.0b4 19/10/2015
 
 * Mockup of appliances wizard
 * Fix tests
@@ -395,7 +395,7 @@
 * Search image by default also in the download directory
 * Fixes issue when Telnet doesn't let you to login to an appliance on Linux.
 
-## 1.3.11 07/10/2015
+## 1.3.11 07/10/2015
 
 * Display the version of Qt in the console
 * Catch errors when we have an infinite recursion when copying a folder
@@ -530,7 +530,7 @@
 * Fix issue with file upload and Qt 5.5
 * Improves the symbol dialog. Implements #514.
 
-## 1.3.9 03/08/2015
+## 1.3.9 03/08/2015
 
 * Catch exception when trying to launch Wireshark.
 * Backport: fixes migration of cloud interfaces.
@@ -548,7 +548,7 @@
 * Write GNS3 upgrade to appdata
 * Fix windows asking for upgrade to the wrong version
 
-## 1.3.8 27/07/2015
+## 1.3.8 27/07/2015
 
 * Fixes rare issue when adding a link. Fixes #573.
 * Backport: option to drop nvram & disk files for IOS routers in order to save disk space.
@@ -575,7 +575,7 @@
 * Remove ram as a mandatory dynamips settings
 * Force UTF-8 when reading server configuration file
 
-## 1.4.0alpha1 09/07/2015
+## 1.4.0alpha1 09/07/2015
 
 * Remove unused cloud code from the 1.4
 * Setup Wizard (to be tweaked). Implements #402.
@@ -652,7 +652,7 @@
 * Fixes WICs are not displayed correctly. Fixes #434.
 * Do not load settings that the GUI doesn't use.
 
-## 1.3.6 16/06/2015
+## 1.3.6 16/06/2015
 
 * Fix an issue with 1.4dev compatibility
 
@@ -673,7 +673,7 @@
 * Raise error if we pass non string to Port name
 * Add basic auth support for local server
 
-## 1.3.4 02/06/2015
+## 1.3.4 02/06/2015
 
 * Check if an IOS image is set in the IOS router template
 * Ensure the version number is written in configuration file
@@ -690,7 +690,7 @@
 * Fix a rare crash in completion
 * Fix crash when loading topology in rare conditions
 
-## 1.3.3 14/05/2015
+## 1.3.3 14/05/2015
 
 * New inline help text for the idle-pc dialog.
 * Reactivate auto idle-pc in device contextual menu + save a chosen idle-pc value in template.
@@ -835,7 +835,7 @@
 * Fix issues with progress dialog
 * Fix save as
 
-## 1.3.0rc2 23/03/2015
+## 1.3.0rc2 23/03/2015
 
 * Fix crash when in same occasion the project name is missing
 * Update sentry key
@@ -852,7 +852,7 @@
 * Del key deletes selected link
 * Fix crash is no remote servers is available
 
-## 1.3.0rc1 19/03/2015
+## 1.3.0rc1 19/03/2015
 
 * Handle legacy snapshots
 * Add server informations for Qemu, VirtualBox and VPCS info boxes
@@ -865,7 +865,7 @@
 * Display a warning on console if server port is already in used
 * Display an error if server version is incorrect
 
-## 1.3.0beta2 13/03/2015
+## 1.3.0beta2 13/03/2015
 
 * Alternative local server shutdown (faster GUI closing on Windows).
 * Grey out local server preferences if the local server is not activated.
@@ -874,7 +874,7 @@
 * Support RAM setting for VirtualBox VMs.
 * Fixed duplicate VM template entries for Qemu, VirtualBox and IOU.
 
-## 1.3.0beta1 11/03/2015
+## 1.3.0beta1 11/03/2015
 
 * New title for VMs/Devices/routers preference pages.
 * Deactivate auto idle-pc in contextual menu while we think about a better implementation.
@@ -903,7 +903,7 @@
 * Fixed adapter bug with VirtualBox.
 * Fixed various errors when a project was not initialized.
 
-## 1.3.0alpha1 03/03/2015
+## 1.3.0alpha1 03/03/2015
 
 * No more console port and UDP tunneling settings by type of module
 * Fixe save
@@ -924,7 +924,7 @@
 
 ## 1.2.2 2015/01/16
 
-### Small improvements / new features
+### Small improvements / new features
  
 * EtherSwitch routers can be added and configured like other IOS routers.
 * Change hostname option in the contextual device menu.
@@ -945,7 +945,7 @@
 * Console switching from local/remote to remote/local while a VirtualBox VM is running.
 * Default Jungle dock location is now bottom right corner.
  
-### Bug fixes
+### Bug fixes
  
 * Fixed the default jungle news loading on Windows.
 * Fixed SuperPutty integration (not the default, still have to select it in the preferences).
@@ -992,7 +992,7 @@ Prevent GNS3 to crash on Windows when importing GNS3 config file.
 * Fix SecureCRT issue when disconnecting from an IOU device on Windows.
 * Update VPCS to version 0.6 in the all-in-one installer.
 
-## 1.1 2014/11/20
+## 1.1 2014/11/20
 
 * Fixed broken cloud.
 * Fixed broken remote server.

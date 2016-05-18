@@ -276,7 +276,7 @@ class Servers(QtCore.QObject):
         """
 
         # Save the remote servers
-        # And emit signal for each server removed
+        # And emit signal for each server removed
         old_server_urls = [ s["url"] for s in self._settings["remote_servers"] ]
         self._settings["remote_servers"] = []
         for server in self._remote_servers.values():
@@ -487,7 +487,7 @@ class Servers(QtCore.QObject):
             except OSError as e:
                 QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not find an unused port for the local server: {}".format(e))
                 return False
-            log.warning("The server port {} is already in use, fallback to port {}".format(old_port, server.port()))
+            log.warning("The server port {} is already in use, fallback to port {}".format(old_port, server.port()))
         return True
 
     def _findUnusedLocalPort(self, host):
@@ -605,7 +605,7 @@ class Servers(QtCore.QObject):
                         else:
                             self._local_server_process.send_signal(signal.SIGINT)
                     # If the process is already dead we received a permission error
-                    # it's a race condition between the timeout and send signal
+                    # it's a race condition between the timeout and send signal
                     except PermissionError:
                         pass
                     try:

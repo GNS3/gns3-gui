@@ -129,7 +129,7 @@ def main():
         LocalConfig.instance()
 
     if hasattr(sys, "frozen"):
-        # We add to the path where the OS search executable our binary location starting by GNS3
+        # We add to the path where the OS search executable our binary location starting by GNS3
         # packaged binary
         frozen_dir = os.path.dirname(os.path.abspath(sys.executable))
         if sys.platform.startswith("darwin"):
@@ -244,7 +244,7 @@ def main():
     mainwindow = MainWindow()
 
     # On OSX we can receive the file to open from a system event
-    # loadPath is smart and will load only if a path is present
+    # loadPath is smart and will load only if a path is present
     mainwindow.ready_signal.connect(lambda: mainwindow.loadPath(app.open_file_at_startup))
     mainwindow.ready_signal.connect(lambda: mainwindow.loadPath(options.project))
     app.file_open_signal.connect(lambda path: mainwindow.loadPath(path))
@@ -271,7 +271,7 @@ def main():
     del app
     # We force a full garbage collect before exit
     # for unknow reason otherwise Qt Segfault on OSX in some
-    # conditions
+    # conditions
     import gc
     gc.collect()
 

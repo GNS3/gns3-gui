@@ -31,7 +31,7 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
         super().__init__()
         super().load(path)
 
-        # If we can't render a SVG we load and base64 the image to create a SVG
+        # If we can't render a SVG we load and base64 the image to create a SVG
         if not self.isValid() and os.path.exists(path):
             image = QtGui.QImage(path)
             data = QtCore.QByteArray()

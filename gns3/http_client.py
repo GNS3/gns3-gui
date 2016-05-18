@@ -208,7 +208,7 @@ class HTTPClient(QtCore.QObject):
             log.warn("Invalid local server url: {}".format(e))
             return 0, None
         except urllib.error.URLError:
-            # Connection refused. It's a normal behavior if server is not started
+            # Connection refused. It's a normal behavior if server is not started
             return 0, None
         except urllib.error.HTTPError as e:
             log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
@@ -309,7 +309,7 @@ class HTTPClient(QtCore.QObject):
                 if callback is not None:
                     callback({"message": msg}, error=True, server=server)
                 return
-            # We don't allow different major version to interact even with dev build
+            # We don't allow different major version to interact even with dev build
             elif parse_version(__version__)[:2] != parse_version(params["version"])[:2]:
                 if callback is not None:
                     callback({"message": msg}, error=True, server=server)
@@ -411,7 +411,7 @@ class HTTPClient(QtCore.QObject):
 
         request.setRawHeader(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
 
-        # By default QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
+        # By default QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
         body = self._addBodyToRequest(body, request)
 
         response = self._network_manager.sendCustomRequest(request, method.encode(), body)
@@ -428,7 +428,7 @@ class HTTPClient(QtCore.QObject):
             response.uploadProgress.connect(qpartial(self._notify_progress_upload, context["query_id"]))
             response.downloadProgress.connect(qpartial(self._notify_progress_download, context["query_id"]))
             # Should be the last operation otherwise we have race condition in Qt
-            # where query start before finishing connect to everything
+            # where query start before finishing connect to everything
             self._notify_progress_start_query(context["query_id"], progressText, response)
 
         if timeout is not None:
@@ -440,7 +440,7 @@ class HTTPClient(QtCore.QObject):
         """
         Beware it's call for all request you need to check the status of the response
         """
-        # We check if we received HTTP headers
+        # We check if we received HTTP headers
         if not len(response.rawHeaderList()) > 0:
             response.abort()
 
@@ -455,7 +455,7 @@ class HTTPClient(QtCore.QObject):
         if response.error() != QtNetwork.QNetworkReply.NoError:
             return
 
-        # HTTP error
+        # HTTP error
         status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
         if status >= 300:
             return
@@ -532,7 +532,7 @@ class HTTPClient(QtCore.QObject):
                     try:
                         callback(json.loads(body), error=True, server=server, context=context)
                     except ValueError:
-                        # It happens when an antivirus catch the communication and send is error page without changing the Content Type
+                        # It happens when an antivirus catch the communication and send is error page without changing the Content Type
                         callback({"message": error_message}, error=True, server=server, context=context)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)

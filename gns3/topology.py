@@ -290,7 +290,7 @@ class Topology:
         if not self._project:
             return
 
-        # We delete by security only images in the project files directory
+        # We delete by security only images in the project files directory
         if not os.path.isabs(image.filePath()):
             if image.filePath() not in [ image.filePath() for image in self._images ]:
                 os.remove(os.path.join(self._project.filesDir(), "project-files", image.filePath()))
@@ -683,7 +683,7 @@ class Topology:
                             self._servers[server_id] = server_select(main_window)
 
                     if self._servers[server_id] is None:
-                        # The user has not changed the server, let's create the server from the topology
+                        # The user has not changed the server, let's create the server from the topology
                         self._servers[server_id] = server_manager.getRemoteServer(protocol, host, port, user, topology_server)
 
         # nodes

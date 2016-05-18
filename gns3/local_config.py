@@ -109,7 +109,7 @@ class LocalConfig(QtCore.QObject):
         Migrate pre 1.4 config path
         """
 
-        # In < 1.4 on Mac the config was in a gns3.net directory
+        # In < 1.4 on Mac the config was in a gns3.net directory
         # We have move to same location as Linux
         if sys.platform.startswith("darwin"):
             old_path = os.path.join(os.path.expanduser("~"), ".config", "gns3.net")

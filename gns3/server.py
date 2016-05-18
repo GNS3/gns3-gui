@@ -57,8 +57,8 @@ class Server(QtCore.QObject):
 
     def _updateServer(self):
         # TODO update server settings on the controller
-        # emit a signal for that
-        # or manage everything in servers?
+        # emit a signal for that
+        # or manage everything in servers?
         pass
 
     def host(self):

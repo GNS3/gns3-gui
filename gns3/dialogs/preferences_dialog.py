@@ -43,7 +43,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
 
         # We adapt the max size to the screen resolution
         # We need to manually do that otherwise on small screen the windows
-        # could be bigger than the screen instead of displaying scrollbars
+        # could be bigger than the screen instead of displaying scrollbars
         height = QtWidgets.QDesktopWidget().screenGeometry().height() - 100
         width = QtWidgets.QDesktopWidget().screenGeometry().width() - 100
 

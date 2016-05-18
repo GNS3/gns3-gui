@@ -50,7 +50,7 @@ class AnalyticsClient(QtCore.QObject):
 
         #
         # We need to build a user agent for Universal Analytics in order to
-        # let analytics guess the OS
+        # let analytics guess the OS
         # this could break by analytics at anytime :(
         if sys.platform.startswith("darwin"):
             self._user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X {release}) AppleWebKit/537.36 (KHTML, like Gecko) GNS3/{version}".format(release=platform.mac_ver()[0].replace(".", "_"), version=__version__)
@@ -100,7 +100,7 @@ class AnalyticsClient(QtCore.QObject):
             body += "&ul={}".format(locale)  # User language
 
         # TODO: HTTPS when possible because it's broken for the moment with Qt on OSX:
-        # https://bugreports.qt.io/browse/QTBUG-45487
+        # https://bugreports.qt.io/browse/QTBUG-45487
         if sys.platform.startswith("darwin"):
             url = QtCore.QUrl('http://www.google-analytics.com/collect')
         else:
