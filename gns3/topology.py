@@ -55,39 +55,6 @@ TOPOLOGY_REVISION = 4
 VALIDATION_ERROR_MESSAGE = "Validation error when dumping the topology.\nIt's probably a false positive but please send the error and the .gns3 file to developers@gns3.net.\nThanks !"
 
 
-class TopologyInstance:
-
-    def __init__(self, name, id, size_id, image_id, private_key, public_key,
-                 host=None, port=None, ssl_ca=None, ssl_ca_file=None):
-
-        # host, port, ssl_ca and ssl_ca_file are not known when the instance is created.
-        # They will typically be set at a later point in time.
-        self.name = name
-        self.id = id
-        self.size_id = size_id
-        self.image_id = image_id
-        self.public_key = public_key
-        self.private_key = private_key
-        self.host = host
-        self.port = port
-        self.ssl_ca = ssl_ca
-        self.ssl_ca_file = ssl_ca_file
-
-    @classmethod
-    def fields(cls):
-        return ["name", "id", "size_id", "image_id", "private_key", "public_key",
-                "host", "port", "ssl_ca", "ssl_ca_file"]
-
-    def set_later_attributes(self, host, port, ssl_ca, ssl_ca_file):
-        """
-        Set attributes that are not known at the time of cloud instance creation.
-        """
-        self.host = host
-        self.port = port
-        self.ssl_ca = ssl_ca
-        self.ssl_ca_file = ssl_ca_file
-
-
 class Topology:
 
     """
@@ -294,52 +261,6 @@ class Topology:
         if not os.path.isabs(image.filePath()):
             if image.filePath() not in [ image.filePath() for image in self._images ]:
                 os.remove(os.path.join(self._project.filesDir(), "project-files", image.filePath()))
-
-
-    def addInstance(self, name, id, size_id, image_id, private_key, public_key,
-                    host=None, port=None, ssl_ca=None, ssl_ca_file=None):
-        """
-        Add an instance to this cloud topology
-        """
-
-        i = TopologyInstance(name=name, id=id, size_id=size_id, image_id=image_id,
-                             private_key=private_key, public_key=public_key, host=host,
-                             port=port, ssl_ca=ssl_ca, ssl_ca_file=ssl_ca_file)
-
-        self._instances.append(i)
-
-    def removeInstance(self, id):
-        """
-        Removes an instance from this cloud topology
-
-        :param name: the name of the instance
-        """
-
-        for instance in self._instances:
-            if instance.id == id:
-                # remove all the nodes running on the instance
-                for node in self._nodes:
-                    if node._server.instance_id == id:
-                        self.removeNode(node)
-                        node.delete()
-                # remove the instance itself
-                self._instances.remove(instance)
-                break
-
-    def getInstance(self, id):
-        """
-        Return the instance if present
-
-        :param id: the instance id
-        :return: a TopologyInstance object
-        """
-        for instance in self._instances:
-            if instance.id == id:
-                return instance
-
-    def anyInstance(self):
-        # For now, just return the first instance
-        return self._instances[0]
 
     def nodes(self):
         """
@@ -809,14 +730,6 @@ class Topology:
                 ellipse_item.load(topology_ellipse)
                 view.scene().addItem(ellipse_item)
                 self.addEllipse(ellipse_item)
-
-        # instances
-        if "instances" in topology["topology"]:
-            instances = topology["topology"]["instances"]
-            for instance in instances:
-                self.addInstance(instance["name"], instance["id"], instance["size_id"],
-                                 instance["image_id"],
-                                 instance["private_key"], instance["public_key"])
 
         if topology_file_errors:
             errors = "\n".join(topology_file_errors)
