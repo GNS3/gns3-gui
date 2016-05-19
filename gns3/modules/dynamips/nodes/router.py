@@ -380,7 +380,7 @@ class Router(Node):
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.httpGet("/dynamips/nodes/{node_id}/idlepc_proposals".format(
+        self.controllerHttpGet("/nodes/{node_id}/dynamips/idlepc_proposals".format(
             node_id=self._node_id),
             callback,
             timeout=240,
@@ -393,7 +393,7 @@ class Router(Node):
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.httpGet("/dynamips/nodes/{node_id}/auto_idlepc".format(
+        self.controllerHttpGet("/nodes/{node_id}/dynamips/auto_idlepc".format(
             node_id=self._node_id),
             callback,
             timeout=240,
