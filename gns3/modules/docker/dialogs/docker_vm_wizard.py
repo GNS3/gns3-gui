@@ -116,8 +116,6 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
             return self.uiImageListComboBox.itemText(index)
         else:
             name = self.uiImageLineEdit.text()
-            if not ":" in name:
-                name = "{}:latest".format(name)
             return name
 
     def getSettings(self):
