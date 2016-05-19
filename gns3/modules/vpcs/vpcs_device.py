@@ -45,6 +45,7 @@ class VPCSDevice(Node):
         log.info("VPCS instance is being created")
         self._node_id = None
         self._settings = {"name": "",
+                          "console_host": None,
                           "startup_script": None,
                           "startup_script_path": None,
                           "console": None}
@@ -146,7 +147,7 @@ class VPCSDevice(Node):
                 params[name] = value
 
         self._update(params)
-    
+
     def updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.

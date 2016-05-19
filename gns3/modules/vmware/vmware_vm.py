@@ -58,6 +58,7 @@ class VMwareVM(Node):
         self._settings = {"name": "",
                           "vmx_path": "",
                           "console": None,
+                          "console_host": None,
                           "adapters": VMWARE_VM_SETTINGS["adapters"],
                           "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
                           "use_ubridge": VMWARE_VM_SETTINGS["use_ubridge"],

@@ -36,12 +36,12 @@ class ConsoleThread(QtCore.QThread):
 
     consoleError = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent, command, name, server, port):
+    def __init__(self, parent, command, name, host, port):
         super().__init__(parent)
 
         self._command = command
         self._name = name
-        self._server = server
+        self._host = host
         self._port = port
 
     def exec_command(self, command):
@@ -60,7 +60,7 @@ class ConsoleThread(QtCore.QThread):
 
     def run(self):
 
-        host = self._server.host()
+        host = self._host
         port = self._port
 
         # replace the place-holders by the actual values
@@ -84,18 +84,18 @@ class ConsoleThread(QtCore.QThread):
                 console_mutex.unlock()
 
 
-def nodeTelnetConsole(name, server, port, command):
+def nodeTelnetConsole(name, host, port, command):
     """
     Start a Telnet console program for a topology node.
 
     :param name: Name of the console
     :param port: Port number of the console on remote host
-    :param server: Server where the console is running
+    :param host: Server where the console is running
     :param command: Console command
     """
 
     log.info('Starting telnet console in thread "{}"'.format(command))
-    console_thread = ConsoleThread(MainWindow.instance(), command, name, server, port)
+    console_thread = ConsoleThread(MainWindow.instance(), command, name, host, port)
     console_thread.consoleError.connect(_consoleErrorSlot)
     console_thread.start()
 

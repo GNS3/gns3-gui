@@ -70,6 +70,7 @@ class QemuVM(Node):
                           "ram": QEMU_VM_SETTINGS["ram"],
                           "cpus": QEMU_VM_SETTINGS["cpus"],
                           "console": None,
+                          "console_host": None,
                           "console_type": QEMU_VM_SETTINGS["console_type"],
                           "adapters": QEMU_VM_SETTINGS["adapters"],
                           "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
@@ -195,7 +196,7 @@ class QemuVM(Node):
                 params[name] = value
 
         self._update(params)
-        
+
     def updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.

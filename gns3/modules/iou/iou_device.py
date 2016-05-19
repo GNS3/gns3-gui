@@ -61,6 +61,7 @@ class IOUDevice(Node):
                           "ethernet_adapters": IOU_DEVICE_SETTINGS["ethernet_adapters"],
                           "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"],
                           "console": None,
+                          "console_host": None,
                           "iourc_content": None}
 
     def _addAdapters(self, nb_ethernet_adapters, nb_serial_adapters):

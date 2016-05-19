@@ -55,6 +55,7 @@ class VirtualBoxVM(Node):
         self._settings = {"name": "",
                           "vmname": "",
                           "console": None,
+                          "console_host": None,
                           "adapters": VBOX_VM_SETTINGS["adapters"],
                           "use_any_adapter": VBOX_VM_SETTINGS["use_any_adapter"],
                           "adapter_type": VBOX_VM_SETTINGS["adapter_type"],

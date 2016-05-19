@@ -71,6 +71,7 @@ class Router(Node):
                           "disk1": 0,
                           "auto_delete_disks": False,
                           "console": None,
+                          "console_host": None,
                           "aux": None,
                           "mac_addr": None,
                           "system_id": "FTX0945W0MY",

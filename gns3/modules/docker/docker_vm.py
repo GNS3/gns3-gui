@@ -47,6 +47,7 @@ class DockerVM(Node):
             "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
             "environment": DOCKER_CONTAINER_SETTINGS["environment"],
             "console": None,
+            "console_host": None,
             "aux": None,
             "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
             "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"],
