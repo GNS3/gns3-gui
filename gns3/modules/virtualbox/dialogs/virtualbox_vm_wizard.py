@@ -42,10 +42,6 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
         self._virtualbox_vms = virtualbox_vms
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/virtualbox.png"))
 
-        if not Servers.instance().remoteServers():
-            # skip the server page if we use the local server
-            self.setStartId(1)
-
     def validateCurrentPage(self):
         """
         Validates the server.

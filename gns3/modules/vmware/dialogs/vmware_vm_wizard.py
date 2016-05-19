@@ -42,10 +42,6 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         self._vmware_vms = vmware_vms
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/vmware_guest.svg"))
 
-        if not Servers.instance().remoteServers():
-            # skip the server page if we use the local server
-            self.setStartId(1)
-
     def validateCurrentPage(self):
         """
         Validates the server.
