@@ -433,8 +433,8 @@ class Topology:
             for node in self._nodes:
                 if not node.initialized():
                     continue
-                if node.server().id() not in servers:
-                    servers[node.server().id()] = node.server()
+                if node.compute().id() not in servers:
+                    servers[node.compute().id()] = node.compute()
                 log.info("Saving node: {}".format(node.name()))
                 topology_nodes.append(node.dump())
 
@@ -449,7 +449,7 @@ class Topology:
         if servers:
             topology_servers = topology["topology"]["servers"] = []
             for server in servers.values():
-                log.info("Saving server: {}".format(server.url()))
+                log.info("Saving server: {}".format(server))
                 topology_servers.append(server.dump())
 
         if include_gui_data:
@@ -574,7 +574,7 @@ class Topology:
             servers = topology["topology"]["servers"]
             for topology_server in servers:
                 if "local" in topology_server and topology_server["local"]:
-                    self._servers[topology_server["id"]] = server_manager.localServer()
+                    self._servers[topology_server["id"]] = ComputeManager.getCompute("local")
                 elif "vm" in topology_server and topology_server["vm"]:
                     gns3_vm_server = server_manager.vmServer()
                     if gns3_vm_server is None:
@@ -587,7 +587,6 @@ class Topology:
                     port = topology_server["port"]
                     user = topology_server.get("user", None)
 
-                    topology_server.pop("cloud", False)
                     topology_server.pop("vm", False)
                     topology_server.pop("local", False)
 

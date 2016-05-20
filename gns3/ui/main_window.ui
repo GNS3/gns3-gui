@@ -451,7 +451,7 @@ background-none;
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="uiServerSummaryDockWidget">
+  <widget class="QDockWidget" name="uiComputeSummaryDockWidget">
    <property name="allowedAreas">
     <set>Qt::AllDockWidgetAreas</set>
    </property>
@@ -470,7 +470,7 @@ background-none;
       <number>0</number>
      </property>
      <item row="0" column="0">
-      <widget class="ServerSummaryView" name="uiServerSummaryTreeWidget">
+      <widget class="ComputeSummaryView" name="uiComputeSummaryTreeWidget">
        <attribute name="headerVisible">
         <bool>false</bool>
        </attribute>
@@ -1186,9 +1186,9 @@ background-none;
    <header>..topology_summary_view.h</header>
   </customwidget>
   <customwidget>
-   <class>ServerSummaryView</class>
+   <class>ComputeSummaryView</class>
    <extends>QTreeWidget</extends>
-   <header>..server_summary_view.h</header>
+   <header>..compute_summary_view.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

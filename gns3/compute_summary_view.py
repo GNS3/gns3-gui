@@ -16,38 +16,38 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Server summary view that list all the server, their status.
+Compute summary view that list all the compute, their status.
 """
 
 import sip
 
 from .qt import QtGui, QtCore, QtWidgets
-from .servers import Servers
+from .compute_manager import ComputeManager
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class ServerItem(QtWidgets.QTreeWidgetItem):
+class ComputeItem(QtWidgets.QTreeWidgetItem):
 
     """
     Custom item for the QTreeWidget instance
     (topology summary view).
 
     :param parent: parent widget
-    :param server: Server instance
+    :param compute: Compute instance
     """
 
-    def __init__(self, parent, server):
+    def __init__(self, parent, compute):
 
         super().__init__(parent)
-        self._server = server
+        self._compute = compute
         self._parent = parent
         self._status = "unknown"
 
-        self._server.connection_connected_signal.connect(self._refreshStatusSlot)
-        self._server.connection_closed_signal.connect(self._refreshStatusSlot)
-        self._server.system_usage_updated_signal.connect(self._refreshStatusSlot)
+        #self._compute.connection_connected_signal.connect(self._refreshStatusSlot)
+        #self._compute.connection_closed_signal.connect(self._refreshStatusSlot)
+        #self._compute.system_usage_updated_signal.connect(self._refreshStatusSlot)
         self._refreshStatusSlot()
 
     def _refreshStatusSlot(self):
@@ -55,20 +55,14 @@ class ServerItem(QtWidgets.QTreeWidgetItem):
         Changes the icon to show the node status (started, stopped etc.)
         """
 
-        usage = self._server.systemUsage()
-
-        if self._server.isLocal():
-            text = "Local"
-        elif self._server.isGNS3VM():
-            text = "GNS3 VM"
-        else:
-            text = self._server.url()
+        usage = None
+        text = self._compute.name()
 
         if usage is not None:
             text = "{} CPU {}%, RAM {}%".format(text, usage["cpu_usage_percent"], usage["memory_usage_percent"])
 
         self.setText(0, text)
-        if self._server.connected():
+        if self._compute.connected():
             self._status = "connected"
             if usage is None or (usage["cpu_usage_percent"] < 90 and usage["memory_usage_percent"] < 90):
                 self.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))
@@ -82,10 +76,10 @@ class ServerItem(QtWidgets.QTreeWidgetItem):
                 self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
 
 
-class ServerSummaryView(QtWidgets.QTreeWidget):
+class ComputeSummaryView(QtWidgets.QTreeWidget):
 
     """
-    Server summary view implementation.
+    Compute summary view implementation.
 
     :param parent: parent widget
     """
@@ -94,39 +88,41 @@ class ServerSummaryView(QtWidgets.QTreeWidget):
 
         super().__init__(parent)
 
-        self._servers = {}
+        self._computes = {}
 
-        Servers.instance().server_added_signal.connect(self._serverAddedSlot)
-        Servers.instance().server_removed_signal.connect(self._serverRemovedSlot)
-        for server in Servers.instance().servers():
-            self._serverAddedSlot(server.url())
+        ComputeManager.instance().created_signal.connect(self._computeAddedSlot)
+        ComputeManager.instance().updated_signal.connect(self._computeUpdatedSlot)
+        ComputeManager.instance().deleted_signal.connect(self._computeRemovedSlot)
+        for compute in ComputeManager.instance().computes():
+            self._computeAddedSlot(compute.id())
 
-    def _serverAddedSlot(self, url):
+    def _computeAddedSlot(self, compute_id):
         """
-        Called when a server is added to the list of servers
+        Called when a compute is added to the list of computes
 
-        :params url: URL of the server
-        """
-
-        server = Servers.instance().getServerFromString(url)
-        url = server.url()
-        # We can get twice an url in case of GNS3 VM remote server
-        # to avoid duplicate desynchronized informations we removed one
-        # version
-        if url in self._servers:
-            if not server.isGNS3VM():
-                return
-            else:
-                self.takeTopLevelItem(self.indexOfTopLevelItem(self._servers[url]))
-        self._servers[url] = ServerItem(self, server)
-
-    def _serverRemovedSlot(self, url):
-        """
-        Called when a server is removed to the list of servers
-
-        :params url: URL of the server
+        :params url: URL of the compute
         """
 
-        if url in self._servers:
-            self.takeTopLevelItem(self.indexOfTopLevelItem(self._servers[url]))
-            del self._servers[url]
+        compute = ComputeManager.instance().getCompute(compute_id)
+        self._computes[compute_id] = ComputeItem(self, compute)
+
+    def _computeUpdatedSlot(self, compute_id):
+        """
+        Called when a compute is removed to the list of computes
+
+        :params url: URL of the compute
+        """
+
+        if compute_id in self._computes:
+            self._computes[compute_id]._refreshStatusSlot()
+
+    def _computeRemovedSlot(self, compute_id):
+        """
+        Called when a compute is removed to the list of computes
+
+        :params url: URL of the compute
+        """
+
+        if compute_id in self._computes:
+            self.takeTopLevelItem(self.indexOfTopLevelItem(self._computes[compute_id]))
+            del self._computes[compute_id]

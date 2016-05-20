@@ -24,7 +24,7 @@ import sys
 import shutil
 
 from gns3.qt import QtGui, QtWidgets
-from gns3.servers import Servers
+from gns3.local_server import LocalServer
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node
 
@@ -50,7 +50,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
         self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
-        self._default_configs_dir = Servers.instance().localServerSettings()["configs_path"]
+        self._default_configs_dir = LocalServer.instance().localServerSettings()["configs_path"]
 
         # add the categories
         for name, category in Node.defaultCategories().items():

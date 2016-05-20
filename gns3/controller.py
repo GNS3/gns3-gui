@@ -25,12 +25,29 @@ class Controller(QtCore.QObject):
     """
     An instance of the GNS3 server controller
     """
+    connected_signal = QtCore.Signal()
+
+    def __init__(self):
+        super().__init__()
+        self._connected = False
+
+    def connected(self):
+        """
+        Is the controller connected
+        """
+        return self._connected
 
     def setHttpClient(self, http_client):
         """
         :param http_client: Instance of HTTP client to communicate with the server
         """
         self._http_client = http_client
+        self._http_client.connection_connected_signal.connect(self._httpClientConnectedSlot)
+
+    def _httpClientConnectedSlot(self):
+        if not self._connected:
+            self._connected = True
+            self.connected_signal.emit()
 
     def get(self, *args, **kwargs):
         return self.createHTTPQuery("GET", *args, **kwargs)
@@ -49,17 +66,6 @@ class Controller(QtCore.QObject):
         Forward the query to the HTTP client or controller depending of the path
         """
         return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
-
-    def addServer(self, server):
-        log.debug("Add server %s to the controller", server.server_id())
-        self.post("/computes", None, body={
-            "compute_id": server.server_id(),
-            "protocol": server.protocol(),
-            "host": server.host(),
-            "port": server.port(),
-            "user": server.user(),
-            "password": server.password()
-        })
 
     @staticmethod
     def instance():

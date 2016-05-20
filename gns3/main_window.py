@@ -27,9 +27,11 @@ import glob
 import logging
 
 from .local_config import LocalConfig
+from .local_server import LocalServer
 from .modules import MODULES
 from .qt import QtGui, QtCore, QtWidgets, QtSvg
 from .servers import Servers
+from .controller import Controller
 from .gns3_vm import GNS3VM
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
@@ -45,7 +47,6 @@ from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .utils.progress_dialog import ProgressDialog
 from .utils.import_project_worker import ImportProjectWorker
-from .utils.wait_for_connection_worker import WaitForConnectionWorker
 from .utils.wait_for_vm_worker import WaitForVMWorker
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
@@ -111,7 +112,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # populate the view -> docks menu
         self.uiDocksMenu.addAction(self.uiTopologySummaryDockWidget.toggleViewAction())
-        self.uiDocksMenu.addAction(self.uiServerSummaryDockWidget.toggleViewAction())
+        self.uiDocksMenu.addAction(self.uiComputeSummaryDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiConsoleDockWidget.toggleViewAction())
         self.uiDocksMenu.addAction(self.uiNodesDockWidget.toggleViewAction())
 
@@ -1017,7 +1018,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings["state"] = bytes(self.saveState().toBase64()).decode()
         self.setSettings(self._settings)
 
-        servers = Servers.instance()
+        servers = LocalServer.instance()
         servers.stopLocalServer(wait=True)
 
         time_spent = "{:.0f}".format(time.time() - self._start_time)
@@ -1053,10 +1054,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if self.testAttribute(QtCore.Qt.WA_WindowModified):
             project = self._project_manager.project()
-            if project.temporary():
-                destination_file = "untitled.gns3"
-            else:
-                destination_file = os.path.basename(project.topologyFile())
+            destination_file = os.path.basename(project.topologyFile())
             reply = QtWidgets.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
                                                   QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Cancel)
             if reply == QtWidgets.QMessageBox.Save:
@@ -1104,21 +1102,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if progress_dialog.exec_():
                     gns3_vm.adjustLocalServerIP()
 
-        # start and connect to the local server
-        server = servers.localServer()
-        if servers.shouldLocalServerAutoStart():
-                if not servers.localServerAutoStart():
-                    QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(servers.localServerPath()))
-                    return
-
-                worker = WaitForConnectionWorker(server.host(), server.port())
-                progress_dialog = ProgressDialog(worker,
-                                                 "Local server",
-                                                 "Connecting to server {} on port {}...".format(server.host(), server.port()),
-                                                 "Cancel", busy=True, parent=self)
-                progress_dialog.show()
-                if not progress_dialog.exec_():
-                    return
+        # start and connect to the local server if need
+        LocalServer.instance().localServerAutoStart()
+        Controller.instance().setHttpClient(LocalServer.instance().httpClient())
 
         # show the setup wizard
         if not self._settings["hide_setup_wizard"] and not gns3_vm.isRunning():

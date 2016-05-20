@@ -65,7 +65,7 @@ class BaseNode(QtCore.QObject):
     end_devices = 2
     security_devices = 3
 
-    def __init__(self, module, server, project):
+    def __init__(self, module, compute, project):
 
         super().__init__()
         # create an unique ID
@@ -73,7 +73,7 @@ class BaseNode(QtCore.QObject):
         BaseNode._instance_count += 1
 
         self._module = module
-        self._server = server
+        self._compute = compute
         self._project = project
         self._initialized = False
         self._loading = False
@@ -158,14 +158,13 @@ class BaseNode(QtCore.QObject):
 
         return self._module
 
-    def server(self):
+    def compute(self):
         """
-        Returns this node server.
+        Returns this node compute.
 
-        :returns: Server instance
+        :returns: Compute instance
         """
-
-        return self._server
+        return self._compute
 
     def project(self):
         """
@@ -390,7 +389,6 @@ class BaseNode(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        server = Controller.instance()
         self._project.get(path, callback, context=context, **kwargs)
 
 
@@ -403,5 +401,4 @@ class BaseNode(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        server = Controller.instance()
         self._project.delete(path, callback, context=context, **kwargs)

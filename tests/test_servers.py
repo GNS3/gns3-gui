@@ -31,79 +31,10 @@ def reset_server():
     Servers._instance = None
 
 
-def test_loadSettings_EmptySettings(local_config, tmpdir):
-
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        json.dump({
-            "version": "1.4"
-        }, f)
-
-    local_config.setConfigFilePath(str(tmpdir / "test.cfg"))
-
-    Servers._instance = None
-    servers = Servers.instance()
-
-    assert servers.localServerSettings()["port"] == 3080
-    assert len(servers.localServerSettings()["password"]) == 64
-    assert len(servers.localServerSettings()["user"]) == 64
-
-    with open(str(tmpdir / "test.cfg")) as f:
-        conf = json.load(f)
-        assert servers.localServerSettings()["password"] == conf["Servers"]["local_server"]["password"]
-        assert servers.localServerSettings()["user"] == conf["Servers"]["local_server"]["user"]
-
-
-def test_loadSettings(tmpdir, local_config):
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        json.dump({
-            "Servers": {
-                "local_server": {
-                    "auth": True,
-                    "user": "world",
-                    "password": "hello"
-                }
-            },
-            "version": "1.4"
-        }, f)
-
-    local_config.setConfigFilePath(str(tmpdir / "test.cfg"))
-    Servers._instance = None
-    servers = Servers.instance()
-
-    assert servers.localServerSettings()["password"] == "hello"
-
-
-def test_loadSettingsWith13LocalServerSetting(tmpdir, local_config):
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        json.dump({
-            "Servers": {
-                "local_server": {
-                    "auth": True,
-                    "user": "world",
-                    "password": "hello"
-                }
-            },
-            "LocalServer": {
-                "auth": False
-            },
-            "version": "1.4"
-        }, f)
-
-    local_config.setConfigFilePath(str(tmpdir / "test.cfg"))
-    Servers._instance = None
-    servers = Servers.instance()
-
-    local_server = local_config.loadSectionSettings("LocalServer", {})
-
-    assert local_server["auth"] == True
-    assert local_server["user"] == "world"
-    assert local_server["password"] == "hello"
-
-
 def testServers():
     servers = Servers.instance()
     http_server = servers.getRemoteServer("http", "localhost", 3080, None)
-    assert len(servers.servers()) == 2
+    assert len(servers.servers()) == 1
 
 
 def test_getRemoteServer():
@@ -156,58 +87,6 @@ def test_is_non_local_server_configured():
     assert servers.isNonLocalServerConfigured() is True
     servers._vm_server = None
     assert servers.isNonLocalServerConfigured() is False
-
-
-@pytest.mark.skipif(sys.platform.startswith('win') is True, reason='Not for windows')
-def test_startLocalServer(tmpdir, local_config):
-    local_server_path = str(tmpdir / "gns3server")
-    open(local_server_path, "w+").close()
-
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        json.dump({
-            "Servers": {
-                "local_server": {
-                    "path": local_server_path,
-                }
-            },
-            "version": "1.4"
-        }, f)
-
-    local_config.setConfigFilePath(str(tmpdir / "test.cfg"))
-    Servers._instance = None
-
-    with patch("gns3.local_config.LocalConfig.configDirectory") as mock_local_config:
-        mock_local_config.return_value = str(tmpdir)
-        process_mock = MagicMock()
-        with patch("subprocess.Popen", return_value=process_mock) as mock:
-
-            # If everything work fine the command is still running and a timeout is raised
-            process_mock.communicate.side_effect = subprocess.TimeoutExpired("test", 1)
-
-            Servers.instance().startLocalServer()
-            mock.assert_called_with([local_server_path,
-                                     '--host=127.0.0.1',
-                                     '--port=3080',
-                                     '--local',
-                                     '--controller',
-                                     '--debug',
-                                     '--log='  + str(tmpdir / "gns3_server.log"),
-                                     '--pid=' + str(tmpdir / "gns3_server.pid")
-                                    ])
-
-
-def test_killAlreadyRunningServer(tmpdir):
-    with patch("gns3.local_config.LocalConfig.configDirectory") as mock_local_config:
-        mock_local_config.return_value = str(tmpdir)
-
-        with open(str(tmpdir / "gns3_server.pid"), "w+") as f:
-            f.write("42")
-
-        mock_process = MagicMock()
-        with patch("psutil.Process", return_value=mock_process) as mock:
-            Servers.instance()._killAlreadyRunningServer()
-            mock.assert_called_with(pid=42)
-            assert mock_process.kill.called
 
 
 def test_getServerInstance():

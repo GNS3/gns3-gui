@@ -38,14 +38,11 @@ from .qt import QtNetwork, QtWidgets, QtCore
 from .network_client import getNetworkUrl
 from .local_config import LocalConfig
 from .settings import SERVERS_SETTINGS
-from .local_server_config import LocalServerConfig
 from .progress import Progress
 from .utils.sudo import sudo
 from .server import Server
 from .controller import Controller
 from .http_client import HTTPClient
-
-from collections import OrderedDict
 
 import logging
 log = logging.getLogger(__name__)
@@ -64,28 +61,20 @@ class Servers(QtCore.QObject):
 
         super().__init__()
         self._settings = {}
-        self._local_server = None
         self._vm_server = None
         self._controller_server = None
         self._remote_servers = {}
-        self._local_server_path = ""
-        self._local_server_auto_start = True
-        self._local_server_allow_console_from_anywhere = False
-        self._local_server_process = None
         self._network_manager = QtNetwork.QNetworkAccessManager()
         self._network_manager.sslErrors.connect(self._handleSslErrors)
         self._remote_server_iter_pos = 0
         self._loadSettings()
-        self._pid_path = os.path.join(LocalConfig.configDirectory(), "gns3_server.pid")
-        self.registerLocalServer()
+
 
     def servers(self):
         """
         Return the list of all servers, remote, vm and local
         """
         servers = list(self._remote_servers.values())
-        if self._local_server:
-            servers.append(self._local_server)
         if self._vm_server:
             servers.append(self._vm_server)
         return servers
@@ -105,95 +94,20 @@ class Servers(QtCore.QObject):
         self.server_added_signal.emit("local")
         log.info("New local server connection {} registered".format(self._local_server.url()))
 
-    @staticmethod
-    def _findLocalServer(self):
+    def _loadSettings(self):
         """
-        Finds the local server path.
-
-        :return: path to the local server
+        Loads the server settings from the persistent settings file.
         """
 
-        local_server_path = shutil.which("gns3server")
+        self._settings = LocalConfig.instance().loadSectionSettings("Servers", SERVERS_SETTINGS)
 
-        if local_server_path is None:
-            return ""
-        return os.path.abspath(local_server_path)
-
-    @staticmethod
-    def _findUbridge(self):
-        """
-        Finds the ubridge executable path.
-
-        :return: path to the ubridge
-        """
-
-        ubridge_path = shutil.which("ubridge")
-
-        if ubridge_path is None:
-            return ""
-        path = os.path.abspath(ubridge_path)
-        return path
-
-    def _checkUbridgePermissions(self):
-        """
-        Checks that uBridge can interact with network interfaces.
-        """
-
-        path = self._settings["local_server"]["ubridge_path"]
-
-        if not path or len(path) == 0 or not os.path.exists(path):
-            return False
-
-        if sys.platform.startswith("win"):
-            # do not check anything on Windows
-            return True
-
-        if os.geteuid() == 0:
-            # we are root, so we should have privileged access.
-            return True
-
-        from .main_window import MainWindow
-        main_window = MainWindow.instance()
-
-        request_setuid = False
-        if sys.platform.startswith("linux"):
-            # test if the executable has the CAP_NET_RAW capability (Linux only)
-            try:
-                if "security.capability" in os.listxattr(path):
-                    caps = os.getxattr(path, "security.capability")
-                    # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
-                    if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
-                        proceed = QtWidgets.QMessageBox.question(
-                            main_window,
-                            "uBridge",
-                            "uBridge requires CAP_NET_RAW capability to interact with network interfaces. Set the capability to uBridge?",
-                            QtWidgets.QMessageBox.Yes,
-                            QtWidgets.QMessageBox.No)
-                        if proceed == QtWidgets.QMessageBox.Yes:
-                            sudo(["setcap", "cap_net_admin,cap_net_raw=ep"])
-                else:
-                    # capabilities not supported
-                    request_setuid = True
-            except OSError as e:
-                QtWidgets.QMessageBox.critical(main_window, "uBridge", "Can't set CAP_NET_RAW capability to uBridge {}: {}".format(path, str(e)))
-                return False
-
-        if sys.platform.startswith("darwin") or request_setuid:
-            try:
-                if os.stat(path).st_uid != 0 or not os.stat(path).st_mode & stat.S_ISUID:
-                    proceed = QtWidgets.QMessageBox.question(
-                        main_window,
-                        "uBridge",
-                        "uBridge requires root permissions to interact with network interfaces. Set root permissions to uBridge?",
-                        QtWidgets.QMessageBox.Yes,
-                        QtWidgets.QMessageBox.No)
-                    if proceed == QtWidgets.QMessageBox.Yes:
-                        sudo(["chmod", "4755", path])
-                        sudo(["chown", "root", path])
-            except OSError as e:
-                QtWidgets.QMessageBox.critical(main_window, "uBridge", "Can't set root permissions to uBridge {}: {}".format(path, str(e)))
-                return False
-        return True
+        for remote_server in self._settings["remote_servers"]:
+            self._addRemoteServer(protocol=remote_server.get("protocol", "http"),
+                                  host=remote_server["host"],
+                                  port=remote_server["port"],
+                                  user=remote_server.get("user", None),
+                                  password=remote_server.get("password", None),
+                                  accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
 
     def _handleSslErrors(self, reply, errorList):
         """
@@ -223,100 +137,6 @@ class Servers(QtCore.QObject):
                 reply.ignoreSslErrors()
                 log.info("SSL error ignored for %s", url)
 
-    def _passwordGenerate(self):
-        """
-        Generate a random password
-        """
-        return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(64))
-
-    def _loadSettings(self):
-        """
-        Loads the server settings from the persistent settings file.
-        """
-
-        self._settings = LocalConfig.instance().loadSectionSettings("Servers", SERVERS_SETTINGS)
-
-        local_server_settings = self._settings["local_server"]
-        if not os.path.exists(local_server_settings["path"]):
-            local_server_settings["path"] = self._findLocalServer(self)
-
-        if not os.path.exists(local_server_settings["ubridge_path"]):
-            local_server_settings["ubridge_path"] = self._findUbridge(self)
-
-        for remote_server in self._settings["remote_servers"]:
-            self._addRemoteServer(protocol=remote_server.get("protocol", "http"),
-                                  host=remote_server["host"],
-                                  port=remote_server["port"],
-                                  user=remote_server.get("user", None),
-                                  password=remote_server.get("password", None),
-                                  accept_insecure_certificate=remote_server.get("accept_insecure_certificate", False))
-
-        changed = False
-        if "user" not in local_server_settings or len(local_server_settings["user"]) == 0:
-            local_server_settings["user"] = self._passwordGenerate()
-            local_server_settings["password"] = self._passwordGenerate()
-            changed = True
-
-        # For 1.3 compatibity old LocalServer section
-        local_server = LocalConfig.instance().loadSectionSettings("LocalServer", {})
-        if "auth" in local_server:
-            local_server["auth"] = local_server_settings["auth"]
-            local_server["user"] = local_server_settings["user"]
-            local_server["password"] = local_server_settings["password"]
-            LocalConfig.instance().saveSectionSettings("LocalServer", local_server)
-            changed = True
-
-        # WARNING: This operation should be a the end of the method otherwise you save a partial config
-        if changed:
-            self._saveSettings()
-
-    def _saveSettings(self):
-        """
-        Saves the server settings to a persistent settings file.
-        """
-
-        # Save the remote servers
-        # And emit signal for each server removed
-        old_server_urls = [ s["url"] for s in self._settings["remote_servers"] ]
-        self._settings["remote_servers"] = []
-        for server in self._remote_servers.values():
-            settings = server.settings()
-            settings["url"] = server.url()
-            self._settings["remote_servers"].append(settings)
-            if settings["url"] in old_server_urls:
-                old_server_urls.remove(settings["url"])
-
-        for old_server_url in old_server_urls:
-            self.server_removed_signal.emit(old_server_url)
-        old_server_urls = []
-
-        # save the settings
-        LocalConfig.instance().saveSectionSettings("Servers", self._settings)
-
-        # save some settings to the local server config files
-        local_server_settings = self._settings["local_server"]
-        server_settings = OrderedDict([
-            ("host", local_server_settings["host"]),
-            ("port", local_server_settings["port"]),
-            ("ubridge_path", local_server_settings["ubridge_path"]),
-            ("auth", local_server_settings.get("auth", False)),
-            ("user", local_server_settings.get("user", "")),
-            ("password", local_server_settings.get("password", "")),
-            ("images_path", local_server_settings["images_path"]),
-            ("projects_path", local_server_settings["projects_path"]),
-            ("configs_path", local_server_settings["configs_path"]),
-            ("console_start_port_range", local_server_settings["console_start_port_range"]),
-            ("console_end_port_range", local_server_settings["console_end_port_range"]),
-            ("udp_start_port_range", local_server_settings["udp_start_port_range"]),
-            ("udp_start_end_range", local_server_settings["udp_end_port_range"]),
-            ("report_errors", local_server_settings["report_errors"]),
-        ])
-        config = LocalServerConfig.instance()
-        config.saveSettings("Server", server_settings)
-
-        if self._local_server and self._local_server.connected():
-            self._local_server.post("/config/reload", None)
-
     def settings(self):
         """
         Returns the servers settings.
@@ -334,25 +154,6 @@ class Servers(QtCore.QObject):
         """
 
         self._settings.update(settings)
-
-    def localServerSettings(self):
-        """
-        Returns the local server settings.
-
-        :returns: local server settings (dict)
-        """
-
-        return self._settings["local_server"]
-
-    def setLocalServerSettings(self, settings):
-        """
-        Set new local server settings.
-
-        :param settings: local server settings (dict)
-        """
-
-        local_server_settings = self._settings["local_server"]
-        local_server_settings.update(settings)
 
     def vmSettings(self):
         """
@@ -372,265 +173,6 @@ class Servers(QtCore.QObject):
 
         vm_settings = self._settings["vm"]
         vm_settings.update(settings)
-
-    def shouldLocalServerAutoStart(self):
-        """
-        Returns either the local server
-        is automatically started on startup.
-
-        :returns: boolean
-        """
-
-        return self._settings["local_server"]["auto_start"]
-
-    def localServerPath(self):
-        """
-        Returns the local server path.
-
-        :returns: path to local server program.
-        """
-
-        return self._settings["local_server"]["path"]
-
-    def _killAlreadyRunningServer(self):
-        """
-        Kill a running zombie server (started by a gui that no longer exists)
-        This will not kill server started by hand.
-        """
-        try:
-            if os.path.exists(self._pid_path):
-                with open(self._pid_path) as f:
-                    pid = int(f.read())
-                process = psutil.Process(pid=pid)
-                log.info("Kill already running server with PID %d", pid)
-                process.kill()
-        except (OSError, ValueError, psutil.NoSuchProcess, psutil.AccessDenied):
-            # Permission issue, or process no longer exists, or file is empty
-            return
-
-    def localServerAutoStart(self):
-        """
-        Try to start the embed gns3 server.
-        """
-
-        # We check if two gui are not launched at the same time
-        # to avoid killing the server of the other GUI
-        if not LocalConfig.isMainGui():
-           log.info("Not the main GUI, will not autostart the server")
-           return True
-
-        if self.isLocalServerRunning():
-            log.info("A local server already running on this host")
-            # Try to kill the server. The server can be still running after
-            # if the server was started by hand
-            self._killAlreadyRunningServer()
-
-        if not self.isLocalServerRunning():
-            if not self.initLocalServer():
-                return False
-            if not self.startLocalServer():
-                return False
-        return True
-
-    def initLocalServer(self):
-        """
-        Initialize the local server.
-        """
-
-        from .main_window import MainWindow
-        main_window = MainWindow.instance()
-
-        self._checkUbridgePermissions()
-
-        # check the local server path
-        local_server_path = self.localServerPath()
-        server = self.localServer()
-        if not local_server_path:
-            log.warn("No local server is configured")
-            return
-        if not os.path.isfile(local_server_path):
-            QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not find local server {}".format(local_server_path))
-            return
-        elif not os.access(local_server_path, os.X_OK):
-            QtWidgets.QMessageBox.critical(main_window, "Local server", "{} is not an executable".format(local_server_path))
-            return
-
-        try:
-            # check if the local address still exists
-            for res in socket.getaddrinfo(server.host(), 0, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
-                af, socktype, proto, _, sa = res
-                with socket.socket(af, socktype, proto) as sock:
-                    sock.bind(sa)
-                    break
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not bind with {}: {} (please check your host binding setting in the preferences)".format(server.host(), e))
-            return False
-
-        try:
-            # check if the port is already taken
-            find_unused_port = False
-            for res in socket.getaddrinfo(server.host(), server.port(), socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
-                af, socktype, proto, _, sa = res
-                with socket.socket(af, socktype, proto) as sock:
-                    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                    sock.bind(sa)
-                    break
-        except OSError as e:
-            log.warning("Could not use socket {}:{} {}".format(server.host(), server.port(), e))
-            find_unused_port = True
-
-        if find_unused_port:
-            # find an alternate port for the local server
-            old_port = server.port()
-            try:
-                server.setHostPort(server.host(), self._findUnusedLocalPort(server.host()))
-            except OSError as e:
-                QtWidgets.QMessageBox.critical(main_window, "Local server", "Could not find an unused port for the local server: {}".format(e))
-                return False
-            log.warning("The server port {} is already in use, fallback to port {}".format(old_port, server.port()))
-        return True
-
-    def _findUnusedLocalPort(self, host):
-        """
-        Find an unused port.
-
-        :param host: server hosts
-
-        :returns: port number
-        """
-
-        with socket.socket() as s:
-            s.bind((host, 0))
-            return s.getsockname()[1]
-
-    def startLocalServer(self):
-        """
-        Starts the local server process.
-        """
-
-        path = self.localServerPath()
-        host = self._local_server.host()
-        port = self._local_server.port()
-        command = '"{executable}" --host={host} --port={port} --local --controller'.format(executable=path,
-                                                                              host=host,
-                                                                              port=port)
-
-        if self._settings["local_server"]["allow_console_from_anywhere"]:
-            # allow connections to console from remote addresses
-            command += " --allow"
-
-        if logging.getLogger().isEnabledFor(logging.DEBUG):
-            command += " --debug"
-
-        settings_dir = LocalConfig.configDirectory()
-        if os.path.isdir(settings_dir):
-            # save server logging info to a file in the settings directory
-            logpath = os.path.join(settings_dir, "gns3_server.log")
-            if os.path.isfile(logpath):
-                # delete the previous log file
-                try:
-                    os.remove(logpath)
-                except FileNotFoundError:
-                    pass
-                except OSError as e:
-                    log.warn("could not delete server log file {}: {}".format(logpath, e))
-            command += ' --log="{}" --pid="{}"'.format(logpath, self._pid_path)
-
-        log.info("Starting local server process with {}".format(command))
-        try:
-            if sys.platform.startswith("win"):
-                # use the string on Windows
-                self._local_server_process = subprocess.Popen(command, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
-            else:
-                # use arguments on other platforms
-                args = shlex.split(command)
-                self._local_server_process = subprocess.Popen(args)
-        except (OSError, subprocess.SubprocessError) as e:
-            log.warning('Could not start local server "{}": {}'.format(command, e))
-            return False
-
-        log.info("Local server process has started (PID={})".format(self._local_server_process.pid))
-        return True
-
-    def localServerProcessIsRunning(self):
-        """
-        Returns either the local server is running.
-
-        :returns: boolean
-        """
-
-        try:
-            if self._local_server_process and self._local_server_process.poll() is None:
-                return True
-        except OSError:
-            pass
-        return False
-
-    def isLocalServerRunning(self):
-        """
-        Synchronous check if a server is already running on this host.
-
-        :returns: boolean
-        """
-
-        status, json_data = self.localServer().getSynchronous("version", timeout=2)
-        if json_data is None or status != 200:
-            return False
-        else:
-            version = json_data.get("version", None)
-            if version is None:
-                log.debug("Server is not a GNS3 server")
-                return False
-        return True
-
-    def stopLocalServer(self, wait=False):
-        """
-        Stops the local server.
-
-        :param wait: wait for the server to stop
-        """
-
-        if self.localServerProcessIsRunning():
-            log.info("Stopping local server (PID={})".format(self._local_server_process.pid))
-            # local server is running, let's stop it
-            if wait:
-                try:
-                    # wait for the server to stop for maximum 2 seconds
-                    self._local_server_process.wait(timeout=2)
-                except subprocess.TimeoutExpired:
-                    # the local server couldn't be stopped with the normal procedure
-                    try:
-                        if sys.platform.startswith("win"):
-                            self._local_server_process.send_signal(signal.CTRL_BREAK_EVENT)
-                        else:
-                            self._local_server_process.send_signal(signal.SIGINT)
-                    # If the process is already dead we received a permission error
-                    # it's a race condition between the timeout and send signal
-                    except PermissionError:
-                        pass
-                    try:
-                        # wait for the server to stop for maximum 2 seconds
-                        self._local_server_process.wait(timeout=2)
-                    except subprocess.TimeoutExpired:
-                        from .main_window import MainWindow
-                        main_window = MainWindow.instance()
-                        proceed = QtWidgets.QMessageBox.question(main_window,
-                                                                 "Local server",
-                                                                 "The Local server cannot be stopped, would you like to kill it?",
-                                                                 QtWidgets.QMessageBox.Yes,
-                                                                 QtWidgets.QMessageBox.No)
-
-                        if proceed == QtWidgets.QMessageBox.Yes:
-                            self._local_server_process.kill()
-
-    def localServer(self):
-        """
-        Returns the local server.
-
-        :returns: Server instance
-        """
-
-        return self._local_server
 
     def initVMServer(self):
         """
@@ -713,7 +255,7 @@ class Servers(QtCore.QObject):
         :param controller: True if the server is the GNS3 controller
         """
 
-        client = HTTPClient(settings, network_manager)
+        client = HTTPClient(settings)
         server = Server(settings, client)
         if controller:
             self._controller_server = Controller.instance()
@@ -863,19 +405,6 @@ class Servers(QtCore.QObject):
         """
 
         self._saveSettings()
-
-    def disconnectAllServers(self):
-        """
-        Disconnects all servers (local and remote).
-        """
-
-        if self._local_server.connected():
-            self._local_server.close()
-        if self._vm_server is not None and self._vm_server.connected():
-            self._vm_server.close()
-        for server in self._remote_servers.values():
-            if server.connected():
-                server.close()
 
     def isNonLocalServerConfigured(self):
         """

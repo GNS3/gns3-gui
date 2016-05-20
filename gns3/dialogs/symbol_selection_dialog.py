@@ -24,7 +24,7 @@ import os
 from ..qt import QtCore, QtGui, QtWidgets
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
-from ..servers import Servers
+from ..local_server import LocalServer
 
 import logging
 log = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self.uiSearchLineEdit.textChanged.connect(self._searchTextChangedSlot)
         self.uiBuiltinSymbolOnlyCheckBox.toggled.connect(self._builtinSymbolOnlyToggledSlot)
         self._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
-        self._symbols_path = Servers.instance().localServerSettings()["symbols_path"]
+        self._symbols_path = LocalServer.instance().localServerSettings()["symbols_path"]
 
         if not self._items:
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).hide()

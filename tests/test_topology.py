@@ -17,6 +17,7 @@
 
 import uuid
 import os
+import pytest
 from unittest.mock import patch, MagicMock
 
 from gns3.topology import Topology
@@ -25,6 +26,8 @@ from gns3.version import __version__
 from gns3.items.pixmap_image_item import PixmapImageItem
 import gns3.main_window
 import gns3.qt
+
+pytestmark = pytest.mark.skip(reason="Need to be moved on server")
 
 
 def test_topology_init():
@@ -68,7 +71,7 @@ def test_dump(vpcs_device, project, local_server):
                     "properties": {
                         "name": vpcs_device.name()
                     },
-                    "server_id": local_server.id(),
+                    "compute_id": local_server.id(),
                     "type": "VPCSDevice",
                     "node_id": vpcs_device.node_id()
                 }
@@ -77,7 +80,7 @@ def test_dump(vpcs_device, project, local_server):
                 {
                     "vm": False,
                     "host": "127.0.0.1",
-                    "id": local_server.id(),
+                    "id": compute.id(),
                     "local": True,
                     "port": 3080,
                     "protocol": "http",

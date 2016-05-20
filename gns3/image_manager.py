@@ -19,8 +19,8 @@ import os
 import pathlib
 import glob
 
-from gns3.servers import Servers
 from gns3.qt import QtWidgets
+from gns3.local_server import LocalServer
 from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.utils.progress_dialog import ProgressDialog
 
@@ -104,6 +104,9 @@ class ImageManager:
         :param node_type: Type of the image
         """
 
+        #TODO: move to server
+        return
+
         if self._asked_for_this_image.setdefault(server.id(), {}).setdefault(filename, False):
             return
         self._asked_for_this_image[server.id()][filename] = True
@@ -161,7 +164,7 @@ class ImageManager:
         :returns: path to the default images directory
         """
 
-        return Servers.instance().localServerSettings()['images_path']
+        return LocalServer.instance().localServerSettings()['images_path']
 
     def getDirectoryForType(self, node_type):
         """

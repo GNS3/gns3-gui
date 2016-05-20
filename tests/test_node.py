@@ -33,7 +33,7 @@ def test_create(vpcs_device, local_server):
         assert args[0] == "/nodes"
         assert kwargs["body"] == {
             "name": "PC 1",
-            "compute_id": local_server.server_id(),
+            "compute_id": local_server.id(),
             "node_type": "vpcs",
             "properties": {
                 "startup_script": "echo TEST"
@@ -78,7 +78,7 @@ def test_vpcs_dump(vpcs_device):
     assert dump["type"] == "VPCSDevice"
     assert dump["description"] == "VPCS device"
     assert dump["properties"] == {"name": vpcs_device.name()}
-    assert dump["server_id"] == vpcs_device._server.id()
+    assert dump["server_id"] == vpcs_device._compute.id()
 
 
 def test_vpcs_load(vpcs_device):
@@ -116,6 +116,6 @@ def test_readBaseConfig(vpcs_device, tmpdir):
 def test_readBaseConfigRelative(vpcs_device, tmpdir):
     with open(str(tmpdir / "test.cfg"), "w+") as f:
         f.write("42")
-    with patch('gns3.servers.Servers.localServerSettings', return_value={'configs_path': str(tmpdir)}):
+    with patch('gns3.local_server.LocalServer.localServerSettings', return_value={'configs_path': str(tmpdir)}):
         assert vpcs_device._readBaseConfig(str("test.cfg")) == "42"
 

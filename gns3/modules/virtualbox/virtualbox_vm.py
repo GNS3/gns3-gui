@@ -195,15 +195,14 @@ class VirtualBoxVM(Node):
   Server's node ID is {node_id}
   VirtualBox name is "{vmname}"
   RAM is {ram} MB
-  VirtualBox VM's server runs on {host}:{port}, console is on port {console}
+  VirtualBox VM's server runs on {host}, console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
            state=state,
            vmname=self._settings["vmname"],
            ram=self._settings["ram"],
-           host=self._server.host(),
-           port=self._server.port(),
+           host=self.compute().id(),
            console=self._settings["console"])
 
         port_info = ""

@@ -138,12 +138,11 @@ class EthernetHub(Node):
         info = """Ethernet hub {name} is always-on
   Local node ID is {id}
   Server's node ID is {node_id}
-  Hub's server runs on {host}:{port}
+  Hub's server runs on {host}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self._server.host(),
-           port=self._server.port())
+           host=self.compute().id())
 
         port_info = ""
         for port in self._ports:

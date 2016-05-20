@@ -22,8 +22,8 @@ Configuration page for Dynamips IOS routers.
 import os
 import re
 
-from gns3.servers import Servers
 from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.local_server import LocalServer
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node
@@ -65,7 +65,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         self.uiIdlepcLineEdit.setValidator(validator)
         self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
-        self._default_configs_dir = Servers.instance().localServerSettings()["configs_path"]
+        self._default_configs_dir = LocalServer.instance().localServerSettings()["configs_path"]
 
         # add the categories
         for name, category in Node.defaultCategories().items():
@@ -239,7 +239,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         if node:
             self._server = node.server()
         else:
-            self._server = Servers.instance().getServerFromString(settings["server"])
+            self._server = rvers.instance().getServerFromString(settings["server"])
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -661,5 +661,5 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         Return true if it's a valid configuration file
         """
         if not os.path.isabs(path):
-            path = os.path.join(Servers.instance().localServerSettings()["configs_path"], path)
+            path = os.path.join(LocalServer.instance().localServerSettings()["configs_path"], path)
         return os.access(path, os.R_OK)

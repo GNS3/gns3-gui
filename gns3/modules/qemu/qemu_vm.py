@@ -150,7 +150,7 @@ class QemuVM(Node):
                 # The image is missing on remote server
                 field = "{}_md5sum".format(image_field)
                 if field not in result or result[field] is None or len(result[field]) == 0:
-                    ImageManager.instance().addMissingImage(result[image_field], self._server, "QEMU")
+                    ImageManager.instance().addMissingImage(result[image_field], self.compute(), "QEMU")
 
     def update(self, new_settings):
         """
@@ -228,14 +228,13 @@ class QemuVM(Node):
 
         info = """QEMU VM {name} is {state}
   Node ID is {id}, server's node ID is {node_id}
-  QEMU VM's server runs on {host}:{port}
+  QEMU VM's server runs on {host}
   Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
            state=state,
-           host=self._server.host(),
-           port=self._server.port(),
+           host=self.compute().id(),
            console=self._settings["console"],
            console_type=self._settings["console_type"])
 

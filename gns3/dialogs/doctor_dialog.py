@@ -24,7 +24,7 @@ import struct
 
 from gns3.qt import QtWidgets
 from gns3.ui.doctor_dialog_ui import Ui_DoctorDialog
-from gns3.servers import Servers
+from gns3.local_server import LocalServer
 from gns3.local_config import LocalConfig
 from gns3 import version
 from gns3.modules.vmware import VMware
@@ -75,7 +75,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
 
     def checkLocalServerEnabled(self):
         """Checking if the local server is enabled"""
-        if Servers.instance().shouldLocalServerAutoStart() is False:
+        if LocalServer.instance().shouldLocalServerAutoStart() is False:
             return (2, "The local server is disabled. Go to Preferences -> Server -> Local Server and enable the local server.")
         return (0, None)
 
@@ -129,7 +129,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             # we are root, so we should have privileged access.
             return (0, None)
 
-        path = Servers.instance().localServerSettings().get("ubridge_path")
+        path = LocalServer.instance().localServerSettings().get("ubridge_path")
         if path is None:
             return (0, None)
         if not os.path.exists(path):
@@ -157,7 +157,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             # we are root, so we should have privileged access.
             return (0, None)
 
-        path = Servers.instance().localServerSettings().get("dynamips_path")
+        path = LocalServer.instance().localServerSettings().get("dynamips_path")
         if path is None:
             return (0, None)
         if not os.path.exists(path):

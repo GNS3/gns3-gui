@@ -494,7 +494,7 @@ class Router(Node):
   Server's node ID is {node_id}
   Dynamips ID is {dynamips_id}
   Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
-  Router's server runs on {host}:{port}, console is on port {console}, aux is on port {aux}
+  Router's server runs on {host}, console is on port {console}, aux is on port {aux}
   Image is {image_name}
   {idlepc_info}
   {disk0} MB disk0 size, {disk1} MB disk1 size
@@ -507,8 +507,7 @@ class Router(Node):
            specific_info=router_specific_info,
            ram=self._settings["ram"],
            nvram=self._settings["nvram"],
-           host=self._server.host(),
-           port=self._server.port(),
+           host=self.compute().id(),
            console=self._settings["console"],
            aux=self._settings["aux"],
            image_name=os.path.basename(self._settings["image"]),

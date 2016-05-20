@@ -34,7 +34,9 @@ def reset_modules():
     from gns3.modules.vpcs.vpcs_device import VPCSDevice
     from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
     from gns3.modules.iou.iou_device import IOUDevice
+    from gns3.compute_manager import ComputeManager
 
+    ComputeManager.reset()
     Port.reset()
     VPCSDevice.reset()
     VirtualBoxVM.reset()
@@ -45,7 +47,7 @@ def reset_modules():
 
 
 @pytest.fixture
-def project(local_server):
+def project():
 
     from gns3.project import Project
 
@@ -58,20 +60,14 @@ def project(local_server):
 
 @pytest.fixture
 def local_server():
-
-    from gns3.servers import Servers
-
-    server = Servers.instance().localServer()
-    server.setHostPort('127.0.0.1', 3080)
-    return server
+    from gns3.compute_manager import ComputeManager
+    return ComputeManager.instance().getCompute("local")
 
 
 @pytest.fixture
 def remote_server():
-
-    from gns3.servers import Servers
-
-    return Servers.instance().getRemoteServer("http", "127.0.0.1", 8001, None)
+    from gns3.compute_manager import ComputeManager
+    return ComputeManager.instance().getCompute("http://example.org")
 
 
 @pytest.fixture

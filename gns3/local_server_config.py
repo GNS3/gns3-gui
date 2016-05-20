@@ -54,6 +54,14 @@ class LocalServerConfig:
             log.error("Could not create the local server configuration {}: {}".format(self._config_file, e))
         self.readConfig()
 
+    def setConfigFile(self, path):
+        """
+        Change the location of the server config (use for test)
+        """
+        self._config = configparser.RawConfigParser()
+        self._config_file = path
+        self.readConfig()
+
     def readConfig(self):
         """
         Read the configuration file.
@@ -76,13 +84,12 @@ class LocalServerConfig:
         except (OSError, configparser.Error) as e:
             log.error("Could not write the local server configuration {}: {}".format(self._config_file, e))
 
-    def loadSettings(self, section, default_settings, types):
+    def loadSettings(self, section, default_settings):
         """
         Get all the settings from a given section.
 
         :param section: section name
         :param default_settings: setting names and default values (dict)
-        :param types: setting types (dict)
 
         :returns: settings (dict)
         """
@@ -92,11 +99,11 @@ class LocalServerConfig:
 
         settings = {}
         for name, default in default_settings.items():
-            if types[name] is int:
-                settings[name] = self._config[section].getint(name, default)
-            elif types[name] is bool:
+            if isinstance(default, bool):
                 settings[name] = self._config[section].getboolean(name, default)
-            elif types[name] is float:
+            elif isinstance(default, int):
+                settings[name] = self._config[section].getint(name, default)
+            elif isinstance(default, float):
                 settings[name] = self._config[section].getfloat(name, default)
             else:
                 settings[name] = self._config[section].get(name, default)

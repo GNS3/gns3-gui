@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from ..servers import Servers
+from ..compute_manager import ComputeManager
 from ..qt import QtWidgets
 
 
@@ -31,35 +31,26 @@ def server_select(parent, allow_local_server=True):
     :returns: Server or None
     """
 
-    servers = Servers.instance()
-    local_server = servers.localServer()
-    remote_servers = servers.remoteServers()
-    gns3_vm = Servers.instance().vmServer()
+    server_list = []
 
-    if allow_local_server:
-        server_list = ["Local server ({})".format(local_server.url())]
-    else:
-        server_list = []
+    for compute in ComputeManager.instance().computes():
+        if compute.id() == "local" and allow_local_server:
+            server_list.append(compute.name())
 
-    if gns3_vm:
-        server_list.append("GNS3 VM ({})".format(gns3_vm.url()))
-    for remote_server in remote_servers.values():
-        server_list.append("{}".format(remote_server.url()))
+    for compute in ComputeManager.instance().computes():
+        if not compute.id() == "local":
+            server_list.append(compute.name())
 
     if len(server_list) == 0:
         raise ValueError("No server available")
     elif len(server_list) == 1:
         selection = server_list[0]
     else:
+        print(server_list)
         (selection, ok) = QtWidgets.QInputDialog.getItem(parent, "Server", "Please choose a server", server_list, 0, False)
         if not ok:
             return None
 
-    if selection.startswith("Local server"):
-        return local_server
-    elif selection.startswith("GNS3 VM"):
-        return gns3_vm
-    else:
-        for server in remote_servers.values():
-            if selection == server.url():
-                return server
+    for compute in ComputeManager.instance().computes():
+        if selection == compute.name():
+            return compute

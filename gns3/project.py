@@ -22,6 +22,7 @@ from .qt import QtCore, qpartial
 
 from gns3.servers import Servers
 from gns3.controller import Controller
+from gns3.compute_manager import ComputeManager
 from gns3.topology import Topology
 
 import logging
@@ -301,21 +302,12 @@ class Project(QtCore.QObject):
 
         if self._id:
             self.project_about_to_close_signal.emit()
-
-            if Servers.instance().localServerProcessIsRunning() and local_server_shutdown:
-                Controller.instance().post("/computes/shutdown", self._projectClosedCallback)
-            else:
-                Controller.instance().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
+            Controller.instance().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
         else:
-            if Servers.instance().localServerProcessIsRunning() and local_server_shutdown:
-                log.info("Local server running shutdown the server")
-                local_server = Servers.instance().localServer()
-                local_server.post("/computes/shutdown", self._projectClosedCallback, progressText="Shutdown the server")
-            else:
-                # The project is not initialized when we close it
-                self._closed = True
-                self.project_about_to_close_signal.emit()
-                self.project_closed_signal.emit()
+            # The project is not initialized when we close it
+            self._closed = True
+            self.project_about_to_close_signal.emit()
+            self.project_closed_signal.emit()
 
     def _projectClosedCallback(self, result, error=False, server=None, **kwargs):
 
@@ -351,6 +343,10 @@ class Project(QtCore.QObject):
             log.warning(result["event"]["message"])
         elif result["action"] == "log.info":
             log.info(result["event"]["message"], extra={"show": True})
+        elif result["action"] == "compute.created" or result["action"] == "compute.updated":
+            cm = ComputeManager.instance()
+            print(result)
+            cm.computeDataReceivedCallback(result["event"])
         elif result["action"] == "ping":
             if "compute_id" in result:
                 compute = Servers.instance().getServerFromString(result["compute_id"])

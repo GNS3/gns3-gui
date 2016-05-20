@@ -39,7 +39,7 @@ def test_vpcs_device_create(vpcs_device, project, local_server):
         assert args[0] == "/nodes"
         assert kwargs["body"] == {
             "name": "PC 1",
-            "compute_id": local_server.server_id(),
+            "compute_id": local_server.id(),
             "node_type": "vpcs",
             "properties": {
                 "startup_script": "echo TEST"
@@ -75,7 +75,7 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
         assert kwargs["body"] == {
             "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
-            "compute_id": local_server.server_id(),
+            "compute_id": local_server.id(),
             "node_type": "vpcs",
             "properties": {}
         }
@@ -114,7 +114,7 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
         assert kwargs["body"] == {
             "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
             "name": "PC 1",
-            "compute_id": local_server.server_id(),
+            "compute_id": local_server.id(),
             "node_type": "vpcs",
             "properties": {}
         }

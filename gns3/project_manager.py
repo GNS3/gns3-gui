@@ -19,7 +19,7 @@ import os
 import json
 
 from .project import Project
-from .servers import Servers
+from .local_server import LocalServer
 from .node import Node
 from .qt import QtCore, QtWidgets
 from .topology import Topology
@@ -112,7 +112,7 @@ class ProjectManager(QtCore.QObject):
         :returns: path to the default projects directory
         """
 
-        return Servers.instance().localServerSettings()["projects_path"]
+        return LocalServer.instance().localServerSettings()["projects_path"]
 
     def createTemporaryProject(self):
         """

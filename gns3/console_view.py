@@ -230,7 +230,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         if node:
             if node.name():
                 name = " {}:".format(node.name())
-            server = "from {}".format(node.server().url())
+            server = "from {}".format(node.compute().name())
 
         text = "Server error {server}:{name} {message}".format(server=server,
                                                                name=name,

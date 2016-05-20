@@ -22,7 +22,7 @@ Configuration page for IOU devices.
 import os
 
 from gns3.qt import QtGui, QtWidgets
-from gns3.servers import Servers
+from gns3.local_server import LocalServer
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node
@@ -53,7 +53,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         # location of the base config templates
         self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
         self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_startup-config.txt"))
-        self._default_configs_dir = Servers.instance().localServerSettings()["configs_path"]
+        self._default_configs_dir = LocalServer.instance().localServerSettings()["configs_path"]
 
         # add the categories
         for name, category in Node.defaultCategories().items():
@@ -153,7 +153,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         if node:
             self._server = node.server()
         else:
-            self._server = Servers.instance().getServerFromString(settings["server"])
+            self._server = LocalServer.instance().getServerFromString(settings["server"])
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])

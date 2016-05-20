@@ -144,7 +144,7 @@ class IOUDevice(Node):
 
         # The image is missing on remote server
         if "md5sum" not in result or result["md5sum"] is None or len(result["md5sum"]) == 0:
-            ImageManager.instance().addMissingImage(result["path"], self._server, "IOU")
+            ImageManager.instance().addMissingImage(result["path"], self.compute(), "IOU")
 
     def start(self):
         """
@@ -249,7 +249,7 @@ class IOUDevice(Node):
         info = """Device {name} is {state}
   Node ID is {id}, server's IOU device ID is {node_id}
   Hardware is Cisco IOU generic device with {memories_info}
-  Device's server runs on {host}:{port}, console is on port {console}
+  Device's server runs on {host}, console is on port {console}
   Image is {image_name}
   {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
 """.format(name=self.name(),
@@ -257,8 +257,7 @@ class IOUDevice(Node):
            node_id=self._node_id,
            state=state,
            memories_info=memories_info,
-           host=self._server.host(),
-           port=self._server.port(),
+           host=self.compute().id(),
            console=self._settings["console"],
            image_name=os.path.basename(self._settings["path"]),
            nb_ethernet=self._settings["ethernet_adapters"],
@@ -319,13 +318,14 @@ class IOUDevice(Node):
             # transfer initial-config (post version 1.4) to startup-config
             vm_settings["startup_config"] = vm_settings["initial_config"]
 
-        if self.server().isLocal():
-            # check and update the path to use the image in the images directory
-            updated_path = os.path.join(ImageManager.instance().getDirectoryForType("IOU"), path)
-            if os.path.isfile(updated_path):
-                path = updated_path
-            elif not os.path.isfile(path):
-                path = self._module.findAlternativeIOUImage(path)
+        #TODO: Move to server
+        # if self.server().isLocal():
+        #     # check and update the path to use the image in the images directory
+        #     updated_path = os.path.join(ImageManager.instance().getDirectoryForType("IOU"), path)
+        #     if os.path.isfile(updated_path):
+        #         path = updated_path
+        #     elif not os.path.isfile(path):
+        #         path = self._module.findAlternativeIOUImage(path)
 
         log.info("iou device {} is loading".format(name))
         self.create(path, name, node_id, vm_settings)

@@ -280,27 +280,28 @@ GRAPHICS_VIEW_SETTINGS = {
     "default_label_color": "#000000",
 }
 
+LOCAL_SERVER_SETTINGS = {
+    "path": "gns3server",
+    "ubridge_path": "ubridge",
+    "host": DEFAULT_LOCAL_SERVER_HOST,
+    "port": DEFAULT_LOCAL_SERVER_PORT,
+    "images_path": DEFAULT_IMAGES_PATH,
+    "projects_path": DEFAULT_PROJECTS_PATH,
+    "symbols_path": DEFAULT_SYMBOLS_PATH,
+    "configs_path": DEFAULT_CONFIGS_PATH,
+    "report_errors": True,
+    "auto_start": True,
+    "allow_console_from_anywhere": False,
+    "auth": True,
+    "user": "",
+    "password": "",
+    "console_start_port_range": 5000,
+    "console_end_port_range": 10000,
+    "udp_start_port_range": 10000,
+    "udp_end_port_range": 20000,
+}
+
 SERVERS_SETTINGS = {
-    "local_server": {
-        "path": "",
-        "ubridge_path": "",
-        "host": DEFAULT_LOCAL_SERVER_HOST,
-        "port": DEFAULT_LOCAL_SERVER_PORT,
-        "images_path": DEFAULT_IMAGES_PATH,
-        "projects_path": DEFAULT_PROJECTS_PATH,
-        "symbols_path": DEFAULT_SYMBOLS_PATH,
-        "configs_path": DEFAULT_CONFIGS_PATH,
-        "report_errors": True,
-        "auto_start": True,
-        "allow_console_from_anywhere": False,
-        "auth": True,
-        "user": "",
-        "password": "",
-        "console_start_port_range": 5000,
-        "console_end_port_range": 10000,
-        "udp_start_port_range": 10000,
-        "udp_end_port_range": 20000,
-    },
     "vm": {
         "auto_start": False,
         "auto_stop": True,

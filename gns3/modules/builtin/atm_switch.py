@@ -136,12 +136,11 @@ class ATMSwitch(Node):
   Local node ID is {id}
   Server's Node ID is {node_id}
   Hardware is Dynamips emulated simple ATM switch
-  Switch's server runs on {host}:{port}
+  Switch's server runs on {host}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self._server.host(),
-           port=self._server.port())
+           host=self._compute.name())
 
         port_info = ""
         mapping = re.compile(r"""^([0-9]*):([0-9]*):([0-9]*)$""")

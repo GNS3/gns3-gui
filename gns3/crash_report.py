@@ -68,9 +68,9 @@ class CrashReport:
         sentry_uncaught.disabled = True
 
     def captureException(self, exception, value, tb):
-        from .servers import Servers
+        from .local_server import LocalServer
 
-        local_server = Servers.instance().localServerSettings()
+        local_server = LocalServer.instance().localServerSettings()
         if local_server["report_errors"]:
             if not RAVEN_AVAILABLE:
                 return

@@ -45,6 +45,7 @@ from .local_config import LocalConfig
 from .progress import Progress
 from .utils.server_select import server_select
 from .utils.normalize_filename import normalize_filename
+from .compute_manager import ComputeManager
 
 # link items
 from .items.link_item import LinkItem
@@ -396,26 +397,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 QtWidgets.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
                 return
 
-            if source_item.node().server().protocol() != destination_item.node().server().protocol():
-                QtWidgets.QMessageBox.critical(self, "Connection", "Sorry, you cannot connect a device running on an insecure server to a device running on a secure server.")
-                return
-
             if isinstance(source_item.node(), Cloud) and isinstance(destination_item.node(), Cloud):
                 QtWidgets.QMessageBox.critical(self, "Connection", "Sorry, you cannot connect a cloud to another cloud!")
-                return
-
-            source_host = source_item.node().server().host()
-            destination_host = destination_item.node().server().host()
-
-            # check that the node can be connected to a cloud
-            if (isinstance(source_item.node(), Cloud) or isinstance(destination_item.node(), Cloud)) and source_host != destination_host:
-                QtWidgets.QMessageBox.critical(self, "Connection", "This device can only be connected to a cloud on the same host")
-                return
-
-            # check if the 2 nodes can communicate
-            if (source_host in self._local_addresses and destination_host not in self._local_addresses) or \
-               (destination_host in self._local_addresses and source_host not in self._local_addresses):
-                QtWidgets.QMessageBox.critical(self, "Connection", "Server {} cannot communicate with server {}, most likely because your local server host binding is set to a local address".format(source_host, destination_host))
                 return
 
             if self._newlink in self.scene().items():
@@ -1464,16 +1447,17 @@ class GraphicsView(QtWidgets.QGraphicsView):
             elif item.parentItem() is None:
                 item.delete()
 
-    @staticmethod
-    def allocateServer(node_data, module_instance):
+    def allocateCompute(self, node_data, module_instance):
         """
         Allocates a server.
-
-        :returns: allocated server (HTTPClient instance)
+        :returns: allocated compute node
         """
 
         from .main_window import MainWindow
         mainwindow = MainWindow.instance()
+
+        if "server" in node_data:
+            return ComputeManager.instance().getCompute(node_data["server"])
 
         if "builtin" in node_data:
             allow_local_server = True
@@ -1506,25 +1490,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
-            if "server" not in node_data:
-                server = self.allocateServer(node_data, instance)
-            elif node_data["server"] == "local":
-                server = Servers.instance().localServer()
-            elif node_data["server"] == "vm":
-                server = Servers.instance().vmServer()
-                if server is None:
-                    QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The GNS3 VM is not running")
-                    return
-            elif node_data["server"] == "load-balance":
-                QtWidgets.QMessageBox.critical(self, "Remote server", "Load-balancing support has been deprecated")
-                return
-            else:
-                server = Servers.instance().getServerFromString(node_data["server"])
-
-            if server is None:
-                return
-
-            node = node_module.instantiateNode(node_class, server, self._main_window.projectManager().project())
+            node = node_module.instantiateNode(node_class, self.allocateCompute(node_data, instance), self._main_window.projectManager().project())
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)

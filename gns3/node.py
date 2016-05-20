@@ -17,7 +17,7 @@
 
 
 import os
-from gns3.servers import Servers
+from gns3.local_server import LocalServer
 from gns3.ports.port import Port
 from gns3.qt import QtGui, QtCore
 
@@ -29,9 +29,10 @@ log = logging.getLogger(__name__)
 
 class Node(BaseNode):
 
-    def __init__(self, module, server, project):
+    def __init__(self, module, compute, project):
 
-        super().__init__(module, server, project)
+        super().__init__(module, compute, project)
+
         self._node_id = None
         self._node_directory = None
         self._command_line = None
@@ -113,7 +114,7 @@ class Node(BaseNode):
         """
         body = {"properties": {},
                 "node_type": self.URL_PREFIX,
-                "compute_id": self._server.server_id()}
+                "compute_id": self._compute.id()}
 
         # We have two kind of properties. The general properties common to all
         # nodes and the specific that we need to put in the properties field
@@ -430,7 +431,7 @@ class Node(BaseNode):
             return None
 
         if not os.path.isabs(config_path):
-            config_path = os.path.join(Servers.instance().localServerSettings()["configs_path"], config_path)
+            config_path = os.path.join(LocalServer.instance().localServerSettings()["configs_path"], config_path)
 
         if not os.path.isfile(config_path):
             return None
@@ -461,7 +462,7 @@ class Node(BaseNode):
             "type": self.__class__.__name__,
             "description": str(self),
             "properties": {},
-            "server_id": self._server.id(),
+            "server_id": self._compute.id(),
             "node_id": self.node_id(),
         }
 

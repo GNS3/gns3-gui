@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Fri May 20 18:17:58 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -87,8 +86,8 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidgetContents = QtWidgets.QWidget()
         self.uiNodesDockWidgetContents.setObjectName("uiNodesDockWidgetContents")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.uiNodesDockWidgetContents)
-        self.vboxlayout.setSpacing(0)
         self.vboxlayout.setContentsMargins(0, 0, 0, 0)
+        self.vboxlayout.setSpacing(0)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiNodesView = NodesView(self.uiNodesDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -129,8 +128,8 @@ class Ui_MainWindow(object):
         self.uiConsoleDockWidgetContents = QtWidgets.QWidget()
         self.uiConsoleDockWidgetContents.setObjectName("uiConsoleDockWidgetContents")
         self.vboxlayout1 = QtWidgets.QVBoxLayout(self.uiConsoleDockWidgetContents)
-        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
+        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setObjectName("vboxlayout1")
         self.uiConsoleTextEdit = ConsoleView(self.uiConsoleDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -176,22 +175,22 @@ class Ui_MainWindow(object):
         self.gridlayout1.addWidget(self.uiTopologySummaryTreeWidget, 0, 0, 1, 1)
         self.uiTopologySummaryDockWidget.setWidget(self.uiTopologySummaryDockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.uiTopologySummaryDockWidget)
-        self.uiServerSummaryDockWidget = QtWidgets.QDockWidget(MainWindow)
-        self.uiServerSummaryDockWidget.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
-        self.uiServerSummaryDockWidget.setObjectName("uiServerSummaryDockWidget")
+        self.uiComputeSummaryDockWidget = QtWidgets.QDockWidget(MainWindow)
+        self.uiComputeSummaryDockWidget.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
+        self.uiComputeSummaryDockWidget.setObjectName("uiComputeSummaryDockWidget")
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.gridLayout = QtWidgets.QGridLayout(self.dockWidgetContents)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName("gridLayout")
-        self.uiServerSummaryTreeWidget = ServerSummaryView(self.dockWidgetContents)
-        self.uiServerSummaryTreeWidget.setObjectName("uiServerSummaryTreeWidget")
-        self.uiServerSummaryTreeWidget.headerItem().setText(0, "1")
-        self.uiServerSummaryTreeWidget.header().setVisible(False)
-        self.gridLayout.addWidget(self.uiServerSummaryTreeWidget, 0, 0, 1, 1)
-        self.uiServerSummaryDockWidget.setWidget(self.dockWidgetContents)
-        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.uiServerSummaryDockWidget)
+        self.uiComputeSummaryTreeWidget = ComputeSummaryView(self.dockWidgetContents)
+        self.uiComputeSummaryTreeWidget.setObjectName("uiComputeSummaryTreeWidget")
+        self.uiComputeSummaryTreeWidget.headerItem().setText(0, "1")
+        self.uiComputeSummaryTreeWidget.header().setVisible(False)
+        self.gridLayout.addWidget(self.uiComputeSummaryTreeWidget, 0, 0, 1, 1)
+        self.uiComputeSummaryDockWidget.setWidget(self.dockWidgetContents)
+        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.uiComputeSummaryDockWidget)
         self.uiAboutAction = QtWidgets.QAction(MainWindow)
         self.uiAboutAction.setMenuRole(QtWidgets.QAction.AboutRole)
         self.uiAboutAction.setObjectName("uiAboutAction")
@@ -377,10 +376,10 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon29 = QtGui.QIcon()
-        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiFitInViewAction = QtWidgets.QAction(MainWindow)
@@ -534,7 +533,7 @@ class Ui_MainWindow(object):
         self.uiAnnotationToolBar.setWindowTitle(_translate("MainWindow", "Drawing"))
         self.uiTopologySummaryDockWidget.setWindowTitle(_translate("MainWindow", "Topology Summary"))
         self.uiTopologySummaryTreeWidget.headerItem().setText(0, _translate("MainWindow", "1"))
-        self.uiServerSummaryDockWidget.setWindowTitle(_translate("MainWindow", "Servers Summary"))
+        self.uiComputeSummaryDockWidget.setWindowTitle(_translate("MainWindow", "Servers Summary"))
         self.uiAboutAction.setText(_translate("MainWindow", "&About"))
         self.uiAboutAction.setStatusTip(_translate("MainWindow", "About"))
         self.uiQuitAction.setText(_translate("MainWindow", "&Quit"))
@@ -666,9 +665,9 @@ class Ui_MainWindow(object):
         self.uiAcademyAction.setText(_translate("MainWindow", "GNS3 &Academy"))
         self.uiLabInstructionsAction.setText(_translate("MainWindow", "&Lab instructions"))
 
-from ..server_summary_view import ServerSummaryView
+from ..compute_summary_view import ComputeSummaryView
 from ..console_view import ConsoleView
-from ..nodes_view import NodesView
 from ..graphics_view import GraphicsView
+from ..nodes_view import NodesView
 from ..topology_summary_view import TopologySummaryView
 from . import resources_rc

@@ -18,7 +18,7 @@
 import os
 import shutil
 
-from gns3.servers import Servers
+from gns3.local_server import LocalServer
 
 import logging
 log = logging.getLogger(__name__)
@@ -33,8 +33,7 @@ def get_default_base_config(base_config_template_path):
     :return: path to the base config
     """
 
-    servers = Servers.instance()
-    config_dir = servers.localServerSettings()["configs_path"]
+    config_dir = LocalServer.instance().localServerSettings()["configs_path"]
     if base_config_template_path:
         try:
             os.makedirs(config_dir, exist_ok=True)
