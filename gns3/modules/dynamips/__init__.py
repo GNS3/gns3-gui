@@ -39,8 +39,6 @@ from .nodes.c3725 import C3725
 from .nodes.c3745 import C3745
 from .nodes.c7200 import C7200
 from .nodes.etherswitch_router import EtherSwitchRouter
-from .nodes.ethernet_switch import EthernetSwitch
-from .nodes.ethernet_hub import EthernetHub
 from .nodes.frame_relay_switch import FrameRelaySwitch
 from .nodes.atm_switch import ATMSwitch
 from .settings import DYNAMIPS_SETTINGS
@@ -411,7 +409,7 @@ class Dynamips(Module):
         :returns: list of classes
         """
 
-        return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EtherSwitchRouter, EthernetSwitch, FrameRelaySwitch, ATMSwitch]
+        return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EtherSwitchRouter, FrameRelaySwitch, ATMSwitch]
 
     def nodes(self):
         """
@@ -420,7 +418,7 @@ class Dynamips(Module):
         """
 
         nodes = []
-        for node_class in [EthernetSwitch, FrameRelaySwitch, ATMSwitch]:
+        for node_class in [FrameRelaySwitch, ATMSwitch]:
             nodes.append(
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),

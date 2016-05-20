@@ -16,10 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for Dynamips Ethernet switches.
+Configuration page for Ethernet switches.
 """
 
 from gns3.qt import QtCore, QtWidgets
+
 from ..utils.tree_widget_item import TreeWidgetItem
 from ..ui.ethernet_switch_configuration_page_ui import Ui_ethernetSwitchConfigPageWidget
 
@@ -123,7 +124,9 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
             item.setText(3, port_ethertype)
             self.uiPortsTreeWidget.addTopLevelItem(item)
 
-        self._ports[port] = {"type": port_type,
+        self._ports[port] = {"name": "Ethernet{}".format(port),
+                             "port_number": port,
+                             "type": port_type,
                              "vlan": vlan,
                              "ethertype": port_ethertype}
 
@@ -169,14 +172,14 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         self._ports = {}
         self._node = node
 
-        for port, info in settings["ports"].items():
+        for port_info in settings["ports"]:
             item = TreeWidgetItem(self.uiPortsTreeWidget)
-            item.setText(0, str(port))
-            item.setText(1, str(info["vlan"]))
-            item.setText(2, info["type"])
-            item.setText(3, info["ethertype"])
+            item.setText(0, str(port_info["port_number"]))
+            item.setText(1, str(port_info["vlan"]))
+            item.setText(2, port_info["type"])
+            item.setText(3, port_info.get("ethertype", ""))
             self.uiPortsTreeWidget.addTopLevelItem(item)
-            self._ports[port] = info
+            self._ports[port_info["port_number"]] = port_info
 
         self.uiPortsTreeWidget.resizeColumnToContents(0)
         self.uiPortsTreeWidget.resizeColumnToContents(1)
@@ -202,4 +205,4 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         else:
             del settings["name"]
 
-        settings["ports"] = self._ports.copy()
+        settings["ports"] = list(self._ports.values())

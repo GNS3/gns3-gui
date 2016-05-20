@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2016 GNS3 Technologies Inc.
+# Copyright (C) 2014 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uuid
+
 from gns3.node import Node
 from gns3.ports.ethernet_port import EthernetPort
 
@@ -23,15 +24,16 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class EthernetHub(Node):
+class EthernetSwitch(Node):
+
     """
-    Ethernet hub.
+    Ethernet switch.
 
     :param module: parent module for this node
     :param server: GNS3 server instance
     :param project: Project instance
     """
-    URL_PREFIX = "ethernet_hub"
+    URL_PREFIX = "ethernet_switch"
 
     def __init__(self, module, server, project):
 
@@ -50,13 +52,13 @@ class EthernetHub(Node):
 
         return True
 
-    def setup(self, name=None, node_id=None, ports=None, default_name_format="Hub{0}"):
+    def setup(self, name=None, node_id=None, ports=[], default_name_format="SW{0}"):
         """
-        Setups this hub.
+        Setups this Ethernet switch.
 
-        :param name: optional name for this hub
+        :param name: optional name for this switch
         :param node_id: node identifier on the server
-        :param ports: ports to automatically be added when creating this hub
+        :param ports: ports to be automatically added when creating this switch
         """
 
         # let's create a unique name if none has been chosen
@@ -64,7 +66,7 @@ class EthernetHub(Node):
             name = self.allocateName(default_name_format)
 
         if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this Ethernet hub")
+            self.error_signal.emit(self.id(), "could not allocate a name for this Ethernet switch")
             return
 
         self._settings["name"] = name
@@ -99,23 +101,20 @@ class EthernetHub(Node):
             self.loaded_signal.emit()
         else:
             self.setInitialized(True)
-            log.info("HUB instance {} has been created".format(self.name()))
+            log.info("Ethernet switch instance {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
     def update(self, new_settings):
         """
-        Updates the settings for this Ethernet hub.
+        Updates the settings for this Ethernet switch.
 
         :param new_settings: settings dictionary
         """
 
         params = {}
         if "ports" in new_settings:
-            params["ports"] = []
-            for port_number in new_settings["ports"]:
-                params["ports"].append({"port_number": int(port_number),
-                                        "name": "Ethernet{}".format(port_number)})
+            params["ports"] = new_settings["ports"]
 
         if "name" in new_settings and new_settings["name"] != self.name():
             if self.hasAllocatedName(new_settings["name"]):
@@ -171,7 +170,8 @@ class EthernetHub(Node):
                         self._ports.remove(port)
                         log.debug("port {} has been removed".format(port.portNumber()))
 
-                self._settings["ports"] = list(map(int, updated_port_list))
+                self._settings["ports"] = result["ports"].copy()
+
             if "name" in result:
                 self._settings["name"] = result["name"]
                 self.updateAllocatedName(result["name"])
@@ -180,15 +180,15 @@ class EthernetHub(Node):
 
     def info(self):
         """
-        Returns information about this Ethernet hub.
+        Returns information about this Ethernet switch.
 
         :returns: formatted string
         """
 
-        info = """Ethernet hub {name} is always-on
+        info = """Ethernet switch {name} is always-on
   Local node ID is {id}
-  Server's node ID is {node_id}
-  Hub's server runs on {host}:{port}
+  Server's Node ID is {node_id}
+  Switch's server runs on {host}:{port}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
@@ -200,26 +200,59 @@ class EthernetHub(Node):
             if port.isFree():
                 port_info += "   Port {} is empty\n".format(port.name())
             else:
-                port_info += "   Port {name} {description}\n".format(name=port.name(),
-                                                                     description=port.description())
+                for port_settings in self._settings["ports"]:
+                    if port_settings["port_number"] == port.portNumber():
+
+                        port_type = port_settings["type"]
+                        port_ethertype = port_settings.get("ethertype", "")
+                        port_vlan = port_settings["vlan"]
+                        port_ethertype_info = ""
+
+                        if port_type == "access":
+                            port_vlan_info = "VLAN ID {}".format(port_vlan)
+                        elif port_type == "dot1q":
+                            port_vlan_info = "native VLAN {}".format(port_vlan)
+                        elif port_type == "qinq":
+                            port_vlan_info = "outer VLAN {}".format(port_vlan)
+                            port_ethertype_info = "({})".format(port_ethertype)
+
+                        port_info += "   Port {name} is in {port_type} {port_ethertype_info} mode, with {port_vlan_info},\n".format(name=port.name(),
+                                                                                                                                    port_type=port_type,
+                                                                                                                                    port_ethertype_info=port_ethertype_info,
+                                                                                                                                    port_vlan_info=port_vlan_info)
+                        port_info += "    {port_description}\n".format(port_description=port.description())
+                    break
 
         return info + port_info
 
     def dump(self):
         """
-        Returns a representation of this Ethernet hub
+        Returns a representation of this Ethernet switch
         (to be saved in a topology file)
 
-        :returns: representation of the node (dictionary)
+        :returns: dictionary
         """
 
-        hub = super().dump()
-        hub["properties"]["name"] = self.name()
-        return hub
+        switch = super().dump()
+        switch["properties"]["name"] = self.name()
+
+        # add the ports
+        if self._ports:
+            ports = switch["ports"] = []
+            for port in self._ports:
+                port_info = port.dump()
+                if port.portNumber() in self._settings["ports"]:
+                    port_info["type"] = self._settings["ports"][port.portNumber()]["type"]
+                    if port_info["type"] == "qinq" and "ethertype" != "0x8100":
+                        port_info["ethertype"] = self._settings["ports"][port.portNumber()]["ethertype"]
+                    port_info["vlan"] = self._settings["ports"][port.portNumber()]["vlan"]
+                ports.append(port_info)
+
+        return switch
 
     def load(self, node_info):
         """
-        Loads an Ethernet hub representation
+        Loads an Ethernet switch representation
         (from a topology file).
 
         :param node_info: representation of the node (dictionary)
@@ -229,20 +262,25 @@ class EthernetHub(Node):
         settings = node_info["properties"]
         name = settings.pop("name")
 
-        # Ethernet hubs do not have an UUID before version 2.0
+        # Ethernet switches do not have an UUID before version 2.0
         node_id = settings.get("node_id", str(uuid.uuid4()))
 
         ports = []
         if "ports" in node_info:
-            ports = [{"port_number": port["port_number"], "name": port["name"]} for port in node_info["ports"]]
+            for port_info in node_info["ports"]:
+                ports.append({"port_number": port_info["port_number"],
+                              "name": port_info["name"],
+                              "type": port_info.get("type", "access"),
+                              "vlan": port_info.get("vlan", 1),
+                              "ethertype": port_info.get("ethertype", "")})
 
-        log.info("Ethernet hub {} is loading".format(name))
+        log.info("Ethernet switch {} is loading".format(name))
         self.setName(name)
         self.setup(name, node_id, ports)
 
     def name(self):
         """
-        Returns the name of this hub.
+        Returns the name of this switch.
 
         :returns: name (string)
         """
@@ -251,7 +289,7 @@ class EthernetHub(Node):
 
     def settings(self):
         """
-        Returns all this hub settings.
+        Returns all this switch settings.
 
         :returns: settings dictionary
         """
@@ -260,7 +298,7 @@ class EthernetHub(Node):
 
     def ports(self):
         """
-        Returns all the ports for this hub.
+        Returns all the ports for this switch.
 
         :returns: list of Port instances
         """
@@ -274,8 +312,8 @@ class EthernetHub(Node):
         :returns: QWidget object
         """
 
-        from .pages.ethernet_hub_configuration_page import EthernetHubConfigurationPage
-        return EthernetHubConfigurationPage
+        from .pages.ethernet_switch_configuration_page import EthernetSwitchConfigurationPage
+        return EthernetSwitchConfigurationPage
 
     @staticmethod
     def defaultSymbol():
@@ -285,12 +323,12 @@ class EthernetHub(Node):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/hub.svg"
+        return ":/symbols/ethernet_switch.svg"
 
     @staticmethod
     def symbolName():
 
-        return "Ethernet hub"
+        return "Ethernet switch"
 
     @staticmethod
     def categories():
@@ -304,4 +342,4 @@ class EthernetHub(Node):
 
     def __str__(self):
 
-        return "Ethernet hub"
+        return "Ethernet switch"

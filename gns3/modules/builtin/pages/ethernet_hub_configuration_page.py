@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Configuration page for Dynamips Ethernet hubs.
+Configuration page for Ethernet hubs.
 """
 
 from gns3.qt import QtWidgets
@@ -50,8 +50,8 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
             self.uiNameLineEdit.hide()
             self.uiNameLabel.hide()
 
-        nbports = len(settings["ports"])
-        self.uiPortsSpinBox.setValue(nbports)
+        nb_ports = len(settings["ports"])
+        self.uiPortsSpinBox.setValue(nb_ports)
 
     def saveSettings(self, settings, node, group=False):
         """
@@ -72,17 +72,17 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
         else:
             del settings["name"]
 
-        nbports = self.uiPortsSpinBox.value()
+        nb_ports = self.uiPortsSpinBox.value()
 
         # check that a link isn't connected to a port
         # before we delete it
         ports = node.ports()
         for port in ports:
-            if not port.isFree() and port.portNumber() > nbports:
+            if not port.isFree() and port.portNumber() > nb_ports:
                 self.loadSettings(settings, node)
                 QtWidgets.QMessageBox.critical(self, node.name(), "A link is connected to port {}, please remove it first".format(port.name()))
                 raise ConfigurationError()
 
         settings["ports"] = []
-        for port in range(1, nbports + 1):
+        for port in range(1, nb_ports + 1):
             settings["ports"].append(str(port))

@@ -24,6 +24,7 @@ from ..module import Module
 from .cloud import Cloud
 from .host import Host
 from .ethernet_hub import EthernetHub
+from .ethernet_switch import EthernetSwitch
 
 
 import logging
@@ -137,7 +138,7 @@ class Builtin(Module):
         :returns: list of classes
         """
 
-        return [Cloud, Host, EthernetHub]
+        return [Cloud, Host, EthernetHub, EthernetSwitch]
 
     def nodes(self):
         """
