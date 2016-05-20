@@ -75,12 +75,21 @@ def remote_server():
 
 
 @pytest.fixture
+def controller():
+    from gns3.controller import Controller
+
+    Controller._instance = None
+    c = Controller.instance()
+    c._http_client = MagicMock()
+    return c
+
+
+@pytest.fixture
 def gns3vm_server():
 
     from gns3.servers import Servers
 
     Servers.instance().initVMServer()
-    print(Servers.instance().vmServer())
     return Servers.instance().vmServer()
 
 

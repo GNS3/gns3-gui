@@ -23,7 +23,7 @@ from unittest.mock import MagicMock
 from gns3.link import Link
 from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.modules.vpcs import VPCS
-from gns3.servers import Servers
+from gns3.controller import Controller
 
 
 @pytest.fixture
@@ -63,8 +63,8 @@ def link(devices, controller, project):
 
 @pytest.fixture
 def controller():
-    Servers.instance()._controller_server = MagicMock()
-    return Servers.instance()._controller_server
+    Controller._instance = MagicMock()
+    return Controller._instance
 
 
 def test_create_link(devices, project, controller):

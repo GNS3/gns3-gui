@@ -170,9 +170,13 @@ class Node(BaseNode):
         # We have two kind of properties. The general properties common to all
         # nodes and the specific that we need to put in the properties field
         node_general_properties = ("name", "node_id", "console", "console_type")
+        # No need to send this back to the server because it's read only
+        ignore_properties = ("console_host", )
         for key, value in params.items():
             if key in node_general_properties:
                 body[key] = value
+            elif key in ignore_properties:
+                pass
             else:
                 body["properties"][key] = value
 

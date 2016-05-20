@@ -122,7 +122,6 @@ class ProjectManager(QtCore.QObject):
         if self._project:
             self._project.close()
         self._project = Project()
-        self._project.setTemporary(True)
         self._project.setName("unsaved")
         self._main_window.uiGraphicsView.reset()
         self._setCurrentFile()
@@ -157,10 +156,6 @@ class ProjectManager(QtCore.QObject):
 
         :param project: path to gns3 project file currently opened
         """
-
-        if self._project.temporary():
-            # do nothing if project is temporary
-            return
 
         try:
             with open(project, encoding="utf-8") as f:
@@ -262,20 +257,17 @@ class ProjectManager(QtCore.QObject):
             MessageBox(self._main_window, "Save project", "Errors detected while saving the project", errors, icon=QtWidgets.QMessageBox.Warning)
 
         self._project.setName(project_name)
-        if self._project.temporary():
-            self._project.moveFromTemporaryToPath(project_dir)
-            return self.saveProject(topology_file_path)
-        else:
-            # We save the topology and use the standard restore process to reinitialize everything
-            self._project.setTopologyFile(topology_file_path)
-            self.saveProject(topology_file_path, random_id=True)
 
-            if os.path.exists(old_topology_file_path):
-                try:
-                    os.remove(old_topology_file_path)
-                except OSError as e:
-                    MessageBox(self._main_window, "Save project", "Errors detected while saving the project", str(e), icon=QtWidgets.QMessageBox.Warning)
-            return self._main_window.loadPath(topology_file_path)
+        # We save the topology and use the standard restore process to reinitialize everything
+        self._project.setTopologyFile(topology_file_path)
+        self.saveProject(topology_file_path, random_id=True)
+
+        if os.path.exists(old_topology_file_path):
+            try:
+                os.remove(old_topology_file_path)
+            except OSError as e:
+                MessageBox(self._main_window, "Save project", "Errors detected while saving the project", str(e), icon=QtWidgets.QMessageBox.Warning)
+        return self._main_window.loadPath(topology_file_path)
 
     def saveProject(self, path, random_id=False):
         """

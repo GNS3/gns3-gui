@@ -26,11 +26,10 @@ class Controller(QtCore.QObject):
     An instance of the GNS3 server controller
     """
 
-    def __init__(self, http_client):
+    def setHttpClient(self, http_client):
         """
         :param http_client: Instance of HTTP client to communicate with the server
         """
-        super().__init__()
         self._http_client = http_client
 
     def get(self, *args, **kwargs):
@@ -61,3 +60,14 @@ class Controller(QtCore.QObject):
             "user": server.user(),
             "password": server.password()
         })
+
+    @staticmethod
+    def instance():
+        """
+        Singleton to return only on instance of Controller.
+        :returns: instance of Controller
+        """
+
+        if not hasattr(Controller, '_instance') or Controller._instance is None:
+            Controller._instance = Controller()
+        return Controller._instance

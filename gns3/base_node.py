@@ -21,7 +21,6 @@ Base class for node classes.
 
 from .qt import QtCore
 from .ports.port import Port
-from .servers import Servers
 
 
 import logging
@@ -377,18 +376,6 @@ class BaseNode(QtCore.QObject):
 
         raise NotImplementedError()
 
-    def httpPost(self, path, callback, body={}, context={}, **kwargs):
-        """
-        POST on current server / project
-
-        :param path: Remote path
-        :param callback: callback method to call when the server replies
-        :param body: params to send (dictionary)
-        :param context: Pass a context to the response callback
-        """
-
-        self._project.post(self._server, path, callback, body=body, context=context, **kwargs)
-
     def controllerHttpPost(self, path, callback, body={}, context={}, **kwargs):
         """
         POST on current server / project
@@ -399,8 +386,7 @@ class BaseNode(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        server = Servers.instance().controllerServer()
-        self._project.post(server, path, callback, body=body, context=context, **kwargs)
+        self._project.post(path, callback, body=body, context=context, **kwargs)
 
     def controllerHttpPut(self, path, callback, body={}, context={}, **kwargs):
         """
@@ -412,19 +398,7 @@ class BaseNode(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        server = Servers.instance().controllerServer()
-        self._project.put(server, path, callback, body=body, context=context, **kwargs)
-
-    def httpGet(self, path, callback, context={}, **kwargs):
-        """
-        GET on current server / project
-
-        :param path: Remote path
-        :param callback: callback method to call when the server replies
-        :param context: Pass a context to the response callback
-        """
-
-        self._project.get(self._server, path, callback, context=context, **kwargs)
+        self._project.put(path, callback, body=body, context=context, **kwargs)
 
     def controllerHttpGet(self, path, callback, context={}, **kwargs):
         """
@@ -436,19 +410,9 @@ class BaseNode(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        server = Servers.instance().controllerServer()
-        self._project.get(server, path, callback, context=context, **kwargs)
+        server = Controller.instance()
+        self._project.get(path, callback, context=context, **kwargs)
 
-    def httpDelete(self, path, callback, context={}, **kwargs):
-        """
-        DELETE on current server / project
-
-        :param path: Remote path
-        :param callback: callback method to call when the server replies
-        :param context: Pass a context to the response callback
-        """
-
-        self._project.delete(self._server, path, callback, context=context, **kwargs)
 
     def controllerHttpDelete(self, path, callback, context={}, **kwargs):
         """
@@ -459,5 +423,5 @@ class BaseNode(QtCore.QObject):
         :param context: Pass a context to the response callback
         """
 
-        server = Servers.instance().controllerServer()
-        self._project.delete(server, path, callback, context=context, **kwargs)
+        server = Controller.instance()
+        self._project.delete(path, callback, context=context, **kwargs)

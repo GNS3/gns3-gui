@@ -623,12 +623,6 @@ class Servers(QtCore.QObject):
                         if proceed == QtWidgets.QMessageBox.Yes:
                             self._local_server_process.kill()
 
-    def controllerServer(self):
-        """
-        Return the controller server
-        """
-        return self._controller_server
-
     def localServer(self):
         """
         Returns the local server.
@@ -722,7 +716,8 @@ class Servers(QtCore.QObject):
         client = HTTPClient(settings, network_manager)
         server = Server(settings, client)
         if controller:
-            self._controller_server = Controller(client)
+            self._controller_server = Controller.instance()
+            self._controller_server.setHttpClient(client)
             #TODO: How to manage server created before?
         if self._controller_server:
             self._controller_server.addServer(server)

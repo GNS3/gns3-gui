@@ -24,7 +24,9 @@ from gns3.server import Server
 
 @pytest.fixture
 def controller():
-    return Controller(MagicMock())
+    c = Controller()
+    c.setHttpClient(MagicMock())
+    return c
 
 
 def test_http_query_forwarded_to_http_client(controller):

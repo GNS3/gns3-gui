@@ -21,6 +21,7 @@ import traceback
 from .qt import QtCore, qpartial
 
 from gns3.servers import Servers
+from gns3.controller import Controller
 from gns3.topology import Topology
 
 import logging
@@ -42,16 +43,13 @@ class Project(QtCore.QObject):
 
     def __init__(self):
 
-        self._servers = Servers.instance()
         self._id = None
-        self._temporary = False
         self._closed = True
         self._created = False
         self._files_dir = None
         self._images_dir = None
         self._name = "untitled"
         self._project_instances.add(self)
-        self._created_servers = set()
 
         # We queue query in order to ensure the project is only created once on remote server
         self._callback_finish_creating_on_server = None
@@ -83,29 +81,6 @@ class Project(QtCore.QObject):
         """
 
         return self._closed
-
-    def temporary(self):
-        """
-        :returns: True if the project is temporary
-        """
-
-        return self._temporary
-
-    def setTemporary(self, temporary):
-        """
-        Set the temporary flag for a project. And update
-        it on the server.
-
-        :param temporary: Temporary flag
-        """
-
-        self._temporary = temporary
-
-    def servers(self):
-        """
-        :returns: List of server where GNS3 is running
-        """
-        return self._created_servers
 
     def id(self):
         """
@@ -168,7 +143,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Servers.instance().controllerServer().post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
+        Controller.instance().post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
 
     def start_all_nodes(self):
         """Start all nodes belonging to this project"""
@@ -177,7 +152,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Servers.instance().controllerServer().post("/projects/{project_id}/nodes/start".format(project_id=self._id), None, body={})
+        Controller.instance().post("/projects/{project_id}/nodes/start".format(project_id=self._id), None, body={})
 
     def stop_all_nodes(self):
         """Stop all nodes belonging to this project"""
@@ -186,7 +161,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Servers.instance().controllerServer().post("/projects/{project_id}/nodes/stop".format(project_id=self._id), None, body={})
+        Controller.instance().post("/projects/{project_id}/nodes/stop".format(project_id=self._id), None, body={})
 
     def suspend_all_nodes(self):
         """Suspend all nodes belonging to this project"""
@@ -195,7 +170,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Servers.instance().controllerServer().post("/projects/{project_id}/nodes/suspend".format(project_id=self._id), None, body={})
+        Controller.instance().post("/projects/{project_id}/nodes/suspend".format(project_id=self._id), None, body={})
 
     def reload_all_nodes(self):
         """Reload all nodes belonging to this project"""
@@ -204,65 +179,60 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Servers.instance().controllerServer().post("/projects/{project_id}/nodes/reload".format(project_id=self._id), None, body={})
+        Controller.instance().post("/projects/{project_id}/nodes/reload".format(project_id=self._id), None, body={})
 
-    def get(self, server, path, callback, **kwargs):
+    def get(self, path, callback, **kwargs):
         """
         HTTP GET on the remote server
 
-        :param server: Server instance
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
 
         Full arg list in createHTTPQuery
         """
-        self._projectHTTPQuery(server, "GET", path, callback, **kwargs)
+        self._projectHTTPQuery("GET", path, callback, **kwargs)
 
-    def post(self, server, path, callback, body={}, **kwargs):
+    def post(self, path, callback, body={}, **kwargs):
         """
         HTTP POST on the remote server
 
-        :param server: Server instance
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
 
         Full arg list in createHTTPQuery
         """
-        self._projectHTTPQuery(server, "POST", path, callback, body=body, **kwargs)
+        self._projectHTTPQuery("POST", path, callback, body=body, **kwargs)
 
-    def put(self, server, path, callback, body={}, **kwargs):
+    def put(self, path, callback, body={}, **kwargs):
         """
         HTTP PUT on the remote server
 
-        :param server: Server instance
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
 
         Full arg list in createHTTPQuery
         """
-        self._projectHTTPQuery(server, "PUT", path, callback, body=body, **kwargs)
+        self._projectHTTPQuery("PUT", path, callback, body=body, **kwargs)
 
-    def delete(self, server, path, callback, body={}, **kwargs):
+    def delete(self, path, callback, body={}, **kwargs):
         """
         HTTP DELETE on the remote server
 
-        :param server: Server instance
         :param path: Remote path
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
 
         Full arg list in createHTTPQuery
         """
-        self._projectHTTPQuery(server, "DELETE", path, callback, body=body, **kwargs)
+        self._projectHTTPQuery("DELETE", path, callback, body=body, **kwargs)
 
-    def _projectHTTPQuery(self, server, method, path, callback, body={}, **kwargs):
+    def _projectHTTPQuery(self, method, path, callback, body={}, **kwargs):
         """
         HTTP query on the remote server
 
-        :param server: Server instance
         :param method: HTTP method (string)
         :param path: Remote path
         :param callback: callback method to call when the server replies
@@ -272,24 +242,23 @@ class Project(QtCore.QObject):
         """
 
         if not self._created:
-            func = qpartial(self._projectOnServerCreated, method, path, callback, body, compute_server=server, **kwargs)
+            func = qpartial(self._projectOnServerCreated, method, path, callback, body, **kwargs)
 
             if self._callback_finish_creating_on_server is None:
                 self._callback_finish_creating_on_server = []
                 body = {
                     "name": self._name,
-                    "temporary": self._temporary,
                     "project_id": self._id,
                     "path": self.filesDir()
                 }
-                Servers.instance().controllerServer().post("/projects", func, body=body)
+                Controller.instance().post("/projects", func, body=body)
             else:
                 # We bufferize the query for when the project is created on the remote server
                 self._callback_finish_creating_on_server.append(func)
         else:
-            self._projectOnServerCreated(method, path, callback, body, params={}, compute_server=server, **kwargs)
+            self._projectOnServerCreated(method, path, callback, body, params={}, **kwargs)
 
-    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, compute_server=None, server=None, **kwargs):
+    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, **kwargs):
         """
         The project is created on the server continue
         the query
@@ -299,7 +268,6 @@ class Project(QtCore.QObject):
         :param callback: callback method to call when the server replies
         :param body: params to send (dictionary)
         :param params: Answer from the creation on server
-        :param server: Server instance
         :param error: HTTP error
 
         Full arg list in createHTTPQuery
@@ -319,7 +287,7 @@ class Project(QtCore.QObject):
             self._startListenNotifications()
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
-        compute_server.createHTTPQuery(method, path, callback, body=body, **kwargs)
+        Controller.instance().createHTTPQuery(method, path, callback, body=body, **kwargs)
 
         # Call all operations waiting for project creation:
         if self._callback_finish_creating_on_server:
@@ -334,14 +302,14 @@ class Project(QtCore.QObject):
         if self._id:
             self.project_about_to_close_signal.emit()
 
-            if self._servers.localServerProcessIsRunning() and local_server_shutdown:
-                Servers.instance().controllerServer().post("/computes/shutdown", self._projectClosedCallback)
+            if Servers.instance().localServerProcessIsRunning() and local_server_shutdown:
+                Controller.instance().post("/computes/shutdown", self._projectClosedCallback)
             else:
-                Servers.instance().controllerServer().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
+                Controller.instance().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
         else:
-            if self._servers.localServerProcessIsRunning() and local_server_shutdown:
+            if Servers.instance().localServerProcessIsRunning() and local_server_shutdown:
                 log.info("Local server running shutdown the server")
-                local_server = self._servers.localServer()
+                local_server = Servers.instance().localServer()
                 local_server.post("/computes/shutdown", self._projectClosedCallback, progressText="Shutdown the server")
             else:
                 # The project is not initialized when we close it
@@ -365,26 +333,10 @@ class Project(QtCore.QObject):
         except KeyError:
             return
 
-    def moveFromTemporaryToPath(self, new_path):
-        """
-        Inform the server that a project is no longer
-        temporary and as a new location.
-
-        :param path: New path of the project
-        """
-
-        self._files_dir = new_path
-        self._temporary = False
-        for server in list(self._created_servers):
-            params = {"name": self._name, "temporary": False}
-            if server.isLocal():
-                params["path"] = new_path
-            server.put("/projects/{project_id}".format(project_id=self._id), None, body=params)
-
     def _startListenNotifications(self):
 
         path = "/projects/{project_id}/notifications".format(project_id=self._id)
-        self._notification_stream = Servers.instance().controllerServer().createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True)
+        self._notification_stream = Controller.instance().createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True)
 
     def _event_received(self, result, server=None, **kwargs):
 

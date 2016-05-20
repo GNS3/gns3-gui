@@ -22,7 +22,7 @@ Manages and stores everything needed for a connection between 2 devices.
 import re
 
 from .qt import QtCore
-from .servers import Servers
+from .controller import Controller
 
 
 import logging
@@ -78,7 +78,7 @@ class Link(QtCore.QObject):
             ]
         }
 
-        Servers.instance().controllerServer().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
+        Controller.instance().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
 
     def _linkCreatedCallback(self, result, error=False, **kwargs):
         if error:
@@ -151,7 +151,7 @@ class Link(QtCore.QObject):
                                                             self._destination_node.name(),
                                                             self._destination_port.name()))
 
-        Servers.instance().controllerServer().delete("/projects/{project_id}/links/{link_id}".format(project_id=self.project().id(),
+        Controller.instance().delete("/projects/{project_id}/links/{link_id}".format(project_id=self.project().id(),
                                                                                                      link_id=self._link_id), self._linkDeletedCallback)
 
     def _linkDeletedCallback(self, result, error=False, **kwargs):
@@ -175,7 +175,7 @@ class Link(QtCore.QObject):
             "capture_file_name": capture_file_name,
             "data_link_type": data_link_type
         }
-        Servers.instance().controllerServer().post(
+        Controller.instance().post(
             "/projects/{project_id}/links/{link_id}/start_capture".format(
                 project_id=self.project().id(),
                 link_id=self._link_id),
@@ -190,7 +190,7 @@ class Link(QtCore.QObject):
         self.setCapturing(True)
 
     def stopCapture(self):
-        Servers.instance().controllerServer().post(
+        Controller.instance().post(
             "/projects/{project_id}/links/{link_id}/stop_capture".format(
                 project_id=self.project().id(),
                 link_id=self._link_id),
@@ -206,7 +206,7 @@ class Link(QtCore.QObject):
         """
         HTTP Get from a link
         """
-        Servers.instance().controllerServer().get(
+        Controller.instance().get(
             "/projects/{project_id}/links/{link_id}{path}".format(
                 project_id=self.project().id(),
                 link_id=self._link_id,

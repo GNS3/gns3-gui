@@ -39,14 +39,14 @@ def test_docker_vm_setup(project, local_server):
             'adapters': 1,
             'console': None,
             'environment': '',
+            'console_host': None,
             'console_type': 'telnet',
             'console_resolution': '1024x768',
             'console_http_path': '/',
             'console_http_port': 80,
             'aux': None
         }
-        mock.assert_called_with(ANY,
-                                "/nodes",
+        mock.assert_called_with("/nodes",
                                 docker_vm._setupNodeCallback,
                                 body={
                                     "compute_id": "local",
@@ -133,7 +133,6 @@ def test_load(project, local_server):
     with patch('gns3.project.Project.post') as mock:
         docker_vm.load(node)
         mock.assert_called_with(
-            ANY,
             "/nodes",
             docker_vm._setupNodeCallback,
             body={'compute_id': 'local',

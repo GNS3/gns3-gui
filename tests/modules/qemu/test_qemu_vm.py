@@ -32,8 +32,7 @@ def test_qemu_vm_setup(qemu_vm, project):
 
     with patch('gns3.project.Project.post') as mock:
         qemu_vm.setup("/bin/fake", name="VMNAME")
-        mock.assert_called_with(ANY,
-                                "/nodes",
+        mock.assert_called_with("/nodes",
                                 qemu_vm._setupNodeCallback,
                                 body={
                                     'name': 'VMNAME',
@@ -65,8 +64,7 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
 
     with patch('gns3.project.Project.post') as mock:
         qemu_vm.setup("/bin/fake", name="VMNAME")
-        mock.assert_called_with(ANY,
-                                "/nodes",
+        mock.assert_called_with("/nodes",
                                 qemu_vm._setupNodeCallback,
                                 body={
                                     'name': 'VMNAME',
@@ -99,8 +97,7 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
 
     with patch('gns3.project.Project.post') as mock:
         qemu_vm.setup("/bin/fake", name="VMNAME")
-        mock.assert_called_with(ANY,
-                                "/nodes",
+        mock.assert_called_with("/nodes",
                                 qemu_vm._setupNodeCallback,
                                 body={
                                     'name': 'VMNAME',

@@ -32,8 +32,7 @@ def test_virtualbox_vm_setup(virtualbox_vm, project):
 
     with patch('gns3.project.Project.post') as mock:
         virtualbox_vm.setup("VMNAME")
-        mock.assert_called_with(ANY,
-                                "/nodes",
+        mock.assert_called_with("/nodes",
                                 virtualbox_vm._setupNodeCallback,
                                 body={
                                     'name': 'VMNAME',
