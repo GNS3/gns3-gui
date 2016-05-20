@@ -52,7 +52,7 @@ class EthernetSwitch(Node):
 
         return True
 
-    def setup(self, name=None, node_id=None, ports=[], default_name_format="SW{0}"):
+    def setup(self, name=None, node_id=None, ports=None, default_name_format="SW{0}"):
         """
         Setups this Ethernet switch.
 

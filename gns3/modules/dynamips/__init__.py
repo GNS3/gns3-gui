@@ -39,8 +39,6 @@ from .nodes.c3725 import C3725
 from .nodes.c3745 import C3745
 from .nodes.c7200 import C7200
 from .nodes.etherswitch_router import EtherSwitchRouter
-from .nodes.frame_relay_switch import FrameRelaySwitch
-from .nodes.atm_switch import ATMSwitch
 from .settings import DYNAMIPS_SETTINGS
 from .settings import IOS_ROUTER_SETTINGS
 from .settings import DEFAULT_IDLEPC
@@ -409,7 +407,7 @@ class Dynamips(Module):
         :returns: list of classes
         """
 
-        return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EtherSwitchRouter, FrameRelaySwitch, ATMSwitch]
+        return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EtherSwitchRouter]
 
     def nodes(self):
         """
@@ -418,15 +416,6 @@ class Dynamips(Module):
         """
 
         nodes = []
-        for node_class in [FrameRelaySwitch, ATMSwitch]:
-            nodes.append(
-                {"class": node_class.__name__,
-                 "name": node_class.symbolName(),
-                 "categories": node_class.categories(),
-                 "symbol": node_class.defaultSymbol(),
-                 "builtin": True}
-            )
-
         for ios_router in self._ios_routers.values():
             node_class = PLATFORM_TO_CLASS[ios_router["platform"]]
             nodes.append(
