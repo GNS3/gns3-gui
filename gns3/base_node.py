@@ -20,6 +20,7 @@ Base class for node classes.
 """
 
 from .qt import QtCore
+from .controller import Controller
 from .ports.port import Port
 
 
