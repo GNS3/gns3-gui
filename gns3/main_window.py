@@ -28,8 +28,6 @@ import logging
 
 from .local_config import LocalConfig
 from .modules import MODULES
-from .modules.module_error import ModuleError
-from .modules.vpcs import VPCS
 from .qt import QtGui, QtCore, QtWidgets, QtSvg
 from .servers import Servers
 from .gns3_vm import GNS3VM
@@ -190,9 +188,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # device menu is contextual and is build on-the-fly
         self.uiDeviceMenu.aboutToShow.connect(self._deviceMenuActionSlot)
-
-        # tools menu connections
-        self.uiVPCSAction.triggered.connect(self._vpcsActionSlot)
 
         # annotate menu connections
         self.uiAddNoteAction.triggered.connect(self._addNoteActionSlot)
@@ -701,35 +696,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.uiGraphicsView.consoleFromItems(self.uiGraphicsView.scene().items())
 
-    def _vpcsActionSlot(self):
-        """
-        Slot called when VPCS multi-host is clicked in the Tools menu.
-        """
-
-        vpcs_module = VPCS.instance()
-        if self._project_manager.project().filesDir() is None:
-            QtWidgets.QMessageBox.critical(self, "VPCS", "Sorry, the project hasn't been initialized yet")
-            return
-
-        try:
-            working_dir = os.path.join(self._project_manager.project().filesDir(), "project-files", "vpcs", "multi-host")
-            os.makedirs(working_dir, exist_ok=True)
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self, "VPCS", "Could not create the VPCS working directory: {}".format(e))
-            return
-
-        try:
-            vpcs_port = vpcs_module.startMultiHostVPCS(working_dir)
-        except ModuleError as e:
-            QtWidgets.QMessageBox.critical(self, "VPCS", "{}".format(e))
-            return
-
-        try:
-            from .telnet_console import telnetConsole
-            telnetConsole("VPCS multi-host", "127.0.0.1", vpcs_port)
-        except (OSError, ValueError) as e:
-            QtWidgets.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
-
     def _addNoteActionSlot(self):
         """
         Slot called when adding a new note on the scene.
@@ -1045,7 +1011,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         log.debug("_finish_application_closing")
-        VPCS.instance().stopMultiHostVPCS()
 
         GNS3VM.instance().shutdown()
         self._settings["geometry"] = bytes(self.saveGeometry().toBase64()).decode()

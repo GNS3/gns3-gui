@@ -103,6 +103,7 @@ background-none;
     <addaction name="uiAcademyAction"/>
     <addaction name="uiDoctorAction"/>
     <addaction name="uiExportDebugInformationAction"/>
+    <addaction name="uiLabInstructionsAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>
    </widget>
@@ -158,7 +159,6 @@ background-none;
     <property name="title">
      <string>&amp;Tools</string>
     </property>
-    <addaction name="uiVPCSAction"/>
    </widget>
    <addaction name="uiFileMenu"/>
    <addaction name="uiEditMenu"/>
@@ -970,28 +970,6 @@ background-none;
     <string>Check for Update</string>
    </property>
   </action>
-  <action name="uiEnergySavingStyleAction">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Energy Saving</string>
-   </property>
-   <property name="statusTip">
-    <string>Energy Saving Mode</string>
-   </property>
-  </action>
-  <action name="uiDefaultStyleAction">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Default</string>
-   </property>
-  </action>
   <action name="uiBrowseRoutersAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
@@ -1105,27 +1083,9 @@ background-none;
     <string>Add a link</string>
    </property>
   </action>
-  <action name="uiGettingStartedAction">
-   <property name="text">
-    <string>Getting started</string>
-   </property>
-   <property name="toolTip">
-    <string>Show GNS3 news</string>
-   </property>
-  </action>
-  <action name="uiLabInstructionsAction">
-   <property name="text">
-    <string>&amp;Lab instructions</string>
-   </property>
-  </action>
   <action name="uiFitInViewAction">
    <property name="text">
     <string>Fit in view</string>
-   </property>
-  </action>
-  <action name="uiDarkStyleAction">
-   <property name="text">
-    <string>Dark Style</string>
    </property>
   </action>
   <action name="uiActionFullscreen">
@@ -1134,29 +1094,6 @@ background-none;
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
-   </property>
-  </action>
-  <action name="uiVPCSAction">
-   <property name="text">
-    <string>&amp;VPCS multi-host</string>
-   </property>
-  </action>
-  <action name="uiDownloadRemoteProject">
-   <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/classic_icons/save-as-project.svg</normaloff>:/classic_icons/save-as-project.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Download remote project</string>
-   </property>
-  </action>
-  <action name="uiQemuImgWizardAction">
-   <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/qemu.svg</normaloff>:/icons/qemu.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Qemu image wizard</string>
    </property>
   </action>
   <action name="uiSetupWizard">
@@ -1219,6 +1156,11 @@ background-none;
   <action name="uiAcademyAction">
    <property name="text">
     <string>GNS3 &amp;Academy</string>
+   </property>
+  </action>
+  <action name="uiLabInstructionsAction">
+   <property name="text">
+    <string>&amp;Lab instructions</string>
    </property>
   </action>
  </widget>
