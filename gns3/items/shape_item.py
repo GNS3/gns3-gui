@@ -270,6 +270,9 @@ class ShapeItem:
         # load optional properties
         z = shape_info.get("z")
         color = shape_info.get("color")
+        if not color and shape_info.get("fill_color"):
+            # compatibility with old 1.0 projects
+            color = shape_info.get("fill_color")
         transparency = shape_info.get("transparency")
         border_color = shape_info.get("border_color")
         border_transparency = shape_info.get("border_transparency")
