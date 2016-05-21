@@ -368,6 +368,9 @@ class Dynamips(Module):
         # find all images with the same platform and local server
         for ios_router in ios_routers.values():
             if ios_router["platform"] == node.settings()["platform"] and ios_router["server"] == "local":
+                if "chassis" in node.settings() and ios_router["chassis"] != node.settings()["chassis"]:
+                    # continue to look if the chassis is not compatible
+                    continue
                 candidate_ios_images[ios_router["image"]] = ios_router
 
         if candidate_ios_images:
@@ -375,9 +378,10 @@ class Dynamips(Module):
                                                            "IOS image", "IOS image {} could not be found\nPlease select an alternative from your existing images:".format(image),
                                                            list(candidate_ios_images.keys()), 0, False)
             if ok:
-                alternative_image["image"] = ios_router["image"]
-                alternative_image["ram"] = ios_router["ram"]
-                alternative_image["idlepc"] = ios_router["idlepc"]
+                candidate = candidate_ios_images[selection]
+                alternative_image["image"] = candidate["image"]
+                alternative_image["ram"] = candidate["ram"]
+                alternative_image["idlepc"] = candidate["idlepc"]
                 self._ios_images_cache[image] = alternative_image
                 return alternative_image
 
