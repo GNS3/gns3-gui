@@ -208,7 +208,7 @@ class Link(QtCore.QObject):
         :param lport: local UDP port
         """
         # check that the node is connected to this link as a source
-        if node_id == self._source_node.id() and port_id == self._source_port.id():
+        if self._source_node and node_id == self._source_node.id() and port_id == self._source_port.id():
             laddr = self._source_node.server().host()
             self._source_udp = (lport, laddr)
             # disconnect the signal has we don't expect new source UDP info for this link.
@@ -219,7 +219,7 @@ class Link(QtCore.QObject):
                                                                         laddr))
 
         # check that the node is connected to this link as a destination
-        elif node_id == self._destination_node.id() and port_id == self._destination_port.id():
+        elif self._destination_node and node_id == self._destination_node.id() and port_id == self._destination_port.id():
             laddr = self._destination_node.server().host()
             self._destination_udp = (lport, laddr)
             # disconnect the signal has we don't expect new source UDP info for this link.
