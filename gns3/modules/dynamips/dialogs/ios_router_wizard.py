@@ -86,7 +86,6 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
         # location of the base config templates
         self._base_startup_config_template = get_resource(os.path.join("configs", "ios_base_startup-config.txt"))
-        self._base_private_config_template = get_resource(os.path.join("configs", "ios_base_private-config.txt"))
         self._base_etherswitch_startup_config_template = get_resource(os.path.join("configs", "ios_etherswitch_startup-config.txt"))
 
         # FIXME: hide because of issue on Windows.

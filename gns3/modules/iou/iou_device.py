@@ -516,7 +516,8 @@ class IOUDevice(VM):
         if private_config in contents:
             new_settings["private_config"] = os.path.join(directory, private_config)
         else:
-            self.warning_signal.emit(self.id(), "no private-config file could be found, expected file name: {}".format(private_config))
+            # private-config is optional
+            log.debug("{}: no private-config file could be found, expected file name: {}".format(self.name(), private_config))
 
         if new_settings:
             self.update(new_settings)
