@@ -49,7 +49,7 @@ class C1700(Router):
             c1700_settings["slot1"] = "C1700-MB-WIC1"
 
         # merge platform settings with the generic ones
-        self._settings.update(c1700_settings)
+            self.settings().update(c1700_settings)
 
     def __str__(self):
 

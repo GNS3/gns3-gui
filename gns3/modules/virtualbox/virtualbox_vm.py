@@ -52,17 +52,18 @@ class VirtualBoxVM(Node):
         self._port_segment_size = 0
         self._first_port_name = None
 
-        self._settings = {"name": "",
-                          "vmname": "",
-                          "console": None,
-                          "console_host": None,
-                          "adapters": VBOX_VM_SETTINGS["adapters"],
-                          "use_any_adapter": VBOX_VM_SETTINGS["use_any_adapter"],
-                          "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
-                          "ram": VBOX_VM_SETTINGS["ram"],
-                          "headless": VBOX_VM_SETTINGS["headless"],
-                          "acpi_shutdown": VBOX_VM_SETTINGS["acpi_shutdown"],
-                          "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
+        virtualbox_vm_settings = {"vmname": "",
+                                  "console": None,
+                                  "console_host": None,
+                                  "adapters": VBOX_VM_SETTINGS["adapters"],
+                                  "use_any_adapter": VBOX_VM_SETTINGS["use_any_adapter"],
+                                  "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
+                                  "ram": VBOX_VM_SETTINGS["ram"],
+                                  "headless": VBOX_VM_SETTINGS["headless"],
+                                  "acpi_shutdown": VBOX_VM_SETTINGS["acpi_shutdown"],
+                                  "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
+
+        self.settings().update(virtualbox_vm_settings)
 
     def _addAdapters(self, adapters):
         """
@@ -106,54 +107,28 @@ class VirtualBoxVM(Node):
         :param additional_settings: additional settings for this VM
         """
 
-        # let's create a unique name if none has been chosen
         if not name:
-            if linked_clone:
-                name = self.allocateName(default_name_format)
-            else:
-                name = vmname
-                self.setName(name)
+            name = vmname
+            self.setName(name)
 
-        if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this VirtualBox VM")
-            return
-
-        self._settings["name"] = name
         self._linked_clone = linked_clone
-        params = {"name": name,
-                  "vmname": vmname,
+        params = {"vmname": vmname,
                   "linked_clone": linked_clone}
-
-        if node_id:
-            params["node_id"] = node_id
-
         self._port_name_format = port_name_format
         self._port_segment_size = port_segment_size
         self._first_port_name = first_port_name
         params.update(additional_settings)
         self._create(params)
 
-    def _setupCallback(self, result, error=False, **kwargs):
+    def _setupCallback(self, result):
         """
         Callback for setup.
 
         :param result: server response (dict)
-        :param error: indicates an error (boolean)
         """
-
-        if not super()._setupCallback(result, error=error, **kwargs):
-            return
 
         # create the ports on the client side
         self._addAdapters(self._settings.get("adapters", 0))
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("VirtualBox VM instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
 
     def update(self, new_settings):
         """
@@ -174,20 +149,17 @@ class VirtualBoxVM(Node):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-        self._update(params)
 
-    def updateCallback(self, result, error=False, **kwargs):
+        if params:
+            self._update(params)
+
+    def _updateCallback(self, result):
         """
         Callback for update.
 
         :param result: server response (dict)
-        :param error: indicates an error (boolean)
         """
 
-        if not super().updateCallback(result, error=error, **kwargs):
-            return False
-
-        updated = False
         nb_adapters_changed = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
@@ -205,10 +177,6 @@ class VirtualBoxVM(Node):
             # TODO: dynamically add/remove adapters
             self._ports.clear()
             self._addAdapters(self._settings["adapters"])
-
-        if updated:
-            log.info("VirtualBox VM {} has been updated".format(self.name()))
-            self.updated_signal.emit()
 
     def info(self):
         """
@@ -306,33 +274,6 @@ class VirtualBoxVM(Node):
         self.setName(name)
         self.setup(vmname, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
-    def name(self):
-        """
-        Returns the name of this VirtualBox VM instance.
-
-        :returns: name (string)
-        """
-
-        return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all this VirtualBox VM instance settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
-
-    def ports(self):
-        """
-        Returns all the ports for this VirtualBox VM instance.
-
-        :returns: list of Port instances
-        """
-
-        return self._ports
-
     def serialConsole(self):
         """
         Returns either the serial console must be used or not.
@@ -396,7 +337,7 @@ class VirtualBoxVM(Node):
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
 
         return [Node.end_devices]

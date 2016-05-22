@@ -77,7 +77,7 @@ class BaseNode(QtCore.QObject):
         self._project = project
         self._initialized = False
         self._loading = False
-        self._status = 0
+        self._status = BaseNode.stopped
         self._ports = []
 
     @classmethod
@@ -274,16 +274,6 @@ class BaseNode(QtCore.QObject):
 
         raise NotImplementedError()
 
-    def name(self):
-        """
-        Returns the name of this node.
-        Must be overloaded.
-
-        :returns: name (string)
-        """
-
-        raise NotImplementedError()
-
     def update(self, new_settings):
         """
         Updates the settings for this node.
@@ -297,12 +287,11 @@ class BaseNode(QtCore.QObject):
     def ports(self):
         """
         Returns all the ports for this node.
-        Must be overloaded.
 
         :returns: list of Port instances
         """
 
-        raise NotImplementedError()
+        return self._ports
 
     @staticmethod
     def defaultCategories():
@@ -325,16 +314,6 @@ class BaseNode(QtCore.QObject):
         Must be overloaded.
 
         :returns: QWidget instance
-        """
-
-        raise NotImplementedError()
-
-    def settings(self):
-        """
-        Returns all the node settings.
-        Must be overloaded.
-
-        :returns: settings dictionary
         """
 
         raise NotImplementedError()

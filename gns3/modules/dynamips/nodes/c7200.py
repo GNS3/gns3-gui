@@ -52,7 +52,7 @@ class C7200(Router):
             c7200_settings["slot0"] = "C7200-IO-FE"
 
         # merge platform settings with the generic ones
-        self._settings.update(c7200_settings)
+        self.settings().update(c7200_settings)
 
     def __str__(self):
 

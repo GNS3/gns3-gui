@@ -88,31 +88,16 @@ class Cloud(BaseNode):
 
         self._server.get("/interfaces", self._setupCallback)
 
-    def _setupCallback(self, result, error=False, **kwargs):
+    def _setupCallback(self, result):
         """
         Callback for setup.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
 
-        if error:
-            log.error("error while setting up {}: {}".format(self.name(), result["message"]))
-            # a warning message instead of a error is more appropriate here
-            self.warning_signal.emit(self.id(), result["message"])
-        else:
-            self._settings["interfaces"] = result.copy()
-
+        self._settings["interfaces"] = result.copy()
         if self._settings["nios"]:
             self._addPorts(self._settings["nios"])
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("cloud {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
 
     def _createNIOUDP(self, nio):
         """
@@ -419,33 +404,6 @@ This is a pseudo-device for external connections
         self._loading = False
         self._node_info = None
 
-    def name(self):
-        """
-        Returns the name of this cloud.
-
-        :returns: name (string)
-        """
-
-        return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all this cloud settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
-
-    def ports(self):
-        """
-        Returns all the ports for this cloud.
-
-        :returns: list of Port instances
-        """
-
-        return self._ports
-
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.
@@ -476,7 +434,7 @@ This is a pseudo-device for external connections
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
 
         return [BaseNode.end_devices]

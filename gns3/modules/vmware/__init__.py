@@ -349,7 +349,7 @@ class VMware(Module):
             default_name_format = self._vmware_vms[vm]["default_name_format"]
         if linked_base:
             default_name_format = default_name_format.replace('{name}', name)
-            name = None
+            name = node.allocateName(default_name_format)
 
         node.setup(vmx_path,
                    name=name,

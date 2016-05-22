@@ -44,16 +44,17 @@ class VPCSDevice(Node):
 
         log.info("VPCS instance is being created")
         self._node_id = None
-        self._settings = {"name": "",
-                          "console_host": None,
-                          "startup_script": None,
-                          "startup_script_path": None,
-                          "console": None}
 
-        port_name = EthernetPort.longNameType() + str(0)
-        short_name = EthernetPort.shortNameType() + str(0)
+        vpcs_settings = {"console_host": None,
+                         "startup_script": None,
+                         "startup_script_path": None,
+                         "console": None}
+
+        self.settings().update(vpcs_settings)
 
         # VPCS devices have only one fixed Ethernet port
+        port_name = EthernetPort.longNameType() + str(0)
+        short_name = EthernetPort.shortNameType() + str(0)
         port = EthernetPort(port_name)
         port.setShortName(short_name)
         port.setAdapterNumber(0)
@@ -70,20 +71,7 @@ class VPCSDevice(Node):
         :param additional_settings: additional settings for this device
         """
 
-        # let's create a unique name if none has been chosen
-        if not name:
-            name = self.allocateName(default_name_format)
-
-        if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this VPCS device")
-            return
-
-        self._settings["name"] = name
-        params = {"name": name}
-
-        if node_id:
-            params["node_id"] = node_id
-
+        params = {}
         if "script_file" in additional_settings:
             if os.path.isfile(additional_settings["script_file"]):
                 base_config_content = self._readBaseConfig(additional_settings["script_file"])
@@ -99,26 +87,7 @@ class VPCSDevice(Node):
             del additional_settings["startup_script"]
 
         params.update(additional_settings)
-        self._create(params)
-
-    def _setupCallback(self, result, error=False, **kwargs):
-        """
-        Callback for setup.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if not super()._setupCallback(result, error=error, **kwargs):
-            return
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("VPCS instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
+        self._create(name, node_id, params, default_name_format)
 
     def update(self, new_settings):
         """
@@ -126,10 +95,6 @@ class VPCSDevice(Node):
 
         :param new_settings: settings dictionary
         """
-
-        if "name" in new_settings and new_settings["name"] != self.name() and self.hasAllocatedName(new_settings["name"]):
-            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-            return
 
         if "script_file" in new_settings:
             if os.path.isfile(new_settings["script_file"]):
@@ -146,38 +111,29 @@ class VPCSDevice(Node):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        self._update(params)
+        if params:
+            self._update(params)
 
-    def updateCallback(self, result, error=False, **kwargs):
+    def _updateCallback(self, result):
         """
         Callback for update.
 
         :param result: server response (dict)
-        :param error: indicates an error (boolean)
         """
 
-        if not super().updateCallback(result, error=error, **kwargs):
-            return False
-
-        updated = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                updated = True
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
                 self._settings[name] = value
 
-        if updated:
-            log.info("VPCS device {} has been updated".format(self.name()))
-            self.updated_signal.emit()
-
     def info(self):
         """
         Returns information about this VPCS device.
 
-        :returns: formated string
+        :returns: formatted string
         """
 
         if self.status() == Node.started:
@@ -352,33 +308,6 @@ class VPCSDevice(Node):
             return
         self.update(new_settings)
 
-    def name(self):
-        """
-        Returns the name of this VPCS device.
-
-        :returns: name (string)
-        """
-
-        return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all this VPCS device settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
-
-    def ports(self):
-        """
-        Returns all the ports for this VPCS device.
-
-        :returns: list of Port instances
-        """
-
-        return self._ports
-
     def console(self):
         """
         Returns the console port for this VPCS device.
@@ -418,7 +347,7 @@ class VPCSDevice(Node):
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
 
         return [Node.end_devices]

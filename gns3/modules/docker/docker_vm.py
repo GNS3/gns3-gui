@@ -37,23 +37,23 @@ class DockerVM(Node):
     URL_PREFIX = "docker"
 
     def __init__(self, module, server, project):
-        super().__init__(module, server, project)
 
-        log.info("Docker image instance is being created")
-        self._settings = {
-            "name": "",
-            "image": "",
-            "adapters": DOCKER_CONTAINER_SETTINGS["adapters"],
-            "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
-            "environment": DOCKER_CONTAINER_SETTINGS["environment"],
-            "console": None,
-            "console_host": None,
-            "aux": None,
-            "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
-            "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"],
-            "console_http_port": DOCKER_CONTAINER_SETTINGS["console_http_port"],
-            "console_http_path": DOCKER_CONTAINER_SETTINGS["console_http_path"]
-        }
+        super().__init__(module, server, project)
+        log.info("Docker VM is being created")
+
+        docker_vm_settings = {"image": "",
+                              "adapters": DOCKER_CONTAINER_SETTINGS["adapters"],
+                              "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
+                              "environment": DOCKER_CONTAINER_SETTINGS["environment"],
+                              "console": None,
+                              "console_host": None,
+                              "aux": None,
+                              "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
+                              "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"],
+                              "console_http_port": DOCKER_CONTAINER_SETTINGS["console_http_port"],
+                              "console_http_path": DOCKER_CONTAINER_SETTINGS["console_http_path"]}
+
+        self.settings().update(docker_vm_settings)
 
     def _addAdapters(self, adapters):
         """Adds adapters.
@@ -78,98 +78,23 @@ class DockerVM(Node):
         :param name: optional name
         :param additional_settings: additional settings for this VM
         """
-        # let's create a unique name if none has been chosen
-        if not name:
-            name = self.allocateName(default_name_format.replace('{name}', base_name))
 
-        if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this container")
-            return
-
-        self.setName(name)
-        self._settings["name"] = name
-        self._settings["image"] = image
+        #self._settings["image"] = image
         params = {
-            "name": name,
             "image": image,
             "adapters": self._settings["adapters"]
         }
-        if node_id:
-            params["node_id"] = node_id
         params.update(additional_settings)
-        self._create(params, timeout=None)
+        default_name_format = default_name_format.replace('{name}', base_name)
+        self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result, error=False, **kwargs):
+    def _setupCallback(self, result):
         """Callback for Docker container setup.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
-        if not super()._setupCallback(result, error=error, **kwargs):
-            return
 
         self._addAdapters(self._settings.get("adapters", 0))
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("Docker container {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
-
-    def updateCallback(self, result, error=False, **kwargs):
-        """
-        Callback for update.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while deleting {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return
-
-        updated = False
-        nb_adapters_changed = False
-        for name, value in result.items():
-            if name in self._settings and self._settings[name] != value:
-                log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                updated = True
-                if name == "name":
-                    # update the node name
-                    self.updateAllocatedName(value)
-                if name == "adapters":
-                    nb_adapters_changed = True
-                self._settings[name] = value
-
-        if nb_adapters_changed:
-            log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
-            # TODO: dynamically add/remove adapters
-            self._ports.clear()
-            self._addAdapters(self._settings["adapters"])
-
-        if updated:
-            log.info("Docker VM {} has been updated".format(self.name()))
-            self.updated_signal.emit()
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this VPCS device.
-
-        :param new_settings: settings dictionary
-        """
-
-        if "name" in new_settings and new_settings["name"] != self.name() and self.hasAllocatedName(new_settings["name"]):
-            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-            return
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        self.update(params)
 
     def dump(self):
         """
@@ -185,12 +110,46 @@ class DockerVM(Node):
             if value is not None and value != "":
                 docker["properties"][name] = value
 
-        # add the ports
-        if self._ports:
-            ports = docker["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
         return docker
+
+    def update(self, new_settings):
+        """
+        Updates the settings for this VPCS device.
+
+        :param new_settings: settings dictionary
+        """
+
+        params = {}
+        for name, value in new_settings.items():
+            if name in self._settings and self._settings[name] != value:
+                params[name] = value
+
+        if params:
+            self._update(params)
+
+    def _updateCallback(self, result):
+        """
+        Callback for update.
+
+        :param result: server response
+        """
+
+        nb_adapters_changed = False
+        for name, value in result.items():
+            if name in self._settings and self._settings[name] != value:
+                log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
+                if name == "name":
+                    # update the node name
+                    self.updateAllocatedName(value)
+                if name == "adapters":
+                    nb_adapters_changed = True
+                self._settings[name] = value
+
+        if nb_adapters_changed:
+            log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
+            # TODO: dynamically add/remove adapters
+            self._ports.clear()
+            self._addAdapters(self._settings["adapters"])
 
     def info(self):
         """Returns information about this Docker container.
@@ -242,56 +201,6 @@ class DockerVM(Node):
 
         log.info("Docker container {} is loading".format(name))
         self.setup(image, name=name, node_id=node_id, additional_settings=settings)
-
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
-
-        self.loaded_signal.disconnect(self._updatePortSettings)
-
-        # assign the correct names and IDs to the ports
-        if "ports" in self._node_info:
-            ports = self._node_info["ports"]
-            for topology_port in ports:
-                for port in self._ports:
-                    adapter_number = topology_port.get("adapter_number")
-                    if adapter_number == port.adapterNumber():
-                        port.setName(topology_port["name"])
-                        port.setId(topology_port["id"])
-
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("Docker container {} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
-        self._node_info = None
-
-    def name(self):
-        """
-        Returns the name of this Docker container.
-
-        :returns: name (string)
-        """
-        return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all settings of this Docker container.
-
-        :returns: settings
-        :rtype: dict
-        """
-        return self._settings
-
-    def ports(self):
-        """
-        Returns all the ports for this Docker VM instance.
-
-        :returns: list of Port instances
-        """
-        return self._ports
 
     def console(self):
         """
@@ -348,7 +257,7 @@ class DockerVM(Node):
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
         return [Node.end_devices]
 

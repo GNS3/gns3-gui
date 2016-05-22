@@ -44,7 +44,7 @@ class C2691(Router):
                           "slot0": "GT96100-FE"}
 
         # merge platform settings with the generic ones
-        self._settings.update(c2691_settings)
+        self.settings().update(c2691_settings)
 
     def __str__(self):
 

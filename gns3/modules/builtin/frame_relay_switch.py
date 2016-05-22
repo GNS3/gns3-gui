@@ -40,10 +40,10 @@ class FrameRelaySwitch(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-        self.setStatus(Node.started)  # this is an always-on node
-        self._ports = []
-        self._settings = {"name": "",
-                          "mappings": {}}
+
+        # this is an always-on node
+        self.setStatus(Node.started)
+        self.settings().update({"mappings": {}})
 
     def isAlwaysOn(self):
         """
@@ -89,43 +89,20 @@ class FrameRelaySwitch(Node):
         :param mappings: mappings to be automatically added when creating this Frame relay switch
         """
 
-        # let's create a unique name if none has been chosen
-        if not name:
-            name = self.allocateName(default_name_format)
-
-        if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this Frame Relay switch")
-            return
-
-        self._settings["name"] = name
-        params = {"name": name}
-        if node_id:
-            params["node_id"] = node_id
+        params = {}
         if mappings:
             params["mappings"] = mappings
-        self._create(params)
+        self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result, error=False, **kwargs):
+    def _setupCallback(self, result):
         """
         Callback for setup.
 
         :param result: server response (dict)
-        :param error: indicates an error (boolean)
         """
-
-        if not super()._setupCallback(result, error=error, **kwargs):
-            return
 
         if "mappings" in result:
             self._updatePortsFromMappings(result["mappings"])
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("Frame Relay switch instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
 
     def update(self, new_settings):
         """
@@ -139,39 +116,21 @@ class FrameRelaySwitch(Node):
             params["mappings"] = new_settings["mappings"]
 
         if "name" in new_settings and new_settings["name"] != self.name():
-            if self.hasAllocatedName(new_settings["name"]):
-                self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-                return
             params["name"] = new_settings["name"]
 
         if params:
             self._update(params)
 
-    def updateCallback(self, result, error=False, **kwargs):
+    def _updateCallback(self, result):
         """
         Callback for update.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
 
-        if not super().updateCallback(result, error=error, **kwargs):
-            return False
-
-        if error:
-            log.error("error while updating {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-
-            if "mappings" in result:
-                self._updatePortsFromMappings(result["mappings"])
-                self._settings["mappings"] = result["mappings"].copy()
-
-            if "name" in result:
-                self._settings["name"] = result["name"]
-                self.updateAllocatedName(result["name"])
-            log.info("{} has been updated".format(self.name()))
-            self.updated_signal.emit()
+        if "mappings" in result:
+            self._updatePortsFromMappings(result["mappings"])
+            self._settings["mappings"] = result["mappings"].copy()
 
     def info(self):
         """
@@ -258,33 +217,6 @@ class FrameRelaySwitch(Node):
         self.setName(name)
         self.setup(name, node_id, mappings)
 
-    def name(self):
-        """
-        Returns the name of this switch.
-
-        :returns: name (string)
-        """
-
-        return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all this switch settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
-
-    def ports(self):
-        """
-        Returns all the ports for this switch.
-
-        :returns: list of Port instances
-        """
-
-        return self._ports
-
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.
@@ -315,7 +247,7 @@ class FrameRelaySwitch(Node):
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
 
         return [Node.switches]

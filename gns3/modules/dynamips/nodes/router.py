@@ -52,39 +52,41 @@ class Router(Node):
         super().__init__(module, server, project)
         log.info("Router {} is being created".format(platform))
         self._dynamips_id = None
-        self._settings = {"name": "",
-                          "platform": platform,
-                          "image": "",
-                          "image_md5sum": "",
-                          "startup_config": "",
-                          "private_config": "",
-                          "ram": 128,
-                          "nvram": 128,
-                          "mmap": True,
-                          "sparsemem": True,
-                          "clock_divisor": 8,
-                          "idlepc": "",
-                          "idlemax": 500,
-                          "idlesleep": 30,
-                          "exec_area": 64,
-                          "disk0": 0,
-                          "disk1": 0,
-                          "auto_delete_disks": False,
-                          "console": None,
-                          "console_host": None,
-                          "aux": None,
-                          "mac_addr": None,
-                          "system_id": "FTX0945W0MY",
-                          "slot0": None,
-                          "slot1": None,
-                          "slot2": None,
-                          "slot3": None,
-                          "slot4": None,
-                          "slot5": None,
-                          "slot6": None,
-                          "wic0": None,
-                          "wic1": None,
-                          "wic2": None}
+
+        router_settings = {"platform": platform,
+                           "image": "",
+                           "image_md5sum": "",
+                           "startup_config": "",
+                           "private_config": "",
+                           "ram": 128,
+                           "nvram": 128,
+                           "mmap": True,
+                           "sparsemem": True,
+                           "clock_divisor": 8,
+                           "idlepc": "",
+                           "idlemax": 500,
+                           "idlesleep": 30,
+                           "exec_area": 64,
+                           "disk0": 0,
+                           "disk1": 0,
+                           "auto_delete_disks": False,
+                           "console": None,
+                           "console_host": None,
+                           "aux": None,
+                           "mac_addr": None,
+                           "system_id": "FTX0945W0MY",
+                           "slot0": None,
+                           "slot1": None,
+                           "slot2": None,
+                           "slot3": None,
+                           "slot4": None,
+                           "slot5": None,
+                           "slot6": None,
+                           "wic0": None,
+                           "wic1": None,
+                           "wic2": None}
+
+        self.settings().update(router_settings)
 
     def _addAdapterPorts(self, adapter, slot_number):
         """
@@ -226,17 +228,7 @@ class Router(Node):
         :param additional_settings: other additional and not mandatory settings
         """
 
-        # let's create a unique name if none has been chosen
-        if not name:
-            name = self.allocateName(default_name_format)
-
-        if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this router")
-            return
-
         platform = self._settings["platform"]
-
-        self._settings["name"] = name
         self._settings["ram"] = ram
         self._settings["image"] = image
 
@@ -245,9 +237,6 @@ class Router(Node):
                   "platform": platform,
                   "ram": ram,
                   "image": image}
-
-        if node_id:
-            params["node_id"] = node_id
 
         if dynamips_id:
             params["dynamips_id"] = dynamips_id
@@ -267,31 +256,19 @@ class Router(Node):
             del additional_settings["private_config"]
 
         params.update(additional_settings)
-        self._create(params)
+        self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result, error=False, **kwargs):
+    def _setupCallback(self, result):
         """
         Callback for setup.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
-
-        if not super()._setupCallback(result, error=error, **kwargs):
-            return
 
         self._dynamips_id = result["dynamips_id"]
 
         # create the ports on the client side
         self._insertAdapters(self._settings)
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.debug("router {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
 
         # The image is missing on remote server
         if "image_md5sum" not in result or result["image_md5sum"] is None or len(result["image_md5sum"]) == 0:
@@ -303,10 +280,6 @@ class Router(Node):
 
         :param new_settings: settings dictionary
         """
-
-        if "name" in new_settings and new_settings["name"] != self.name() and self.hasAllocatedName(new_settings["name"]):
-            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-            return
 
         params = {}
         if "startup_config" in new_settings:
@@ -326,24 +299,19 @@ class Router(Node):
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        self._update(params)
+        if params:
+            self._update(params)
 
-    def updateCallback(self, result, error=False, **kwargs):
+    def _updateCallback(self, result):
         """
         Callback for update.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
 
-        if not super().updateCallback(result, error=error, **kwargs):
-            return False
-
-        updated = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                updated = True
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
@@ -369,10 +337,6 @@ class Router(Node):
                         self._removeWICPorts(self._settings[name], wic_slot_number)
                 self._settings[name] = value
         self._updateWICNumbering()
-
-        if updated:
-            log.info("router {} has been updated".format(self.name()))
-            self.updated_signal.emit()
 
     def computeIdlepcs(self, callback):
         """
@@ -766,33 +730,6 @@ class Router(Node):
         if new_settings:
             self.update(new_settings)
 
-    def name(self):
-        """
-        Returns the name of this router.
-
-        :returns: name (string)
-        """
-
-        return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all this router settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
-
-    def ports(self):
-        """
-        Returns all the ports for this router.
-
-        :returns: list of Port instances
-        """
-
-        return self._ports
-
     def console(self):
         """
         Returns the console port for this router.
@@ -853,7 +790,7 @@ class Router(Node):
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
 
         return [Node.routers]

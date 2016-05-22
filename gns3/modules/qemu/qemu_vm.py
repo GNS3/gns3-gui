@@ -48,43 +48,44 @@ class QemuVM(Node):
         self._first_port_name = None
         self._linked_clone = True
 
-        self._settings = {"name": "",
-                          "usage": "",
-                          "qemu_path": "",
-                          "hda_disk_image": "",
-                          "hdb_disk_image": "",
-                          "hdc_disk_image": "",
-                          "hdd_disk_image": "",
-                          "hda_disk_interface": QEMU_VM_SETTINGS["hda_disk_interface"],
-                          "hdb_disk_interface": QEMU_VM_SETTINGS["hdb_disk_interface"],
-                          "hdc_disk_interface": QEMU_VM_SETTINGS["hdc_disk_interface"],
-                          "hdd_disk_interface": QEMU_VM_SETTINGS["hdd_disk_interface"],
-                          "cdrom_image": "",
-                          "hda_disk_image_md5sum": "",
-                          "hdb_disk_image_md5sum": "",
-                          "hdc_disk_image_md5sum": "",
-                          "hdd_disk_image_md5sum": "",
-                          "cdrom_image_md5sum": "",
-                          "boot_priority": QEMU_VM_SETTINGS["boot_priority"],
-                          "options": "",
-                          "ram": QEMU_VM_SETTINGS["ram"],
-                          "cpus": QEMU_VM_SETTINGS["cpus"],
-                          "console": None,
-                          "console_host": None,
-                          "console_type": QEMU_VM_SETTINGS["console_type"],
-                          "adapters": QEMU_VM_SETTINGS["adapters"],
-                          "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
-                          "mac_address": QEMU_VM_SETTINGS["mac_address"],
-                          "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
-                          "platform": QEMU_VM_SETTINGS["platform"],
-                          "acpi_shutdown": QEMU_VM_SETTINGS["acpi_shutdown"],
-                          "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],
-                          "process_priority": QEMU_VM_SETTINGS["process_priority"],
-                          "initrd": "",
-                          "kernel_image": "",
-                          "initrd_md5sum": "",
-                          "kernel_image_md5sum": "",
-                          "kernel_command_line": ""}
+        qemu_vm_settings = {"usage": "",
+                            "qemu_path": "",
+                            "hda_disk_image": "",
+                            "hdb_disk_image": "",
+                            "hdc_disk_image": "",
+                            "hdd_disk_image": "",
+                            "hda_disk_interface": QEMU_VM_SETTINGS["hda_disk_interface"],
+                            "hdb_disk_interface": QEMU_VM_SETTINGS["hdb_disk_interface"],
+                            "hdc_disk_interface": QEMU_VM_SETTINGS["hdc_disk_interface"],
+                            "hdd_disk_interface": QEMU_VM_SETTINGS["hdd_disk_interface"],
+                            "cdrom_image": "",
+                            "hda_disk_image_md5sum": "",
+                            "hdb_disk_image_md5sum": "",
+                            "hdc_disk_image_md5sum": "",
+                            "hdd_disk_image_md5sum": "",
+                            "cdrom_image_md5sum": "",
+                            "boot_priority": QEMU_VM_SETTINGS["boot_priority"],
+                            "options": "",
+                            "ram": QEMU_VM_SETTINGS["ram"],
+                            "cpus": QEMU_VM_SETTINGS["cpus"],
+                            "console": None,
+                            "console_host": None,
+                            "console_type": QEMU_VM_SETTINGS["console_type"],
+                            "adapters": QEMU_VM_SETTINGS["adapters"],
+                            "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
+                            "mac_address": QEMU_VM_SETTINGS["mac_address"],
+                            "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
+                            "platform": QEMU_VM_SETTINGS["platform"],
+                            "acpi_shutdown": QEMU_VM_SETTINGS["acpi_shutdown"],
+                            "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],
+                            "process_priority": QEMU_VM_SETTINGS["process_priority"],
+                            "initrd": "",
+                            "kernel_image": "",
+                            "initrd_md5sum": "",
+                            "kernel_image_md5sum": "",
+                            "kernel_command_line": ""}
+
+        self.settings().update(qemu_vm_settings)
 
     def _addAdapters(self, adapters):
         """
@@ -104,8 +105,7 @@ class QemuVM(Node):
                     port0=interface_number,
                     port1=1 + interface_number,
                     segment0=segment_number,
-                    segment1=1 + segment_number
-                )
+                    segment1=1 + segment_number)
                 interface_number += 1
                 if self._port_segment_size and interface_number % self._port_segment_size == 0:
                     segment_number += 1
@@ -126,51 +126,24 @@ class QemuVM(Node):
         :param node_id: Node identifier
         """
 
-        # let's create a unique name if none has been chosen
-        if not name and linked_clone:
-            name = self.allocateName(default_name_format)
-
-        if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this QEMU VM")
-            return
-
-        self.setName(name)
-        self._settings["name"] = name
         self._linked_clone = linked_clone
-        params = {"name": name,
-                  "qemu_path": qemu_path,
+        params = {"qemu_path": qemu_path,
                   "linked_clone": linked_clone}
-
-        if node_id:
-            params["node_id"] = node_id
-
         self._port_name_format = port_name_format
         self._port_segment_size = port_segment_size
         self._first_port_name = first_port_name
         params.update(additional_settings)
-        self._create(params)
+        self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result, error=False, **kwargs):
+    def _setupCallback(self, result):
         """
         Callback for setup.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
-
-        if not super()._setupCallback(result, error=error, **kwargs):
-            return
 
         # create the ports on the client side
         self._addAdapters(self._settings.get("adapters", 0))
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("QEMU VM instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
 
         for image_field in ["hda_disk_image", "hdb_disk_image", "hdc_disk_image", "hdd_disk_image", "initrd", "kernel_image", "cdrom_image"]:
             if image_field in result and result[image_field] is not None and result[image_field] != "":
@@ -186,34 +159,25 @@ class QemuVM(Node):
         :param new_settings: settings dictionary
         """
 
-        if "name" in new_settings and new_settings["name"] != self.name() and self.hasAllocatedName(new_settings["name"]):
-            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-            return
-
         params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
 
-        self._update(params)
+        if params:
+            self._update(params)
 
-    def updateCallback(self, result, error=False, **kwargs):
+    def _updateCallback(self, result):
         """
         Callback for update.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
 
-        if not super().updateCallback(result, error=error, **kwargs):
-            return False
-
-        updated = False
         nb_adapters_changed = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                updated = True
                 if name == "name":
                     # update the node name
                     self.updateAllocatedName(value)
@@ -226,10 +190,6 @@ class QemuVM(Node):
             # TODO: dynamically add/remove adapters
             self._ports.clear()
             self._addAdapters(self._settings["adapters"])
-
-        if updated:
-            log.info("QEMU VM {} has been updated".format(self.name()))
-            self.updated_signal.emit()
 
     def dump(self):
         """
@@ -325,33 +285,6 @@ class QemuVM(Node):
         self.setName(name)
         self.setup(qemu_path, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
-    def name(self):
-        """
-        Returns the name of this QEMU VM instance.
-
-        :returns: name (string)
-        """
-
-        return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all this QEMU VM instance settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
-
-    def ports(self):
-        """
-        Returns all the ports for this QEMU VM instance.
-
-        :returns: list of Port instances
-        """
-
-        return self._ports
-
     def console(self):
         """
         Returns the console port for this QEMU VM instance.
@@ -391,7 +324,7 @@ class QemuVM(Node):
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
 
         return [Node.end_devices]

@@ -59,7 +59,7 @@ class C2600(Router):
         c2600_settings["slot0"] = self.chassis_to_default_adapter[chassis]
 
         # merge platform settings with the generic ones
-        self._settings.update(c2600_settings)
+        self.settings().update(c2600_settings)
 
     def __str__(self):
 

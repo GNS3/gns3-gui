@@ -46,7 +46,7 @@ class EtherSwitchRouter(Router):
                                       "slot0": "GT96100-FE"}
 
         # merge platform settings with the generic ones
-        self._settings.update(self._etherswitch_settings)
+        self.settings().update(self._etherswitch_settings)
 
     @staticmethod
     def defaultSymbol():
@@ -63,7 +63,7 @@ class EtherSwitchRouter(Router):
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
 
         return [Node.switches]

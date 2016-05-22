@@ -48,7 +48,7 @@ class C3600(Router):
             c3600_settings["slot0"] = "Leopard-2FE"
 
         # merge platform settings with the generic ones
-        self._settings.update(c3600_settings)
+        self.settings().update(c3600_settings)
 
     def __str__(self):
 

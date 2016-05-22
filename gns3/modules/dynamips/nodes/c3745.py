@@ -44,7 +44,7 @@ class C3745(Router):
                           "slot0": "GT96100-FE"}
 
         # merge platform settings with the generic ones
-        self._settings.update(c3745_settings)
+        self.settings().update(c3745_settings)
 
     def __str__(self):
 

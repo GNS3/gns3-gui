@@ -344,7 +344,7 @@ class Project(QtCore.QObject):
         if result["action"] == "node.updated":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
-                node.updateCallback(result["event"])
+                node.updateNodeCallback(result["event"])
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":

@@ -38,10 +38,10 @@ class EthernetSwitch(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-        self.setStatus(Node.started)  # this is an always-on node
-        self._ports = []
-        self._settings = {"name": "",
-                          "ports": []}
+
+        # this is an always-on node
+        self.setStatus(Node.started)
+        self.settings().update({"ports": []})
 
     def isAlwaysOn(self):
         """
@@ -61,32 +61,17 @@ class EthernetSwitch(Node):
         :param ports: ports to be automatically added when creating this switch
         """
 
-        # let's create a unique name if none has been chosen
-        if not name:
-            name = self.allocateName(default_name_format)
-
-        if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this Ethernet switch")
-            return
-
-        self._settings["name"] = name
-        params = {"name": name}
-        if node_id:
-            params["node_id"] = node_id
+        params = {}
         if ports:
             params["ports"] = ports
-        self._create(params)
+        self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result, error=False, **kwargs):
+    def _setupCallback(self, result):
         """
         Callback for setup.
 
         :param result: server response (dict)
-        :param error: indicates an error (boolean)
         """
-
-        if not super()._setupCallback(result, error=error, **kwargs):
-            return
 
         if "ports" in result:
             for port_info in result["ports"]:
@@ -96,14 +81,6 @@ class EthernetSwitch(Node):
                 port.setStatus(EthernetPort.started)
                 self._ports.append(port)
                 log.debug("port {} has been added".format(port_info["port_number"]))
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("Ethernet switch instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
 
     def update(self, new_settings):
         """
@@ -117,9 +94,6 @@ class EthernetSwitch(Node):
             params["ports"] = new_settings["ports"]
 
         if "name" in new_settings and new_settings["name"] != self.name():
-            if self.hasAllocatedName(new_settings["name"]):
-                self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-                return
             params["name"] = new_settings["name"]
 
         if params:
@@ -142,41 +116,27 @@ class EthernetSwitch(Node):
         self._ports.append(port)
         log.debug("port {} has been added".format(port_number))
 
-    def updateCallback(self, result, error=False, **kwargs):
+    def _updateCallback(self, result):
         """
         Callback for update.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
 
-        if not super().updateCallback(result, error=error, **kwargs):
-            return False
+        if "ports" in result:
+            updated_port_list = []
+            # add/update ports
+            for port_info in result["ports"]:
+                self._updatePort(port_info["name"], port_info["port_number"])
+                updated_port_list.append(port_info["port_number"])
 
-        if error:
-            log.error("error while updating {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            if "ports" in result:
-                updated_port_list = []
-                # add/update ports
-                for port_info in result["ports"]:
-                    self._updatePort(port_info["name"], port_info["port_number"])
-                    updated_port_list.append(port_info["port_number"])
+            # delete ports
+            for port in self._ports.copy():
+                if port.isFree() and port.portNumber() not in updated_port_list:
+                    self._ports.remove(port)
+                    log.debug("port {} has been removed".format(port.portNumber()))
 
-                # delete ports
-                for port in self._ports.copy():
-                    if port.isFree() and port.portNumber() not in updated_port_list:
-                        self._ports.remove(port)
-                        log.debug("port {} has been removed".format(port.portNumber()))
-
-                self._settings["ports"] = result["ports"].copy()
-
-            if "name" in result:
-                self._settings["name"] = result["name"]
-                self.updateAllocatedName(result["name"])
-            log.info("{} has been updated".format(self.name()))
-            self.updated_signal.emit()
+            self._settings["ports"] = result["ports"].copy()
 
     def info(self):
         """
@@ -278,33 +238,6 @@ class EthernetSwitch(Node):
         self.setName(name)
         self.setup(name, node_id, ports)
 
-    def name(self):
-        """
-        Returns the name of this switch.
-
-        :returns: name (string)
-        """
-
-        return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all this switch settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
-
-    def ports(self):
-        """
-        Returns all the ports for this switch.
-
-        :returns: list of Port instances
-        """
-
-        return self._ports
-
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.
@@ -335,7 +268,7 @@ class EthernetSwitch(Node):
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
 
         return [Node.switches]

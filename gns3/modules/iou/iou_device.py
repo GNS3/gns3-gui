@@ -49,20 +49,22 @@ class IOUDevice(Node):
 
         log.info("IOU instance is being created")
         self._node_id = None
-        self._settings = {"name": "",
-                          "path": "",
-                          "md5sum": "",
-                          "startup_config": "",
-                          "private_config": "",
-                          "l1_keepalives": False,
-                          "use_default_iou_values": IOU_DEVICE_SETTINGS["use_default_iou_values"],
-                          "ram": IOU_DEVICE_SETTINGS["ram"],
-                          "nvram": IOU_DEVICE_SETTINGS["nvram"],
-                          "ethernet_adapters": IOU_DEVICE_SETTINGS["ethernet_adapters"],
-                          "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"],
-                          "console": None,
-                          "console_host": None,
-                          "iourc_content": None}
+
+        iou_device_settings = {"path": "",
+                               "md5sum": "",
+                               "startup_config": "",
+                               "private_config": "",
+                               "l1_keepalives": False,
+                               "use_default_iou_values": IOU_DEVICE_SETTINGS["use_default_iou_values"],
+                               "ram": IOU_DEVICE_SETTINGS["ram"],
+                               "nvram": IOU_DEVICE_SETTINGS["nvram"],
+                               "ethernet_adapters": IOU_DEVICE_SETTINGS["ethernet_adapters"],
+                               "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"],
+                               "console": None,
+                               "console_host": None,
+                               "iourc_content": None}
+
+        self.settings().update(iou_device_settings)
 
     def _addAdapters(self, nb_ethernet_adapters, nb_serial_adapters):
         """
@@ -110,21 +112,8 @@ class IOUDevice(Node):
         :param console: optional TCP console port
         """
 
-        # let's create a unique name if none has been chosen
-        if not name:
-            name = self.allocateName(default_name_format)
 
-        if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this IOU device")
-            return
-
-        self._settings["name"] = name
-        params = {"name": name,
-                  "path": iou_path}
-
-        if node_id:
-            params["node_id"] = node_id
-
+        params = {"path": iou_path}
         # push the startup-config
         if "startup_config" in additional_settings:
             base_config_content = self._readBaseConfig(additional_settings["startup_config"])
@@ -140,31 +129,18 @@ class IOUDevice(Node):
             del additional_settings["private_config"]
 
         params = self._addIourcContentToParams(params)
-
         params.update(additional_settings)
-        self._create(params)
+        self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result, error=False, **kwargs):
+    def _setupCallback(self, result):
         """
         Callback for setup.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
-
-        if not super()._setupCallback(result, error=error, **kwargs):
-            return
 
         # create the ports on the client side
         self._addAdapters(self._settings.get("ethernet_adapters", 0), self._settings.get("serial_adapters", 0))
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("IOU instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
 
         # The image is missing on remote server
         if "md5sum" not in result or result["md5sum"] is None or len(result["md5sum"]) == 0:
@@ -208,10 +184,6 @@ class IOUDevice(Node):
         :param new_settings: settings dictionary
         """
 
-        if "name" in new_settings and new_settings["name"] != self.name() and self.hasAllocatedName(new_settings["name"]):
-            self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-            return
-
         params = {}
         if "startup_config" in new_settings:
             base_config_content = self._readBaseConfig(new_settings["startup_config"])
@@ -228,25 +200,21 @@ class IOUDevice(Node):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-        self._update(params)
 
-    def updateCallback(self, result, error=False, **kwargs):
+        if params:
+            self._update(params)
+
+    def _updateCallback(self, result):
         """
         Callback for update.
 
         :param result: server response
-        :param error: indicates an error (boolean)
         """
 
-        if not super().updateCallback(result, error=error, **kwargs):
-            return False
-
-        updated = False
         nb_adapters_changed = False
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                updated = True
                 if name == "ethernet_adapters" or name == "serial_adapters":
                     nb_adapters_changed = True
                 if name == "name":
@@ -259,10 +227,6 @@ class IOUDevice(Node):
             # TODO: dynamically add/remove adapters
             self._ports.clear()
             self._addAdapters(self._settings["ethernet_adapters"], self._settings["serial_adapters"])
-
-        if updated:
-            log.info("IOU device {} has been updated".format(self.name()))
-            self.updated_signal.emit()
 
     def info(self):
         """
@@ -365,9 +329,6 @@ class IOUDevice(Node):
 
         log.info("iou device {} is loading".format(name))
         self.setName(name)
-        self._loading = True
-        self._node_info = node_info
-        self.loaded_signal.connect(self._updatePortSettings)
         self.setup(path, name, node_id, vm_settings)
 
     def saveConfig(self):
@@ -519,33 +480,6 @@ class IOUDevice(Node):
         if new_settings:
             self.update(new_settings)
 
-    def name(self):
-        """
-        Returns the name of this IOU device.
-
-        :returns: name (string)
-        """
-
-        return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all this IOU device settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
-
-    def ports(self):
-        """
-        Returns all the ports for this IOU device.
-
-        :returns: list of Port instances
-        """
-
-        return self._ports
-
     def console(self):
         """
         Returns the console port for this IOU device.
@@ -602,7 +536,7 @@ class IOUDevice(Node):
         """
         Returns the node categories the node is part of (used by the device panel).
 
-        :returns: list of node category (integer)
+        :returns: list of node categories
         """
 
         return [Node.routers, Node.switches]

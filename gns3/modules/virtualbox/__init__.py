@@ -283,7 +283,7 @@ class VirtualBox(Module):
             default_name_format = self._virtualbox_vms[vm]["default_name_format"]
         if linked_base:
             default_name_format = default_name_format.replace('{name}', name)
-            name = None
+            name = node.allocateName(default_name_format)
 
         node.setup(vmname,
                    name=name,

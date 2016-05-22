@@ -32,10 +32,12 @@ class Node(BaseNode):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-
         self._node_id = None
         self._node_directory = None
         self._command_line = None
+
+        # minimum required base settings
+        self._settings = {"name": ""}
 
     def isAlwaysOn(self):
         """
@@ -50,6 +52,7 @@ class Node(BaseNode):
         """
         :returns: The console command for this host
         """
+
         from .main_window import MainWindow
         general_settings = MainWindow.instance().settings()
 
@@ -73,6 +76,7 @@ class Node(BaseNode):
         return console_type
 
     def consoleHost(self):
+
         return self.settings()["console_host"]
 
     def node_id(self):
@@ -101,6 +105,173 @@ class Node(BaseNode):
         """
 
         return self._command_line
+
+    def _prepareBody(self, params):
+        """
+        :returns: Body for Create and update
+        """
+        body = {"properties": {},
+                "node_type": self.URL_PREFIX,
+                "compute_id": self._server.server_id()}
+
+        # We have two kind of properties. The general properties common to all
+        # nodes and the specific that we need to put in the properties field
+        node_general_properties = ("name", "node_id", "console", "console_type")
+        # No need to send this back to the server because it's read only
+        ignore_properties = ("console_host", )
+        for key, value in params.items():
+            if key in node_general_properties:
+                body[key] = value
+            elif key in ignore_properties:
+                pass
+            else:
+                body["properties"][key] = value
+
+        return body
+
+    def _create(self, name=None, node_id=None, params=None, default_name_format="Hub{0}", linked_clone=False, timeout=120):
+        """
+        Create the node on the controller
+        """
+
+        if params is None:
+            params = {}
+
+        # let's create a unique name if none has been chosen
+        if not name:
+            name = self.allocateName(default_name_format)
+
+        if not name:
+            self.error_signal.emit(self.id(), "could not allocate a name for this node")
+            return
+
+        # update the name now so we know the node name in case of an error
+        params["name"] = self._settings["name"] = name
+        self.setName(name)
+        if node_id:
+            params["node_id"] = node_id
+        body = self._prepareBody(params)
+        self.controllerHttpPost("/nodes", self.setupNodeCallback, body=body, timeout=timeout)
+
+    def setupNodeCallback(self, result, error=False, **kwargs):
+        """
+        Callback for setup.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        :returns: Boolean success or not
+        """
+
+        if error:
+            log.error("Error while setting up {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+            return False
+
+        self._node_id = result["node_id"]
+        if not self._node_id:
+            self.error_signal.emit(self.id(), "returned ID from server is null")
+            return False
+
+        if "node_directory" in result:
+            self._node_directory = result["node_directory"]
+
+        if "command_line" in result:
+            self._command_line = result["command_line"]
+
+        # update the settings using the defaults sent by the server
+        for name, value in result.items():
+            if name in self._settings and self._settings[name] != value:
+                log.info("{} setting up and updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
+                self._settings[name] = value
+
+        if "properties" in result:
+            for name, value in result["properties"].items():
+                if name in self._settings and self._settings[name] != value:
+                    log.info("{} setting up and updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
+                    self._settings[name] = value
+
+            # For compatibility with old API
+            # FIXME: review this
+            result.update(result["properties"])
+            del result["properties"]
+
+        self._setupCallback(result)
+
+        if self._loading:
+            self.loaded_signal.emit()
+        else:
+            self.setInitialized(True)
+            log.info("Node instance {} has been created".format(self.name()))
+            self.created_signal.emit(self.id())
+            self._module.addNode(self)
+
+    def _setupCallback(self, result):
+        """
+        Setup callback compatible with the compute api.
+        """
+
+        pass
+
+    def _update(self, params, timeout=60):
+        """
+        Update the node on the controller
+        """
+
+        #FIXME: should probably be moved on server side
+        if "name" in params and params["name"] != self.name():
+            if self.hasAllocatedName(params["name"]):
+                self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(params["name"]))
+                return
+
+        log.debug("{} is updating settings: {}".format(self.name(), params))
+        body = self._prepareBody(params)
+        self.controllerHttpPut("/nodes/{node_id}".format(project_id=self._project.id(), node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout)
+
+    def updateNodeCallback(self, result, error=False, **kwargs):
+        """
+        Callback for update.
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while updating {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+            return False
+
+        if "command_line" in result:
+            self._command_line = result["command_line"]
+
+        if "status" in result:
+            if result["status"] == "started":
+                self.setStatus(Node.started)
+            elif result["status"] == "stopped":
+                self.setStatus(Node.stopped)
+            elif result["status"] == "suspended":
+                self.setStatus(Node.suspended)
+
+        if "name" in result:
+            self._settings["name"] = result["name"]
+            self.updateAllocatedName(result["name"])
+
+        # For compatibility with old API
+        # FIXME: review this
+        if "properties" in result:
+            result.update(result["properties"])
+            del result["properties"]
+
+        self._updateCallback(result)
+        log.info("{} has been updated".format(self.name()))
+        self.updated_signal.emit()
+        return True
+
+    def _updateCallback(self, result):
+        """
+        Update callback compatible with the compute api.
+        """
+
+        pass
 
     def delete(self):
         """
@@ -156,132 +327,10 @@ class Node(BaseNode):
         else:
             log.info("{} has started".format(self.name()))
             self.setStatus(Node.started)
-            if result:
-                self.updateCallback(result)
 
-    def _prepareBody(self, params):
-        """
-        :returns: Body for Create and update
-        """
-        body = {"properties": {},
-                "node_type": self.URL_PREFIX,
-                "compute_id": self._server.server_id()}
-
-        # We have two kind of properties. The general properties common to all
-        # nodes and the specific that we need to put in the properties field
-        node_general_properties = ("name", "node_id", "console", "console_type")
-        # No need to send this back to the server because it's read only
-        ignore_properties = ("console_host", )
-        for key, value in params.items():
-            if key in node_general_properties:
-                body[key] = value
-            elif key in ignore_properties:
-                pass
-            else:
-                body["properties"][key] = value
-
-        return body
-
-    def _create(self, params, timeout=120):
-        """
-        Create the node on the controller
-        """
-        body = self._prepareBody(params)
-        self.controllerHttpPost("/nodes", self._setupNodeCallback, body=body, timeout=timeout)
-
-    def _update(self, params, timeout=60):
-        """
-        Update the node on the controller
-        """
-        log.debug("{} is updating settings: {}".format(self.name(), params))
-        body = self._prepareBody(params)
-        self.controllerHttpPut("/nodes/{node_id}".format(project_id=self._project.id(), node_id=self._node_id), self.updateCallback, body=body, timeout=timeout)
-
-    def _setupNodeCallback(self, result, error=False, **kwargs):
-        """
-        Callback for setup.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        :returns: Boolean success or not
-        """
-
-        if error:
-            log.error("Error while setting up {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return False
-
-        self._node_id = result["node_id"]
-        if not self._node_id:
-            self.error_signal.emit(self.id(), "returned ID from server is null")
-            return False
-
-        if "node_directory" in result:
-            self._node_directory = result["node_directory"]
-
-        if "command_line" in result:
-            self._command_line = result["command_line"]
-
-        # update the settings using the defaults sent by the server
-        for name, value in result.items():
-            if name in self._settings and self._settings[name] != value:
-                log.info("{} setting up and updating {} from '{}' to '{}'".format(self.name(),
-                                                                                  name,
-                                                                                  self._settings[name],
-                                                                                  value))
-                self._settings[name] = value
-
-        if "properties" in result:
-            for name, value in result["properties"].items():
-                if name in self._settings and self._settings[name] != value:
-                    log.info("{} setting up and updating {} from '{}' to '{}'".format(self.name(),
-                                                                                      name,
-                                                                                      self._settings[name],
-                                                                                      value))
-                    self._settings[name] = value
-            # For compatibility with old API
-            result.update(result["properties"])
-            del result["properties"]
-        return self._setupCallback(result, error=error, **kwargs)
-
-    def _setupCallback(self, result, error=False, **kwargs):
-        """
-        Setup callback compatible with the compute api.
-        Could be removed when all node will be rewrite to use the
-        controller API
-        """
-        return True
-
-    def updateCallback(self, result, error=False, **kwargs):
-        """
-        Callback for update.
-
-        :param result: server response (dict)
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while updating {}: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return False
-
-        if "command_line" in result:
-            self._command_line = result["command_line"]
-
-        if "status" in result:
-            if result["status"] == "started":
-                self.setStatus(Node.started)
-            elif result["status"] == "stopped":
-                self.setStatus(Node.stopped)
-            elif result["status"] == "suspended":
-                self.setStatus(Node.suspended)
-
-        # For compatibility with old API
-        if "properties" in result:
-            result.update(result["properties"])
-            del result["properties"]
-
-        return True
+            # FIXME: why?
+            #if result:
+            #    self.updateCallback(result)
 
     def stop(self):
         """
@@ -306,7 +355,7 @@ class Node(BaseNode):
         if error:
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-            # To avoid block the client if the node no longer exists or server doesn't answer we consider node as stopped
+            # To avoid blocking the client we consider node as stopped if the node no longer exists or server doesn't answer
             if not "status" in result or result["status"] == 404:
                 self.setStatus(Node.stopped)
         else:
@@ -414,6 +463,11 @@ class Node(BaseNode):
             "node_id": self.node_id(),
         }
 
+        # add the properties
+        # for name, value in self._settings.items():
+        #     if value is not None and value != "":
+        #         node["properties"][name] = value
+
         # add the ports
         if self._ports:
             # In 1.4.2dev1 we track an issue about duplicate port name
@@ -511,3 +565,21 @@ class Node(BaseNode):
         self._module.addNode(self)
         self._loading = False
         self._node_info = None
+
+    def name(self):
+        """
+        Returns the name of this node.
+
+        :returns: name (string)
+        """
+
+        return self._settings["name"]
+
+    def settings(self):
+        """
+        Returns all the node settings.
+
+        :returns: settings dictionary
+        """
+
+        return self._settings
