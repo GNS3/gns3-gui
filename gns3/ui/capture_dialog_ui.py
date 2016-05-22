@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/capture_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/capture_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Sun May 22 10:18:42 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,20 +13,10 @@ class Ui_CaptureDialog(object):
     def setupUi(self, CaptureDialog):
         CaptureDialog.setObjectName("CaptureDialog")
         CaptureDialog.setWindowModality(QtCore.Qt.WindowModal)
-        CaptureDialog.resize(352, 201)
+        CaptureDialog.resize(439, 159)
         CaptureDialog.setModal(False)
-        self.verticalLayout = QtWidgets.QVBoxLayout(CaptureDialog)
-        self.verticalLayout.setContentsMargins(-1, -1, 12, -1)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.label_3 = QtWidgets.QLabel(CaptureDialog)
-        self.label_3.setWordWrap(True)
-        self.label_3.setObjectName("label_3")
-        self.verticalLayout.addWidget(self.label_3)
-        self.formLayout = QtWidgets.QFormLayout()
-        self.formLayout.setFieldGrowthPolicy(QtWidgets.QFormLayout.ExpandingFieldsGrow)
-        self.formLayout.setLabelAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.formLayout.setFormAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.formLayout.setObjectName("formLayout")
+        self.gridLayout = QtWidgets.QGridLayout(CaptureDialog)
+        self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(CaptureDialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -34,7 +25,7 @@ class Ui_CaptureDialog(object):
         self.label.setSizePolicy(sizePolicy)
         self.label.setScaledContents(False)
         self.label.setObjectName("label")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label)
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.uiDataLinkTypeComboBox = QtWidgets.QComboBox(CaptureDialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -42,17 +33,17 @@ class Ui_CaptureDialog(object):
         sizePolicy.setHeightForWidth(self.uiDataLinkTypeComboBox.sizePolicy().hasHeightForWidth())
         self.uiDataLinkTypeComboBox.setSizePolicy(sizePolicy)
         self.uiDataLinkTypeComboBox.setObjectName("uiDataLinkTypeComboBox")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.uiDataLinkTypeComboBox)
+        self.gridLayout.addWidget(self.uiDataLinkTypeComboBox, 0, 1, 1, 1)
         self.label_2 = QtWidgets.QLabel(CaptureDialog)
         self.label_2.setObjectName("label_2")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_2)
+        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
         self.uiCaptureFileNameLineEdit = QtWidgets.QLineEdit(CaptureDialog)
         self.uiCaptureFileNameLineEdit.setObjectName("uiCaptureFileNameLineEdit")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.uiCaptureFileNameLineEdit)
-        self.verticalLayout.addLayout(self.formLayout)
+        self.gridLayout.addWidget(self.uiCaptureFileNameLineEdit, 1, 1, 1, 1)
         self.uiStartCommandCheckBox = QtWidgets.QCheckBox(CaptureDialog)
+        self.uiStartCommandCheckBox.setChecked(True)
         self.uiStartCommandCheckBox.setObjectName("uiStartCommandCheckBox")
-        self.verticalLayout.addWidget(self.uiStartCommandCheckBox)
+        self.gridLayout.addWidget(self.uiStartCommandCheckBox, 2, 0, 1, 2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(20)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -68,7 +59,9 @@ class Ui_CaptureDialog(object):
         self.uiOkButton.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiOkButton.setObjectName("uiOkButton")
         self.horizontalLayout.addWidget(self.uiOkButton)
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.gridLayout.addLayout(self.horizontalLayout, 3, 0, 1, 2)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 244, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem1, 4, 1, 1, 1)
 
         self.retranslateUi(CaptureDialog)
         QtCore.QMetaObject.connectSlotsByName(CaptureDialog)
@@ -76,7 +69,6 @@ class Ui_CaptureDialog(object):
     def retranslateUi(self, CaptureDialog):
         _translate = QtCore.QCoreApplication.translate
         CaptureDialog.setWindowTitle(_translate("CaptureDialog", "Packet capture"))
-        self.label_3.setText(_translate("CaptureDialog", "The captures will be saved in project-files/captures inside the project directory"))
         self.label.setText(_translate("CaptureDialog", "Link type:"))
         self.label_2.setText(_translate("CaptureDialog", "File name:"))
         self.uiStartCommandCheckBox.setText(_translate("CaptureDialog", "Start the capture visualization program"))
