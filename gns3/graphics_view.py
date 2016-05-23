@@ -795,25 +795,25 @@ class GraphicsView(QtWidgets.QGraphicsView):
             auto_idlepc_action.triggered.connect(self.autoIdlepcActionSlot)
             menu.addAction(auto_idlepc_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "start"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
             start_action = QtWidgets.QAction("Start", menu)
             start_action.setIcon(QtGui.QIcon(':/icons/start.svg'))
             start_action.triggered.connect(self.startActionSlot)
             menu.addAction(start_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "suspend"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
             suspend_action = QtWidgets.QAction("Suspend", menu)
             suspend_action.setIcon(QtGui.QIcon(':/icons/pause.svg'))
             suspend_action.triggered.connect(self.suspendActionSlot)
             menu.addAction(suspend_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "stop"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
             stop_action = QtWidgets.QAction("Stop", menu)
             stop_action.setIcon(QtGui.QIcon(':/icons/stop.svg'))
             stop_action.triggered.connect(self.stopActionSlot)
             menu.addAction(stop_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "reload"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
             reload_action = QtWidgets.QAction("Reload", menu)
             reload_action.setIcon(QtGui.QIcon(':/icons/reload.svg'))
             reload_action.triggered.connect(self.reloadActionSlot)
@@ -1524,12 +1524,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if server is None:
                 return
 
-            node = node_module.createNode(node_class, server, self._main_window.projectManager().project())
+            node = node_module.instantiateNode(node_class, server, self._main_window.projectManager().project())
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
             node_item = SvgNodeItem(node, node_data["symbol"])
-            node_module.setupNode(node, node_data["name"])
+            node_module.createNode(node, node_data["name"])
         # If no server is available a ValueError is raised
         except (ModuleError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))

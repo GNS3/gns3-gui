@@ -117,10 +117,10 @@ class QemuVM(Node):
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self, qemu_path, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
+    def create(self, qemu_path, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
               first_port_name="", linked_clone=True, additional_settings={}, default_name_format=None):
         """
-        Setups this QEMU VM.
+        Creates this QEMU VM.
 
         :param name: optional name
         :param node_id: Node identifier
@@ -135,9 +135,9 @@ class QemuVM(Node):
         params.update(additional_settings)
         self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response
         """
@@ -163,7 +163,6 @@ class QemuVM(Node):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-
         if params:
             self._update(params)
 
@@ -282,8 +281,7 @@ class QemuVM(Node):
         name = vm_settings.pop("name")
         qemu_path = vm_settings.pop("qemu_path")
         log.info("QEMU VM {} is loading".format(name))
-        self.setName(name)
-        self.setup(qemu_path, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
+        self.create(qemu_path, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
     def console(self):
         """

@@ -216,9 +216,9 @@ class Router(Node):
                 self._addWICPorts(wic, wic_slot_number)
         self._updateWICNumbering()
 
-    def setup(self, image, ram, name=None, node_id=None, dynamips_id=None, additional_settings={}, default_name_format="R{0}"):
+    def create(self, image, ram, name=None, node_id=None, dynamips_id=None, additional_settings={}, default_name_format="R{0}"):
         """
-        Setups this router.
+        Creates this router.
 
         :param image: IOS image path
         :param ram: amount of RAM
@@ -258,9 +258,9 @@ class Router(Node):
         params.update(additional_settings)
         self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response
         """
@@ -578,8 +578,7 @@ class Router(Node):
                     vm_settings["idlepc"] = alternative_image["idlepc"]
 
         log.info("router {} is loading".format(name))
-        self.setName(name)
-        self.setup(image, ram, name, node_id, dynamips_id, vm_settings)
+        self.create(image, ram, name, node_id, dynamips_id, vm_settings)
 
     def saveConfig(self):
         """

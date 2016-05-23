@@ -223,7 +223,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         ram = self.uiRamSpinBox.value()
         router_class = PLATFORM_TO_CLASS[platform]
         self._router = router_class(module, server, main_window.projectManager().project())
-        self._router.setup(ios_image, ram, name="AUTOIDLEPC")
+        self._router.create(ios_image, ram, name="AUTOIDLEPC")
         self._router.created_signal.connect(self.createdSlot)
         self._router.server_error_signal.connect(self.serverErrorSlot)
         self.uiIdlePCFinderPushButton.setEnabled(False)

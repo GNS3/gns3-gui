@@ -40,21 +40,17 @@ class FrameRelaySwitch(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-
         # this is an always-on node
         self.setStatus(Node.started)
+        self._always_on = True
         self.settings().update({"mappings": {}})
 
-    def isAlwaysOn(self):
-        """
-        Indicates that this node is always running and cannot be stopped.
-
-        :returns: boolean
-        """
-
-        return True
-
     def _updatePortsFromMappings(self, mappings):
+        """
+        Updates the ports based on the Frame Relay mappings.
+
+        :param mappings: Frame Relay mappings
+        """
 
         ports_to_create = []
         for source, destination in mappings.items():
@@ -80,9 +76,9 @@ class FrameRelaySwitch(Node):
             self._ports.append(port)
             log.debug("port {} has been added".format(port_name))
 
-    def setup(self, name=None, node_id=None, mappings={}, default_name_format="FR{0}"):
+    def create(self, name=None, node_id=None, mappings={}, default_name_format="FR{0}"):
         """
-        Setups this Frame Relay switch.
+        Creates this Frame Relay switch.
 
         :param name: name for this switch.
         :param node_id: node identifier on the server
@@ -94,9 +90,9 @@ class FrameRelaySwitch(Node):
             params["mappings"] = mappings
         self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response (dict)
         """
@@ -112,12 +108,9 @@ class FrameRelaySwitch(Node):
         """
 
         params = {}
-        if "mappings" in new_settings:
-            params["mappings"] = new_settings["mappings"]
-
-        if "name" in new_settings and new_settings["name"] != self.name():
-            params["name"] = new_settings["name"]
-
+        for name, value in new_settings.items():
+            if name in self._settings and self._settings[name] != value:
+                params[name] = value
         if params:
             self._update(params)
 
@@ -187,11 +180,8 @@ class FrameRelaySwitch(Node):
         """
 
         frsw = super().dump()
-        frsw["properties"]["name"] = self.name()
-
         if self._settings["mappings"]:
             frsw["properties"]["mappings"] = self._settings["mappings"]
-
         return frsw
 
     def load(self, node_info):
@@ -203,19 +193,18 @@ class FrameRelaySwitch(Node):
         """
 
         super().load(node_info)
-        settings = node_info["properties"]
-        name = settings.pop("name")
+        properties = node_info["properties"]
+        name = properties.pop("name")
 
         # Frame Relay switches do not have an UUID before version 2.0
-        node_id = settings.get("node_id", str(uuid.uuid4()))
+        node_id = properties.get("node_id", str(uuid.uuid4()))
 
         mappings = {}
-        if "mappings" in settings:
-            mappings = settings["mappings"]
+        if "mappings" in properties:
+            mappings = properties["mappings"]
 
         log.info("Frame-Relay switch {} is loading".format(name))
-        self.setName(name)
-        self.setup(name, node_id, mappings)
+        self.create(name, node_id, mappings)
 
     def configPage(self):
         """

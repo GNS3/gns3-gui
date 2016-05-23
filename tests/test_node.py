@@ -43,8 +43,8 @@ def test_create(vpcs_device, local_server):
 
 def test_setupVMCallback(vpcs_device):
     node_id = str(uuid.uuid4())
-    vpcs_device._setupCallback = MagicMock()
-    vpcs_device._setupNodeCallback({
+    vpcs_device._createCallback = MagicMock()
+    vpcs_device._createNodeCallback({
         "name": "PC 1",
         "node_id": node_id,
         "properties": {
@@ -53,7 +53,7 @@ def test_setupVMCallback(vpcs_device):
     })
     assert vpcs_device._node_id == node_id
     assert vpcs_device._settings["startup_script"] == "echo TEST"
-    vpcs_device._setupCallback.assert_called_with({
+    vpcs_device._createCallback.assert_called_with({
             "name": "PC 1",
             "node_id": node_id,
             "startup_script": "echo TEST"

@@ -73,9 +73,9 @@ class Cloud(BaseNode):
         self.delete_links_signal.emit()
         self.deleted_signal.emit()
 
-    def setup(self, name=None, additional_settings={}):
+    def create(self, name=None, additional_settings={}):
         """
-        Setups this cloud.
+        Creates this cloud.
 
         :param name: optional name for this cloud
         """
@@ -86,11 +86,11 @@ class Cloud(BaseNode):
         if additional_settings and "nios" in additional_settings:
             self._settings["nios"] = additional_settings["nios"]
 
-        self._server.get("/interfaces", self._setupCallback)
+        self._server.get("/interfaces", self._createCallback)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response
         """
@@ -282,10 +282,6 @@ class Cloud(BaseNode):
 
             self._settings["nios"] = new_settings["nios"].copy()
 
-        if "name" in new_settings and new_settings["name"] != self.name():
-            self._settings["name"] = new_settings["name"]
-            updated = True
-
         if updated:
             log.info("cloud {} has been updated".format(self.name()))
             self.updated_signal.emit()
@@ -361,7 +357,7 @@ This is a pseudo-device for external connections
         self._loading = True
         self._node_info = node_info
         self.loaded_signal.connect(self._updatePortSettings)
-        self.setup(name, additional_settings=settings)
+        self.create(name, additional_settings=settings)
 
     def _updatePortSettings(self):
         """

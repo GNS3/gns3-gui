@@ -38,23 +38,14 @@ class EthernetSwitch(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-
         # this is an always-on node
         self.setStatus(Node.started)
+        self._always_on = True
         self.settings().update({"ports": []})
 
-    def isAlwaysOn(self):
+    def create(self, name=None, node_id=None, ports=None, default_name_format="SW{0}"):
         """
-        Indicates that this node is always running and cannot be stopped.
-
-        :returns: boolean
-        """
-
-        return True
-
-    def setup(self, name=None, node_id=None, ports=None, default_name_format="SW{0}"):
-        """
-        Setups this Ethernet switch.
+        Creates this Ethernet switch.
 
         :param name: optional name for this switch
         :param node_id: node identifier on the server
@@ -66,9 +57,9 @@ class EthernetSwitch(Node):
             params["ports"] = ports
         self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response (dict)
         """
@@ -90,12 +81,9 @@ class EthernetSwitch(Node):
         """
 
         params = {}
-        if "ports" in new_settings:
-            params["ports"] = new_settings["ports"]
-
-        if "name" in new_settings and new_settings["name"] != self.name():
-            params["name"] = new_settings["name"]
-
+        for name, value in new_settings.items():
+            if name in self._settings and self._settings[name] != value:
+                params[name] = value
         if params:
             self._update(params)
 
@@ -194,8 +182,6 @@ class EthernetSwitch(Node):
         """
 
         switch = super().dump()
-        switch["properties"]["name"] = self.name()
-
         # add the ports
         if self._ports:
             ports = switch["ports"] = []
@@ -207,7 +193,6 @@ class EthernetSwitch(Node):
                         port_info["ethertype"] = self._settings["ports"][port.portNumber()]["ethertype"]
                     port_info["vlan"] = self._settings["ports"][port.portNumber()]["vlan"]
                 ports.append(port_info)
-
         return switch
 
     def load(self, node_info):
@@ -219,11 +204,11 @@ class EthernetSwitch(Node):
         """
 
         super().load(node_info)
-        settings = node_info["properties"]
-        name = settings.pop("name")
+        properties = node_info["properties"]
+        name = properties.pop("name")
 
         # Ethernet switches do not have an UUID before version 2.0
-        node_id = settings.get("node_id", str(uuid.uuid4()))
+        node_id = properties.get("node_id", str(uuid.uuid4()))
 
         ports = []
         if "ports" in node_info:
@@ -235,8 +220,7 @@ class EthernetSwitch(Node):
                               "ethertype": port_info.get("ethertype", "")})
 
         log.info("Ethernet switch {} is loading".format(name))
-        self.setName(name)
-        self.setup(name, node_id, ports)
+        self.create(name, node_id, ports)
 
     def configPage(self):
         """

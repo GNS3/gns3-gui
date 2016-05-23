@@ -131,29 +131,29 @@ class VPCS(Module):
         self._settings.update(settings)
         self._saveSettings()
 
-    def createNode(self, node_class, server, project):
+    def instantiateNode(self, node_class, server, project):
         """
-        Creates a new node.
+        Instantiate a new node.
 
         :param node_class: Node object
         :param server: HTTPClient instance
         :param project: Project instance
         """
 
-        log.info("Creating node {}".format(node_class))
+        log.info("Instantiating node {}".format(node_class))
 
         # create an instance of the node class
         return node_class(self, server, project)
 
-    def setupNode(self, node, node_name):
+    def createNode(self, node, node_name):
         """
-        Setups a node.
+        Creates a node.
 
         :param node: Node instance
         :param node_name: Node name
         """
 
-        log.info("configuring node {}".format(node))
+        log.info("creating node {}".format(node))
         vm_settings = {}
 
         script_file = self._settings["base_script_file"]
@@ -164,7 +164,7 @@ class VPCS(Module):
         if self._settings["default_name_format"]:
             default_name_format = self._settings["default_name_format"]
 
-        node.setup(additional_settings=vm_settings, default_name_format=default_name_format)
+        node.create(additional_settings=vm_settings, default_name_format=default_name_format)
 
     def reset(self):
         """

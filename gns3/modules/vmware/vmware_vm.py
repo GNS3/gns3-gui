@@ -101,10 +101,10 @@ class VMwareVM(Node):
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self, vmx_path, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
+    def create(self, vmx_path, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
               first_port_name="", linked_clone=False, additional_settings={}, default_name_format=None):
         """
-        Setups this VMware VM.
+        Creates this VMware VM.
 
         :param vmx_path: path to the vmx file
         :param name: optional name
@@ -122,9 +122,9 @@ class VMwareVM(Node):
         params.update(additional_settings)
         self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response (dict)
         """
@@ -139,19 +139,10 @@ class VMwareVM(Node):
         :param new_settings: settings (dict)
         """
 
-        if "name" in new_settings and new_settings["name"] != self.name():
-            if self.hasAllocatedName(new_settings["name"]):
-                self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-                return
-            # elif self._linked_clone:
-            #     # forces the update of the VM name in VirtualBox.
-            #     new_settings["vmname"] = new_settings["name"]
-
         params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-
         if params:
             self._update(params)
 
@@ -273,8 +264,7 @@ class VMwareVM(Node):
         vmx_path = vm_settings.pop("vmx_path")
 
         log.info("VMware VM {} is loading".format(name))
-        self.setName(name)
-        self.setup(vmx_path, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
+        self.create(vmx_path, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
     def allocateVMnetInterface(self, port_id):
         """

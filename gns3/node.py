@@ -35,6 +35,7 @@ class Node(BaseNode):
         self._node_id = None
         self._node_directory = None
         self._command_line = None
+        self._always_on = False
 
         # minimum required base settings
         self._settings = {"name": ""}
@@ -46,7 +47,7 @@ class Node(BaseNode):
         :returns: boolean
         """
 
-        return False
+        return self._always_on
 
     def consoleCommand(self, console_type=None):
         """
@@ -151,11 +152,11 @@ class Node(BaseNode):
         if node_id:
             params["node_id"] = node_id
         body = self._prepareBody(params)
-        self.controllerHttpPost("/nodes", self.setupNodeCallback, body=body, timeout=timeout)
+        self.controllerHttpPost("/nodes", self.createNodeCallback, body=body, timeout=timeout)
 
-    def setupNodeCallback(self, result, error=False, **kwargs):
+    def createNodeCallback(self, result, error=False, **kwargs):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response
         :param error: indicates an error (boolean)
@@ -195,7 +196,7 @@ class Node(BaseNode):
             result.update(result["properties"])
             del result["properties"]
 
-        self._setupCallback(result)
+        self._createCallback(result)
 
         if self._loading:
             self.loaded_signal.emit()
@@ -205,9 +206,9 @@ class Node(BaseNode):
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Setup callback compatible with the compute api.
+        Create callback compatible with the compute api.
         """
 
         pass
@@ -463,6 +464,8 @@ class Node(BaseNode):
             "node_id": self.node_id(),
         }
 
+        node["properties"]["name"] = self.name()
+
         # add the properties
         # for name, value in self._settings.items():
         #     if value is not None and value != "":
@@ -496,6 +499,7 @@ class Node(BaseNode):
         self._loading = True
         self._node_info = node_info
         self.loaded_signal.connect(self._updatePortSettings)
+        self.setName(node_info["properties"]["name"])
 
     def openConsole(self, command=None, aux=False):
         if command is None:

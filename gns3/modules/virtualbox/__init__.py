@@ -206,29 +206,28 @@ class VirtualBox(Module):
         self._settings.update(settings)
         self._saveSettings()
 
-    def createNode(self, node_class, server, project):
+    def instantiateNode(self, node_class, server, project):
         """
-        Creates a new node.
+        Instantiate a new node.
 
         :param node_class: Node object
         :param server: HTTPClient instance
         :param project: Project instance
         """
 
-        log.info("creating node {}".format(node_class))
-
+        log.info("instantiating node {}".format(node_class))
         # create an instance of the node class
         return node_class(self, server, project)
 
-    def setupNode(self, node, node_name):
+    def createNode(self, node, node_name):
         """
-        Setups a node.
+        Creates a node.
 
         :param node: Node instance
         :param node_name: Node name
         """
 
-        log.info("configuring node {} with id {}".format(node, node.id()))
+        log.info("creating node {} with id {}".format(node, node.id()))
 
         vm = None
         if node_name:
@@ -285,7 +284,7 @@ class VirtualBox(Module):
             default_name_format = default_name_format.replace('{name}', name)
             name = node.allocateName(default_name_format)
 
-        node.setup(vmname,
+        node.create(vmname,
                    name=name,
                    port_name_format=port_name_format,
                    port_segment_size=port_segment_size,

@@ -30,10 +30,10 @@ def test_vpcs_device_init(local_server, project):
     vpcs_device = VPCSDevice(None, local_server, project)
 
 
-def test_vpcs_device_setup(vpcs_device, project, local_server):
+def test_vpcs_device_create(vpcs_device, project, local_server):
 
     with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
-        vpcs_device.setup(name="PC 1", additional_settings={"startup_script": "echo TEST"})
+        vpcs_device.create(name="PC 1", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes"
@@ -57,7 +57,7 @@ def test_vpcs_device_setup(vpcs_device, project, local_server):
                 "startup_script": None,
             }
         }
-        vpcs_device._setupNodeCallback(params)
+        vpcs_device._createNodeCallback(params)
 
         assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -68,7 +68,7 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
     """
 
     with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
-        vpcs_device.setup(name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_script": "echo TEST"})
+        vpcs_device.create(name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes"
@@ -91,7 +91,7 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
                 "startup_script": None,
             }
         }
-        vpcs_device._setupNodeCallback(params)
+        vpcs_device._createNodeCallback(params)
 
         assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -107,7 +107,7 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
         f.write("echo TEST")
 
     with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
-        vpcs_device.setup(name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"script_file": path})
+        vpcs_device.create(name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"script_file": path})
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes"
@@ -130,7 +130,7 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
                 "startup_script": "echo TEST",
             }
         }
-        vpcs_device._setupNodeCallback(params)
+        vpcs_device._createNodeCallback(params)
 
         assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 

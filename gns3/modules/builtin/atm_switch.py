@@ -40,21 +40,17 @@ class ATMSwitch(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-
         # this is an always-on node
         self.setStatus(Node.started)
+        self._always_on = True
         self.settings().update({"mappings": {}})
 
-    def isAlwaysOn(self):
-        """
-        Indicates that this node is always running and cannot be stopped.
-
-        :returns: boolean
-        """
-
-        return True
-
     def _updatePortsFromMappings(self, mappings):
+        """
+        Updates the ports based on the ATM mappings.
+
+        :param mappings: ATM mappings
+        """
 
         ports_to_create = []
         for source, destination in mappings.items():
@@ -80,9 +76,9 @@ class ATMSwitch(Node):
             self._ports.append(port)
             log.debug("port {} has been added".format(port_name))
 
-    def setup(self, name=None, node_id=None, mappings={}, default_name_format="ATM{0}"):
+    def create(self, name=None, node_id=None, mappings=None, default_name_format="ATM{0}"):
         """
-        Setups this ATM switch.
+        Creates this ATM switch.
 
         :param name: optional name for this switch.
         :param node_id: Node identifier on the server
@@ -94,9 +90,9 @@ class ATMSwitch(Node):
             params["mappings"] = mappings
         self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response (dict)
         """
@@ -112,12 +108,9 @@ class ATMSwitch(Node):
         """
 
         params = {}
-        if "mappings" in new_settings:
-            params["mappings"] = new_settings["mappings"]
-
-        if "name" in new_settings and new_settings["name"] != self.name():
-            params["name"] = new_settings["name"]
-
+        for name, value in new_settings.items():
+            if name in self._settings and self._settings[name] != value:
+                params[name] = value
         if params:
             self._update(params)
 
@@ -208,11 +201,8 @@ class ATMSwitch(Node):
         """
 
         atmsw = super().dump()
-        atmsw["properties"]["name"] = self.name()
-
         if self._settings["mappings"]:
             atmsw["properties"]["mappings"] = self._settings["mappings"]
-
         return atmsw
 
     def load(self, node_info):
@@ -223,19 +213,19 @@ class ATMSwitch(Node):
         :param node_info: representation of the node (dictionary)
         """
 
-        settings = node_info["properties"]
-        name = settings.pop("name")
+        super().load(node_info)
+        properties = node_info["properties"]
+        name = properties.pop("name")
 
         # ATM switches do not have an UUID before version 2.0
-        node_id = settings.get("node_id", str(uuid.uuid4()))
+        node_id = properties.get("node_id", str(uuid.uuid4()))
 
         mappings = {}
-        if "mappings" in settings:
-            mappings = settings["mappings"]
+        if "mappings" in properties:
+            mappings = properties["mappings"]
 
         log.info("ATM switch {} is loading".format(name))
-        self.setName(name)
-        self.setup(name, node_id, mappings)
+        self.create(name, node_id, mappings)
 
     def configPage(self):
         """

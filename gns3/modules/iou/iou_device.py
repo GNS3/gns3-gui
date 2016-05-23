@@ -103,9 +103,9 @@ class IOUDevice(Node):
                 self._ports.remove(port)
                 log.info("port {} has been removed".format(port.name()))
 
-    def setup(self, iou_path, name=None, node_id=None, additional_settings={}, default_name_format="IOU{0}"):
+    def create(self, iou_path, name=None, node_id=None, additional_settings={}, default_name_format="IOU{0}"):
         """
-        Setups this IOU device.
+        Creates this IOU device.
 
         :param iou_path: path to an IOU image
         :param name: optional name
@@ -132,9 +132,9 @@ class IOUDevice(Node):
         params.update(additional_settings)
         self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response
         """
@@ -328,8 +328,7 @@ class IOUDevice(Node):
                 path = self._module.findAlternativeIOUImage(path)
 
         log.info("iou device {} is loading".format(name))
-        self.setName(name)
-        self.setup(path, name, node_id, vm_settings)
+        self.create(path, name, node_id, vm_settings)
 
     def saveConfig(self):
         """

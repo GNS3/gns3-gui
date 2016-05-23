@@ -642,7 +642,7 @@ class Topology:
                         topology_file_errors.append("No server reference for node ID {}".format(topology_node["id"]))
                         continue
 
-                    node = node_module.createNode(node_class, server, self._project)
+                    node = node_module.initiateNode(node_class, server, self._project)
                     node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
                     node.warning_signal.connect(main_window.uiConsoleTextEdit.writeWarning)
                     node.server_error_signal.connect(main_window.uiConsoleTextEdit.writeServerError)

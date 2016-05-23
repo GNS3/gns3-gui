@@ -235,29 +235,28 @@ class Dynamips(Module):
         self._settings.update(settings)
         self._saveSettings()
 
-    def createNode(self, node_class, server, project):
+    def instantiateNode(self, node_class, server, project):
         """
-        Creates a new node.
+        Instantiate a new node.
 
         :param node_class: Node object
         :param server: HTTPClient instance
         :param project: Project instance
         """
 
-        log.info("creating node {}".format(node_class))
-
+        log.info("instantiating node {}".format(node_class))
         # create an instance of the node class
         return node_class(self, server, project)
 
-    def setupNode(self, node, node_name):
+    def createNode(self, node, node_name):
         """
-        Setups a node.
+        Creates a node.
 
         :param node: Node instance
         :param node_name: Node name
         """
 
-        log.info("configuring node {}".format(node))
+        log.info("creating node {}".format(node))
 
         if isinstance(node, Router):
             ios_router = None
@@ -291,9 +290,9 @@ class Dynamips(Module):
             image = vm_settings.pop("image", None)
             if image is None:
                 raise ModuleError("No IOS image has been associated with this IOS router")
-            node.setup(image, ram, additional_settings=vm_settings, default_name_format=default_name_format)
+            node.create(image, ram, additional_settings=vm_settings, default_name_format=default_name_format)
         else:
-            node.setup()
+            node.create()
 
     def updateImageIdlepc(self, image_path, idlepc):
         """

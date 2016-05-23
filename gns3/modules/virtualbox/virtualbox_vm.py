@@ -95,10 +95,10 @@ class VirtualBoxVM(Node):
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
-    def setup(self, vmname, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
+    def create(self, vmname, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
               first_port_name="", linked_clone=False, additional_settings={}, default_name_format=None):
         """
-        Setups this VirtualBox VM.
+        Creates this VirtualBox VM.
 
         :param vmname: VM name in VirtualBox
         :param name: optional name
@@ -118,11 +118,11 @@ class VirtualBoxVM(Node):
         self._port_segment_size = port_segment_size
         self._first_port_name = first_port_name
         params.update(additional_settings)
-        self._create(params)
+        self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response (dict)
         """
@@ -271,8 +271,7 @@ class VirtualBoxVM(Node):
         vmname = vm_settings.pop("vmname")
 
         log.info("VirtualBox VM {} is loading".format(name))
-        self.setName(name)
-        self.setup(vmname, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
+        self.create(vmname, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
     def serialConsole(self):
         """

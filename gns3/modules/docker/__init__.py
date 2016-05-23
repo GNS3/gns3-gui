@@ -128,23 +128,25 @@ class Docker(Module):
         self._settings.update(settings)
         self._saveSettings()
 
-    def createNode(self, node_class, server, project):
-        """Creates a new node.
+    def instantiateNode(self, node_class, server, project):
+        """
+        Instantiate a new node.
 
         :param node_class: Node object
         :param server: HTTPClient instance
         """
-        log.info("creating node {}".format(node_class))
+        log.info("instantiating node {}".format(node_class))
         # create an instance of the node class
         return node_class(self, server, project)
 
-    def setupNode(self, node, node_name):
-        """Sets up a node.
+    def createNode(self, node, node_name):
+        """
+        Creates a node.
 
         :param node: Node instance
         :param node_name: Node name
         """
-        log.info("configuring node {} with id {}".format(node, node.id()))
+        log.info("creating node {} with id {}".format(node, node.id()))
 
         image = None
         if node_name:
@@ -186,7 +188,7 @@ class Docker(Module):
             default_name_format = self._docker_containers[image]["default_name_format"]
 
         image = self._docker_containers[image]["image"]
-        node.setup(image, base_name=node_name, additional_settings=image_settings, default_name_format=default_name_format)
+        node.create(image, base_name=node_name, additional_settings=image_settings, default_name_format=default_name_format)
 
     def reset(self):
         """Resets the servers."""

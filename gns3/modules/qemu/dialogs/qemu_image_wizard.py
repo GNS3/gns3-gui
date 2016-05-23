@@ -65,7 +65,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
         self.uiLocationLineEdit.textChanged.connect(self._locationChangedSlot)
         self.uiLocationBrowseToolButton.clicked.connect(self._browserSlot)
 
-        # Finisher setup
+        # Finish setup
         self.page(self.pageIds()[-1]).validatePage = self._createDisk
 
         # Default values

@@ -36,23 +36,14 @@ class EthernetHub(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-
         # this is an always-on node
         self.setStatus(Node.started)
+        self._always_on = True
         self.settings().update({"ports": []})
 
-    def isAlwaysOn(self):
+    def create(self, name=None, node_id=None, ports=None, default_name_format="Hub{0}"):
         """
-        Indicates that this node is always running and cannot be stopped.
-
-        :returns: boolean
-        """
-
-        return True
-
-    def setup(self, name=None, node_id=None, ports=None, default_name_format="Hub{0}"):
-        """
-        Setups this hub.
+        Creates this hub.
 
         :param name: optional name for this hub
         :param node_id: node identifier on the server
@@ -64,9 +55,9 @@ class EthernetHub(Node):
             params["ports"] = ports
         self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
+    def _createCallback(self, result):
         """
-        Callback for setup.
+        Callback for create.
 
         :param result: server response (dict)
         """
@@ -88,15 +79,13 @@ class EthernetHub(Node):
         """
 
         params = {}
+        if "name" in new_settings:
+            params["name"] = new_settings["name"]
         if "ports" in new_settings:
             params["ports"] = []
             for port_number in new_settings["ports"]:
                 params["ports"].append({"port_number": int(port_number),
                                         "name": "Ethernet{}".format(port_number)})
-
-        if "name" in new_settings and new_settings["name"] != self.name():
-            params["name"] = new_settings["name"]
-
         if params:
             self._update(params)
 
@@ -174,9 +163,7 @@ class EthernetHub(Node):
         :returns: representation of the node (dictionary)
         """
 
-        hub = super().dump()
-        hub["properties"]["name"] = self.name()
-        return hub
+        return super().dump()
 
     def load(self, node_info):
         """
@@ -187,19 +174,18 @@ class EthernetHub(Node):
         """
 
         super().load(node_info)
-        settings = node_info["properties"]
-        name = settings.pop("name")
+        properties = node_info["properties"]
+        name = properties.pop("name")
 
         # Ethernet hubs do not have an UUID before version 2.0
-        node_id = settings.get("node_id", str(uuid.uuid4()))
+        node_id = properties.get("node_id", str(uuid.uuid4()))
 
         ports = []
         if "ports" in node_info:
             ports = [{"port_number": port["port_number"], "name": port["name"]} for port in node_info["ports"]]
 
         log.info("Ethernet hub {} is loading".format(name))
-        self.setName(name)
-        self.setup(name, node_id, ports)
+        self.create(name, node_id, ports)
 
     def configPage(self):
         """

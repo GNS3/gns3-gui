@@ -72,30 +72,29 @@ class Builtin(Module):
 
         self._nodes.clear()
 
-    def createNode(self, node_class, server, project):
+    def instantiateNode(self, node_class, server, project):
         """
-        Creates a new node.
+        Instantiate a new node.
 
         :param node_class: Node object
         :param server: HTTPClient instance
         :param project: Project instance
         """
 
-        log.info("creating node {}".format(node_class))
-
+        log.info("instantiating node {}".format(node_class))
         # create an instance of the node class
         return node_class(self, server, project)
 
-    def setupNode(self, node, node_name):
+    def createNode(self, node, node_name):
         """
-        Setups a node.
+        Creates a node.
 
         :param node: Node instance
         :param node_name: Node name
         """
 
-        log.info("configuring node {}".format(node))
-        node.setup()
+        log.info("creating node {}".format(node))
+        node.create()
 
     @staticmethod
     def findAlternativeInterface(node, missing_interface):

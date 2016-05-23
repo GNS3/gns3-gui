@@ -49,14 +49,14 @@ def test_iou_device_init(local_server, project):
     iou_device = IOUDevice(None, local_server, project)
 
 
-def test_iou_device_setup(iou_device, project, fake_iourc):
+def test_iou_device_create(iou_device, project, fake_iourc):
 
     with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
-        iou_device.setup("/tmp/iou.bin", name="PC 1")
+        iou_device.create("/tmp/iou.bin", name="PC 1")
         mock.assert_called_with("/nodes",
-                                iou_device._setupNodeCallback,
+                                iou_device._createNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
@@ -77,7 +77,7 @@ def test_iou_device_setup(iou_device, project, fake_iourc):
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        iou_device._setupNodeCallback(params)
+        iou_device._createNodeCallback(params)
 
         assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -90,7 +90,7 @@ def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
     with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
-        iou_device.setup("/tmp/iou.bin", name="PC 1")
+        iou_device.create("/tmp/iou.bin", name="PC 1")
 
         # Callback
         params = {
@@ -102,7 +102,7 @@ def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
         }
 
         with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            iou_device._setupNodeCallback(params)
+            iou_device._createNodeCallback(params)
             assert mock.called
 
         assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
@@ -116,9 +116,9 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
     with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
-        iou_device.setup("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c")
+        iou_device.create("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c")
         mock.assert_called_with("/nodes",
-                                iou_device._setupNodeCallback,
+                                iou_device._createNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
@@ -140,7 +140,7 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        iou_device._setupNodeCallback(params)
+        iou_device._createNodeCallback(params)
 
 
         assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
@@ -158,9 +158,9 @@ def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_
     with patch('gns3.project.Project.post') as mock:
         iou_device._module._settings["iourc_path"] = fake_iourc
 
-        iou_device.setup("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_config": startup_config})
+        iou_device.create("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_config": startup_config})
         mock.assert_called_with("/nodes",
-                                iou_device._setupNodeCallback,
+                                iou_device._createNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
@@ -344,7 +344,7 @@ def test_load(local_server, project, fake_bin):
         "type": "IOUDevice",
         "node_id": uuid
     }
-    with patch("gns3.modules.iou.iou_device.IOUDevice.setup") as mock:
+    with patch("gns3.modules.iou.iou_device.IOUDevice.create") as mock:
 
         iou_device.load(nio_node)
         iou_device._addAdapters(1, 0)
@@ -385,7 +385,7 @@ def test_load_1_2(local_server, project, fake_bin):
         "type": "IOUDevice",
         "node_id": uuid
     }
-    with patch("gns3.modules.iou.iou_device.IOUDevice.setup") as mock:
+    with patch("gns3.modules.iou.iou_device.IOUDevice.create") as mock:
         iou_device.load(nio_node)
         iou_device._addAdapters(1, 0)
 

@@ -62,9 +62,9 @@ class VPCSDevice(Node):
         self._ports.append(port)
         log.debug("port {} has been added".format(port_name))
 
-    def setup(self, name=None, node_id=None, additional_settings={}, default_name_format="PC{0}"):
+    def create(self, name=None, node_id=None, additional_settings={}, default_name_format="PC{0}"):
         """
-        Setups this VPCS device.
+        Creates this VPCS device.
 
         :param name: optional name
         :param node_id: Node identifier
@@ -209,8 +209,7 @@ class VPCSDevice(Node):
         name = vm_settings.pop("name")
 
         log.info("VPCS device {} is loading".format(name))
-        self.setName(name)
-        self.setup(name, node_id, vm_settings)
+        self.create(name, node_id, vm_settings)
 
     def exportConfig(self, config_export_path):
         """

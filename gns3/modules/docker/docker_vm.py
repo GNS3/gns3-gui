@@ -71,8 +71,8 @@ class DockerVM(Node):
             self._ports.append(new_port)
             log.debug("Adapter {} has been added".format(adapter_name))
 
-    def setup(self, image, name=None, base_name=None, node_id=None, additional_settings={}, default_name_format="{name}-{0}"):
-        """Sets up this Docker container.
+    def create(self, image, name=None, base_name=None, node_id=None, additional_settings={}, default_name_format="{name}-{0}"):
+        """Creates this Docker container.
 
         :param image: image name
         :param name: optional name
@@ -88,8 +88,9 @@ class DockerVM(Node):
         default_name_format = default_name_format.replace('{name}', base_name)
         self._create(name, node_id, params, default_name_format)
 
-    def _setupCallback(self, result):
-        """Callback for Docker container setup.
+    def _createCallback(self, result):
+        """
+        Callback for Docker container creating.
 
         :param result: server response
         """
@@ -114,7 +115,7 @@ class DockerVM(Node):
 
     def update(self, new_settings):
         """
-        Updates the settings for this VPCS device.
+        Updates the settings for this Docker container.
 
         :param new_settings: settings dictionary
         """
@@ -123,7 +124,6 @@ class DockerVM(Node):
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-
         if params:
             self._update(params)
 
@@ -190,17 +190,16 @@ class DockerVM(Node):
         """
 
         super().load(node_info)
-
-        settings = node_info["properties"]
-        name = settings.pop("name")
-        image = settings.pop("image")
+        properties = node_info["properties"]
+        name = properties.pop("name")
+        image = properties.pop("image")
         node_id = node_info.get("node_id")
         if not node_id:
             # for backward compatibility
             node_id = node_info.get("vm_id")
 
         log.info("Docker container {} is loading".format(name))
-        self.setup(image, name=name, node_id=node_id, additional_settings=settings)
+        self.create(image, name=name, node_id=node_id, additional_settings=properties)
 
     def console(self):
         """
