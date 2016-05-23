@@ -1,5 +1,24 @@
 # Change Log
 
+## 1.5.0b1 23/05/2016
+
+* Remote server selector not enabled in import appliance wizard
+* New server dialog is now windows modal
+* Fixes issue when UDPPortAllocatedSlot() is called multiple times.
+* Private-config is optional.
+* Fixes alternative IOS image selection when loading a project.
+* Accept fill_color property for rectangle/ellipse objects. Compatibility for old 1.0 projects.
+* Fixes check for NPF service and add check for NPCAP service on Windows.
+* :latest for docker image is managed server side
+* Remove unbreakable space
+* Fix Checkbox and radio button are not readable with charcoal style
+* Fix existing remotez server is not recognised
+* Fix Cannot change docker image adapter number from docker image configuration
+* Fix got an unexpected keyword argument 'ram_limit'
+* Check that both Qt and PyQt version >= 5.6 to enable high DPI scaling.
+* Check Qt version, not PyQt. Fixes #1232.
+* Fix you can not turn off the GNS3VM with remote server
+
 ## 1.5.0a2 10/05/2016
 
 * Fix issue with PyPi
