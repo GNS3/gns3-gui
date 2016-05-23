@@ -278,6 +278,7 @@ class Node(BaseNode):
         """
         Deletes this node instance.
         """
+
         log.info("{} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2014 GNS3 Technologies Inc.
+# Copyright (C) 2016 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ NIO implementation on the client side (in the form of a pseudo node represented 
 """
 
 import re
-from gns3.base_node import BaseNode
 from gns3.node import Node
 from gns3.ports.port import Port
 from gns3.nios.nio_generic_ethernet import NIOGenericEthernet
@@ -36,57 +35,46 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class Cloud(BaseNode):
+class Cloud(Node):
 
     """
-    Dynamips cloud.
+    Cloud node
 
     :param module: parent module for this node
     :param server: GNS3 server instance
     :param project: Project instance
     """
 
-    _name_instance_count = 1
+    URL_PREFIX = "cloud"
 
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
+        self.setStatus(Node.started)
+        self._always_on = True
 
-        log.info("cloud is being created")
-        # create an unique id and name
-        self._name_id = Cloud._name_instance_count
-        Cloud._name_instance_count += 1
+        self._cloud_settings = {"interfaces": {},
+                                "nios": []}
 
-        name = "Cloud {}".format(self._name_id)
-        self.setStatus(Node.started)  # this is an always-on node
-        self._initial_settings = None
-        self._settings = {"name": name,
-                          "interfaces": {},
-                          "nios": []}
+        self.settings().update(self._cloud_settings)
 
-    def delete(self):
-        """
-        Deletes this cloud.
-        """
-
-        # first delete all the links attached to this node
-        self.delete_links_signal.emit()
-        self.deleted_signal.emit()
-
-    def create(self, name=None, additional_settings={}):
+    def create(self, name = None, node_id = None, additional_settings = None, default_name_format = "Cloud{0}"):
         """
         Creates this cloud.
 
         :param name: optional name for this cloud
+        :param node_id: Node identifier on the server
+        :param additional_settings: additional settings for this cloud
         """
-
-        if name:
-            self._settings["name"] = name
 
         if additional_settings and "nios" in additional_settings:
             self._settings["nios"] = additional_settings["nios"]
 
-        self._server.get("/interfaces", self._createCallback)
+        params = {}
+        #if additional_settings:
+        #    params["mappings"] = mappings
+        self._create(name, node_id, params, default_name_format)
+        # self._server.get("/interfaces", self._createCallback)
 
     def _createCallback(self, result):
         """
@@ -95,9 +83,10 @@ class Cloud(BaseNode):
         :param result: server response
         """
 
-        self._settings["interfaces"] = result.copy()
-        if self._settings["nios"]:
-            self._addPorts(self._settings["nios"])
+        print(result)
+        #self._settings["interfaces"] = result.copy()
+        #if self._settings["nios"]:
+        #    self._addPorts(self._settings["nios"])
 
     def _createNIOUDP(self, nio):
         """
@@ -286,6 +275,18 @@ class Cloud(BaseNode):
             log.info("cloud {} has been updated".format(self.name()))
             self.updated_signal.emit()
 
+    def _updateCallback(self, result):
+        """
+        Callback for update.
+
+        :param result: server response
+        """
+
+        pass
+        #if "mappings" in result:
+        #    self._updatePortsFromMappings(result["mappings"])
+        #    self._settings["mappings"] = result["mappings"].copy()
+
     def deleteNIO(self, port):
 
         pass
@@ -294,7 +295,7 @@ class Cloud(BaseNode):
         """
         Returns information about this cloud.
 
-        :returns: formated string
+        :returns: formatted string
         """
 
         info = """Cloud device {name} is always-on
@@ -327,19 +328,8 @@ This is a pseudo-device for external connections
         :returns: representation of the node (dictionary)
         """
 
-        cloud = {"id": self.id(),
-                 "type": self.__class__.__name__,
-                 "description": str(self),
-                 "properties": {"name": self.name(),
-                                "nios": self._settings["nios"]},
-                 "server_id": self._server.id()}
-
-        # add the ports
-        if self._ports:
-            ports = cloud["ports"] = []
-            for port in self._ports:
-                ports.append(port.dump())
-
+        cloud = super().dump()
+        cloud["properties"]["nios"] = self._settings["nios"]
         return cloud
 
     def load(self, node_info):
@@ -350,14 +340,12 @@ This is a pseudo-device for external connections
         :param node_info: representation of the node (dictionary)
         """
 
-        settings = node_info["properties"]
-        name = settings.pop("name")
+        super().load(node_info)
+        properties = node_info["properties"]
+        name = properties.pop("name")
+        #self.loaded_signal.connect(self._updatePortSettings)
         log.info("cloud {} is loading".format(name))
-        self.setName(name)
-        self._loading = True
-        self._node_info = node_info
-        self.loaded_signal.connect(self._updatePortSettings)
-        self.create(name, additional_settings=settings)
+        self.create(name, additional_settings=properties)
 
     def _updatePortSettings(self):
         """
@@ -433,7 +421,7 @@ This is a pseudo-device for external connections
         :returns: list of node categories
         """
 
-        return [BaseNode.end_devices]
+        return [Node.end_devices]
 
     def __str__(self):
 
