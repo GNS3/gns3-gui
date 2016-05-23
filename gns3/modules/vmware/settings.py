@@ -44,7 +44,7 @@ VMWARE_VM_SETTINGS = {
     "port_segment_size": 0,
     "first_port_name": "",
     "adapters": 1,
-    "adapter_type": "default",
+    "adapter_type": "e1000",
     "use_ubridge": True,
     "use_any_adapter": False,
     "headless": False,
