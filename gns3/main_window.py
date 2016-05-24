@@ -88,6 +88,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         HTTPClient.setProgressCallback(Progress.instance(self))
 
         self._project_manager = ProjectManager(self)
+        self._project_manager.project_ready_signal.connect(self._projectReadySlot)
         self._first_file_load = True
         self._open_project_path = None
         self._loadSettings()
@@ -142,6 +143,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._setStyle(self._settings.get("style"))
 
         self.setWindowTitle("[*] GNS3")
+
+
+        # This widgets will be disable when you have no project loaded
+        self.disableWhenNoProjectWidgets = [
+            self.uiNodesDockWidget,
+            self.uiAnnotateMenu,
+            self.uiAnnotationToolBar,
+            self.uiControlToolBar,
+            self.uiControlMenu,
+            self.uiSaveProjectAction,
+            self.uiSaveProjectAsAction,
+            self.uiExportProjectAction,
+            self.uiImportProjectAction,
+            self.uiScreenshotAction,
+            self.uiSnapshotAction,
+            self.uiHelpMenu
+        ]
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
@@ -299,6 +317,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         if self.checkForUnsavedChanges():
+            # Disable all control
+            for widget in self.disableWhenNoProjectWidgets:
+                widget.setEnabled(False)
+
             self._project_dialog = NewProjectDialog(self)
             self._project_dialog.show()
             create_new_project = self._project_dialog.exec_()
@@ -309,7 +331,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if create_new_project:
                 self._project_manager.createNewProject(self._project_dialog.getNewProjectSettings())
             else:
-                self._project_manager.createTemporaryProject()
+                # User cancel but a project is already open, renable widgets
+                if self._project_manager.project():
+                    for widget in self.disableWhenNoProjectWidgets:
+                        widget.setEnabled(True)
+
             self._project_dialog = None
 
     def _newApplianceActionSlot(self):
@@ -379,16 +405,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             if path.endswith(".gns3project") or path.endswith(".gns3p"):
                 # Portable GNS3 project
-                project_name = os.path.basename(path).split('.')[0]
-                self._project_dialog = NewProjectDialog(self, default_project_name=project_name)
-                self._project_dialog.show()
-                if self._project_dialog.exec_():
-                    new_project_settings = self._project_dialog.getNewProjectSettings()
-                    import_worker = ImportProjectWorker(path, new_project_settings)
-                    import_worker.imported.connect(self.loadPath)
-                    progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self)
-                    progress_dialog.show()
-                    progress_dialog.exec_()
+                raise NotImplementedError
                 self._project_dialog = None
 
             elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
@@ -409,12 +426,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
                     project.close()
 
+    def _projectReadySlot(self):
+        """
+        Called when a project finish to load
+        """
+        for widget in self.disableWhenNoProjectWidgets:
+            widget.setEnabled(True)
+
     def _projectClosedContinueLoadPath(self):
 
         path = self._open_project_path
         if self._project_manager.loadProject(path):
             self._labInstructionsActionSlot(silent=True)
-            self._project_manager.project_new_signal.emit(path)
 
     def _saveProjectActionSlot(self):
         """
@@ -422,13 +445,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         project = self._project_manager.project()
-        if project.temporary():
-            return self._project_manager.saveProjectAs()
-        else:
-            if not project.filesDir():
-                QtWidgets.QMessageBox.critical(self, "Project", "Sorry, no project has been created or initialized")
-                return
-            return self._project_manager.saveProject(project.topologyFile())
+        if not project.filesDir():
+            QtWidgets.QMessageBox.critical(self, "Project", "Sorry, no project has been created or initialized")
+            return
+        return self._project_manager.saveProject(project.topologyFile())
 
     def _saveProjectAsActionSlot(self):
         """
@@ -524,9 +544,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         project = self._project_manager.project()
-        if project.temporary():
-            QtWidgets.QMessageBox.critical(self, "Snapshots", "Sorry, snapshots are not supported with temporary projects")
-            return
 
         # first check if any node doesn't run locally
         topology = Topology.instance()
@@ -797,10 +814,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to open lab instructions.
         """
 
-        if self._project_manager.project().temporary():
-            QtWidgets.QMessageBox.critical(self, "Lab instructions", "Sorry, lab instructions are not supported with temporary projects")
-            return
-
         project_dir = glob.escape(os.path.dirname(self._project_manager.project().topologyFile()))
         instructions_files = glob.glob(project_dir + os.sep + "instructions.*")
         instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
@@ -944,9 +957,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         project = self._project_manager.project()
-        if project.temporary():
-            QtWidgets.QMessageBox.critical(self, "README", "Sorry, README file is not supported with temporary projects")
-            return
 
         log.debug("Opened %s", project.readmePathFile())
         if not os.path.exists(project.readmePathFile()):
@@ -989,7 +999,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._analytics_client.sendScreenView("Main Window", session_start=False)
 
         project = self._project_manager.project()
-        if project.closed():
+        if not project:
+            self._finish_application_closing(close_windows=False)
+            event.accept()
+            self.uiConsoleTextEdit.closeIO()
+        elif project.closed():
             log.debug("Project is closed killing server and closing main windows")
             self._finish_application_closing(close_windows=False)
             event.accept()
@@ -1057,8 +1071,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             reply = QtWidgets.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
                                                   QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Cancel)
             if reply == QtWidgets.QMessageBox.Save:
-                if project.temporary():
-                    return self._project_manager.saveProjectAs()
                 return self._project_manager.saveProject(project.topologyFile())
             elif reply == QtWidgets.QMessageBox.Cancel:
                 return False
@@ -1112,7 +1124,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 setup_wizard.exec_()
 
         self._analytics_client.sendScreenView("Main Window")
-        self._project_manager.createTemporaryProject()
         self.ready_signal.emit()
 
         if self._settings["check_for_update"]:
@@ -1128,18 +1139,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called when the application is ready to load a project
         """
-        if self._settings["auto_launch_project_dialog"] and self._first_file_load:
-            self._project_dialog = NewProjectDialog(self, showed_from_startup=True)
-            self._project_dialog.accepted.connect(self._newProjectDialogAcceptedSlot)
-            self._project_dialog.show()
-
-    def _newProjectDialogAcceptedSlot(self):
-        """
-        Called when user accept the new project dialog
-        """
-        if self._project_dialog:
-            self._project_manager.createNewProject(self._project_dialog.getNewProjectSettings())
-            self._project_dialog = None
+        self._newProjectActionSlot()
 
     def updateRecentFileSettings(self, path):
         """

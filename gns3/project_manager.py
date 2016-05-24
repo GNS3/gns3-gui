@@ -37,13 +37,13 @@ class ProjectManager(QtCore.QObject):
 
     # signal to tell a new project was created
     project_new_signal = QtCore.pyqtSignal(str)
+    project_ready_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent):
 
         super().__init__(parent)
         self._main_window = parent
         self._project = None
-        self.createTemporaryProject()
         self.project_new_signal.connect(self.projectCreatedSlot)
 
     def _setCurrentFile(self, path=None):
@@ -114,21 +114,10 @@ class ProjectManager(QtCore.QObject):
 
         return LocalServer.instance().localServerSettings()["projects_path"]
 
-    def createTemporaryProject(self):
-        """
-        Creates a temporary project.
-        """
+    def createNewProject(self, project_settings):
 
         if self._project:
             self._project.close()
-        self._project = Project()
-        self._project.setName("unsaved")
-        self._main_window.uiGraphicsView.reset()
-        self._setCurrentFile()
-
-    def createNewProject(self, project_settings):
-
-        self._project.close()
         self._project = Project()
         self._main_window.uiGraphicsView.reset()
         # create the destination directory for project files
@@ -137,8 +126,6 @@ class ProjectManager(QtCore.QObject):
         except OSError as e:
             QtWidgets.QMessageBox.critical(self._main_window, "New project",
                                            "Could not create project files directory {}: {}".format(project_settings["project_files_dir"], e))
-            self.createTemporaryProject()
-
         # let all modules know about the new project files directory
         # self.uiGraphicsView.updateProjectFilesDir(new_project_settings["project_files_dir"])
 
@@ -149,6 +136,7 @@ class ProjectManager(QtCore.QObject):
         self._project.setTopologyFile(project_settings["project_path"])
         self.saveProject(project_settings["project_path"])
         self.project_new_signal.emit(self._project.topologyFile())
+        self.project_ready_signal.emit()
 
     def projectCreatedSlot(self, project):
         """
@@ -180,17 +168,16 @@ class ProjectManager(QtCore.QObject):
             topology.loadFile(path, self._project)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self._main_window, "Load", "Could not load project {}: {}".format(os.path.basename(path), e))
-            self.createTemporaryProject()
             return False
         except ValueError as e:
             QtWidgets.QMessageBox.critical(self._main_window, "Load", "Invalid or corrupted file: {}".format(e))
-            self.createTemporaryProject()
             return False
         finally:
             QtWidgets.QApplication.restoreOverrideCursor()
 
         self._main_window.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         self._setCurrentFile(path)
+        self.project_ready_signal.emit()
         return True
 
     def saveProjectAs(self):
@@ -204,14 +191,11 @@ class ProjectManager(QtCore.QObject):
             QtWidgets.QMessageBox.warning(self._main_window, "Save As", "All devices must be stopped before saving to another location")
             return False
 
-        if self._isProjectOnRemoteServer() and not self._project.temporary():
+        if self._isProjectOnRemoteServer():
             MessageBox(self._main_window, "Save project", "You can not use the save as function on a remote project for the moment.")
             return
 
-        if self._project.temporary():
-            default_project_name = "untitled"
-        else:
-            default_project_name = self._project.name()
+        default_project_name = self._project.name()
 
         projects_dir_path = os.path.normpath(os.path.expanduser(self.projectsDirPath()))
         file_dialog = QtWidgets.QFileDialog(self._main_window)
@@ -238,16 +222,9 @@ class ProjectManager(QtCore.QObject):
             QtWidgets.QMessageBox.critical(self._main_window, "Save project", "Could not create project directory {}: {}".format(project_dir, e))
             return
 
-        if self._project.temporary():
-            # move files if saving from a temporary project
-            log.info("Moving project files from {} to {}".format(self._project.filesDir(), project_dir))
-            worker = ProcessFilesWorker(self._project.filesDir(), project_dir, move=True, skip_files=[".gns3_temporary"])
-            progress_dialog = ProgressDialog(worker, "Project", "Moving project files...", "Cancel", parent=self._main_window)
-        else:
-            # else, just copy the files
-            log.info("Copying project files from {} to {}".format(self._project.filesDir(), project_dir))
-            worker = ProcessFilesWorker(self._project.filesDir(), project_dir)
-            progress_dialog = ProgressDialog(worker, "Project", "Copying project files...", "Cancel", parent=self._main_window)
+        log.info("Copying project files from {} to {}".format(self._project.filesDir(), project_dir))
+        worker = ProcessFilesWorker(self._project.filesDir(), project_dir)
+        progress_dialog = ProgressDialog(worker, "Project", "Copying project files...", "Cancel", parent=self._main_window)
         progress_dialog.show()
         progress_dialog.exec_()
 
@@ -312,10 +289,6 @@ class ProjectManager(QtCore.QObject):
 
         if self._main_window.testAttribute(QtCore.Qt.WA_WindowModified):
             QtWidgets.QMessageBox.critical(self._main_window, "Export project", "Please save the project before exporting it")
-            return
-
-        if self.project().temporary():
-            QtWidgets.QMessageBox.critical(self._main_window, "Export project", "A temporary project cannot be exported")
             return
 
         topology = Topology.instance()

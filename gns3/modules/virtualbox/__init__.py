@@ -263,8 +263,6 @@ class VirtualBox(Module):
                 if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
                         (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
                     raise ModuleError("Sorry a VirtualBox VM without the linked base setting enabled can only be used once in your topology")
-        elif node.project().temporary():
-            raise ModuleError("Sorry, VirtualBox linked clones are not supported in temporary projects")
 
         vm_settings = {}
         for setting_name, value in self._virtualbox_vms[vm].items():

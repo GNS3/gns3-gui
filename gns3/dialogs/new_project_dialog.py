@@ -26,12 +26,11 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
     New project dialog.
 
     :param parent: parent widget.
-    :param showed_from_startup: boolean to indicate if this dialog
     :param default_project_name: Project name by default
     has been opened automatically when GNS3 started.
     """
 
-    def __init__(self, parent, showed_from_startup=False, default_project_name="untitled"):
+    def __init__(self, parent, default_project_name="untitled"):
 
         super().__init__(parent)
         self.setupUi(self)
@@ -46,9 +45,8 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
         self.uiOpenProjectPushButton.clicked.connect(self._openProjectActionSlot)
         self.uiRecentProjectsPushButton.clicked.connect(self._showRecentProjectsSlot)
 
-        if not showed_from_startup:
-            self.uiOpenProjectPushButton.hide()
-            self.uiRecentProjectsPushButton.hide()
+        self.uiOpenProjectPushButton.hide()
+        self.uiRecentProjectsPushButton.hide()
 
     def keyPressEvent(self, e):
         """
