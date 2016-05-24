@@ -239,7 +239,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiConfigsPathLineEdit.setText(local_server["configs_path"])
         self.uiStatsCheckBox.setChecked(settings["send_stats"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
-        self.uiLaunchNewProjectDialogCheckBox.setChecked(settings["auto_launch_project_dialog"])
         self.uiAutoScreenshotCheckBox.setChecked(settings["auto_screenshot"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiLinkManualModeCheckBox.setChecked(settings["link_manual_mode"])
@@ -303,7 +302,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
                                      "report_errors": self.uiCrashReportCheckBox.isChecked()}
         LocalServer.instance().setLocalServerSettings(new_local_server_settings)
 
-        new_general_settings = {"auto_launch_project_dialog": self.uiLaunchNewProjectDialogCheckBox.isChecked(),
+        new_general_settings = {
                                 "auto_screenshot": self.uiAutoScreenshotCheckBox.isChecked(),
                                 "style": self.uiStyleComboBox.currentText(),
                                 "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),

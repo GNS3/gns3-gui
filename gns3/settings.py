@@ -246,7 +246,6 @@ else:
 
 GENERAL_SETTINGS = {
     "style": DEFAULT_STYLE,
-    "auto_launch_project_dialog": True,
     "auto_screenshot": True,
     "check_for_update": True,
     "experimental_features": False,

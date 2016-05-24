@@ -45,8 +45,6 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
         self.uiOpenProjectPushButton.clicked.connect(self._openProjectActionSlot)
         self.uiRecentProjectsPushButton.clicked.connect(self._showRecentProjectsSlot)
 
-        self.uiOpenProjectPushButton.hide()
-        self.uiRecentProjectsPushButton.hide()
 
     def keyPressEvent(self, e):
         """

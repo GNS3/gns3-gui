@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>527</width>
-    <height>541</height>
+    <height>568</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="uiGeneralTab">
       <attribute name="title">
@@ -627,16 +627,6 @@
        <string>Miscellaneous</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QCheckBox" name="uiLaunchNewProjectDialogCheckBox">
-         <property name="text">
-          <string>Launch the new project dialog on startup</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QCheckBox" name="uiAutoScreenshotCheckBox">
          <property name="text">
