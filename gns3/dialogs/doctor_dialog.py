@@ -183,6 +183,22 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             pass
         return (0, None)
 
+    def _check_windows_service(self, service_name):
+
+        import pywintypes
+        import win32service
+        import win32serviceutil
+
+        try:
+            if win32serviceutil.QueryServiceStatus(service_name, None)[1] != win32service.SERVICE_RUNNING:
+                return False
+        except pywintypes.error as e:
+            if e.winerror == 1060:
+                return False
+            else:
+                raise
+        return True
+
     def checkRPFServiceIsRunning(self):
         """Check if the RPF service is running (required to use Ethernet NIOs)"""
 
@@ -190,18 +206,11 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             return (0, None)
 
         import pywintypes
-        import win32service
-        import win32serviceutil
-
         try:
-            if win32serviceutil.QueryServiceStatus("npf", None)[1] != win32service.SERVICE_RUNNING:
-                return (2, "The NPF service is not running: open cmd.exe as an Administrator and type 'sc config npf start= auto && net start npf'")
-            return (0, None)
+            if not self._check_windows_service("npf") and not self._check_windows_service("npcap"):
+                return (2, "The NPF or NPCAP service is not installed, please install Winpcap or Npcap and reboot")
         except pywintypes.error as e:
-            if e[0] == 1060:
-                return (2, "The NPF service is not installed, please install Winpcap and reboot")
-            else:
-                return (2, "Could not check if the NPF service is running: {}".format(e[2]))
+            return (2, "Could not check if the NPF or Npcap service is running: {}".format(e.strerror))
 
 if __name__ == '__main__':
     import sys

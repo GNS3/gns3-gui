@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/new_server_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/new_server_dialog.ui'
 #
-# Created: Sat Apr  2 12:15:52 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,6 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_NewServerDialog(object):
     def setupUi(self, NewServerDialog):
         NewServerDialog.setObjectName("NewServerDialog")
+        NewServerDialog.setWindowModality(QtCore.Qt.WindowModal)
         NewServerDialog.resize(426, 304)
         self.verticalLayout = QtWidgets.QVBoxLayout(NewServerDialog)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -68,7 +68,7 @@ class Ui_NewServerDialog(object):
         self.gridLayout.addWidget(self.uiServerPasswordLabel, 5, 0, 1, 2)
         self.uiServerPasswordLineEdit = QtWidgets.QLineEdit(self.groupBox)
         self.uiServerPasswordLineEdit.setEnabled(False)
-        self.uiServerPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText|QtCore.Qt.ImhNoAutoUppercase|QtCore.Qt.ImhNoPredictiveText)
+        self.uiServerPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText|QtCore.Qt.ImhNoAutoUppercase|QtCore.Qt.ImhNoPredictiveText|QtCore.Qt.ImhSensitiveData)
         self.uiServerPasswordLineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.uiServerPasswordLineEdit.setObjectName("uiServerPasswordLineEdit")
         self.gridLayout.addWidget(self.uiServerPasswordLineEdit, 5, 2, 1, 1)
@@ -91,7 +91,7 @@ class Ui_NewServerDialog(object):
         NewServerDialog.setWindowTitle(_translate("NewServerDialog", "New server"))
         self.groupBox.setTitle(_translate("NewServerDialog", "Server settings"))
         self.uiServerProtocolLabel.setText(_translate("NewServerDialog", "Protocol:"))
-        self.uiServerProtocolComboBox.setProperty("currentText", _translate("NewServerDialog", "HTTP"))
+        self.uiServerProtocolComboBox.setCurrentText(_translate("NewServerDialog", "HTTP"))
         self.uiServerProtocolComboBox.setItemText(0, _translate("NewServerDialog", "HTTP"))
         self.uiServerProtocolComboBox.setItemText(1, _translate("NewServerDialog", "HTTPS"))
         self.uiServerHostLabel.setText(_translate("NewServerDialog", "Host:"))

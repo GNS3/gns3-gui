@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>NewServerDialog</class>
  <widget class="QDialog" name="NewServerDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -35,7 +38,7 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="currentText" stdset="0">
+        <property name="currentText">
          <string>HTTP</string>
         </property>
         <item>
@@ -127,7 +130,7 @@
          <bool>false</bool>
         </property>
         <property name="inputMethodHints">
-         <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
+         <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
         </property>
         <property name="echoMode">
          <enum>QLineEdit::Password</enum>
