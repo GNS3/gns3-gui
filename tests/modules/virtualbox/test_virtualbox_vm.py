@@ -33,7 +33,7 @@ def test_virtualbox_vm_create(virtualbox_vm, project):
     with patch('gns3.project.Project.post') as mock:
         virtualbox_vm.create("VMNAME")
         mock.assert_called_with("/nodes",
-                                virtualbox_vm._createNodeCallback,
+                                virtualbox_vm.createNodeCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'compute_id': 'local',
@@ -55,7 +55,7 @@ def test_virtualbox_vm_create(virtualbox_vm, project):
             "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
             "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c"
         }
-        virtualbox_vm._createNodeCallback(params)
+        virtualbox_vm.createNodeCallback(params)
         assert virtualbox_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 

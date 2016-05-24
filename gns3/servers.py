@@ -260,9 +260,6 @@ class Servers(QtCore.QObject):
         if controller:
             self._controller_server = Controller.instance()
             self._controller_server.setHttpClient(client)
-            #TODO: How to manage server created before?
-        if self._controller_server:
-            self._controller_server.addServer(server)
         return server
 
     def findRemoteServer(self, protocol, host, port, user, settings={}):

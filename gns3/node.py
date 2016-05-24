@@ -131,7 +131,7 @@ class Node(BaseNode):
 
         return body
 
-    def _create(self, name=None, node_id=None, params=None, default_name_format="Hub{0}", linked_clone=False, timeout=120):
+    def _create(self, name=None, node_id=None, params=None, default_name_format="Hub{0}", timeout=120):
         """
         Create the node on the controller
         """

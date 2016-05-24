@@ -79,14 +79,14 @@ class DockerVM(Node):
         :param additional_settings: additional settings for this VM
         """
 
-        #self._settings["image"] = image
         params = {
             "image": image,
             "adapters": self._settings["adapters"]
         }
         params.update(additional_settings)
-        default_name_format = default_name_format.replace('{name}', base_name)
-        self._create(name, node_id, params, default_name_format)
+        if base_name:
+            default_name_format = default_name_format.replace('{name}', base_name)
+        self._create(name=name, node_id=node_id, params=params, default_name_format=default_name_format)
 
     def _createCallback(self, result):
         """

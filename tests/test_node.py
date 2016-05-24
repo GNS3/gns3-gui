@@ -27,7 +27,7 @@ from gns3.nios.nio_udp import NIOUDP
 
 def test_create(vpcs_device, local_server):
     with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
-        vpcs_device._create({"name": "PC 1", "startup_script": "echo TEST"})
+        vpcs_device._create(name="PC 1", params={"startup_script": "echo TEST"})
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes"
@@ -44,7 +44,7 @@ def test_create(vpcs_device, local_server):
 def test_setupVMCallback(vpcs_device):
     node_id = str(uuid.uuid4())
     vpcs_device._createCallback = MagicMock()
-    vpcs_device._createNodeCallback({
+    vpcs_device.createNodeCallback({
         "name": "PC 1",
         "node_id": node_id,
         "properties": {
@@ -57,8 +57,7 @@ def test_setupVMCallback(vpcs_device):
             "name": "PC 1",
             "node_id": node_id,
             "startup_script": "echo TEST"
-        },
-        error=False
+        }
     )
 
 

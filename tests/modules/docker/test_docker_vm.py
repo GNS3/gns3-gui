@@ -32,22 +32,8 @@ def test_docker_vm_create(project, local_server):
     docker_vm = DockerVM(Docker(), local_server, project)
     with patch('gns3.project.Project.post') as mock:
         docker_vm.create("ubuntu", base_name="ubuntu")
-        assert docker_vm._settings == {
-            'image': 'ubuntu',
-            'name': 'ubuntu-1',
-            'start_command': '',
-            'adapters': 1,
-            'console': None,
-            'environment': '',
-            'console_host': None,
-            'console_type': 'telnet',
-            'console_resolution': '1024x768',
-            'console_http_path': '/',
-            'console_http_port': 80,
-            'aux': None
-        }
         mock.assert_called_with("/nodes",
-                                docker_vm._createNodeCallback,
+                                docker_vm.createNodeCallback,
                                 body={
                                     "compute_id": "local",
                                     "node_type": "docker",
@@ -58,7 +44,7 @@ def test_docker_vm_create(project, local_server):
                                     "name": "ubuntu-1"
                                 },
                                 context={},
-                                timeout=None)
+                                timeout=120)
 
 
 def test_createCallback(project, local_server):
@@ -68,11 +54,15 @@ def test_createCallback(project, local_server):
     params = {
         "name": "DOCKER1",
         "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
+        "properties": {
+            "image": "ubuntu"
+        }
     }
-    docker_vm._createNodeCallback(params)
+    docker_vm.createNodeCallback(params)
 
     assert docker_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
     assert docker_vm.name() == "DOCKER1"
+    assert docker_vm._settings["image"] == "ubuntu"
 
 
 def test_dump(project, local_server):
@@ -134,7 +124,7 @@ def test_load(project, local_server):
         docker_vm.load(node)
         mock.assert_called_with(
             "/nodes",
-            docker_vm._createNodeCallback,
+            docker_vm.createNodeCallback,
             body={'compute_id': 'local',
                   'name': 'mysql:latest-1',
                   'console': 6000,
@@ -145,4 +135,4 @@ def test_load(project, local_server):
                                  'adapters': 1,
                                  'image': 'mysql:latest'}},
             context={},
-            timeout=None)
+            timeout=120)

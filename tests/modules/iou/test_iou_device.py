@@ -56,7 +56,7 @@ def test_iou_device_create(iou_device, project, fake_iourc):
 
         iou_device.create("/tmp/iou.bin", name="PC 1")
         mock.assert_called_with("/nodes",
-                                iou_device._createNodeCallback,
+                                iou_device.createNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
@@ -77,7 +77,7 @@ def test_iou_device_create(iou_device, project, fake_iourc):
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        iou_device._createNodeCallback(params)
+        iou_device.createNodeCallback(params)
 
         assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -102,7 +102,7 @@ def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
         }
 
         with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            iou_device._createNodeCallback(params)
+            iou_device.createNodeCallback(params)
             assert mock.called
 
         assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
@@ -118,7 +118,7 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
 
         iou_device.create("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c")
         mock.assert_called_with("/nodes",
-                                iou_device._createNodeCallback,
+                                iou_device.createNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
@@ -140,7 +140,7 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
             "path": "iou.bin",
             "md5sum": "0cc175b9c0f1b6a831c399e269772661"
         }
-        iou_device._createNodeCallback(params)
+        iou_device.createNodeCallback(params)
 
 
         assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
@@ -160,7 +160,7 @@ def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_
 
         iou_device.create("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_config": startup_config})
         mock.assert_called_with("/nodes",
-                                iou_device._createNodeCallback,
+                                iou_device.createNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',

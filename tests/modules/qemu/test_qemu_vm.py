@@ -33,7 +33,7 @@ def test_qemu_vm_create(qemu_vm, project):
     with patch('gns3.project.Project.post') as mock:
         qemu_vm.create("/bin/fake", name="VMNAME")
         mock.assert_called_with("/nodes",
-                                qemu_vm._createNodeCallback,
+                                qemu_vm.createNodeCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'properties': {
@@ -55,7 +55,7 @@ def test_qemu_vm_create(qemu_vm, project):
             "node_directory": "/tmp/test",
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661"
         }
-        qemu_vm._createNodeCallback(params)
+        qemu_vm.createNodeCallback(params)
         assert qemu_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
         assert qemu_vm.nodeDir() == "/tmp/test"
 
@@ -65,7 +65,7 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
     with patch('gns3.project.Project.post') as mock:
         qemu_vm.create("/bin/fake", name="VMNAME")
         mock.assert_called_with("/nodes",
-                                qemu_vm._createNodeCallback,
+                                qemu_vm.createNodeCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'properties': {
@@ -88,7 +88,7 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661",
             "command_line": "/bin/fake"
         }
-        qemu_vm._createNodeCallback(params)
+        qemu_vm.createNodeCallback(params)
         assert qemu_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
         assert qemu_vm.commandLine() == "/bin/fake"
 
@@ -98,7 +98,7 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
     with patch('gns3.project.Project.post') as mock:
         qemu_vm.create("/bin/fake", name="VMNAME")
         mock.assert_called_with("/nodes",
-                                qemu_vm._createNodeCallback,
+                                qemu_vm.createNodeCallback,
                                 body={
                                     'name': 'VMNAME',
                                     'properties': {
@@ -120,7 +120,7 @@ def test_qemu_vm_setup_md5_missing(qemu_vm, project):
             "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661"
         }
         with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            qemu_vm._createNodeCallback(params)
+            qemu_vm.createNodeCallback(params)
             assert mock.called
 
         assert qemu_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"

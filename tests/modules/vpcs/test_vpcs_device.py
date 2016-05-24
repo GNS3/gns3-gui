@@ -57,7 +57,7 @@ def test_vpcs_device_create(vpcs_device, project, local_server):
                 "startup_script": None,
             }
         }
-        vpcs_device._createNodeCallback(params)
+        vpcs_device.createNodeCallback(params)
 
         assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -91,7 +91,7 @@ def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
                 "startup_script": None,
             }
         }
-        vpcs_device._createNodeCallback(params)
+        vpcs_device.createNodeCallback(params)
 
         assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
@@ -130,7 +130,7 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
                 "startup_script": "echo TEST",
             }
         }
-        vpcs_device._createNodeCallback(params)
+        vpcs_device.createNodeCallback(params)
 
         assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
