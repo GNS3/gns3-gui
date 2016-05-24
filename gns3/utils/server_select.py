@@ -46,7 +46,6 @@ def server_select(parent, allow_local_server=True):
     elif len(server_list) == 1:
         selection = server_list[0]
     else:
-        print(server_list)
         (selection, ok) = QtWidgets.QInputDialog.getItem(parent, "Server", "Please choose a server", server_list, 0, False)
         if not ok:
             return None

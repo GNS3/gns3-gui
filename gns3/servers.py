@@ -400,8 +400,7 @@ class Servers(QtCore.QObject):
         """
         Saves the settings.
         """
-
-        self._saveSettings()
+        pass
 
     def isNonLocalServerConfigured(self):
         """
