@@ -20,7 +20,6 @@ import sys
 import traceback
 from .qt import QtCore, qpartial
 
-from gns3.servers import Servers
 from gns3.controller import Controller
 from gns3.compute_manager import ComputeManager
 from gns3.topology import Topology
@@ -347,6 +346,4 @@ class Project(QtCore.QObject):
             cm = ComputeManager.instance()
             cm.computeDataReceivedCallback(result["event"])
         elif result["action"] == "ping":
-            if "compute_id" in result:
-                compute = Servers.instance().getServerFromString(result["compute_id"])
-                compute.setSystemUsage(result["event"])
+            pass
