@@ -30,7 +30,6 @@ from .local_config import LocalConfig
 from .local_server import LocalServer
 from .modules import MODULES
 from .qt import QtGui, QtCore, QtWidgets, QtSvg
-from .servers import Servers
 from .controller import Controller
 from .gns3_vm import GNS3VM
 from .node import Node
@@ -532,7 +531,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # first check if any node doesn't run locally
         topology = Topology.instance()
         for node in topology.nodes():
-            if node.server() != Servers.instance().localServer():
+            if node.compute().id() != "local":
                 QtWidgets.QMessageBox.critical(self, "Snapshots", "Sorry, snapshots can only be created if all the nodes run locally")
                 return
 
@@ -1088,11 +1087,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
-        servers = Servers.instance()
         # start the GNS3 VM
         gns3_vm = GNS3VM.instance()
         if not gns3_vm.isRunning():
-            servers.initVMServer()
+            #servers.initVMServer()
             if gns3_vm.isRemote():
                 gns3_vm.setRunning(True)
             elif gns3_vm.autoStart():

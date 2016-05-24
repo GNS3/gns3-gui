@@ -37,6 +37,7 @@ from ..utils.wait_for_vm_worker import WaitForVMWorker
 from ..settings import SERVERS_SETTINGS
 from ..gns3_vm import GNS3VM
 from ..dialogs.new_server_dialog import NewServerDialog
+from ..local_server import LocalServer
 
 
 class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
@@ -272,7 +273,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
 
         # local server settings
-        local_server_settings = servers_settings["local_server"]
+        local_server_settings = LocalServer.instance().localServerSettings()
         self.uiLocalServerPathLineEdit.setText(local_server_settings["path"])
         self.uiUbridgePathLineEdit.setText(local_server_settings["ubridge_path"])
         index = self.uiLocalServerHostComboBox.findData(local_server_settings["host"])
@@ -350,7 +351,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         servers = Servers.instance()
         servers_settings = servers.settings()
-        local_server_settings = servers_settings["local_server"]
+        local_server_settings = LocalServer.instance().localServerSettings()
         restart_local_server = False
         restart_gns3_vm = False
 
@@ -389,19 +390,17 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                 # first check if we have nodes on the local server
                 local_nodes = []
                 topology = Topology.instance()
-                for node in topology.nodes():
-                    if node.server().isLocal():
-                        local_nodes.append(node.name())
-                if local_nodes:
-                    nodes = "\n".join(local_nodes)
-                    MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing the local server settings", nodes)
+                if len(topology.nodes()):
+                    MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing the local server settings")
                     return
-                servers.setLocalServerSettings(new_local_server_settings)
-                servers.registerLocalServer()
+                LocalServer.instance().setLocalServerSettings(new_local_server_settings)
                 restart_local_server = True
         else:
-            servers.setLocalServerSettings(new_local_server_settings)
-            servers.stopLocalServer(wait=True)
+            LocalServer.instance().localServerSettings().setLocalServerSettings(new_local_server_settings)
+            LocalServer.instance().localServerSettings().stopLocalServer(wait=True)
+
+        #TODO fix settings
+        return
 
         # save the GNS3 VM preferences
         new_gns3vm_settings = servers_settings["vm"].copy()

@@ -38,7 +38,6 @@ from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
 from .items.svg_image_item import SvgImageItem
 from .items.pixmap_image_item import PixmapImageItem
-from .servers import Servers
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .utils.message_box import MessageBox
@@ -569,7 +568,8 @@ class Topology:
 
         # servers
         self._servers = {}
-        server_manager = Servers.instance()
+        raise NotImplementedError
+        server_manager = None
         if "servers" in topology["topology"]:
             servers = topology["topology"]["servers"]
             for topology_server in servers:
