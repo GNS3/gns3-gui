@@ -345,7 +345,6 @@ class Project(QtCore.QObject):
             log.info(result["event"]["message"], extra={"show": True})
         elif result["action"] == "compute.created" or result["action"] == "compute.updated":
             cm = ComputeManager.instance()
-            print(result)
             cm.computeDataReceivedCallback(result["event"])
         elif result["action"] == "ping":
             if "compute_id" in result:
