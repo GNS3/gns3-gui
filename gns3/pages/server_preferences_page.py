@@ -38,6 +38,7 @@ from ..settings import SERVERS_SETTINGS
 from ..gns3_vm import GNS3VM
 from ..dialogs.new_server_dialog import NewServerDialog
 from ..local_server import LocalServer
+from ..compute_manager import ComputeManager
 
 
 class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
@@ -50,7 +51,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         super().__init__()
         self.setupUi(self)
-        self._remote_servers = {}
+        self._remote_computes = {}
         self.uiRemoteGNS3VMSettingsGroupBox.setEnabled(False)
 
         # connect the slots
@@ -261,8 +262,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         item = self.uiRemoteServersTreeWidget.currentItem()
         if item:
-            assert item.server_id in self._remote_servers, "Missing {} in {}".format(item.server_id, self._remote_servers)
-            del self._remote_servers[item.server_id]
+            del self._remote_computes[item.compute_id]
             self.uiRemoteServersTreeWidget.takeTopLevelItem(self.uiRemoteServersTreeWidget.indexOfTopLevelItem(item))
 
     def _populateWidgets(self, servers_settings):
@@ -320,25 +320,26 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         servers_settings = servers.settings()
         self._populateWidgets(servers_settings)
 
+        cm = ComputeManager.instance()
         # load remote server preferences
-        self._remote_servers.clear()
+        self._remote_computes.clear()
         self.uiServersComboBox.clear()
         self.uiRemoteServersTreeWidget.clear()
-        for server_id, server in servers.remoteServers().items():
-            protocol = server.protocol()
-            host = server.host()
-            port = server.port()
-            user = server.user()
-            self._remote_servers[server_id] = server.settings()
+        for compute in cm.computes():
+            protocol = compute.protocol()
+            host = compute.host()
+            port = compute.port()
+            user = compute.user()
+            self._remote_computes[compute.id()] = compute
             item = QtWidgets.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
             item.setText(0, protocol)
             item.setText(1, host)
             item.setText(2, str(port))
             item.setText(3, user)
-            item.settings = server.settings()
-            item.server_id = server_id
+            item.settings = compute
+            item.compute_id = compute.id()
 
-            self.uiServersComboBox.addItem(server.url(), server)
+            self.uiServersComboBox.addItem(compute.name(), compute)
 
         self.uiServersComboBox.setCurrentIndex(self.uiServersComboBox.findText(servers_settings['vm']['remote_vm_url']))
 
@@ -399,66 +400,62 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             LocalServer.instance().localServerSettings().setLocalServerSettings(new_local_server_settings)
             LocalServer.instance().localServerSettings().stopLocalServer(wait=True)
 
-        #TODO fix settings
-        return
-
         # save the GNS3 VM preferences
-        new_gns3vm_settings = servers_settings["vm"].copy()
-        new_gns3vm_settings.update({"auto_start": self.uiEnableVMCheckBox.isChecked(),
-                                    "auto_stop": self.uiShutdownCheckBox.isChecked(),
-                                    "adjust_local_server_ip": self.uiAdjustLocalServerIPCheckBox.isChecked(),
-                                    "vmname": self.uiVMListComboBox.currentText(),
-                                    "vmx_path": self.uiVMListComboBox.currentData(),
-                                    "headless": self.uiHeadlessCheckBox.isChecked()})
+        # new_gns3vm_settings = servers_settings["vm"].copy()
+        # new_gns3vm_settings.update({"auto_start": self.uiEnableVMCheckBox.isChecked(),
+        #                             "auto_stop": self.uiShutdownCheckBox.isChecked(),
+        #                             "adjust_local_server_ip": self.uiAdjustLocalServerIPCheckBox.isChecked(),
+        #                             "vmname": self.uiVMListComboBox.currentText(),
+        #                             "vmx_path": self.uiVMListComboBox.currentData(),
+        #                             "headless": self.uiHeadlessCheckBox.isChecked()})
+        #
 
-
-        if self.uiVmwareRadioButton.isChecked():
-            new_gns3vm_settings["virtualization"] = "VMware"
-        elif self.uiVirtualBoxRadioButton.isChecked():
-            new_gns3vm_settings["virtualization"] = "VirtualBox"
-        elif self.uiRemoteRadioButton.isChecked() and self.uiEnableVMCheckBox.isChecked():
-            if self.uiServersComboBox.currentData() is None:
-                QtWidgets.QMessageBox.critical(self, "Remote GNS3 VM host", "The remote GNS3 VM cannot be empty")
-                return
-            new_gns3vm_settings["virtualization"] = "remote"
-            new_gns3vm_settings["remote_vm_protocol"] = self.uiServersComboBox.currentData().protocol()
-            new_gns3vm_settings["remote_vm_password"] = self.uiServersComboBox.currentData().password()
-            new_gns3vm_settings["remote_vm_host"] = self.uiServersComboBox.currentData().host()
-            new_gns3vm_settings["remote_vm_port"] = self.uiServersComboBox.currentData().port()
-            new_gns3vm_settings["remote_vm_user"] = self.uiServersComboBox.currentData().user()
-            new_gns3vm_settings["remote_vm_url"] = self.uiServersComboBox.currentData().url()
-
-        if new_gns3vm_settings != servers_settings["vm"]:
-            log.info("GNS3 VM restart required!")
-            restart_gns3_vm = True
-        servers_settings["vm"].update(new_gns3vm_settings)
+        # if self.uiVmwareRadioButton.isChecked():
+        #     new_gns3vm_settings["virtualization"] = "VMware"
+        # elif self.uiVirtualBoxRadioButton.isChecked():
+        #     new_gns3vm_settings["virtualization"] = "VirtualBox"
+        # elif self.uiRemoteRadioButton.isChecked() and self.uiEnableVMCheckBox.isChecked():
+        #     if self.uiServersComboBox.currentData() is None:
+        #         QtWidgets.QMessageBox.critical(self, "Remote GNS3 VM host", "The remote GNS3 VM cannot be empty")
+        #         return
+        #     new_gns3vm_settings["virtualization"] = "remote"
+        #     new_gns3vm_settings["remote_vm_protocol"] = self.uiServersComboBox.currentData().protocol()
+        #     new_gns3vm_settings["remote_vm_password"] = self.uiServersComboBox.currentData().password()
+        #     new_gns3vm_settings["remote_vm_host"] = self.uiServersComboBox.currentData().host()
+        #     new_gns3vm_settings["remote_vm_port"] = self.uiServersComboBox.currentData().port()
+        #     new_gns3vm_settings["remote_vm_user"] = self.uiServersComboBox.currentData().user()
+        #     new_gns3vm_settings["remote_vm_url"] = self.uiServersComboBox.currentData().url()
+        #
+        # if new_gns3vm_settings != servers_settings["vm"]:
+        #     log.info("GNS3 VM restart required!")
+        #     restart_gns3_vm = True
+        # servers_settings["vm"].update(new_gns3vm_settings)
 
         # save the server preferences
         servers.setSettings(servers_settings)
         # save the remote server preferences
-        servers.updateRemoteServers(self._remote_servers)
-        servers.save()
+        ComputeManager.instance().updateList(self._remote_computes.values())
 
         # start or restart the local GNS3 VM if required
-        if restart_gns3_vm:
-            gns3_vm = GNS3VM.instance()
-            gns3_vm.shutdown(force=True)
-            if servers_settings["vm"]["virtualization"] == "remote":
-                servers.initVMServer()
-            elif gns3_vm.autoStart():
-                servers.initVMServer()
-                worker = WaitForVMWorker()
-                progress_dialog = ProgressDialog(worker, "Local GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
-                progress_dialog.show()
-                if progress_dialog.exec_():
-                    local_server_ip = gns3_vm.adjustLocalServerIP()
-                    if local_server_ip != new_local_server_settings["host"]:
-                        new_local_server_settings["host"] = local_server_ip
-                        index = self.uiLocalServerHostComboBox.findData(local_server_ip)
-                        if index != -1:
-                            restart_local_server = True
-                            self.uiLocalServerHostComboBox.setCurrentIndex(index)
-
+        # if restart_gns3_vm:
+        #     gns3_vm = GNS3VM.instance()
+        #     gns3_vm.shutdown(force=True)
+        #     if servers_settings["vm"]["virtualization"] == "remote":
+        #         servers.initVMServer()
+        #     elif gns3_vm.autoStart():
+        #         servers.initVMServer()
+        #         worker = WaitForVMWorker()
+        #         progress_dialog = ProgressDialog(worker, "Local GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
+        #         progress_dialog.show()
+        #         if progress_dialog.exec_():
+        #             local_server_ip = gns3_vm.adjustLocalServerIP()
+        #             if local_server_ip != new_local_server_settings["host"]:
+        #                 new_local_server_settings["host"] = local_server_ip
+        #                 index = self.uiLocalServerHostComboBox.findData(local_server_ip)
+        #                 if index != -1:
+        #                     restart_local_server = True
+        #                     self.uiLocalServerHostComboBox.setCurrentIndex(index)
+        #
         # start or restart the local server if required
         if restart_local_server:
             servers.stopLocalServer(wait=True)

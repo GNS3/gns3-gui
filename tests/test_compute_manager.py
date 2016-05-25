@@ -26,6 +26,18 @@ def test_getCompute():
     assert cm.getCompute("local") == compute
 
 
+def test_deleteCompute(controller):
+    callback_delete = MagicMock()
+    cm = ComputeManager()
+    cm.deleted_signal.connect(callback_delete)
+    compute = cm.getCompute("test")
+    assert cm.getCompute("test") == compute
+    cm.deleteCompute("test")
+    assert "test" not in cm._computes
+    assert callback_delete.called
+    controller._http_client.createHTTPQuery.assert_called_with("DELETE", "/computes/test", None)
+
+
 def test_listComputesCallback():
     callback = MagicMock()
     cm = ComputeManager()
@@ -83,3 +95,16 @@ def test_computeDataReceivedCallback():
     assert cm._computes["test"].connected()
     assert callback_update.called
 
+
+def test_updateList(controller):
+    cm = ComputeManager()
+    computes = []
+    computes.append(cm.getCompute("test1"))
+    computes.append(cm.getCompute("test2"))
+    # This server new to be deleted because exist in compute manager
+    # but not in setting list
+    cm.getCompute("test3")
+    cm.updateList(computes)
+    assert "test1" in cm._computes
+    assert "test2" in cm._computes
+    assert "test3" not in cm._computes

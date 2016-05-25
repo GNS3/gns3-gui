@@ -20,6 +20,7 @@ from .qt import QtCore
 from .compute import Compute
 from .controller import Controller
 
+import copy
 import logging
 log = logging.getLogger(__name__)
 
@@ -82,6 +83,22 @@ class ComputeManager(QtCore.QObject):
             self._computes[compute_id] = Compute(compute_id)
             self.created_signal.emit(compute_id)
         return self._computes[compute_id]
+
+    def deleteCompute(self, compute_id):
+        if compute_id in self._computes:
+            compute = self._computes[compute_id]
+            del self._computes[compute_id]
+            self._controller.delete("/computes/" + compute_id, None)
+        self.deleted_signal.emit(compute_id)
+
+    def updateList(self, computes):
+        """
+        Sync an array of compute server with remote
+        """
+        for compute_id in copy.copy(self._computes):
+            # Delete compute on controller not in the new computes
+            if compute_id not in [c.id() for c in computes]:
+                self.deleteCompute(compute_id)
 
     @staticmethod
     def reset():
