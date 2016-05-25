@@ -239,7 +239,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         if node:
             self._server = node.server()
         else:
-            self._server = rvers.instance().getServerFromString(settings["server"])
+            self._server = Servers.instance().getServerFromString(settings["server"])
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])

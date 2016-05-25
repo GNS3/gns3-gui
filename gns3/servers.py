@@ -19,27 +19,14 @@
 Keeps track of all the local and remote servers and their settings.
 """
 
-import sys
-import os
-import shlex
-import signal
 import urllib
-import shutil
-import string
-import random
-import socket
-import subprocess
 import binascii
-import stat
-import struct
-import psutil
 
 from .qt import QtNetwork, QtWidgets, QtCore
 from .network_client import getNetworkUrl
 from .local_config import LocalConfig
 from .settings import SERVERS_SETTINGS
 from .progress import Progress
-from .utils.sudo import sudo
 from .server import Server
 from .controller import Controller
 from .http_client import HTTPClient

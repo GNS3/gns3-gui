@@ -144,10 +144,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.setWindowTitle("[*] GNS3")
 
-
         # This widgets will be disable when you have no project loaded
         self.disableWhenNoProjectWidgets = [
-            self.uiNodesDockWidget,
+            self.uiGraphicsView,
             self.uiAnnotateMenu,
             self.uiAnnotationToolBar,
             self.uiControlToolBar,

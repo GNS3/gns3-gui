@@ -114,6 +114,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         self._local_addresses = ['0.0.0.0', '127.0.0.1', 'localhost', '::1', '0:0:0:0:0:0:0:1', '::', QtNetwork.QHostInfo.localHostName()]
 
+    def setEnabled(self, enabled):
+
+        if enabled is False:
+            item = QtWidgets.QGraphicsTextItem("Please create a project")
+            item.setPos(0, 0)
+            self.scene().addItem(item)
+        super().setEnabled(enabled)
+
     def reset(self):
         """
         Remove all the items from the scene and
