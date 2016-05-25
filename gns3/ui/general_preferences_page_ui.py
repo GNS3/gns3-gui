@@ -352,7 +352,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.verticalLayout.addLayout(self.horizontalLayout_6)
 
         self.retranslateUi(GeneralPreferencesPageWidget)
-        self.uiMiscTabWidget.setCurrentIndex(4)
+        self.uiMiscTabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(GeneralPreferencesPageWidget)
 
     def retranslateUi(self, GeneralPreferencesPageWidget):
