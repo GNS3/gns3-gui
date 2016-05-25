@@ -21,6 +21,7 @@ Configuration page for server preferences.
 
 import os
 import sys
+import copy
 import shutil
 
 import logging
@@ -36,7 +37,7 @@ from ..utils.wait_for_connection_worker import WaitForConnectionWorker
 from ..utils.wait_for_vm_worker import WaitForVMWorker
 from ..settings import SERVERS_SETTINGS
 from ..gns3_vm import GNS3VM
-from ..dialogs.new_server_dialog import NewServerDialog
+from ..dialogs.edit_compute_dialog import EditComputeDialog
 from ..local_server import LocalServer
 from ..compute_manager import ComputeManager
 
@@ -60,6 +61,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiUbridgeToolButton.clicked.connect(self._ubridgeBrowserSlot)
         self.uiAddRemoteServerPushButton.clicked.connect(self._remoteServerAddSlot)
         self.uiDeleteRemoteServerPushButton.clicked.connect(self._remoteServerDeleteSlot)
+        self.uiUpdateRemoteServerPushButton.clicked.connect(self._remoteServerUpdateSlot)
+
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiLocalServerAutoStartCheckBox.stateChanged.connect(self._useLocalServerAutoStartSlot)
@@ -161,7 +164,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
         Slot to enable or not the GNS3 VM settings.
         """
-
+        #TODO: Make compatible with 2.0
+        return
         if state:
             if not self.uiLocalServerAutoStartCheckBox.isChecked() and not self.uiRemoteRadioButton.isChecked():
                 QtWidgets.QMessageBox.critical(self, "Local GNS3 VM", "The local server must be enabled in order to use a local GNS3 VM")
@@ -242,15 +246,17 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         item = self.uiRemoteServersTreeWidget.currentItem()
         if item:
             self.uiDeleteRemoteServerPushButton.setEnabled(True)
+            self.uiUpdateRemoteServerPushButton.setEnabled(True)
         else:
             self.uiDeleteRemoteServerPushButton.setEnabled(False)
+            self.uiUpdateRemoteServerPushButton.setEnabled(False)
 
     def _remoteServerAddSlot(self):
         """
         Adds a new remote server.
         """
 
-        dialog = NewServerDialog(self.parent())
+        dialog = EditComputeDialog(self.parent())
         dialog.show()
         if dialog.exec_():
             self.loadPreferences()
@@ -264,6 +270,17 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         if item:
             del self._remote_computes[item.compute_id]
             self.uiRemoteServersTreeWidget.takeTopLevelItem(self.uiRemoteServersTreeWidget.indexOfTopLevelItem(item))
+
+    def _remoteServerUpdateSlot(self):
+        """
+        Update a remote server.
+        """
+
+        item = self.uiRemoteServersTreeWidget.currentItem()
+        dialog = EditComputeDialog(self.parent(), item.compute)
+        dialog.show()
+        if dialog.exec_():
+            self._populateRemoteServersTree()
 
     def _populateWidgets(self, servers_settings):
         """
@@ -310,6 +327,20 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             self.uiRemoteRadioButton.setChecked(True)
         self.uiHeadlessCheckBox.setChecked(vm_settings["headless"])
 
+    def _populateRemoteServersTree(self):
+        self.uiRemoteServersTreeWidget.clear()
+        for compute in self._remote_computes.values():
+            item = QtWidgets.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
+            item.setText(0, compute.name())
+            item.setText(1, compute.protocol())
+            item.setText(2, compute.host())
+            item.setText(3, str(compute.port()))
+            item.setText(4, compute.user())
+            item.compute = self._remote_computes[compute.id()]
+            item.compute_id = compute.id()
+        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
+        self._remoteServerChangedSlot()
+
     def loadPreferences(self):
         """
         Loads the server preferences.
@@ -324,26 +355,14 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         # load remote server preferences
         self._remote_computes.clear()
         self.uiServersComboBox.clear()
-        self.uiRemoteServersTreeWidget.clear()
         for compute in cm.computes():
-            protocol = compute.protocol()
-            host = compute.host()
-            port = compute.port()
-            user = compute.user()
-            self._remote_computes[compute.id()] = compute
-            item = QtWidgets.QTreeWidgetItem(self.uiRemoteServersTreeWidget)
-            item.setText(0, protocol)
-            item.setText(1, host)
-            item.setText(2, str(port))
-            item.setText(3, user)
-            item.settings = compute
-            item.compute_id = compute.id()
-
+            # We copy to be able to detect the change with the original element
+            # when we apply the settings
+            self._remote_computes[compute.id()] = copy.copy(compute)
             self.uiServersComboBox.addItem(compute.name(), compute)
-
+        self._populateRemoteServersTree()
         self.uiServersComboBox.setCurrentIndex(self.uiServersComboBox.findText(servers_settings['vm']['remote_vm_url']))
 
-        self.uiRemoteServersTreeWidget.resizeColumnToContents(0)
 
     def savePreferences(self):
         """

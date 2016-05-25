@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
-    <height>596</height>
+    <width>550</width>
+    <height>606</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -544,8 +544,13 @@
           </sizepolicy>
          </property>
          <property name="columnCount">
-          <number>4</number>
+          <number>5</number>
          </property>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
          <column>
           <property name="text">
            <string notr="true">Protocol</string>
@@ -574,6 +579,16 @@
           <widget class="QPushButton" name="uiAddRemoteServerPushButton">
            <property name="text">
             <string>&amp;Add</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiUpdateRemoteServerPushButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Edit</string>
            </property>
           </widget>
          </item>

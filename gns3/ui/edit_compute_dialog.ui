@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewServerDialog</class>
- <widget class="QDialog" name="NewServerDialog">
+ <class>EditComputeDialog</class>
+ <widget class="QDialog" name="EditComputeDialog">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>426</width>
-    <height>304</height>
+    <width>523</width>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New server</string>
+   <string>Server</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -23,14 +23,33 @@
       <string>Server settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
+      <item row="3" column="1" colspan="2">
+       <widget class="QSpinBox" name="uiServerPortSpinBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="suffix">
+         <string notr="true"> TCP</string>
+        </property>
+        <property name="maximum">
+         <number>65535</number>
+        </property>
+        <property name="value">
+         <number>3080</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
        <widget class="QLabel" name="uiServerProtocolLabel">
         <property name="text">
          <string>Protocol:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" colspan="2">
+      <item row="1" column="1" colspan="2">
        <widget class="QComboBox" name="uiServerProtocolComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -53,81 +72,80 @@
         </item>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="uiServerHostLabel">
         <property name="text">
          <string>Host:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="2">
+      <item row="2" column="1" colspan="2">
        <widget class="QLineEdit" name="uiServerHostLineEdit">
         <property name="text">
          <string>192.168.56.101</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="uiServerPortLabel">
         <property name="text">
          <string>Port:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QSpinBox" name="uiServerPortSpinBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="suffix">
-         <string notr="true"> TCP</string>
-        </property>
-        <property name="maximum">
-         <number>65535</number>
-        </property>
-        <property name="value">
-         <number>3080</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="3">
-       <widget class="QCheckBox" name="uiEnableAuthenticationCheckBox">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>Enable authentication</string>
+         <string>Name:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0" colspan="2">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="uiServerNameLineEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="uiEnableAuthenticationCheckBox">
+     <property name="title">
+      <string>Enable authentication</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::ExpandingFieldsGrow</enum>
+      </property>
+      <item row="1" column="0">
        <widget class="QLabel" name="uiServerUserLabel">
         <property name="text">
          <string>User:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
+      <item row="1" column="1">
        <widget class="QLineEdit" name="uiServerUserLineEdit">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="toolTip">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="5" column="0" colspan="2">
+      <item row="2" column="0">
        <widget class="QLabel" name="uiServerPasswordLabel">
         <property name="text">
          <string>Password:</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
+      <item row="2" column="1">
        <widget class="QLineEdit" name="uiServerPasswordLineEdit">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="inputMethodHints">
          <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
@@ -141,12 +159,12 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+    <widget class="QLabel" name="uiWarningLabel">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;WARNING&lt;/span&gt;: Change a server with authentication enabled will reset the password.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -158,10 +176,20 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>21</height>
+       <height>40</height>
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -170,7 +198,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>NewServerDialog</receiver>
+   <receiver>EditComputeDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -186,7 +214,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>NewServerDialog</receiver>
+   <receiver>EditComputeDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

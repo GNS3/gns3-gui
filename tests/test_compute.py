@@ -21,3 +21,22 @@ from gns3.compute import Compute
 def test_init():
     compute = Compute("local")
     assert compute.id() == "local"
+
+
+def test_json():
+    compute = Compute("test")
+    compute.setHost("example.org")
+    compute.setName("Test")
+    compute.setProtocol("https")
+    compute.setUser("hello")
+    compute.setPassword("world")
+    compute.setPort(4242)
+    assert compute.__json__() == {
+        'compute_id': 'test',
+        'host': 'example.org',
+        'name': 'Test',
+        'password': 'world',
+        'port': 4242,
+        'protocol': 'https',
+        'user': 'hello'
+    }

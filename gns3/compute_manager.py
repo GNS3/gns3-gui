@@ -98,7 +98,14 @@ class ComputeManager(QtCore.QObject):
         for compute_id in copy.copy(self._computes):
             # Delete compute on controller not in the new computes
             if compute_id not in [c.id() for c in computes]:
+                log.debug("Delete compute %s", compute_id)
                 self.deleteCompute(compute_id)
+            else:
+                for c in computes:
+                    if c.id() == compute_id and c != self._computes[compute_id]:
+                        log.debug("Update compute %s", compute_id)
+                        self._controller.put("/computes/" + compute_id, None, body=c.__json__())
+                        self._computes[compute_id] = c
 
     @staticmethod
     def reset():

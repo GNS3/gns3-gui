@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import copy
 from unittest.mock import MagicMock
 
 from gns3.compute_manager import ComputeManager
@@ -96,7 +97,7 @@ def test_computeDataReceivedCallback():
     assert callback_update.called
 
 
-def test_updateList(controller):
+def test_updateList_deleted(controller):
     cm = ComputeManager()
     computes = []
     computes.append(cm.getCompute("test1"))
@@ -108,3 +109,24 @@ def test_updateList(controller):
     assert "test1" in cm._computes
     assert "test2" in cm._computes
     assert "test3" not in cm._computes
+
+
+def test_updateList_updated(controller):
+    cm = ComputeManager()
+    computes = []
+    compute = copy.copy(cm.getCompute("test1"))
+    computes.append(compute)
+    compute.setName("TEST2")
+    cm.updateList(computes)
+    assert cm._computes["test1"].name() == "TEST2"
+    controller._http_client.createHTTPQuery.assert_called_with("PUT", "/computes/test1", None, body=compute.__json__())
+
+
+def test_updateList_no_change(controller):
+    cm = ComputeManager()
+    computes = []
+    compute = copy.copy(cm.getCompute("test1"))
+    computes.append(compute)
+    controller._http_client = MagicMock()
+    cm.updateList(computes)
+    assert not controller._http_client.createHTTPQuery.called

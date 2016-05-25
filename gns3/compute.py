@@ -28,6 +28,7 @@ class Compute:
         self._host = None
         self._port = None
         self._user = None
+        self._password = None
 
     def id(self):
         return self._compute_id
@@ -56,6 +57,9 @@ class Compute:
     def setUser(self, user):
         self._user = user
 
+    def setPassword(self, password):
+        self._password = password
+
     def protocol(self):
         return self._protocol
 
@@ -71,3 +75,18 @@ class Compute:
     def __str__(self):
         return self._compute_id
 
+    def __json__(self):
+        return {
+            "host": self._host,
+            "port": self._port,
+            "protocol": self._protocol,
+            "user": self._user,
+            "password": self._password,
+            "name": self._name,
+            "compute_id": self._compute_id
+        }
+
+    def __eq__(self, v):
+        if isinstance(v, Compute):
+            return self.__json__() == v.__json__()
+        return False
