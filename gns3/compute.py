@@ -24,6 +24,10 @@ class Compute:
         self._compute_id = compute_id
         self._name = compute_id
         self._connected = False
+        self._protocol = None
+        self._host = None
+        self._port = None
+        self._user = None
 
     def id(self):
         return self._compute_id
@@ -39,6 +43,30 @@ class Compute:
 
     def setConnected(self, value):
         self._connected = value
+
+    def port(self):
+        return self._port
+
+    def setPort(self, port):
+        self._port = port
+
+    def user(self):
+        return self._user
+
+    def setUser(self, user):
+        self._user = user
+
+    def protocol(self):
+        return self._protocol
+
+    def setProtocol(self, protocol):
+        self._protocol = protocol
+
+    def host(self):
+        return self._host
+
+    def setHost(self, host):
+        self._host = host
 
     def __str__(self):
         return self._compute_id

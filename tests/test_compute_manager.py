@@ -34,7 +34,11 @@ def test_listComputesCallback():
         {
             "compute_id": "local",
             "name": "Local server",
-            "connected": False
+            "connected": False,
+            "protocol": "http",
+            "host": "localhost",
+            "port": 3080,
+            "user": None
         }
     ])
     assert cm._computes["local"].name() == "Local server"
@@ -50,9 +54,17 @@ def test_computeDataReceivedCallback():
     cm.computeDataReceivedCallback({
         "compute_id": "test",
         "name": "Test server",
-        "connected": False
+        "connected": False,
+        "protocol": "http",
+        "host": "test.org",
+        "port": 3080,
+        "user": None
     })
     assert cm._computes["test"].name() == "Test server"
+    assert cm._computes["test"].protocol() == "http"
+    assert cm._computes["test"].host() == "test.org"
+    assert cm._computes["test"].port() == 3080
+    assert cm._computes["test"].user() is None
     assert cm._computes["test"].connected() is False
     assert callback_create.called
     assert not callback_update.called
@@ -61,7 +73,11 @@ def test_computeDataReceivedCallback():
     cm.computeDataReceivedCallback({
         "compute_id": "test",
         "name": "Test Compute",
-        "connected": True
+        "connected": True,
+        "protocol": "http",
+        "host": "test.org",
+        "port": 3080,
+        "user": None
     })
     assert cm._computes["test"].name() == "Test Compute"
     assert cm._computes["test"].connected()

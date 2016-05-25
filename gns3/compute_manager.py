@@ -23,6 +23,7 @@ from .controller import Controller
 import logging
 log = logging.getLogger(__name__)
 
+
 class ComputeManager(QtCore.QObject):
     created_signal = QtCore.Signal(str)
     updated_signal = QtCore.Signal(str)
@@ -60,6 +61,10 @@ class ComputeManager(QtCore.QObject):
 
         self._computes[compute_id].setName(compute["name"])
         self._computes[compute_id].setConnected(compute["connected"])
+        self._computes[compute_id].setProtocol(compute["protocol"])
+        self._computes[compute_id].setHost(compute["host"])
+        self._computes[compute_id].setPort(compute["port"])
+        self._computes[compute_id].setUser(compute["user"])
 
         if new_node:
             self.created_signal.emit(compute_id)
