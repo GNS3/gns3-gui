@@ -109,7 +109,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
         Refresh the list of VM available in VMware or VirtualBox.
         """
-
+        #TODO: Make compatible with 2.0
+        return
         if not self.uiEnableVMCheckBox.isChecked():
             return
         server = Servers.instance().localServer()
