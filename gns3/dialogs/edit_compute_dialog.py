@@ -18,6 +18,7 @@
 import re
 
 from gns3.qt import QtWidgets
+from gns3.compute import Compute
 from gns3.ui.edit_compute_dialog_ui import Ui_EditComputeDialog
 
 
@@ -50,6 +51,7 @@ class EditComputeDialog(QtWidgets.QDialog, Ui_EditComputeDialog):
                 self.uiEnableAuthenticationCheckBox.setChecked(False)
                 self.uiWarningLabel.setVisible(False)
         else:
+            self.uiEnableAuthenticationCheckBox.setChecked(False)
             self.uiWarningLabel.setVisible(False)
         self._enableAuthenticationSlot(self.uiEnableAuthenticationCheckBox.isChecked())
 
@@ -68,6 +70,9 @@ class EditComputeDialog(QtWidgets.QDialog, Ui_EditComputeDialog):
             self.uiServerPasswordLineEdit.setVisible(False)
             self.uiServerUserLabel.setVisible(False)
             self.uiServerPasswordLabel.setVisible(False)
+
+    def compute(self):
+        return self._compute
 
     def accept(self):
         """
@@ -92,7 +97,7 @@ class EditComputeDialog(QtWidgets.QDialog, Ui_EditComputeDialog):
             return
 
         if not self._compute:
-            pass
+            self._compute = Compute()
         self._compute.setName(name)
         self._compute.setProtocol(protocol)
         self._compute.setHost(host)

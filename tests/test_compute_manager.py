@@ -19,6 +19,7 @@ import copy
 from unittest.mock import MagicMock
 
 from gns3.compute_manager import ComputeManager
+from gns3.compute import Compute
 
 
 def test_getCompute():
@@ -120,6 +121,17 @@ def test_updateList_updated(controller):
     cm.updateList(computes)
     assert cm._computes["test1"].name() == "TEST2"
     controller._http_client.createHTTPQuery.assert_called_with("PUT", "/computes/test1", None, body=compute.__json__())
+
+
+def test_updateList_added(controller):
+    cm = ComputeManager()
+    computes = []
+    compute = Compute()
+    computes.append(compute)
+    controller._http_client = MagicMock()
+    cm.updateList(computes)
+    assert compute.id() in cm._computes
+    controller._http_client.createHTTPQuery.assert_called_with("POST", "/computes", None, body=compute.__json__())
 
 
 def test_updateList_no_change(controller):

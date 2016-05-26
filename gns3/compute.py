@@ -15,12 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import uuid
+
 
 class Compute:
     """
     A compute node on the remote server
     """
-    def __init__(self, compute_id):
+    def __init__(self, compute_id=None):
+        if compute_id is None:
+            compute_id = str(uuid.uuid4())
         self._compute_id = compute_id
         self._name = compute_id
         self._connected = False

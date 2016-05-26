@@ -260,7 +260,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         dialog = EditComputeDialog(self.parent())
         dialog.show()
         if dialog.exec_():
-            self.loadPreferences()
+            self._remote_computes[dialog.compute().id()] = dialog.compute()
+            self._populateRemoteServersTree()
 
     def _remoteServerDeleteSlot(self):
         """

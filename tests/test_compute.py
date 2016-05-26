@@ -23,6 +23,11 @@ def test_init():
     assert compute.id() == "local"
 
 
+def test_init_without_id():
+    compute = Compute()
+    assert compute.id() is not None
+
+
 def test_json():
     compute = Compute("test")
     compute.setHost("example.org")
