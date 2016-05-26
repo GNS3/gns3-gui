@@ -37,7 +37,7 @@ class ProjectManager(QtCore.QObject):
 
     # signal to tell a new project was created
     project_new_signal = QtCore.pyqtSignal(str)
-    project_ready_signal = QtCore.pyqtSignal()
+    project_changed_signal = QtCore.pyqtSignal()
 
     def __init__(self, parent):
 
@@ -136,7 +136,7 @@ class ProjectManager(QtCore.QObject):
         self._project.setTopologyFile(project_settings["project_path"])
         self.saveProject(project_settings["project_path"])
         self.project_new_signal.emit(self._project.topologyFile())
-        self.project_ready_signal.emit()
+        self.project_changed_signal.emit()
 
     def projectCreatedSlot(self, project):
         """
@@ -177,7 +177,7 @@ class ProjectManager(QtCore.QObject):
 
         self._main_window.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         self._setCurrentFile(path)
-        self.project_ready_signal.emit()
+        self.project_changed_signal.emit()
         return True
 
     def saveProjectAs(self):
@@ -365,3 +365,11 @@ You are responsible to check if you have the right to distribute the image(s) as
         if not path:
             return
         self._main_window.loadPath(path)
+
+
+    def deleteProject(self):
+        if self._project:
+           self._project.destroy()
+           self._project = None
+           self._setCurrentFile(None)
+        self.project_changed_signal.emit()

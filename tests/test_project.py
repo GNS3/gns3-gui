@@ -181,6 +181,21 @@ def test_project_commit(controller):
     assert args[1] == "/projects/{project_id}/commit".format(project_id=project.id())
 
 
+def test_project_destroy(controller):
+
+
+    project = Project()
+    project.setId(str(uuid4()))
+    project.destroy()
+
+    mock = controller._http_client.createHTTPQuery
+    assert mock.called
+    args, kwargs = mock.call_args
+
+    assert args[0] == "DELETE"
+    assert args[1] == "/projects/{project_id}".format(project_id=project.id())
+
+
 def test_topology_file(tmpdir):
 
     project = Project()

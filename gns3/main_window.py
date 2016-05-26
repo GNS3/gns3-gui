@@ -88,7 +88,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         HTTPClient.setProgressCallback(Progress.instance(self))
 
         self._project_manager = ProjectManager(self)
-        self._project_manager.project_ready_signal.connect(self._projectReadySlot)
+        self._project_manager.project_changed_signal.connect(self._projectChangedSlot)
         self._first_file_load = True
         self._open_project_path = None
         self._loadSettings()
@@ -157,6 +157,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiImportProjectAction,
             self.uiScreenshotAction,
             self.uiSnapshotAction,
+            self.uiDeleteProjectAction,
             self.uiHelpMenu
         ]
 
@@ -179,6 +180,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
+        self.uiDeleteProjectAction.triggered.connect(self._deleteProjectActionSlot)
 
         # edit menu connections
         self.uiSelectAllAction.triggered.connect(self._selectAllActionSlot)
@@ -425,12 +427,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
                     project.close()
 
-    def _projectReadySlot(self):
+    def _projectChangedSlot(self):
         """
         Called when a project finish to load
         """
-        for widget in self.disableWhenNoProjectWidgets:
-            widget.setEnabled(True)
+        # No projects
+        if self._project_manager.project() is None:
+            self.uiGraphicsView.reset()
+            for widget in self.disableWhenNoProjectWidgets:
+                widget.setEnabled(False)
+        else:
+            for widget in self.disableWhenNoProjectWidgets:
+                widget.setEnabled(True)
 
     def _projectClosedContinueLoadPath(self):
 
@@ -1224,6 +1232,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         self._project_manager.importProject()
+
+    def _deleteProjectActionSlot(self):
+        reply = QtWidgets.QMessageBox.warning(
+            self,
+            "GNS3",
+            "The project will be deleted from disk. All files will be removed including the project subdirectories. Continue?",
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            self._project_manager.deleteProject()
 
     def _setStyle(self, style_name):
         """

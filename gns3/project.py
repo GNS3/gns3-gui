@@ -308,6 +308,13 @@ class Project(QtCore.QObject):
             self.project_about_to_close_signal.emit()
             self.project_closed_signal.emit()
 
+    def destroy(self):
+        """
+        Delete the project from all servers
+        """
+        self.project_about_to_close_signal.emit()
+        Controller.instance().delete("/projects/{project_id}".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Delete the project")
+
     def _projectClosedCallback(self, result, error=False, server=None, **kwargs):
 
         if error:
