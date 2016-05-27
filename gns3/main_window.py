@@ -89,6 +89,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     # signal to tell the windows is ready to load his first project
     ready_signal = QtCore.pyqtSignal()
 
+    SUPPORTED_IMAGE_FORMATS = [
+        "svg",
+        "bmp",
+        "jpeg",
+        "jpg",
+        "gif",
+        "pbm",
+        "pgm",
+        "png",
+        "ppm",
+        "xbm",
+        "xpm"
+    ]
+
     def __init__(self, parent=None):
 
         super().__init__(parent)
@@ -443,6 +457,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if self._project_dialog:
                 self._project_dialog.reject()
                 self._project_dialog = None
+
+            for image_format in self.SUPPORTED_IMAGE_FORMATS:
+                if path.endswith("." + image_format):
+                    self._importImage(path)
+                    return
 
             if path.endswith(".gns3project") or path.endswith(".gns3p"):
                 project_name = os.path.basename(path).split('.')[0]
@@ -808,13 +827,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
 
         # supported image file formats
-        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.gif *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)"
+        file_formats = "Image files (*." + " *.".join(self.SUPPORTED_IMAGE_FORMATS) + ");;All files (*.*)"
 
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._pictures_dir, file_formats)
-        if not path:
-            return
-        self._pictures_dir = os.path.dirname(path)
+        if path:
+            self._importImage(path)
 
+    def _importImage(self, path):
+
+        if not self._project:
+            return
+
+        files_dir = self._project.filesDir()
+        self._pictures_dir = os.path.dirname(path)
         image = QtGui.QPixmap(path)
         if image.isNull():
             QtWidgets.QMessageBox.critical(self, "Image", "Image file format not supported")
