@@ -1638,7 +1638,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         for node in topology.nodes():
             if node.__class__.__name__ in ["VirtualBoxVM", "VMwareVM"]:
-                QtWidgets.QMessageBox.critical(self, "Export portable project" "A project containing VMware or VirtualBox VMs cannot be exported because the VMs are managed by these software.")
+                QtWidgets.QMessageBox.critical(self, "Export portable project", "A project containing VMware or VirtualBox VMs cannot be exported because the VMs are managed by these software.")
                 return
 
         include_image_question = """Would you like to include any base image?
