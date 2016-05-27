@@ -35,7 +35,11 @@ class Progress(QtCore.QObject):
     remove_query_signal = QtCore.Signal(str)
     progress_signal = QtCore.Signal(str, int, int)
 
-    def __init__(self, parent, min_duration=1000):
+    def __init__(self, parent, min_duration=1000, delay=250):
+        """
+        :param min_duration: When the windows is display the windows is display for at least min_duration
+        :param delay: Delay before display the first dialog
+        """
 
         super().__init__(parent)
         self._progress_dialog = None
@@ -45,8 +49,10 @@ class Progress(QtCore.QObject):
         self._rtimer.timeout.connect(self.update)
         self._rtimer.start(250)
 
-        # When in millisecond we start to show the progress dialog
+        # When in millisecond we started to show the progress dialog
         self._display_start_time = 0
+
+        self._delay = delay
 
         self._finished_query_during_display = 0
         self._queries = {}
@@ -96,6 +102,9 @@ class Progress(QtCore.QObject):
         self._cancelSlot()
 
     def update(self):
+        now = (time.time() * 1000)
+        if now < self._display_start_time:
+            return
         if len(self._queries) == 0 and (time.time() * 1000) >= self._display_start_time + self._minimum_duration:
             self.hide()
             return
@@ -122,8 +131,8 @@ class Progress(QtCore.QObject):
 
             self._progress_dialog = progress_dialog
             self._finished_query_during_display = 0
-            self._display_start_time = time.time() * 1000
-            self._progress_dialog.show()
+            self._display_start_time = (time.time() * 1000) + self._delay
+            self.update()
         else:
             start_timer = False
             progress_dialog = self._progress_dialog
