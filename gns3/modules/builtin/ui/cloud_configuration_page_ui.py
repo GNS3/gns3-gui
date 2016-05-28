@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created: Sat Mar 19 22:31:09 2016
+# Created: Fri May 27 22:47:08 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!

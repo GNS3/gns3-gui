@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Fri May 27 22:47:07 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -391,10 +392,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.groupBox)
         self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
         self.gridLayout_3.addWidget(self.uiACPIShutdownCheckBox, 2, 0, 1, 2)
-        self.uiQemuOptionsLineEdit.raise_()
-        self.uiQemuOptionsLabel.raise_()
-        self.uiACPIShutdownCheckBox.raise_()
-        self.uiBaseVMCheckBox.raise_()
         self.verticalLayout_2.addWidget(self.groupBox)
         spacerItem4 = QtWidgets.QSpacerItem(20, 90, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem4)
@@ -450,6 +447,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiCdromImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiCdromTab), _translate("QemuVMConfigPageWidget", "CD/DVD"))
         self.uiLegacyNetworkingCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use the legacy networking mode"))
+        self.uiMacAddrLineEdit.setToolTip(_translate("QemuVMConfigPageWidget", "The 5th and 6th bytes will be randomized"))
         self.uiPortSegmentSizeLabel.setText(_translate("QemuVMConfigPageWidget", "Segment size:"))
         self.uiAdapterTypesLabel.setText(_translate("QemuVMConfigPageWidget", "Type:"))
         self.uiAdaptersLabel.setText(_translate("QemuVMConfigPageWidget", "Adapters:"))
