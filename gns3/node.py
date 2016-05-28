@@ -102,7 +102,8 @@ class Node(QtCore.QObject):
 
         for number in range(1, 100000):
             if '{0}' in base_name or '{id}' in base_name:
-                name = base_name.format(number, id=number)
+                name = base_name.replace('{0}', str(number))
+                name = name.replace('{id}', str(number))
             else:
                 name = base_name + str(number)
             if name not in self._allocated_names:
