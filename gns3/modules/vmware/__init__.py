@@ -173,6 +173,7 @@ class VMware(Module):
             "host_type": self._settings["host_type"],
             "vmnet_start_range": self._settings["vmnet_start_range"],
             "vmnet_end_range": self._settings["vmnet_end_range"],
+            "block_host_traffic": self._settings["block_host_traffic"]
         }
 
         if self._settings["vmrun_path"]:

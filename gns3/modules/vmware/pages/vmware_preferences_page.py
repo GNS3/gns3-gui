@@ -60,6 +60,8 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         else:
             # VMnet limit on Linux is 255
             self.uiVMnetEndRangeSpinBox.setMaximum(255)
+            # Block host network traffic is only supported on Windows for now
+            self.uiBlockHostTrafficCheckBox.setEnabled(False)
 
     def _vmrunPathBrowserSlot(self):
         """
@@ -163,6 +165,7 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
             self.uiHostTypeComboBox.setCurrentIndex(index)
         self.uiVMnetStartRangeSpinBox.setValue(settings["vmnet_start_range"])
         self.uiVMnetEndRangeSpinBox.setValue(settings["vmnet_end_range"])
+        self.uiBlockHostTrafficCheckBox.setChecked(settings["block_host_traffic"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def loadPreferences(self):
@@ -186,5 +189,6 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
                         "host_type": self.uiHostTypeComboBox.itemData(self.uiHostTypeComboBox.currentIndex()),
                         "vmnet_start_range": self.uiVMnetStartRangeSpinBox.value(),
                         "vmnet_end_range": self.uiVMnetEndRangeSpinBox.value(),
+                        "block_host_traffic": self.uiBlockHostTrafficCheckBox.isChecked(),
                         "use_local_server": self.uiUseLocalServercheckBox.isChecked()}
         VMware.instance().setSettings(new_settings)
