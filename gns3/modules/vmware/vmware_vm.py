@@ -25,7 +25,6 @@ import tempfile
 
 from gns3.qt import QtCore
 from gns3.node import Node
-from gns3.nios.nio_vmnet import NIOVMNET
 from gns3.ports.ethernet_port import EthernetPort
 from .settings import VMWARE_VM_SETTINGS
 
@@ -60,7 +59,6 @@ class VMwareVM(Node):
                               "console_host": None,
                               "adapters": VMWARE_VM_SETTINGS["adapters"],
                               "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
-                              "use_ubridge": VMWARE_VM_SETTINGS["use_ubridge"],
                               "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
                               "headless": VMWARE_VM_SETTINGS["headless"],
                               "acpi_shutdown": VMWARE_VM_SETTINGS["acpi_shutdown"],
@@ -92,10 +90,7 @@ class VMwareVM(Node):
                 if self._port_segment_size and interface_number % self._port_segment_size == 0:
                     segment_number += 1
                     interface_number = 0
-            if self._settings["use_ubridge"]:
-                new_port = EthernetPort(port_name)
-            else:
-                new_port = EthernetPort(port_name, nio=NIOVMNET)
+            new_port = EthernetPort(port_name)
             new_port.setAdapterNumber(adapter_number)
             new_port.setPortNumber(0)
             self._ports.append(new_port)
@@ -163,11 +158,9 @@ class VMwareVM(Node):
                     self.updateAllocatedName(value)
                 if name == "adapters":
                     nb_adapters_changed = True
-                if name == "use_ubridge":
-                    ubridge_setting_changed = True
                 self._settings[name] = value
 
-        if nb_adapters_changed or ubridge_setting_changed:
+        if nb_adapters_changed:
             log.debug("number of adapters has changed to {} or uBridge setting changed".format(self._settings["adapters"]))
             # TODO: dynamically add/remove adapters
             self._ports.clear()
@@ -201,14 +194,8 @@ class VMwareVM(Node):
             if port.isFree():
                 port_info += "     {port_name} is empty\n".format(port_name=port.name())
             else:
-                nio = port.nio()
-                port_nio = "using UDP tunnel"
-                if isinstance(nio, NIOVMNET):
-                    port_nio = "using " + nio.vmnet()
-                port_info += "     {port_name} {port_description} {port_nio}\n".format(port_name=port.name(),
-                                                                                       port_description=port.description(),
-                                                                                       port_nio=port_nio)
-
+                port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
+                                                                            port_description=port.description())
         return info + port_info
 
     def dump(self):

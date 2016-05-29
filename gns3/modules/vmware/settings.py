@@ -45,7 +45,6 @@ VMWARE_VM_SETTINGS = {
     "first_port_name": "",
     "adapters": 1,
     "adapter_type": "e1000",
-    "use_ubridge": True,
     "use_any_adapter": False,
     "headless": False,
     "acpi_shutdown": False,

@@ -22,7 +22,6 @@ from unittest.mock import patch, Mock, ANY
 
 from gns3.modules.iou.iou_device import IOUDevice
 from gns3.ports.port import Port
-from gns3.nios.nio_udp import NIOUDP
 from gns3.base_node import BaseNode
 from gns3.utils.normalize_filename import normalize_filename
 from gns3.modules.iou import IOU

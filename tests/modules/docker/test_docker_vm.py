@@ -19,7 +19,6 @@ from unittest.mock import patch, Mock, ANY
 from gns3.modules.docker.docker_vm import DockerVM
 from gns3.modules.docker import Docker
 from gns3.ports.port import Port
-from gns3.nios.nio_udp import NIOUDP
 
 
 def test_docker_vm_init(local_server, project):

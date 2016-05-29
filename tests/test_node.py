@@ -22,7 +22,6 @@ from unittest.mock import patch, Mock, MagicMock
 from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.node import Node
 from gns3.ports.port import Port
-from gns3.nios.nio_udp import NIOUDP
 
 
 def test_create(vpcs_device, local_server):

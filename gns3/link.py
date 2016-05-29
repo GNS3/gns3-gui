@@ -38,7 +38,6 @@ class Link(QtCore.QObject):
     :param source_port: source Port instance
     :param destination_node: destination Node instance
     :param destination_port: destination Port instance
-    :param stub: indicates if the link is connected to a stub device like a Cloud
     """
 
     # signals used to let the GUI view know about link

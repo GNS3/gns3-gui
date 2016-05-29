@@ -530,7 +530,7 @@
                 "headless": { "type": "boolean" },
                 "name": { "$ref": "#/definitions/mandatory_string" },
                 "vmx_path": { "$ref": "#/definitions/mandatory_string" },
-                "use_ubridge": { "type": "boolean" },
+                "use_ubridge": { "type": "boolean", "description": "Deprecated in 2.0"},
                 "use_any_adapter": { "type": "boolean" },
                 "adapter_type": {
                     "enum": [

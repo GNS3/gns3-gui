@@ -20,7 +20,6 @@ import pytest
 from unittest.mock import patch, Mock
 from gns3.modules.vpcs.vpcs_device import VPCSDevice
 from gns3.ports.port import Port
-from gns3.nios.nio_udp import NIOUDP
 from gns3.base_node import BaseNode
 from gns3.utils.normalize_filename import normalize_filename
 

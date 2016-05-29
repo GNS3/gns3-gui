@@ -144,7 +144,6 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
-        self.uiUseUbridgeCheckBox.setChecked(settings["use_ubridge"])
         self.uiUseAnyAdapterCheckBox.setChecked(settings["use_any_adapter"])
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
         self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
@@ -216,13 +215,6 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             settings["first_port_name"] = self.uiFirstPortNameLineEdit.text().strip()
 
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
-        use_ubridge = self.uiUseUbridgeCheckBox.isChecked()
-        if node and settings["use_ubridge"] != use_ubridge:
-            for node_port in node.ports():
-                if not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, node.name(), "Changing the use uBridge setting while links are connected isn't supported! Please delete all the links first.")
-                    raise ConfigurationError()
-        settings["use_ubridge"] = use_ubridge
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
         settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2014 GNS3 Technologies Inc.
+# Copyright (C) 2016 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,8 +19,7 @@
 Configuration page for clouds.
 """
 
-import re
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtWidgets
 from ..ui.cloud_configuration_page_ui import Ui_cloudConfigPageWidget
 
 
@@ -34,490 +33,228 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         super().__init__()
         self.setupUi(self)
-        self._nios = set()
+        self._ports = []
 
-        # connect NIO generic Ethernet slots
-        self.uiGenericEthernetComboBox.currentIndexChanged.connect(self._genericEthernetSelectedSlot)
-        self.uiGenericEthernetListWidget.itemSelectionChanged.connect(self._genericEthernetChangedSlot)
-        self.uiAddGenericEthernetPushButton.clicked.connect(self._genericEthernetAddSlot)
-        self.uiDeleteGenericEthernetPushButton.clicked.connect(self._genericEthernetDeleteSlot)
+        # connect Ethernet slots
+        self.uiEthernetListWidget.itemSelectionChanged.connect(self._EthernetChangedSlot)
+        self.uiAddEthernetPushButton.clicked.connect(self._EthernetAddSlot)
+        self.uiDeleteEthernetPushButton.clicked.connect(self._EthernetDeleteSlot)
 
-        # connect NIO Linux Ethernet slots
-        self.uiLinuxEthernetComboBox.currentIndexChanged.connect(self._linuxEthernetSelectedSlot)
-        self.uiLinuxEthernetListWidget.itemSelectionChanged.connect(self._linuxEthernetChangedSlot)
-        self.uiAddLinuxEthernetPushButton.clicked.connect(self._linuxEthernetAddSlot)
-        self.uiDeleteLinuxEthernetPushButton.clicked.connect(self._linuxEthernetDeleteSlot)
+        # connect TAP slots
+        self.uiTAPComboBox.currentIndexChanged.connect(self._TAPSelectedSlot)
+        self.uiTAPListWidget.itemSelectionChanged.connect(self._TAPChangedSlot)
+        self.uiAddTAPPushButton.clicked.connect(self._TAPAddSlot)
+        self.uiDeleteTAPPushButton.clicked.connect(self._TAPDeleteSlot)
 
-        # connect NIO NAT slots
-        self.uiNIONATListWidget.currentRowChanged.connect(self._NIONATSelectedSlot)
-        self.uiNIONATListWidget.itemSelectionChanged.connect(self._NIONATChangedSlot)
-        self.uiAddNIONATPushButton.clicked.connect(self._NIONATAddSlot)
-        self.uiDeleteNIONATPushButton.clicked.connect(self._NIONATDeleteSlot)
+        # connect UDP slots
+        self.uiUDPTreeWidget.itemActivated.connect(self._UDPSelectedSlot)
+        self.uiUDPTreeWidget.itemSelectionChanged.connect(self._UDPChangedSlot)
+        self.uiAddUDPPushButton.clicked.connect(self._UDPAddSlot)
+        self.uiDeleteUDPPushButton.clicked.connect(self._UDPDeleteSlot)
 
-        # connect NIO UDP slots
-        self.uiNIOUDPListWidget.currentRowChanged.connect(self._NIOUDPSelectedSlot)
-        self.uiNIOUDPListWidget.itemSelectionChanged.connect(self._NIOUDPChangedSlot)
-        self.uiAddNIOUDPPushButton.clicked.connect(self._NIOUDPAddSlot)
-        self.uiDeleteNIOUDPPushButton.clicked.connect(self._NIOUDPDeleteSlot)
-
-        # connect NIO TAP slots
-        self.uiNIOTAPListWidget.currentRowChanged.connect(self._NIOTAPSelectedSlot)
-        self.uiNIOTAPListWidget.itemSelectionChanged.connect(self._NIOTAPChangedSlot)
-        self.uiAddNIOTAPPushButton.clicked.connect(self._NIOTAPAddSlot)
-        self.uiDeleteNIOTAPPushButton.clicked.connect(self._NIOTAPDeleteSlot)
-
-        # connect NIO UNIX slots
-        self.uiNIOUNIXListWidget.currentRowChanged.connect(self._NIOUNIXSelectedSlot)
-        self.uiNIOUNIXListWidget.itemSelectionChanged.connect(self._NIOUNIXChangedSlot)
-        self.uiAddNIOUNIXPushButton.clicked.connect(self._NIOUNIXAddSlot)
-        self.uiDeleteNIOUNIXPushButton.clicked.connect(self._NIOUNIXDeleteSlot)
-
-        # connect NIO VDE slots
-        self.uiNIOVDEListWidget.currentRowChanged.connect(self._NIOVDESelectedSlot)
-        self.uiNIOVDEListWidget.itemSelectionChanged.connect(self._NIOVDEChangedSlot)
-        self.uiAddNIOVDEPushButton.clicked.connect(self._NIOVDEAddSlot)
-        self.uiDeleteNIOVDEPushButton.clicked.connect(self._NIOVDEDeleteSlot)
-
-        # connect NIO NULL slots
-        self.uiNIONullListWidget.currentRowChanged.connect(self._NIONullSelectedSlot)
-        self.uiNIONullListWidget.itemSelectionChanged.connect(self._NIONullChangedSlot)
-        self.uiAddNIONullPushButton.clicked.connect(self._NIONullAddSlot)
-        self.uiDeleteNIONullPushButton.clicked.connect(self._NIONullDeleteSlot)
-
-    def _genericEthernetSelectedSlot(self, index):
-        """
-        Loads the selected generic Ethernet interface in lineEdit.
-
-        :param index: ignored
-        """
-
-        self.uiGenericEthernetLineEdit.setText(self.uiGenericEthernetComboBox.currentText())
-
-    def _genericEthernetChangedSlot(self):
+    def _EthernetChangedSlot(self):
         """
         Enables the use of the delete button.
         """
 
-        item = self.uiGenericEthernetListWidget.currentItem()
+        item = self.uiEthernetListWidget.currentItem()
         if item:
-            self.uiDeleteGenericEthernetPushButton.setEnabled(True)
+            self.uiDeleteEthernetPushButton.setEnabled(True)
         else:
-            self.uiDeleteGenericEthernetPushButton.setEnabled(False)
+            self.uiDeleteEthernetPushButton.setEnabled(False)
 
-    def _genericEthernetAddSlot(self):
+    def _EthernetAddSlot(self):
         """
-        Adds a new generic Ethernet NIO.
+        Adds a new Ethernet interface.
         """
 
-        interface = self.uiGenericEthernetLineEdit.text()
+        interface = self.uiEthernetComboBox.currentText()
         if interface:
-            nio = "nio_gen_eth:{interface}".format(interface=interface)
-            if nio not in self._nios:
-                self.uiGenericEthernetListWidget.addItem(nio)
-                self._nios.add(nio)
-
-    def _genericEthernetDeleteSlot(self):
-        """
-        Deletes the selected generic Ethernet NIO.
-        """
-
-        item = self.uiGenericEthernetListWidget.currentItem()
-        if item:
-            nio = item.text()
-            # check we can delete that NIO
-            node_ports = self._node.ports()
-            for node_port in node_ports:
-                if node_port.name() == nio and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+            for port in self._ports:
+                if port["name"] == interface and port["type"] == "ethernet":
                     return
-            self._nios.remove(nio)
-            self.uiGenericEthernetListWidget.takeItem(self.uiGenericEthernetListWidget.currentRow())
+            self.uiEthernetListWidget.addItem(interface)
+            self._ports.append({"name": interface,
+                                "port_number": len(self._ports) + 1,
+                                "type": "ethernet",
+                                "interface": interface})
+            index = self.uiEthernetComboBox.findText(interface)
+            if index != -1:
+                self.uiEthernetComboBox.removeItem(index)
 
-    def _linuxEthernetSelectedSlot(self, index):
+    def _EthernetDeleteSlot(self):
         """
-        Loads the selected Linux interface in lineEdit.
+        Deletes the selected Ethernet interface.
+        """
+
+        item = self.uiEthernetListWidget.currentItem()
+        if item:
+            interface = item.text()
+            # check we can delete that interface
+            for node_port in self._node.ports():
+                if node_port.name() == interface and not node_port.isFree():
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(interface))
+                    return
+            for port in self._ports.copy():
+                if port["name"] == interface:
+                    self._ports.remove(port)
+                    self.uiEthernetListWidget.takeItem(self.uiEthernetListWidget.currentRow())
+                    for interface in self._node.interfaces():
+                        if interface["name"] == port["name"] and interface["type"] == "ethernet":
+                            self.uiEthernetComboBox.addItem(interface["name"])
+                    break
+
+    def _TAPSelectedSlot(self, index):
+        """
+        Loads the selected TAP interface.
 
         :param index: ignored
         """
 
-        self.uiLinuxEthernetLineEdit.setText(self.uiLinuxEthernetComboBox.currentText())
+        self.uiTAPLineEdit.setText(self.uiTAPComboBox.currentText())
 
-    def _linuxEthernetChangedSlot(self):
+    def _TAPChangedSlot(self):
         """
         Enables the use of the delete button.
         """
 
-        item = self.uiLinuxEthernetListWidget.currentItem()
+        item = self.uiTAPListWidget.currentItem()
         if item:
-            self.uiDeleteLinuxEthernetPushButton.setEnabled(True)
+            self.uiDeleteTAPPushButton.setEnabled(True)
+            self.uiTAPLineEdit.setText(item.text())
         else:
-            self.uiDeleteLinuxEthernetPushButton.setEnabled(False)
+            self.uiDeleteTAPPushButton.setEnabled(False)
 
-    def _linuxEthernetAddSlot(self):
+    def _TAPAddSlot(self):
         """
-        Adds a new Linux Ethernet NIO.
+        Adds a new TAP interface.
         """
 
-        interface = self.uiLinuxEthernetLineEdit.text()
+        interface = self.uiTAPLineEdit.text()
         if interface:
-            nio = "nio_gen_linux:{interface}".format(interface=interface)
-            if nio not in self._nios:
-                self.uiLinuxEthernetListWidget.addItem(nio)
-                self._nios.add(nio)
-
-    def _linuxEthernetDeleteSlot(self):
-        """
-        Deletes the selected Linux Ethernet NIO.
-        """
-
-        item = self.uiLinuxEthernetListWidget.currentItem()
-        if item:
-            nio = item.text()
-            # check we can delete that NIO
-            node_ports = self._node.ports()
-            for node_port in node_ports:
-                if node_port.name() == nio and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+            for port in self._ports:
+                if port["name"] == interface and port["type"] == "tap":
                     return
-            self._nios.remove(nio)
-            self.uiLinuxEthernetListWidget.takeItem(self.uiLinuxEthernetListWidget.currentRow())
+            self.uiTAPListWidget.addItem(interface)
+            self._ports.append({"name": interface,
+                                "port_number": len(self._ports) + 1,
+                                "type": "tap",
+                                "interface": interface})
+            index = self.uiTAPComboBox.findText(interface)
+            if index != -1:
+                self.uiTAPComboBox.removeItem(index)
 
-    def _NIONATSelectedSlot(self, index):
+    def _TAPDeleteSlot(self):
         """
-        Loads a selected NAT NIO.
-
-        :param index: ignored
+        Deletes a TAP interface.
         """
 
-        item = self.uiNIONATListWidget.currentItem()
+        item = self.uiTAPListWidget.currentItem()
         if item:
-            nio = item.text()
-            match = re.search(r"""^nio_nat:(.+)$""", nio)
-            if match:
-                self.uiNIONATIdentiferLineEdit.setText(match.group(1))
+            interface = item.text()
+            # check we can delete that interface
+            for node_port in self._node.ports():
+                if node_port.name() == interface and not node_port.isFree():
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(interface))
+                    return
+            for port in self._ports.copy():
+                if port["name"] == interface:
+                    self._ports.remove(port)
+                    self.uiTAPListWidget.takeItem(self.uiTAPListWidget.currentRow())
+                    for interface in self._node.interfaces():
+                        if interface["name"] == port["name"] and interface["type"] == "tap":
+                            self.uiTAPComboBox.addItem(interface["name"])
+                    break
 
-    def _NIONATChangedSlot(self):
+    def _UDPSelectedSlot(self, item, column):
+        """
+        Loads a selected UDP tunnel.
+
+        :param item: selected TreeWidgetItem instance
+        :param column: ignored
+        """
+
+        name = item.text(0)
+        local_port = int(item.text(1))
+        remote_host = item.text(2)
+        remote_port = int(item.text(3))
+        self.uiUDPNameLineEdit.setText(name)
+        self.uiLocalPortSpinBox.setValue(local_port)
+        self.uiRemoteHostLineEdit.setText(remote_host)
+        self.uiRemotePortSpinBox.setValue(remote_port)
+
+    def _UDPChangedSlot(self):
         """
         Enables the use of the delete button.
         """
 
-        item = self.uiNIONATListWidget.currentItem()
+        item = self.uiUDPTreeWidget.currentItem()
         if item:
-            self.uiDeleteNIONATPushButton.setEnabled(True)
+            self.uiDeleteUDPPushButton.setEnabled(True)
         else:
-            self.uiDeleteNIONATPushButton.setEnabled(False)
+            self.uiDeleteUDPPushButton.setEnabled(False)
 
-    def _NIONATAddSlot(self):
+    def _UDPAddSlot(self):
         """
-        Adds a new NAT NIO.
-        """
-
-        identifier = self.uiNIONATIdentiferLineEdit.text()
-        if identifier:
-            nio = "nio_nat:{}".format(identifier)
-            if nio not in self._nios:
-                self.uiNIONATListWidget.addItem(nio)
-                self._nios.add(nio)
-
-    def _NIONATDeleteSlot(self):
-        """
-        Deletes a NAT NIO.
+        Adds a new UDP tunnel
         """
 
-        item = self.uiNIONATListWidget.currentItem()
-        if item:
-            nio = item.text()
-            # check we can delete that NIO
-            node_ports = self._node.ports()
-            for node_port in node_ports:
-                if node_port.name() == nio and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
-                    return
-            self._nios.remove(nio)
-            self.uiNIONATListWidget.takeItem(self.uiNIONATListWidget.currentRow())
-
-    def _NIOUDPSelectedSlot(self, index):
-        """
-        Loads a selected UDP.
-
-        :param index: ignored
-        """
-
-        item = self.uiNIOUDPListWidget.currentItem()
-        if item:
-            nio = item.text()
-            match = re.search(r"""^nio_udp:(\d+):(.+):(\d+)$""", nio)
-            if match:
-                self.uiLocalPortSpinBox.setValue(int(match.group(1)))
-                self.uiRemoteHostLineEdit.setText(match.group(2))
-                self.uiRemotePortSpinBox.setValue(int(match.group(3)))
-
-    def _NIOUDPChangedSlot(self):
-        """
-        Enables the use of the delete button.
-        """
-
-        item = self.uiNIOUDPListWidget.currentItem()
-        if item:
-            self.uiDeleteNIOUDPPushButton.setEnabled(True)
-        else:
-            self.uiDeleteNIOUDPPushButton.setEnabled(False)
-
-    def _NIOUDPAddSlot(self):
-        """
-        Adds a new UDP NIO.
-        """
-
+        name = self.uiUDPNameLineEdit.text()
         local_port = self.uiLocalPortSpinBox.value()
         remote_host = self.uiRemoteHostLineEdit.text()
         remote_port = self.uiRemotePortSpinBox.value()
-        if remote_host:
-            nio = "nio_udp:{lport}:{rhost}:{rport}".format(lport=local_port,
-                                                           rhost=remote_host,
-                                                           rport=remote_port)
-            if nio not in self._nios:
-                self.uiNIOUDPListWidget.addItem(nio)
-                self._nios.add(nio)
-                self.uiLocalPortSpinBox.setValue(local_port + 1)
-                self.uiRemotePortSpinBox.setValue(remote_port + 1)
-
-    def _NIOUDPDeleteSlot(self):
-        """
-        Deletes an UDP NIO.
-        """
-
-        item = self.uiNIOUDPListWidget.currentItem()
-        if item:
-            nio = item.text()
-            # check we can delete that NIO
-            node_ports = self._node.ports()
-            for node_port in node_ports:
-                if node_port.name() == nio and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+        if name and remote_host:
+            for port in self._ports:
+                if port["name"] == name:
                     return
-            self._nios.remove(nio)
-            self.uiNIOUDPListWidget.takeItem(self.uiNIOUDPListWidget.currentRow())
 
-    def _NIOTAPSelectedSlot(self, index):
+            # add a new entry in the tree widget
+            item = QtWidgets.QTreeWidgetItem(self.uiUDPTreeWidget)
+            item.setText(0, name)
+            item.setText(1, str(local_port))
+            item.setText(2, remote_host)
+            item.setText(3, str(remote_port))
+            self.uiUDPTreeWidget.addTopLevelItem(item)
+            self._ports.append({"name": name,
+                                "port_number": len(self._ports) + 1,
+                                "type": "udp",
+                                "lport": local_port,
+                                "rhost": remote_host,
+                                "rport": remote_port})
+            self.uiLocalPortSpinBox.setValue(local_port + 1)
+            self.uiRemotePortSpinBox.setValue(remote_port + 1)
+            self.uiUDPTreeWidget.resizeColumnToContents(0)
+            self.uiUDPTreeWidget.resizeColumnToContents(1)
+            self.uiUDPTreeWidget.resizeColumnToContents(2)
+            self.uiUDPTreeWidget.resizeColumnToContents(3)
+            nb_tunnels = 0
+            for port in self._ports:
+                if port["type"] == "udp":
+                    nb_tunnels += 1
+            self.uiUDPNameLineEdit.setText("UDP tunnel {}".format(nb_tunnels + 1))
+
+    def _UDPDeleteSlot(self):
         """
-        Loads the selected NIO TAP in lineEdit.
-
-        :param index: ignored
+        Deletes an UDP tunnel.
         """
 
-        item = self.uiNIOTAPListWidget.currentItem()
+        item = self.uiUDPTreeWidget.currentItem()
         if item:
-            nio = item.text()
-            match = re.search(r"""^nio_tap:(.+)$""", nio)
-            if match:
-                self.uiNIOTAPLineEdit.setText(match.group(1))
-
-    def _NIOTAPChangedSlot(self):
-        """
-        Enables the use of the delete button.
-        """
-
-        item = self.uiNIOTAPListWidget.currentItem()
-        if item:
-            self.uiDeleteNIOTAPPushButton.setEnabled(True)
-        else:
-            self.uiDeleteNIOTAPPushButton.setEnabled(False)
-
-    def _NIOTAPAddSlot(self):
-        """
-        Adds a new UDP NIO.
-        """
-
-        tap_interface = self.uiNIOTAPLineEdit.text()
-        if tap_interface:
-            nio = "nio_tap:{}".format(tap_interface.lower())
-            if nio not in self._nios:
-                self.uiNIOTAPListWidget.addItem(nio)
-                self._nios.add(nio)
-
-    def _NIOTAPDeleteSlot(self):
-        """
-        Deletes a TAP NIO.
-        """
-
-        item = self.uiNIOTAPListWidget.currentItem()
-        if item:
-            nio = item.text()
-            # check we can delete that NIO
-            node_ports = self._node.ports()
-            for node_port in node_ports:
-                if node_port.name() == nio and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
+            name = item.text(0)
+            # check we can delete that UDP tunnel
+            for node_port in self._node.ports():
+                if node_port.name() == name and not node_port.isFree():
+                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(name))
                     return
-            self._nios.remove(nio)
-            self.uiNIOTAPListWidget.takeItem(self.uiNIOTAPListWidget.currentRow())
-
-    def _NIOUNIXSelectedSlot(self, index):
-        """
-        Loads a selected UNIX NIO.
-
-        :param index: ignored
-        """
-
-        item = self.uiNIOUNIXListWidget.currentItem()
-        if item:
-            nio = item.text()
-            match = re.search(r"""^nio_unix:(.+):(.+)$""", nio)
-            if match:
-                self.uiLocalFileLineEdit.setText(match.group(1))
-                self.uiRemoteFileLineEdit.setText(match.group(2))
-
-    def _NIOUNIXChangedSlot(self):
-        """
-        Enables the use of the delete button.
-        """
-
-        item = self.uiNIOUNIXListWidget.currentItem()
-        if item:
-            self.uiDeleteNIOUNIXPushButton.setEnabled(True)
-        else:
-            self.uiDeleteNIOUNIXPushButton.setEnabled(False)
-
-    def _NIOUNIXAddSlot(self):
-        """
-        Adds a new UNIX NIO.
-        """
-
-        local_file = self.uiLocalFileLineEdit.text()
-        remote_file = self.uiRemoteFileLineEdit.text()
-        if local_file and remote_file:
-            nio = "nio_unix:{local}:{remote}".format(local=local_file,
-                                                     remote=remote_file)
-            if nio not in self._nios:
-                self.uiNIOUNIXListWidget.addItem(nio)
-                self._nios.add(nio)
-
-    def _NIOUNIXDeleteSlot(self):
-        """
-        Deletes an UNIX NIO.
-        """
-
-        item = self.uiNIOUNIXListWidget.currentItem()
-        if item:
-            nio = item.text()
-            # check we can delete that NIO
-            node_ports = self._node.ports()
-            for node_port in node_ports:
-                if node_port.name() == nio and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
-                    return
-            self._nios.remove(nio)
-            self.uiNIOUNIXListWidget.takeItem(self.uiNIOUNIXListWidget.currentRow())
-
-    def _NIOVDESelectedSlot(self, index):
-        """
-        Loads a selected VDE NIO.
-
-        :param index: ignored
-        """
-
-        item = self.uiNIOVDEListWidget.currentItem()
-        if item:
-            nio = item.text()
-            match = re.search(r"""^nio_vde:(.+):(.+)$""", nio)
-            if match:
-                self.uiVDEControlFileLineEdit.setText(match.group(1))
-                self.uiVDELocalFileLineEdit.setText(match.group(2))
-
-    def _NIOVDEChangedSlot(self):
-        """
-        Enables the use of the delete button.
-        """
-
-        item = self.uiNIOVDEListWidget.currentItem()
-        if item:
-            self.uiDeleteNIOVDEPushButton.setEnabled(True)
-        else:
-            self.uiDeleteNIOVDEPushButton.setEnabled(False)
-
-    def _NIOVDEAddSlot(self):
-        """
-        Adds a new VDE NIO.
-        """
-
-        control_file = self.uiVDEControlFileLineEdit.text()
-        local_file = self.uiVDELocalFileLineEdit.text()
-        if local_file and control_file:
-            nio = "nio_vde:{control}:{local}".format(control=control_file, local=local_file)
-            if nio not in self._nios:
-                self.uiNIOVDEListWidget.addItem(nio)
-                self._nios.add(nio)
-
-    def _NIOVDEDeleteSlot(self):
-        """
-        Deletes a VDE NIO.
-        """
-
-        item = self.uiNIOVDEListWidget.currentItem()
-        if item:
-            nio = item.text()
-            # check we can delete that NIO
-            node_ports = self._node.ports()
-            for node_port in node_ports:
-                if node_port.name() == nio and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
-                    return
-            self._nios.remove(nio)
-            self.uiNIOVDEListWidget.takeItem(self.uiNIOVDEListWidget.currentRow())
-
-    def _NIONullSelectedSlot(self, index):
-        """
-        Loads a selected NULL NIO.
-
-        :param index: ignored
-        """
-
-        item = self.uiNIONullListWidget.currentItem()
-        if item:
-            nio = item.text()
-            match = re.search(r"""^nio_null:(.+)$""", nio)
-            if match:
-                self.uiNIONullIdentiferLineEdit.setText(match.group(1))
-
-    def _NIONullChangedSlot(self):
-        """
-        Enables the use of the delete button.
-        """
-
-        item = self.uiNIONullListWidget.currentItem()
-        if item:
-            self.uiDeleteNIONullPushButton.setEnabled(True)
-        else:
-            self.uiDeleteNIONullPushButton.setEnabled(False)
-
-    def _NIONullAddSlot(self):
-        """
-        Adds a new NULL NIO.
-        """
-
-        identifier = self.uiNIONullIdentiferLineEdit.text()
-        if identifier:
-            nio = "nio_null:{}".format(identifier)
-            if nio not in self._nios:
-                self.uiNIONullListWidget.addItem(nio)
-                self._nios.add(nio)
-
-    def _NIONullDeleteSlot(self):
-        """
-        Deletes a NULL NIO.
-        """
-
-        item = self.uiNIONullListWidget.currentItem()
-        if item:
-            nio = item.text()
-            # check we can delete that NIO
-            node_ports = self._node.ports()
-            for node_port in node_ports:
-                if node_port.name() == nio and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
-                    return
-            self._nios.remove(nio)
-            self.uiNIONullListWidget.takeItem(self.uiNIONullListWidget.currentRow())
+            for port in self._ports.copy():
+                if port["name"] == name:
+                    self._ports.remove(port)
+            self.uiUDPTreeWidget.takeTopLevelItem(self.uiUDPTreeWidget.indexOfTopLevelItem(item))
+            nb_tunnels = 0
+            for port in self._ports:
+                if port["type"] == "udp":
+                    nb_tunnels += 1
+            self.uiUDPNameLineEdit.setText("UDP tunnel {}".format(nb_tunnels + 1))
 
     def loadSettings(self, settings, node, group=False):
         """
@@ -535,54 +272,53 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         self._node = node
 
-        # load all network interfaces
-        self.uiGenericEthernetComboBox.clear()
+        # load all Ethernet network interfaces
+        self.uiEthernetComboBox.clear()
         index = 0
-        for interface in settings["interfaces"]:
-            if interface["name"].startswith("tap"):
-                # do not add TAP interfaces
-                continue
-            self.uiGenericEthernetComboBox.addItem(interface["name"])
-            self.uiGenericEthernetComboBox.setItemData(index, interface["id"], QtCore.Qt.ToolTipRole)
-            index += 1
-        self.uiGenericEthernetComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
-
-        # load all network interfaces
-        self.uiLinuxEthernetComboBox.clear()
-        index = 0
-        for interface in settings["interfaces"]:
-            if not interface["name"].startswith(r"\Device\NPF_") and not interface["name"].startswith("tap"):
-                self.uiLinuxEthernetComboBox.addItem(interface["name"])
-                self.uiLinuxEthernetComboBox.setItemData(index, interface["id"], QtCore.Qt.ToolTipRole)
+        for interface in self._node.interfaces():
+            if interface["type"] == "ethernet":
+                self.uiEthernetComboBox.addItem(interface["name"])
                 index += 1
-        self.uiLinuxEthernetComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
+        self.uiEthernetComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
 
-        # populate the NIO lists
-        self.nios = set()
-        self.uiGenericEthernetListWidget.clear()
-        self.uiLinuxEthernetListWidget.clear()
-        self.uiNIOUDPListWidget.clear()
-        self.uiNIOTAPListWidget.clear()
-        self.uiNIOUNIXListWidget.clear()
-        self.uiNIOVDEListWidget.clear()
-        self.uiNIONullListWidget.clear()
+        # load all TAP interfaces
+        self.uiTAPListWidget.clear()
+        index = 0
+        for interface in self._node.interfaces():
+            if interface["type"] == "tap":
+                self.uiTAPComboBox.addItem(interface["name"])
+                index += 1
+        self.uiTAPComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
 
-        for nio in settings["nios"]:
-            self._nios.add(nio)
-            if nio.lower().startswith("nio_gen_eth"):
-                self.uiGenericEthernetListWidget.addItem(nio)
-            elif nio.lower().startswith("nio_gen_linux"):
-                self.uiLinuxEthernetListWidget.addItem(nio)
-            elif nio.lower().startswith("nio_udp"):
-                self.uiNIOUDPListWidget.addItem(nio)
-            elif nio.lower().startswith("nio_tap"):
-                self.uiNIOTAPListWidget.addItem(nio)
-            elif nio.lower().startswith("nio_unix"):
-                self.uiNIOUNIXListWidget.addItem(nio)
-            elif nio.lower().startswith("nio_vde"):
-                self.uiNIOVDEListWidget.addItem(nio)
-            elif nio.lower().startswith("nio_null"):
-                self.uiNIONullListWidget.addItem(nio)
+        # load the current ports
+        self._ports = []
+        self.uiEthernetListWidget.clear()
+        self.uiTAPListWidget.clear()
+        self.uiUDPTreeWidget.clear()
+
+        for port in settings["ports"]:
+            self._ports.append(port)
+            if port["type"] == "ethernet":
+                self.uiEthernetListWidget.addItem(port["name"])
+                index = self.uiEthernetComboBox.findText(port["name"])
+                if index != -1:
+                    self.uiEthernetComboBox.removeItem(index)
+            elif port["type"] == "tap":
+                self.uiTAPListWidget.addItem(port["name"])
+                index = self.uiTAPComboBox.findText(port["name"])
+                if index != -1:
+                    self.uiTAPComboBox.removeItem(index)
+            elif port["type"] == "udp":
+                item = QtWidgets.QTreeWidgetItem(self.uiUDPTreeWidget)
+                item.setText(0, port["name"])
+                item.setText(1, str(port["lport"]))
+                item.setText(2, port["rhost"])
+                item.setText(3, str(port["rport"]))
+                self.uiUDPTreeWidget.addTopLevelItem(item)
+                self.uiUDPTreeWidget.resizeColumnToContents(0)
+                self.uiUDPTreeWidget.resizeColumnToContents(1)
+                self.uiUDPTreeWidget.resizeColumnToContents(2)
+                self.uiUDPTreeWidget.resizeColumnToContents(3)
 
     def saveSettings(self, settings, node, group=False):
         """
@@ -598,4 +334,4 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         else:
             del settings["name"]
 
-        settings["nios"] = list(self._nios)
+        settings["ports"] = self._ports

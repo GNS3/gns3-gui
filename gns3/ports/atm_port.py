@@ -28,7 +28,6 @@ class ATMPort(Port):
     ATM port.
 
     :param name: port name (string)
-    :param nio: NIO instance to attach to this port
     """
 
     def __init__(self, name):

@@ -19,7 +19,6 @@
 from unittest.mock import patch, Mock, ANY
 from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
 from gns3.ports.port import Port
-from gns3.nios.nio_udp import NIOUDP
 from gns3.base_node import BaseNode
 
 

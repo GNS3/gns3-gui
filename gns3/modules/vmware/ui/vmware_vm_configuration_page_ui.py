@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
 #
-# Created: Thu Feb  4 22:41:33 2016
+# Created: Sat May 28 16:33:33 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -100,11 +100,11 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiPortSegmentSizeSpinBox.setSingleStep(4)
         self.uiPortSegmentSizeSpinBox.setObjectName("uiPortSegmentSizeSpinBox")
         self.gridLayout_2.addWidget(self.uiPortSegmentSizeSpinBox, 3, 2, 1, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(248, 178, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem1, 7, 1, 1, 2)
         self.uiAdaptersLabel = QtWidgets.QLabel(self.tab_2)
         self.uiAdaptersLabel.setObjectName("uiAdaptersLabel")
         self.gridLayout_2.addWidget(self.uiAdaptersLabel, 0, 0, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(248, 178, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem1, 8, 1, 1, 2)
         self.uiAdapterTypesComboBox = QtWidgets.QComboBox(self.tab_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -118,16 +118,13 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.gridLayout_2.addWidget(self.label, 5, 0, 1, 1)
         self.uiUseAnyAdapterCheckBox = QtWidgets.QCheckBox(self.tab_2)
         self.uiUseAnyAdapterCheckBox.setObjectName("uiUseAnyAdapterCheckBox")
-        self.gridLayout_2.addWidget(self.uiUseAnyAdapterCheckBox, 7, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.uiUseAnyAdapterCheckBox, 6, 0, 1, 3)
         self.uiFirstPortNameLabel = QtWidgets.QLabel(self.tab_2)
         self.uiFirstPortNameLabel.setObjectName("uiFirstPortNameLabel")
         self.gridLayout_2.addWidget(self.uiFirstPortNameLabel, 1, 0, 1, 1)
         self.uiFirstPortNameLineEdit = QtWidgets.QLineEdit(self.tab_2)
         self.uiFirstPortNameLineEdit.setObjectName("uiFirstPortNameLineEdit")
         self.gridLayout_2.addWidget(self.uiFirstPortNameLineEdit, 1, 2, 1, 1)
-        self.uiUseUbridgeCheckBox = QtWidgets.QCheckBox(self.tab_2)
-        self.uiUseUbridgeCheckBox.setObjectName("uiUseUbridgeCheckBox")
-        self.gridLayout_2.addWidget(self.uiUseUbridgeCheckBox, 6, 0, 1, 3)
         self.uiTabWidget.addTab(self.tab_2, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
 
@@ -156,6 +153,5 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.label.setText(_translate("VMwareVMConfigPageWidget", "Type:"))
         self.uiUseAnyAdapterCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Allow GNS3 to use any configured VMware adapter"))
         self.uiFirstPortNameLabel.setText(_translate("VMwareVMConfigPageWidget", "First port name:"))
-        self.uiUseUbridgeCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Use uBridge for network connections"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("VMwareVMConfigPageWidget", "Network"))
 
