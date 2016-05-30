@@ -334,45 +334,6 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         if os.path.isfile(capture_file_path) and self._settings["command_auto_start"]:
             self.startPacketCaptureReader(source_node_name)
 
-    def stopPacketCapture(self):
-        """
-        Stops a packet capture.
-        """
-
-        self._capturing = False
-        self._capture_file_path = ""
-        if self._tail_process and self._tail_process.poll() is None:
-            try:
-                self._tail_process.kill()
-            except PermissionError:
-                pass
-            self._tail_process = None
-        self._capture_reader_process = None
-
-
-    def startPacketCaptureAnalyzer(self):
-        """
-        Starts the packet capture analyzer.
-        """
-
-        if not os.path.isfile(self._capture_file_path):
-            raise FileNotFoundError("the {} capture file does not exist on this host".format(self._capture_file_path))
-
-        if self._capture_analyzer_process and self._capture_analyzer_process.poll() is None:
-            self._capture_analyzer_process.kill()
-            self._capture_analyzer_process = None
-
-        command = self._settings["packet_capture_analyzer_command"]
-        temp_capture_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(self._capture_file_path))
-
-        try:
-            shutil.copy(self._capture_file_path, temp_capture_file_path)
-        except OSError:
-            raise
-
-        command = command.replace("%c", '"' + temp_capture_file_path + '"')
-        self._capture_analyzer_process = subprocess.Popen(command)
-
     def setHovered(self, value):
         """
         Sets the link as hovered or not.

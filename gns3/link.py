@@ -81,7 +81,7 @@ class Link(QtCore.QObject):
 
     def _linkCreatedCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("error while creating link: {}".format(result["message"]))
+            log.error("Error while creating link: {}".format(result["message"]))
             return
 
         # let the GUI know about this link has been deleted
