@@ -73,7 +73,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
                 return
             count = 0
             for _, _, files in os.walk(path):
-                files[:] = [f for f in files]
                 count += len(files)
                 if count > 10000:
                     QtWidgets.QMessageBox.warning(self, "Images directory", "This directory contains a lot of files, the scan process could consume a lot of resources")
