@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Fri May 27 22:52:02 2016
+# Created: Mon May 30 11:50:13 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -447,7 +447,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiCdromImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiCdromTab), _translate("QemuVMConfigPageWidget", "CD/DVD"))
         self.uiLegacyNetworkingCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use the legacy networking mode"))
-        self.uiMacAddrLineEdit.setToolTip(_translate("QemuVMConfigPageWidget", "The 4th and 5th bytes will be randomized"))
         self.uiPortSegmentSizeLabel.setText(_translate("QemuVMConfigPageWidget", "Segment size:"))
         self.uiAdapterTypesLabel.setText(_translate("QemuVMConfigPageWidget", "Type:"))
         self.uiAdaptersLabel.setText(_translate("QemuVMConfigPageWidget", "Adapters:"))
