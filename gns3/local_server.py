@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 #
 # Copyright (C) 2016 GNS3 Technologies Inc.
@@ -59,6 +60,7 @@ class LocalServer():
         self._config_directory = LocalConfig.configDirectory()
         self._pid_path = os.path.join(self._config_directory, "gns3_server.pid")
         self.localServerSettings()
+        self._port = self._settings["port"]
 
     def parent(self):
         """
@@ -227,10 +229,10 @@ class LocalServer():
                 return False
 
         if self.parent():
-            worker = WaitForConnectionWorker(self._settings["host"], self._settings["port"])
+            worker = WaitForConnectionWorker(self._settings["host"], self._port)
             progress_dialog = ProgressDialog(worker,
                                              "Local server",
-                                             "Connecting to server {} on port {}...".format(self._settings["host"], self._settings["port"]),
+                                             "Connecting to server {} on port {}...".format(self._settings["host"], self._port),
                                              "Cancel", busy=True, parent=self.parent())
             progress_dialog.show()
             if not progress_dialog.exec_():
@@ -244,6 +246,8 @@ class LocalServer():
         """
 
         self._checkUbridgePermissions()
+
+        self._port = self._settings["port"]
 
         # check the local server path
         local_server_path = self.localServerPath()
@@ -271,25 +275,25 @@ class LocalServer():
         try:
             # check if the port is already taken
             find_unused_port = False
-            for res in socket.getaddrinfo(self._settings["host"], self._settings["port"], socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
+            for res in socket.getaddrinfo(self._settings["host"], self._port, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
                 af, socktype, proto, _, sa = res
                 with socket.socket(af, socktype, proto) as sock:
                     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                     sock.bind(sa)
                     break
         except OSError as e:
-            log.warning("Could not use socket {}:{} {}".format(self._settings["host"], self._settings["port"], e))
+            log.warning("Could not use socket {}:{} {}".format(self._settings["host"], self._port, e))
             find_unused_port = True
 
         if find_unused_port:
             # find an alternate port for the local server
-            old_port = self._settings["port"]
+            old_port = self._port
             try:
-                server.setHostPort(self._settings["host"], self._findUnusedLocalPort(self._settings["host"]))
+                self._port = self._findUnusedLocalPort(self._settings["host"])
             except OSError as e:
                 QtWidgets.QMessageBox.critical(self.parent(), "Local server", "Could not find an unused port for the local server: {}".format(e))
                 return False
-            log.warning("The server port {} is already in use, fallback to port {}".format(old_port, self._settings["port"]))
+            log.warning("The server port {} is already in use, fallback to port {}".format(old_port, self._port))
         return True
 
     def _findUnusedLocalPort(self, host):
@@ -317,7 +321,7 @@ class LocalServer():
 
         path = self.localServerPath()
         host = self._settings["host"]
-        port = self._settings["port"]
+        port = self._port
         command = '"{executable}" --host={host} --port={port} --local --controller'.format(executable=path,
                                                                               host=host,
                                                                               port=port)
@@ -380,7 +384,7 @@ class LocalServer():
         :returns: boolean
         """
 
-        status, json_data = getSynchronous(self._settings["host"], self._settings["port"], "version",
+        status, json_data = getSynchronous(self._settings["host"], self._port, "version",
                                            timeout=2,
                                            user=self._settings["user"],
                                            password=self._settings["password"])
