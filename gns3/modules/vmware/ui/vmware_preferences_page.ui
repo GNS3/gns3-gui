@@ -177,6 +177,16 @@
             </item>
            </layout>
           </item>
+          <item>
+           <widget class="QCheckBox" name="uiBlockHostTrafficCheckBox">
+            <property name="toolTip">
+             <string>Block network traffic originating from the host OS to be injected in vmnet interfaces. Currently supported on Windows only.</string>
+            </property>
+            <property name="text">
+             <string>Block network traffic originating from the host OS</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

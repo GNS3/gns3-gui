@@ -24,6 +24,7 @@ import sys
 
 from ..qt import QtCore
 from ..servers import Servers
+from ..gns3_vm import GNS3VM
 
 
 class ImportProjectWorker(QtCore.QObject):
@@ -58,7 +59,7 @@ class ImportProjectWorker(QtCore.QObject):
             return
 
         self.updated.emit(25)
-        if sys.platform.startswith("linux") and Servers.instance().vmServer() is None:
+        if sys.platform.startswith("linux") and not GNS3VM.instance().isRunning():
             Servers.instance().localServer().post("/projects/{}/import?gns3vm=0".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source))
         else:
             Servers.instance().localServer().post("/projects/{}/import?gns3vm=1".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source))
@@ -107,3 +108,4 @@ class ImportProjectWorker(QtCore.QObject):
 
     def cancel(self):
         pass
+
