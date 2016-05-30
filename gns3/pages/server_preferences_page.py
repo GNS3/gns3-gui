@@ -479,8 +479,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         #
         # start or restart the local server if required
         if restart_local_server:
-            servers.stopLocalServer(wait=True)
-            if servers.startLocalServer():
+            LocalServer.instance().stopLocalServer(wait=True)
+            if LocalServer.instance().startLocalServer():
                 worker = WaitForConnectionWorker(new_local_server_settings["host"], new_local_server_settings["port"])
                 dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
                 dialog.show()
