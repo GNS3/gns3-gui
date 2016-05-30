@@ -68,6 +68,16 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
     def _imageDirectoriesAddPushButtonSlot(self):
         path = QtWidgets.QFileDialog.getExistingDirectory(self, "My images directory", options=QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
+            if self.uiImageDirectoriesListWidget.findItems(path, QtCore.Qt.MatchFixedString):
+                QtWidgets.QMessageBox.critical(self, "Images directory", "This directory has already been added")
+                return
+            count = 0
+            for _, _, files in os.walk(path):
+                files[:] = [f for f in files]
+                count += len(files)
+                if count > 10000:
+                    QtWidgets.QMessageBox.warning(self, "Images directory", "This directory contains a lot of files, the scan process could consume a lot of resources")
+                    break
             self.uiImageDirectoriesListWidget.addItem(path)
 
     def _imageDirectoriesDeletePushButtonSlot(self):
@@ -271,7 +281,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiVNCConsoleCommandLineEdit.setCursorPosition(0)
 
         self.uiImageDirectoriesListWidget.clear()
-        for path in local_server["additional_images_path"].split(":"):
+        for path in local_server["additional_image_paths"].split(":"):
             if len(path) > 0:
                 self.uiImageDirectoriesListWidget.addItem(path)
 
@@ -312,17 +322,17 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         Saves the general preferences.
         """
 
-        additional_images_path = set()
+        additional_image_paths = set()
         for i in range(0, self.uiImageDirectoriesListWidget.count()):
             item = self.uiImageDirectoriesListWidget.item(i)
-            additional_images_path.add(item.text())
+            additional_image_paths.add(item.text())
 
         new_local_server_settings = {"images_path": self.uiImagesPathLineEdit.text(),
                                      "projects_path": self.uiProjectsPathLineEdit.text(),
                                      "symbols_path": self.uiSymbolsPathLineEdit.text(),
                                      "configs_path": self.uiConfigsPathLineEdit.text(),
                                      "report_errors": self.uiCrashReportCheckBox.isChecked(),
-                                     "additional_images_path": ":".join(additional_images_path)}
+                                     "additional_image_paths": additional_image_paths}
         LocalServer.instance().setLocalServerSettings(new_local_server_settings)
 
         new_general_settings = {
