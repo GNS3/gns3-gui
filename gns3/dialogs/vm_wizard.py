@@ -79,6 +79,7 @@ class VMWizard(QtWidgets.QWizard):
 
         if checked:
             self.uiRemoteServersGroupBox.setEnabled(True)
+            self.uiRemoteServersComboBox.setEnabled(True)
             self.uiRemoteServersGroupBox.show()
 
     def _localToggledSlot(self, checked):
