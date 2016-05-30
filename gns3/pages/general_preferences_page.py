@@ -62,6 +62,18 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
         self._default_label_color = QtGui.QColor(QtCore.Qt.black)
         self.uiStyleComboBox.addItems(STYLES)
+        self.uiImageDirectoriesAddPushButton.clicked.connect(self._imageDirectoriesAddPushButtonSlot)
+        self.uiImageDirectoriesDeletePushButton.clicked.connect(self._imageDirectoriesDeletePushButtonSlot)
+
+    def _imageDirectoriesAddPushButtonSlot(self):
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My images directory", options=QtWidgets.QFileDialog.ShowDirsOnly)
+        if path:
+            self.uiImageDirectoriesListWidget.addItem(path)
+
+    def _imageDirectoriesDeletePushButtonSlot(self):
+        item = self.uiImageDirectoriesListWidget.currentItem()
+        if item:
+            self.uiImageDirectoriesListWidget.takeItem(self.uiImageDirectoriesListWidget.currentRow())
 
     def _projectsPathSlot(self):
         """
@@ -258,6 +270,11 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiVNCConsoleCommandLineEdit.setText(settings["vnc_console_command"])
         self.uiVNCConsoleCommandLineEdit.setCursorPosition(0)
 
+        self.uiImageDirectoriesListWidget.clear()
+        for path in local_server["additional_images_path"].split(":"):
+            if len(path) > 0:
+                self.uiImageDirectoriesListWidget.addItem(path)
+
     def _populateGraphicsViewSettingWidgets(self, settings):
         """
         Populates the widgets with the settings.
@@ -295,11 +312,17 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         Saves the general preferences.
         """
 
+        additional_images_path = set()
+        for i in range(0, self.uiImageDirectoriesListWidget.count()):
+            item = self.uiImageDirectoriesListWidget.item(i)
+            additional_images_path.add(item.text())
+
         new_local_server_settings = {"images_path": self.uiImagesPathLineEdit.text(),
                                      "projects_path": self.uiProjectsPathLineEdit.text(),
                                      "symbols_path": self.uiSymbolsPathLineEdit.text(),
                                      "configs_path": self.uiConfigsPathLineEdit.text(),
-                                     "report_errors": self.uiCrashReportCheckBox.isChecked()}
+                                     "report_errors": self.uiCrashReportCheckBox.isChecked(),
+                                     "additional_images_path": ":".join(additional_images_path)}
         LocalServer.instance().setLocalServerSettings(new_local_server_settings)
 
         new_general_settings = {

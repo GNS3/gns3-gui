@@ -286,6 +286,7 @@ LOCAL_SERVER_SETTINGS = {
     "port": DEFAULT_LOCAL_SERVER_PORT,
     "images_path": DEFAULT_IMAGES_PATH,
     "projects_path": DEFAULT_PROJECTS_PATH,
+    "additional_images_path": "",
     "symbols_path": DEFAULT_SYMBOLS_PATH,
     "configs_path": DEFAULT_CONFIGS_PATH,
     "report_errors": True,
