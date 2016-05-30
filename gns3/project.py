@@ -45,6 +45,7 @@ class Project(QtCore.QObject):
 
         self._id = None
         self._closed = True
+        self._closing = False
         self._created = False
         self._files_dir = None
         self._images_dir = None
@@ -279,6 +280,7 @@ class Project(QtCore.QObject):
 
         if not self._created:
             self._closed = False
+            self._closing = False
             self._created = True
 
         if not self._id:
@@ -299,6 +301,9 @@ class Project(QtCore.QObject):
     def close(self, local_server_shutdown=False):
         """Close project"""
 
+        if self._closed or self._closing:
+            return
+        self._closing = True
         if self._id:
             self.project_about_to_close_signal.emit()
             Controller.instance().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
