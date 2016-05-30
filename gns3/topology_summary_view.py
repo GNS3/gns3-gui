@@ -105,19 +105,18 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         List all the connections as children.
         """
 
-        ports = self._node.ports()
         self.takeChildren()
 
         capturing = False
-        for port in ports:
-            if not port.isFree():
-                item = QtWidgets.QTreeWidgetItem()
-                item.setText(0, "{} {}".format(port.shortName(), port.description(short=True)))
-                item.setData(0, QtCore.Qt.UserRole, port)
-                if port.capturing():
-                    item.setIcon(0, QtGui.QIcon(':/icons/inspect.svg'))
-                    capturing = True
-                self.addChild(item)
+        for link in self._node.links():
+            item = QtWidgets.QTreeWidgetItem()
+            port = link.getNodePort(self._node)
+            item.setText(0, "{} {}".format(port.shortName(), port.description(short=True)))
+            item.setData(0, QtCore.Qt.UserRole, link)
+            if link.capturing():
+                item.setIcon(0, QtGui.QIcon(':/icons/inspect.svg'))
+                capturing = True
+            self.addChild(item)
 
         if self._parent.show_only_devices_with_capture and capturing is False:
             self.setHidden(True)

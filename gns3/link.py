@@ -70,6 +70,9 @@ class Link(QtCore.QObject):
         self._capturing = False
         self._capture_file_path = None
 
+        self._source_node.addLink(self)
+        self._destination_node.addLink(self)
+
         body = {
             "nodes": [
                 {"node_id": source_node.node_id(), "adapter_number": source_port.adapterNumber(), "port_number": source_port.portNumber()},
@@ -94,6 +97,7 @@ class Link(QtCore.QObject):
         self._destination_port.setDestinationPort(self._source_port)
 
         self._link_id = result["link_id"]
+
 
     def setCapturing(self, capturing):
         self._capturing = capturing
@@ -162,8 +166,10 @@ class Link(QtCore.QObject):
             return
 
         self._source_port.setFree()
+        self._source_node.deleteLink(self)
         self._source_node.updated_signal.emit()
         self._destination_port.setFree()
+        self._destination_node.deleteLink(self)
         self._destination_node.updated_signal.emit()
 
         # let the GUI know about this link has been deleted
@@ -257,6 +263,16 @@ class Link(QtCore.QObject):
         """
 
         return self._destination_port
+
+    def getNodePort(self, node):
+        """
+        Search the port in the link corresponding to this node
+
+        :returns: Node instance
+        """
+        if self._destination_node == node:
+            return self._destination_port
+        return self._source_port
 
     def dump(self):
         """

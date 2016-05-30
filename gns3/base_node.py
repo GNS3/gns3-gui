@@ -79,6 +79,19 @@ class BaseNode(QtCore.QObject):
         self._loading = False
         self._status = BaseNode.stopped
         self._ports = []
+        self._links = set()
+
+    def links(self):
+        """
+        Links connected to the node
+        """
+        return self._links
+
+    def addLink(self, link):
+        self._links.add(link)
+
+    def deleteLink(self, link):
+        self._links.remove(link)
 
     @classmethod
     def reset(cls):
