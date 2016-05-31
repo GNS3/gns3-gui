@@ -22,7 +22,6 @@ Built-in module implementation.
 from gns3.qt import QtWidgets
 from ..module import Module
 from .cloud import Cloud
-from .host import Host
 from .ethernet_hub import EthernetHub
 from .ethernet_switch import EthernetSwitch
 from .frame_relay_switch import FrameRelaySwitch
@@ -138,7 +137,7 @@ class Builtin(Module):
         :returns: list of classes
         """
 
-        return [Cloud, Host, EthernetHub, EthernetSwitch, FrameRelaySwitch, ATMSwitch]
+        return [Cloud, EthernetHub, EthernetSwitch, FrameRelaySwitch, ATMSwitch]
 
     def nodes(self):
         """
