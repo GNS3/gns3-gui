@@ -18,13 +18,11 @@
 import os
 import sys
 import shlex
-import tempfile
 import subprocess
 
 from .qt import QtWidgets
 from .local_config import LocalConfig
 from .settings import PACKET_CAPTURE_SETTINGS
-from .link import Link
 from .dialogs.capture_dialog import CaptureDialog
 
 
@@ -65,9 +63,11 @@ class PacketCapture:
         if link.capturing():
             QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "A capture is already running")
             return
-
-
-        dialog = CaptureDialog(self.parent(), link.capture_file_name(), self.settings()["command_auto_start"])
+        if link.sourcePort().linkType() == "Serial":
+            ethernet_link = False
+        else:
+            ethernet_link = True
+        dialog = CaptureDialog(self.parent(), link.capture_file_name(), self.settings()["command_auto_start"], ethernet_link)
         if dialog.exec_():
             self._autostart[link] = dialog.commandAutoStart()
             link.startCapture(dialog.dataLink(), dialog.fileName() + ".pcap")

@@ -21,7 +21,6 @@ Link items are graphical representation of a link on the QGraphicsScene
 """
 
 import math
-import sys
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg
 
 from ..node import Node
@@ -320,19 +319,6 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
             PacketCapture.instance().startPacketCaptureAnalyzer(self._link)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self._main_window, "Capture analyzer", "Cannot start the packet capture analyzer program: {}".format(e))
-
-    def startPacketCapture(self, source_node_name, capture_file_path):
-        """
-        Starts a packet capture.
-
-        :param capture_file_path: PCAP capture output file
-        """
-
-        self._capturing = True
-        self._capture_file_path = capture_file_path
-        log.info("Saving packet capture to {}".format(capture_file_path))
-        if os.path.isfile(capture_file_path) and self._settings["command_auto_start"]:
-            self.startPacketCaptureReader(source_node_name)
 
     def setHovered(self, value):
         """

@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-
 from gns3.qt import QtWidgets
 from gns3.ui.capture_dialog_ui import Ui_CaptureDialog
 
@@ -29,16 +27,21 @@ class CaptureDialog(QtWidgets.QDialog, Ui_CaptureDialog):
     This dialog allow configure the packet capture
     """
 
-    def __init__(self, parent, file_name, auto_start):
+    def __init__(self, parent, file_name, auto_start, ethernet_link=True):
 
         super().__init__(parent)
         self.setupUi(self)
-        self.uiOkButton.clicked.connect(self._okButtonClickedSlot)
-        self.uiDataLinkTypeComboBox.addItem("Ethernet", "DLT_EN10MB")
-        self.uiDataLinkTypeComboBox.addItem("Frame Relay", "DLT_FRELAY")
-        self.uiDataLinkTypeComboBox.addItem("ATM", "DLT_ATM_RFC1483")
-        self.uiDataLinkTypeComboBox.addItem("Cisco HDLC", "DLT_C_HDLC")
-        self.uiDataLinkTypeComboBox.addItem("Cisco PPP", "DLT_PPP_SERIAL")
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Ok).clicked.connect(self._okButtonClickedSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel).clicked.connect(self.reject)
+
+        if ethernet_link:
+            self.uiDataLinkTypeComboBox.addItem("Ethernet", "DLT_EN10MB")
+        else:
+            self.uiDataLinkTypeComboBox.addItem("Cisco HDLC", "DLT_C_HDLC")
+            self.uiDataLinkTypeComboBox.addItem("Cisco PPP", "DLT_PPP_SERIAL")
+            self.uiDataLinkTypeComboBox.addItem("Frame Relay", "DLT_FRELAY")
+            self.uiDataLinkTypeComboBox.addItem("ATM", "DLT_ATM_RFC1483")
+
         self.uiCaptureFileNameLineEdit.setText(file_name)
         self.uiStartCommandCheckBox.setChecked(auto_start)
 
