@@ -38,12 +38,14 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         # connect Ethernet slots
         self.uiEthernetListWidget.itemSelectionChanged.connect(self._EthernetChangedSlot)
         self.uiAddEthernetPushButton.clicked.connect(self._EthernetAddSlot)
+        self.uiAddAllEthernetPushButton.clicked.connect(self._EthernetAddAllSlot)
         self.uiDeleteEthernetPushButton.clicked.connect(self._EthernetDeleteSlot)
 
         # connect TAP slots
         self.uiTAPComboBox.currentIndexChanged.connect(self._TAPSelectedSlot)
         self.uiTAPListWidget.itemSelectionChanged.connect(self._TAPChangedSlot)
         self.uiAddTAPPushButton.clicked.connect(self._TAPAddSlot)
+        self.uiAddAllTAPPushButton.clicked.connect(self._TAPAddAllSlot)
         self.uiDeleteTAPPushButton.clicked.connect(self._TAPDeleteSlot)
 
         # connect UDP slots
@@ -63,12 +65,13 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         else:
             self.uiDeleteEthernetPushButton.setEnabled(False)
 
-    def _EthernetAddSlot(self):
+    def _EthernetAddSlot(self, interface=None):
         """
         Adds a new Ethernet interface.
         """
 
-        interface = self.uiEthernetComboBox.currentText()
+        if not interface:
+            interface = self.uiEthernetComboBox.currentText()
         if interface:
             for port in self._ports:
                 if port["name"] == interface and port["type"] == "ethernet":
@@ -82,19 +85,31 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             if index != -1:
                 self.uiEthernetComboBox.removeItem(index)
 
+    def _EthernetAddAllSlot(self):
+        """
+        Adds all Ethernet interfaces.
+        """
+
+        for index in range(0, self.uiEthernetComboBox.count()):
+            interface = self.uiEthernetComboBox.itemText(index)
+            self._EthernetAddSlot(interface)
+        self.uiEthernetListWidget.refresh()
+
     def _EthernetDeleteSlot(self):
         """
         Deletes the selected Ethernet interface.
         """
 
-        item = self.uiEthernetListWidget.currentItem()
-        if item:
+        for item in self.uiEthernetListWidget.selectedItems():
             interface = item.text()
             # check we can delete that interface
             for node_port in self._node.ports():
                 if node_port.name() == interface and not node_port.isFree():
                     QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(interface))
                     return
+
+        for item in self.uiEthernetListWidget.selectedItems():
+            interface = item.text()
             for port in self._ports.copy():
                 if port["name"] == interface:
                     self._ports.remove(port)
@@ -125,12 +140,13 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         else:
             self.uiDeleteTAPPushButton.setEnabled(False)
 
-    def _TAPAddSlot(self):
+    def _TAPAddSlot(self, interface=None):
         """
         Adds a new TAP interface.
         """
 
-        interface = self.uiTAPLineEdit.text()
+        if not interface:
+            interface = self.uiTAPLineEdit.text()
         if interface:
             for port in self._ports:
                 if port["name"] == interface and port["type"] == "tap":
@@ -144,19 +160,30 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             if index != -1:
                 self.uiTAPComboBox.removeItem(index)
 
+    def _TAPAddAllSlot(self):
+        """
+        Adds all TAP interfaces
+        """
+
+        for index in range(0, self.uiTAPComboBox.count()):
+            interface = self.uiTAPComboBox.itemText(index)
+            self._TAPAddSlot(interface)
+
     def _TAPDeleteSlot(self):
         """
         Deletes a TAP interface.
         """
 
-        item = self.uiTAPListWidget.currentItem()
-        if item:
+        for item in self.uiTAPListWidget.selectedItems():
             interface = item.text()
             # check we can delete that interface
             for node_port in self._node.ports():
                 if node_port.name() == interface and not node_port.isFree():
                     QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(interface))
                     return
+
+        for item in self.uiTAPListWidget.selectedItems():
+            interface = item.text()
             for port in self._ports.copy():
                 if port["name"] == interface:
                     self._ports.remove(port)
@@ -238,14 +265,16 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         Deletes an UDP tunnel.
         """
 
-        item = self.uiUDPTreeWidget.currentItem()
-        if item:
+        for item in self.uiUDPTreeWidget.selectedItems():
             name = item.text(0)
             # check we can delete that UDP tunnel
             for node_port in self._node.ports():
                 if node_port.name() == name and not node_port.isFree():
                     QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(name))
                     return
+
+        for item in self.uiUDPTreeWidget.selectedItems():
+            name = item.text(0)
             for port in self._ports.copy():
                 if port["name"] == name:
                     self._ports.remove(port)
@@ -282,7 +311,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiEthernetComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
 
         # load all TAP interfaces
-        self.uiTAPListWidget.clear()
+        self.uiTAPComboBox.clear()
         index = 0
         for interface in self._node.interfaces():
             if interface["type"] == "tap":
