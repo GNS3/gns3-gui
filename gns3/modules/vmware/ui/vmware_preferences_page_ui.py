@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
 #
-# Created: Sat May 28 13:36:45 2016
+# Created: Tue May 31 11:28:22 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -92,6 +92,7 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.horizontalLayout_3.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.uiBlockHostTrafficCheckBox = QtWidgets.QCheckBox(self.uiManagedVMnetRangeGroupBox)
+        self.uiBlockHostTrafficCheckBox.setChecked(True)
         self.uiBlockHostTrafficCheckBox.setObjectName("uiBlockHostTrafficCheckBox")
         self.verticalLayout.addWidget(self.uiBlockHostTrafficCheckBox)
         self.verticalLayout_3.addWidget(self.uiManagedVMnetRangeGroupBox)
@@ -126,7 +127,7 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiVMnetEndRangeSpinBox.setPrefix(_translate("VMwarePreferencesPageWidget", "vmnet"))
         self.uiConfigureVmnetPushButton.setText(_translate("VMwarePreferencesPageWidget", "&Configure"))
         self.uiResetVmnetPushButton.setText(_translate("VMwarePreferencesPageWidget", "&Reset"))
-        self.uiBlockHostTrafficCheckBox.setToolTip(_translate("VMwarePreferencesPageWidget", "Block network traffic originating from the host OS to be injected in vmnet interfaces. Currently supported on Windows only."))
+        self.uiBlockHostTrafficCheckBox.setToolTip(_translate("VMwarePreferencesPageWidget", "Block network traffic originating from the host OS to be injected in vmnet interfaces. Currently supported on Windows only and is recommended."))
         self.uiBlockHostTrafficCheckBox.setText(_translate("VMwarePreferencesPageWidget", "Block network traffic originating from the host OS"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiNetworkTab), _translate("VMwarePreferencesPageWidget", "Network"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
