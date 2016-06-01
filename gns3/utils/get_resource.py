@@ -36,7 +36,6 @@ except ValueError:
 def clean_egg_cache():
     try:
         import shutil
-        log.debug("Clean egg cache %s", egg_cache_dir)
         shutil.rmtree(egg_cache_dir, ignore_errors=True)
     except Exception:
         # We don't care if we can not cleanup
