@@ -1,5 +1,25 @@
 # Change Log
 
+## 1.5.0rc1 01/06/2016
+
+* Avoid a segfault when exiting with debug enabled
+* Fix the GNS3 VM is visible even if deactivated
+* Do not automatically stop the GNS3 VM by default.
+* Block VMnet host traffic by default. Solves the traffic loop issue on Windows.
+* Remove tooltip for Qemu VM base mac address.
+* Fix you cannot select the remote server of your choice in qemu wizard
+* Fix issue when deleting a running container
+* Allow to block network traffic originating from the host OS for vmnet interfaces (Windows only).
+* Change tooltip for Qemu VM base MAC address.
+* Improve image import
+* Support dragging an image in the GNS3 topology from the system file browser
+* Fix an issue with import with no GNS3 VM
+* Fix error when using {} in the node name
+* Display the progress dialog after 250ms
+* Fix a crash when exporting a project with virtualbox or VMware VM
+* Set default VMware VM adapter type to e1000.
+
+
 ## 1.5.0b1 23/05/2016
 
 * Remote server selector not enabled in import appliance wizard
