@@ -324,11 +324,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if not group:
             # set the device name
             self.uiNameLineEdit.setText(settings["name"])
-            if "console" in settings:
-                self.uiConsolePortSpinBox.setValue(settings["console"])
-            else:
-                self.uiConsolePortLabel.hide()
-                self.uiConsolePortSpinBox.hide()
 
             if "linked_base" in settings:
                 self.uiBaseVMCheckBox.setChecked(settings["linked_base"])
@@ -349,8 +344,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
-            self.uiConsolePortLabel.hide()
-            self.uiConsolePortSpinBox.hide()
             self.uiHddTab.hide()
             self.uiCdromTab.hide()
             self.uiInitrdLabel.hide()
@@ -455,8 +448,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             else:
                 settings["name"] = name
 
-            if "console" in settings:
-                settings["console"] = self.uiConsolePortSpinBox.value()
             if "linked_base" in settings:
                 settings["linked_base"] = self.uiBaseVMCheckBox.isChecked()
 

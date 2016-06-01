@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Thu Feb  4 21:08:13 2016
+# Created: Tue May 31 21:46:30 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_iouDeviceConfigPageWidget(object):
     def setupUi(self, iouDeviceConfigPageWidget):
         iouDeviceConfigPageWidget.setObjectName("iouDeviceConfigPageWidget")
-        iouDeviceConfigPageWidget.resize(569, 564)
+        iouDeviceConfigPageWidget.resize(569, 503)
         self.verticalLayout = QtWidgets.QVBoxLayout(iouDeviceConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(iouDeviceConfigPageWidget)
@@ -90,13 +90,6 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiPrivateConfigToolButton.setObjectName("uiPrivateConfigToolButton")
         self.horizontalLayout_6.addWidget(self.uiPrivateConfigToolButton)
         self.gridLayout.addLayout(self.horizontalLayout_6, 7, 1, 1, 1)
-        self.uiConsolePortLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
-        self.uiConsolePortLabel.setObjectName("uiConsolePortLabel")
-        self.gridLayout.addWidget(self.uiConsolePortLabel, 8, 0, 1, 1)
-        self.uiConsolePortSpinBox = QtWidgets.QSpinBox(self.uiGeneralgroupBox)
-        self.uiConsolePortSpinBox.setMaximum(65535)
-        self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
-        self.gridLayout.addWidget(self.uiConsolePortSpinBox, 8, 1, 1, 1)
         self.uiDefaultNameFormatLabel = QtWidgets.QLabel(self.uiGeneralgroupBox)
         self.uiDefaultNameFormatLabel.setObjectName("uiDefaultNameFormatLabel")
         self.gridLayout.addWidget(self.uiDefaultNameFormatLabel, 1, 0, 1, 1)
@@ -212,7 +205,6 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiStartupConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse..."))
         self.uiPrivateConfigLabel.setText(_translate("iouDeviceConfigPageWidget", "Private-config:"))
         self.uiPrivateConfigToolButton.setText(_translate("iouDeviceConfigPageWidget", "&Browse..."))
-        self.uiConsolePortLabel.setText(_translate("iouDeviceConfigPageWidget", "Console port:"))
         self.uiDefaultNameFormatLabel.setText(_translate("iouDeviceConfigPageWidget", "Default name format:"))
         self.uiOtherSettingsGroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "Other settings"))
         self.uiL1KeepalivesCheckBox.setText(_translate("iouDeviceConfigPageWidget", "Enable layer 1 keepalive messages (testing only)"))

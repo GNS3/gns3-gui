@@ -158,12 +158,6 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
 
-            if "console" in settings:
-                self.uiConsolePortSpinBox.setValue(settings["console"])
-            else:
-                self.uiConsolePortLabel.hide()
-                self.uiConsolePortSpinBox.hide()
-
             # load the IOU image path
             self.uiIOUImageLineEdit.setText(settings["path"])
 
@@ -241,9 +235,6 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
                 QtWidgets.QMessageBox.critical(self, "Name", "Invalid name detected for IOU device: {}".format(name))
             else:
                 settings["name"] = name
-
-            if "console" in settings:
-                settings["console"] = self.uiConsolePortSpinBox.value()
 
             # save the IOU image path
             ios_path = self.uiIOUImageLineEdit.text().strip()

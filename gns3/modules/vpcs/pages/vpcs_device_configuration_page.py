@@ -45,12 +45,9 @@ class VPCSDeviceConfigurationPage(QtWidgets.QWidget, Ui_VPCSDeviceConfigPageWidg
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
-            self.uiConsolePortSpinBox.setValue(settings["console"])
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
-            self.uiConsolePortLabel.hide()
-            self.uiConsolePortSpinBox.hide()
 
     def saveSettings(self, settings, node, group=False):
         """
@@ -64,16 +61,12 @@ class VPCSDeviceConfigurationPage(QtWidgets.QWidget, Ui_VPCSDeviceConfigPageWidg
         # these settings cannot be shared by nodes and updated
         # in the node properties dialog.
         if not group:
-
             # set the device name
             name = self.uiNameLineEdit.text()
             if not name:
                 QtWidgets.QMessageBox.critical(self, "Name", "VPCS device name cannot be empty!")
             else:
                 settings["name"] = name
-
-            if "console" in settings:
-                settings["console"] = self.uiConsolePortSpinBox.value()
         else:
             del settings["name"]
-            del settings["console"]
+

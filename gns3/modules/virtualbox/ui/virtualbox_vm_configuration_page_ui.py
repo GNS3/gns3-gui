@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
 #
-# Created: Thu Feb  4 21:54:18 2016
+# Created: Tue May 31 21:49:05 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_virtualBoxVMConfigPageWidget(object):
     def setupUi(self, virtualBoxVMConfigPageWidget):
         virtualBoxVMConfigPageWidget.setObjectName("virtualBoxVMConfigPageWidget")
-        virtualBoxVMConfigPageWidget.resize(510, 463)
+        virtualBoxVMConfigPageWidget.resize(500, 410)
         self.verticalLayout = QtWidgets.QVBoxLayout(virtualBoxVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(virtualBoxVMConfigPageWidget)
@@ -57,18 +57,18 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiVMRamSpinBox.setMaximum(65535)
         self.uiVMRamSpinBox.setObjectName("uiVMRamSpinBox")
         self.gridLayout.addWidget(self.uiVMRamSpinBox, 5, 1, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(20, 138, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 10, 1, 1, 1)
         self.uiSymbolLabel = QtWidgets.QLabel(self.tab)
         self.uiSymbolLabel.setObjectName("uiSymbolLabel")
         self.gridLayout.addWidget(self.uiSymbolLabel, 2, 0, 1, 1)
         self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
-        self.gridLayout.addWidget(self.uiACPIShutdownCheckBox, 8, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiACPIShutdownCheckBox, 7, 0, 1, 2)
         self.uiBaseVMCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiBaseVMCheckBox.setEnabled(True)
         self.uiBaseVMCheckBox.setObjectName("uiBaseVMCheckBox")
-        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 10, 0, 1, 2)
-        spacerItem = QtWidgets.QSpacerItem(20, 138, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 11, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 9, 0, 1, 2)
         self.uiCategoryLabel = QtWidgets.QLabel(self.tab)
         self.uiCategoryLabel.setObjectName("uiCategoryLabel")
         self.gridLayout.addWidget(self.uiCategoryLabel, 3, 0, 1, 1)
@@ -77,21 +77,14 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.gridLayout.addWidget(self.uiCategoryComboBox, 3, 1, 1, 1)
         self.uiEnableConsoleCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiEnableConsoleCheckBox.setObjectName("uiEnableConsoleCheckBox")
-        self.gridLayout.addWidget(self.uiEnableConsoleCheckBox, 7, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiEnableConsoleCheckBox, 6, 0, 1, 2)
         self.uiHeadlessModeCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiHeadlessModeCheckBox.setChecked(False)
         self.uiHeadlessModeCheckBox.setObjectName("uiHeadlessModeCheckBox")
-        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 9, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 8, 0, 1, 2)
         self.uiVMListLabel = QtWidgets.QLabel(self.tab)
         self.uiVMListLabel.setObjectName("uiVMListLabel")
         self.gridLayout.addWidget(self.uiVMListLabel, 4, 0, 1, 1)
-        self.uiConsolePortLabel = QtWidgets.QLabel(self.tab)
-        self.uiConsolePortLabel.setObjectName("uiConsolePortLabel")
-        self.gridLayout.addWidget(self.uiConsolePortLabel, 6, 0, 1, 1)
-        self.uiConsolePortSpinBox = QtWidgets.QSpinBox(self.tab)
-        self.uiConsolePortSpinBox.setMaximum(65535)
-        self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
-        self.gridLayout.addWidget(self.uiConsolePortSpinBox, 6, 1, 1, 1)
         self.uiDefaultNameFormatLabel = QtWidgets.QLabel(self.tab)
         self.uiDefaultNameFormatLabel.setObjectName("uiDefaultNameFormatLabel")
         self.gridLayout.addWidget(self.uiDefaultNameFormatLabel, 1, 0, 1, 1)
@@ -169,7 +162,6 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.uiEnableConsoleCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Enable remote console"))
         self.uiHeadlessModeCheckBox.setText(_translate("virtualBoxVMConfigPageWidget", "Start VM in headless mode"))
         self.uiVMListLabel.setText(_translate("virtualBoxVMConfigPageWidget", "VM name:"))
-        self.uiConsolePortLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Console port:"))
         self.uiDefaultNameFormatLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Default name format:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("virtualBoxVMConfigPageWidget", "General settings"))
         self.uiAdaptersLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Adapters:"))

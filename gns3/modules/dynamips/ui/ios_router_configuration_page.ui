@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>499</width>
-    <height>507</height>
+    <width>492</width>
+    <height>472</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,19 @@
        <string>General</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="15" column="1">
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>263</width>
+           <height>151</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="10" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
@@ -41,28 +54,8 @@
          </item>
         </layout>
        </item>
-       <item row="17" column="1">
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>263</width>
-           <height>151</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="14" column="0">
-        <widget class="QLabel" name="uiAuxPortLabel">
-         <property name="text">
-          <string>Aux port:</string>
-         </property>
-        </widget>
        </item>
        <item row="4" column="1">
         <widget class="QLabel" name="uiChassisTextLabel">
@@ -75,13 +68,6 @@
         <widget class="QLabel" name="uiSymbolLabel">
          <property name="text">
           <string>Symbol:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="0">
-        <widget class="QLabel" name="uiConsolePortLabel">
-         <property name="text">
-          <string>Console port:</string>
          </property>
         </widget>
        </item>
@@ -185,7 +171,7 @@
          </property>
         </widget>
        </item>
-       <item row="16" column="1">
+       <item row="14" column="1">
         <widget class="QComboBox" name="uiNPEComboBox">
          <property name="enabled">
           <bool>true</bool>
@@ -198,7 +184,7 @@
          </property>
         </widget>
        </item>
-       <item row="15" column="1">
+       <item row="13" column="1">
         <widget class="QComboBox" name="uiMidplaneComboBox">
          <property name="enabled">
           <bool>true</bool>
@@ -211,7 +197,7 @@
          </property>
         </widget>
        </item>
-       <item row="15" column="0">
+       <item row="13" column="0">
         <widget class="QLabel" name="uiMidplaneLabel">
          <property name="text">
           <string>Midplane:</string>
@@ -228,24 +214,10 @@
        <item row="6" column="1">
         <widget class="QComboBox" name="uiCategoryComboBox"/>
        </item>
-       <item row="16" column="0">
+       <item row="14" column="0">
         <widget class="QLabel" name="uiNPELabel">
          <property name="text">
           <string>NPE:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="1">
-        <widget class="QSpinBox" name="uiConsolePortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="1">
-        <widget class="QSpinBox" name="uiAuxPortSpinBox">
-         <property name="maximum">
-          <number>65535</number>
          </property>
         </widget>
        </item>

@@ -18,13 +18,6 @@
     <widget class="QLineEdit" name="uiNameLineEdit"/>
    </item>
    <item row="2" column="1">
-    <widget class="QSpinBox" name="uiConsolePortSpinBox">
-     <property name="maximum">
-      <number>65535</number>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -36,13 +29,6 @@
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="uiConsolePortLabel">
-     <property name="text">
-      <string>Console port:</string>
-     </property>
-    </widget>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="uiNameLabel">

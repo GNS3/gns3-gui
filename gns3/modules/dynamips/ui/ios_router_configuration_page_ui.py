@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created: Thu Feb  4 21:08:13 2016
+# Created: Tue May 31 21:42:36 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_iosRouterConfigPageWidget(object):
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName("iosRouterConfigPageWidget")
-        iosRouterConfigPageWidget.resize(499, 507)
+        iosRouterConfigPageWidget.resize(492, 472)
         self.vboxlayout = QtWidgets.QVBoxLayout(iosRouterConfigPageWidget)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiTabWidget = QtWidgets.QTabWidget(iosRouterConfigPageWidget)
@@ -21,6 +21,8 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiGeneralPageWidget.setObjectName("uiGeneralPageWidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.uiGeneralPageWidget)
         self.gridLayout_2.setObjectName("gridLayout_2")
+        spacerItem = QtWidgets.QSpacerItem(263, 151, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem, 15, 1, 1, 1)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.uiPrivateConfigLineEdit = QtWidgets.QLineEdit(self.uiGeneralPageWidget)
@@ -31,14 +33,9 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiPrivateConfigToolButton.setObjectName("uiPrivateConfigToolButton")
         self.horizontalLayout_6.addWidget(self.uiPrivateConfigToolButton)
         self.gridLayout_2.addLayout(self.horizontalLayout_6, 10, 1, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(263, 151, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem, 17, 1, 1, 1)
         self.uiNameLineEdit = QtWidgets.QLineEdit(self.uiGeneralPageWidget)
         self.uiNameLineEdit.setObjectName("uiNameLineEdit")
         self.gridLayout_2.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
-        self.uiAuxPortLabel = QtWidgets.QLabel(self.uiGeneralPageWidget)
-        self.uiAuxPortLabel.setObjectName("uiAuxPortLabel")
-        self.gridLayout_2.addWidget(self.uiAuxPortLabel, 14, 0, 1, 1)
         self.uiChassisTextLabel = QtWidgets.QLabel(self.uiGeneralPageWidget)
         self.uiChassisTextLabel.setText("")
         self.uiChassisTextLabel.setObjectName("uiChassisTextLabel")
@@ -46,9 +43,6 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiSymbolLabel = QtWidgets.QLabel(self.uiGeneralPageWidget)
         self.uiSymbolLabel.setObjectName("uiSymbolLabel")
         self.gridLayout_2.addWidget(self.uiSymbolLabel, 5, 0, 1, 1)
-        self.uiConsolePortLabel = QtWidgets.QLabel(self.uiGeneralPageWidget)
-        self.uiConsolePortLabel.setObjectName("uiConsolePortLabel")
-        self.gridLayout_2.addWidget(self.uiConsolePortLabel, 13, 0, 1, 1)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.uiStartupConfigLineEdit = QtWidgets.QLineEdit(self.uiGeneralPageWidget)
@@ -109,7 +103,7 @@ class Ui_iosRouterConfigPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiNPEComboBox.sizePolicy().hasHeightForWidth())
         self.uiNPEComboBox.setSizePolicy(sizePolicy)
         self.uiNPEComboBox.setObjectName("uiNPEComboBox")
-        self.gridLayout_2.addWidget(self.uiNPEComboBox, 16, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.uiNPEComboBox, 14, 1, 1, 1)
         self.uiMidplaneComboBox = QtWidgets.QComboBox(self.uiGeneralPageWidget)
         self.uiMidplaneComboBox.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -118,10 +112,10 @@ class Ui_iosRouterConfigPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiMidplaneComboBox.sizePolicy().hasHeightForWidth())
         self.uiMidplaneComboBox.setSizePolicy(sizePolicy)
         self.uiMidplaneComboBox.setObjectName("uiMidplaneComboBox")
-        self.gridLayout_2.addWidget(self.uiMidplaneComboBox, 15, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.uiMidplaneComboBox, 13, 1, 1, 1)
         self.uiMidplaneLabel = QtWidgets.QLabel(self.uiGeneralPageWidget)
         self.uiMidplaneLabel.setObjectName("uiMidplaneLabel")
-        self.gridLayout_2.addWidget(self.uiMidplaneLabel, 15, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.uiMidplaneLabel, 13, 0, 1, 1)
         self.uiIOSImageLabel = QtWidgets.QLabel(self.uiGeneralPageWidget)
         self.uiIOSImageLabel.setObjectName("uiIOSImageLabel")
         self.gridLayout_2.addWidget(self.uiIOSImageLabel, 8, 0, 1, 1)
@@ -130,15 +124,7 @@ class Ui_iosRouterConfigPageWidget(object):
         self.gridLayout_2.addWidget(self.uiCategoryComboBox, 6, 1, 1, 1)
         self.uiNPELabel = QtWidgets.QLabel(self.uiGeneralPageWidget)
         self.uiNPELabel.setObjectName("uiNPELabel")
-        self.gridLayout_2.addWidget(self.uiNPELabel, 16, 0, 1, 1)
-        self.uiConsolePortSpinBox = QtWidgets.QSpinBox(self.uiGeneralPageWidget)
-        self.uiConsolePortSpinBox.setMaximum(65535)
-        self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
-        self.gridLayout_2.addWidget(self.uiConsolePortSpinBox, 13, 1, 1, 1)
-        self.uiAuxPortSpinBox = QtWidgets.QSpinBox(self.uiGeneralPageWidget)
-        self.uiAuxPortSpinBox.setMaximum(65535)
-        self.uiAuxPortSpinBox.setObjectName("uiAuxPortSpinBox")
-        self.gridLayout_2.addWidget(self.uiAuxPortSpinBox, 14, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.uiNPELabel, 14, 0, 1, 1)
         self.uiDefaultNameFormatLineEdit = QtWidgets.QLineEdit(self.uiGeneralPageWidget)
         self.uiDefaultNameFormatLineEdit.setObjectName("uiDefaultNameFormatLineEdit")
         self.gridLayout_2.addWidget(self.uiDefaultNameFormatLineEdit, 1, 1, 1, 1)
@@ -553,9 +539,7 @@ class Ui_iosRouterConfigPageWidget(object):
         _translate = QtCore.QCoreApplication.translate
         iosRouterConfigPageWidget.setWindowTitle(_translate("iosRouterConfigPageWidget", "Dynamips IOS Router configuration"))
         self.uiPrivateConfigToolButton.setText(_translate("iosRouterConfigPageWidget", "&Browse..."))
-        self.uiAuxPortLabel.setText(_translate("iosRouterConfigPageWidget", "Aux port:"))
         self.uiSymbolLabel.setText(_translate("iosRouterConfigPageWidget", "Symbol:"))
-        self.uiConsolePortLabel.setText(_translate("iosRouterConfigPageWidget", "Console port:"))
         self.uiStartupConfigToolButton.setText(_translate("iosRouterConfigPageWidget", "&Browse..."))
         self.uiPlatformLabel.setText(_translate("iosRouterConfigPageWidget", "Platform:"))
         self.uiIOSImageToolButton.setText(_translate("iosRouterConfigPageWidget", "&Browse..."))

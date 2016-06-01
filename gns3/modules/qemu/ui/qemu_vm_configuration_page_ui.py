@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Fri May 27 22:52:02 2016
+# Created: Tue May 31 21:47:30 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,9 +63,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiQemuListLabel = QtWidgets.QLabel(self.uiGeneralSettingsTab)
         self.uiQemuListLabel.setObjectName("uiQemuListLabel")
         self.gridLayout_4.addWidget(self.uiQemuListLabel, 6, 0, 1, 1)
-        self.uiConsolePortLabel = QtWidgets.QLabel(self.uiGeneralSettingsTab)
-        self.uiConsolePortLabel.setObjectName("uiConsolePortLabel")
-        self.gridLayout_4.addWidget(self.uiConsolePortLabel, 9, 0, 1, 1)
         self.uiCategoryLabel = QtWidgets.QLabel(self.uiGeneralSettingsTab)
         self.uiCategoryLabel.setObjectName("uiCategoryLabel")
         self.gridLayout_4.addWidget(self.uiCategoryLabel, 3, 0, 1, 1)
@@ -74,16 +71,14 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiCPUSpinBox.setMaximum(255)
         self.uiCPUSpinBox.setObjectName("uiCPUSpinBox")
         self.gridLayout_4.addWidget(self.uiCPUSpinBox, 5, 1, 1, 1)
-        self.uiConsolePortSpinBox = QtWidgets.QSpinBox(self.uiGeneralSettingsTab)
-        self.uiConsolePortSpinBox.setMaximum(65535)
-        self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
-        self.gridLayout_4.addWidget(self.uiConsolePortSpinBox, 9, 1, 1, 1)
         self.uiBootPriorityComboBox = QtWidgets.QComboBox(self.uiGeneralSettingsTab)
         self.uiBootPriorityComboBox.setObjectName("uiBootPriorityComboBox")
         self.gridLayout_4.addWidget(self.uiBootPriorityComboBox, 7, 1, 1, 1)
         self.uiNameLabel = QtWidgets.QLabel(self.uiGeneralSettingsTab)
         self.uiNameLabel.setObjectName("uiNameLabel")
         self.gridLayout_4.addWidget(self.uiNameLabel, 0, 0, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(263, 94, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_4.addItem(spacerItem, 9, 1, 1, 1)
         self.uiQemuListComboBox = QtWidgets.QComboBox(self.uiGeneralSettingsTab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -92,8 +87,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiQemuListComboBox.setSizePolicy(sizePolicy)
         self.uiQemuListComboBox.setObjectName("uiQemuListComboBox")
         self.gridLayout_4.addWidget(self.uiQemuListComboBox, 6, 1, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(263, 94, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_4.addItem(spacerItem, 10, 1, 1, 1)
         self.uiCPULabel = QtWidgets.QLabel(self.uiGeneralSettingsTab)
         self.uiCPULabel.setObjectName("uiCPULabel")
         self.gridLayout_4.addWidget(self.uiCPULabel, 5, 0, 1, 1)
@@ -415,7 +408,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiConsoleTypeLabel.setText(_translate("QemuVMConfigPageWidget", "Console type:"))
         self.uiBootPriorityLabel.setText(_translate("QemuVMConfigPageWidget", "Boot priority:"))
         self.uiQemuListLabel.setText(_translate("QemuVMConfigPageWidget", "Qemu binary:"))
-        self.uiConsolePortLabel.setText(_translate("QemuVMConfigPageWidget", "Console port:"))
         self.uiCategoryLabel.setText(_translate("QemuVMConfigPageWidget", "Category:"))
         self.uiNameLabel.setText(_translate("QemuVMConfigPageWidget", "Name:"))
         self.uiCPULabel.setText(_translate("QemuVMConfigPageWidget", "vCPUs:"))

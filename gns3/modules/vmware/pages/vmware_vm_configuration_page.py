@@ -84,12 +84,6 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
                 self.uiNameLabel.hide()
                 self.uiNameLineEdit.hide()
 
-            if "console" in settings:
-                self.uiConsolePortSpinBox.setValue(settings["console"])
-            else:
-                self.uiConsolePortLabel.hide()
-                self.uiConsolePortSpinBox.hide()
-
             if "linked_base" in settings:
                 self.uiBaseVMCheckBox.setChecked(settings["linked_base"])
             else:
@@ -98,8 +92,6 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
-            self.uiConsolePortLabel.hide()
-            self.uiConsolePortSpinBox.hide()
             # self.uiVMListLabel.hide()
             # self.uiVMListComboBox.hide()
 
@@ -168,9 +160,6 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
                     QtWidgets.QMessageBox.critical(self, "Name", "VMware name cannot be empty!")
                 else:
                     settings["name"] = name
-
-            if "console" in settings:
-                settings["console"] = self.uiConsolePortSpinBox.value()
 
             if "linked_base" in settings:
                 settings["linked_base"] = self.uiBaseVMCheckBox.isChecked()

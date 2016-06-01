@@ -77,10 +77,6 @@ class DockerVMConfigurationPage(
             self.uiCMDLineEdit.hide()
             self.uiAdapterLabel.hide()
             self.uiAdapterSpinBox.hide()
-            self.uiConsolePortLabel.hide()
-            self.uiConsolePortSpinBox.hide()
-            self.uiAuxPortLabel.hide()
-            self.uiAuxPortSpinBox.hide()
             self.uiCategoryComboBox.hide()
 
         if not node:
@@ -97,16 +93,10 @@ class DockerVMConfigurationPage(
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
 
             self.uiCategoryComboBox.setCurrentIndex(settings["category"])
-            self.uiConsolePortLabel.hide()
-            self.uiConsolePortSpinBox.hide()
-            self.uiAuxPortLabel.hide()
-            self.uiAuxPortSpinBox.hide()
             self.uiNetworkConfigEditButton.hide()
             self.uiNetworkConfigLabel.hide()
         else:
             self._node = node
-            self.uiConsolePortSpinBox.setValue(settings["console"])
-            self.uiAuxPortSpinBox.setValue(settings["aux"])
             self.uiCategoryComboBox.hide()
             self.uiCategoryLabel.hide()
 
@@ -175,8 +165,3 @@ class DockerVMConfigurationPage(
                 QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
             else:
                 settings["symbol"] = symbol_path
-        else:
-            settings["console"] = self.uiConsolePortSpinBox.value()
-            settings["aux"] = self.uiAuxPortSpinBox.value()
-
-

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
 #
-# Created: Sat May 28 16:33:33 2016
+# Created: Tue May 31 21:50:07 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,25 +37,18 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiSymbolLabel = QtWidgets.QLabel(self.tab)
         self.uiSymbolLabel.setObjectName("uiSymbolLabel")
         self.gridLayout.addWidget(self.uiSymbolLabel, 2, 0, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(20, 138, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 8, 0, 1, 1)
         self.uiNameLabel = QtWidgets.QLabel(self.tab)
         self.uiNameLabel.setObjectName("uiNameLabel")
         self.gridLayout.addWidget(self.uiNameLabel, 0, 0, 1, 1)
         self.uiBaseVMCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiBaseVMCheckBox.setEnabled(True)
         self.uiBaseVMCheckBox.setObjectName("uiBaseVMCheckBox")
-        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 8, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiBaseVMCheckBox, 7, 0, 1, 2)
         self.uiEnableConsoleCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiEnableConsoleCheckBox.setObjectName("uiEnableConsoleCheckBox")
-        self.gridLayout.addWidget(self.uiEnableConsoleCheckBox, 5, 0, 1, 2)
-        spacerItem = QtWidgets.QSpacerItem(20, 138, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 9, 0, 1, 1)
-        self.uiConsolePortSpinBox = QtWidgets.QSpinBox(self.tab)
-        self.uiConsolePortSpinBox.setMaximum(65535)
-        self.uiConsolePortSpinBox.setObjectName("uiConsolePortSpinBox")
-        self.gridLayout.addWidget(self.uiConsolePortSpinBox, 4, 1, 1, 1)
-        self.uiConsolePortLabel = QtWidgets.QLabel(self.tab)
-        self.uiConsolePortLabel.setObjectName("uiConsolePortLabel")
-        self.gridLayout.addWidget(self.uiConsolePortLabel, 4, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiEnableConsoleCheckBox, 4, 0, 1, 2)
         self.uiCategoryLabel = QtWidgets.QLabel(self.tab)
         self.uiCategoryLabel.setObjectName("uiCategoryLabel")
         self.gridLayout.addWidget(self.uiCategoryLabel, 3, 0, 1, 1)
@@ -64,11 +57,11 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.gridLayout.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
         self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
-        self.gridLayout.addWidget(self.uiACPIShutdownCheckBox, 6, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiACPIShutdownCheckBox, 5, 0, 1, 2)
         self.uiHeadlessModeCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiHeadlessModeCheckBox.setChecked(False)
         self.uiHeadlessModeCheckBox.setObjectName("uiHeadlessModeCheckBox")
-        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 7, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiHeadlessModeCheckBox, 6, 0, 1, 2)
         self.uiDefaultNameFormatLabel = QtWidgets.QLabel(self.tab)
         self.uiDefaultNameFormatLabel.setObjectName("uiDefaultNameFormatLabel")
         self.gridLayout.addWidget(self.uiDefaultNameFormatLabel, 1, 0, 1, 1)
@@ -140,7 +133,6 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiNameLabel.setText(_translate("VMwareVMConfigPageWidget", "Name:"))
         self.uiBaseVMCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Use as a linked base VM (experimental)"))
         self.uiEnableConsoleCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Enable remote console"))
-        self.uiConsolePortLabel.setText(_translate("VMwareVMConfigPageWidget", "Console port:"))
         self.uiCategoryLabel.setText(_translate("VMwareVMConfigPageWidget", "Category:"))
         self.uiACPIShutdownCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Enable ACPI shutdown"))
         self.uiHeadlessModeCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Start VM in headless mode"))

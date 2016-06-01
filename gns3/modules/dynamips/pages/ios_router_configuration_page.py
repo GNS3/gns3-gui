@@ -243,22 +243,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
-
-            if "console" in settings:
-                self.uiConsolePortSpinBox.setValue(settings["console"])
-            else:
-                self.uiConsolePortLabel.hide()
-                self.uiConsolePortSpinBox.hide()
-
-            if "aux" in settings:
-                if settings["aux"] is None:
-                    self.uiAuxPortSpinBox.setValue(0)
-                else:
-                    self.uiAuxPortSpinBox.setValue(settings["aux"])
-            else:
-                self.uiAuxPortLabel.hide()
-                self.uiAuxPortSpinBox.hide()
-
             # load the MAC address setting
             self.uiBaseMACLineEdit.setInputMask("HHHH.HHHH.HHHH;_")
             if settings["mac_addr"]:
@@ -273,10 +257,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiIOSImageLabel.hide()
             self.uiIOSImageLineEdit.hide()
             self.uiIOSImageToolButton.hide()
-            self.uiConsolePortLabel.hide()
-            self.uiConsolePortSpinBox.hide()
-            self.uiAuxPortLabel.hide()
-            self.uiAuxPortSpinBox.hide()
             self.uiBaseMacLabel.hide()
             self.uiBaseMACLineEdit.hide()
 
@@ -497,12 +477,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 QtWidgets.QMessageBox.critical(self, "Name", "Invalid name detected for IOS router: {}".format(name))
             else:
                 settings["name"] = name
-
-            if "console" in settings:
-                settings["console"] = self.uiConsolePortSpinBox.value()
-                aux = self.uiAuxPortSpinBox.value()
-                if aux:
-                    settings["aux"] = aux
 
             # check and save the base MAC address
             mac = self.uiBaseMACLineEdit.text()
