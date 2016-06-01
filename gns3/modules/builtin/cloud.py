@@ -49,6 +49,13 @@ class Cloud(Node):
 
         return self._interfaces
 
+    def _isVirtualizationInterface(self, interface):
+
+        for virtualization_interface in ("vmnet", "vboxnet", "docker", "lxcbr", "virbr", "ovs-system"):
+            if interface.lower().startswith(virtualization_interface):
+                return True
+        return False
+
     def create(self, name=None, node_id=None, ports=None, default_name_format = "Cloud{0}"):
         """
         Creates this cloud.
@@ -71,7 +78,7 @@ class Cloud(Node):
         """
 
         self._interfaces = result["interfaces"].copy()
-        if "ports" in result:
+        if "ports" in result and result["ports"]:
             for port_info in result["ports"]:
                 port = Port(port_info["name"])
                 port.setAdapterNumber(0)  # adapter number is always 0
@@ -79,6 +86,18 @@ class Cloud(Node):
                 port.setStatus(Port.started)
                 self._ports.append(port)
                 log.debug("port {} has been added".format(port_info["port_number"]))
+        else:
+            port_number = 1
+            settings = {"ports": []}
+            for interface in self._interfaces:
+                if self._isVirtualizationInterface(interface["name"]):
+                    continue
+                settings["ports"].append({"name": interface["name"],
+                                          "port_number": port_number,
+                                          "type": interface["type"],
+                                          "interface": interface["name"]})
+                port_number += 1
+            self.update(settings)
 
     def update(self, new_settings):
         """
