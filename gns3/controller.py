@@ -43,7 +43,7 @@ class Controller(QtCore.QObject):
         """
         self._http_client = http_client
         self._http_client.connection_connected_signal.connect(self._httpClientConnectedSlot)
-        self.get('/version', None)
+        self.get('/server/version', None)
 
     def _httpClientConnectedSlot(self):
         if not self._connected:

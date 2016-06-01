@@ -413,10 +413,9 @@ class LocalServer():
         :returns: boolean
         """
 
-        status, json_data = getSynchronous(self._settings["host"], self._port, "version",
-                                           timeout=2,
-                                           user=self._settings["user"],
-                                           password=self._settings["password"])
+        status, json_data = getSynchronous(self._settings["host"], self._port, "server/version",
+                                           timeout=2, user=self._settings["user"], password=self._settings["password"])
+
         if json_data is None or status != 200:
             return False
         else:

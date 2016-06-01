@@ -116,7 +116,7 @@ def test_post_not_connected(http_client, http_request, network_manager, response
     response.header.return_value = "application/json"
     response.readAll.return_value = ("{\"version\": \"" + __version__ + "\", \"local\": true}").encode()
 
-    # Trigger the completion of /version
+    # Trigger the completion of /server/version
     response.finished.emit()
 
     # Trigger the completion
@@ -146,7 +146,7 @@ def test_post_not_connected_connection_failed(http_client, http_request, network
     assert args[0] == http_request
     assert args[1] == b"GET"
 
-    # Trigger the completion of /version
+    # Trigger the completion of /server/version
     response.finished.emit()
 
     assert callback.called
@@ -260,7 +260,7 @@ def test_callbackConnect_version_ok(http_client):
         "local": True,
         "version": __version__
     }
-    http_client._callbackConnect("GET", "/version", None, {}, {}, params)
+    http_client._callbackConnect("GET", "/server/version", None, {}, {}, params)
     assert http_client._connected
 
 
@@ -272,7 +272,7 @@ def test_callbackConnect_version_non_local_remote_server(http_client):
     }
     mock = unittest.mock.MagicMock()
     http_client._local = False
-    http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
+    http_client._callbackConnect("GET", "/server/version", mock, {}, {}, params)
     assert http_client._connected is True
 
 
@@ -283,7 +283,7 @@ def test_callbackConnect_major_version_invalid(http_client):
         "version": "1.2.3"
     }
     mock = unittest.mock.MagicMock()
-    http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
+    http_client._callbackConnect("GET", "/server/version", mock, {}, {}, params)
     assert http_client._connected is False
     mock.assert_called_with({"message": "Client version {} differs with server version 1.2.3".format(__version__)}, error=True, server=None)
 
@@ -299,11 +299,11 @@ def test_callbackConnect_minor_version_invalid(http_client):
 
     # Stable release
     if __version_info__[3] == 0:
-        http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
+        http_client._callbackConnect("GET", "/server/version", mock, {}, {}, params)
         assert http_client._connected is False
         mock.assert_called_with({"message": "Client version {} differs with server version {}".format(__version__, new_version)}, error=True, server=None)
     else:
-        http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
+        http_client._callbackConnect("GET", "/server/version", mock, {}, {}, params)
         assert http_client._connected is True
 
 
@@ -313,6 +313,6 @@ def test_callbackConnect_non_gns3_server(http_client):
         "virus": True,
     }
     mock = unittest.mock.MagicMock()
-    http_client._callbackConnect("GET", "/version", mock, {}, {}, params)
+    http_client._callbackConnect("GET", "/server/version", mock, {}, {}, params)
     assert http_client._connected is False
     mock.assert_called_with({"message": "The remote server http://127.0.0.1:3080 is not a GNS3 server"}, error=True, server=None)
