@@ -618,7 +618,11 @@ class Servers(QtCore.QObject):
         Initialize the GNS3 VM server.
         """
 
+
         gns3_vm_settings = self._settings["vm"]
+
+        if not gns3_vm_settings["auto_start"]:
+            return
 
         if gns3_vm_settings["virtualization"] == "remote":
             protocol = gns3_vm_settings["remote_vm_protocol"]
