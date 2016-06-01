@@ -49,10 +49,11 @@ class Cloud(Node):
 
         return self._interfaces
 
-    def _isVirtualizationInterface(self, interface):
+    @staticmethod
+    def isSpecialInterface(interface):
 
-        for virtualization_interface in ("vmnet", "vboxnet", "docker", "lxcbr", "virbr", "ovs-system"):
-            if interface.lower().startswith(virtualization_interface):
+        for special_interface in ("lo", "vmnet", "vboxnet", "docker", "lxcbr", "virbr", "ovs-system", "veth"):
+            if interface.lower().startswith(special_interface):
                 return True
         return False
 
@@ -90,7 +91,7 @@ class Cloud(Node):
             port_number = 1
             settings = {"ports": []}
             for interface in self._interfaces:
-                if self._isVirtualizationInterface(interface["name"]):
+                if self.isSpecialInterface(interface["name"]):
                     continue
                 settings["ports"].append({"name": interface["name"],
                                           "port_number": port_number,

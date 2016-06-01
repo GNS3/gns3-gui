@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>758</width>
-    <height>289</height>
+    <height>299</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,13 +24,6 @@
        <string>Ethernet interfaces</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="2">
-        <widget class="QPushButton" name="uiAddEthernetPushButton">
-         <property name="text">
-          <string>&amp;Add</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QComboBox" name="uiEthernetComboBox">
          <property name="sizePolicy">
@@ -39,12 +32,29 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="insertPolicy">
+          <enum>QComboBox::InsertAlphabetically</enum>
+         </property>
          <property name="sizeAdjustPolicy">
           <enum>QComboBox::AdjustToContents</enum>
          </property>
         </widget>
        </item>
-       <item row="0" column="4">
+       <item row="0" column="1">
+        <widget class="QPushButton" name="uiAddEthernetPushButton">
+         <property name="text">
+          <string>&amp;Add</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="uiAddAllEthernetPushButton">
+         <property name="text">
+          <string>&amp;Add all</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
         <widget class="QPushButton" name="uiDeleteEthernetPushButton">
          <property name="enabled">
           <bool>false</bool>
@@ -54,8 +64,8 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="5">
-        <widget class="EthernetInterfacesListWidget" name="uiEthernetListWidget">
+       <item row="1" column="0" colspan="4">
+        <widget class="QListWidget" name="uiEthernetListWidget">
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
@@ -64,10 +74,10 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QPushButton" name="uiAddAllEthernetPushButton">
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="uiShowSpecialInterfacesCheckBox">
          <property name="text">
-          <string>&amp;Add all</string>
+          <string>&amp;Show special Ethernet interfaces</string>
          </property>
         </widget>
        </item>
@@ -77,6 +87,7 @@
       <zorder>uiAddEthernetPushButton</zorder>
       <zorder>uiDeleteEthernetPushButton</zorder>
       <zorder>uiAddAllEthernetPushButton</zorder>
+      <zorder>uiShowSpecialInterfacesCheckBox</zorder>
      </widget>
      <widget class="QWidget" name="TAPTab">
       <attribute name="title">
@@ -127,6 +138,9 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="insertPolicy">
+          <enum>QComboBox::InsertAlphabetically</enum>
          </property>
          <property name="sizeAdjustPolicy">
           <enum>QComboBox::AdjustToContents</enum>
@@ -379,13 +393,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>EthernetInterfacesListWidget</class>
-   <extends>QListWidget</extends>
-   <header>..pages.ethernet_interfaces_list_widget.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

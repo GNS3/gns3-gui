@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created: Mon May 30 21:22:49 2016
+# Created: Wed Jun  1 11:53:13 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_cloudConfigPageWidget(object):
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
-        cloudConfigPageWidget.resize(758, 289)
+        cloudConfigPageWidget.resize(758, 299)
         self.verticalLayout = QtWidgets.QVBoxLayout(cloudConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(cloudConfigPageWidget)
@@ -21,29 +21,33 @@ class Ui_cloudConfigPageWidget(object):
         self.EthernetTab.setObjectName("EthernetTab")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.EthernetTab)
         self.gridLayout_3.setObjectName("gridLayout_3")
-        self.uiAddEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
-        self.uiAddEthernetPushButton.setObjectName("uiAddEthernetPushButton")
-        self.gridLayout_3.addWidget(self.uiAddEthernetPushButton, 0, 2, 1, 1)
         self.uiEthernetComboBox = QtWidgets.QComboBox(self.EthernetTab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiEthernetComboBox.sizePolicy().hasHeightForWidth())
         self.uiEthernetComboBox.setSizePolicy(sizePolicy)
+        self.uiEthernetComboBox.setInsertPolicy(QtWidgets.QComboBox.InsertAlphabetically)
         self.uiEthernetComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
         self.uiEthernetComboBox.setObjectName("uiEthernetComboBox")
         self.gridLayout_3.addWidget(self.uiEthernetComboBox, 0, 0, 1, 1)
+        self.uiAddEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
+        self.uiAddEthernetPushButton.setObjectName("uiAddEthernetPushButton")
+        self.gridLayout_3.addWidget(self.uiAddEthernetPushButton, 0, 1, 1, 1)
+        self.uiAddAllEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
+        self.uiAddAllEthernetPushButton.setObjectName("uiAddAllEthernetPushButton")
+        self.gridLayout_3.addWidget(self.uiAddAllEthernetPushButton, 0, 2, 1, 1)
         self.uiDeleteEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
         self.uiDeleteEthernetPushButton.setEnabled(False)
         self.uiDeleteEthernetPushButton.setObjectName("uiDeleteEthernetPushButton")
-        self.gridLayout_3.addWidget(self.uiDeleteEthernetPushButton, 0, 4, 1, 1)
-        self.uiEthernetListWidget = EthernetInterfacesListWidget(self.EthernetTab)
+        self.gridLayout_3.addWidget(self.uiDeleteEthernetPushButton, 0, 3, 1, 1)
+        self.uiEthernetListWidget = QtWidgets.QListWidget(self.EthernetTab)
         self.uiEthernetListWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.uiEthernetListWidget.setObjectName("uiEthernetListWidget")
-        self.gridLayout_3.addWidget(self.uiEthernetListWidget, 1, 0, 1, 5)
-        self.uiAddAllEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
-        self.uiAddAllEthernetPushButton.setObjectName("uiAddAllEthernetPushButton")
-        self.gridLayout_3.addWidget(self.uiAddAllEthernetPushButton, 0, 3, 1, 1)
+        self.gridLayout_3.addWidget(self.uiEthernetListWidget, 1, 0, 1, 4)
+        self.uiShowSpecialInterfacesCheckBox = QtWidgets.QCheckBox(self.EthernetTab)
+        self.uiShowSpecialInterfacesCheckBox.setObjectName("uiShowSpecialInterfacesCheckBox")
+        self.gridLayout_3.addWidget(self.uiShowSpecialInterfacesCheckBox, 2, 0, 1, 1)
         self.uiTabWidget.addTab(self.EthernetTab, "")
         self.TAPTab = QtWidgets.QWidget()
         self.TAPTab.setObjectName("TAPTab")
@@ -74,6 +78,7 @@ class Ui_cloudConfigPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiTAPComboBox.sizePolicy().hasHeightForWidth())
         self.uiTAPComboBox.setSizePolicy(sizePolicy)
+        self.uiTAPComboBox.setInsertPolicy(QtWidgets.QComboBox.InsertAlphabetically)
         self.uiTAPComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
         self.uiTAPComboBox.setObjectName("uiTAPComboBox")
         self.gridLayout_2.addWidget(self.uiTAPComboBox, 0, 1, 1, 4)
@@ -196,9 +201,10 @@ class Ui_cloudConfigPageWidget(object):
         _translate = QtCore.QCoreApplication.translate
         cloudConfigPageWidget.setWindowTitle(_translate("cloudConfigPageWidget", "Cloud configuration"))
         self.uiAddEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))
+        self.uiAddAllEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add all"))
         self.uiDeleteEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Delete"))
         self.uiEthernetListWidget.setSortingEnabled(True)
-        self.uiAddAllEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add all"))
+        self.uiShowSpecialInterfacesCheckBox.setText(_translate("cloudConfigPageWidget", "&Show special Ethernet interfaces"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.EthernetTab), _translate("cloudConfigPageWidget", "Ethernet interfaces"))
         self.uiDeleteTAPPushButton.setText(_translate("cloudConfigPageWidget", "&Delete"))
         self.uiTAPListWidget.setSortingEnabled(True)
@@ -223,4 +229,3 @@ class Ui_cloudConfigPageWidget(object):
         self.uiNameLabel.setText(_translate("cloudConfigPageWidget", "Name:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.MiscTab), _translate("cloudConfigPageWidget", "Misc."))
 
-from ..pages.ethernet_interfaces_list_widget import EthernetInterfacesListWidget

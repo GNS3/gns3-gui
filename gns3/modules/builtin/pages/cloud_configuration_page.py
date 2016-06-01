@@ -19,8 +19,9 @@
 Configuration page for clouds.
 """
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from ..ui.cloud_configuration_page_ui import Ui_cloudConfigPageWidget
+from ..cloud import Cloud
 
 
 class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
@@ -53,6 +54,8 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiUDPTreeWidget.itemSelectionChanged.connect(self._UDPChangedSlot)
         self.uiAddUDPPushButton.clicked.connect(self._UDPAddSlot)
         self.uiDeleteUDPPushButton.clicked.connect(self._UDPDeleteSlot)
+
+        self.uiShowSpecialInterfacesCheckBox.stateChanged.connect(self._showSpecialInterfacesSlot)
 
     def _EthernetChangedSlot(self):
         """
@@ -93,7 +96,6 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         for index in range(0, self.uiEthernetComboBox.count()):
             interface = self.uiEthernetComboBox.itemText(index)
             self._EthernetAddSlot(interface)
-        self.uiEthernetListWidget.refresh()
 
     def _EthernetDeleteSlot(self):
         """
@@ -113,10 +115,14 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             for port in self._ports.copy():
                 if port["name"] == interface:
                     self._ports.remove(port)
+                    print("remove {}".format(port["name"]))
                     self.uiEthernetListWidget.takeItem(self.uiEthernetListWidget.currentRow())
                     for interface in self._node.interfaces():
+                        if not self.uiShowSpecialInterfacesCheckBox.isChecked() and Cloud.isSpecialInterface(interface["name"]):
+                            continue
                         if interface["name"] == port["name"] and interface["type"] == "ethernet":
                             self.uiEthernetComboBox.addItem(interface["name"])
+                            break
                     break
 
     def _TAPSelectedSlot(self, index):
@@ -285,6 +291,19 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                     nb_tunnels += 1
             self.uiUDPNameLineEdit.setText("UDP tunnel {}".format(nb_tunnels + 1))
 
+    def _showSpecialInterfacesSlot(self, state):
+
+        self.uiEthernetComboBox.clear()
+        index = 0
+        for interface in self._node.interfaces():
+            if interface["type"] == "ethernet":
+                if not state and Cloud.isSpecialInterface(interface["name"]):
+                    continue
+                if self.uiEthernetListWidget.findItems(interface["name"], QtCore.Qt.MatchFixedString):
+                    continue
+                self.uiEthernetComboBox.addItem(interface["name"])
+                index += 1
+
     def loadSettings(self, settings, node, group=False):
         """
         Loads the cloud settings.
@@ -305,10 +324,9 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiEthernetComboBox.clear()
         index = 0
         for interface in self._node.interfaces():
-            if interface["type"] == "ethernet":
+            if interface["type"] == "ethernet" and not Cloud.isSpecialInterface(interface["name"]):
                 self.uiEthernetComboBox.addItem(interface["name"])
                 index += 1
-        self.uiEthernetComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
 
         # load all TAP interfaces
         self.uiTAPComboBox.clear()
@@ -317,7 +335,6 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             if interface["type"] == "tap":
                 self.uiTAPComboBox.addItem(interface["name"])
                 index += 1
-        self.uiTAPComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
 
         # load the current ports
         self._ports = []
