@@ -31,7 +31,7 @@ import signal
 import subprocess
 
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtWidgets, QtCore
 from gns3.settings import LOCAL_SERVER_SETTINGS
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
@@ -43,6 +43,35 @@ from gns3.http_client import HTTPClient
 
 import logging
 log = logging.getLogger(__name__)
+
+
+class StopLocalServerWorker(QtCore.QObject):
+    """
+    Worker for displaying a progress dialog when closing
+    the server
+    """
+    # signals to update the progress dialog.
+    error = QtCore.pyqtSignal(str, bool)
+    finished = QtCore.pyqtSignal()
+    updated = QtCore.pyqtSignal(int)
+
+    def __init__(self, local_server_process):
+        super().__init__()
+        self._local_server_process = local_server_process
+
+    def run(self):
+        precision = 1
+        remaining_trial = 4 / precision # 4 Seconds
+        while remaining_trial > 0:
+            if self._local_server_process.returncode is None:
+                remaining_trial -=1
+                self.thread().sleep(precision)
+            else:
+                break
+        self.finished.emit()
+
+    def cancel(self):
+        return
 
 
 class LocalServer():
@@ -407,33 +436,41 @@ class LocalServer():
         if self.localServerProcessIsRunning():
             log.info("Stopping local server (PID={})".format(self._local_server_process.pid))
             # local server is running, let's stop it
+            # TODO: Main GUI
+            if self._http_client:
+                self._http_client.createHTTPQuery("POST", "/server/shutdown", None, showProgress=False)
             if wait:
-                try:
-                    # wait for the server to stop for maximum 2 seconds
-                    self._local_server_process.wait(timeout=2)
-                except subprocess.TimeoutExpired:
-                    # the local server couldn't be stopped with the normal procedure
-                    try:
-                        if sys.platform.startswith("win"):
-                            self._local_server_process.send_signal(signal.CTRL_BREAK_EVENT)
-                        else:
-                            self._local_server_process.send_signal(signal.SIGINT)
-                    # If the process is already dead we received a permission error
-                    # it's a race condition between the timeout and send signal
-                    except PermissionError:
-                        pass
-                    try:
-                        # wait for the server to stop for maximum 2 seconds
-                        self._local_server_process.wait(timeout=2)
-                    except subprocess.TimeoutExpired:
-                        proceed = QtWidgets.QMessageBox.question(self.parent(),
-                                                                 "Local server",
-                                                                 "The Local server cannot be stopped, would you like to kill it?",
-                                                                 QtWidgets.QMessageBox.Yes,
-                                                                 QtWidgets.QMessageBox.No)
+                worker = StopLocalServerWorker(self._local_server_process)
+                progress_dialog = ProgressDialog(worker, "Run as administrator", "Waiting for server stop...", None, busy=True, parent=self.parent())
+                progress_dialog.show()
+                progress_dialog.exec_()
+                if self._local_server_process.returncode is None:
+                    self._killLocalServer()
 
-                        if proceed == QtWidgets.QMessageBox.Yes:
-                            self._local_server_process.kill()
+    def _killLocalServer(self):
+        # the local server couldn't be stopped with the normal procedure
+        try:
+            if sys.platform.startswith("win"):
+                self._local_server_process.send_signal(signal.CTRL_BREAK_EVENT)
+            else:
+                self._local_server_process.send_signal(signal.SIGINT)
+        # If the process is already dead we received a permission error
+        # it's a race condition between the timeout and send signal
+        except PermissionError:
+            pass
+        try:
+            # wait for the server to stop for maximum 2 seconds
+            self._local_server_process.wait(timeout=2)
+        except subprocess.TimeoutExpired:
+            proceed = QtWidgets.QMessageBox.question(self.parent(),
+                                                     "Local server",
+                                                     "The Local server cannot be stopped, would you like to kill it?",
+                                                     QtWidgets.QMessageBox.Yes,
+                                                     QtWidgets.QMessageBox.No)
+
+            if proceed == QtWidgets.QMessageBox.Yes:
+                self._local_server_process.kill()
+
 
     @staticmethod
     def instance():
