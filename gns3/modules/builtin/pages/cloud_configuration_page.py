@@ -115,8 +115,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             for port in self._ports.copy():
                 if port["name"] == interface:
                     self._ports.remove(port)
-                    print("remove {}".format(port["name"]))
-                    self.uiEthernetListWidget.takeItem(self.uiEthernetListWidget.currentRow())
+                    self.uiEthernetListWidget.takeItem(self.uiEthernetListWidget.row(item))
                     for interface in self._node.interfaces():
                         if not self.uiShowSpecialInterfacesCheckBox.isChecked() and Cloud.isSpecialInterface(interface["name"]):
                             continue
@@ -193,7 +192,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             for port in self._ports.copy():
                 if port["name"] == interface:
                     self._ports.remove(port)
-                    self.uiTAPListWidget.takeItem(self.uiTAPListWidget.currentRow())
+                    self.uiTAPListWidget.takeItem(self.uiTAPListWidget.row(item))
                     for interface in self._node.interfaces():
                         if interface["name"] == port["name"] and interface["type"] == "tap":
                             self.uiTAPComboBox.addItem(interface["name"])
