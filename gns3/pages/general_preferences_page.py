@@ -331,7 +331,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
                                      "symbols_path": self.uiSymbolsPathLineEdit.text(),
                                      "configs_path": self.uiConfigsPathLineEdit.text(),
                                      "report_errors": self.uiCrashReportCheckBox.isChecked(),
-                                     "additional_image_paths": additional_image_paths}
+                                     "additional_image_paths": ":".join(additional_image_paths)}
         LocalServer.instance().setLocalServerSettings(new_local_server_settings)
 
         new_general_settings = {
