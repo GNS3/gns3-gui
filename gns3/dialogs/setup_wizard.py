@@ -237,9 +237,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         server = Servers.instance().localServer()
         if self.uiVmwareRadioButton.isChecked():
-            server.get("/vmware/vms", self._getVMsFromServerCallback)
+            server.get("/computes/local/vmware/vms", self._getVMsFromServerCallback)
         elif self.uiVirtualBoxRadioButton.isChecked():
-            server.get("/virtualbox/vms", self._getVMsFromServerCallback)
+            server.get("/computes/local/virtualbox/vms", self._getVMsFromServerCallback)
 
     def _getVMsFromServerCallback(self, result, error=False, **kwargs):
         """

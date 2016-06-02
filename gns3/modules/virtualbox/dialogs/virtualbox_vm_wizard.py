@@ -20,7 +20,7 @@ Wizard for VirtualBox VMs.
 """
 
 from gns3.qt import QtGui, QtWidgets
-from gns3.servers import Servers
+from gns3.controller import Controller
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.virtualbox_vm_wizard_ui import Ui_VirtualBoxVMWizard
@@ -61,7 +61,7 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
         super().initializePage(page_id)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
             self.uiVMListComboBox.clear()
-            self._server.get("/virtualbox/vms", self._getVirtualBoxVMsFromServerCallback, progressText="Listing VirtualBox VMs...")
+            Controller.instance().get("/computes/{}/virtualbox/vms".format(self._compute_id), self._getVirtualBoxVMsFromServerCallback, progressText="Listing VirtualBox VMs...")
 
     def _getVirtualBoxVMsFromServerCallback(self, result, error=False, **kwargs):
         """

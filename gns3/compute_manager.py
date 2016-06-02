@@ -76,7 +76,7 @@ class ComputeManager(QtCore.QObject):
         """
         :returns: List of computes nodes
         """
-        return self._computes.values()
+        return list(self._computes.values())
 
     def getCompute(self, compute_id):
         if compute_id not in self._computes:

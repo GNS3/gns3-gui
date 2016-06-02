@@ -20,7 +20,7 @@ Wizard for VMware VMs.
 """
 
 from gns3.qt import QtGui, QtWidgets
-from gns3.servers import Servers
+from gns3.controller import Controller
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.vmware_vm_wizard_ui import Ui_VMwareVMWizard
@@ -61,7 +61,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         super().initializePage(page_id)
         if self.page(page_id) == self.uiVirtualBoxWizardPage:
             self.uiVMListComboBox.clear()
-            self._server.get("/vmware/vms", self._getVMwareVMsFromServerCallback)
+            Controller.instance().get("/computes/{}/vmware/vms".format(self._compute_id), self._getVMwareVMsFromServerCallback, progressText="Listing VMware VMs...")
 
     def _getVMwareVMsFromServerCallback(self, result, error=False, **kwargs):
         """
