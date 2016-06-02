@@ -194,7 +194,7 @@ class HTTPClient(QtCore.QObject):
         :param query: The query to execute when all network stack is ready
         :param query: The Server to connect
         """
-        self._executeHTTPQuery("GET", "/server/version", query, {}, server=server, timeout=5)
+        self._executeHTTPQuery("GET", "/version", query, {}, server=server, timeout=5)
 
     def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, server=None, **kwargs):
         """
@@ -240,7 +240,7 @@ class HTTPClient(QtCore.QObject):
 
     def _callbackConnect(self, method, path, callback, body, original_context, params, error=False, server=None, **kwargs):
         """
-        Callback after /server/version response. Continue execution of query
+        Callback after /version response. Continue execution of query
 
         :param method: HTTP method
         :param path: Remote path

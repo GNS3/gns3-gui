@@ -413,7 +413,7 @@ class LocalServer():
         :returns: boolean
         """
 
-        status, json_data = getSynchronous(self._settings["host"], self._port, "server/version",
+        status, json_data = getSynchronous(self._settings["host"], self._port, "version",
                                            timeout=2, user=self._settings["user"], password=self._settings["password"])
 
         if json_data is None or status != 200:
@@ -437,7 +437,7 @@ class LocalServer():
             # local server is running, let's stop it
             # TODO: Main GUI
             if self._http_client:
-                self._http_client.createHTTPQuery("POST", "/server/shutdown", None, showProgress=False)
+                self._http_client.createHTTPQuery("POST", "/shutdown", None, showProgress=False)
             if wait:
                 worker = StopLocalServerWorker(self._local_server_process)
                 progress_dialog = ProgressDialog(worker, "Run as administrator", "Waiting for server stop...", None, busy=True, parent=self.parent())
