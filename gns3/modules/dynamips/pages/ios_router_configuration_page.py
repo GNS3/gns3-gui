@@ -58,7 +58,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         self.uiPrivateConfigToolButton.clicked.connect(self._privateConfigBrowserSlot)
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
-        self._server = None
+        self._compute_id = None
         self._idle_valid = False
         idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]{8})?$")
         validator = QtGui.QRegExpValidator(idle_pc_rgx, self)
@@ -95,7 +95,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         """
 
         from ..pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        path = IOSRouterPreferencesPage.getIOSImage(self, self._server)
+        path = IOSRouterPreferencesPage.getIOSImage(self, self._compute_id)
         if not path:
             return
         self.uiIOSImageLineEdit.clear()
@@ -237,9 +237,9 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         """
 
         if node:
-            self._server = node.server()
+            self._compute_id = node.compute().id()
         else:
-            self._server = Servers.instance().getServerFromString(settings["server"])
+            self._compute_id = settings["server"]
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])

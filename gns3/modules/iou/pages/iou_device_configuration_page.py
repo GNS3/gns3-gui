@@ -48,7 +48,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         self.uiIOUImageToolButton.clicked.connect(self._iouImageBrowserSlot)
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
         self._current_iou_image = ""
-        self._server = None
+        self._compute_id = None
 
         # location of the base config templates
         self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
@@ -77,7 +77,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         """
 
         from .iou_device_preferences_page import IOUDevicePreferencesPage
-        path = IOUDevicePreferencesPage.getIOUImage(self, self._server)
+        path = IOUDevicePreferencesPage.getIOUImage(self, self._compute_id)
         if not path:
             return
         self.uiIOUImageLineEdit.clear()
@@ -151,9 +151,9 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         """
 
         if node:
-            self._server = node.server()
+            self._compute_id = node.compute().id()
         else:
-            self._server = LocalServer.instance().getServerFromString(settings["server"])
+            self._compute_id = settings["server"]
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
