@@ -25,6 +25,7 @@ from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
 
+from ...controller import Controller
 from ..module import Module
 from ..module_error import ModuleError
 from .qemu_vm import QemuVM
@@ -254,11 +255,11 @@ class Qemu(Module):
 
         self._nodes.clear()
 
-    def getQemuBinariesFromServer(self, server, callback, archs=None):
+    def getQemuBinariesFromServer(self, compute_id, callback, archs=None):
         """
         Gets the QEMU binaries list from a server.
 
-        :param server: server to send the request to
+        :param compute_id: server to send the request to
         :param callback: callback for the reply from the server
         :param archs: A list of architectures. Only binaries matching the specified architectures are returned.
         """
@@ -266,9 +267,9 @@ class Qemu(Module):
         request_body = None
         if archs is not None:
             request_body = {"archs": archs}
-        server.get("/qemu/binaries", callback, body=request_body)
+        Controller.instance().get("/computes/{}/qemu/binaries".format(compute_id), callback, body=request_body)
 
-    def getQemuImgBinariesFromServer(self, server, callback):
+    def getQemuImgBinariesFromServer(self, compute_id, callback):
         """
         Gets the QEMU-img binaries list from a server.
 
@@ -276,9 +277,9 @@ class Qemu(Module):
         :param callback: callback for the reply from the server
         """
 
-        server.get(r"/qemu/img-binaries", callback)
+        Controller.instance().get(r"/computes/{}/qemu/img-binaries".format(compute_id), callback)
 
-    def getQemuCapabilitiesFromServer(self, server, callback):
+    def getQemuCapabilitiesFromServer(self, compute_id, callback):
         """
         Gets the capabilities of Qemu at a server.
 
@@ -286,9 +287,9 @@ class Qemu(Module):
         :param callback: callback for the reply from the server
         """
 
-        server.get(r"/qemu/capabilities", callback)
+        Controller.instance().get(r"/computes/{}/qemu/capabilities".format(compute_id), callback)
 
-    def createDiskImage(self, server, callback, options):
+    def createDiskImage(self, compute_id, callback, options):
         """
         Create a disk image on the remote server
 
@@ -297,7 +298,7 @@ class Qemu(Module):
         :param options: Options for the image creation
         """
 
-        server.post(r"/qemu/img", callback, body=options)
+        Controller.instance().post(r"/computes/{}/qemu/img".format(compute_id), callback, body=options)
 
     @staticmethod
     def getNodeClass(name):

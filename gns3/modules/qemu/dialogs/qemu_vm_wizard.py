@@ -89,10 +89,10 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
         super().initializePage(page_id)
         if self.page(page_id) in [self.uiDiskWizardPage, self.uiInitrdKernelImageWizardPage]:
-            self.loadImagesList("/qemu/vms")
+            self.loadImagesList("/qemu/images")
         elif self.page(page_id) == self.uiBinaryMemoryWizardPage:
             try:
-                Qemu.instance().getQemuBinariesFromServer(self._server, self._getQemuBinariesFromServerCallback)
+                Qemu.instance().getQemuBinariesFromServer(self._compute_id, self._getQemuBinariesFromServerCallback)
             except ModuleError as e:
                 QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
 

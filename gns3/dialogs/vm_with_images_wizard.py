@@ -18,7 +18,8 @@
 
 from .vm_wizard import VMWizard
 from gns3.qt import QtWidgets
-from gns3.servers import Servers
+from gns3.controller import Controller
+
 
 
 class VMWithImagesWizard(VMWizard):
@@ -89,9 +90,7 @@ class VMWithImagesWizard(VMWizard):
         self._radio_existing_images_buttons.add(radio_button)
 
     def _imageCreateSlot(self, line_edit, create_image_wizard, image_suffix):
-        server = Servers.instance().getServerFromString(self.getSettings()["server"])
-
-        create_dialog = create_image_wizard(self, server, self.uiNameLineEdit.text() + image_suffix)
+        create_dialog = create_image_wizard(self, self.getSettings()["server"], self.uiNameLineEdit.text() + image_suffix)
         if QtWidgets.QDialog.Accepted == create_dialog.exec_():
             line_edit.setText(create_dialog.uiLocationLineEdit.text())
 
@@ -100,8 +99,7 @@ class VMWithImagesWizard(VMWizard):
         Slot to open a file browser and select an image.
         """
 
-        server = Servers.instance().getServerFromString(self.getSettings()["server"])
-        path = image_selector(self, server)
+        path = image_selector(self, self.getSettings()["server"])
         if not path:
             return
         line_edit.clear()
@@ -146,7 +144,7 @@ class VMWithImagesWizard(VMWizard):
         :param endpoint: server endpoint with the list of Images
         """
 
-        self._server.get(endpoint, self._getImagesFromServerCallback)
+        Controller.instance().get("/computes/{}{}".format(self._compute_id, endpoint), self._getImagesFromServerCallback)
 
     def _getImagesFromServerCallback(self, result, error=False, **kwargs):
         """
