@@ -43,7 +43,7 @@ class ImageManager:
         :returns path: Final path
         """
 
-        if server and not server.isLocal():
+        if server and server != "local":
             return self._uploadImageToRemoteServer(path, server, node_type)
         else:
             destination_directory = self.getDirectoryForType(node_type)
