@@ -326,7 +326,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         super().initializePage(page_id)
 
         if self.page(page_id) == self.uiIOSImageWizardPage:
-            self.loadImagesList("/dynamips/vms")
+            self.loadImagesList("/dynamips/images")
         elif self.page(page_id) == self.uiNamePlatformWizardPage:
             self._prefillPlatform()
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
