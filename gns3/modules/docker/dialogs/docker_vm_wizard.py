@@ -125,20 +125,13 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
         :rtype: dict
         """
 
-        if self.uiLocalRadioButton.isChecked():
-            server = "local"
-        elif self.uiRemoteRadioButton.isChecked():
-            server = self.uiRemoteServersComboBox.currentText()
-        elif self.uiVMRadioButton.isChecked():
-            server = "vm"
-
         image = self._getImageName()
         start_command = self.uiStartCommandLineEdit.text()
         name = self.uiNameLineEdit.text()
 
         settings = {
             "image": image,
-            "server": server,
+            "server": self._server,
             "adapters": self.uiAdaptersSpinBox.value(),
             "name": name,
             "environment": self.uiEnvironmentTextEdit.toPlainText(),

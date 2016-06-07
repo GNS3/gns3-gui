@@ -91,11 +91,6 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
         :return: settings dict
         """
 
-        if self.uiLocalRadioButton.isChecked():
-            server = "local"
-        else:
-            server = self.uiRemoteServersComboBox.currentText()
-
         index = self.uiVMListComboBox.currentIndex()
         vmname = self.uiVMListComboBox.itemText(index)
         vminfo = self.uiVMListComboBox.itemData(index)
@@ -103,7 +98,7 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
         settings = {
             "name": vmname,
             "vmname": vmname,
-            "server": server,
+            "server": self._compute_id,
             "ram": vminfo["ram"],
             "linked_base": self.uiBaseVMCheckBox.isChecked()
         }

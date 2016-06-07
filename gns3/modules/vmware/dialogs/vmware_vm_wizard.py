@@ -91,18 +91,13 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         :return: settings dict
         """
 
-        if self.uiLocalRadioButton.isChecked():
-            server = "local"
-        else:
-            server = self.uiRemoteServersComboBox.currentText()
-
         index = self.uiVMListComboBox.currentIndex()
         vmname = self.uiVMListComboBox.itemText(index)
         vminfo = self.uiVMListComboBox.itemData(index)
 
         settings = {
             "name": vmname,
-            "server": server,
+            "server": self._compute_id,
             "vmx_path": vminfo["vmx_path"],
             "linked_base": self.uiBaseVMCheckBox.isChecked()
         }

@@ -111,7 +111,8 @@ class VMWizard(QtWidgets.QWizard):
                 self.uiRemoteRadioButton.setEnabled(False)
             else:
                 for compute in ComputeManager.instance().computes():
-                    self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
+                    if compute.id() != "local":
+                        self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
 
             if hasattr(self, "uiVMRadioButton") and not GNS3VM.instance().isRunning():
                 self.uiVMRadioButton.setEnabled(False)
@@ -138,7 +139,7 @@ class VMWizard(QtWidgets.QWizard):
                     return False
         elif self.currentPage() == self.uiServerWizardPage:
             if self.uiRemoteRadioButton.isChecked():
-                if not Servers.instance().remoteServers():
+                if self.uiRemoteServersComboBox.count() == 0:
                     QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
                     return False
                 self._compute_id = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())

@@ -99,7 +99,7 @@ class VMWithImagesWizard(VMWizard):
         Slot to open a file browser and select an image.
         """
 
-        path = image_selector(self, self.getSettings()["server"])
+        path = image_selector(self, self._compute_id)
         if not path:
             return
         line_edit.clear()

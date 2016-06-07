@@ -390,12 +390,6 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         """
 
         image = self.uiIOSImageLineEdit.text()
-        if self.uiLocalRadioButton.isChecked():
-            server = "local"
-        elif self.uiRemoteRadioButton.isChecked():
-            server = self.uiRemoteServersComboBox.currentText()
-        elif self.uiVMRadioButton.isChecked():
-            server = "vm"
 
         platform = self.uiPlatformComboBox.currentText()
         settings = {
@@ -407,7 +401,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
             "idlepc": self.uiIdlepcLineEdit.text(),
             "platform": platform,
             "chassis": self.uiChassisComboBox.currentText(),
-            "server": server,
+            "server": self._compute_id,
         }
 
         if self.uiEtherSwitchCheckBox.isChecked():

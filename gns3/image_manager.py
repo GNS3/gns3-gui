@@ -21,6 +21,7 @@ import glob
 
 from gns3.qt import QtWidgets
 from gns3.local_server import LocalServer
+from gns3.controller import Controller
 from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.utils.progress_dialog import ProgressDialog
 
@@ -93,7 +94,8 @@ class ImageManager:
             raise Exception('Invalid node type')
 
         filename = self._getRelativeImagePath(path, node_type).replace("\\", "/")
-        server.post('{}/{}'.format(upload_endpoint, filename), None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
+
+        Controller.instance().post(r'/computes/{}{}/{}'.format(server, upload_endpoint, filename), None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
         return filename
 
     def addMissingImage(self, filename, server, node_type):

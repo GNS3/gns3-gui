@@ -144,19 +144,12 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         :return: settings dict
         """
 
-        if self.uiLocalRadioButton.isChecked():
-            server = "local"
-        elif self.uiRemoteRadioButton.isChecked():
-            server = self.uiRemoteServersComboBox.currentText()
-        elif self.uiVMRadioButton.isChecked():
-            server = "vm"
-
         qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
         settings = {
             "name": self.uiNameLineEdit.text(),
             "ram": self.uiRamSpinBox.value(),
             "qemu_path": qemu_path,
-            "server": server,
+            "server": self._compute_id,
             "category": Node.end_devices,
             "hda_disk_image": self.uiHdaDiskImageLineEdit.text(),
         }

@@ -128,13 +128,6 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
             ethernet_adapters = 2
             serial_adapters = 2
 
-        if self.uiLocalRadioButton.isChecked():
-            server = "local"
-        elif self.uiRemoteRadioButton.isChecked():
-            server = self.uiRemoteServersComboBox.currentText()
-        elif self.uiVMRadioButton.isChecked():
-            server = "vm"
-
         settings = {
             "name": self.uiNameLineEdit.text(),
             "path": path,
@@ -144,7 +137,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
             "serial_adapters": serial_adapters,
             "symbol": symbol,
             "category": category,
-            "server": server,
+            "server": self._compute_id,
         }
 
         return settings
