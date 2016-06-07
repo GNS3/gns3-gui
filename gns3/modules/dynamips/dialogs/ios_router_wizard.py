@@ -29,6 +29,7 @@ from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
+from gns3.compute_manager import ComputeManager
 
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
 from ..settings import PLATFORMS_DEFAULT_RAM, PLATFORMS_DEFAULT_NVRAM, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
@@ -215,13 +216,16 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
         from gns3.main_window import MainWindow
         main_window = MainWindow.instance()
-        server = Servers.instance().getServerFromString(self.getSettings()["server"])
         module = Dynamips.instance()
         platform = self.uiPlatformComboBox.currentText()
         ios_image = self.uiIOSImageLineEdit.text()
         ram = self.uiRamSpinBox.value()
         router_class = PLATFORM_TO_CLASS[platform]
-        self._router = router_class(module, server, main_window.projectManager().project())
+
+        if main_window.projectManager().project() is None:
+            QtWidgets.QMessageBox.critical(self, "Idle PC", "You need to create a project before computing Idle PC")
+            return False
+        self._router = router_class(module, ComputeManager.instance().getCompute(self._compute_id), main_window.projectManager().project())
         self._router.create(ios_image, ram, name="AUTOIDLEPC")
         self._router.created_signal.connect(self.createdSlot)
         self._router.server_error_signal.connect(self.serverErrorSlot)
