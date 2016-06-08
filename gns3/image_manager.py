@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import copy
 import pathlib
 import glob
 
@@ -136,7 +137,7 @@ class ImageManager:
         :returns: path to the default images directory
         """
 
-        return LocalServer.instance().localServerSettings()['images_path']
+        return copy.copy(LocalServer.instance().localServerSettings()['images_path'])
 
     def getDirectoryForType(self, node_type):
         """
