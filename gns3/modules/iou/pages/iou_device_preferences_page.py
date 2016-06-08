@@ -26,6 +26,7 @@ from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.image_manager import ImageManager
+from gns3.compute_manager import ComputeManager
 
 from .. import IOU
 from ..settings import IOU_DEVICE_SETTINGS
@@ -72,7 +73,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", iou_device["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", iou_device["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", iou_device["server"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(iou_device["server"]).name()])
         QtWidgets.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
         if iou_device["startup_config"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Startup-config:", iou_device["startup_config"]])

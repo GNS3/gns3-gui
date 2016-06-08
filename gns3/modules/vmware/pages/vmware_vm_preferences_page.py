@@ -24,6 +24,7 @@ import copy
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
+from gns3.compute_manager import ComputeManager
 
 from .. import VMware
 from ..settings import VMWARE_VM_SETTINGS
@@ -69,7 +70,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vmware_vm["name"]])
         if vmware_vm["linked_base"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", vmware_vm["server"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["server"]).name()])
         QtWidgets.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vmware_vm["enable_remote_console"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])
         QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vmware_vm["acpi_shutdown"])])

@@ -25,6 +25,7 @@ from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
+from gns3.compute_manager import ComputeManager
 
 from .. import Docker
 from ..settings import DOCKER_CONTAINER_SETTINGS
@@ -68,7 +69,7 @@ class DockerVMPreferencesPage(
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Image name:", docker_image["image"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", str(docker_image["server"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(docker_image["server"]).name()])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", str(docker_image["console_type"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_image["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(docker_image["adapters"])])

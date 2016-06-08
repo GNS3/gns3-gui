@@ -24,6 +24,7 @@ import copy
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
+from gns3.compute_manager import ComputeManager
 
 from .. import VirtualBox
 from ..settings import VBOX_VM_SETTINGS
@@ -71,7 +72,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         if vbox_vm["linked_base"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vbox_vm["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", vbox_vm["server"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vbox_vm["server"]).name()])
         QtWidgets.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_remote_console"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
         QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vbox_vm["acpi_shutdown"])])

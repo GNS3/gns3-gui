@@ -31,6 +31,7 @@ from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.image_manager import ImageManager
+from gns3.compute_manager import ComputeManager
 
 from .. import Dynamips
 from ..settings import IOS_ROUTER_SETTINGS
@@ -338,7 +339,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ios_router["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ios_router["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ios_router["server"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ios_router["server"]).name()])
         QtWidgets.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
         if ios_router["chassis"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])
