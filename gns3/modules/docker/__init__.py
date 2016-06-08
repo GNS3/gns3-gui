@@ -24,6 +24,7 @@ from ..module import Module
 from ..module_error import ModuleError
 from .docker_vm import DockerVM
 from .settings import DOCKER_SETTINGS, DOCKER_CONTAINER_SETTINGS
+from ...controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
@@ -194,13 +195,13 @@ class Docker(Module):
         """Resets the servers."""
         self._nodes.clear()
 
-    def getDockerImagesFromServer(self, server, callback):
+    def getDockerImagesFromServer(self, compute_id, callback):
         """Gets the Docker images list from a server.
 
         :param server: server to send the request to
         :param callback: callback for the reply from the server
         """
-        server.get("/docker/images", callback)
+        Controller.instance().get("/computes/{}/docker/images".format(compute_id), callback)
 
     @staticmethod
     def getNodeClass(name):

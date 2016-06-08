@@ -66,7 +66,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
         super().initializePage(page_id)
 
         if self.page(page_id) == self.uiImageWizardPage:
-            Docker.instance().getDockerImagesFromServer(self._server, self._getDockerImagesFromServerCallback)
+            Docker.instance().getDockerImagesFromServer(self._compute_id, self._getDockerImagesFromServerCallback)
 
     def _getDockerImagesFromServerCallback(
             self, result, error=False, **kwargs):
@@ -131,7 +131,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
 
         settings = {
             "image": image,
-            "server": self._server,
+            "server": self._compute_id,
             "adapters": self.uiAdaptersSpinBox.value(),
             "name": name,
             "environment": self.uiEnvironmentTextEdit.toPlainText(),
