@@ -29,7 +29,7 @@ from ..registry.image import Image
 from ..utils import human_filesize
 from ..utils.wait_for_lambda_worker import WaitForLambdaWorker
 from ..utils.progress_dialog import ProgressDialog
-from ..servers import Servers
+from ..compute_manager import ComputeManager
 from ..gns3_vm import GNS3VM
 from ..local_config import LocalConfig
 
@@ -117,10 +117,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
-            for server in Servers.instance().remoteServers().values():
-                self.uiRemoteServersComboBox.addItem(server.url(), server)
+            for compute in ComputeManager.instance().remoteComputes():
+                self.uiRemoteServersComboBox.addItem(compute.name(), compute)
 
-            if not GNS3VM.instance().isRunning():
+            if not ComputeManager.instance().vmCompute():
                 self.uiVMRadioButton.setEnabled(False)
 
             if (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
@@ -131,11 +131,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 elif type != "dynamips":
                     self.uiLocalRadioButton.setEnabled(False)
 
-            if GNS3VM.instance().isRunning():
+            if ComputeManager.instance().vmCompute():
                 self.uiVMRadioButton.setChecked(True)
-            elif Servers.instance().isLocalServerRunning() and self.uiLocalRadioButton.isEnabled():
+            elif ComputeManager.instance().localCompute():
                 self.uiLocalRadioButton.setChecked(True)
-            elif len(Servers.instance().remoteServers().values()) > 0:
+            elif len(ComputeManager.instance().remoteComputes()) > 0:
                 self.uiRemoteRadioButton.setChecked(True)
             else:
                 self.uiRemoteRadioButton.setChecked(False)
@@ -388,13 +388,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         else:
             appliance_configuration = self._appliance.search_images_for_version(version)
 
-        if self._server.isLocal():
-            server_string = "local"
-        elif self._server.isGNS3VM():
-            server_string = "vm"
-        else:
-            server_string = self._server.url()
-
         while len(appliance_configuration["name"]) == 0 or not config.is_name_available(appliance_configuration["name"]):
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "The name \"{}\" is already used by another appliance".format(appliance_configuration["name"]))
             appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add appliance", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
@@ -403,7 +396,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, server_string), allowed_exceptions=[ConfigException, OSError])
+        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, self._server), allowed_exceptions=[ConfigException, OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
         progress_dialog.show()
         if not progress_dialog.exec_():
@@ -454,16 +447,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.currentPage() == self.uiServerWizardPage:
             if self.uiRemoteRadioButton.isChecked():
-                if not Servers.instance().remoteServers():
+                if len(ComputeManager.instance().remoteComputes()) == 0:
                     QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
                     return False
-                self._server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
+                self._server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex()).id()
             elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isChecked():
-                gns3_vm_server = Servers.instance().vmServer()
-                if gns3_vm_server is None:
-                    QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The GNS3 VM is not running")
-                    return False
-                self._server = gns3_vm_server
+                self._server = "vm"
             else:
                 if (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
                     if "qemu" in self._appliance:
@@ -471,7 +460,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                         if reply == QtWidgets.QMessageBox.No:
                             return False
 
-                self._server = Servers.instance().localServer()
+                self._server = "local"
 
         elif self.currentPage() == self.uiQemuWizardPage:
             if self.uiQemuListComboBox.currentIndex() == -1:

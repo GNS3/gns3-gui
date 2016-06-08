@@ -56,7 +56,7 @@ class VMWizard(QtWidgets.QWizard):
         self.uiLocalRadioButton.setChecked(True)
         self._localToggledSlot(True)
 
-        if len(ComputeManager.instance().computes()) == 1:
+        if len(ComputeManager.instance().remoteComputes()) == 0 and ComputeManager.instance().vmCompute() is None:
             # skip the server page if we use the first server
             self.setStartId(1)
 

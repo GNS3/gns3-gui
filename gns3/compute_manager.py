@@ -78,6 +78,30 @@ class ComputeManager(QtCore.QObject):
         """
         return list(self._computes.values())
 
+    def vmCompute(self):
+        """
+        :returns: The GNS3 VM compute node or None
+        """
+        try:
+            return self._computes["vm"]
+        except KeyError:
+            return None
+
+    def localCompute(self):
+        """
+        :returns: The local compute node or None
+        """
+        try:
+            return self._computes["local"]
+        except KeyError:
+            return None
+
+    def remoteComputes(self):
+        """
+        :returns: List of non local and non VM computes
+        """
+        return [c for c in self._computes.values() if c.id() != "local" and c.id() != "vm"]
+
     def getCompute(self, compute_id):
         if compute_id not in self._computes:
             self._computes[compute_id] = Compute(compute_id)
