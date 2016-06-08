@@ -92,39 +92,6 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
         assert qemu_vm.commandLine() == "/bin/fake"
 
 
-def test_qemu_vm_setup_md5_missing(qemu_vm, project):
-
-    with patch('gns3.project.Project.post') as mock:
-        qemu_vm.create("/bin/fake", name="VMNAME")
-        mock.assert_called_with("/nodes",
-                                qemu_vm.createNodeCallback,
-                                body={
-                                    'name': 'VMNAME',
-                                    'properties': {
-                                        'linked_clone': True,
-                                        'qemu_path': '/bin/fake'
-                                    },
-                                    'compute_id': 'local',
-                                    'node_type': 'qemu'
-                                },
-                                context={},
-                                timeout=120)
-
-        # Callback
-        params = {
-            "name": "QEMU1",
-            "vmname": "VMNAME",
-            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
-            "hda_disk_image": "0cc175b9c0f1b6a831c399e269772661"
-        }
-        with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            qemu_vm.createNodeCallback(params)
-            assert mock.called
-
-        assert qemu_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
-
-
 def test_update(qemu_vm):
 
     new_settings = {

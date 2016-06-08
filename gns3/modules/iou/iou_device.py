@@ -142,10 +142,6 @@ class IOUDevice(Node):
         # create the ports on the client side
         self._addAdapters(self._settings.get("ethernet_adapters", 0), self._settings.get("serial_adapters", 0))
 
-        # The image is missing on remote server
-        if "md5sum" not in result or result["md5sum"] is None or len(result["md5sum"]) == 0:
-            ImageManager.instance().addMissingImage(result["path"], self.compute(), "IOU")
-
     def start(self):
         """
         Starts this VM instance.

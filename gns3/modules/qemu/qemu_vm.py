@@ -145,13 +145,6 @@ class QemuVM(Node):
         # create the ports on the client side
         self._addAdapters(self._settings.get("adapters", 0))
 
-        for image_field in ["hda_disk_image", "hdb_disk_image", "hdc_disk_image", "hdd_disk_image", "initrd", "kernel_image", "cdrom_image"]:
-            if image_field in result and result[image_field] is not None and result[image_field] != "":
-                # The image is missing on remote server
-                field = "{}_md5sum".format(image_field)
-                if field not in result or result[field] is None or len(result[field]) == 0:
-                    ImageManager.instance().addMissingImage(result[image_field], self.compute(), "QEMU")
-
     def update(self, new_settings):
         """
         Updates the settings for this QEMU VM.

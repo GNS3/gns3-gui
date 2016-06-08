@@ -81,32 +81,6 @@ def test_iou_device_create(iou_device, project, fake_iourc):
         assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
-def test_iou_device_setup_md5_missing(iou_device, project, fake_iourc):
-    """
-    It should notify the user asking him to upload the image
-    """
-
-    with patch('gns3.project.Project.post') as mock:
-        iou_device._module._settings["iourc_path"] = fake_iourc
-
-        iou_device.create("/tmp/iou.bin", name="PC 1")
-
-        # Callback
-        params = {
-            "console": 2000,
-            "name": "PC1",
-            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
-            "path": "iou.bin",
-        }
-
-        with patch("gns3.image_manager.ImageManager.addMissingImage") as mock:
-            iou_device.createNodeCallback(params)
-            assert mock.called
-
-        assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
-
-
 def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
     """
     If we have an ID that mean the VM already exits and we should not send startup_script

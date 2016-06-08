@@ -270,10 +270,6 @@ class Router(Node):
         # create the ports on the client side
         self._insertAdapters(self._settings)
 
-        # The image is missing on remote server
-        if "image_md5sum" not in result or result["image_md5sum"] is None or len(result["image_md5sum"]) == 0:
-            ImageManager.instance().addMissingImage(result["image"], self._server, "DYNAMIPS")
-
     def update(self, new_settings):
         """
         Updates the settings for this router.

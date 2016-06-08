@@ -98,36 +98,6 @@ class ImageManager:
         Controller.instance().post(r'/computes/{}{}/{}'.format(server, upload_endpoint, filename), None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
         return filename
 
-    def addMissingImage(self, filename, server, node_type):
-        """
-        Add a missing image to the queue of images require to be upload on remote server
-        :param filename: Filename of the image
-        :param server: Server where image should be uploaded
-        :param node_type: Type of the image
-        """
-
-        #TODO: move to server
-        return
-
-        if self._asked_for_this_image.setdefault(server.id(), {}).setdefault(filename, False):
-            return
-        self._asked_for_this_image[server.id()][filename] = True
-
-        if server.isLocal():
-            return
-        path = os.path.join(self.getDirectoryForType(node_type), filename)
-        if os.path.exists(path):
-            if self._askForUploadMissingImage(filename, server):
-
-                if filename.endswith(".vmdk"):
-                    # A vmdk file could be split in multiple vmdk file
-                    search = glob.escape(path).replace(".vmdk", "-*.vmdk")
-                    for file in glob.glob(search):
-                        self._uploadImageToRemoteServer(file, server, node_type)
-
-                self._uploadImageToRemoteServer(path, server, node_type)
-                del self._asked_for_this_image[server.id()][filename]
-
     def _askForUploadMissingImage(self, filename, server):
         from gns3.main_window import MainWindow
         parent = MainWindow.instance()

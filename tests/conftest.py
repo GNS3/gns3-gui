@@ -67,7 +67,7 @@ def local_server():
 @pytest.fixture
 def remote_server():
     from gns3.compute_manager import ComputeManager
-    return ComputeManager.instance().getCompute("http://example.org")
+    return ComputeManager.instance().getCompute("example.org")
 
 
 @pytest.fixture

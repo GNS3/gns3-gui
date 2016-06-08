@@ -18,9 +18,13 @@
 import pathlib
 import pytest
 import os
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from gns3.image_manager import ImageManager
+from gns3.local_server import LocalServer
+from gns3.controller import Controller
+from gns3.settings import LOCAL_SERVER_SETTINGS
+
 
 @pytest.fixture
 def images_dir(tmpdir):
@@ -31,8 +35,11 @@ def images_dir(tmpdir):
 @pytest.yield_fixture
 def image_manager(tmpdir, images_dir):
     ImageManager._instance = None
-    with patch('gns3.servers.Servers.localServerSettings', return_value={'images_path': str(images_dir)}):
+    settings = LOCAL_SERVER_SETTINGS
+    settings['images_path'] = str(images_dir)
+    with patch('gns3.local_server_config.LocalServerConfig.loadSettings', return_value=LOCAL_SERVER_SETTINGS):
         yield ImageManager.instance()
+    ImageManager._instance = None
 
 
 @pytest.fixture
@@ -46,91 +53,35 @@ def qemu_img(images_dir):
     return path
 
 
-@pytest.mark.skip(reason="Need to refactor image missing support")
 def test_askCopyUploadImage_remote(image_manager, remote_server):
     with patch('gns3.image_manager.ImageManager._uploadImageToRemoteServer') as mock:
         image_manager.askCopyUploadImage(None, '/tmp/test', remote_server, 'QEMU')
         assert mock.called
 
 
-@pytest.mark.skip(reason="Need to refactor image missing support")
-def test_uploadImageToRemoteServer(image_manager, remote_server, images_dir):
-    with patch('gns3.server.Server.post') as mock:
-        filename = image_manager._uploadImageToRemoteServer(str(images_dir / "QEMU" / "test"), remote_server, 'QEMU')
-        assert filename == 'test'
-        args, kwargs = mock.call_args
-        assert args[0] == '/qemu/images/test'
-        assert kwargs['body'] == pathlib.Path(str(images_dir / "QEMU" / "test"))
+def test_uploadImageToRemoteServer(image_manager, remote_server, images_dir, controller):
+    controller.post = MagicMock()
+    filename = image_manager._uploadImageToRemoteServer(str(images_dir / "QEMU" / "test"), remote_server, 'QEMU')
+    assert filename == 'test'
+    args, kwargs = controller.post.call_args
+    assert args[0] == '/computes/example.org/qemu/images/test'
+    assert kwargs['body'] == pathlib.Path(str(images_dir / "QEMU" / "test"))
 
 
-@pytest.mark.skip(reason="Need to refactor image missing support")
 def test_getDirectory(image_manager, images_dir):
     assert image_manager.getDirectory() == str(images_dir)
 
 
-@pytest.mark.skip(reason="Need to refactor image missing support")
 def test_directoryType(image_manager, images_dir):
     assert image_manager.getDirectoryForType('DYNAMIPS') == str(images_dir / 'IOS')
     assert image_manager.getDirectoryForType('QEMU') == str(images_dir / 'QEMU')
     assert image_manager.getDirectoryForType('IOU') == str(images_dir / 'IOU')
 
 
-@pytest.mark.skip(reason="Need to refactor image missing support")
-def test_addMissingImage(image_manager, remote_server, qemu_img):
-    with patch('gns3.image_manager.ImageManager._uploadImageToRemoteServer') as mock:
-        with patch('gns3.image_manager.ImageManager._askForUploadMissingImage', return_value=True):
-            image_manager.addMissingImage('test.img', remote_server, 'QEMU')
-            assert mock.called
-            args, kwargs = mock.call_args
-            assert args[0] == qemu_img
-            assert args[1] == remote_server
-            assert args[2] == 'QEMU'
-
-
-@pytest.mark.skip(reason="Need to refactor image missing support")
-def test_addMissingImageOVAWithMultipleVMDK(image_manager, remote_server, images_dir):
-    os.makedirs(str(images_dir / 'QEMU' / 'test.ova'))
-    open(str(images_dir / 'QEMU' / 'test.ova' / 'test.vmdk'), 'w+').close()
-    open(str(images_dir / 'QEMU' / 'test.ova' / 'test-s001.vmdk'), 'w+').close()
-    open(str(images_dir / 'QEMU' / 'test.ova' / 'test.nvram'), 'w+').close()
-
-    with patch('gns3.image_manager.ImageManager._uploadImageToRemoteServer') as mock:
-        with patch('gns3.image_manager.ImageManager._askForUploadMissingImage', return_value=True):
-            image_manager.addMissingImage('test.ova/test.vmdk', remote_server, 'QEMU')
-            assert mock.call_count == 2
-
-            args, kwargs = mock.call_args_list[0]
-            assert args[0] == str(images_dir / 'QEMU' / 'test.ova' / 'test-s001.vmdk')
-            assert args[1] == remote_server
-            assert args[2] == 'QEMU'
-
-            args, kwargs = mock.call_args_list[1]
-            assert os.path.normpath(args[0]) == str(images_dir / 'QEMU' / 'test.ova' / 'test.vmdk')
-            assert args[1] == remote_server
-            assert args[2] == 'QEMU'
-
-
-@pytest.mark.skip(reason="Need to refactor image missing support")
-def test_addMissingImage_ask_once(image_manager, remote_server, qemu_img):
-    with patch('gns3.image_manager.ImageManager._askForUploadMissingImage', return_value=False) as mock:
-        image_manager.addMissingImage('test.img', remote_server, 'QEMU')
-        image_manager.addMissingImage('test.img', remote_server, 'QEMU')
-        assert mock.call_count == 1
-
-
-@pytest.mark.skip(reason="Need to refactor image missing support")
-def test_addMissingImageLocalServer(image_manager, local_server, qemu_img):
-    with patch('gns3.image_manager.ImageManager._uploadImageToRemoteServer') as mock:
-        image_manager.addMissingImage('test.img', local_server, 'QEMU')
-        assert not mock.called
-
-
-@pytest.mark.skip(reason="Need to refactor image missing support")
 def test_getRelativeImagePath(image_manager, remote_server, qemu_img):
     assert image_manager._getRelativeImagePath(qemu_img, "QEMU") == "test.img"
 
 
-@pytest.mark.skip(reason="Need to refactor image missing support")
 def test_getRelativeImagePathOutsideStandardDirectory(image_manager, remote_server, images_dir):
     qemu_img_abs = images_dir / "full_images" / "a.img"
     qemu_img_abs.write("1", ensure=True)
