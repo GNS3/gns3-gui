@@ -440,7 +440,7 @@ class LocalServer():
                 self._http_client.createHTTPQuery("POST", "/shutdown", None, showProgress=False)
             if wait:
                 worker = StopLocalServerWorker(self._local_server_process)
-                progress_dialog = ProgressDialog(worker, "Run as administrator", "Waiting for server stop...", None, busy=True, parent=self.parent())
+                progress_dialog = ProgressDialog(worker, "Local server", "Waiting for server stop...", None, busy=True, parent=self.parent())
                 progress_dialog.show()
                 progress_dialog.exec_()
                 if self._local_server_process.returncode is None:
