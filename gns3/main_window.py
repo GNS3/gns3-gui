@@ -165,6 +165,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
+        if self._settings["hide_new_appliance_template_button"]:
+            self.uiNewAppliancePushButton.hide()
 
         self.setWindowTitle("[*] GNS3")
 

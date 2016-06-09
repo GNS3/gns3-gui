@@ -264,6 +264,7 @@ GENERAL_SETTINGS = {
     "default_local_news": False,
     "hide_getting_started_dialog": False,
     "hide_setup_wizard": False,
+    "hide_new_appliance_template_button": False,
     "recent_files": [],
     "geometry": "",
     "state": "",
