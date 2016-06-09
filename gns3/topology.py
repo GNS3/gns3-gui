@@ -31,7 +31,6 @@ from .qt import QtGui, QtWidgets, QtSvg, qpartial
 from .qt.qimage_svg_renderer import QImageSvgRenderer
 
 from .items.node_item import NodeItem
-from .items.svg_node_item import SvgNodeItem
 from .items.link_item import LinkItem
 from .items.note_item import NoteItem
 from .items.rectangle_item import RectangleItem
@@ -350,7 +349,7 @@ class Topology:
                             if item.label():
                                 node["label"] = item.label().dump()
                             symbol_path = None
-                            if isinstance(item, SvgNodeItem):
+                            if isinstance(item, NodeItem):
                                 symbol_path = item.renderer().objectName()
 
                             if os.path.exists(symbol_path):
@@ -680,11 +679,11 @@ class Topology:
                         renderer = QImageSvgRenderer(symbol_path)
 
                 if renderer and renderer.isValid():
-                    node_item = SvgNodeItem(node, symbol_path)
+                    node_item = NodeItem(node, symbol_path)
                 else:
                     if "symbol" in topology_node:
                         topology_file_errors.append("Symbol {} is invalid or doesn't exist".format(topology_node["symbol"]))
-                    node_item = SvgNodeItem(node)
+                    node_item = NodeItem(node)
 
                 # create the node item and restore GUI settings
                 node_item.setPos(topology_node["x"], topology_node["y"])

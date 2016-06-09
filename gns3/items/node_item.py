@@ -19,14 +19,15 @@
 Graphical representation of a node on the QGraphicsScene.
 """
 
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtCore, QtGui, QtWidgets, QtSvg
+from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from .note_item import NoteItem
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class NodeItem():
+class NodeItem(QtSvg.QGraphicsSvgItem):
 
     """
     Node for the scene.
@@ -36,7 +37,8 @@ class NodeItem():
 
     show_layer = False
 
-    def __init__(self, node):
+    def __init__(self, node, symbol=None):
+        super().__init__()
 
         # attached node
         self._node = node
@@ -91,6 +93,15 @@ class NodeItem():
         from ..main_window import MainWindow
         self._main_window = MainWindow.instance()
         self._settings = self._main_window.uiGraphicsView.settings()
+
+        # create renderer using symbols path/resource
+        if symbol:
+            renderer = QImageSvgRenderer(symbol)
+            if symbol != node.defaultSymbol():
+                renderer.setObjectName(symbol)
+        else:
+            renderer = QImageSvgRenderer(node.defaultSymbol())
+        self.setSharedRenderer(renderer)
 
     def setUnsavedState(self):
         """
