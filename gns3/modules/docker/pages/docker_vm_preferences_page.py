@@ -23,7 +23,6 @@ import copy
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.main_window import MainWindow
-from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
 
@@ -34,9 +33,10 @@ from ..pages.docker_vm_configuration_page import DockerVMConfigurationPage
 from ..dialogs.docker_vm_wizard import DockerVMWizard
 
 
-class DockerVMPreferencesPage(
-        QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidget):
-    """QWidget preference page for Docker image preferences."""
+class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidget):
+    """
+    QWidget preference page for Docker image preferences.
+    """
 
     def __init__(self):
         super().__init__()
@@ -47,12 +47,9 @@ class DockerVMPreferencesPage(
         self._items = []
 
         self.uiNewDockerVMPushButton.clicked.connect(self._dockerImageNewSlot)
-        self.uiEditDockerVMPushButton.clicked.connect(
-            self._dockerImageEditSlot)
-        self.uiDeleteDockerVMPushButton.clicked.connect(
-            self._dockerImageDeleteSlot)
-        self.uiDockerVMsTreeWidget.itemSelectionChanged.connect(
-            self._dockerImageChangedSlot)
+        self.uiEditDockerVMPushButton.clicked.connect(self._dockerImageEditSlot)
+        self.uiDeleteDockerVMPushButton.clicked.connect(self._dockerImageDeleteSlot)
+        self.uiDockerVMsTreeWidget.itemSelectionChanged.connect(self._dockerImageChangedSlot)
 
     def _createSectionItem(self, name):
         section_item = QtWidgets.QTreeWidgetItem(self.uiDockerVMInfoTreeWidget)
@@ -84,7 +81,9 @@ class DockerVMPreferencesPage(
         self.uiDockerVMsTreeWidget.setMaximumWidth(self.uiDockerVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def _dockerImageChangedSlot(self):
-        """Loads a selected Docker image from the tree widget."""
+        """
+        Loads a selected Docker image from the tree widget.
+        """
 
         selection = self.uiDockerVMsTreeWidget.selectedItems()
         self.uiDeleteDockerVMPushButton.setEnabled(len(selection) != 0)
@@ -99,27 +98,29 @@ class DockerVMPreferencesPage(
             self.uiDockerVMInfoTreeWidget.clear()
 
     def _dockerImageNewSlot(self):
-        """Creates a new Docker image."""
+        """
+        Creates a new Docker image.
+        """
         wizard = DockerVMWizard(self._docker_containers, parent=self)
         wizard.show()
         if wizard.exec_():
             new_image_settings = wizard.getSettings()
-            key = "{server}:{name}".format(
-                server=new_image_settings["server"],
-                name=new_image_settings["name"])
+            key = "{server}:{name}".format(server=new_image_settings["server"], name=new_image_settings["name"])
             self._docker_containers[key] = DOCKER_CONTAINER_SETTINGS.copy()
             self._docker_containers[key].update(new_image_settings)
 
             item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
             item.setText(0, self._docker_containers[key]["name"])
-            item.setIcon(
-                0, QtGui.QIcon(self._docker_containers[key]["symbol"]))
+            item.setIcon(0, QtGui.QIcon(self._docker_containers[key]["symbol"]))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiDockerVMsTreeWidget.setCurrentItem(item)
 
     def _dockerImageEditSlot(self):
-        """Edits a Docker image"""
+        """
+        Edits a Docker image.
+        """
+
         item = self.uiDockerVMsTreeWidget.currentItem()
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
@@ -129,16 +130,13 @@ class DockerVMPreferencesPage(
                 DockerVMConfigurationPage(), parent=self)
             dialog.show()
             if dialog.exec_():
+                # update the icon
+                item.setIcon(0, QtGui.QIcon(docker_image["symbol"]))
                 if docker_image["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(
-                        server=docker_image["server"],
-                        name=docker_image["name"])
+                    new_key = "{server}:{name}".format(server=docker_image["server"], name=docker_image["name"])
                     if new_key in self._docker_containers:
-                        QtWidgets.QMessageBox.critical(
-                            self, "Docker image",
-                            "Docker container name {} already exists for server {}".format(
-                                docker_image["name"],
-                                docker_image["server"]))
+                        QtWidgets.QMessageBox.critical(self, "Docker image", "Docker container name {} already exists for server {}".format(docker_image["name"],
+                                                                                                                                            docker_image["server"]))
                         docker_image["name"] = item.text(0)
                         return
                     self._docker_containers[new_key] = self._docker_containers[key]
@@ -148,16 +146,20 @@ class DockerVMPreferencesPage(
                 self._refreshInfo(docker_image)
 
     def _dockerImageDeleteSlot(self):
-        """Deletes a Docker image."""
+        """
+        Deletes a Docker image.
+        """
+
         for item in self.uiDockerVMsTreeWidget.selectedItems():
             if item:
                 key = item.data(0, QtCore.Qt.UserRole)
                 del self._docker_containers[key]
-                self.uiDockerVMsTreeWidget.takeTopLevelItem(
-                    self.uiDockerVMsTreeWidget.indexOfTopLevelItem(item))
+                self.uiDockerVMsTreeWidget.takeTopLevelItem(self.uiDockerVMsTreeWidget.indexOfTopLevelItem(item))
 
     def loadPreferences(self):
-        """Loads the Docker VM preferences."""
+        """
+        Loads the Docker VM preferences.
+        """
 
         docker_module = Docker.instance()
         self._docker_containers = copy.deepcopy(docker_module.VMs())
@@ -178,5 +180,8 @@ class DockerVMPreferencesPage(
             self.uiDockerVMsTreeWidget.setMaximumWidth(self.uiDockerVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):
-        """Saves the Docker image preferences."""
+        """
+        Saves the Docker image preferences.
+        """
+
         Docker.instance().setVMs(self._docker_containers)

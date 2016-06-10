@@ -19,7 +19,10 @@
 Configuration page for clouds.
 """
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtGui, QtCore, QtWidgets
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.node import Node
+
 from ..ui.cloud_configuration_page_ui import Ui_cloudConfigPageWidget
 from ..cloud import Cloud
 
@@ -35,6 +38,10 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         super().__init__()
         self.setupUi(self)
         self._ports = []
+
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
 
         # connect Ethernet slots
         self.uiEthernetListWidget.itemSelectionChanged.connect(self._EthernetChangedSlot)
@@ -56,6 +63,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiDeleteUDPPushButton.clicked.connect(self._UDPDeleteSlot)
 
         self.uiShowSpecialInterfacesCheckBox.stateChanged.connect(self._showSpecialInterfacesSlot)
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
 
     def _EthernetChangedSlot(self):
         """
@@ -303,7 +311,20 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                 self.uiEthernetComboBox.addItem(interface["name"])
                 index += 1
 
-    def loadSettings(self, settings, node, group=False):
+    def _symbolBrowserSlot(self):
+        """
+        Slot to open the symbol browser and select a new symbol.
+        """
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
+        dialog.show()
+        if dialog.exec_():
+            new_symbol_path = dialog.getSymbol()
+            self.uiSymbolLineEdit.setText(new_symbol_path)
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
+
+    def loadSettings(self, settings, node=None, group=False):
         """
         Loads the cloud settings.
 
@@ -317,55 +338,86 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         else:
             self.uiNameLineEdit.setEnabled(False)
 
-        self._node = node
+        if not node:
+            # these are template settings
 
-        # load all Ethernet network interfaces
-        self.uiEthernetComboBox.clear()
-        index = 0
-        for interface in self._node.interfaces():
-            if interface["type"] == "ethernet" and not Cloud.isSpecialInterface(interface["name"]):
-                self.uiEthernetComboBox.addItem(interface["name"])
-                index += 1
+            # rename the label from "Name" to "Template name"
+            self.uiNameLabel.setText("Template name:")
 
-        # load all TAP interfaces
-        self.uiTAPComboBox.clear()
-        index = 0
-        for interface in self._node.interfaces():
-            if interface["type"] == "tap":
-                self.uiTAPComboBox.addItem(interface["name"])
-                index += 1
+            # load the default name format
+            self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
 
-        # load the current ports
-        self._ports = []
-        self.uiEthernetListWidget.clear()
-        self.uiTAPListWidget.clear()
-        self.uiUDPTreeWidget.clear()
+            # load the symbol
+            self.uiSymbolLineEdit.setText(settings["symbol"])
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
 
-        for port in settings["ports"]:
-            self._ports.append(port)
-            if port["type"] == "ethernet":
-                self.uiEthernetListWidget.addItem(port["name"])
-                index = self.uiEthernetComboBox.findText(port["name"])
-                if index != -1:
-                    self.uiEthernetComboBox.removeItem(index)
-            elif port["type"] == "tap":
-                self.uiTAPListWidget.addItem(port["name"])
-                index = self.uiTAPComboBox.findText(port["name"])
-                if index != -1:
-                    self.uiTAPComboBox.removeItem(index)
-            elif port["type"] == "udp":
-                item = QtWidgets.QTreeWidgetItem(self.uiUDPTreeWidget)
-                item.setText(0, port["name"])
-                item.setText(1, str(port["lport"]))
-                item.setText(2, port["rhost"])
-                item.setText(3, str(port["rport"]))
-                self.uiUDPTreeWidget.addTopLevelItem(item)
-                self.uiUDPTreeWidget.resizeColumnToContents(0)
-                self.uiUDPTreeWidget.resizeColumnToContents(1)
-                self.uiUDPTreeWidget.resizeColumnToContents(2)
-                self.uiUDPTreeWidget.resizeColumnToContents(3)
+            # load the category
+            index = self.uiCategoryComboBox.findData(settings["category"])
+            if index != -1:
+                self.uiCategoryComboBox.setCurrentIndex(index)
 
-    def saveSettings(self, settings, node, group=False):
+            for index in range(0, 3):
+                self.uiTabWidget.removeTab(0)
+            self.uiTabWidget.setTabText(0, "Settings")
+
+        else:
+            self.uiDefaultNameFormatLabel.hide()
+            self.uiDefaultNameFormatLineEdit.hide()
+            self.uiSymbolLabel.hide()
+            self.uiSymbolLineEdit.hide()
+            self.uiSymbolToolButton.hide()
+            self.uiCategoryComboBox.hide()
+            self.uiCategoryLabel.hide()
+            self.uiCategoryComboBox.hide()
+            self._node = node
+
+            # load all Ethernet network interfaces
+            self.uiEthernetComboBox.clear()
+            index = 0
+            for interface in self._node.interfaces():
+                if interface["type"] == "ethernet" and not Cloud.isSpecialInterface(interface["name"]):
+                    self.uiEthernetComboBox.addItem(interface["name"])
+                    index += 1
+
+            # load all TAP interfaces
+            self.uiTAPComboBox.clear()
+            index = 0
+            for interface in self._node.interfaces():
+                if interface["type"] == "tap":
+                    self.uiTAPComboBox.addItem(interface["name"])
+                    index += 1
+
+            # load the current ports
+            self._ports = []
+            self.uiEthernetListWidget.clear()
+            self.uiTAPListWidget.clear()
+            self.uiUDPTreeWidget.clear()
+
+            for port in settings["ports"]:
+                self._ports.append(port)
+                if port["type"] == "ethernet":
+                    self.uiEthernetListWidget.addItem(port["name"])
+                    index = self.uiEthernetComboBox.findText(port["name"])
+                    if index != -1:
+                        self.uiEthernetComboBox.removeItem(index)
+                elif port["type"] == "tap":
+                    self.uiTAPListWidget.addItem(port["name"])
+                    index = self.uiTAPComboBox.findText(port["name"])
+                    if index != -1:
+                        self.uiTAPComboBox.removeItem(index)
+                elif port["type"] == "udp":
+                    item = QtWidgets.QTreeWidgetItem(self.uiUDPTreeWidget)
+                    item.setText(0, port["name"])
+                    item.setText(1, str(port["lport"]))
+                    item.setText(2, port["rhost"])
+                    item.setText(3, str(port["rport"]))
+                    self.uiUDPTreeWidget.addTopLevelItem(item)
+                    self.uiUDPTreeWidget.resizeColumnToContents(0)
+                    self.uiUDPTreeWidget.resizeColumnToContents(1)
+                    self.uiUDPTreeWidget.resizeColumnToContents(2)
+                    self.uiUDPTreeWidget.resizeColumnToContents(3)
+
+    def saveSettings(self, settings, node=None, group=False):
         """
         Saves the cloud settings.
 
@@ -379,4 +431,24 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         else:
             del settings["name"]
 
-        settings["ports"] = self._ports
+        if not node:
+            # these are template settings
+
+            # save the default name format
+            default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
+            if '{0}' not in default_name_format and '{id}' not in default_name_format:
+                QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
+            else:
+                settings["default_name_format"] = default_name_format
+
+            symbol_path = self.uiSymbolLineEdit.text()
+            pixmap = QtGui.QPixmap(symbol_path)
+            if pixmap.isNull():
+                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
+            else:
+                settings["symbol"] = symbol_path
+
+            settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
+
+        else:
+            settings["ports"] = self._ports

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created: Wed Jun  1 11:53:13 2016
+# Created: Fri Jun 10 16:26:54 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -182,14 +182,39 @@ class Ui_cloudConfigPageWidget(object):
         self.MiscTab.setObjectName("MiscTab")
         self.gridLayout = QtWidgets.QGridLayout(self.MiscTab)
         self.gridLayout.setObjectName("gridLayout")
-        spacerItem2 = QtWidgets.QSpacerItem(20, 399, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem2, 1, 1, 1, 1)
         self.uiNameLabel = QtWidgets.QLabel(self.MiscTab)
         self.uiNameLabel.setObjectName("uiNameLabel")
         self.gridLayout.addWidget(self.uiNameLabel, 0, 0, 1, 1)
         self.uiNameLineEdit = QtWidgets.QLineEdit(self.MiscTab)
         self.uiNameLineEdit.setObjectName("uiNameLineEdit")
-        self.gridLayout.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiNameLineEdit, 0, 2, 1, 1)
+        self.uiDefaultNameFormatLabel = QtWidgets.QLabel(self.MiscTab)
+        self.uiDefaultNameFormatLabel.setObjectName("uiDefaultNameFormatLabel")
+        self.gridLayout.addWidget(self.uiDefaultNameFormatLabel, 1, 0, 1, 2)
+        self.uiDefaultNameFormatLineEdit = QtWidgets.QLineEdit(self.MiscTab)
+        self.uiDefaultNameFormatLineEdit.setObjectName("uiDefaultNameFormatLineEdit")
+        self.gridLayout.addWidget(self.uiDefaultNameFormatLineEdit, 1, 2, 1, 1)
+        self.uiSymbolLabel = QtWidgets.QLabel(self.MiscTab)
+        self.uiSymbolLabel.setObjectName("uiSymbolLabel")
+        self.gridLayout.addWidget(self.uiSymbolLabel, 2, 0, 1, 2)
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.uiSymbolLineEdit = QtWidgets.QLineEdit(self.MiscTab)
+        self.uiSymbolLineEdit.setObjectName("uiSymbolLineEdit")
+        self.horizontalLayout_7.addWidget(self.uiSymbolLineEdit)
+        self.uiSymbolToolButton = QtWidgets.QToolButton(self.MiscTab)
+        self.uiSymbolToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.uiSymbolToolButton.setObjectName("uiSymbolToolButton")
+        self.horizontalLayout_7.addWidget(self.uiSymbolToolButton)
+        self.gridLayout.addLayout(self.horizontalLayout_7, 2, 2, 1, 1)
+        self.uiCategoryLabel = QtWidgets.QLabel(self.MiscTab)
+        self.uiCategoryLabel.setObjectName("uiCategoryLabel")
+        self.gridLayout.addWidget(self.uiCategoryLabel, 3, 0, 1, 2)
+        self.uiCategoryComboBox = QtWidgets.QComboBox(self.MiscTab)
+        self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
+        self.gridLayout.addWidget(self.uiCategoryComboBox, 3, 2, 1, 1)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 399, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem2, 4, 1, 1, 2)
         self.uiTabWidget.addTab(self.MiscTab, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
 
@@ -227,5 +252,9 @@ class Ui_cloudConfigPageWidget(object):
         self.uiUDPTreeWidget.headerItem().setText(3, _translate("cloudConfigPageWidget", "Remote port"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.UDPTab), _translate("cloudConfigPageWidget", "UDP tunnels"))
         self.uiNameLabel.setText(_translate("cloudConfigPageWidget", "Name:"))
+        self.uiDefaultNameFormatLabel.setText(_translate("cloudConfigPageWidget", "Default name format:"))
+        self.uiSymbolLabel.setText(_translate("cloudConfigPageWidget", "Symbol:"))
+        self.uiSymbolToolButton.setText(_translate("cloudConfigPageWidget", "&Browse..."))
+        self.uiCategoryLabel.setText(_translate("cloudConfigPageWidget", "Category:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.MiscTab), _translate("cloudConfigPageWidget", "Misc."))
 

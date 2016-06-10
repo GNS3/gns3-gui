@@ -20,7 +20,10 @@ Built-in module implementation.
 """
 
 from gns3.qt import QtWidgets
+from gns3.local_config import LocalConfig
+
 from ..module import Module
+from .settings import BUILTIN_SETTINGS, CLOUD_SETTINGS
 from .cloud import Cloud
 from .ethernet_hub import EthernetHub
 from .ethernet_switch import EthernetSwitch
@@ -40,10 +43,95 @@ class Builtin(Module):
     def __init__(self):
         super().__init__()
 
+        self._settings = {}
         self._nodes = []
+        self._cloud_nodes = {}
+
+        # load the settings
+        self._loadSettings()
 
     def configChangedSlot(self):
+
         pass
+
+    def settings(self):
+        """
+        Returns the module settings
+
+        :returns: module settings (dictionary)
+        """
+
+        return self._settings
+
+    def setSettings(self, settings):
+        """Sets the module settings
+
+        :param settings: module settings (dictionary)
+        """
+
+        self._settings.update(settings)
+        self._saveSettings()
+
+    def _saveSettings(self):
+        """
+        Saves the settings to the persistent settings file.
+        """
+
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
+
+    def _loadSettings(self):
+        """
+        Loads the settings from the persistent settings file.
+        """
+
+        local_config = LocalConfig.instance()
+        self._settings = local_config.loadSectionSettings(self.__class__.__name__, BUILTIN_SETTINGS)
+        self._loadNodes()
+
+    def _loadNodes(self):
+        """
+        Load the built-in nodes from the persistent settings file.
+        """
+
+        settings = LocalConfig.instance().settings()
+        if "cloud_nodes" in settings.get(self.__class__.__name__, {}):
+            for device in settings[self.__class__.__name__]["cloud_nodes"]:
+                name = device.get("name")
+                server = device.get("server")
+                key = "{server}:{name}".format(server=server, name=name)
+                if key in self._cloud_nodes or not name or not server:
+                    continue
+                cloud_node_settings = CLOUD_SETTINGS.copy()
+                cloud_node_settings.update(device)
+                self._cloud_nodes[key] = cloud_node_settings
+
+    def _saveNodes(self):
+        """
+        Saves the built-in nodes to the persistent settings file.
+        """
+
+        self._settings["cloud_nodes"] = list(self._cloud_nodes.values())
+        self._saveSettings()
+
+
+    def cloudNodes(self):
+        """
+        Returns cloud nodes settings.
+
+        :returns: Cloud nodes settings (dictionary)
+        """
+
+        return self._cloud_nodes
+
+    def setCloudNodes(self, new_cloud_nodes):
+        """
+        Sets cloud nodes settings.
+
+        :param new_cloud_nodes: cloud nodes settings (dictionary)
+        """
+
+        self._cloud_nodes = new_cloud_nodes.copy()
+        self._saveNodes()
 
     def addNode(self, node):
         """
@@ -154,6 +242,18 @@ class Builtin(Module):
                  "symbol": node_class.defaultSymbol(),
                  "builtin": True}
             )
+
+        # add custom cloud node templates
+        for cloud_node in self._cloud_nodes.values():
+            nodes.append(
+                {"class": Cloud.__name__,
+                 "name": cloud_node["name"],
+                 "server": cloud_node["server"],
+                 "symbol": cloud_node["symbol"],
+                 "categories": [cloud_node["category"]]
+                 }
+            )
+
         return nodes
 
     @staticmethod
@@ -162,7 +262,11 @@ class Builtin(Module):
         :returns: QWidget object list
         """
 
-        return []
+        from .pages.builtin_preferences_page import BuiltinPreferencesPage
+        from .pages.cloud_preferences_page import CloudPreferencesPage
+
+        return [BuiltinPreferencesPage, CloudPreferencesPage]
+
 
     @staticmethod
     def instance():
