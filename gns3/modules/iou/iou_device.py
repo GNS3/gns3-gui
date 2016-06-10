@@ -155,7 +155,7 @@ class IOUDevice(Node):
         params = self._addIourcContentToParams(params)
 
         log.debug("{} is starting".format(self.name()))
-        self.httpPost("/{prefix}/nodes/{node_id}/start".format(prefix=self.URL_PREFIX, node_id=self._node_id), self._startCallback, body=params, progressText="{} is starting".format(self.name()))
+        self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, progressText="{} is starting".format(self.name()))
 
     def _addIourcContentToParams(self, params):
         """

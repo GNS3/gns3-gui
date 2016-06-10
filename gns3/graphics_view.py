@@ -975,7 +975,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                         QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(node_dir))
                         break
                 else:
-                    QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}".format(node_dir, node.server().url()))
+                    QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}".format(node_dir, node.compute().name()))
                     break
 
     def consoleToNode(self, node, aux=False):
