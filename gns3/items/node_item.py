@@ -93,16 +93,26 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         from ..main_window import MainWindow
         self._main_window = MainWindow.instance()
         self._settings = self._main_window.uiGraphicsView.settings()
+        self.setSymbol(symbol)
 
+    def _updateNode(self):
+        """
+        Sync change to the node
+        """
+        self._node.setGraphics(self.x(), self.y(), self.zValue(), self._symbol, self._node_label)
+
+    def setSymbol(self, symbol):
+        """
+        :param symbol: Change the symbol path
+        """
         # create renderer using symbols path/resource
+        if symbol is None:
+            symbol = node.defaultSymbol()
         self._symbol = symbol
-        if symbol:
-            renderer = QImageSvgRenderer(symbol)
-            if symbol != node.defaultSymbol():
-                renderer.setObjectName(symbol)
-        else:
-            renderer = QImageSvgRenderer(node.defaultSymbol())
+        renderer = QImageSvgRenderer(symbol)
+        renderer.setObjectName(symbol)
         self.setSharedRenderer(renderer)
+        self._updateNode()
 
     def setUnsavedState(self):
         """
@@ -395,7 +405,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 self.graphicsEffect().setEnabled(True)
             else:
                 self.graphicsEffect().setEnabled(False)
-                self._node.setGraphics(self.x(), self.y(), self.zValue(), self._symbol, self._node_label)
+                self._updateNode()
 
         # adjust link item positions when this node is moving or has changed.
         if change == QtWidgets.QGraphicsItem.ItemPositionChange or change == QtWidgets.QGraphicsItem.ItemPositionHasChanged:

@@ -148,18 +148,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         """
 
         symbol_path = self.getSymbol()
-
-        pixmap = QtGui.QPixmap(symbol_path)
-        if not pixmap.isNull():
-            for item in self._items:
-                renderer = QImageSvgRenderer(symbol_path)
-                renderer.setObjectName(symbol_path)
-                if renderer.isValid():
-                    item.setSharedRenderer(renderer)
-                else:
-                    QtWidgets.QMessageBox.critical(self, "Custom pixmap symbol", "Invalid image")
-                    return False
-
+        for item in self._items:
+            item.setSymbol(symbol_path)
         return True
 
     def getSymbol(self):
