@@ -493,6 +493,12 @@ class HTTPClient(QtCore.QObject):
                     except ValueError:
                         # It happens when an antivirus catch the communication and send is error page without changing the Content Type
                         callback({"message": error_message}, error=True, server=server, context=context)
+            else:
+                # Because nothing is configured to handle the error we display it to the user
+                try:
+                    log.error(json.loads(body)["message"])
+                except (ValueError, KeyError):
+                    log.error(error_message)
         else:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
