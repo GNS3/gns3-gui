@@ -41,6 +41,17 @@ class Node(BaseNode):
         # minimum required base settings
         self._settings = {"name": ""}
 
+    def setGraphics(self, x, y, z, symbol, label):
+        data = {
+            "x": x,
+            "y": y,
+            "z": z,
+            "symbol": symbol
+        }
+        if label is not None:
+            data["label"] = label.dump()
+        self._update(data)
+
     def isAlwaysOn(self):
         """
         Whether the node is always on.
@@ -118,7 +129,7 @@ class Node(BaseNode):
 
         # We have two kind of properties. The general properties common to all
         # nodes and the specific that we need to put in the properties field
-        node_general_properties = ("name", "node_id", "console", "console_type")
+        node_general_properties = ("name", "node_id", "console", "console_type", "x", "y", "z", "symbol", "label")
         # No need to send this back to the server because it's read only
         ignore_properties = ("console_host", )
         for key, value in params.items():

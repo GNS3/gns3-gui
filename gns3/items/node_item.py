@@ -95,6 +95,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self._settings = self._main_window.uiGraphicsView.settings()
 
         # create renderer using symbols path/resource
+        self._symbol = symbol
         if symbol:
             renderer = QImageSvgRenderer(symbol)
             if symbol != node.defaultSymbol():
@@ -394,6 +395,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 self.graphicsEffect().setEnabled(True)
             else:
                 self.graphicsEffect().setEnabled(False)
+                self._node.setGraphics(self.x(), self.y(), self.zValue(), self._symbol, self._node_label)
 
         # adjust link item positions when this node is moving or has changed.
         if change == QtWidgets.QGraphicsItem.ItemPositionChange or change == QtWidgets.QGraphicsItem.ItemPositionHasChanged:
@@ -475,3 +477,4 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if not self.isSelected():
             self.graphicsEffect().setEnabled(False)
+
