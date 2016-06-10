@@ -229,6 +229,8 @@ class Node(BaseNode):
         """
         Update the node on the controller
         """
+        if not self._node_id:
+            return
 
         #FIXME: should probably be moved on server side
         if "name" in params and params["name"] != self.name():
