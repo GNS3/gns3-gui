@@ -28,6 +28,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
 
     :param parent: optional parent
     """
+    item_unselected_signal = QtCore.Signal()
 
     show_layer = False
 
@@ -255,3 +256,15 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
         note_item.setDefaultTextColor(self.defaultTextColor())
         note_item.setRotation(self.rotation())
         return note_item
+
+    def itemChange(self, change, value):
+        """
+        Notifies this node item that some part of the item's state changes.
+
+        :param change: GraphicsItemChange type
+        :param value: value of the change
+        """
+        if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
+            if value == 0:
+                self.item_unselected_signal.emit()
+        return super().itemChange(change, value)

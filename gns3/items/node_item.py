@@ -298,6 +298,13 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         self._node_label = label
+        self._node_label.item_unselected_signal.connect(self._labelUnselectedSlot)
+
+    def _labelUnselectedSlot(self):
+        """
+        Called when user unselect the label
+        """
+        self._updateNode()
 
     def _centerLabel(self):
         """
@@ -318,7 +325,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if not self._node_label:
-            self._node_label = NoteItem(self)
+            self.setLabel(NoteItem(self))
             self._node_label.setEditable(False)
             self._node_label.setPlainText(self._node.name())
             self._centerLabel()
@@ -413,7 +420,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             for link in self._links:
                 link.adjust()
 
-        return QtWidgets.QGraphicsItem.itemChange(self, change, value)
+        return super().itemChange(change, value)
 
     def paint(self, painter, option, widget=None):
         """
