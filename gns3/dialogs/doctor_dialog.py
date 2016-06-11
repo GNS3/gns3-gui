@@ -213,6 +213,8 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         except pywintypes.error as e:
             return (2, "Could not check if the NPF or Npcap service is running: {}".format(e.strerror))
 
+        return (0, None)
+
 if __name__ == '__main__':
     import sys
     app = QtWidgets.QApplication(sys.argv)
