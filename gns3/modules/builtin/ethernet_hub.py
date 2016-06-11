@@ -82,10 +82,7 @@ class EthernetHub(Node):
         if "name" in new_settings:
             params["name"] = new_settings["name"]
         if "ports" in new_settings:
-            params["ports"] = []
-            for port_number in new_settings["ports"]:
-                params["ports"].append({"port_number": int(port_number),
-                                        "name": "Ethernet{}".format(port_number)})
+            params["ports"] = new_settings["ports"]
         if params:
             self._update(params)
 

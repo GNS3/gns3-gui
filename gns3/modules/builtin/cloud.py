@@ -57,7 +57,7 @@ class Cloud(Node):
                 return True
         return False
 
-    def create(self, name=None, node_id=None, ports=None, default_name_format = "Cloud{0}"):
+    def create(self, name=None, node_id=None, ports=None, default_name_format="Cloud{0}"):
         """
         Creates this cloud.
 

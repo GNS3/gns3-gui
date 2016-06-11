@@ -19,7 +19,9 @@
 Configuration page for Ethernet switches.
 """
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtGui, QtCore, QtWidgets
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.node import Node
 
 from ..utils.tree_widget_item import TreeWidgetItem
 from ..ui.ethernet_switch_configuration_page_ui import Ui_ethernetSwitchConfigPageWidget
@@ -37,6 +39,10 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         self.setupUi(self)
         self._ports = {}
 
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
+
         # connect slots
         self.uiAddPushButton.clicked.connect(self._addPortSlot)
         self.uiDeletePushButton.clicked.connect(self._deletePortSlot)
@@ -47,6 +53,21 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         # enable sorting
         self.uiPortsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
         self.uiPortsTreeWidget.setSortingEnabled(True)
+
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
+
+    def _symbolBrowserSlot(self):
+        """
+        Slot to open the symbol browser and select a new symbol.
+        """
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
+        dialog.show()
+        if dialog.exec_():
+            new_symbol_path = dialog.getSymbol()
+            self.uiSymbolLineEdit.setText(new_symbol_path)
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
 
     def _portSelectedSlot(self, item, column):
         """
@@ -141,11 +162,11 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         item = self.uiPortsTreeWidget.currentItem()
         if item:
             port = int(item.text(0))
-            node_ports = self._node.ports()
-            for node_port in node_ports:
-                if node_port.portNumber() == port and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
-                    return
+            if self._node:
+                for node_port in self._node.ports():
+                    if node_port.portNumber() == port and not node_port.isFree():
+                        QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to port {}, please remove it first".format(node_port.name()))
+                        return
             del self._ports[port]
             self.uiPortsTreeWidget.takeTopLevelItem(self.uiPortsTreeWidget.indexOfTopLevelItem(item))
 
@@ -154,7 +175,7 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         else:
             self.uiPortSpinBox.setValue(1)
 
-    def loadSettings(self, settings, node, group=False):
+    def loadSettings(self, settings, node=None, group=False):
         """
         Loads the Ethernet switch settings.
 
@@ -172,6 +193,33 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         self._ports = {}
         self._node = node
 
+        if not node:
+            # these are template settings
+
+            # rename the label from "Name" to "Template name"
+            self.uiNameLabel.setText("Template name:")
+
+            # load the default name format
+            self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
+
+            # load the symbol
+            self.uiSymbolLineEdit.setText(settings["symbol"])
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
+
+            # load the category
+            index = self.uiCategoryComboBox.findData(settings["category"])
+            if index != -1:
+                self.uiCategoryComboBox.setCurrentIndex(index)
+        else:
+            self.uiDefaultNameFormatLabel.hide()
+            self.uiDefaultNameFormatLineEdit.hide()
+            self.uiSymbolLabel.hide()
+            self.uiSymbolLineEdit.hide()
+            self.uiSymbolToolButton.hide()
+            self.uiCategoryComboBox.hide()
+            self.uiCategoryLabel.hide()
+            self.uiCategoryComboBox.hide()
+
         for port_info in settings["ports"]:
             item = TreeWidgetItem(self.uiPortsTreeWidget)
             item.setText(0, str(port_info["port_number"]))
@@ -186,7 +234,7 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         if len(self._ports) > 0:
             self.uiPortSpinBox.setValue(max(self._ports) + 1)
 
-    def saveSettings(self, settings, node, group=False):
+    def saveSettings(self, settings, node=None, group=False):
         """
         Saves the Ethernet switch settings.
 
@@ -204,5 +252,24 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
                 settings["name"] = name
         else:
             del settings["name"]
+
+        if not node:
+            # these are template settings
+
+            # save the default name format
+            default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
+            if '{0}' not in default_name_format and '{id}' not in default_name_format:
+                QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
+            else:
+                settings["default_name_format"] = default_name_format
+
+            symbol_path = self.uiSymbolLineEdit.text()
+            pixmap = QtGui.QPixmap(symbol_path)
+            if pixmap.isNull():
+                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
+            else:
+                settings["symbol"] = symbol_path
+
+            settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         settings["ports"] = list(self._ports.values())

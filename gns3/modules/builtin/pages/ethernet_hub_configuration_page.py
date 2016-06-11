@@ -19,8 +19,11 @@
 Configuration page for Ethernet hubs.
 """
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtGui, QtWidgets
 from gns3.dialogs.node_properties_dialog import ConfigurationError
+from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.node import Node
+
 from ..ui.ethernet_hub_configuration_page_ui import Ui_ethernetHubConfigPageWidget
 
 
@@ -35,7 +38,26 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
         super().__init__()
         self.setupUi(self)
 
-    def loadSettings(self, settings, node, group=False):
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
+
+        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
+
+    def _symbolBrowserSlot(self):
+        """
+        Slot to open the symbol browser and select a new symbol.
+        """
+
+        symbol_path = self.uiSymbolLineEdit.text()
+        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
+        dialog.show()
+        if dialog.exec_():
+            new_symbol_path = dialog.getSymbol()
+            self.uiSymbolLineEdit.setText(new_symbol_path)
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
+
+    def loadSettings(self, settings, node=None, group=False):
         """
         Loads the Ethernet hub settings.
 
@@ -50,10 +72,37 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
             self.uiNameLineEdit.hide()
             self.uiNameLabel.hide()
 
+        if not node:
+            # these are template settings
+
+            # rename the label from "Name" to "Template name"
+            self.uiNameLabel.setText("Template name:")
+
+            # load the default name format
+            self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
+
+            # load the symbol
+            self.uiSymbolLineEdit.setText(settings["symbol"])
+            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
+
+            # load the category
+            index = self.uiCategoryComboBox.findData(settings["category"])
+            if index != -1:
+                self.uiCategoryComboBox.setCurrentIndex(index)
+        else:
+            self.uiDefaultNameFormatLabel.hide()
+            self.uiDefaultNameFormatLineEdit.hide()
+            self.uiSymbolLabel.hide()
+            self.uiSymbolLineEdit.hide()
+            self.uiSymbolToolButton.hide()
+            self.uiCategoryComboBox.hide()
+            self.uiCategoryLabel.hide()
+            self.uiCategoryComboBox.hide()
+
         nb_ports = len(settings["ports"])
         self.uiPortsSpinBox.setValue(nb_ports)
 
-    def saveSettings(self, settings, node, group=False):
+    def saveSettings(self, settings, node=None, group=False):
         """
         Saves the Ethernet hub settings.
 
@@ -74,15 +123,35 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
 
         nb_ports = self.uiPortsSpinBox.value()
 
-        # check that a link isn't connected to a port
-        # before we delete it
-        ports = node.ports()
-        for port in ports:
-            if not port.isFree() and port.portNumber() > nb_ports:
-                self.loadSettings(settings, node)
-                QtWidgets.QMessageBox.critical(self, node.name(), "A link is connected to port {}, please remove it first".format(port.name()))
-                raise ConfigurationError()
+        if node:
+            # check that a link isn't connected to a port before we delete it
+            ports = node.ports()
+            for port in ports:
+                if not port.isFree() and port.portNumber() > nb_ports:
+                    self.loadSettings(settings, node)
+                    QtWidgets.QMessageBox.critical(self, node.name(), "A link is connected to port {}, please remove it first".format(port.name()))
+                    raise ConfigurationError()
+
+        else:
+            # these are template settings
+
+            # save the default name format
+            default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
+            if '{0}' not in default_name_format and '{id}' not in default_name_format:
+                QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
+            else:
+                settings["default_name_format"] = default_name_format
+
+            symbol_path = self.uiSymbolLineEdit.text()
+            pixmap = QtGui.QPixmap(symbol_path)
+            if pixmap.isNull():
+                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
+            else:
+                settings["symbol"] = symbol_path
+
+            settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         settings["ports"] = []
-        for port in range(1, nb_ports + 1):
-            settings["ports"].append(str(port))
+        for port_number in range(1, nb_ports + 1):
+            settings["ports"].append({"port_number": int(port_number),
+                                      "name": "Ethernet{}".format(port_number)})

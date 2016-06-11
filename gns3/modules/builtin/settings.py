@@ -27,7 +27,23 @@ BUILTIN_SETTINGS = {
 
 CLOUD_SETTINGS = {
     "name": "",
-    "default_name_format": "{name}-{0}",
+    "default_name_format": "Cloud{0}",
     "symbol": ":/symbols/cloud.svg",
     "category": Node.end_devices,
+}
+
+ETHERNET_HUB_SETTINGS = {
+    "name": "",
+    "default_name_format": "Hub{0}",
+    "symbol": ":/symbols/hub.svg",
+    "category": Node.switches,
+    "ports": [],
+}
+
+ETHERNET_SWITCH_SETTINGS = {
+    "name": "",
+    "default_name_format": "Switch{0}",
+    "symbol": ":/symbols/ethernet_switch.svg",
+    "category": Node.switches,
+    "ports": [],
 }
