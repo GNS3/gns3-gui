@@ -55,8 +55,8 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
         self.uiTypeComboBox.addItems(["L2 image", "L3 image"])
 
         # Mandatory fields
-        self.uiNameImageWizardPage.registerField("name*", self.uiNameLineEdit)
-        self.uiNameImageWizardPage.registerField("image*", self.uiIOUImageLineEdit)
+        self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)
+        self.uiNameWizardPage.registerField("image*", self.uiIOUImageLineEdit)
 
         self.uiIOUImageLineEdit.textChanged.connect(self._imageLineEditTextChangedSlot)
 
@@ -94,7 +94,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-        if self.page(page_id) == self.uiNameImageWizardPage:
+        if self.page(page_id) == self.uiNameWizardPage:
             if not self.uiIOUImageToolButton.isEnabled():
                 QtWidgets.QMessageBox.warning(self, "IOU image", "You have chosen to use a remote server, please provide the path to an IOU image located on this server!")
             self.loadImagesList("/iou/vms")

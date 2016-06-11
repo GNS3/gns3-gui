@@ -35,9 +35,9 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
 
     def __init__(self, docker_containers, parent):
 
-        super().__init__(parent=parent, devices=[], use_local_server=Docker.instance().settings()["use_local_server"])
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(
-            ":/icons/docker.png"))
+        super().__init__(docker_containers, Docker.instance().settings()["use_local_server"], parent)
+        self._docker_containers = docker_containers
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/docker.png"))
 
         self.uiNewImageRadioButton.setChecked(True)
         self._existingImageRadioButtonToggledSlot(False)
@@ -46,8 +46,6 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
         if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
             # Cannot use Docker locally on Windows and Mac
             self.uiLocalRadioButton.setEnabled(False)
-
-        self._docker_containers = docker_containers
 
     def _existingImageRadioButtonToggledSlot(self, status):
         if self.uiExistingImageRadioButton.isChecked():
@@ -77,8 +75,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
         :param error: indicates an error (boolean)
         """
         if error:
-            QtWidgets.QMessageBox.critical(
-                self, "Docker Images", "{}".format(result["message"]))
+            QtWidgets.QMessageBox.critical(self, "Docker Images", "{}".format(result["message"]))
         else:
             self.uiImageListComboBox.clear()
             if len(result) == 0:
@@ -104,9 +101,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
 
         if self.currentPage() == self.uiNameWizardPage:
             if self.uiNameLineEdit.text() in [ d["name"] for d in self._docker_containers.values() ]:
-                QtWidgets.QMessageBox.critical(
-                    self, "Container name",
-                    "This name already exist!")
+                QtWidgets.QMessageBox.critical(self, "Container name", "This name already exist!")
                 return False
         return True
 

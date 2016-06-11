@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>423</height>
+    <width>586</width>
+    <height>411</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,7 +88,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiNameImageWizardPage">
+  <widget class="QWizardPage" name="uiNameWizardPage">
    <property name="title">
     <string>Name and image</string>
    </property>

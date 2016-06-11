@@ -92,7 +92,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         self.uiTestIOSImagePushButton.hide()
 
         # Mandatory fields
-        self.uiNamePlatformWizardPage.registerField("name*", self.uiNameLineEdit)
+        self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)
         self.uiIOSImageWizardPage.registerField("image*", self.uiIOSImageLineEdit)
 
         self._widget_slots = {0: self.uiSlot0comboBox,
@@ -327,7 +327,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
         if self.page(page_id) == self.uiIOSImageWizardPage:
             self.loadImagesList("/dynamips/vms")
-        elif self.page(page_id) == self.uiNamePlatformWizardPage:
+        elif self.page(page_id) == self.uiNameWizardPage:
             self._prefillPlatform()
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
             ios_image = self.uiIOSImageLineEdit.text()
