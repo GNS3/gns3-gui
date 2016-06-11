@@ -236,8 +236,7 @@ class Qemu(Module):
         if self._qemu_vms[vm]["default_name_format"]:
             default_name_format = self._qemu_vms[vm]["default_name_format"]
         if linked_base:
-            default_name_format = default_name_format.replace('{name}', name)
-            name = node.allocateName(default_name_format)
+            name = default_name_format.replace('{name}', name)
 
         node.create(qemu_path,
                     name=name,

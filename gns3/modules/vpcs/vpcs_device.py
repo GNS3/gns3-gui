@@ -124,9 +124,6 @@ class VPCSDevice(Node):
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                if name == "name":
-                    # update the node name
-                    self.updateAllocatedName(value)
                 self._settings[name] = value
 
     def info(self):

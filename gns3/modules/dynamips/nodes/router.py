@@ -308,9 +308,6 @@ class Router(Node):
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                if name == "name":
-                    # update the node name
-                    self.updateAllocatedName(value)
                 if name.startswith("slot"):
                     # add or remove adapters ports
                     slot_number = int(name[-1])

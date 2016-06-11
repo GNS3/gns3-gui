@@ -213,9 +213,6 @@ class IOUDevice(Node):
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                 if name == "ethernet_adapters" or name == "serial_adapters":
                     nb_adapters_changed = True
-                if name == "name":
-                    # update the node name
-                    self.updateAllocatedName(value)
                 self._settings[name] = value
 
         if nb_adapters_changed:

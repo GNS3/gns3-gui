@@ -20,7 +20,6 @@ Base class for node classes.
 """
 
 from .qt import QtCore
-from .controller import Controller
 from .ports.port import Port
 
 
@@ -100,67 +99,6 @@ class BaseNode(QtCore.QObject):
         """
 
         cls._instance_count = 1
-        cls._allocated_names.clear()
-
-    def allocateName(self, base_name):
-        """
-        Allocates a new name for a node.
-
-        :param base_name: base name for the node which will be completed with a
-        unique number
-
-        :returns: allocated name or None if one could not be found
-        """
-
-        for number in range(1, 100000):
-            if '{0}' in base_name or '{id}' in base_name:
-                name = base_name.format(number, id=number)
-            else:
-                name = base_name + str(number)
-            if name not in self._allocated_names:
-                self._allocated_names.add(name)
-                return name
-        return None
-
-    def removeAllocatedName(self):
-        """
-        Removes an allocated name from a node.
-        """
-
-        if self.name() in self._allocated_names:
-            self._allocated_names.remove(self.name())
-
-    def updateAllocatedName(self, name):
-        """
-        Updates a name for a node.
-
-        :param name: new node name
-        """
-
-        self.removeAllocatedName()
-        self._allocated_names.add(name)
-
-    def setName(self, name):
-        """
-        Set a name for a node.
-
-        :param name: node name
-        """
-
-        self._allocated_names.add(name)
-
-    def hasAllocatedName(self, name):
-        """
-        Returns either a name is already allocated or not.
-
-        :param name: node name
-
-        :returns: boolean
-        """
-
-        if name in self._allocated_names:
-            return True
-        return False
 
     def module(self):
         """

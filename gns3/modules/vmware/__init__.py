@@ -349,17 +349,16 @@ class VMware(Module):
         if self._vmware_vms[vm]["default_name_format"]:
             default_name_format = self._vmware_vms[vm]["default_name_format"]
         if linked_base:
-            default_name_format = default_name_format.replace('{name}', name)
-            name = node.allocateName(default_name_format)
+            name = default_name_format.replace('{name}', name)
 
         node.create(vmx_path,
-                   name=name,
-                   port_name_format=port_name_format,
-                   port_segment_size=port_segment_size,
-                   first_port_name=first_port_name,
-                   linked_clone=linked_base,
-                   additional_settings=vm_settings,
-                   default_name_format=default_name_format)
+                    name=name,
+                    port_name_format=port_name_format,
+                    port_segment_size=port_segment_size,
+                    first_port_name=first_port_name,
+                    linked_clone=linked_base,
+                    additional_settings=vm_settings,
+                    default_name_format=default_name_format)
 
     def reset(self):
         """

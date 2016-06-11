@@ -109,7 +109,6 @@ class VirtualBoxVM(Node):
 
         if not name:
             name = vmname
-            self.setName(name)
 
         self._linked_clone = linked_clone
         params = {"vmname": vmname,
@@ -164,10 +163,6 @@ class VirtualBoxVM(Node):
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                updated = True
-                if name == "name":
-                    # update the node name
-                    self.updateAllocatedName(value)
                 if name == "adapters":
                     nb_adapters_changed = True
                 self._settings[name] = value

@@ -52,10 +52,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         effect = QtWidgets.QGraphicsColorizeEffect()
         effect.setColor(QtGui.QColor("black"))
         effect.setStrength(0.8)
-        #effect = QtWidgets.QGraphicsDropShadowEffect()
-        # effect.setColor(QtGui.QColor("darkGray"))
-        # effect.setBlurRadius(0)
-        #effect.setOffset(3, 3)
         self.setGraphicsEffect(effect)
         self.graphicsEffect().setEnabled(False)
 
@@ -238,7 +234,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if self is None:
             return
-        self._node.removeAllocatedName()
         if self in self.scene().items():
             self.scene().removeItem(self)
         self.setUnsavedState()

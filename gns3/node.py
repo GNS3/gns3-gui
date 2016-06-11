@@ -150,17 +150,11 @@ class Node(BaseNode):
         if params is None:
             params = {}
 
-        # let's create a unique name if none has been chosen
         if not name:
-            name = self.allocateName(default_name_format)
+            # use the default name format if no name is provided
+            name = default_name_format
 
-        if not name:
-            self.error_signal.emit(self.id(), "could not allocate a name for this node")
-            return
-
-        # update the name now so we know the node name in case of an error
-        params["name"] = self._settings["name"] = name
-        self.setName(name)
+        params["name"] = name
         if node_id:
             params["node_id"] = node_id
         body = self._prepareBody(params)
@@ -176,9 +170,13 @@ class Node(BaseNode):
         """
 
         if error:
-            log.error("Error while setting up {}: {}".format(self.name(), result["message"]))
+            log.error("Error while setting up node: {}".format(result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
             return False
+
+        if "name" in result:
+            # set the node name first to have meaningful logs and facilitate debugging
+            self.setName(result["name"])
 
         self._node_id = result["node_id"]
         if not self._node_id:
@@ -232,12 +230,6 @@ class Node(BaseNode):
         if not self._node_id:
             return
 
-        #FIXME: should probably be moved on server side
-        if "name" in params and params["name"] != self.name():
-            if self.hasAllocatedName(params["name"]):
-                self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(params["name"]))
-                return
-
         log.debug("{} is updating settings: {}".format(self.name(), params))
         body = self._prepareBody(params)
         self.controllerHttpPut("/nodes/{node_id}".format(project_id=self._project.id(), node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout)
@@ -255,6 +247,9 @@ class Node(BaseNode):
             self.server_error_signal.emit(self.id(), result["message"])
             return False
 
+        if "name" in result:
+            self.setName(result["name"])
+
         if "command_line" in result:
             self._command_line = result["command_line"]
 
@@ -265,10 +260,6 @@ class Node(BaseNode):
                 self.setStatus(Node.stopped)
             elif result["status"] == "suspended":
                 self.setStatus(Node.suspended)
-
-        if "name" in result:
-            self._settings["name"] = result["name"]
-            self.updateAllocatedName(result["name"])
 
         # For compatibility with old API
         # FIXME: review this
@@ -514,7 +505,6 @@ class Node(BaseNode):
         self._loading = True
         self._node_info = node_info
         self.loaded_signal.connect(self._updatePortSettings)
-        self.setName(node_info["properties"]["name"])
 
     def openConsole(self, command=None, aux=False):
         if command is None:
@@ -584,6 +574,15 @@ class Node(BaseNode):
         self._module.addNode(self)
         self._loading = False
         self._node_info = None
+
+    def setName(self, name):
+        """
+        Set a name for a node.
+
+        :param name: node name
+        """
+
+        self._settings["name"] = name
 
     def name(self):
         """
