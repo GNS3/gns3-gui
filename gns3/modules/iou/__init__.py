@@ -359,7 +359,6 @@ class IOU(Module):
             nodes.append(
                 {"class": IOUDevice.__name__,
                  "name": iou_device["name"],
-                 "ram": iou_device["ram"],
                  "server": iou_device["server"],
                  "symbol": iou_device["symbol"],
                  "categories": [iou_device["category"]]

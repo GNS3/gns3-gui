@@ -439,7 +439,6 @@ class Dynamips(Module):
             nodes.append(
                 {"class": node_class.__name__,
                  "name": ios_router["name"],
-                 "ram": ios_router["ram"],
                  "server": ios_router["server"],
                  "symbol": ios_router["symbol"],
                  "categories": [ios_router["category"]]}

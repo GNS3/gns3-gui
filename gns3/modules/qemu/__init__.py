@@ -334,7 +334,6 @@ class Qemu(Module):
             nodes.append(
                 {"class": QemuVM.__name__,
                  "name": qemu_vm["name"],
-                 "ram": qemu_vm["ram"],
                  "server": qemu_vm["server"],
                  "symbol": qemu_vm["symbol"],
                  "categories": [qemu_vm["category"]]

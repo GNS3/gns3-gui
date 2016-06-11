@@ -108,7 +108,6 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
             "name": vmname,
             "vmname": vmname,
             "server": server,
-            "ram": vminfo["ram"],
             "linked_base": self.uiBaseVMCheckBox.isChecked()
         }
 
