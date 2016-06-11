@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
 #
-# Created: Fri Mar 25 14:43:13 2016
+# Created: Fri Jun 10 21:29:04 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_IOUDeviceWizard(object):
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName("IOUDeviceWizard")
-        IOUDeviceWizard.resize(585, 423)
+        IOUDeviceWizard.resize(586, 411)
         IOUDeviceWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -51,21 +51,21 @@ class Ui_IOUDeviceWizard(object):
         self.gridLayout_7.addWidget(self.uiRemoteServersComboBox, 0, 1, 1, 1)
         self.gridLayout_2.addWidget(self.uiRemoteServersGroupBox, 1, 0, 1, 1)
         IOUDeviceWizard.addPage(self.uiServerWizardPage)
-        self.uiNameImageWizardPage = QtWidgets.QWizardPage()
-        self.uiNameImageWizardPage.setObjectName("uiNameImageWizardPage")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiNameImageWizardPage)
+        self.uiNameWizardPage = QtWidgets.QWizardPage()
+        self.uiNameWizardPage.setObjectName("uiNameWizardPage")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiNameWizardPage)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.formLayout_7 = QtWidgets.QFormLayout()
         self.formLayout_7.setFieldGrowthPolicy(QtWidgets.QFormLayout.ExpandingFieldsGrow)
         self.formLayout_7.setObjectName("formLayout_7")
-        self.uiNameLabel = QtWidgets.QLabel(self.uiNameImageWizardPage)
+        self.uiNameLabel = QtWidgets.QLabel(self.uiNameWizardPage)
         self.uiNameLabel.setObjectName("uiNameLabel")
         self.formLayout_7.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.uiNameLabel)
-        self.uiNameLineEdit = QtWidgets.QLineEdit(self.uiNameImageWizardPage)
+        self.uiNameLineEdit = QtWidgets.QLineEdit(self.uiNameWizardPage)
         self.uiNameLineEdit.setObjectName("uiNameLineEdit")
         self.formLayout_7.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.uiNameLineEdit)
         self.verticalLayout_2.addLayout(self.formLayout_7)
-        self.groupBox = QtWidgets.QGroupBox(self.uiNameImageWizardPage)
+        self.groupBox = QtWidgets.QGroupBox(self.uiNameWizardPage)
         self.groupBox.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.groupBox.setAutoFillBackground(False)
         self.groupBox.setObjectName("groupBox")
@@ -111,7 +111,7 @@ class Ui_IOUDeviceWizard(object):
         self.formLayout_8.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_5)
         self.verticalLayout_3.addLayout(self.formLayout_8)
         self.verticalLayout_2.addWidget(self.groupBox)
-        IOUDeviceWizard.addPage(self.uiNameImageWizardPage)
+        IOUDeviceWizard.addPage(self.uiNameWizardPage)
 
         self.retranslateUi(IOUDeviceWizard)
         QtCore.QMetaObject.connectSlotsByName(IOUDeviceWizard)
@@ -127,8 +127,8 @@ class Ui_IOUDeviceWizard(object):
         self.uiLocalRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on your local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("IOUDeviceWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("IOUDeviceWizard", "Run on:"))
-        self.uiNameImageWizardPage.setTitle(_translate("IOUDeviceWizard", "Name and image"))
-        self.uiNameImageWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a descriptive name for the new IOU device and add an IOU image."))
+        self.uiNameWizardPage.setTitle(_translate("IOUDeviceWizard", "Name and image"))
+        self.uiNameWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a descriptive name for the new IOU device and add an IOU image."))
         self.uiNameLabel.setText(_translate("IOUDeviceWizard", "Name:"))
         self.groupBox.setTitle(_translate("IOUDeviceWizard", "Image"))
         self.uiExistingImageRadioButton.setText(_translate("IOUDeviceWizard", "Existing image"))

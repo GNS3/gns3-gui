@@ -169,7 +169,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiNamePlatformWizardPage">
+  <widget class="QWizardPage" name="uiNameWizardPage">
    <property name="title">
     <string>Name and platform</string>
    </property>

@@ -59,7 +59,8 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
                     elif res == 2:
                         self.write('<span style="color: red"><strong>ERROR</strong> {}</span>'.format(msg))
                 except Exception as e:
-                    self.write('<span style="color: red"><strong>FAIL</strong> The doctor fail during this test with error: {} Please check on the forum.</span>'.format(str(e)))
+                    log.error("GNS3 doctor exception detected: {}".format(e), exc_info=1)
+                    self.write('<span style="color: red"><strong>FAIL</strong> The doctor failed during this test with error: {} Please check on the forum.</span>'.format(str(e)))
                 self.write("<br/>")
 
     def write(self, text):
@@ -183,7 +184,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             pass
         return (0, None)
 
-    def _check_windows_service(self, service_name):
+    def _checkWindowsService(self, service_name):
 
         import pywintypes
         import win32service
@@ -207,10 +208,12 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
 
         import pywintypes
         try:
-            if not self._check_windows_service("npf") and not self._check_windows_service("npcap"):
+            if not self._checkWindowsService("npf") and not self._checkWindowsService("npcap"):
                 return (2, "The NPF or NPCAP service is not installed, please install Winpcap or Npcap and reboot")
         except pywintypes.error as e:
             return (2, "Could not check if the NPF or Npcap service is running: {}".format(e.strerror))
+
+        return (0, None)
 
 if __name__ == '__main__':
     import sys

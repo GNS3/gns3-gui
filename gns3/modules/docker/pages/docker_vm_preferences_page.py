@@ -125,9 +125,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
             docker_image = self._docker_containers[key]
-            dialog = ConfigurationDialog(
-                docker_image["name"], docker_image,
-                DockerVMConfigurationPage(), parent=self)
+            dialog = ConfigurationDialog(docker_image["name"], docker_image, DockerVMConfigurationPage(), parent=self)
             dialog.show()
             if dialog.exec_():
                 # update the icon

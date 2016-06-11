@@ -131,7 +131,7 @@ class VMWizard(QtWidgets.QWizard):
         Validates the server.
         """
 
-        if hasattr(self, "uiNamePlatformWizardPage") and self.currentPage() == self.uiNamePlatformWizardPage:
+        if hasattr(self, "uiNameWizardPage") and self.currentPage() == self.uiNameWizardPage:
             name = self.uiNameLineEdit.text()
             for device in self._devices.values():
                 if device["name"] == name:
