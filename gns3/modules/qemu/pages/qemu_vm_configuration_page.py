@@ -27,7 +27,6 @@ from gns3.modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node
 from gns3.qt import QtGui, QtCore, QtWidgets, qpartial
-from gns3.servers import Servers
 from gns3.modules.module_error import ModuleError
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.image_manager import ImageManager
@@ -132,9 +131,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             if legacy_networking and device_name not in self._legacy_devices:
                 continue
             self.uiAdapterTypesComboBox.addItem("{} ({})".format(device_description, device_name), device_name)
-
-    def getServer(self):
-        return Servers.instance().getServerFromString(self.getSettings()["server"])
 
     @staticmethod
     def getImageDirectory():
