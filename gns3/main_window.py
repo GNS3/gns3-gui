@@ -837,6 +837,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self._pictures_dir = os.path.dirname(path)
         files_dir = self._project.filesDir()
+        if files_dir is None:
+            QtWidgets.QMessageBox.critical(self, "Image", "Project is not yet created")
+            return
         os.makedirs(files_dir, exist_ok=True)
         image = QtGui.QPixmap(path)
         if image.isNull():
