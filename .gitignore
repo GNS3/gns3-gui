@@ -59,3 +59,4 @@ keys
 /gns3_server.ini
 updates
 .cache
+__pycache__
