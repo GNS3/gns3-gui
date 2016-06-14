@@ -257,7 +257,6 @@ class ProjectManager(QtCore.QObject):
         topology = Topology.instance()
         topology.project = self._project
         try:
-            self._project.commit()
             topology = topology.dump(random_id=random_id)
             log.info("Saving project: {}".format(path))
             content = json.dumps(topology, sort_keys=True, indent=4)

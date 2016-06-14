@@ -166,21 +166,6 @@ def test_project_delete_on_created_project(controller):
     assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
 
 
-def test_project_commit(controller):
-
-
-    project = Project()
-    project.setId(str(uuid4()))
-    project.commit()
-
-    mock = controller._http_client.createHTTPQuery
-    assert mock.called
-    args, kwargs = mock.call_args
-
-    assert args[0] == "POST"
-    assert args[1] == "/projects/{project_id}/commit".format(project_id=project.id())
-
-
 def test_project_destroy(controller):
 
 

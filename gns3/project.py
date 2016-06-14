@@ -137,15 +137,6 @@ class Project(QtCore.QObject):
         self.setFilesDir(os.path.dirname(topology_file))
         self._name = os.path.basename(topology_file).replace('.gns3', '')
 
-    def commit(self):
-        """Save project on remote servers"""
-
-        # Don't do anything if the project doesn't exist on the server
-        if self._id is None:
-            return
-
-        Controller.instance().post("/projects/{project_id}/commit".format(project_id=self._id), None, body={})
-
     def start_all_nodes(self):
         """Start all nodes belonging to this project"""
 
