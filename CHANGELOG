@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.5.0rc2 15/06/2016
+
+* Ethernet0 => eth0 for docker
+* Validate appliance schema before loading it
+* Fix a rare crash when loading images
+* Fixes doctor failure with 1.5rc1. Fixes #1290.
+* Check for template name collisions.
+* Log GNS3 doctor exceptions.
+* Option to hide the new appliance template button. Fixes #1277.
+
 ## 1.5.0rc1 01/06/2016
 
 * Avoid a segfault when exiting with debug enabled
