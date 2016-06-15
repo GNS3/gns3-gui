@@ -34,12 +34,12 @@ def microcore_appliance(registry):
     """
     An instance of microcore Appliance object
     """
-    return Appliance(registry, "tests/registry/appliances/microcore-linux.json")
+    return Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
 
 
 def test_check_config(tmpdir, registry):
 
-    test_path = str(tmpdir / "test.json")
+    test_path = str(tmpdir / "test.gns3a")
 
     with open(test_path, "w+", encoding="utf-8") as f:
         f.write("")
@@ -61,17 +61,26 @@ def test_check_config(tmpdir, registry):
             f.write('{"registry_version": 42}')
         Appliance(registry, test_path)
 
-    Appliance(registry, "tests/registry/appliances/microcore-linux.json")
+    # Will raise an error due to JSON schema invalid
+    with open("tests/registry/appliances/microcore-linux.gns3a", encoding="utf-8") as f:
+        config = json.load(f)
+        config["images"][0]["md5sum"] = "broken"
+        with open(test_path, "w+", encoding="utf-8") as f:
+            json.dump(config, f)
+    with pytest.raises(ApplianceError):
+        Appliance(registry, test_path)
+
+    Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
 
 
 def test_resolve_version(tmpdir):
 
-    with open("tests/registry/appliances/microcore-linux.json", encoding="utf-8") as f:
+    with open("tests/registry/appliances/microcore-linux.gns3a", encoding="utf-8") as f:
         config = json.load(f)
 
     hda = config["images"][0]
 
-    new_config = Appliance(registry, "tests/registry/appliances/microcore-linux.json")
+    new_config = Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
     assert new_config["versions"][0]["images"] == {"hda_disk_image": hda}
 
 
@@ -98,7 +107,7 @@ def test_resolve_version_dynamips(tmpdir):
 def test_resolve_version_invalid_file(tmpdir):
 
     with pytest.raises(ApplianceError):
-        Appliance(registry, "tests/registry/appliances/broken-microcore-linux.json")
+        Appliance(registry, "tests/registry/appliances/broken-microcore-linux.gns3a")
 
 
 def test_resolve_version_ova(tmpdir):
@@ -158,13 +167,13 @@ def test_is_version_installable(linux_microcore_img, microcore_appliance):
 
 def test_image_dir_name(microcore_appliance):
 
-    assert Appliance(registry, "tests/registry/appliances/microcore-linux.json").image_dir_name() == "QEMU"
+    assert Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a").image_dir_name() == "QEMU"
     assert Appliance(registry, "tests/registry/appliances/cisco-iou-l3.gns3a").image_dir_name() == "IOU"
 
 
 def test_create_new_version(microcore_appliance):
 
-    a = Appliance(registry, "tests/registry/appliances/microcore-linux.json")
+    a = Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
     a.create_new_version("42.0")
     v = a['versions'][-1:][0]
     assert v == {

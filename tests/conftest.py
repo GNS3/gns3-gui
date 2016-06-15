@@ -85,7 +85,9 @@ def gns3vm_server():
 
     from gns3.servers import Servers
 
+    Servers.instance()._settings["vm"]["auto_start"] = True
     Servers.instance().initVMServer()
+    assert Servers.instance().vmServer() is not None
     return Servers.instance().vmServer()
 
 
