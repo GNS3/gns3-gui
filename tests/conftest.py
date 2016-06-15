@@ -111,7 +111,7 @@ def iou_device(local_server, project):
     from gns3.modules.iou import IOU
 
     device = IOUDevice(IOU(), local_server, project)
-    device._iou_device_id = str(uuid.uuid4())
+    device._node_id = str(uuid.uuid4())
     settings = device._settings
     settings["name"] = "IOU 1"
     device._settings = settings
@@ -126,7 +126,7 @@ def virtualbox_vm(local_server, project):
     from gns3.modules.virtualbox import VirtualBox
 
     vm = VirtualBoxVM(VirtualBox(), local_server, project)
-    vm._virtualbox_vm_id = str(uuid.uuid4())
+    vm._node_id = str(uuid.uuid4())
     vm._settings = {"name": "VBOX1",
                     "vmname": "VBOX1",
                     "console": None,
@@ -147,7 +147,7 @@ def qemu_vm(local_server, project):
     from gns3.modules.qemu import Qemu
 
     vm = QemuVM(Qemu(), local_server, project)
-    vm._qemu_id = str(uuid.uuid4())
+    vm._node_id = str(uuid.uuid4())
     vm._settings = {"name": "QEMU1"}
     vm.setInitialized(True)
     return vm

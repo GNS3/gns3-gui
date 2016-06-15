@@ -227,6 +227,7 @@ class Node(BaseNode):
         """
         Update the node on the controller
         """
+
         if not self._node_id:
             return
 

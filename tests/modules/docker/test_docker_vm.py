@@ -40,7 +40,7 @@ def test_docker_vm_create(project, local_server):
                                         "adapters": 1,
                                         "image": "ubuntu",
                                     },
-                                    "name": "ubuntu-1"
+                                    "name": "ubuntu-{0}"
                                 },
                                 context={},
                                 timeout=120)

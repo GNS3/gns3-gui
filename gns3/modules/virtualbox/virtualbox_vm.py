@@ -137,10 +137,7 @@ class VirtualBoxVM(Node):
         """
 
         if "name" in new_settings and new_settings["name"] != self.name():
-            if self.hasAllocatedName(new_settings["name"]):
-                self.error_signal.emit(self.id(), 'Name "{}" is already used by another node'.format(new_settings["name"]))
-                return
-            elif self._linked_clone:
+            if self._linked_clone:
                 # forces the update of the VM name in VirtualBox.
                 new_settings["vmname"] = new_settings["name"]
 
