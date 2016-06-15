@@ -13,14 +13,15 @@
     "status": "experimental",
     "vendor_url": "https://www.juniper.net",
     "registry_version": 1,
-    
+
     "qemu": {
         "console_type": "telnet",
         "ram": 2000,
         "adapter_type": "e1000",
         "adapters": 6,
         "arch": "x86_64",
-        "options": "-smp 2"
+        "options": "-smp 2",
+        "kvm": "require"
     },
 
 

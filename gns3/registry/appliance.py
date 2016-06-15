@@ -20,6 +20,10 @@ import json
 import copy
 import os
 import collections
+import jsonschema
+
+
+from gns3.utils.get_resource import get_resource
 
 
 class ApplianceError(Exception):
@@ -51,6 +55,15 @@ class Appliance(collections.Mapping):
             raise ApplianceError("Invalid appliance configuration please report the issue on https://github.com/GNS3/gns3-registry")
         if self._appliance["registry_version"] > 3:
             raise ApplianceError("Please update GNS3 in order to install this appliance")
+
+        with open(get_resource(os.path.join("schemas", "appliance.json"))) as f:
+            schema = json.load(f)
+        v = jsonschema.Draft4Validator(schema)
+        try:
+            v.validate(self._appliance)
+        except jsonschema.ValidationError as e:
+            error = jsonschema.exceptions.best_match(v.iter_errors(self._appliance)).message
+            raise ApplianceError("Invalid appliance file: {}".format(error))
 
     def __getitem__(self, key):
         return self._appliance.__getitem__(key)
