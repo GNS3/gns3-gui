@@ -21,7 +21,7 @@ from uuid import uuid4
 from gns3.project import Project
 
 
-def test_project_post_non_initialized_project_local_server(tmpdir, controller):
+def test_project_create(tmpdir, controller):
     """
     Test a post on a local servers. The project
     is not created on the server and should be created automatically.
@@ -30,62 +30,22 @@ def test_project_post_non_initialized_project_local_server(tmpdir, controller):
 
     uuid = str(uuid4())
     project = Project()
-    project._created_servers = set()
     project.setFilesDir(str(tmpdir))
+    project.setName("test")
 
-    project.post("/test", lambda: 0, body={"test": "test"})
+    project.create()
 
     mock = controller._http_client.createHTTPQuery
     assert mock.called
     args, kwargs = mock.call_args
     assert args[0] == "POST"
     assert args[1] == "/projects"
-    assert kwargs["body"] == {"name": "untitled",
-                              "path": str(tmpdir),
-                              "project_id": None}
+    assert kwargs["body"] == {"name": "test",
+                              "path": str(tmpdir)}
 
     args[2]({"project_id": uuid})
 
     assert project._closed is False
-    assert project._created
-
-    args, kwargs = mock.call_args
-    assert args[0] == "POST"
-    assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
-    assert kwargs["body"] == {"test": "test"}
-
-
-def test_project_post_non_created_project_local_server(tmpdir, controller):
-    """
-    Test a post on a local servers. The project
-    is not created on the server and should be created automaticaly.
-    And after make the call
-    """
-
-    uuid = str(uuid4())
-    project = Project()
-    project.setId(uuid)
-    project.setFilesDir(str(tmpdir))
-
-    mock = controller._http_client.createHTTPQuery
-
-    project.post("/test", lambda: 0, body={"test": "test"})
-
-    args, kwargs = mock.call_args
-    assert args[0] == "POST"
-    assert args[1] == "/projects"
-    assert kwargs["body"] == {"name": "untitled",
-                              "project_id": uuid,
-                              "path": str(tmpdir)}
-
-    args[2]({})
-
-    assert project._created
-
-    args, kwargs = mock.call_args
-    assert args[0] == "POST"
-    assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
-    assert kwargs["body"] == {"test": "test"}
 
 
 def test_project_post_on_created_project(controller):

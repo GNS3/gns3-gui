@@ -91,6 +91,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self._settings = self._main_window.uiGraphicsView.settings()
         self.setSymbol(symbol)
 
+        if node.initialized():
+            self.createdSlot(node.id())
+
     def _updateNode(self):
         """
         Sync change to the node
@@ -110,15 +113,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setSharedRenderer(renderer)
         self._updateNode()
 
-    def setUnsavedState(self):
-        """
-        Indicates the project is in a unsaved state.
-        """
-
-        from ..main_window import MainWindow
-        main_window = MainWindow.instance()
-        main_window.setUnsavedState()
-
     def node(self):
         """
         Returns the node attached to this node item.
@@ -137,7 +131,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         self._links.append(link)
         self._node.updated_signal.emit()
-        self.setUnsavedState()
 
     def removeLink(self, link):
         """
@@ -148,7 +141,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if link in self._links:
             self._links.remove(link)
-        self.setUnsavedState()
 
     def links(self):
         """
@@ -210,7 +202,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             if self._node_label.toPlainText() != self._node.name():
                 self._node_label.setPlainText(self._node.name())
                 self._centerLabel()
-        self.setUnsavedState()
 
         # update the link tooltips in case the
         # node name has changed
@@ -236,7 +227,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             return
         if self in self.scene().items():
             self.scene().removeItem(self)
-        self.setUnsavedState()
 
     def serverErrorSlot(self, base_node_id, message):
         """
@@ -411,7 +401,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         # adjust link item positions when this node is moving or has changed.
         if change == QtWidgets.QGraphicsItem.ItemPositionChange or change == QtWidgets.QGraphicsItem.ItemPositionHasChanged:
-            self.setUnsavedState()
             for link in self._links:
                 link.adjust()
 

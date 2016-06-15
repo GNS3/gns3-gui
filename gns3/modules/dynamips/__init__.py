@@ -403,6 +403,12 @@ class Dynamips(Module):
         return None
 
     @staticmethod
+    def getNodeType(name, platform):
+        if name == "dynamips":
+            return PLATFORM_TO_CLASS[platform]
+        return None
+
+    @staticmethod
     def classes():
         """
         Returns all the node classes supported by this module.

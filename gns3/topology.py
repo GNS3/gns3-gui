@@ -17,49 +17,30 @@
 
 """
 Contains this entire topology: nodes and links.
-Handles the saving and loading of a topology.
 """
 
-import os
-import json
-import uuid
-import glob
-import shutil
-import sys
-
-from .qt import QtGui, QtWidgets, QtSvg, qpartial
-from .qt.qimage_svg_renderer import QImageSvgRenderer
-
-from .items.node_item import NodeItem
-from .items.link_item import LinkItem
-from .items.note_item import NoteItem
-from .items.rectangle_item import RectangleItem
-from .items.ellipse_item import EllipseItem
-from .items.svg_image_item import SvgImageItem
-from .items.pixmap_image_item import PixmapImageItem
+from .qt import QtCore
 from .modules import MODULES
 from .modules.module_error import ModuleError
-from .utils.message_box import MessageBox
-from .utils.server_select import server_select
-from .version import __version__
-from .topology_check import getTopologyValidationErrors
+from .items.node_item import NodeItem
+from .compute_manager import ComputeManager
+
 
 import logging
 log = logging.getLogger(__name__)
 
-# The topology version supported by client
-TOPOLOGY_REVISION = 4
 
-VALIDATION_ERROR_MESSAGE = "Validation error when dumping the topology.\nIt's probably a false positive but please send the error and the .gns3 file to developers@gns3.net.\nThanks !"
-
-
-class Topology:
+class Topology(QtCore.QObject):
 
     """
     Topology.
     """
+    node_added_signal = QtCore.Signal(int)
+    project_changed_signal = QtCore.Signal()
 
     def __init__(self):
+
+        super().__init__()
 
         self._nodes = []
         self._links = []
@@ -67,12 +48,11 @@ class Topology:
         self._rectangles = []
         self._ellipses = []
         self._images = []
-        self._topology = None
-        self._initialized_nodes = []
-        self._initialized_links = []
-        self._instances = []
-        self._auto_start = False
         self._project = None
+        self._main_window = None
+
+    def setMainWindow(self, main_window):
+        self._main_window = main_window
 
     @property
     def project(self):
@@ -93,6 +73,7 @@ class Topology:
         """
 
         self._project = project
+        self.project_changed_signal.emit()
 
     def addNode(self, node):
         """
@@ -101,8 +82,8 @@ class Topology:
         :param node: Node instance
         """
 
-        # self._topology.add_node(node)
         self._nodes.append(node)
+        self.node_added_signal.emit(node.id())
 
     def removeNode(self, node):
         """
@@ -302,13 +283,6 @@ class Topology:
 
         return self._images
 
-    def instances(self):
-        """
-        Returns the list of instances for this cloud topology
-        """
-
-        return self._instances
-
     def reset(self):
         """
         Resets this topology.
@@ -321,593 +295,54 @@ class Topology:
         self._rectangles.clear()
         self._ellipses.clear()
         self._images.clear()
-        self._initialized_nodes.clear()
-        self._initialized_links.clear()
-        self._instances = []
-
-    def _dump_gui_settings(self, topology):
-        """
-        Adds GUI settings to the topology when saving a topology.
-
-        :param topology: topology representation
-        """
-
-        from .main_window import MainWindow
-        main_window = MainWindow.instance()
-        if main_window.uiShowPortNamesAction.isChecked():
-            topology["show_port_names"] = True
-        view = main_window.uiGraphicsView
-        if "nodes" in topology["topology"]:
-            for item in view.scene().items():
-                if isinstance(item, NodeItem):
-                    for node in topology["topology"]["nodes"]:
-                        if node["id"] == item.node().id():
-                            node["x"] = item.x()
-                            node["y"] = item.y()
-                            if item.zValue() != 1.0:
-                                node["z"] = item.zValue()
-                            if item.label():
-                                node["label"] = item.label().dump()
-                            symbol_path = None
-                            if isinstance(item, NodeItem):
-                                symbol_path = item.renderer().objectName()
-
-                            if os.path.exists(symbol_path):
-                                symbol_dir_path = os.path.join(self._project.filesDir(), "project-files", "symbols")
-                                os.makedirs(symbol_dir_path, exist_ok=True)
-                                new_symbol_path = os.path.join(symbol_dir_path, os.path.basename(symbol_path))
-                                try:
-                                    shutil.copyfile(symbol_path, new_symbol_path)
-                                except shutil.SameFileError:
-                                    pass
-                                symbol_path = os.path.basename(symbol_path)
-                            if symbol_path:
-                                node["symbol"] = symbol_path
-                if isinstance(item, LinkItem):
-                    if item.link() is not None:
-                        for link in topology["topology"]["links"]:
-                            if link["id"] == item.link().id():
-                                source_port_label = item.sourcePort().label()
-                                destination_port_label = item.destinationPort().label()
-                                if source_port_label:
-                                    link["source_port_label"] = source_port_label.dump()
-                                if destination_port_label:
-                                    link["destination_port_label"] = destination_port_label.dump()
-
-        # notes
-        if self._notes:
-            topology_notes = topology["topology"]["notes"] = []
-            for note in self._notes:
-                topology_notes.append(note.dump())
-
-        # rectangles
-        if self._rectangles:
-            topology_rectangles = topology["topology"]["rectangles"] = []
-            for rectangle in self._rectangles:
-                topology_rectangles.append(rectangle.dump())
-
-        # ellipses
-        if self._ellipses:
-            topology_ellipses = topology["topology"]["ellipses"] = []
-            for ellipse in self._ellipses:
-                topology_ellipses.append(ellipse.dump())
-
-        # images
-        if self._images:
-            topology_images = topology["topology"]["images"] = []
-            for image in self._images:
-                image_info = image.dump()
-                image_in_default_dir = os.path.join(self._project.filesDir(), "project-files", "images", os.path.basename(image_info["path"]))
-                if os.path.exists(image_in_default_dir):
-                    image_info["path"] = os.path.join("images", os.path.basename(image_info["path"]))
-                topology_images.append(image_info)
-
-    def dump(self, include_gui_data=True, random_id=False):
-        """
-        Creates a complete representation of the topology.
-
-        :param include_gui_data: either to include or not the GUI specific info.
-        :param dump_id: change vm id and project id too a new randow value (save as feature)
-        :param random_id: Randomize vm and project id (for save as)
-
-        :returns: topology representation
-        """
-
-        log.info("Starting to save the topology (version {})".format(__version__))
-        topology = {"project_id": self._project.id(),
-                    "name": self._project.name(),
-                    "version": __version__,
-                    "type": "topology",
-                    "topology": {},
-                    "auto_start": False,
-                    "revision": TOPOLOGY_REVISION
-                    }
-
-        servers = {}
-
-        # nodes
-        if self._nodes:
-            topology_nodes = topology["topology"]["nodes"] = []
-            for node in self._nodes:
-                if not node.initialized():
-                    continue
-                if node.compute().id() not in servers:
-                    servers[node.compute().id()] = node.compute()
-                log.info("Saving node: {}".format(node.name()))
-                topology_nodes.append(node.dump())
-
-        # links
-        if self._links:
-            topology_links = topology["topology"]["links"] = []
-            for link in self._links:
-                log.info("Saving link: {}".format(str(link)))
-                topology_links.append(link.dump())
-
-        # servers
-        if servers:
-            topology_servers = topology["topology"]["servers"] = []
-            for server in servers.values():
-                log.info("Saving server: {}".format(server))
-                topology_servers.append(server.dump())
-
-        if include_gui_data:
-            self._dump_gui_settings(topology)
-
-        if random_id:
-            topology = self._randomize_id(topology)
-
-        errors = getTopologyValidationErrors(topology)
-        if errors:
-            log.error(errors)
-            log.error(VALIDATION_ERROR_MESSAGE)
-            if hasattr(sys, '_called_from_test'):
-                raise Exception
-
-        return topology
-
-    def _randomize_id(self, topology):
-        """
-        Iterate on all keys and replace the uuid by a new one.Use by save as
-        for create new topology. It's also rename the VM folder on disk.
-
-        """
-        topology["project_id"] = str(uuid.uuid4())
-        if "nodes" in topology["topology"]:
-            for key, node in enumerate(topology["topology"]["nodes"]):
-                old_uuid = topology["topology"]["nodes"][key].get("node_id", None)
-                new_uuid = str(uuid.uuid4())
-                topology["topology"]["nodes"][key]["node_id"] = new_uuid
-                if old_uuid:
-                    if self.project.filesDir():
-                        for path in glob.glob(os.path.join(glob.escape(self.project.filesDir()), "project-files", "*", old_uuid)):
-                            new_path = path.replace(old_uuid, new_uuid)
-                            shutil.move(path, new_path)
-        return topology
-
-    def loadFile(self, path, project):
-        """
-        Load a topology file
-
-        :param path: Path to topology directory
-        :param project: Project instance
-        """
-
-        log.debug("Start loading topology")
-        self._project = project
-
-        with open(path, encoding="utf-8") as f:
-            log.info("loading project: {}".format(path))
-            json_topology = json.load(f)
-
-        if not isinstance(json_topology, dict):
-            raise ValueError("Not a GNS3 project")
-
-        if "revision" in json_topology and json_topology["revision"] > TOPOLOGY_REVISION:
-            raise ValueError("This topology is not supported by your version of GNS3 please use GNS3 {} or later".format(json_topology["version"]))
-
-        errors = getTopologyValidationErrors(json_topology)
-        if errors:
-            log.error(errors)
-            log.error(VALIDATION_ERROR_MESSAGE)
-            if hasattr(sys, '_called_from_test'):
-                raise Exception
-
-        if "project_id" in json_topology:
-            self._project.setId(json_topology["project_id"])
-        self._project.setName(json_topology.get("name", "unnamed"))
-        self._project.setTopologyFile(path)
-        self._load(json_topology)
-
-    def _load(self, topology):
-        """
-        Loads a topology.
-
-        :param topology: topology representation
-        """
-
-        from .main_window import MainWindow
-        main_window = MainWindow.instance()
-        main_window.projectManager().setProject(self._project)
-        view = main_window.uiGraphicsView
-
-        topology_file_errors = []
-        if "topology" not in topology or "version" not in topology:
-            log.warn("not a topology file")
-            return
-
-        # auto start option
-        self._auto_start = topology.get("auto_start", False)
-
-        # show port name option
-        if topology.get("show_port_names", False):
-            main_window.uiShowPortNamesAction.setChecked(True)
-            LinkItem.showPortLabels(True)
-
-        # deactivate the unsaved state support
-        main_window.ignoreUnsavedState(True)
-        # trick: no matter what, reactivate the unsaved state support after 5 seconds
-        main_window.run_later(5000, self._reactivateUnsavedState)
-
-        self._node_to_links_mapping = {}
-        # create a mapping node ID to links
-        if "links" in topology["topology"]:
-            links = topology["topology"]["links"]
-            for topology_link in links:
-                # It seem an 1.0 topology could be corrupt and missed the id
-                if "id" in topology_link:
-                    log.debug("Mapping node to link with ID {}".format(topology_link["id"]))
-                    source_id = topology_link["source_node_id"]
-                    destination_id = topology_link["destination_node_id"]
-                    if source_id not in self._node_to_links_mapping:
-                        self._node_to_links_mapping[source_id] = []
-                    if destination_id not in self._node_to_links_mapping:
-                        self._node_to_links_mapping[destination_id] = []
-                    self._node_to_links_mapping[source_id].append(topology_link)
-                    self._node_to_links_mapping[destination_id].append(topology_link)
-
-        # servers
-        self._servers = {}
-        raise NotImplementedError
-        server_manager = None
-        if "servers" in topology["topology"]:
-            servers = topology["topology"]["servers"]
-            for topology_server in servers:
-                if "local" in topology_server and topology_server["local"]:
-                    self._servers[topology_server["id"]] = ComputeManager.getCompute("local")
-                elif "vm" in topology_server and topology_server["vm"]:
-                    gns3_vm_server = server_manager.vmServer()
-                    if gns3_vm_server is None:
-                        QtWidgets.QMessageBox.critical(main_window, "GNS3 VM", "The GNS3 VM is not running")
-                        return
-                    self._servers[topology_server["id"]] = gns3_vm_server
-                else:
-                    protocol = topology_server.get("protocol", "http")
-                    host = topology_server["host"]
-                    port = topology_server["port"]
-                    user = topology_server.get("user", None)
-
-                    topology_server.pop("vm", False)
-                    topology_server.pop("local", False)
-
-                    server_id = topology_server.pop("id")
-                    self._servers[server_id] = server_manager.findRemoteServer(protocol, host, port, user, topology_server)
-
-                    if self._servers[server_id] is None:
-                        reply = QtWidgets.QMessageBox.warning(main_window,
-                                                              "Remote server not found",
-                                                              "Remote server {}://{}:{} doesn't exist in your preferences, do you want to select another server?\n\nIt is recommended to backup your project first.".format(protocol, host, port),
-                                                              QtWidgets.QMessageBox.Yes,
-                                                              QtWidgets.QMessageBox.No)
-                        if reply == QtWidgets.QMessageBox.Yes:
-                            self._servers[server_id] = server_select(main_window)
-
-                    if self._servers[server_id] is None:
-                        # The user has not changed the server, let's create the server from the topology
-                        self._servers[server_id] = server_manager.getRemoteServer(protocol, host, port, user, topology_server)
-
-        # nodes
-        self._load_old_topology = False
-        if "nodes" in topology["topology"]:
-            topology_nodes = {}
-            nodes = topology["topology"]["nodes"]
-            for topology_node in nodes:
-                # check for duplicate node IDs
-                if topology_node["id"] in topology_nodes:
-                    topology_file_errors.append("Duplicated node ID {} for {}".format(topology_node["id"],
-                                                                                      topology_node["description"]))
-                    continue
-                topology_nodes[topology_node["id"]] = topology_node
-
-            for topology_node in topology_nodes.values():
-                log.debug("loading node with ID {}".format(topology_node["id"]))
-
-                try:
-                    node_module = None
-                    for module in MODULES:
-                        instance = module.instance()
-                        node_class = module.getNodeClass(topology_node["type"])
-                        if node_class:
-                            node_module = instance
-                            break
-                    if not node_module:
-                        raise ModuleError("Could not find any module for {}".format(topology_node["type"]))
-
-                    server = None
-                    if topology_node["server_id"] in self._servers:
-                        server = self._servers[topology_node["server_id"]]
-
-                    if not server:
-                        topology_file_errors.append("No server reference for node ID {}".format(topology_node["id"]))
-                        continue
-
-                    node = node_module.initiateNode(node_class, server, self._project)
-                    node.error_signal.connect(main_window.uiConsoleTextEdit.writeError)
-                    node.warning_signal.connect(main_window.uiConsoleTextEdit.writeWarning)
-                    node.server_error_signal.connect(main_window.uiConsoleTextEdit.writeServerError)
-
-                except ModuleError as e:
-                    topology_file_errors.append(str(e))
-                    continue
-
-                node.setId(topology_node["id"])
-
-                # we want to know when the node has been created
-                callback = qpartial(self._nodeCreatedSlot, topology)
-                node.created_signal.connect(callback)
-
-                self.addNode(node)
-
-                # load the settings
-                node.load(topology_node)
-
-                # for backward compatibility before version 1.4
-                if "default_symbol" in topology_node:
-                    topology_node["symbol"] = topology_node["default_symbol"]
-                    topology_node["symbol"] = topology_node["symbol"][:-11] + ".svg" if topology_node["symbol"].endswith("normal.svg") else topology_node["symbol"]
-
-                renderer = None
-                if "symbol" in topology_node:
-                    symbol_path = topology_node["symbol"]
-                    renderer = QImageSvgRenderer(symbol_path)
-
-                    if not renderer.isValid():
-                        symbol_path = os.path.join(self._project.filesDir(), "project-files", "symbols", topology_node["symbol"])
-                        renderer = QImageSvgRenderer(symbol_path)
-
-                    if not renderer.isValid():
-                        symbol_path = os.path.normpath(symbol_path)
-                        renderer = QImageSvgRenderer(symbol_path)
-
-                if renderer and renderer.isValid():
-                    node_item = NodeItem(node, symbol_path)
-                else:
-                    if "symbol" in topology_node:
-                        topology_file_errors.append("Symbol {} is invalid or doesn't exist".format(topology_node["symbol"]))
-                    node_item = NodeItem(node)
-
-                # create the node item and restore GUI settings
-                node_item.setPos(topology_node["x"], topology_node["y"])
-
-                # create the node label if present
-                label_info = topology_node.get("label")
-                if label_info:
-                    node_label = NoteItem(node_item)
-                    node_label.setEditable(False)
-                    node_label.load(label_info)
-                    node_item.setLabel(node_label)
-
-                if "z" in topology_node:
-                    node_item.setZValue(topology_node["z"])
-
-                view.scene().addItem(node_item)
-                main_window.uiTopologySummaryTreeWidget.addNode(node)
-
-        # notes
-        if "notes" in topology["topology"]:
-            notes = topology["topology"]["notes"]
-            for topology_note in notes:
-                note_item = NoteItem()
-                note_item.load(topology_note)
-                view.scene().addItem(note_item)
-                self.addNote(note_item)
-
-        # rectangles
-        if "rectangles" in topology["topology"]:
-            rectangles = topology["topology"]["rectangles"]
-            for topology_rectangle in rectangles:
-                rectangle_item = RectangleItem()
-                rectangle_item.load(topology_rectangle)
-                view.scene().addItem(rectangle_item)
-                self.addRectangle(rectangle_item)
-
-        # ellipses
-        if "ellipses" in topology["topology"]:
-            ellipses = topology["topology"]["ellipses"]
-            for topology_ellipse in ellipses:
-                ellipse_item = EllipseItem()
-                ellipse_item.load(topology_ellipse)
-                view.scene().addItem(ellipse_item)
-                self.addEllipse(ellipse_item)
-
-        if topology_file_errors:
-            errors = "\n".join(topology_file_errors)
-            MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
-        log.debug("Finish loading topology")
-        self._autoStart(topology)
-
-    def _load_images(self, topology):
-
-        from .main_window import MainWindow
-        main_window = MainWindow.instance()
-        view = main_window.uiGraphicsView
-        topology_file_errors = []
-
-        # images
-        if "images" in topology["topology"]:
-            images = topology["topology"]["images"]
-            for topology_image in images:
-                updated_image_path = os.path.join(self._project.filesDir(), "project-files", topology_image["path"])
-                if os.path.exists(updated_image_path):
-                    image_path = updated_image_path
-                else:
-                    image_path = topology_image["path"]
-
-                image_path = os.path.normpath(image_path)
-                if not os.path.isfile(image_path):
-                    topology_file_errors.append("Path to image {} doesn't exist".format(image_path))
-                    continue
-
-                pixmap = QtGui.QPixmap(image_path)
-                if pixmap.isNull():
-                    topology_file_errors.append("Image format not supported for {}".format(image_path))
-                    continue
-
-                renderer = QtSvg.QSvgRenderer(image_path)
-                if renderer.isValid():
-                    # use a SVG image item if this is a valid SVG file
-                    image_item = SvgImageItem(renderer, image_path)
-                else:
-                    image_item = PixmapImageItem(pixmap, image_path)
-                image_item.load(topology_image)
-                view.scene().addItem(image_item)
-                self.addImage(image_item)
-
-        if topology_file_errors:
-            errors = "\n".join(topology_file_errors)
-            MessageBox(main_window, "Topology", "Errors detected while importing the topology", errors)
-
-    def _nodeCreatedSlot(self, topology, base_node_id):
-        """
-        Slot to know when a node has been created.
-        When all nodes have initialized, links can be created.
-
-        :param base_node_id: base node identifier
-        """
-
-        node = self.getNode(base_node_id)
-        if not node or not node.initialized():
-            log.warn("Cannot find node {base_node_id} or node not initialized".format(base_node_id=base_node_id))
-            return
-
-        from .main_window import MainWindow
-        main_window = MainWindow.instance()
-        view = main_window.uiGraphicsView
-        log.debug("node {} has initialized".format(node.name()))
-        self._initialized_nodes.append(base_node_id)
-
-        if base_node_id in self._node_to_links_mapping:
-            topology_link = self._node_to_links_mapping[base_node_id]
-            for link in topology_link:
-                source_node_id = link["source_node_id"]
-                destination_node_id = link["destination_node_id"]
-                if source_node_id in self._initialized_nodes and destination_node_id in self._initialized_nodes:
-
-                    source_node = self.getNode(source_node_id)
-                    destination_node = self.getNode(destination_node_id)
-
-                    log.debug("creating link from {} to {}".format(source_node.name(), destination_node.name()))
-
-                    source_port = None
-                    destination_port = None
-
-                    # find the source port
-                    found = False
-                    for port in source_node.ports():
-                        if port.id() == link["source_port_id"]:
-                            found = True
-                            source_port = port
-                            if "source_port_label" in link:
-                                source_port.setLabel(self._createPortLabel(source_node, link["source_port_label"]))
-                            break
-                    if not found:
-                        msg = "Corrupted topology {} source port doesn't exist".format(link["description"])
-                        log.error(msg)
-
-                    # find the destination port
-                    found = False
-                    for port in destination_node.ports():
-                        if port.id() == link["destination_port_id"]:
-                            found = True
-                            destination_port = port
-                            if "destination_port_label" in link:
-                                destination_port.setLabel(self._createPortLabel(destination_node, link["destination_port_label"]))
-                            break
-                    if not found:
-                        msg = "Corrupted topology {} destination port {} doesn't exist".format(link["description"], link["destination_port_id"])
-                        log.error(msg)
-
-                    if source_port and destination_port:
-                        link = view.addLink(source_node, source_port, destination_node, destination_port)
-                        callback = qpartial(self._linkCreatedSlot, topology)
-                        link.add_link_signal.connect(callback)
-
-        # We save at the end of initialization process in order to upgrade old topologies
-        if len(topology["topology"]["nodes"]) == len(self._initialized_nodes):
-            self._autoStart(topology)
-
-            self._load_images(topology)
-            if "project_id" not in topology:
-                log.info("Saving converted topology...")
-                main_window.saveProject(self._project.topologyFile())
-
-    def _linkCreatedSlot(self, topology, link_id):
-        """
-        Called when a link is successfully created
-        """
-
-        self._initialized_links.append(link_id)
-        self._autoStart(topology)
-
-    def _autoStart(self, topology):
-        """
-        If everything is created auto start the topology
-        """
-
-        if "nodes" not in topology["topology"] or ((len(topology["topology"].get("links", [])) == len(self._initialized_links)) and (len(topology["topology"]["nodes"]) == len(self._initialized_nodes))):
-            log.info("Topology initialized")
-            # Auto start
-            if self._auto_start:
-                log.info("Auto start nodes")
-                for initialized_node in self._initialized_nodes:
-                    initialized_node = self.getNode(initialized_node)
-                    if hasattr(initialized_node, "start"):
-                        log.info("Auto start node %s", initialized_node.name())
-                        initialized_node.start()
-
-    def _createPortLabel(self, node, label_info):
-        """
-        Creates a port label.
-
-        :param node: Node instance
-        :param label_info:  label info (dictionary)
-
-        :return: NoteItem instance
-        """
-
-        from .main_window import MainWindow
-        main_window = MainWindow.instance()
-        view = main_window.uiGraphicsView
-        for item in view.scene().items():
-            if isinstance(item, NodeItem) and node.id() == item.node().id():
-                port_label = NoteItem(item)
-                port_label.load(label_info)
-                port_label.hide()
-                return port_label
-        return None
-
-    def _reactivateUnsavedState(self):
-        """
-        Slots to reactivate the unsaved state support
-        when the QTimer timeouts
-        """
-
-        from .main_window import MainWindow
-        main_window = MainWindow.instance()
-        main_window.ignoreUnsavedState(False)
 
     def __str__(self):
 
         return "GNS3 network topology"
+
+    def createNode(self, node_data):
+        """
+        Creates a new node on the scene.
+
+        :param node_data: node data to create a new node
+        """
+        node_module = None
+        for module in MODULES:
+            instance = module.instance()
+            if node_data["node_type"] == "dynamips":
+                node_class = module.getNodeType(node_data["node_type"], node_data["properties"]["platform"])
+            else:
+                node_class = module.getNodeType(node_data["node_type"])
+            if node_class:
+                node_module = module.instance()
+                break
+
+        if not node_module:
+            raise ModuleError("Could not find any module for {}".format(node_class))
+
+        node = node_module.instantiateNode(node_class, ComputeManager.instance().getCompute(node_data["compute_id"]), self._project)
+        node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
+        node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
+        node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
+        node.createNodeCallback(node_data)
+
+        self._main_window.uiGraphicsView.createNodeItem(node, node_data["symbol"], node_data["x"], node_data["y"])
+
+    def createLink(self, link_data):
+        if len(link_data["nodes"]) == 2:
+            link_side = link_data["nodes"][0]
+            source_node = self.getNodeFromUuid(link_side["node_id"])
+            for port in source_node.ports():
+                if port.adapterNumber() == link_side["adapter_number"] and port.portNumber() == link_side["port_number"]:
+                    source_port = port
+                    break
+            link_side = link_data["nodes"][1]
+            destination_node = self.getNodeFromUuid(link_side["node_id"])
+            for port in destination_node.ports():
+                if port.adapterNumber() == link_side["adapter_number"] and port.portNumber() == link_side["port_number"]:
+                    destination_port = port
+                    break
+        self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, link_id=link_data["link_id"])
 
     @staticmethod
     def instance():

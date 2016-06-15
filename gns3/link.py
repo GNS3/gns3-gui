@@ -49,7 +49,7 @@ class Link(QtCore.QObject):
 
     _instance_count = 1
 
-    def __init__(self, source_node, source_port, destination_node, destination_port):
+    def __init__(self, source_node, source_port, destination_node, destination_port, link_id=None):
 
         super().__init__()
 
@@ -66,7 +66,7 @@ class Link(QtCore.QObject):
         self._source_port = source_port
         self._destination_node = destination_node
         self._destination_port = destination_port
-        self._link_id = None
+        self._link_id = link_id
         self._capturing = False
         self._capture_file_path = None
 
@@ -80,7 +80,10 @@ class Link(QtCore.QObject):
             ]
         }
 
-        Controller.instance().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
+        if self._link_id:
+            self._linkCreatedCallback({"link_id": self._link_id})
+        else:
+            Controller.instance().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
 
     def _linkCreatedCallback(self, result, error=False, **kwargs):
         if error:

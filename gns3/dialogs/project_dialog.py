@@ -17,10 +17,11 @@
 
 import os
 from ..qt import QtCore, QtGui, QtWidgets
-from ..ui.new_project_dialog_ui import Ui_NewProjectDialog
+from ..ui.project_dialog_ui import Ui_ProjectDialog
+from ..controller import Controller
 
 
-class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
+class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
     """
     New project dialog.
@@ -45,6 +46,26 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
         self.uiOpenProjectPushButton.clicked.connect(self._openProjectActionSlot)
         self.uiRecentProjectsPushButton.clicked.connect(self._showRecentProjectsSlot)
 
+        Controller.instance().get("/projects", self._projectListCallback)
+        self.uiProjectsTreeWidget.itemDoubleClicked.connect(self._projectsTreeWidgetDoubleClickedSlot)
+
+    def _projectsTreeWidgetDoubleClickedSlot(self, item, column):
+        self.done(True)
+
+    def _projectListCallback(self, result, error=False, **kwargs):
+        self.uiProjectsTreeWidget.clear()
+        if not error:
+            for project in result:
+                path = os.path.join(project["path"], project["filename"])
+                item =  QtWidgets.QTreeWidgetItem([project["name"], project["status"], path])
+                item.setData(0, QtCore.Qt.UserRole, project["project_id"])
+                item.setData(1, QtCore.Qt.UserRole, project["name"])
+                item.setData(2, QtCore.Qt.UserRole, path)
+                self.uiProjectsTreeWidget.addTopLevelItem(item)
+            self.uiProjectsTreeWidget.resizeColumnToContents(0)
+            self.uiProjectsTreeWidget.resizeColumnToContents(1)
+            self.uiProjectsTreeWidget.resizeColumnToContents(2)
+            self.uiProjectsTreeWidget.sortItems(0, QtCore.Qt.AscendingOrder)
 
     def keyPressEvent(self, e):
         """
@@ -71,7 +92,7 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
         if path:
             self.uiLocationLineEdit.setText(path)
 
-    def getNewProjectSettings(self):
+    def getProjectSettings(self):
 
         return self._project_settings
 
@@ -104,33 +125,43 @@ class NewProjectDialog(QtWidgets.QDialog, Ui_NewProjectDialog):
             menu.addAction(action)
         menu.exec_(QtGui.QCursor.pos())
 
+    def _newProject(self):
+        project_name = self.uiNameLineEdit.text()
+        project_location = self.uiLocationLineEdit.text()
+
+        if not project_name:
+            QtWidgets.QMessageBox.critical(self, "New project", "Project name is empty")
+            return
+
+        if not project_location:
+            QtWidgets.QMessageBox.critical(self, "New project", "Project location is empty")
+            return
+
+        if os.path.isdir(project_location):
+            reply = QtWidgets.QMessageBox.question(self,
+                                                   "New project",
+                                                   "Location {} already exists, overwrite it?".format(project_location),
+                                                   QtWidgets.QMessageBox.Yes,
+                                                   QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
+                return
+
+        self._project_settings["project_name"] = project_name
+        self._project_settings["project_path"] = os.path.join(project_location, project_name + ".gns3")
+        self._project_settings["project_files_dir"] = project_location
+
     def done(self, result):
 
         if result:
-            project_name = self.uiNameLineEdit.text()
-            project_location = self.uiLocationLineEdit.text()
-            project_type = "local"
-
-            if not project_name:
-                QtWidgets.QMessageBox.critical(self, "New project", "Project name is empty")
-                return
-
-            if not project_location:
-                QtWidgets.QMessageBox.critical(self, "New project", "Project location is empty")
-                return
-
-            if os.path.isdir(project_location):
-                reply = QtWidgets.QMessageBox.question(self,
-                                                       "New project",
-                                                       "Location {} already exists, overwrite it?".format(project_location),
-                                                       QtWidgets.QMessageBox.Yes,
-                                                       QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.No:
+            if self.uiOpenProjectTabWidget.currentIndex() == 0:
+                self._newProject()
+            else:
+                current = self.uiProjectsTreeWidget.currentItem()
+                if current is None:
+                    QtWidgets.QMessageBox.critical(self, "Open project", "No project selected")
                     return
 
-            self._project_settings["project_name"] = project_name
-            self._project_settings["project_path"] = os.path.join(project_location, project_name + ".gns3")
-            self._project_settings["project_files_dir"] = project_location
-            self._project_settings["project_type"] = project_type
-
+                self._project_settings["project_id"] = current.data(0, QtCore.Qt.UserRole)
+                self._project_settings["project_name"] = current.data(1, QtCore.Qt.UserRole)
+                self._project_settings["project_path"] = current.data(2, QtCore.Qt.UserRole)
         super().done(result)

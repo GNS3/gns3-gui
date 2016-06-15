@@ -69,22 +69,6 @@ def test_vpcs_device_start(vpcs_device):
         assert args[0] == "/nodes/{node_id}/start".format(node_id=vpcs_device.node_id())
 
 
-def test_vpcs_dump(vpcs_device):
-
-    dump = vpcs_device.dump()
-    assert dump["id"] == vpcs_device.id()
-    assert dump["type"] == "VPCSDevice"
-    assert dump["description"] == "VPCS device"
-    assert dump["properties"] == {"name": vpcs_device.name()}
-    assert dump["server_id"] == vpcs_device._compute.id()
-
-
-def test_vpcs_load(vpcs_device):
-
-    dump = vpcs_device.dump()
-    vpcs_device.load(dump)
-
-
 def test_vpcs_device_stop(vpcs_device):
 
     with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:

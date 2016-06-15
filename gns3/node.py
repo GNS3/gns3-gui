@@ -50,7 +50,12 @@ class Node(BaseNode):
         }
         if label is not None:
             data["label"] = label.dump()
-        self._update(data)
+        # If it's the initialization we don't resend it
+        # to the server
+        if "x" in self._settings:
+            self._update(data)
+        else:
+            self._settings.update(data)
 
     def isAlwaysOn(self):
         """
@@ -453,59 +458,6 @@ class Node(BaseNode):
         except UnicodeDecodeError as e:
             self.error_signal.emit(self.id(), "Invalid configuration file {}: {}".format(config_path, e))
             return None
-
-    def dump(self):
-        """
-        Returns a representation of this device.
-        (to be saved in a topology file).
-
-        :returns: representation of the node (dictionary)
-        """
-
-        node = {
-            "id": self.id(),
-            "type": self.__class__.__name__,
-            "description": str(self),
-            "properties": {},
-            "server_id": self._compute.id(),
-            "node_id": self.node_id(),
-        }
-
-        node["properties"]["name"] = self.name()
-
-        # add the properties
-        # for name, value in self._settings.items():
-        #     if value is not None and value != "":
-        #         node["properties"][name] = value
-
-        # add the ports
-        if self._ports:
-            # In 1.4.2dev1 we track an issue about duplicate port name
-            # https://github.com/GNS3/gns3-gui/issues/992
-            initialized_port_name = set()
-
-            ports = node["ports"] = []
-            for port in self._ports:
-                if port.name() in initialized_port_name:
-                    msg = "Duplicate port name {} in {}.".format(port.name(), self.name())
-                    log.error(msg)
-                else:
-                    ports.append(port.dump())
-                    initialized_port_name.add(port.name())
-
-        return node
-
-    def load(self, node_info):
-        """
-        Loads a device representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        self._loading = True
-        self._node_info = node_info
-        self.loaded_signal.connect(self._updatePortSettings)
 
     def openConsole(self, command=None, aux=False):
         if command is None:

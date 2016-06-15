@@ -89,7 +89,6 @@ background-none;
     </property>
     <addaction name="uiNewProjectAction"/>
     <addaction name="uiOpenProjectAction"/>
-    <addaction name="uiSaveProjectAction"/>
     <addaction name="uiSaveProjectAsAction"/>
     <addaction name="uiDeleteProjectAction"/>
     <addaction name="separator"/>
@@ -113,7 +112,6 @@ background-none;
     <addaction name="uiAcademyAction"/>
     <addaction name="uiDoctorAction"/>
     <addaction name="uiExportDebugInformationAction"/>
-    <addaction name="uiLabInstructionsAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>
    </widget>
@@ -207,7 +205,6 @@ background-none;
    </attribute>
    <addaction name="uiNewProjectAction"/>
    <addaction name="uiOpenProjectAction"/>
-   <addaction name="uiSaveProjectAction"/>
   </widget>
   <widget class="QDockWidget" name="uiNodesDockWidget">
    <property name="enabled">

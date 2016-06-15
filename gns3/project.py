@@ -38,22 +38,14 @@ class Project(QtCore.QObject):
     # Called when the project is closed on all servers
     project_closed_signal = QtCore.Signal()
 
-    # List of non closed project instance
-    _project_instances = set()
-
     def __init__(self):
 
         self._id = None
         self._closed = True
         self._closing = False
-        self._created = False
         self._files_dir = None
         self._images_dir = None
         self._name = "untitled"
-        self._project_instances.add(self)
-
-        # We queue query in order to ensure the project is only created once on remote server
-        self._callback_finish_creating_on_server = None
 
         self._notification_stream = None
 
@@ -225,36 +217,6 @@ class Project(QtCore.QObject):
         """
         HTTP query on the remote server
 
-        :param method: HTTP method (string)
-        :param path: Remote path
-        :param callback: callback method to call when the server replies
-        :param body: params to send (dictionary)
-
-        Full arg list in createHTTPQuery
-        """
-
-        if not self._created:
-            func = qpartial(self._projectOnServerCreated, method, path, callback, body, **kwargs)
-
-            if self._callback_finish_creating_on_server is None:
-                self._callback_finish_creating_on_server = []
-                body = {
-                    "name": self._name,
-                    "project_id": self._id,
-                    "path": self.filesDir()
-                }
-                Controller.instance().post("/projects", func, body=body)
-            else:
-                # We bufferize the query for when the project is created on the remote server
-                self._callback_finish_creating_on_server.append(func)
-        else:
-            self._projectOnServerCreated(method, path, callback, body, params={}, **kwargs)
-
-    def _projectOnServerCreated(self, method, path, callback, body, params={}, error=False, **kwargs):
-        """
-        The project is created on the server continue
-        the query
-
         :param method: HTTP Method type (string)
         :param path: Remote path
         :param callback: callback method to call when the server replies
@@ -265,29 +227,66 @@ class Project(QtCore.QObject):
         Full arg list in createHTTPQuery
         """
 
-        if error:
-            log.error("Error while creating project: {}".format(params["message"]))
-            return
-
-        if not self._created:
-            self._closed = False
-            self._closing = False
-            self._created = True
-
-        if not self._id:
-            self._id = params["project_id"]
-
-            self._startListenNotifications()
-
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
         Controller.instance().createHTTPQuery(method, path, callback, body=body, **kwargs)
 
-        # Call all operations waiting for project creation:
-        if self._callback_finish_creating_on_server:
-            calls = self._callback_finish_creating_on_server
-            self._callback_finish_creating_on_server = []
-            for call in calls:
-                call()
+    def create(self):
+        """
+        Create the project on the remote server.
+        """
+        body = {
+            "name": self._name,
+            "path": self.filesDir()
+        }
+        Controller.instance().post("/projects", self._projectCreatedCallback, body=body)
+
+    def _projectCreatedCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while creating project: {}".format(params["message"]))
+            return
+        self._id = result["project_id"]
+        if self._closed:
+            self._closed = False
+            self._closing = False
+            self._startListenNotifications()
+
+    def load(self, path=None):
+        if path:
+            body =  {"path": path}
+            Controller.instance().post("/projects/load", self._projectOpenCallback, body=body)
+        else:
+            self.post("/open", self._projectOpenCallback)
+
+    def _projectOpenCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while opening project: {}".format(result["message"]))
+            return
+
+        self._id = result["project_id"]
+
+        if self._closed:
+            self._closed = False
+            self._closing = False
+            self._startListenNotifications()
+
+        self.get("/nodes", self._listNodesCallback)
+
+    def _listNodesCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while opening project: {}".format(params["message"]))
+            return
+        topo = Topology.instance()
+        for node in result:
+            topo.createNode(node)
+        self.get("/links", self._listLinksCallback)
+
+    def _listLinksCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while opening project: {}".format(params["message"]))
+            return
+        topo = Topology.instance()
+        for link in result:
+            topo.createLink(link)
 
     def close(self, local_server_shutdown=False):
         """Close project"""
@@ -322,10 +321,6 @@ class Project(QtCore.QObject):
 
         self._closed = True
         self.project_closed_signal.emit()
-        try:
-            self._project_instances.remove(self)
-        except KeyError:
-            return
 
     def _startListenNotifications(self):
 
