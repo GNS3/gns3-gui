@@ -26,7 +26,6 @@ import subprocess
 from ..qt import QtCore
 from ..version import __version__
 from ..gns3_vm import GNS3VM
-from ..servers import Servers
 
 import logging
 log = logging.getLogger(__name__)
@@ -48,7 +47,6 @@ class WaitForVMWorker(QtCore.QObject):
         super().__init__()
         self._is_running = False
         self._vm = GNS3VM.instance()
-
         vm_settings = self._vm.settings()
         self._vmname = vm_settings["vmname"]
         self._vmx_path = vm_settings["vmx_path"]
@@ -166,7 +164,7 @@ class WaitForVMWorker(QtCore.QObject):
         Worker starting point.
         """
 
-        vm_server = Servers.instance().vmServer()
+        vm_server = self._vm.server()
         self._is_running = True
         if self._virtualization == "VMware":
             self._is_running = self._start_vmware(vm_server)
@@ -192,7 +190,7 @@ class WaitForVMWorker(QtCore.QObject):
                 return
             server_version = json_data["version"]
             if __version__ != server_version:
-                # It's just a warning. If the version has a big mistach the HTTP code for the connection to
+                # It's just a warning. If the version has a big mismatch the HTTP code for the connection to
                 # to the server will block.
                 log.warning("Client version {} differs with server version {} in the GNS3 VM, please upgrade the VM by selecting the Upgrade options in the VM menu.".format(__version__, server_version))
         except OSError as e:
@@ -235,6 +233,32 @@ class WaitForVMWorker(QtCore.QObject):
             guest_ip_address = self._vm.execute_vmrun("getGuestIPAddress", [self._vmx_path, "-wait"], timeout=120)
             vm_server.setHostPort(guest_ip_address, vm_server.port())
             log.info("GNS3 VM IP address set to {}".format(guest_ip_address))
+
+            # import struct
+            # import json
+            #
+            # while True:
+            #     if not self._is_running:
+            #         return False
+            #     log.info("Starting to search for IP")
+            #     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            #     s.bind(("172.16.39.1", 0))
+            #     s.settimeout(2.0)
+            #     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+            #     try:
+            #         s.sendto(b"ABCD", ('<broadcast>', 3080))
+            #         data, _ = s.recvfrom(1024)
+            #     except socket.timeout:
+            #         continue
+            #     try:
+            #         server_info = json.loads(data.decode())
+            #     except ValueError:
+            #         continue
+            #     print(server_info["ip"])
+            #     vm_server.setHostPort(server_info["ip"], server_info["port"])
+            #     log.info("GNS3 VM IP address set to {}".format(server_info))
+            #     break
+
         except OSError as e:
             self.error.emit("Could not execute vmrun: {}".format(e), True)
             return False

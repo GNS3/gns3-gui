@@ -1041,8 +1041,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings["state"] = bytes(self.saveState().toBase64()).decode()
         self.setSettings(self._settings)
 
-        servers = LocalServer.instance()
-        servers.stopLocalServer(wait=True)
+        server = LocalServer.instance()
+        server.stopLocalServer(wait=True)
 
         time_spent = "{:.0f}".format(time.time() - self._start_time)
         log.debug("Time spend in the software is {}".format(time_spent))
@@ -1112,7 +1112,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # start the GNS3 VM
         gns3_vm = GNS3VM.instance()
         if not gns3_vm.isRunning():
-            #servers.initVMServer()
+            gns3_vm.initVM()
             if gns3_vm.isRemote():
                 gns3_vm.setRunning(True)
             elif gns3_vm.autoStart():
@@ -1120,7 +1120,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
                 progress_dialog.show()
                 if progress_dialog.exec_():
-                    gns3_vm.adjustLocalServerIP()
+                    pass
+                    #gns3_vm.adjustLocalServerIP()
+            Controller.instance().setHttpClient(gns3_vm.httpClient())
 
         # start and connect to the local server if need
         LocalServer.instance().localServerAutoStart()

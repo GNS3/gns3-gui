@@ -23,7 +23,6 @@ import sys
 
 
 from ..qt import QtCore
-from ..servers import Servers
 from ..gns3_vm import GNS3VM
 
 

@@ -23,7 +23,6 @@ import os
 import re
 
 from gns3.qt import QtCore, QtGui, QtWidgets
-from gns3.servers import Servers
 from gns3.node import Node
 from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource

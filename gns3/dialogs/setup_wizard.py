@@ -20,7 +20,6 @@ import os
 import psutil
 
 from gns3.qt import QtCore, QtWidgets, QtGui
-from gns3.servers import Servers
 from ..gns3_vm import GNS3VM
 from ..dialogs.preferences_dialog import PreferencesDialog
 from ..ui.setup_wizard_ui import Ui_SetupWizard
@@ -46,7 +45,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             # we want to see the cancel button on OSX
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
-        self._server = Servers.instance().localServer()
+        #self._server = Servers.instance().localServer()
         self.uiGNS3VMDownloadLinkUrlLabel.setText('')
         self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)

@@ -38,6 +38,7 @@ from gns3.local_server_config import LocalServerConfig
 from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.utils.http import getSynchronous
+from gns3.utils.sudo import sudo
 from gns3.http_client import HTTPClient
 
 
@@ -127,7 +128,7 @@ class LocalServer():
                     # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
                     if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
                         proceed = QtWidgets.QMessageBox.question(
-                            self.paren(),
+                            self.parent(),
                             "uBridge",
                             "uBridge requires CAP_NET_RAW capability to interact with network interfaces. Set the capability to uBridge?",
                             QtWidgets.QMessageBox.Yes,
@@ -487,9 +488,7 @@ def main():
     import pprint
 
     pp = pprint.PrettyPrinter(indent=4)
-
     print("Local server config")
-
     local_server = LocalServer(False)
     pp.pprint(local_server.localServerSettings())
     local_server.localServerAutoStart()

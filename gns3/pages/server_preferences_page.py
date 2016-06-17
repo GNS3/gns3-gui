@@ -29,7 +29,6 @@ log = logging.getLogger(__name__)
 
 from gns3.qt import QtNetwork, QtWidgets
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
-from ..servers import Servers
 from ..topology import Topology
 from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
@@ -146,14 +145,13 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             QtWidgets.QMessageBox.critical(self, "VM List", "{}".format(result["message"]))
         else:
             self.uiVMListComboBox.clear()
-            vm_settings = Servers.instance().settings()["vm"]
             for vm in result:
                 vmx_path = ""
                 if self.uiVmwareRadioButton.isChecked():
                     vmx_path = vm.get("vmx_path")
                 self.uiVMListComboBox.addItem(vm["vmname"], vmx_path)
-            gns3_vm = Servers.instance().vmSettings()
-            index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
+            gns3_vm_settings = GNS3VM.instance().settings()
+            index = self.uiVMListComboBox.findText(gns3_vm_settings["vmname"])
             if index != -1:
                 self.uiVMListComboBox.setCurrentIndex(index)
             else:
@@ -348,10 +346,10 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Loads the server preferences.
         """
 
-        servers = Servers.instance()
+        #servers = Servers.instance()
         # load the servers settings
-        servers_settings = servers.settings()
-        self._populateWidgets(servers_settings)
+        #servers_settings = servers.settings()
+        #self._populateWidgets(servers_settings)
 
         cm = ComputeManager.instance()
         # load remote server preferences
@@ -363,7 +361,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             self._remote_computes[compute.id()] = copy.copy(compute)
             self.uiServersComboBox.addItem(compute.name(), compute)
         self._populateRemoteServersTree()
-        self.uiServersComboBox.setCurrentIndex(self.uiServersComboBox.findText(servers_settings['vm']['remote_vm_url']))
+
+        #self.uiServersComboBox.setCurrentIndex(self.uiServersComboBox.findText(servers_settings['vm']['remote_vm_url']))
 
 
     def savePreferences(self):
@@ -371,8 +370,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Saves the server preferences.
         """
 
-        servers = Servers.instance()
-        servers_settings = servers.settings()
+        #servers = Servers.instance()
+        #servers_settings = servers.settings()
         local_server_settings = LocalServer.instance().localServerSettings()
         restart_local_server = False
         restart_gns3_vm = False
@@ -453,7 +452,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         # servers_settings["vm"].update(new_gns3vm_settings)
 
         # save the server preferences
-        servers.setSettings(servers_settings)
+        #servers.setSettings(servers_settings)
         # save the remote server preferences
         ComputeManager.instance().updateList(self._remote_computes.values())
 

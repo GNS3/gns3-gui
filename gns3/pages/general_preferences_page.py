@@ -125,7 +125,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         Slot to select the configs directory path.
         """
 
-        local_server = LocalServer.instance()
+        local_server = LocalServer.instance().localServerSettings()
         directory = local_server["configs_path"]
         path = QtWidgets.QFileDialog.getExistingDirectory(self, "My configs directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:

@@ -48,7 +48,6 @@ class Server(QtCore.QObject):
         self._local = True
         self._gns3_vm = False
         self._server_id = settings.get("server_id", self.url())
-
         self._http_client = http_client
 
         # Unique ID for dump in topology
@@ -169,7 +168,7 @@ class Server(QtCore.QObject):
 
     def settings(self):
         """
-        Return a dictionnary with server settings
+        Return a dictionary with server settings
         """
         settings = {"protocol": self.protocol(),
                     "host": self.host(),

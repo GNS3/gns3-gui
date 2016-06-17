@@ -24,7 +24,6 @@ import os
 import pickle
 
 from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial
-from .servers import Servers
 from .items.node_item import NodeItem
 from .dialogs.node_properties_dialog import NodePropertiesDialog
 from .link import Link

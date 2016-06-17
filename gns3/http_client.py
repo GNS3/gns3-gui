@@ -17,16 +17,15 @@
 
 
 import json
-import http
 import copy
 import ipaddress
 import uuid
 import pathlib
+import urllib.request
 import base64
 
 from .version import __version__, __version_info__
 from .qt import QtCore, QtNetwork, qpartial
-from .network_client import getNetworkUrl
 from .utils import parse_version
 
 import logging
@@ -62,7 +61,6 @@ class HTTPClient(QtCore.QObject):
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
         self._connected = False
-
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
 
         if network_manager:
@@ -403,7 +401,6 @@ class HTTPClient(QtCore.QObject):
         if not len(response.rawHeaderList()) > 0:
             response.abort()
 
-
     def _processDownloadProgress(self, response, callback, context, server, bytesReceived, bytesTotal):
         """
         Process a packet receive on the notification feed.
@@ -529,3 +526,45 @@ class HTTPClient(QtCore.QObject):
                 e = HttpBadRequest(body)
             raise e
 
+    def getSynchronous(self, endpoint, timeout=2):
+        """
+        Synchronous check if a server is running
+
+        :returns: Tuple (Status code, json of anwser). Status 0 is a non HTTP error
+        """
+        try:
+            url = "{protocol}://{host}:{port}/v2/{endpoint}".format(protocol=self._protocol, host=self._host, port=self._port, endpoint=endpoint)
+
+            if self._user is not None and len(self._user) > 0:
+                log.debug("Synchronous get {} with user '{}'".format(url, self._user))
+                auth_handler = urllib.request.HTTPBasicAuthHandler()
+                auth_handler.add_password(realm="GNS3 server",
+                                          uri=url,
+                                          user=self._user,
+                                          passwd=self._password)
+                opener = urllib.request.build_opener(auth_handler)
+                urllib.request.install_opener(opener)
+            else:
+                log.debug("Synchronous get {} (no authentication)".format(url))
+
+            response = urllib.request.urlopen(url, timeout=timeout)
+            content_type = response.getheader("CONTENT-TYPE")
+            if response.status == 200:
+                if content_type == "application/json":
+                    content = response.read()
+                    json_data = json.loads(content.decode("utf-8"))
+                    return response.status, json_data
+            else:
+                return response.status, None
+        except http.client.InvalidURL as e:
+            log.warn("Invalid local server url: {}".format(e))
+            return 0, None
+        except urllib.error.URLError:
+            # Connection refused. It's a normal behavior if server is not started
+            return 0, None
+        except urllib.error.HTTPError as e:
+            log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
+            return e.code, None
+        except (OSError, http.client.BadStatusLine, ValueError) as e:
+            log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
+        return 0, None

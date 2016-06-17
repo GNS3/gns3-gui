@@ -27,7 +27,10 @@ import shutil
 
 from .qt import QtNetwork
 from collections import OrderedDict
-from .servers import Servers
+from .settings import SERVERS_SETTINGS
+from .local_config import LocalConfig
+from .server import Server
+from gns3.http_client import HTTPClient
 
 import logging
 log = logging.getLogger(__name__)
@@ -44,6 +47,57 @@ class GNS3VM:
         self._is_running = False
         # The current running vboxmanage and vmrun process
         self._running_process = None
+        self._http_client = None
+        self._server = None
+        self._settings = None
+        self._loadSettings()
+
+    def initVM(self):
+        """
+        Initialize the local server.
+        """
+
+        vm_settings = self.settings()
+        if vm_settings["virtualization"] == "remote":
+            protocol = vm_settings["remote_vm_protocol"]
+            host = vm_settings["remote_vm_host"]
+            port = vm_settings["remote_vm_port"]
+            user = vm_settings["remote_vm_user"]
+            password = vm_settings["remote_vm_password"]
+        else:
+            protocol = "http"
+            host = "unset"
+            port = 3080  # hardcoded port for local GNS3 VM
+            user = ""  # no user for local GNS3 VM
+            password = ""  # no password for local GNS3 VM
+
+        server_info = {
+            "host": host,
+            "port": port,
+            "protocol": protocol,
+            "user": user,
+            "password": password
+        }
+
+        self._http_client = HTTPClient(server_info)
+        self._server = Server(server_info, self.httpClient())
+        self._server.setLocal(False)
+        self._server.setGNS3VM(True)
+
+    def httpClient(self):
+
+        return self._http_client
+
+    def server(self):
+
+        return self._server
+
+    def _loadSettings(self):
+        """
+        Loads the server settings from the persistent settings file.
+        """
+
+        self._settings = LocalConfig.instance().loadSectionSettings("Servers", SERVERS_SETTINGS)
 
     def settings(self):
         """
@@ -52,7 +106,7 @@ class GNS3VM:
         :returns: GNS3 VM settings (dict)
         """
 
-        return Servers.instance().vmSettings()
+        return self._settings["vm"]
 
     def setSettings(self, settings):
         """
@@ -61,7 +115,8 @@ class GNS3VM:
         :param settings: GNS3 VM settings (dict)
         """
 
-        Servers.instance().setVMsettings(settings)
+        self._settings["vm"].update(settings)
+        LocalConfig.instance().instance().saveSettings("Servers", settings)
 
     def killRunningProcess(self):
         """
@@ -193,8 +248,7 @@ class GNS3VM:
         :returns: boolean
         """
 
-        vm_settings = Servers.instance().vmSettings()
-        return vm_settings["auto_start"]
+        return self.settings()["auto_start"]
 
     def isRemote(self):
         """
@@ -203,8 +257,7 @@ class GNS3VM:
         :returns: boolean
         """
 
-        vm_settings = Servers.instance().vmSettings()
-        if vm_settings["virtualization"] == "remote":
+        if self.settings()["virtualization"] == "remote":
             return True
         return False
 

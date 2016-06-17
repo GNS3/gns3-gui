@@ -20,7 +20,7 @@ import zipfile
 import shutil
 
 from ..qt import QtCore
-from ..servers import Servers
+from ..local_server import LocalServer
 
 
 class ExportProjectWorker(QtCore.QObject):
@@ -52,7 +52,7 @@ class ExportProjectWorker(QtCore.QObject):
                               self._exportVmReceived,
                               downloadProgressCallback=self._downloadFileProgress)
         else:
-            self._project.get(Servers.instance().localServer(),
+            self._project.get(LocalServer.instance(),  # FIXME
                               "/export?include_images={}".format(self._include_images),
                               self._exportLocalReceived,
                               downloadProgressCallback=self._downloadFileProgress)
@@ -84,7 +84,8 @@ class ExportProjectWorker(QtCore.QObject):
             self.finished.emit()
             return
 
-        self._project.get(Servers.instance().localServer(), "/export?include_images={}".format(self._include_images), self._exportLocalReceived, downloadProgressCallback=self._downloadFileProgress)
+        # FIXME
+        self._project.get(LocalServer.instance(), "/export?include_images={}".format(self._include_images), self._exportLocalReceived, downloadProgressCallback=self._downloadFileProgress)
 
     def _exportLocalReceived(self, content, error=False, server=None, context={}, **kwargs):
         if error:
