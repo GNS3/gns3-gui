@@ -97,22 +97,6 @@ class DockerVM(Node):
 
         self._addAdapters(self._settings.get("adapters", 0))
 
-    def dump(self):
-        """
-        Returns a representation of this Docker VM instance.
-        (to be saved in a topology file).
-
-        :returns: representation of the node (dictionary)
-        """
-        docker = super().dump()
-
-        # add the properties
-        for name, value in self._settings.items():
-            if value is not None and value != "":
-                docker["properties"][name] = value
-
-        return docker
-
     def update(self, new_settings):
         """
         Updates the settings for this Docker container.
@@ -177,26 +161,6 @@ class DockerVM(Node):
                     port_description=port.description())
 
         return info + port_info
-
-    def load(self, node_info):
-        """
-        Loads a Docker representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-        properties = node_info["properties"]
-        name = properties.pop("name")
-        image = properties.pop("image")
-        node_id = node_info.get("node_id")
-        if not node_id:
-            # for backward compatibility
-            node_id = node_info.get("vm_id")
-
-        log.info("Docker container {} is loading".format(name))
-        self.create(image, name=name, node_id=node_id, additional_settings=properties)
 
     def console(self):
         """

@@ -512,66 +512,6 @@ class Router(Node):
         slot_info = self._slot_info()
         return info + slot_info
 
-    def dump(self):
-        """
-        Returns a representation of this router
-        (to be saved in a topology file).
-
-        :returns: representation of the node (dictionary)
-        """
-
-        router = super().dump()
-        router["dynamips_id"] = self._dynamips_id
-
-        # add the properties
-        for name, value in self._settings.items():
-            if value is not None and value != "":
-                router["properties"][name] = value
-
-        return router
-
-    def load(self, node_info):
-        """
-        Loads a router representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-
-        # for backward compatibility
-        node_id = dynamips_id = node_info.get("router_id")
-        if not node_id:
-            node_id = node_info.get("node_id")
-            dynamips_id = node_info.get("dynamips_id")
-            if not node_id:
-                node_id = node_info.get("vm_id")
-
-        vm_settings = {}
-        for name, value in node_info["properties"].items():
-            if name in self._settings:
-                vm_settings[name] = value
-        name = vm_settings.pop("name")
-        ram = vm_settings.pop("ram", PLATFORMS_DEFAULT_RAM[self._settings["platform"]])
-        image = vm_settings.pop("image", "")
-
-        if self.server().isLocal():
-            # check and update the path to use the image in the images directory
-            updated_image_path = os.path.join(ImageManager.instance().getDirectoryForType("DYNAMIPS"), image)
-            if os.path.isfile(updated_image_path):
-                image = updated_image_path
-            elif not os.path.isfile(image):
-                alternative_image = self._module.findAlternativeIOSImage(image, self)
-                image = alternative_image["image"]
-                if alternative_image["ram"]:
-                    ram = alternative_image["ram"]
-                if alternative_image["idlepc"]:
-                    vm_settings["idlepc"] = alternative_image["idlepc"]
-
-        log.info("router {} is loading".format(name))
-        self.create(image, ram, name, node_id, dynamips_id, vm_settings)
-
     def saveConfig(self):
         """
         Save the configs

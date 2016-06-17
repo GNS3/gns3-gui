@@ -37,7 +37,7 @@ from .ui.main_window_ui import Ui_MainWindow
 from .style import Style
 from .project_manager import ProjectManager
 from .dialogs.about_dialog import AboutDialog
-from .dialogs.new_project_dialog import NewProjectDialog
+from .dialogs.project_dialog import ProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
 from .dialogs.export_debug_dialog import ExportDebugDialog
@@ -84,6 +84,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         MainWindow._instance = self
+        topology = Topology.instance()
+        topology.setMainWindow(self)
+
         self._settings = {}
         HTTPClient.setProgressCallback(Progress.instance(self))
 
@@ -93,9 +96,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._open_project_path = None
         self._loadSettings()
         self._connections()
-        self._ignore_unsaved_state = False
         self._max_recent_files = 5
-        self._soft_exit = True
         self._project_dialog = None
         self._recent_file_actions = []
         self._start_time = time.time()
@@ -222,7 +223,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
         self.uiCheckForUpdateAction.triggered.connect(self._checkForUpdateActionSlot)
         self.uiSetupWizard.triggered.connect(self._setupWizardActionSlot)
-        self.uiLabInstructionsAction.triggered.connect(self._labInstructionsActionSlot)
         self.uiAboutQtAction.triggered.connect(self._aboutQtActionSlot)
         self.uiAboutAction.triggered.connect(self._aboutActionSlot)
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
@@ -279,10 +279,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-    def setSoftExit(self, softExit):
-        """If True warn user before exiting app if unsaved data"""
-        self._soft_exit = softExit
-
     def projectManager(self):
         """
         Return the project manager.
@@ -297,50 +293,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return self._analytics_client
 
-    def setUnsavedState(self):
-        """
-        Sets the project in a unsaved state.
-        """
-
-        if not self._ignore_unsaved_state:
-            self.setWindowModified(True)
-
-    def ignoreUnsavedState(self, value):
-        """
-        Activates or deactivates the possibility to
-        set the project in unsaved state.
-
-        :param value: boolean
-        """
-
-        self._ignore_unsaved_state = value
-
     def _newProjectActionSlot(self):
         """
         Slot called to create a new project.
         """
 
-        if self.checkForUnsavedChanges():
-            # Disable all control
-            for widget in self.disableWhenNoProjectWidgets:
-                widget.setEnabled(False)
+        # Disable all control
+        for widget in self.disableWhenNoProjectWidgets:
+            widget.setEnabled(False)
 
-            self._project_dialog = NewProjectDialog(self)
-            self._project_dialog.show()
-            create_new_project = self._project_dialog.exec_()
-            # Close the device dock so it repopulates.  Done in case switching between cloud and local.
-            self.uiNodesDockWidget.setVisible(False)
-            self.uiNodesDockWidget.setWindowTitle("")
+        self._project_dialog = ProjectDialog(self)
+        self._project_dialog.show()
+        create_new_project = self._project_dialog.exec_()
+        # Close the device dock so it repopulates.  Done in case switching between cloud and local.
+        self.uiNodesDockWidget.setVisible(False)
+        self.uiNodesDockWidget.setWindowTitle("")
 
-            if create_new_project:
-                self._project_manager.createNewProject(self._project_dialog.getNewProjectSettings())
-            else:
-                # User cancel but a project is already open, renable widgets
-                if self._project_manager.project():
-                    for widget in self.disableWhenNoProjectWidgets:
-                        widget.setEnabled(True)
+        if create_new_project:
+            self._project_manager.createLoadProject(self._project_dialog.getProjectSettings())
+        else:
+            # User cancel but a project is already open, renable widgets
+            if self._project_manager.project():
+                for widget in self.disableWhenNoProjectWidgets:
+                    widget.setEnabled(True)
 
-            self._project_dialog = None
+        self._project_dialog = None
 
     def _newApplianceActionSlot(self):
         """
@@ -421,14 +398,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     return
                 self._appliance_wizard.show()
                 self._appliance_wizard.exec_()
-            elif self.checkForUnsavedChanges():
-                self._open_project_path = path
-                project = self._project_manager.project()
-                if project.closed():
-                    self._projectClosedContinueLoadPath()
-                else:
-                    project.project_closed_signal.connect(self._projectClosedContinueLoadPath)
-                    project.close()
+            else:
+                self._project_manager.loadProject(path)
 
     def _projectChangedSlot(self):
         """
@@ -442,12 +413,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             for widget in self.disableWhenNoProjectWidgets:
                 widget.setEnabled(True)
-
-    def _projectClosedContinueLoadPath(self):
-
-        path = self._open_project_path
-        if self._project_manager.loadProject(path):
-            self._labInstructionsActionSlot(silent=True)
 
     def _saveProjectActionSlot(self):
         """
@@ -819,21 +784,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             setup_wizard.show()
             setup_wizard.exec_()
 
-    def _labInstructionsActionSlot(self, silent=False):
-        """
-        Slot to open lab instructions.
-        """
-
-        project_dir = glob.escape(os.path.dirname(self._project_manager.project().topologyFile()))
-        instructions_files = glob.glob(project_dir + os.sep + "instructions.*")
-        instructions_files += glob.glob(os.path.join(project_dir, "instructions") + os.sep + "instructions*")
-        if len(instructions_files):
-            path = instructions_files[0]
-            if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + path, QtCore.QUrl.TolerantMode)) is False and silent is False:
-                QtWidgets.QMessageBox.critical(self, "Lab instructions", "Could not open {}".format(path))
-        elif silent is False:
-            QtWidgets.QMessageBox.critical(self, "Lab instructions", "No instructions found")
-
     def _aboutQtActionSlot(self):
         """
         Slot to display the Qt About dialog.
@@ -1018,12 +968,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._finish_application_closing(close_windows=False)
             event.accept()
             self.uiConsoleTextEdit.closeIO()
-        elif not self._soft_exit or self.checkForUnsavedChanges():
+        else:
             log.debug("Project is not closed asking for project closing")
             project.project_closed_signal.connect(self._finish_application_closing)
             project.close(local_server_shutdown=True)
-            event.ignore()
-        else:
             event.ignore()
 
     def _finish_application_closing(self, close_windows=True):
@@ -1063,28 +1011,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if not node.isAlwaysOn() and node.status() == Node.started:
                 return True
         return False
-
-    def checkForUnsavedChanges(self):
-        """
-        Checks if there are any unsaved changes.
-
-        :returns: boolean
-        """
-
-        if self._nodeRunning():
-            QtWidgets.QMessageBox.warning(self, "Closing project", "A node is still running, please stop it before closing your project")
-            return False
-
-        if self.testAttribute(QtCore.Qt.WA_WindowModified):
-            project = self._project_manager.project()
-            destination_file = os.path.basename(project.topologyFile())
-            reply = QtWidgets.QMessageBox.warning(self, "Unsaved changes", 'Save changes to project "{}" before closing?'.format(destination_file),
-                                                  QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Cancel)
-            if reply == QtWidgets.QMessageBox.Save:
-                return self._project_manager.saveProject(project.topologyFile())
-            elif reply == QtWidgets.QMessageBox.Cancel:
-                return False
-        return True
 
     def startupLoading(self):
         """

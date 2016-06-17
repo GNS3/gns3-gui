@@ -286,6 +286,20 @@ class Builtin(Module):
         return None
 
     @staticmethod
+    def getNodeType(name, platform=None):
+        if name == "cloud":
+            return Cloud
+        elif name == "ethernet_hub":
+            return EthernetHub
+        elif name == "ethernet_switch":
+            return EthernetSwitch
+        elif name == "frame_relay_switch":
+            return FrameRelaySwitch
+        elif name == "atm_switch":
+            return ATMSwitch
+        return None
+
+    @staticmethod
     def classes():
         """
         Returns all the node classes supported by this module.

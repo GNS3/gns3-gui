@@ -180,30 +180,6 @@ class QemuVM(Node):
             self._ports.clear()
             self._addAdapters(self._settings["adapters"])
 
-    def dump(self):
-        """
-        Returns a representation of this QEMU VM instance.
-        (to be saved in a topology file).
-
-        :returns: representation of the node (dictionary)
-        """
-
-        qemu_vm = super().dump()
-        qemu_vm["linked_clone"] = self._linked_clone
-        qemu_vm["port_name_format"] = self._port_name_format
-
-        if self._port_segment_size:
-            qemu_vm["port_segment_size"] = self._port_segment_size
-        if self._first_port_name:
-            qemu_vm["first_port_name"] = self._first_port_name
-
-        # add the properties
-        for name, value in self._settings.items():
-            if value is not None and value != "":
-                qemu_vm["properties"][name] = value
-
-        return qemu_vm
-
     def info(self):
         """
         Returns information about this QEMU VM instance.
@@ -240,37 +216,6 @@ class QemuVM(Node):
             info += "  Usage: {}\n".format(self._settings["usage"])
 
         return info + port_info
-
-    def load(self, node_info):
-        """
-        Loads a QEMU VM representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-        # for backward compatibility
-        node_id = node_info.get("qemu_id")
-        if not node_id:
-            node_id = node_info.get("node_id")
-            if not node_id:
-                node_id = node_info.get("vm_id")
-
-        linked_clone = node_info.get("linked_clone", True)
-        port_name_format = node_info.get("port_name_format", "Ethernet{0}")
-        port_segment_size = node_info.get("port_segment_size", 0)
-        first_port_name = node_info.get("first_port_name", "")
-
-        # prepare the VM settings
-        vm_settings = {}
-        for name, value in node_info["properties"].items():
-            if name in self._settings:
-                vm_settings[name] = value
-        name = vm_settings.pop("name")
-        qemu_path = vm_settings.pop("qemu_path")
-        log.info("QEMU VM {} is loading".format(name))
-        self.create(qemu_path, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
 
     def console(self):
         """

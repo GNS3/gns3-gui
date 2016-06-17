@@ -203,27 +203,6 @@ class BaseNode(QtCore.QObject):
 
         self._initialized = initialized
 
-    def dump(self):
-        """
-        Returns a representation of this node.
-        Must be overloaded.
-
-        :returns: dictionary
-        """
-
-        raise NotImplementedError()
-
-    def load(self, node_info):
-        """
-        Loads a node representation
-        (from a topology file).
-        Must be overloaded.
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        raise NotImplementedError()
-
     def update(self, new_settings):
         """
         Updates the settings for this node.

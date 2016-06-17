@@ -206,6 +206,12 @@ class VPCS(Module):
         return None
 
     @staticmethod
+    def getNodeType(name, platform=None):
+        if name == "vpcs":
+            return VPCSDevice
+        return None
+
+    @staticmethod
     def classes():
         """
         Returns all the node classes supported by this module.

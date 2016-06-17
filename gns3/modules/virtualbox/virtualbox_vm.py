@@ -207,63 +207,6 @@ class VirtualBoxVM(Node):
 
         return info + port_info
 
-    def dump(self):
-        """
-        Returns a representation of this VirtualBox VM instance.
-        (to be saved in a topology file).
-
-        :returns: representation of the node (dictionary)
-        """
-
-        vbox_vm = super().dump()
-        vbox_vm["linked_clone"] = self._linked_clone
-        vbox_vm["port_name_format"] = self._port_name_format
-
-        if self._port_segment_size:
-            vbox_vm["port_segment_size"] = self._port_segment_size
-        if self._first_port_name:
-            vbox_vm["first_port_name"] = self._first_port_name
-
-        # add the properties
-        for name, value in self._settings.items():
-            if value is not None and value != "":
-                vbox_vm["properties"][name] = value
-
-        return vbox_vm
-
-    def load(self, node_info):
-        """
-        Loads a VirtualBox VM representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-
-        # for backward compatibility
-        node_id = node_info.get("vbox_id")
-        if not node_id:
-            node_id = node_info.get("node_id")
-            if not node_id:
-                node_id = node_info.get("vm_id")
-
-        linked_clone = node_info.get("linked_clone", False)
-        port_name_format = node_info.get("port_name_format", "Ethernet{0}")
-        port_segment_size = node_info.get("port_segment_size", 0)
-        first_port_name = node_info.get("first_port_name", "")
-
-        vm_settings = {}
-        for name, value in node_info["properties"].items():
-            if name in self._settings:
-                vm_settings[name] = value
-        vm_settings["adapters"] = vm_settings.get("adapters", 1)  # for compatibility
-        name = vm_settings.pop("name")
-        vmname = vm_settings.pop("vmname")
-
-        log.info("VirtualBox VM {} is loading".format(name))
-        self.create(vmname, name, node_id, port_name_format, port_segment_size, first_port_name, linked_clone, vm_settings)
-
     def serialConsole(self):
         """
         Returns either the serial console must be used or not.

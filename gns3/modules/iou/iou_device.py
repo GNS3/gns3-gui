@@ -266,63 +266,6 @@ class IOUDevice(Node):
 
         return info + port_info
 
-    def dump(self):
-        """
-        Returns a representation of this IOU device.
-        (to be saved in a topology file).
-
-        :returns: representation of the node (dictionary)
-        """
-
-        iou = super().dump()
-
-        # add the properties
-        for name, value in self._settings.items():
-            if value is not None and value != "":
-                iou["properties"][name] = value
-
-        return iou
-
-    def load(self, node_info):
-        """
-        Loads an IOU device representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-
-        # for backward compatibility
-        node_id = node_info.get("iou_id")
-        if not node_id:
-            node_id = node_info.get("node_id")
-            if not node_id:
-                node_id = node_info.get("vm_id")
-
-        vm_settings = {}
-        for name, value in node_info["properties"].items():
-            if name in self._settings:
-                vm_settings[name] = value
-        name = vm_settings.pop("name")
-        path = vm_settings.pop("path")
-
-        if "initial_config" in vm_settings:
-            # transfer initial-config (post version 1.4) to startup-config
-            vm_settings["startup_config"] = vm_settings["initial_config"]
-
-        #TODO: Move to server
-        # if self.server().isLocal():
-        #     # check and update the path to use the image in the images directory
-        #     updated_path = os.path.join(ImageManager.instance().getDirectoryForType("IOU"), path)
-        #     if os.path.isfile(updated_path):
-        #         path = updated_path
-        #     elif not os.path.isfile(path):
-        #         path = self._module.findAlternativeIOUImage(path)
-
-        log.info("iou device {} is loading".format(name))
-        self.create(path, name, node_id, vm_settings)
-
     def saveConfig(self):
         """
         Save the configs

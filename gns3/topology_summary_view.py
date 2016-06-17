@@ -53,6 +53,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         node.stopped_signal.connect(self._refreshStatusSlot)
         node.suspended_signal.connect(self._refreshStatusSlot)
         node.updated_signal.connect(self._refreshNodeSlot)
+        node.created_signal.connect(self._refreshNodeSlot)
         node.deleted_signal.connect(self._deletedNodeSlot)
 
         self._refreshStatusSlot()
@@ -146,27 +147,19 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
 
         super().__init__(parent)
         self._topology = Topology.instance()
+        self._topology.node_added_signal.connect(self._nodeAddedSlot)
+        self._topology.project_changed_signal.connect(self._projectChangedSlot)
         self.itemSelectionChanged.connect(self._itemSelectionChangedSlot)
         self.show_only_devices_with_capture = False
         self.setExpandsOnDoubleClick(False)
         self.itemDoubleClicked.connect(self._itemDoubleClickedSlot)
 
-    def addNode(self, node):
-        """
-        Adds a node to the summary view.
-
-        :param node: Node instance
-        """
-
-        # we want to have this node listed only when completely created.
-        node.created_signal.connect(self._createdNodeSlot)
-
-    def clear(self):
+    def _projectChangedSlot(self):
         """
         Clears all the topology summary.
         """
 
-        QtWidgets.QTreeWidget.clear(self)
+        self.clear()
 
     def refreshAllLinks(self, source_child=None):
         """
@@ -180,7 +173,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                 continue
             child.refreshLinks()
 
-    def _createdNodeSlot(self, base_node_id):
+    def _nodeAddedSlot(self, base_node_id):
         """
         Received events for node creation.
 

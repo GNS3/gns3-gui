@@ -214,6 +214,12 @@ class Docker(Module):
             return globals()[name]
 
     @staticmethod
+    def getNodeType(name, platform=None):
+        if name == "docker":
+            return DockerVM
+        return None
+
+    @staticmethod
     def classes():
         """Returns all the node classes supported by this module.
 

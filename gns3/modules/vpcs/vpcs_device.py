@@ -159,54 +159,6 @@ class VPCSDevice(Node):
 
         return info + port_info
 
-    def dump(self):
-        """
-        Returns a representation of this VPCS device.
-        (to be saved in a topology file).
-
-        :returns: representation of the node (dictionary)
-        """
-
-        vpcs_device = super().dump()
-
-        # add the properties
-        for name, value in self._settings.items():
-            if value is not None and value != "":
-                if name != "startup_script":
-                    if name == "startup_script_path":
-                        value = os.path.basename(value)
-                    vpcs_device["properties"][name] = value
-
-        return vpcs_device
-
-    def load(self, node_info):
-        """
-        Loads a VPCS device representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-
-        # for backward compatibility
-        node_id = node_info.get("vpcs_id")
-        if not node_id:
-            node_id = node_info.get("node_id")
-            if not node_id:
-                # for backward compatibility
-                node_id = node_info.get("vm_id")
-
-        # prepare the VM settings
-        vm_settings = {}
-        for name, value in node_info["properties"].items():
-            if name in self._settings:
-                vm_settings[name] = value
-        name = vm_settings.pop("name")
-
-        log.info("VPCS device {} is loading".format(name))
-        self.create(name, node_id, vm_settings)
-
     def exportConfig(self, config_export_path):
         """
         Exports the script file.

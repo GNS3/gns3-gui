@@ -252,7 +252,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.scene().addItem(image_item)
         self._topology.addImage(image_item)
 
-    def addLink(self, source_node, source_port, destination_node, destination_port):
+    def addLink(self, source_node, source_port, destination_node, destination_port, link_id=None):
         """
         Creates a Link instance representing a connection between 2 devices.
 
@@ -263,13 +263,17 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :returns: Link
         """
 
-        link = Link(source_node, source_port, destination_node, destination_port)
+        link = Link(source_node, source_port, destination_node, destination_port, link_id=link_id)
 
         # connect the signals that let the graphics view knows about events such as
         # a new link creation or deletion.
         if self._topology.addLink(link):
             link.add_link_signal.connect(self.addLinkSlot)
             link.delete_link_signal.connect(self.deleteLinkSlot)
+
+        if link_id:
+            self.addLinkSlot(link.id())
+
         return link
 
     def addLinkSlot(self, link_id):
@@ -1483,7 +1487,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         :returns: NodeItem instance
         """
-
         try:
             node_module = None
             for module in MODULES:
@@ -1500,18 +1503,21 @@ class GraphicsView(QtWidgets.QGraphicsView):
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
-            node_item = NodeItem(node, node_data["symbol"])
-            node_module.createNode(node, node_data["name"])
         # If no server is available a ValueError is raised
         except (ModuleError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
             return
 
-        node_item.setPos(self.mapToScene(pos))
+        node_module.createNode(node, node_data["name"])
+        pos = self.mapToScene(pos)
+        return self.createNodeItem(node, node_data["symbol"], pos.x(), pos.y())
+
+    def createNodeItem(self, node, symbol, x, y):
+        node_item = NodeItem(node, symbol)
+        node_item.setPos(QtCore.QPoint(x, y))
         self.scene().addItem(node_item)
         x = node_item.pos().x() - (node_item.boundingRect().width() / 2)
         y = node_item.pos().y() - (node_item.boundingRect().height() / 2)
         node_item.setPos(x, y)
         self._topology.addNode(node)
-        self._main_window.uiTopologySummaryTreeWidget.addNode(node)
         return node_item

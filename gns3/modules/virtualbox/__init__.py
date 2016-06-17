@@ -310,6 +310,12 @@ class VirtualBox(Module):
         return None
 
     @staticmethod
+    def getNodeType(name, platform=None):
+        if name == "virtualbox":
+            return VirtualBoxVM
+        return None
+
+    @staticmethod
     def classes():
         """
         Returns all the node classes supported by this module.

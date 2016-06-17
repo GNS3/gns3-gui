@@ -252,7 +252,6 @@ def main():
     # Manage Ctrl + C or kill command
     def sigint_handler(*args):
         log.info("Signal received exiting the application")
-        mainwindow.setSoftExit(False)
         app.closeAllWindows()
     orig_sigint = signal.signal(signal.SIGINT, sigint_handler)
     orig_sigterm = signal.signal(signal.SIGTERM, sigint_handler)
