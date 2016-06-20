@@ -242,7 +242,7 @@ class Project(QtCore.QObject):
 
     def _projectCreatedCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while creating project: {}".format(params["message"]))
+            log.error("Error while creating project: {}".format(result["message"]))
             return
         self._id = result["project_id"]
         if self._closed:
