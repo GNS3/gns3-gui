@@ -381,7 +381,8 @@ class NodeItem():
             GRID_SIZE = 75
             tmp_x = (GRID_SIZE * round(self.x() / GRID_SIZE)) - ((self.boundingRect().width() / 2) % GRID_SIZE)
             tmp_y = (GRID_SIZE * round(self.y() / GRID_SIZE)) - ((self.boundingRect().height() / 2) % GRID_SIZE)
-            self.setPos(tmp_x, tmp_y)
+            if tmp_x != self.x() and tmp_y != self.y():
+                self.setPos(tmp_x, tmp_y)
 
         # dynamically change the renderer when this node item is selected/unselected.
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
