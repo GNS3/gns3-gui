@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Tue May 10 10:08:21 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -87,8 +86,8 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidgetContents = QtWidgets.QWidget()
         self.uiNodesDockWidgetContents.setObjectName("uiNodesDockWidgetContents")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.uiNodesDockWidgetContents)
-        self.vboxlayout.setSpacing(0)
         self.vboxlayout.setContentsMargins(0, 0, 0, 0)
+        self.vboxlayout.setSpacing(0)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiNodesView = NodesView(self.uiNodesDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -129,8 +128,8 @@ class Ui_MainWindow(object):
         self.uiConsoleDockWidgetContents = QtWidgets.QWidget()
         self.uiConsoleDockWidgetContents.setObjectName("uiConsoleDockWidgetContents")
         self.vboxlayout1 = QtWidgets.QVBoxLayout(self.uiConsoleDockWidgetContents)
-        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
+        self.vboxlayout1.setSpacing(0)
         self.vboxlayout1.setObjectName("vboxlayout1")
         self.uiConsoleTextEdit = ConsoleView(self.uiConsoleDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -324,6 +323,9 @@ class Ui_MainWindow(object):
         self.uiShowLayersAction = QtWidgets.QAction(MainWindow)
         self.uiShowLayersAction.setCheckable(True)
         self.uiShowLayersAction.setObjectName("uiShowLayersAction")
+        self.uiSnapToGridAction = QtWidgets.QAction(MainWindow)
+        self.uiSnapToGridAction.setCheckable(True)
+        self.uiSnapToGridAction.setObjectName("uiSnapToGridAction")
         self.uiSaveProjectAsAction = QtWidgets.QAction(MainWindow)
         icon21 = QtGui.QIcon()
         icon21.addPixmap(QtGui.QPixmap(":/icons/save-as-project.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -385,9 +387,9 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction.setCheckable(True)
         icon29 = QtGui.QIcon()
         icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon29.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon29.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon29)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiGettingStartedAction = QtWidgets.QAction(MainWindow)
@@ -475,6 +477,7 @@ class Ui_MainWindow(object):
         self.uiViewMenu.addAction(self.uiFitInViewAction)
         self.uiViewMenu.addSeparator()
         self.uiViewMenu.addAction(self.uiShowLayersAction)
+        self.uiViewMenu.addAction(self.uiSnapToGridAction)
         self.uiViewMenu.addAction(self.uiResetPortLabelsAction)
         self.uiViewMenu.addAction(self.uiShowPortNamesAction)
         self.uiViewMenu.addSeparator()
@@ -642,6 +645,8 @@ class Ui_MainWindow(object):
         self.uiSnapshotAction.setStatusTip(_translate("MainWindow", "Manage snapshots"))
         self.uiShowLayersAction.setText(_translate("MainWindow", "Show layers"))
         self.uiShowLayersAction.setStatusTip(_translate("MainWindow", "Show layers"))
+        self.uiSnapToGridAction.setText(_translate("MainWindow", "Snap To Grid"))
+        self.uiSnapToGridAction.setStatusTip(_translate("MainWindow", "Snap To Grid"))
         self.uiSaveProjectAsAction.setText(_translate("MainWindow", "&Save project as..."))
         self.uiSaveProjectAsAction.setToolTip(_translate("MainWindow", "Save project as..."))
         self.uiSaveProjectAsAction.setStatusTip(_translate("MainWindow", "Save project as..."))
@@ -702,9 +707,9 @@ class Ui_MainWindow(object):
         self.uiEditReadmeAction.setText(_translate("MainWindow", "Edit readme"))
         self.uiAcademyAction.setText(_translate("MainWindow", "GNS3 &Academy"))
 
-from ..graphics_view import GraphicsView
 from ..console_view import ConsoleView
+from ..graphics_view import GraphicsView
 from ..nodes_view import NodesView
-from ..topology_summary_view import TopologySummaryView
 from ..server_summary_view import ServerSummaryView
+from ..topology_summary_view import TopologySummaryView
 from . import resources_rc

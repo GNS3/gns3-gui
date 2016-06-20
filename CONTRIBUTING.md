@@ -18,6 +18,10 @@ it on https://github.com/GNS3/gns3-gui we will take care of the triage.
 
 For bugs specific to the GNS3 VM, please report on https://github.com/GNS3/gns3-vm
 
+## Security issues
+
+For security issues please keep it private and send an email to developers@gns3.net
+
 ## Asking for new features
 
 The best is to start a discussion on the community website in order to get feedback
