@@ -342,7 +342,7 @@ class HTTPClient(QtCore.QObject):
         Full arg list in createHTTPQuery
         """
 
-        self.createHTTPQuery("GET", path, callback, **kwargs)
+        return self.createHTTPQuery("GET", path, callback, **kwargs)
 
     def put(self, path, callback, **kwargs):
         """

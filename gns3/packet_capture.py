@@ -28,6 +28,7 @@ class PacketCapture:
 
     def __init__(self):
         self._capture_files = {}
+        self._stream_capture_request = {}
 
     def startCapture(self, vm, port, file_path):
         """
@@ -52,7 +53,7 @@ class PacketCapture:
                 vm.error_signal.emit(vm.id(), "Could not start the packet capture reader: {}: {}".format(e, e.filename))
             self._capture_files[port] = temp_capture_file_path
 
-            vm.server().get("/files/stream",
+            self._stream_capture_request[port] = vm.server().get("/files/stream",
                             None,
                             body={"location": file_path},
                             context={"pcap_file": temp_capture_file_path, "vm": vm},
@@ -86,6 +87,10 @@ class PacketCapture:
             except OSError as e:
                 vm.error_signal.emit(vm.id(), "Could not stop packet capture: {}: {}".format(e, self._capture_files[port]))
             self._capture_files[port] = None
+
+        if port in self._stream_capture_request:
+            self._stream_capture_request[port].abort()
+            self._stream_capture_request[port] = None
 
         log.info("{} has successfully stopped capturing packets on {}".format(vm.name(), port.name()))
         vm.updated_signal.emit()
