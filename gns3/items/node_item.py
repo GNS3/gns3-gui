@@ -377,7 +377,8 @@ class NodeItem():
         :param value: value of the change
         """
 
-        if change == 9 and self._main_window.uiSnapToGridAction.isChecked(): # Unsure but change seems to alternate between 0/9 while dragging
+        # was causing infinite recursion loops when placed within the below if statements
+        if change == QtWidgets.QGraphicsItem.ItemPositionHasChanged and self._main_window.uiSnapToGridAction.isChecked():
             GRID_SIZE = 75
             self.setPos(float(GRID_SIZE * round(self.x() / GRID_SIZE)), float(GRID_SIZE * round(self.y() / GRID_SIZE)))
 
