@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/home/cometo/dev/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Tue Apr 26 11:38:43 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -316,6 +315,9 @@ class Ui_MainWindow(object):
         self.uiShowLayersAction = QtWidgets.QAction(MainWindow)
         self.uiShowLayersAction.setCheckable(True)
         self.uiShowLayersAction.setObjectName("uiShowLayersAction")
+        self.uiSnapToGridAction = QtWidgets.QAction(MainWindow)
+        self.uiSnapToGridAction.setCheckable(True)
+        self.uiSnapToGridAction.setObjectName("uiSnapToGridAction")
         self.uiSaveProjectAsAction = QtWidgets.QAction(MainWindow)
         icon20 = QtGui.QIcon()
         icon20.addPixmap(QtGui.QPixmap(":/icons/save-as-project.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -467,6 +469,7 @@ class Ui_MainWindow(object):
         self.uiViewMenu.addAction(self.uiFitInViewAction)
         self.uiViewMenu.addSeparator()
         self.uiViewMenu.addAction(self.uiShowLayersAction)
+        self.uiViewMenu.addAction(self.uiSnapToGridAction)
         self.uiViewMenu.addAction(self.uiResetPortLabelsAction)
         self.uiViewMenu.addAction(self.uiShowPortNamesAction)
         self.uiViewMenu.addSeparator()
@@ -632,6 +635,8 @@ class Ui_MainWindow(object):
         self.uiSnapshotAction.setStatusTip(_translate("MainWindow", "Manage snapshots"))
         self.uiShowLayersAction.setText(_translate("MainWindow", "Show layers"))
         self.uiShowLayersAction.setStatusTip(_translate("MainWindow", "Show layers"))
+        self.uiSnapToGridAction.setText(_translate("MainWindow", "Snap To Grid"))
+        self.uiSnapToGridAction.setStatusTip(_translate("MainWindow", "Snap To Grid"))
         self.uiSaveProjectAsAction.setText(_translate("MainWindow", "&Save project as..."))
         self.uiSaveProjectAsAction.setToolTip(_translate("MainWindow", "Save project as..."))
         self.uiSaveProjectAsAction.setStatusTip(_translate("MainWindow", "Save project as..."))
