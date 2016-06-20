@@ -245,6 +245,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiShowLayersAction.triggered.connect(self._showLayersActionSlot)
         self.uiResetPortLabelsAction.triggered.connect(self._resetPortLabelsActionSlot)
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
+        self.uiViewGridAction.triggered.connect(self._showGridActionSlot)
 
         # control menu connections
         self.uiStartAllAction.triggered.connect(self._startAllActionSlot)
@@ -332,6 +333,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         self._ignore_unsaved_state = value
+
+    def _showGridActionSlot(self):
+        """
+        Called when we ask to display the grid
+        """
+        self.uiGraphicsView.viewport().update()
 
     def _createNewProject(self, new_project_settings):
         """

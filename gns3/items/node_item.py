@@ -377,10 +377,11 @@ class NodeItem():
         :param value: value of the change
         """
 
-        # was causing infinite recursion loops when placed within the below if statements
         if change == QtWidgets.QGraphicsItem.ItemPositionHasChanged and self._main_window.uiSnapToGridAction.isChecked():
             GRID_SIZE = 75
-            self.setPos(float(GRID_SIZE * round(self.x() / GRID_SIZE)), float(GRID_SIZE * round(self.y() / GRID_SIZE)))
+            tmp_x = (GRID_SIZE * round(self.x() / GRID_SIZE)) - ((self.boundingRect().width() / 2) % GRID_SIZE)
+            tmp_y = (GRID_SIZE * round(self.y() / GRID_SIZE)) - ((self.boundingRect().height() / 2) % GRID_SIZE)
+            self.setPos(tmp_x, tmp_y)
 
         # dynamically change the renderer when this node item is selected/unselected.
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
