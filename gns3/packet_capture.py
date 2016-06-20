@@ -51,6 +51,7 @@ class PacketCapture:
     def settings(self):
         return LocalConfig.instance().loadSectionSettings("PacketCapture", PACKET_CAPTURE_SETTINGS)
 
+
     def startCapture(self, link):
         """
         Start the packet capture reader on this port

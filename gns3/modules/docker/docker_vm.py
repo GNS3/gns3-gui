@@ -61,7 +61,7 @@ class DockerVM(Node):
         :param adapters: number of adapters
         """
         for adapter_number in range(0, adapters):
-            adapter_name = EthernetPort.longNameType() + str(adapter_number)
+            adapter_name = "eth" + str(adapter_number)
             short_name = EthernetPort.shortNameType() + str(adapter_number)
             new_port = EthernetPort(adapter_name)
             new_port.setShortName(short_name)

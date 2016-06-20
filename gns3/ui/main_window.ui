@@ -132,6 +132,7 @@ background-none;
     <addaction name="uiFitInViewAction"/>
     <addaction name="separator"/>
     <addaction name="uiShowLayersAction"/>
+    <addaction name="uiSnapToGridAction"/>
     <addaction name="uiResetPortLabelsAction"/>
     <addaction name="uiShowPortNamesAction"/>
     <addaction name="separator"/>
@@ -944,6 +945,17 @@ background-none;
    </property>
    <property name="statusTip">
     <string>Show layers</string>
+   </property>
+  </action>
+  <action name="uiSnapToGridAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Snap To Grid</string>
+   </property>
+   <property name="statusTip">
+    <string>Snap To Grid</string>
    </property>
   </action>
   <action name="uiSaveProjectAsAction">
