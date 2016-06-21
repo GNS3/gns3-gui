@@ -45,7 +45,7 @@ class ShapeItem:
 
     show_layer = False
 
-    def __init__(self, project=None, pos=None, shape_id=None, svg=None, width=200, height=200, **kws):
+    def __init__(self, project=None, pos=None, shape_id=None, svg=None, width=200, height=200, z=0, **kws):
 
         self._id = shape_id
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable)
@@ -60,6 +60,8 @@ class ShapeItem:
 
         if pos:
             self.setPos(pos)
+        if z:
+            self.setZValue(z)
 
         if svg is None:
             self.setRect(0, 0, width, height)
@@ -106,6 +108,7 @@ class ShapeItem:
             log.error("Error while setting up shape: {}".format(result["message"]))
             return False
         self.setPos(QtCore.QPoint(result["x"], result["y"]))
+        self.setZValue(result["z"])
         self.fromSvg(result["svg"])
 
     def keyPressEvent(self, event):
@@ -329,7 +332,7 @@ class ShapeItem:
         return {
             "x": int(self.pos().x()),
             "y": int(self.pos().y()),
-            "z": int(0),
+            "z": int(self.zValue()),
             "svg": self.toSvg()
         }
 
