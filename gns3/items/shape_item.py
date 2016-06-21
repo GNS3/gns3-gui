@@ -246,15 +246,17 @@ class ShapeItem:
         if self.zValue() >= 0:
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
 
-    def delete(self):
+    def delete(self, skip_controller=False):
         """
-        Deletes this rectangle.
+        Deletes this shape.
+
+        :param skip_controller: Do not replicate change on the controller (usefull when it's already deleted on controller
         """
 
         self.scene().removeItem(self)
         from ..topology import Topology
         Topology.instance().removeShape(self)
-        if self._id:
+        if self._id and not skip_controller:
             self._project.delete("/shapes/" + self._id, None, body=self.__json__())
 
     def drawLayerInfo(self, painter):

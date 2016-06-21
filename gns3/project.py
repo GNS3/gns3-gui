@@ -347,6 +347,10 @@ class Project(QtCore.QObject):
             shape = Topology.instance().getShapeFromUuid(result["event"]["shape_id"])
             if shape is not None:
                 shape.updateShapeCallback(result["event"])
+        elif result["action"] == "shape.deleted":
+            shape = Topology.instance().getShapeFromUuid(result["event"]["shape_id"])
+            if shape is not None:
+                shape.delete(skip_controller=True)
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":
