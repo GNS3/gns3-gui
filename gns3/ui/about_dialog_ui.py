@@ -3645,6 +3645,7 @@ class Ui_AboutDialog(object):
 "Tishkov Pavel [64]\n"
 "Wilhelm Jonker\n"
 "Paul Sivie\n"
+"BlessLarryAgbemor\n"
 "Richard Miller\n"
 ""))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("AboutDialog", "&Thanks to"))
