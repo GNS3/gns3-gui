@@ -315,6 +315,12 @@ class Topology(QtCore.QObject):
                     break
         self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, link_id=link_data["link_id"])
 
+    def createShape(self, shape_data):
+        if "ellipse" in shape_data["svg"]:
+            self._main_window.uiGraphicsView.createShapeItem("ellipse", shape_data["x"], shape_data["y"], shape_data["z"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
+        elif "rect" in shape_data["svg"]:
+            self._main_window.uiGraphicsView.createShapeItem("rect", shape_data["x"], shape_data["y"], shape_data["z"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
+
     @staticmethod
     def instance():
         """

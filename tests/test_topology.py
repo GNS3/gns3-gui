@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import uuid
+from unittest.mock import MagicMock
+
 from gns3.topology import Topology
 
 
@@ -30,4 +33,17 @@ def test_topology_node(vpcs_device):
     topology.removeNode(vpcs_device)
     assert len(topology.nodes()) == 0
 
+
+def test_createShape():
+    topology = Topology()
+    shape_data = {
+        "x": 42,
+        "y": 12,
+        "z": 0,
+        "shape_id": str(uuid.uuid4()),
+        "svg": "<svg height=\"105.0\" width=\"158.0\"><ellipse cx=\"79\" cy=\"52\" rx=\"79\" ry=\"53\" style=\"stroke-width:2;stroke:#000000;fill:#ffffff;\" /></svg>",
+    }
+    topology._main_window = MagicMock()
+    topology.createShape(shape_data)
+    topology._main_window.uiGraphicsView.createShapeItem.assert_called_with("ellipse", 42, 12, 0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
 

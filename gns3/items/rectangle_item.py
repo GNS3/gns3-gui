@@ -31,18 +31,8 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
     Class to draw a rectangle on the scene.
     """
 
-    def __init__(self, pos=None, width=200, height=100, project=None):
-
-        super().__init__(project=project)
-
-        self.setRect(0, 0, width, height)
-        pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-        self.setPen(pen)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 255))  # default color is white and not transparent
-        self.setBrush(brush)
-        if pos:
-            self.setPos(pos)
-        self.createShapeOnController()
+    def __init__(self, width=200, height=100, **kws):
+        super().__init__(width=width, height=height, **kws)
 
     def paint(self, painter, option, widget=None):
         """
@@ -75,12 +65,12 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
         Return an SVG version of the shape
         """
         svg = ET.Element("svg")
-        svg.set("width", str(self.rect().width()))
-        svg.set("height", str(self.rect().height()))
+        svg.set("width", str(int(self.rect().width())))
+        svg.set("height", str(int(self.rect().height())))
 
         rect = ET.SubElement(svg, "rect")
-        rect.set("width", str(self.rect().width()))
-        rect.set("height", str(self.rect().height()))
+        rect.set("width", str(int(self.rect().width())))
+        rect.set("height", str(int(self.rect().height())))
 
         rect = self._styleSvg(rect)
 

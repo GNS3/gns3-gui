@@ -19,6 +19,7 @@
 Base class for shape items (Rectangle, ellipse etc.).
 """
 
+import xml.etree.ElementTree as ET
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg
 
 import logging
@@ -27,16 +28,26 @@ log = logging.getLogger(__name__)
 
 class ShapeItem:
 
+    # Map QT stroke to SVG style
+    QT_DASH_TO_SVG = {
+        QtCore.Qt.SolidLine: "",
+        QtCore.Qt.NoPen: None,
+        QtCore.Qt.DashLine: "25, 25",
+        QtCore.Qt.DotLine:  "5, 25",
+        QtCore.Qt.DashDotLine:  "5, 25, 25",
+        QtCore.Qt.DashDotDotLine: "25, 25, 5, 25, 5"
+    }
+
+
     """
     Base class to draw shapes on the scene.
     """
 
     show_layer = False
 
-    def __init__(self, project=None, **kws):
+    def __init__(self, project=None, pos=None, shape_id=None, svg=None, width=200, height=200, **kws):
 
-        assert project is not None
-        self._id = None
+        self._id = shape_id
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable)
         self.setAcceptHoverEvents(True)
         self._border = 5
@@ -47,7 +58,17 @@ class ShapeItem:
 
         self._project = project
 
-    def createShapeOnController(self):
+        if pos:
+            self.setPos(pos)
+
+        if svg is None:
+            self.setRect(0, 0, width, height)
+            pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+            self.setPen(pen)
+            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 255))  # default color is white and not transparent
+            self.setBrush(brush)
+        else:
+            self.fromSvg(svg)
         if self._id is None:
             self._project.post("/shapes", self._createShapeCallback, body=self.__json__())
 
@@ -272,18 +293,13 @@ class ShapeItem:
         style += "stroke-width:{};".format(pen.width())
         style += "stroke:#{};".format(hex(pen.color().rgba())[4:])
 
-        if pen.style() == QtCore.Qt.SolidLine:
-            pass
-        elif pen.style() == QtCore.Qt.NoPen:
-            style = ""
-        elif pen.style() == QtCore.Qt.DashLine:
-            element.set("stroke-dasharray", "25, 25")
-        elif pen.style() == QtCore.Qt.DotLine:
-            element.set("stroke-dasharray", "5, 25")
-        elif pen.style() == QtCore.Qt.DashDotLine:
-            element.set("stroke-dasharray", "5, 25, 25")
-        elif pen.style() == QtCore.Qt.DashDotDotLine:
-            element.set("stroke-dasharray", "25, 25, 5, 25, 5")
+        dasharray = self.QT_DASH_TO_SVG[pen.style()]
+        if dasharray is None:
+            style = "" # No border to the element
+        elif dasharray == "":
+            pass # Solid line
+        else:
+            element.set("stroke-dasharray", dasharray)
 
         style += "fill:#{};".format(hex(self.brush().color().rgba())[4:])
         element.set("style", style)
@@ -297,3 +313,55 @@ class ShapeItem:
             "svg": self.toSvg()
         }
 
+    def _colorFromSvg(self, value):
+        value = value.strip('#')
+        if len(value) == 6: # If alpha channel is missing
+            value = "ff" + value
+        value = int(value, base=16)
+        return QtGui.QColor.fromRgba(value)
+
+    def fromSvg(self, svg):
+        """
+        Import element informations from an SVG
+        """
+        svg = ET.fromstring(svg)
+        width = float(svg.get("width", self.rect().width()))
+        height = float(svg.get("height", self.rect().height()))
+        self.setRect(0, 0, width, height)
+
+        try:
+            styles = svg[0].get("style")
+        except IndexError:
+            return
+
+        pen = QtGui.QPen()
+        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+        for style in styles.split(";"):
+            try:
+                key, value = style.split(":")
+            except ValueError:
+                continue
+            key = key.strip()
+            value = value.strip()
+
+            if key == "stroke-width":
+                pen.setWidth(int(value))
+            elif key == "stroke":
+                pen.setColor(self._colorFromSvg(value))
+            elif key == "fill":
+                brush.setColor(self._colorFromSvg(value))
+
+        # Map SVG stroke style (border of the element to the Qt version)
+        if not "stroke" in styles:
+            pen.setStyle(QtCore.Qt.NoPen)
+        else:
+            pen.setStyle(QtCore.Qt.SolidLine)
+            stroke = svg[0].get("stroke-dasharray")
+            if stroke:
+                for (qt_stroke, svg_stroke) in self.QT_DASH_TO_SVG.items():
+                     if svg_stroke == stroke:
+                        pen.setStyle(qt_stroke)
+
+        self.setPen(pen)
+        self.setBrush(brush)
+        self.update()

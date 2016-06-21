@@ -38,6 +38,28 @@ def test_toSvg(project, controller):
     assert rect.get("stroke-dasharray") == "25, 25"
 
 
+def test_fromSvg(project, controller):
+    rect = RectangleItem(project=project)
+    rect.fromSvg("<svg height=\"150\" width=\"250\"><rect height=\"150\" style=\"stroke-width:5;stroke:#0000ff;fill:#ff00ff;\" width=\"150\" stroke-dasharray=\"5, 25, 25\" /></svg>")
+    assert rect.rect().width() == 250
+    assert rect.rect().height() == 150
+    assert rect.pen().width() == 5
+    assert hex(rect.pen().color().rgba()) == "0xff0000ff"
+    assert hex(rect.brush().color().rgba()) == "0xffff00ff"
+    assert rect.pen().style() == QtCore.Qt.DashDotLine
+
+
+def test_fromSvg_solid_stroke(project, controller):
+    rect = RectangleItem(project=project)
+    rect.fromSvg("<svg height=\"150\" width=\"250\"><rect height=\"150\" style=\"stroke-width:5;stroke:#0000ff;fill:#ff00ff;\" width=\"150\" /></svg>")
+    assert rect.pen().style() == QtCore.Qt.SolidLine
+
+
+def test_fromEmptySvg(project, controller):
+    rect = RectangleItem(project=project)
+    rect.fromSvg("<svg></svg>")
+
+
 def test_create(project, controller):
     rect = RectangleItem(width=400, height=280, project=project)
     controller._http_client.createHTTPQuery.assert_called_with(

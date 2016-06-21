@@ -484,16 +484,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_note = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_rectangle:
-            rectangle = RectangleItem(self.mapToScene(event.pos()), project=self._main_window.projectManager().project())
-            self.scene().addItem(rectangle)
-            self._topology.addShape(rectangle)
+            pos = self.mapToScene(event.pos())
+            self.createShapeItem("rect", pos.x(), pos.y(), 0)
             self._main_window.uiDrawRectangleAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_rectangle = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_ellipse:
-            ellipse = EllipseItem(self.mapToScene(event.pos()), project=self._main_window.projectManager().project())
-            self.scene().addItem(ellipse)
-            self._topology.addShape(ellipse)
+            pos = self.mapToScene(event.pos())
+            self.createShapeItem("ellipse", pos.x(), pos.y(), 0)
             self._main_window.uiDrawEllipseAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_ellipse = False
@@ -1521,3 +1519,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         node_item.setPos(x, y)
         self._topology.addNode(node)
         return node_item
+
+    def createShapeItem(self, type, x, y, z, svg=None, shape_id=None):
+        if type == "ellipse":
+            item = EllipseItem(pos=QtCore.QPoint(x, y), project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
+        elif type == "rect":
+            item = RectangleItem(pos=QtCore.QPoint(x, y), project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
+        self.scene().addItem(item)
+        self._topology.addShape(item)

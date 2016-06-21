@@ -273,7 +273,7 @@ class Project(QtCore.QObject):
 
     def _listNodesCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while opening project: {}".format(params["message"]))
+            log.error("Error while listing project: {}".format(params["message"]))
             return
         topo = Topology.instance()
         for node in result:
@@ -282,11 +282,20 @@ class Project(QtCore.QObject):
 
     def _listLinksCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while opening project: {}".format(params["message"]))
+            log.error("Error while listing links: {}".format(params["message"]))
             return
         topo = Topology.instance()
         for link in result:
             topo.createLink(link)
+        self.get("/shapes", self._listShapesCallback)
+
+    def _listShapesCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while listing shapes: {}".format(params["message"]))
+            return
+        topo = Topology.instance()
+        for shape in result:
+            topo.createShape(shape)
 
     def close(self, local_server_shutdown=False):
         """Close project"""
