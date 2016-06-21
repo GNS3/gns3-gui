@@ -45,8 +45,7 @@ class Topology(QtCore.QObject):
         self._nodes = []
         self._links = []
         self._notes = []
-        self._rectangles = []
-        self._ellipses = []
+        self._shapes = []
         self._images = []
         self._project = None
         self._main_window = None
@@ -176,43 +175,24 @@ class Topology(QtCore.QObject):
         if note in self._notes:
             self._notes.remove(note)
 
-    def addRectangle(self, rectangle):
+    def addShape(self, shape):
         """
-        Adds a new rectangle to this topology.
+        Adds a new shape to this topology.
 
-        :param rectangle: RectangleItem instance
+        :param shape: ShapeItem instance
         """
 
-        self._rectangles.append(rectangle)
+        self._shapes.append(shape)
 
-    def removeRectangle(self, rectangle):
+    def removeShape(self, shape):
         """
         Removes a rectangle from this topology.
 
         :param rectangle: RectangleItem instance
         """
 
-        if rectangle in self._rectangles:
-            self._rectangles.remove(rectangle)
-
-    def addEllipse(self, ellipse):
-        """
-        Adds a new ellipse to this topology.
-
-        :param ellipse: EllipseItem instance
-        """
-
-        self._ellipses.append(ellipse)
-
-    def removeEllipse(self, ellipse):
-        """
-        Removes an ellipse from this topology.
-
-        :param ellipse: EllipseItem instance
-        """
-
-        if ellipse in self._ellipses:
-            self._ellipses.remove(ellipse)
+        if shape in self._shapes:
+            self._shapes.remove(shape)
 
     def addImage(self, image):
         """
@@ -262,19 +242,12 @@ class Topology(QtCore.QObject):
 
         return self._notes
 
-    def rectangles(self):
+    def shapes(self):
         """
-        Returns all the rectangles in this topology.
-        """
-
-        return self._rectangles
-
-    def ellipses(self):
-        """
-        Returns all the ellipses in this topology.
+        Returns all the shapes in this topology.
         """
 
-        return self._ellipses
+        return self._shapes
 
     def images(self):
         """
@@ -288,12 +261,10 @@ class Topology(QtCore.QObject):
         Resets this topology.
         """
 
-        # self._topology.clear()
         self._links.clear()
         self._nodes.clear()
         self._notes.clear()
-        self._rectangles.clear()
-        self._ellipses.clear()
+        self._shapes.clear()
         self._images.clear()
 
     def __str__(self):

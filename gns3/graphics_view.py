@@ -484,16 +484,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_note = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_rectangle:
-            rectangle = RectangleItem(self.mapToScene(event.pos()))
+            rectangle = RectangleItem(self.mapToScene(event.pos()), project=self._main_window.projectManager().project())
             self.scene().addItem(rectangle)
-            self._topology.addRectangle(rectangle)
+            self._topology.addShape(rectangle)
             self._main_window.uiDrawRectangleAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_rectangle = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_ellipse:
-            ellipse = EllipseItem(self.mapToScene(event.pos()))
+            ellipse = EllipseItem(self.mapToScene(event.pos()), project=self._main_window.projectManager().project())
             self.scene().addItem(ellipse)
-            self._topology.addEllipse(ellipse)
+            self._topology.addShape(ellipse)
             self._main_window.uiDrawEllipseAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_ellipse = False

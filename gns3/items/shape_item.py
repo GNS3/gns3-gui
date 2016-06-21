@@ -19,7 +19,10 @@
 Base class for shape items (Rectangle, ellipse etc.).
 """
 
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtCore, QtGui, QtWidgets, QtSvg
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class ShapeItem:
@@ -30,8 +33,10 @@ class ShapeItem:
 
     show_layer = False
 
-    def __init__(self, **kws):
+    def __init__(self, project=None, **kws):
 
+        assert project is not None
+        self._id = None
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable)
         self.setAcceptHoverEvents(True)
         self._border = 5
@@ -39,6 +44,30 @@ class ShapeItem:
 
         from ..main_window import MainWindow
         self._graphics_view = MainWindow.instance().uiGraphicsView
+
+        self._project = project
+
+    def createShapeOnController(self):
+        if self._id is None:
+            self._project.post("/shapes", self._createShapeCallback, body=self.__json__())
+
+    def _createShapeCallback(self, result, error=False, **kwargs):
+        """
+        Callback for create.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        :returns: Boolean success or not
+        """
+
+        if error:
+            log.error("Error while setting up shape: {}".format(result["message"]))
+            return False
+        self._id = result["shape_id"]
+
+    def updateShapeOnController(self):
+        if self._id:
+            self._project.put("/shapes/" + self._id, None, body=self.__json__())
 
     def keyPressEvent(self, event):
         """
@@ -178,6 +207,15 @@ class ShapeItem:
         if self.zValue() >= 0:
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
 
+    def delete(self):
+        """
+        Deletes this rectangle.
+        """
+
+        self.scene().removeItem(self)
+        from ..topology import Topology
+        Topology.instance().removeShape(self)
+
     def drawLayerInfo(self, painter):
         """
         Draws the layer position.
@@ -216,93 +254,44 @@ class ShapeItem:
             self.setFlag(self.ItemIsSelectable, True)
             self.setFlag(self.ItemIsMovable, True)
 
-    def dump(self):
+    def itemChange(self, change, value):
+        if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
+            if not value:
+                self.updateShapeOnController()
+        return QtWidgets.QGraphicsItem.itemChange(self, change, value)
+
+    def _styleSvg(self, element):
         """
-        Returns a representation of this shape item.
-
-        :returns: dictionary
+        Add style from the shape item to the SVG element that we will
+        export
         """
-
-        shape_info = {"width": self.rect().width(),
-                      "height": self.rect().height(),
-                      "x": self.x(),
-                      "y": self.y()}
-
-        brush = self.brush()
-        if brush.color() != QtCore.Qt.white:
-            shape_info["color"] = brush.color().name()
-        if brush.color().alpha() != 255:
-            shape_info["transparency"] = brush.color().alpha()
-
+        style = ""
         pen = self.pen()
-        if pen.color() != QtCore.Qt.black:
-            shape_info["border_color"] = pen.color().name()
-        if pen.color().alpha() != 255:
-            shape_info["border_transparency"] = pen.color().alpha()
-        if pen.width() != 2:
-            shape_info["border_width"] = pen.width()
-        if pen.style() != QtCore.Qt.SolidLine:
-            shape_info["border_style"] = pen.style()
+        style += "stroke-width:{};".format(pen.width())
+        style += "stroke:#{};".format(hex(pen.color().rgba())[4:])
 
-        if self.rotation() != 0:
-            shape_info["rotation"] = self.rotation()
-        if self.zValue() != 0:
-            shape_info["z"] = self.zValue()
+        if pen.style() == QtCore.Qt.SolidLine:
+            pass
+        elif pen.style() == QtCore.Qt.NoPen:
+            style = ""
+        elif pen.style() == QtCore.Qt.DashLine:
+            element.set("stroke-dasharray", "25, 25")
+        elif pen.style() == QtCore.Qt.DotLine:
+            element.set("stroke-dasharray", "5, 25")
+        elif pen.style() == QtCore.Qt.DashDotLine:
+            element.set("stroke-dasharray", "5, 25, 25")
+        elif pen.style() == QtCore.Qt.DashDotDotLine:
+            element.set("stroke-dasharray", "25, 25, 5, 25, 5")
 
-        return shape_info
+        style += "fill:#{};".format(hex(self.brush().color().rgba())[4:])
+        element.set("style", style)
+        return element
 
-    def load(self, shape_info):
-        """
-        Loads a representation of this shape item.
-        (from a topology file).
+    def __json__(self):
+        return {
+            "x": int(self.pos().x()),
+            "y": int(self.pos().y()),
+            "z": int(0),
+            "svg": self.toSvg()
+        }
 
-        :param shape_info: representation of the shape item (dictionary)
-        """
-
-        # load mandatory properties
-        width = shape_info["width"]
-        height = shape_info["height"]
-        x = shape_info["x"]
-        y = shape_info["y"]
-        self.setRect(0, 0, width, height)
-        self.setPos(x, y)
-
-        # load optional properties
-        z = shape_info.get("z")
-        color = shape_info.get("color")
-        if not color and shape_info.get("fill_color"):
-            # compatibility with old 1.0 projects
-            color = shape_info.get("fill_color")
-        transparency = shape_info.get("transparency")
-        border_color = shape_info.get("border_color")
-        border_transparency = shape_info.get("border_transparency")
-        border_width = shape_info.get("border_width")
-        border_style = shape_info.get("border_style")
-        rotation = shape_info.get("rotation")
-
-        if color:
-            color = QtGui.QColor(color)
-        else:
-            color = QtGui.QColor(255, 255, 255)
-        if transparency is not None:
-            color.setAlpha(transparency)
-        self.setBrush(QtGui.QBrush(color))
-
-        pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-        if border_color:
-            border_color = QtGui.QColor(border_color)
-        else:
-            border_color = pen.color()
-        if border_transparency:
-            border_color.setAlpha(border_transparency)
-        pen.setColor(border_color)
-        if border_width is not None:
-            pen.setWidth(int(border_width))
-        if border_style is not None:
-            pen.setStyle(QtCore.Qt.PenStyle(border_style))
-        self.setPen(pen)
-
-        if rotation is not None:
-            self.setRotation(rotation)
-        if z is not None:
-            self.setZValue(z)

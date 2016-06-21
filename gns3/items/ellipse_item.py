@@ -19,6 +19,9 @@
 Graphical representation of an ellipse on the QGraphicsScene.
 """
 
+import math
+import xml.etree.ElementTree as ET
+
 from ..qt import QtCore, QtGui, QtWidgets
 from .shape_item import ShapeItem
 
@@ -29,25 +32,17 @@ class EllipseItem(QtWidgets.QGraphicsEllipseItem, ShapeItem):
     Class to draw an ellipse on the scene.
     """
 
-    def __init__(self, pos=None, width=200, height=200):
+    def __init__(self, pos=None, width=200, height=200, project=None):
 
-        super().__init__()
+        super().__init__(project=project)
         self.setRect(0, 0, width, height)
-        pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.DashLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+        pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
         self.setPen(pen)
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 255))  # default color is white and not transparent
         self.setBrush(brush)
         if pos:
             self.setPos(pos)
-
-    def delete(self):
-        """
-        Deletes this ellipse.
-        """
-
-        self.scene().removeItem(self)
-        from ..topology import Topology
-        Topology.instance().removeEllipse(self)
+        self.createShapeOnController()
 
     def paint(self, painter, option, widget=None):
         """
@@ -74,3 +69,21 @@ class EllipseItem(QtWidgets.QGraphicsEllipseItem, ShapeItem):
         ellipse_item.setZValue(self.zValue())
         ellipse_item.setRotation(self.rotation())
         return ellipse_item
+
+    def toSvg(self):
+        """
+        Return an SVG version of the shape
+        """
+        svg = ET.Element("svg")
+        svg.set("width", str(self.rect().width()))
+        svg.set("height", str(self.rect().height()))
+
+        ellipse = ET.SubElement(svg, "ellipse")
+        ellipse.set("cx", str(math.floor(self.rect().width() / 2)))
+        ellipse.set("rx", str(math.ceil(self.rect().width() / 2)))
+        ellipse.set("cy", str(math.floor(self.rect().height() / 2)))
+        ellipse.set("ry", str(math.ceil(self.rect().height() / 2)))
+
+        ellipse = self._styleSvg(ellipse)
+
+        return ET.tostring(svg, encoding="utf-8").decode("utf-8")

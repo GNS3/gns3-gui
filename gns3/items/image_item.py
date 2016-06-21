@@ -97,36 +97,4 @@ class ImageItem():
             self.setFlag(self.ItemIsSelectable, True)
             self.setFlag(self.ItemIsMovable, True)
 
-    def dump(self):
-        """
-        Returns a representation of this image item.
 
-        :returns: dictionary
-        """
-
-        image_info = {"path": self._image_path,
-                      "x": self.x(),
-                      "y": self.y()}
-
-        if self.zValue() != 0:
-            image_info["z"] = self.zValue()
-
-        return image_info
-
-    def load(self, image_info):
-        """
-        Loads an image representation
-        (from a topology file).
-
-        :param image_info: representation of the image item (dictionary)
-        """
-
-        # load mandatory properties
-        x = image_info["x"]
-        y = image_info["y"]
-        self.setPos(x, y)
-
-        # load optional properties
-        z = image_info.get("z")
-        if z is not None:
-            self.setZValue(z)

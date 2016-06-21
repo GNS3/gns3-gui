@@ -19,6 +19,8 @@
 Graphical representation of a rectangle on the QGraphicsScene.
 """
 
+import xml.etree.ElementTree as ET
+
 from ..qt import QtCore, QtGui, QtWidgets
 from .shape_item import ShapeItem
 
@@ -29,9 +31,10 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
     Class to draw a rectangle on the scene.
     """
 
-    def __init__(self, pos=None, width=200, height=100):
+    def __init__(self, pos=None, width=200, height=100, project=None):
 
-        super().__init__()
+        super().__init__(project=project)
+
         self.setRect(0, 0, width, height)
         pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
         self.setPen(pen)
@@ -39,15 +42,7 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
         self.setBrush(brush)
         if pos:
             self.setPos(pos)
-
-    def delete(self):
-        """
-        Deletes this rectangle.
-        """
-
-        self.scene().removeItem(self)
-        from ..topology import Topology
-        Topology.instance().removeRectangle(self)
+        self.createShapeOnController()
 
     def paint(self, painter, option, widget=None):
         """
@@ -74,3 +69,20 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
         rectangle_item.setZValue(self.zValue())
         rectangle_item.setRotation(self.rotation())
         return rectangle_item
+
+    def toSvg(self):
+        """
+        Return an SVG version of the shape
+        """
+        svg = ET.Element("svg")
+        svg.set("width", str(self.rect().width()))
+        svg.set("height", str(self.rect().height()))
+
+        rect = ET.SubElement(svg, "rect")
+        rect.set("width", str(self.rect().width()))
+        rect.set("height", str(self.rect().height()))
+
+        rect = self._styleSvg(rect)
+
+        return ET.tostring(svg, encoding="utf-8").decode("utf-8")
+
