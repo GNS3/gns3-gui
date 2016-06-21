@@ -1520,10 +1520,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._topology.addNode(node)
         return node_item
 
-    def createShapeItem(self, type, x, y, z, svg=None, shape_id=None):
+    def createShapeItem(self, type, x, y, z, rotation=0, svg=None, shape_id=None):
         if type == "ellipse":
-            item = EllipseItem(pos=QtCore.QPoint(x, y), project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
+            item = EllipseItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
         elif type == "rect":
-            item = RectangleItem(pos=QtCore.QPoint(x, y), project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
+            item = RectangleItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
         self.scene().addItem(item)
         self._topology.addShape(item)

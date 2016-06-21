@@ -45,7 +45,7 @@ class ShapeItem:
 
     show_layer = False
 
-    def __init__(self, project=None, pos=None, shape_id=None, svg=None, width=200, height=200, z=0, **kws):
+    def __init__(self, project=None, pos=None, shape_id=None, svg=None, width=200, height=200, z=0, rotation=0, **kws):
 
         self._id = shape_id
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable)
@@ -62,6 +62,8 @@ class ShapeItem:
             self.setPos(pos)
         if z:
             self.setZValue(z)
+        if rotation:
+            self.setRotation(rotation)
 
         if svg is None:
             self.setRect(0, 0, width, height)
@@ -109,6 +111,7 @@ class ShapeItem:
             return False
         self.setPos(QtCore.QPoint(result["x"], result["y"]))
         self.setZValue(result["z"])
+        self.setRotation(result["rotation"])
         self.fromSvg(result["svg"])
 
     def keyPressEvent(self, event):
@@ -122,7 +125,9 @@ class ShapeItem:
         modifiers = event.modifiers()
         if key in (QtCore.Qt.Key_P, QtCore.Qt.Key_Plus, QtCore.Qt.Key_Equal) and modifiers & QtCore.Qt.AltModifier \
                 or key == QtCore.Qt.Key_Plus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
-            if self.rotation() > -360.0:
+            if self.rotation() == 0:
+                self.setRotation(359)
+            else:
                 self.setRotation(self.rotation() - 1)
         elif key in (QtCore.Qt.Key_M, QtCore.Qt.Key_Minus) and modifiers & QtCore.Qt.AltModifier \
                 or key == QtCore.Qt.Key_Minus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
@@ -333,6 +338,7 @@ class ShapeItem:
             "x": int(self.pos().x()),
             "y": int(self.pos().y()),
             "z": int(self.zValue()),
+            "rotation": int(self.rotation()),
             "svg": self.toSvg()
         }
 

@@ -70,6 +70,7 @@ def test_create(project, controller):
             "x": 0,
             "y": 0,
             "z": 0,
-            "svg": rect.toSvg()
+            "svg": rect.toSvg(),
+            "rotation": int(rect.rotation())
         }
     )

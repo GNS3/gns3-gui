@@ -329,9 +329,9 @@ class Topology(QtCore.QObject):
 
     def createShape(self, shape_data):
         if "ellipse" in shape_data["svg"]:
-            self._main_window.uiGraphicsView.createShapeItem("ellipse", shape_data["x"], shape_data["y"], shape_data["z"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
+            self._main_window.uiGraphicsView.createShapeItem("ellipse", shape_data["x"], shape_data["y"], shape_data["z"], rotation=shape_data["rotation"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
         elif "rect" in shape_data["svg"]:
-            self._main_window.uiGraphicsView.createShapeItem("rect", shape_data["x"], shape_data["y"], shape_data["z"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
+            self._main_window.uiGraphicsView.createShapeItem("rect", shape_data["x"], shape_data["y"], shape_data["z"], rotation=shape_data["rotation"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
 
     @staticmethod
     def instance():
