@@ -215,6 +215,8 @@ class ShapeItem:
         self.scene().removeItem(self)
         from ..topology import Topology
         Topology.instance().removeShape(self)
+        if self._id:
+            self._project.delete("/shapes/" + self._id, None, body=self.__json__())
 
     def drawLayerInfo(self, painter):
         """
