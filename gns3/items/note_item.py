@@ -188,59 +188,6 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
             self.setFlag(self.ItemIsSelectable, True)
             self.setFlag(self.ItemIsMovable, True)
 
-    def dump(self):
-        """
-        Returns a representation of this note.
-
-        :returns: dictionary
-        """
-
-        note_info = {"text": self.toPlainText(),
-                     "x": self.x(),
-                     "y": self.y()}
-
-        note_info["font"] = self.font().toString()
-        note_info["color"] = self.defaultTextColor().name(QtGui.QColor.HexArgb)
-        if self.rotation() != 0:
-            note_info["rotation"] = self.rotation()
-        if self.zValue() != 2:
-            note_info["z"] = self.zValue()
-
-        return note_info
-
-    def load(self, note_info):
-        """
-        Loads a note representation
-        (from a topology file).
-
-        :param note_info: representation of the note (dictionary)
-        """
-
-        # load mandatory properties
-        text = note_info["text"]
-        x = note_info["x"]
-        y = note_info["y"]
-
-        self.setPlainText(text)
-        self.setPos(x, y)
-
-        # load optional properties
-        font = note_info.get("font")
-        color = note_info.get("color")
-        rotation = note_info.get("rotation")
-        z = note_info.get("z")
-
-        if font:
-            qt_font = QtGui.QFont()
-            if qt_font.fromString(font):
-                self.setFont(qt_font)
-        if color:
-            self.setDefaultTextColor(QtGui.QColor(color))
-        if rotation is not None:
-            self.setRotation(float(rotation))
-        if z is not None:
-            self.setZValue(z)
-
     def duplicate(self):
         """
         Duplicates this node item.
