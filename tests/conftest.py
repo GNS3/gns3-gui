@@ -42,9 +42,6 @@ def reset_modules():
     VirtualBoxVM.reset()
     IOUDevice.reset()
 
-    from gns3.servers import Servers
-    Servers._instance = None
-
 
 @pytest.fixture
 def project():
