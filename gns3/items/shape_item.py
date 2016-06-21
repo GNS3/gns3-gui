@@ -72,6 +72,9 @@ class ShapeItem:
         if self._id is None:
             self._project.post("/shapes", self._createShapeCallback, body=self.__json__())
 
+    def shape_id(self):
+        return self._id
+
     def _createShapeCallback(self, result, error=False, **kwargs):
         """
         Callback for create.
@@ -86,9 +89,24 @@ class ShapeItem:
             return False
         self._id = result["shape_id"]
 
-    def updateShapeOnController(self):
+    def updateShape(self):
         if self._id:
-            self._project.put("/shapes/" + self._id, None, body=self.__json__())
+            self._project.put("/shapes/" + self._id, self.updateShapeCallback, body=self.__json__())
+
+    def updateShapeCallback(self, result, error=False, **kwargs):
+        """
+        Callback for update.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        :returns: Boolean success or not
+        """
+
+        if error:
+            log.error("Error while setting up shape: {}".format(result["message"]))
+            return False
+        self.setPos(QtCore.QPoint(result["x"], result["y"]))
+        self.fromSvg(result["svg"])
 
     def keyPressEvent(self, event):
         """
@@ -280,7 +298,7 @@ class ShapeItem:
     def itemChange(self, change, value):
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
             if not value:
-                self.updateShapeOnController()
+                self.updateShape()
         return QtWidgets.QGraphicsItem.itemChange(self, change, value)
 
     def _styleSvg(self, element):

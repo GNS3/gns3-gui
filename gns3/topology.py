@@ -194,6 +194,18 @@ class Topology(QtCore.QObject):
         if shape in self._shapes:
             self._shapes.remove(shape)
 
+    def getShapeFromUuid(self, shape_id):
+        """
+        Lookups for a shape using its identifier.
+
+        :returns: Node instance or None
+        """
+
+        for shape in self._shapes:
+            if shape.shape_id() == shape_id:
+                return shape
+        return None
+
     def addImage(self, image):
         """
         Adds a new image to this topology.

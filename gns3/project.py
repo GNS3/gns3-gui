@@ -343,6 +343,10 @@ class Project(QtCore.QObject):
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
                 node.updateNodeCallback(result["event"])
+        elif result["action"] == "shape.updated":
+            shape = Topology.instance().getShapeFromUuid(result["event"]["shape_id"])
+            if shape is not None:
+                shape.updateShapeCallback(result["event"])
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":
