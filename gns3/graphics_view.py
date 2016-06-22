@@ -1586,6 +1586,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         super().drawBackground(painter, rect)
         if self._main_window.uiViewGridAction.isChecked():
             gridSize = 75;
+            painter.save()
+            painter.setPen(QtGui.QPen(QtGui.QColor(190, 190, 190)))
 
             left = int(rect.left()) - (int(rect.left()) % gridSize)
             top = int(rect.top()) - (int(rect.top()) % gridSize)
@@ -1598,4 +1600,5 @@ class GraphicsView(QtWidgets.QGraphicsView):
             while y < rect.bottom():
                 painter.drawLine(rect.left(), y, rect.right(), y)
                 y += gridSize
+            painter.restore()
 
