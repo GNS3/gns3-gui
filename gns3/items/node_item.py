@@ -377,7 +377,7 @@ class NodeItem():
         :param value: value of the change
         """
 
-        if change == QtWidgets.QGraphicsItem.ItemPositionHasChanged and self._main_window.uiSnapToGridAction.isChecked():
+        if change == QtWidgets.QGraphicsItem.ItemPositionHasChanged and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
             GRID_SIZE = 75
             mid_x = self.boundingRect().width() / 2
             tmp_x = (GRID_SIZE * round((self.x() + mid_x) / GRID_SIZE)) - mid_x
