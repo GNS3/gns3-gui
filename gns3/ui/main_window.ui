@@ -133,6 +133,7 @@ background-none;
     <addaction name="separator"/>
     <addaction name="uiShowLayersAction"/>
     <addaction name="uiSnapToGridAction"/>
+    <addaction name="uiViewGridAction"/>
     <addaction name="uiResetPortLabelsAction"/>
     <addaction name="uiShowPortNamesAction"/>
     <addaction name="separator"/>
@@ -952,7 +953,7 @@ background-none;
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Snap To Grid</string>
+    <string>Snap to grid</string>
    </property>
    <property name="statusTip">
     <string>Snap To Grid</string>
@@ -1213,11 +1214,6 @@ background-none;
     <string>GNS3 &amp;Academy</string>
    </property>
   </action>
-  <action name="uiLabInstructionsAction">
-   <property name="text">
-    <string>&amp;Lab instructions</string>
-   </property>
-  </action>
   <action name="uiDeleteProjectAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
@@ -1225,6 +1221,14 @@ background-none;
    </property>
    <property name="text">
     <string>Delete project</string>
+   </property>
+  </action>
+  <action name="uiViewGridAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>View grid</string>
    </property>
   </action>
  </widget>

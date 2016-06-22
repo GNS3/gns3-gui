@@ -60,6 +60,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiVNCConsolePreconfiguredCommandPushButton.clicked.connect(self._vncConsolePreconfiguredCommandSlot)
         self.uiDefaultLabelFontPushButton.clicked.connect(self._setDefaultLabelFontSlot)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
+        self.uiBrowseConfigurationPushButton.clicked.connect(self._browseConfigurationDirectorySlot)
         self._default_label_color = QtGui.QColor(QtCore.Qt.black)
         self.uiStyleComboBox.addItems(STYLES)
         self.uiImageDirectoriesAddPushButton.clicked.connect(self._imageDirectoriesAddPushButtonSlot)
@@ -208,6 +209,12 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         # QtWidgets.QApplication.quit()
         LocalConfig.instance().setConfigFilePath(configuration_file_path)
         self._preferences_dialog.reject()
+
+    def _browseConfigurationDirectorySlot(self):
+        """
+        Slot to open a file browser into the configuration directory
+        """
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl("file://" + LocalConfig.configDirectory()))
 
     def _exportConfigurationFileSlot(self):
         """

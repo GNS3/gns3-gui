@@ -99,7 +99,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # set the custom flags for this view
         self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
-        self.setCacheMode(QtWidgets.QGraphicsView.CacheBackground)
         self.setRenderHint(QtGui.QPainter.Antialiasing)
         self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
@@ -1527,3 +1526,23 @@ class GraphicsView(QtWidgets.QGraphicsView):
             item = RectangleItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
         self.scene().addItem(item)
         self._topology.addShape(item)
+
+    def drawBackground(self, painter, rect):
+        super().drawBackground(painter, rect)
+        if self._main_window.uiViewGridAction.isChecked():
+            gridSize = 75;
+            painter.save()
+            painter.setPen(QtGui.QPen(QtGui.QColor(190, 190, 190)))
+
+            left = int(rect.left()) - (int(rect.left()) % gridSize)
+            top = int(rect.top()) - (int(rect.top()) % gridSize)
+
+            x = left
+            while x < rect.right():
+                painter.drawLine(x, rect.top(), x, rect.bottom())
+                x += gridSize
+            y = top
+            while y < rect.bottom():
+                painter.drawLine(rect.left(), y, rect.right(), y)
+                y += gridSize
+            painter.restore()
