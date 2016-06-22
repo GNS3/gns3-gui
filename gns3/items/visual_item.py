@@ -129,7 +129,6 @@ class VisualItem:
         }
         svg = self.toSvg()
         hash_svg = binascii.crc32(svg.encode())
-        print(hash_svg)
         if hash_svg != self._hash_svg:
             data["svg"] = svg
             self._hash_svg = hash_svg

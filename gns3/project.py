@@ -343,6 +343,8 @@ class Project(QtCore.QObject):
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
                 node.updateNodeCallback(result["event"])
+        elif result["action"] == "shape.created":
+            Topology.instance().createShape(result["event"])
         elif result["action"] == "shape.updated":
             shape = Topology.instance().getShapeFromUuid(result["event"]["shape_id"])
             if shape is not None:

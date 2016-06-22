@@ -240,35 +240,36 @@ class ShapeItem(VisualItem):
         try:
             styles = svg[0].get("style")
         except IndexError:
-            return
+            styles = None
 
         pen = QtGui.QPen()
         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-        for style in styles.split(";"):
-            try:
-                key, value = style.split(":")
-            except ValueError:
-                continue
-            key = key.strip()
-            value = value.strip()
+        if styles:
+            for style in styles.split(";"):
+                try:
+                    key, value = style.split(":")
+                except ValueError:
+                    continue
+                key = key.strip()
+                value = value.strip()
 
-            if key == "stroke-width":
-                pen.setWidth(int(value))
-            elif key == "stroke":
-                pen.setColor(self._colorFromSvg(value))
-            elif key == "fill":
-                brush.setColor(self._colorFromSvg(value))
+                if key == "stroke-width":
+                    pen.setWidth(int(value))
+                elif key == "stroke":
+                    pen.setColor(self._colorFromSvg(value))
+                elif key == "fill":
+                    brush.setColor(self._colorFromSvg(value))
 
-        # Map SVG stroke style (border of the element to the Qt version)
-        if not "stroke" in styles:
-            pen.setStyle(QtCore.Qt.NoPen)
-        else:
-            pen.setStyle(QtCore.Qt.SolidLine)
-            stroke = svg[0].get("stroke-dasharray")
-            if stroke:
-                for (qt_stroke, svg_stroke) in self.QT_DASH_TO_SVG.items():
-                     if svg_stroke == stroke:
-                        pen.setStyle(qt_stroke)
+            # Map SVG stroke style (border of the element to the Qt version)
+            if not "stroke" in styles:
+                pen.setStyle(QtCore.Qt.NoPen)
+            else:
+                pen.setStyle(QtCore.Qt.SolidLine)
+                stroke = svg[0].get("stroke-dasharray")
+                if stroke:
+                    for (qt_stroke, svg_stroke) in self.QT_DASH_TO_SVG.items():
+                         if svg_stroke == stroke:
+                            pen.setStyle(qt_stroke)
 
         self.setPen(pen)
         self.setBrush(brush)
