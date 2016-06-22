@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>527</width>
-    <height>541</height>
+    <width>529</width>
+    <height>568</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -193,6 +193,13 @@
              <widget class="QPushButton" name="uiExportConfigurationFilePushButton">
               <property name="text">
                <string>&amp;Export</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="uiBrowseConfigurationPushButton">
+              <property name="text">
+               <string>Browse configuration directory</string>
               </property>
              </widget>
             </item>

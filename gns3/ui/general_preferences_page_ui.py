@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created: Thu May  5 18:39:32 2016
+# Created: Tue Jun 21 21:50:52 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(527, 541)
+        GeneralPreferencesPageWidget.resize(529, 568)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
@@ -117,6 +117,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiExportConfigurationFilePushButton = QtWidgets.QPushButton(self.uiConfigurationFileGroupBox)
         self.uiExportConfigurationFilePushButton.setObjectName("uiExportConfigurationFilePushButton")
         self.horizontalLayout.addWidget(self.uiExportConfigurationFilePushButton)
+        self.uiBrowseConfigurationPushButton = QtWidgets.QPushButton(self.uiConfigurationFileGroupBox)
+        self.uiBrowseConfigurationPushButton.setObjectName("uiBrowseConfigurationPushButton")
+        self.horizontalLayout.addWidget(self.uiBrowseConfigurationPushButton)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
@@ -374,6 +377,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiConfigurationFileGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Configuration file"))
         self.uiImportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Import"))
         self.uiExportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Export"))
+        self.uiBrowseConfigurationPushButton.setText(_translate("GeneralPreferencesPageWidget", "Browse configuration directory"))
         self.uiConfigurationFileLabel.setText(_translate("GeneralPreferencesPageWidget", "Unknown location"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiGeneralTab), _translate("GeneralPreferencesPageWidget", "General"))
         self.uiTelnetConsoleSettingsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Console settings"))
