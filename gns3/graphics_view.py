@@ -53,11 +53,11 @@ from .items.serial_link_item import SerialLinkItem
 # other items
 from .items.note_item import NoteItem
 from .items.shape_item import ShapeItem
+from .items.visual_item import VisualItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
 from .items.pixmap_image_item import PixmapImageItem
-from .items.svg_image_item import SvgImageItem
 
 log = logging.getLogger(__name__)
 
@@ -231,25 +231,17 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._adding_ellipse = False
             self.setCursor(QtCore.Qt.ArrowCursor)
 
-    def addImage(self, image, image_path):
+    def addImage(self,image_path):
         """
         Adds an image.
 
-        :param image: QPixmap or QSvgRenderer instance
         :param image_path: path to the image
         """
 
-        if isinstance(image, QtSvg.QSvgRenderer):
-            # use a SVG image item if this is a valid SVG file
-            image_item = SvgImageItem(image, image_path)
-        else:
-            image_item = PixmapImageItem(image, image_path)
-        # center the image on the scene
-        x = image_item.pos().x() - (image_item.boundingRect().width() / 2)
-        y = image_item.pos().y() - (image_item.boundingRect().height() / 2)
-        image_item.setPos(x, y)
+        image_item = ImageItem(image_path=image_path, project=self._main_window.projectManager().project())
+
         self.scene().addItem(image_item)
-        self._topology.addImage(image_item)
+        self._topology.addShape(image_item)
 
     def addLink(self, source_node, source_port, destination_node, destination_port, link_id=None):
         """
@@ -484,13 +476,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._adding_note = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_rectangle:
             pos = self.mapToScene(event.pos())
-            self.createShapeItem("rect", pos.x(), pos.y(), 0)
+            self.createVisualItem("rect", pos.x(), pos.y(), 0)
             self._main_window.uiDrawRectangleAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_rectangle = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_ellipse:
             pos = self.mapToScene(event.pos())
-            self.createShapeItem("ellipse", pos.x(), pos.y(), 0)
+            self.createVisualItem("ellipse", pos.x(), pos.y(), 0)
             self._main_window.uiDrawEllipseAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_ellipse = False
@@ -809,7 +801,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             reload_action.triggered.connect(self.reloadActionSlot)
             menu.addAction(reload_action)
 
-        if True in list(map(lambda item: isinstance(item, NoteItem) or isinstance(item, ShapeItem) or isinstance(item, ImageItem), items)):
+        if True in list(map(lambda item: isinstance(item, NoteItem) or isinstance(item, VisualItem), items)):
             duplicate_action = QtWidgets.QAction("Duplicate", menu)
             duplicate_action.setIcon(QtGui.QIcon(':/icons/new.svg'))
             duplicate_action.triggered.connect(self.duplicateActionSlot)
@@ -1519,11 +1511,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._topology.addNode(node)
         return node_item
 
-    def createShapeItem(self, type, x, y, z, rotation=0, svg=None, shape_id=None):
+    def createVisualItem(self, type, x, y, z, rotation=0, svg=None, shape_id=None):
         if type == "ellipse":
             item = EllipseItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
         elif type == "rect":
             item = RectangleItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
+        elif type == "image":
+            item = ImageItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
         self.scene().addItem(item)
         self._topology.addShape(item)
 

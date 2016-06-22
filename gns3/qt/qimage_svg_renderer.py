@@ -26,21 +26,33 @@ from . import QtGui
 class QImageSvgRenderer(QtSvg.QSvgRenderer):
     """
     Renderer pixmap and svg to SVG item
-    """
-    def __init__(self, path):
-        super().__init__()
-        super().load(path)
 
-        # If we can't render a SVG we load and base64 the image to create a SVG
-        if not self.isValid() and os.path.exists(path):
-            image = QtGui.QImage(path)
-            data = QtCore.QByteArray()
-            buf = QtCore.QBuffer(data)
-            image.save(buf, 'PNG')
-            xml = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<image width="{width}" height="{height}" xlink:href="data:image/png;base64,{data}"/>
-</svg>""".format(data=bytes(data.toBase64()).decode(),
-                width=image.rect().width(),
-                height=image.rect().height())
-            super().load(xml.encode())
+    :param path_or_data: Svg element of path to a SVG
+    """
+    def __init__(self, path_or_data):
+        super().__init__()
+        if not os.path.exists(path_or_data):
+            self._svg = path_or_data
+            path_or_data = path_or_data.encode("utf-8")
+            super().load(path_or_data)
+        else:
+            super().load(path_or_data)
+            # If we can't render a SVG we load and base64 the image to create a SVG
+            if not self.isValid():
+                image = QtGui.QImage(path_or_data)
+                data = QtCore.QByteArray()
+                buf = QtCore.QBuffer(data)
+                image.save(buf, 'PNG')
+                self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}">
+    <image width="{width}" height="{height}" xlink:href="data:image/png;base64,{data}"/>
+    </svg>""".format(data=bytes(data.toBase64()).decode(),
+                    width=image.rect().width(),
+                    height=image.rect().height())
+                super().load(self._svg.encode())
+
+    def svg(self):
+        """
+        :returns: SVG source code
+        """
+        return self._svg
 

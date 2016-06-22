@@ -19,6 +19,8 @@
 Contains this entire topology: nodes and links.
 """
 
+import xml.etree.ElementTree as ET
+
 from .qt import QtCore
 from .modules import MODULES
 from .modules.module_error import ModuleError
@@ -206,33 +208,6 @@ class Topology(QtCore.QObject):
                 return shape
         return None
 
-    def addImage(self, image):
-        """
-        Adds a new image to this topology.
-
-        :param image: ImageItem instance
-        """
-
-        self._images.append(image)
-
-    def removeImage(self, image):
-        """
-        Removes an image from this topology.
-
-        :param image: ImageItem instance
-        """
-
-        if image in self._images:
-            self._images.remove(image)
-
-        if not self._project:
-            return
-
-        # We delete by security only images in the project files directory
-        if not os.path.isabs(image.filePath()):
-            if image.filePath() not in [ image.filePath() for image in self._images ]:
-                os.remove(os.path.join(self._project.filesDir(), "project-files", image.filePath()))
-
     def nodes(self):
         """
         Returns all the nodes in this topology.
@@ -328,10 +303,28 @@ class Topology(QtCore.QObject):
         self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, link_id=link_data["link_id"])
 
     def createShape(self, shape_data):
-        if "ellipse" in shape_data["svg"]:
-            self._main_window.uiGraphicsView.createShapeItem("ellipse", shape_data["x"], shape_data["y"], shape_data["z"], rotation=shape_data["rotation"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
-        elif "rect" in shape_data["svg"]:
-            self._main_window.uiGraphicsView.createShapeItem("rect", shape_data["x"], shape_data["y"], shape_data["z"], rotation=shape_data["rotation"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
+        """
+        Take info from the API and create a shape
+
+        :param shape_data: Dict send by the API
+        """
+        svg = ET.fromstring(shape_data["svg"])
+        try:
+            #If SVG is more complex we consider it as an image
+            if len(svg[0]) != 0:
+                type = "image"
+            else:
+                tag = svg[0].tag
+                if tag == "ellipse":
+                    type = "ellipse"
+                elif tag == "rect":
+                    type = "rect"
+                else:
+                    type = "image"
+        except IndexError:
+            # If unknow we render it as a raw SVG image
+            type = "image"
+        self._main_window.uiGraphicsView.createVisualItem(type, shape_data["x"], shape_data["y"], shape_data["z"], rotation=shape_data["rotation"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
 
     @staticmethod
     def instance():

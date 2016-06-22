@@ -706,12 +706,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called when inserting an image on the scene.
         """
-
-        files_dir = self._project_manager.project().filesDir()
-        if files_dir is None:
-            QtWidgets.QMessageBox.critical(self, "Image", "Please create a node first")
-            return
-
         # supported image file formats
         file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.gif *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)"
 
@@ -721,34 +715,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._pictures_dir = os.path.dirname(path)
 
         image = QtGui.QPixmap(path)
-        if image.isNull():
-            QtWidgets.QMessageBox.critical(self, "Image", "Image file format not supported")
-            return
-
-        destination_dir = os.path.join(files_dir, "project-files", "images")
-        try:
-            os.makedirs(destination_dir, exist_ok=True)
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self, "Image", "Could not create the image directory: {}".format(e))
-            return
-
-        image_filename = os.path.basename(path)
-        destination_image_path = os.path.join(destination_dir, image_filename)
-        if not os.path.isfile(destination_image_path):
-            # copy the image to the project files directory
-            try:
-                shutil.copyfile(path, destination_image_path)
-            except OSError as e:
-                QtWidgets.QMessageBox.critical(self, "Image", "Could not copy the image to the project image directory: {}".format(e))
-                return
-
-        renderer = QtSvg.QSvgRenderer(path)
-        if renderer.isValid():
-            # use a SVG image item if this is a valid SVG file
-            image = renderer
-
-        # path to the image is relative to the project-files dir
-        self.uiGraphicsView.addImage(image, os.path.join("images", image_filename))
+        self.uiGraphicsView.addImage(path)
 
     def _drawRectangleActionSlot(self):
         """
