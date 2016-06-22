@@ -64,6 +64,9 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self._default_label_color = QtGui.QColor(QtCore.Qt.black)
         self.uiStyleComboBox.addItems(STYLES)
 
+        self.uiCloseConsoleWindowsOnDeleteCheckBox.hide()  # FIXME: not implemented
+        self.uiBringConsoleWindowToFrontCheckBox.hide()  # FIXME: not implemented
+
     def _projectsPathSlot(self):
         """
         Slot to select the projects directory path.
