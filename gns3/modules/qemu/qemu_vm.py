@@ -113,7 +113,7 @@ class QemuVM(Node):
             new_port = EthernetPort(port_name)
             new_port.setAdapterNumber(adapter_number)
             new_port.setPortNumber(0)
-            new_port.setHotPluggable(False)
+            #new_port.setHotPluggable(False)  # FIXME: should not hot pluggable if not using uBridge
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
