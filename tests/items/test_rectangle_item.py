@@ -33,7 +33,9 @@ def test_toSvg(project, controller):
     rect = svg[0]
     assert float(rect.get("width")) ==  400.0
     assert float(rect.get("height")) ==  280.0
-    assert rect.get("style") == "stroke-width:2;stroke:#000000;fill:#ffffff;"
+    assert rect.get("stroke-width") == "2"
+    assert rect.get("stroke") == "#000000"
+    assert rect.get("fill", "#ffffff")
 
     assert rect.get("stroke-dasharray") == "25, 25"
 

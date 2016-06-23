@@ -35,7 +35,9 @@ def test_toSvg(project, controller):
     assert float(ellipse.get("rx")) ==  200.0
     assert float(ellipse.get("cy")) ==  50.0
     assert float(ellipse.get("ry")) ==  50.0
-    assert ellipse.get("style") == "stroke-width:2;stroke:#000000;fill:#ffffff;"
+    assert ellipse.get("stroke-width") == "2"
+    assert ellipse.get("stroke") == "#000000"
+    assert ellipse.get("fill", "#ffffff")
 
     assert ellipse.get("stroke-dasharray") == "25, 25"
 

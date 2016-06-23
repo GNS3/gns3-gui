@@ -47,7 +47,7 @@ def test_fromSvg(project, controller):
     text2 = TextItem(project=project)
     text2.fromSvg(text.toSvg())
     assert text2.toPlainText() == "Hello"
-    assert hex(text2.defaultTextColor().rgba()) == "0xff000000"
+    assert hex(text2.defaultTextColor().rgba()) == "0xffff0000"
     assert text2.font().pointSize() == 55
     assert text2.font().family() == "Verdana"
 

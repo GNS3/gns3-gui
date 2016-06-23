@@ -188,19 +188,17 @@ class ShapeItem(DrawingItem):
         """
         style = ""
         pen = self.pen()
-        style += "stroke-width:{};".format(pen.width())
-        style += "stroke:#{};".format(hex(pen.color().rgba())[4:])
+        element.set("fill", "#{}".format(hex(self.brush().color().rgba())[4:]))
 
         dasharray = self.QT_DASH_TO_SVG[pen.style()]
-        if dasharray is None:
-            style = "" # No border to the element
+        if dasharray is None: # No border to the element
+            return element
         elif dasharray == "":
             pass # Solid line
         else:
             element.set("stroke-dasharray", dasharray)
-
-        style += "fill:#{};".format(hex(self.brush().color().rgba())[4:])
-        element.set("style", style)
+        element.set("stroke-width", str(pen.width()))
+        element.set("stroke", "#" + hex(pen.color().rgba())[4:])
         return element
 
     def fromSvg(self, svg):
