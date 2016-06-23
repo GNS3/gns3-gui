@@ -613,8 +613,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         NodeItem.show_layer = self.uiShowLayersAction.isChecked()
         ShapeItem.show_layer = self.uiShowLayersAction.isChecked()
-        ImageItem.show_layer = self.uiShowLayersAction.isChecked()
-        NoteItem.show_layer = self.uiShowLayersAction.isChecked()
         for item in self.uiGraphicsView.items():
             item.update()
 

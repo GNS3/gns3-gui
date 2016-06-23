@@ -64,6 +64,21 @@ def test_createDrawing_rect():
     topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("rect", 42, 12, 0, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
 
 
+def test_createDrawing_text():
+    topology = Topology()
+    shape_data = {
+        "x": 42,
+        "y": 12,
+        "z": 0,
+        "rotation": 0,
+        "drawing_id": str(uuid.uuid4()),
+        "svg": "<svg height=\"105.0\" width=\"158.0\"><text/></svg>",
+    }
+    topology._main_window = MagicMock()
+    topology.createDrawing(shape_data)
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("text", 42, 12, 0, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
+
+
 def test_createDrawing_svg():
     """
     If SVG is more complex we consider it as an image

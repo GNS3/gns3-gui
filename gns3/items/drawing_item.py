@@ -94,13 +94,13 @@ class DrawingItem:
         if "svg" in result:
             self.fromSvg(result["svg"])
 
-    def keyPressEvent(self, event):
+    def handleKeyPressEvent(self, event):
         """
         Handles all key press events
 
         :param event: QKeyEvent
+        :return: Boolean True the event has been captured
         """
-
         key = event.key()
         modifiers = event.modifiers()
         if key in (QtCore.Qt.Key_P, QtCore.Qt.Key_Plus, QtCore.Qt.Key_Equal) and modifiers & QtCore.Qt.AltModifier \
@@ -109,11 +109,22 @@ class DrawingItem:
                 self.setRotation(359)
             else:
                 self.setRotation(self.rotation() - 1)
+            return True
         elif key in (QtCore.Qt.Key_M, QtCore.Qt.Key_Minus) and modifiers & QtCore.Qt.AltModifier \
                 or key == QtCore.Qt.Key_Minus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
             if self.rotation() < 360.0:
                 self.setRotation(self.rotation() + 1)
-        else:
+                return True
+        return False
+
+    def keyPressEvent(self, event):
+        """
+        Handles all key press events
+
+        :param event: QKeyEvent
+        """
+
+        if not self.handleKeyPressEvent(event):
             QtWidgets.QGraphicsItem.keyPressEvent(self, event)
 
     def _colorFromSvg(self, value):

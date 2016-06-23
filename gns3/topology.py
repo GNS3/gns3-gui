@@ -319,6 +319,8 @@ class Topology(QtCore.QObject):
                     type = "ellipse"
                 elif tag == "rect":
                     type = "rect"
+                elif tag == "text":
+                    type = "text"
                 else:
                     type = "image"
         except IndexError:

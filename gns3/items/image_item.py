@@ -75,3 +75,4 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
         Return an SVG version of the shape
         """
         return self.renderer().svg()
+

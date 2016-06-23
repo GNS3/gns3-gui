@@ -65,3 +65,4 @@ class EllipseItem(QtWidgets.QGraphicsEllipseItem, ShapeItem):
         ellipse = self._styleSvg(ellipse)
 
         return ET.tostring(svg, encoding="utf-8").decode("utf-8")
+

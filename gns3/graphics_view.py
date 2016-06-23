@@ -52,6 +52,7 @@ from .items.serial_link_item import SerialLinkItem
 
 # other items
 from .items.note_item import NoteItem
+from .items.text_item import TextItem
 from .items.shape_item import ShapeItem
 from .items.drawing_item import DrawingItem
 from .items.rectangle_item import RectangleItem
@@ -462,13 +463,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         elif item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.LeftButton:
             self._userNodeLinking(event, item)
         elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
-            note = NoteItem()
-            note.setPos(self.mapToScene(event.pos()))
+            pos = self.mapToScene(event.pos())
+            note = self.createDrawingItem("text", pos.x(), pos.y(), 0)
             pos_x = note.pos().x()
             pos_y = note.pos().y() - (note.boundingRect().height() / 2)
             note.setPos(pos_x, pos_y)
-            self.scene().addItem(note)
-            self._topology.addNote(note)
             note.editText()
             self._main_window.uiAddNoteAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
@@ -541,7 +540,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if event.key() == QtCore.Qt.Key_Delete:
             # check if we are editing an NoteItem instance, then send the delete key event to it
             for item in self.scene().selectedItems():
-                if isinstance(item, NoteItem) and item.hasFocus():
+                if (isinstance(item, NoteItem) or isinstance(item, TextItem)) and item.hasFocus():
                     super().keyPressEvent(event)
                     return
             self.deleteActionSlot()
@@ -800,7 +799,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             reload_action.triggered.connect(self.reloadActionSlot)
             menu.addAction(reload_action)
 
-        if True in list(map(lambda item: isinstance(item, NoteItem) or isinstance(item, DrawingItem), items)):
+        if True in list(map(lambda item: isinstance(item, DrawingItem), items)):
             duplicate_action = QtWidgets.QAction("Duplicate", menu)
             duplicate_action.setIcon(QtGui.QIcon(':/icons/new.svg'))
             duplicate_action.triggered.connect(self.duplicateActionSlot)
@@ -808,7 +807,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if True in list(map(lambda item: isinstance(item, NoteItem), items)):
             text_edit_action = QtWidgets.QAction("Text edit", menu)
-            text_edit_action.setIcon(QtGui.QIcon(':/icons/show-hostname.svg'))  # TODO: change icon for text edit
+            text_edit_action.setIcon(QtGui.QIcon(':/icons/show-hostname.svg'))
+            text_edit_action.triggered.connect(self.textEditActionSlot)
+            menu.addAction(text_edit_action)
+
+        if True in list(map(lambda item: isinstance(item, TextItem), items)):
+            text_edit_action = QtWidgets.QAction("Text edit", menu)
+            text_edit_action.setIcon(QtGui.QIcon(':/icons/edit.svg'))
             text_edit_action.triggered.connect(self.textEditActionSlot)
             menu.addAction(text_edit_action)
 
@@ -1301,12 +1306,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if isinstance(item, NoteItem):
-                note_item = item.duplicate()
-                self.scene().addItem(note_item)
-                self._topology.addNote(note_item)
-            elif isinstance(item, DrawingItem):
-                type = "ellipse"
+            if isinstance(item, DrawingItem):
+                if isinstance(item, EllipseItem):
+                    type = "ellipse"
+                elif isinstance(item, TextItem):
+                    type = "text"
+                elif isinstance(item, RectangleItem):
+                    type = "rect"
+                else:
+                    type = "image"
                 self.createDrawingItem(type, item.pos().x() + 20,  item.pos().x() + 20, item.zValue(), rotation=item.rotation(), svg=item.toSvg())
 
     def styleActionSlot(self):
@@ -1332,7 +1340,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NoteItem):
+            if isinstance(item, NoteItem) or isinstance(item, TextItem):
                 items.append(item)
         if items:
             text_edit_dialog = TextEditorDialog(self._main_window, items)
@@ -1508,8 +1516,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
             item = RectangleItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
             item = ImageItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
+        elif type == "text":
+            item = TextItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
         self.scene().addItem(item)
         self._topology.addDrawing(item)
+        return item
 
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)
