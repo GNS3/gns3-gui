@@ -30,10 +30,11 @@ class DrawingItem:
 
     def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, rotation=0, **kws):
         self._id = drawing_id
-        self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable | QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
 
         from ..main_window import MainWindow
         self._graphics_view = MainWindow.instance().uiGraphicsView
+        self._main_window = MainWindow.instance()
 
         self._project = project
 
@@ -163,6 +164,15 @@ class DrawingItem:
             self._project.delete("/drawings/" + self._id, None, body=self.__json__())
 
     def itemChange(self, change, value):
+        if change == QtWidgets.QGraphicsItem.ItemPositionHasChanged and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
+            GRID_SIZE = 75
+            mid_x = self.boundingRect().width() / 2
+            tmp_x = (GRID_SIZE * round((self.x() + mid_x) / GRID_SIZE)) - mid_x
+            mid_y = self.boundingRect().height() / 2
+            tmp_y = (GRID_SIZE * round((self.y() + mid_y) / GRID_SIZE)) - mid_y
+            if tmp_x != self.x() and tmp_y != self.y():
+                self.setPos(tmp_x, tmp_y)
+
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
             if not value:
                 self.updateDrawing()
