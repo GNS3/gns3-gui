@@ -54,6 +54,18 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
         if self._id is None:
             self.create()
 
+    def paint(self, painter, option, widget=None):
+        """
+        Paints the contents of an item in local coordinates.
+
+        :param painter: QPainter instance
+        :param option: QStyleOptionGraphicsItem instance
+        :param widget: QWidget instance
+        """
+
+        super().paint(painter, option, widget)
+        self.drawLayerInfo(painter)
+
     def fromSvg(self, svg):
         renderer = QImageSvgRenderer(svg)
         self.setSharedRenderer(renderer)

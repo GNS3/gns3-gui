@@ -35,6 +35,7 @@ class EllipseItem(QtWidgets.QGraphicsEllipseItem, ShapeItem):
     def __init__(self, width=200, height=200, **kws):
         super().__init__(width=width, height=height, **kws)
 
+
     def paint(self, painter, option, widget=None):
         """
         Paints the contents of an item in local coordinates.

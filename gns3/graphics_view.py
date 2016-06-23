@@ -57,7 +57,6 @@ from .items.drawing_item import DrawingItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
-from .items.pixmap_image_item import PixmapImageItem
 
 log = logging.getLogger(__name__)
 
@@ -241,7 +240,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         image_item = ImageItem(image_path=image_path, project=self._main_window.projectManager().project())
 
         self.scene().addItem(image_item)
-        self._topology.addShape(image_item)
+        self._topology.addDrawing(image_item)
 
     def addLink(self, source_node, source_port, destination_node, destination_port, link_id=None):
         """

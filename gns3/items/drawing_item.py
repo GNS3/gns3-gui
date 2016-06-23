@@ -24,6 +24,8 @@ log = logging.getLogger(__name__)
 
 class DrawingItem:
 
+    show_layer = False
+
     """
     Base class for non emulation item
     """
@@ -178,3 +180,25 @@ class DrawingItem:
                 self.updateDrawing()
         return QtWidgets.QGraphicsItem.itemChange(self, change, value)
 
+    def drawLayerInfo(self, painter):
+        """
+        Draws the layer position.
+
+        :param painter: QPainter instance
+        """
+
+        if self.show_layer is False:
+            return
+
+        brect = self.boundingRect()
+        # don't draw anything if the object is too small
+        if brect.width() < 20 or brect.height() < 20:
+            return
+
+        center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
+        painter.setBrush(QtCore.Qt.red)
+        painter.setPen(QtCore.Qt.red)
+        painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
+        painter.setPen(QtCore.Qt.black)
+        zval = str(int(self.zValue()))
+        painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)

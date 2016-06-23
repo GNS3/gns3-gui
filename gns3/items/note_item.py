@@ -215,3 +215,23 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
             if value == 0:
                 self.item_unselected_signal.emit()
         return super().itemChange(change, value)
+
+    def dump(self):
+        """
+        Returns a representation of this note.
+
+        :returns: dictionary
+        """
+
+        note_info = {"text": self.toPlainText(),
+                     "x": self.x(),
+                     "y": self.y()}
+
+        note_info["font"] = self.font().toString()
+        note_info["color"] = self.defaultTextColor().name(QtGui.QColor.HexArgb)
+        if self.rotation() != 0:
+            note_info["rotation"] = self.rotation()
+        if self.zValue() != 2:
+            note_info["z"] = self.zValue()
+
+        return note_info

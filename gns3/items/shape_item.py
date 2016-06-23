@@ -44,8 +44,6 @@ class ShapeItem(DrawingItem):
     """
     Base class to draw shapes on the scene.
     """
-    show_layer = False
-
 
     def __init__(self, width=200, height=200, svg=None, **kws):
 
@@ -182,29 +180,6 @@ class ShapeItem(DrawingItem):
         # objects on the background layer don't need cursors
         if self.zValue() >= 0:
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
-
-    def drawLayerInfo(self, painter):
-        """
-        Draws the layer position.
-
-        :param painter: QPainter instance
-        """
-
-        if self.show_layer is False:
-            return
-
-        brect = self.boundingRect()
-        # don't draw anything if the object is too small
-        if brect.width() < 20 or brect.height() < 20:
-            return
-
-        center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
-        painter.setBrush(QtCore.Qt.red)
-        painter.setPen(QtCore.Qt.red)
-        painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
-        painter.setPen(QtCore.Qt.black)
-        zval = str(int(self.zValue()))
-        painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
 
     def _styleSvg(self, element):
         """
