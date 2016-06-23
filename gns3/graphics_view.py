@@ -53,7 +53,7 @@ from .items.serial_link_item import SerialLinkItem
 # other items
 from .items.note_item import NoteItem
 from .items.shape_item import ShapeItem
-from .items.visual_item import VisualItem
+from .items.drawing_item import DrawingItem
 from .items.rectangle_item import RectangleItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
@@ -476,13 +476,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._adding_note = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_rectangle:
             pos = self.mapToScene(event.pos())
-            self.createVisualItem("rect", pos.x(), pos.y(), 0)
+            self.createDrawingItem("rect", pos.x(), pos.y(), 0)
             self._main_window.uiDrawRectangleAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_rectangle = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_ellipse:
             pos = self.mapToScene(event.pos())
-            self.createVisualItem("ellipse", pos.x(), pos.y(), 0)
+            self.createDrawingItem("ellipse", pos.x(), pos.y(), 0)
             self._main_window.uiDrawEllipseAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_ellipse = False
@@ -801,7 +801,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             reload_action.triggered.connect(self.reloadActionSlot)
             menu.addAction(reload_action)
 
-        if True in list(map(lambda item: isinstance(item, NoteItem) or isinstance(item, VisualItem), items)):
+        if True in list(map(lambda item: isinstance(item, NoteItem) or isinstance(item, DrawingItem), items)):
             duplicate_action = QtWidgets.QAction("Duplicate", menu)
             duplicate_action.setIcon(QtGui.QIcon(':/icons/new.svg'))
             duplicate_action.triggered.connect(self.duplicateActionSlot)
@@ -1511,7 +1511,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._topology.addNode(node)
         return node_item
 
-    def createVisualItem(self, type, x, y, z, rotation=0, svg=None, shape_id=None):
+    def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, shape_id=None):
         if type == "ellipse":
             item = EllipseItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
         elif type == "rect":

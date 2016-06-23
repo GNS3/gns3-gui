@@ -22,14 +22,14 @@ import binascii
 log = logging.getLogger(__name__)
 
 
-class VisualItem:
+class DrawingItem:
 
     """
     Base class for non emulation item
     """
 
-    def __init__(self, project=None, pos=None, shape_id=None, svg=None, z=0, rotation=0, **kws):
-        self._id = shape_id
+    def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, rotation=0, **kws):
+        self._id = drawing_id
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable)
 
         from ..main_window import MainWindow
@@ -49,13 +49,13 @@ class VisualItem:
             self.setRotation(rotation)
 
 
-    def shape_id(self):
+    def drawing_id(self):
         return self._id
 
     def create(self):
-        self._project.post("/shapes", self._createShapeCallback, body=self.__json__())
+        self._project.post("/drawings", self._createDrawingCallback, body=self.__json__())
 
-    def _createShapeCallback(self, result, error=False, **kwargs):
+    def _createDrawingCallback(self, result, error=False, **kwargs):
         """
         Callback for create.
 
@@ -65,15 +65,15 @@ class VisualItem:
         """
 
         if error:
-            log.error("Error while setting up shape: {}".format(result["message"]))
+            log.error("Error while setting up drawing: {}".format(result["message"]))
             return False
-        self._id = result["shape_id"]
+        self._id = result["drawing_id"]
 
-    def updateShape(self):
+    def updateDrawing(self):
         if self._id:
-            self._project.put("/shapes/" + self._id, self.updateShapeCallback, body=self.__json__())
+            self._project.put("/drawings/" + self._id, self.updateDrawingCallback, body=self.__json__())
 
-    def updateShapeCallback(self, result, error=False, **kwargs):
+    def updateDrawingCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 
@@ -83,7 +83,7 @@ class VisualItem:
         """
 
         if error:
-            log.error("Error while setting up shape: {}".format(result["message"]))
+            log.error("Error while setting up drawing: {}".format(result["message"]))
             return False
         self.setPos(QtCore.QPoint(result["x"], result["y"]))
         self.setZValue(result["z"])
@@ -151,20 +151,20 @@ class VisualItem:
 
     def delete(self, skip_controller=False):
         """
-        Deletes this shape.
+        Deletes this drawing.
 
-        :param skip_controller: Do not replicate change on the controller (usefull when it's already deleted on controller
+        :param skip_controller: Do not replicate change on the controller (usefull when it's already deleted on controller)
         """
 
         self.scene().removeItem(self)
         from ..topology import Topology
-        Topology.instance().removeShape(self)
+        Topology.instance().removeDrawing(self)
         if self._id and not skip_controller:
-            self._project.delete("/shapes/" + self._id, None, body=self.__json__())
+            self._project.delete("/drawings/" + self._id, None, body=self.__json__())
 
     def itemChange(self, change, value):
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
             if not value:
-                self.updateShape()
+                self.updateDrawing()
         return QtWidgets.QGraphicsItem.itemChange(self, change, value)
 

@@ -21,14 +21,14 @@ Base class for shape items (Rectangle, ellipse etc.).
 
 import xml.etree.ElementTree as ET
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg
-from .visual_item import VisualItem
+from .drawing_item import DrawingItem
 
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class ShapeItem(VisualItem):
+class ShapeItem(DrawingItem):
 
     # Map QT stroke to SVG style
     QT_DASH_TO_SVG = {

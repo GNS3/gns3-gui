@@ -324,7 +324,7 @@ class Topology(QtCore.QObject):
         except IndexError:
             # If unknow we render it as a raw SVG image
             type = "image"
-        self._main_window.uiGraphicsView.createVisualItem(type, shape_data["x"], shape_data["y"], shape_data["z"], rotation=shape_data["rotation"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
+        self._main_window.uiGraphicsView.createDrawingItem(type, shape_data["x"], shape_data["y"], shape_data["z"], rotation=shape_data["rotation"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
 
     @staticmethod
     def instance():

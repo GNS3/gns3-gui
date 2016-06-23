@@ -64,8 +64,8 @@ def test_create(project, controller):
     rect = RectangleItem(width=400, height=280, project=project)
     controller._http_client.createHTTPQuery.assert_called_with(
         "POST",
-        "/projects/" + project.id() + "/shapes",
-        rect._createShapeCallback,
+        "/projects/" + project.id() + "/drawings",
+        rect._createDrawingCallback,
         body={
             "x": 0,
             "y": 0,

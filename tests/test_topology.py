@@ -46,7 +46,7 @@ def test_createShape_ellipse():
     }
     topology._main_window = MagicMock()
     topology.createShape(shape_data)
-    topology._main_window.uiGraphicsView.createVisualItem.assert_called_with("ellipse", 42, 12, 0, rotation=0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("ellipse", 42, 12, 0, rotation=0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
 
 
 def test_createShape_rect():
@@ -61,7 +61,7 @@ def test_createShape_rect():
     }
     topology._main_window = MagicMock()
     topology.createShape(shape_data)
-    topology._main_window.uiGraphicsView.createVisualItem.assert_called_with("rect", 42, 12, 0, rotation=0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("rect", 42, 12, 0, rotation=0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
 
 
 def test_createShape_svg():
@@ -79,5 +79,5 @@ def test_createShape_svg():
     }
     topology._main_window = MagicMock()
     topology.createShape(shape_data)
-    topology._main_window.uiGraphicsView.createVisualItem.assert_called_with("image", 42, 12, 0, rotation=0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("image", 42, 12, 0, rotation=0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
 

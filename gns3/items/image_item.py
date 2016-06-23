@@ -23,10 +23,10 @@ import xml.etree.ElementTree as ET
 
 from ..qt import QtWidgets, QtCore, QtSvg
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
-from .visual_item import VisualItem
+from .drawing_item import DrawingItem
 
 
-class ImageItem(QtSvg.QGraphicsSvgItem, VisualItem):
+class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
 
     """
     Class to insert an image on the scene.
