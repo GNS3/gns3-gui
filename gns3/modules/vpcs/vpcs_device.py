@@ -59,6 +59,7 @@ class VPCSDevice(Node):
         port.setShortName(short_name)
         port.setAdapterNumber(0)
         port.setPortNumber(0)
+        port.setHotPluggable(False)
         self._ports.append(port)
         log.debug("port {} has been added".format(port_name))
 

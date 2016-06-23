@@ -1514,7 +1514,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)
-        if self._main_window.uiViewGridAction.isChecked():
+        if self._main_window.uiShowGridAction.isChecked():
             gridSize = 75;
             painter.save()
             painter.setPen(QtGui.QPen(QtGui.QColor(190, 190, 190)))

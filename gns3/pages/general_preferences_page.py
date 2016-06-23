@@ -85,6 +85,9 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         if item:
             self.uiImageDirectoriesListWidget.takeItem(self.uiImageDirectoriesListWidget.currentRow())
 
+        self.uiCloseConsoleWindowsOnDeleteCheckBox.hide()  # FIXME: not implemented
+        self.uiBringConsoleWindowToFrontCheckBox.hide()  # FIXME: not implemented
+
     def _projectsPathSlot(self):
         """
         Slot to select the projects directory path.
