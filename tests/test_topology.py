@@ -41,12 +41,12 @@ def test_createShape_ellipse():
         "y": 12,
         "z": 0,
         "rotation": 0,
-        "shape_id": str(uuid.uuid4()),
+        "drawing_id": str(uuid.uuid4()),
         "svg": "<svg height=\"105.0\" width=\"158.0\"><ellipse cx=\"79\" cy=\"52\" rx=\"79\" ry=\"53\" style=\"stroke-width:2;stroke:#000000;fill:#ffffff;\" /></svg>",
     }
     topology._main_window = MagicMock()
     topology.createShape(shape_data)
-    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("ellipse", 42, 12, 0, rotation=0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("ellipse", 42, 12, 0, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
 
 
 def test_createShape_rect():
@@ -56,12 +56,12 @@ def test_createShape_rect():
         "y": 12,
         "z": 0,
         "rotation": 0,
-        "shape_id": str(uuid.uuid4()),
+        "drawing_id": str(uuid.uuid4()),
         "svg": "<svg height=\"105.0\" width=\"158.0\"><rect/></svg>",
     }
     topology._main_window = MagicMock()
     topology.createShape(shape_data)
-    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("rect", 42, 12, 0, rotation=0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("rect", 42, 12, 0, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
 
 
 def test_createShape_svg():
@@ -74,10 +74,10 @@ def test_createShape_svg():
         "y": 12,
         "z": 0,
         "rotation": 0,
-        "shape_id": str(uuid.uuid4()),
+        "drawing_id": str(uuid.uuid4()),
         "svg": "<svg height=\"105.0\" width=\"158.0\"><rect><line/></rect></svg>",
     }
     topology._main_window = MagicMock()
     topology.createShape(shape_data)
-    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("image", 42, 12, 0, rotation=0, svg=shape_data["svg"], shape_id=shape_data["shape_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("image", 42, 12, 0, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
 

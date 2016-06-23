@@ -47,7 +47,7 @@ class Topology(QtCore.QObject):
         self._nodes = []
         self._links = []
         self._notes = []
-        self._shapes = []
+        self._drawings = []
         self._images = []
         self._project = None
         self._main_window = None
@@ -177,35 +177,35 @@ class Topology(QtCore.QObject):
         if note in self._notes:
             self._notes.remove(note)
 
-    def addShape(self, shape):
+    def addDrawing(self, drawing):
         """
-        Adds a new shape to this topology.
+        Adds a new drawing to this topology.
 
-        :param shape: ShapeItem instance
+        :param drawing: DrawingItem instance
         """
 
-        self._shapes.append(shape)
+        self._drawings.append(drawing)
 
-    def removeShape(self, shape):
+    def removeDrawing(self, drawing):
         """
         Removes a rectangle from this topology.
 
         :param rectangle: RectangleItem instance
         """
 
-        if shape in self._shapes:
-            self._shapes.remove(shape)
+        if drawing in self._drawings:
+            self._drawings.remove(drawing)
 
-    def getShapeFromUuid(self, shape_id):
+    def getDrawingFromUuid(self, drawing_id):
         """
-        Lookups for a shape using its identifier.
+        Lookups for a drawing using its identifier.
 
         :returns: Node instance or None
         """
 
-        for shape in self._shapes:
-            if shape.shape_id() == shape_id:
-                return shape
+        for drawing in self._drawings:
+            if drawing.drawing_id() == drawing_id:
+                return drawing
         return None
 
     def nodes(self):
@@ -229,12 +229,12 @@ class Topology(QtCore.QObject):
 
         return self._notes
 
-    def shapes(self):
+    def drawings(self):
         """
-        Returns all the shapes in this topology.
+        Returns all the drawings in this topology.
         """
 
-        return self._shapes
+        return self._drawings
 
     def images(self):
         """
@@ -251,7 +251,7 @@ class Topology(QtCore.QObject):
         self._links.clear()
         self._nodes.clear()
         self._notes.clear()
-        self._shapes.clear()
+        self._drawings.clear()
         self._images.clear()
 
     def __str__(self):
@@ -302,13 +302,13 @@ class Topology(QtCore.QObject):
                     break
         self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, link_id=link_data["link_id"])
 
-    def createShape(self, shape_data):
+    def createDrawing(self, drawing_data):
         """
-        Take info from the API and create a shape
+        Take info from the API and create a drawing
 
-        :param shape_data: Dict send by the API
+        :param drawing_data: Dict send by the API
         """
-        svg = ET.fromstring(shape_data["svg"])
+        svg = ET.fromstring(drawing_data["svg"])
         try:
             #If SVG is more complex we consider it as an image
             if len(svg[0]) != 0:
@@ -324,7 +324,7 @@ class Topology(QtCore.QObject):
         except IndexError:
             # If unknow we render it as a raw SVG image
             type = "image"
-        self._main_window.uiGraphicsView.createDrawingItem(type, shape_data["x"], shape_data["y"], shape_data["z"], rotation=shape_data["rotation"], shape_id=shape_data["shape_id"], svg=shape_data["svg"])
+        self._main_window.uiGraphicsView.createDrawingItem(type, drawing_data["x"], drawing_data["y"], drawing_data["z"], rotation=drawing_data["rotation"], drawing_id=drawing_data["drawing_id"], svg=drawing_data["svg"])
 
     @staticmethod
     def instance():

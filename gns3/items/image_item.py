@@ -63,14 +63,3 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
         Return an SVG version of the shape
         """
         return self.renderer().svg()
-
-    def duplicate(self):
-        """
-        Duplicates this image item.
-
-        :return: SvgImageItem instance
-        """
-
-        image_item = ImageItem(self.renderer(), self._image_path, pos=QtCore.QPointF(self.x() + 20, self.y() + 20))
-        image_item.setZValue(self.zValue())
-        return image_item

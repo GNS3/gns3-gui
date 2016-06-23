@@ -273,7 +273,7 @@ class Project(QtCore.QObject):
 
     def _listNodesCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while listing project: {}".format(params["message"]))
+            log.error("Error while listing project: {}".format(result["message"]))
             return
         topo = Topology.instance()
         for node in result:
@@ -282,20 +282,20 @@ class Project(QtCore.QObject):
 
     def _listLinksCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while listing links: {}".format(params["message"]))
+            log.error("Error while listing links: {}".format(result["message"]))
             return
         topo = Topology.instance()
         for link in result:
             topo.createLink(link)
-        self.get("/shapes", self._listShapesCallback)
+        self.get("/drawings", self._listDrawingsCallback)
 
-    def _listShapesCallback(self, result, error=False, **kwargs):
+    def _listDrawingsCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while listing shapes: {}".format(params["message"]))
+            log.error("Error while listing drawings: {}".format(result["message"]))
             return
         topo = Topology.instance()
-        for shape in result:
-            topo.createShape(shape)
+        for drawing in result:
+            topo.createDrawing(drawing)
 
     def close(self, local_server_shutdown=False):
         """Close project"""
@@ -343,16 +343,18 @@ class Project(QtCore.QObject):
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
                 node.updateNodeCallback(result["event"])
-        elif result["action"] == "shape.created":
-            Topology.instance().createShape(result["event"])
-        elif result["action"] == "shape.updated":
-            shape = Topology.instance().getShapeFromUuid(result["event"]["shape_id"])
-            if shape is not None:
-                shape.updateShapeCallback(result["event"])
-        elif result["action"] == "shape.deleted":
-            shape = Topology.instance().getShapeFromUuid(result["event"]["shape_id"])
-            if shape is not None:
-                shape.delete(skip_controller=True)
+        elif result["action"] == "drawing.created":
+            drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
+            if drawing is None:
+                Topology.instance().createDrawing(result["event"])
+        elif result["action"] == "drawing.updated":
+            drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
+            if drawing is not None:
+                drawing.updateDrawingCallback(result["event"])
+        elif result["action"] == "drawing.deleted":
+            drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
+            if drawing is not None:
+                drawing.delete(skip_controller=True)
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":

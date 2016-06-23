@@ -1306,18 +1306,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 note_item = item.duplicate()
                 self.scene().addItem(note_item)
                 self._topology.addNote(note_item)
-            elif isinstance(item, RectangleItem):
-                rectangle_item = item.duplicate()
-                self.scene().addItem(rectangle_item)
-                self._topology.addRectangle(rectangle_item)
-            elif isinstance(item, EllipseItem):
-                ellipse_item = item.duplicate()
-                self.scene().addItem(ellipse_item)
-                self._topology.addEllipse(ellipse_item)
-            elif isinstance(item, ImageItem):
-                image_item = item.duplicate()
-                self.scene().addItem(image_item)
-                self._topology.addImage(image_item)
+            elif isinstance(item, DrawingItem):
+                type = "ellipse"
+                self.createDrawingItem(type, item.pos().x() + 20,  item.pos().x() + 20, item.zValue(), rotation=item.rotation(), svg=item.toSvg())
 
     def styleActionSlot(self):
         """
@@ -1511,15 +1502,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._topology.addNode(node)
         return node_item
 
-    def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, shape_id=None):
+    def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, drawing_id=None):
         if type == "ellipse":
-            item = EllipseItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
+            item = EllipseItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
         elif type == "rect":
-            item = RectangleItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
+            item = RectangleItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
-            item = ImageItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), shape_id=shape_id, svg=svg)
+            item = ImageItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
         self.scene().addItem(item)
-        self._topology.addShape(item)
+        self._topology.addDrawing(item)
 
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)

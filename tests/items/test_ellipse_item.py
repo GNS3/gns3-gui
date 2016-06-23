@@ -40,3 +40,9 @@ def test_toSvg(project, controller):
     assert ellipse.get("stroke-dasharray") == "25, 25"
 
 
+def test_fromSvg(project, controller):
+    ellipse = EllipseItem(project=project)
+    ellipse.fromSvg("<svg height=\"150\" width=\"250\"><ellipse height=\"150\" style=\"stroke-width:5;stroke:#0000ff;fill:#ff00ff;\" width=\"150\" stroke-dasharray=\"5, 25, 25\" /></svg>")
+    assert ellipse.rect().width() == 250
+    assert ellipse.rect().height() == 150
+    assert ellipse.pen().width() == 5

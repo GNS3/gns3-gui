@@ -47,20 +47,6 @@ class EllipseItem(QtWidgets.QGraphicsEllipseItem, ShapeItem):
         super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
 
-    def duplicate(self):
-        """
-        Duplicates this ellipse item.
-
-        :return: EllipseItem instance
-        """
-
-        ellipse_item = EllipseItem(QtCore.QPointF(self.x() + 20, self.y() + 20), self.rect().width(), self.rect().height())
-        ellipse_item.setPen(self.pen())
-        ellipse_item.setBrush(self.brush())
-        ellipse_item.setZValue(self.zValue())
-        ellipse_item.setRotation(self.rotation())
-        return ellipse_item
-
     def toSvg(self):
         """
         Return an SVG version of the shape

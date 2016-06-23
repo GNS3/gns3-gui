@@ -46,20 +46,6 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
         super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
 
-    def duplicate(self):
-        """
-        Duplicates this rectangle item.
-
-        :return: RectangleItem instance
-        """
-
-        rectangle_item = RectangleItem(QtCore.QPointF(self.x() + 20, self.y() + 20), self.rect().width(), self.rect().height())
-        rectangle_item.setPen(self.pen())
-        rectangle_item.setBrush(self.brush())
-        rectangle_item.setZValue(self.zValue())
-        rectangle_item.setRotation(self.rotation())
-        return rectangle_item
-
     def toSvg(self):
         """
         Return an SVG version of the shape
