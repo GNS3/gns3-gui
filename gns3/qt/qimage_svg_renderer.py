@@ -31,7 +31,7 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
     """
     def __init__(self, path_or_data):
         super().__init__()
-        if not os.path.exists(path_or_data):
+        if not os.path.exists(path_or_data) and not path_or_data.startswith(":"):
             self._svg = path_or_data
             path_or_data = path_or_data.encode("utf-8")
             super().load(path_or_data)
