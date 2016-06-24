@@ -20,11 +20,9 @@ import os
 import psutil
 
 from gns3.qt import QtCore, QtWidgets, QtGui
-from ..gns3_vm import GNS3VM
 from ..dialogs.preferences_dialog import PreferencesDialog
 from ..ui.setup_wizard_ui import Ui_SetupWizard
 from ..utils.progress_dialog import ProgressDialog
-from ..utils.wait_for_vm_worker import WaitForVMWorker
 from ..utils.wait_for_connection_worker import WaitForConnectionWorker
 from ..version import __version__
 
@@ -142,6 +140,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Validates the settings.
         """
 
+        # FIXME
         gns3_vm = GNS3VM.instance()
         servers = Servers.instance()
         if self.currentPage() == self.uiVMWizardPage:

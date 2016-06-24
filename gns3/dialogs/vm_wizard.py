@@ -18,8 +18,8 @@
 import sys
 
 from gns3.qt import QtWidgets
-from gns3.compute_manager import ComputeManager
 from gns3.gns3_vm import GNS3VM
+from gns3.compute_manager import ComputeManager
 
 
 class VMWizard(QtWidgets.QWizard):
@@ -114,10 +114,11 @@ class VMWizard(QtWidgets.QWizard):
                     if compute.id() != "local":
                         self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
 
-            if hasattr(self, "uiVMRadioButton") and not GNS3VM.instance().isRunning():
-                self.uiVMRadioButton.setEnabled(False)
-            if hasattr(self, "uiVMRadioButton") and GNS3VM.instance().isRunning():
-                self.uiVMRadioButton.setChecked(True)
+            if hasattr(self, "uiVMRadioButton"):
+                if not GNS3VM.instance().isEnabled():
+                    self.uiVMRadioButton.setEnabled(False)
+                else:
+                    self.uiVMRadioButton.setEnabled(True)
             elif self._use_local_server and self.uiLocalRadioButton.isEnabled():
                 self.uiLocalRadioButton.setChecked(True)
             else:

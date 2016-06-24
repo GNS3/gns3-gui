@@ -43,7 +43,7 @@ class ComputeManager(QtCore.QObject):
 
     def _listComputesCallback(self, result, error=False, **kwargs):
         if error is True:
-            log.error("Error while getting compute list: {}".format(self.name(), result["message"]))
+            log.error("Error while getting compute list: {}".format(result["message"]))
             return
 
         for compute in result:

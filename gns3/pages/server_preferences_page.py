@@ -33,7 +33,6 @@ from ..topology import Topology
 from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.wait_for_connection_worker import WaitForConnectionWorker
-from ..utils.wait_for_vm_worker import WaitForVMWorker
 from ..settings import SERVERS_SETTINGS
 from ..gns3_vm import GNS3VM
 from ..dialogs.edit_compute_dialog import EditComputeDialog

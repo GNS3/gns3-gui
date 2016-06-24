@@ -25,6 +25,8 @@ import logging
 import struct
 import sip
 import json
+
+from .node import Node
 from .qt import QtCore
 from .version import __version__
 
@@ -289,17 +291,6 @@ class ConsoleCmd(cmd.Cmd):
                         if node["id"] == base_node_id:
                             print(json.dumps(node, sort_keys=True, indent=4))
                             break
-
-    def _show_gnsvm(self, params):
-        """
-        Handles the 'show gns3vm' command.
-
-        :param params: list of parameters
-        """
-        from gns3.gns3_vm import GNS3VM
-        vm = GNS3VM.instance()
-        print("Running: {}".format(vm.isRunning()))
-        print("Settings: {}".format(vm.settings()))
 
     def do_show(self, args):
         """

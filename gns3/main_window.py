@@ -22,16 +22,13 @@ Main window for the GUI.
 import sys
 import os
 import time
-import shutil
-import glob
 import logging
 
 from .local_config import LocalConfig
 from .local_server import LocalServer
 from .modules import MODULES
-from .qt import QtGui, QtCore, QtWidgets, QtSvg
+from .qt import QtGui, QtCore, QtWidgets
 from .controller import Controller
-from .gns3_vm import GNS3VM
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
 from .style import Style
@@ -46,7 +43,6 @@ from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .utils.progress_dialog import ProgressDialog
 from .utils.import_project_worker import ImportProjectWorker
-from .utils.wait_for_vm_worker import WaitForVMWorker
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .items.shape_item import ShapeItem
@@ -957,7 +953,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         log.debug("_finish_application_closing")
 
-        GNS3VM.instance().shutdown()
+        # GNS3VM.instance().shutdown()  # FIXME
         self._settings["geometry"] = bytes(self.saveGeometry().toBase64()).decode()
         self._settings["state"] = bytes(self.saveState().toBase64()).decode()
         self.setSettings(self._settings)
@@ -1009,19 +1005,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._setStyle(self._settings.get("style"))
 
         # start the GNS3 VM
-        gns3_vm = GNS3VM.instance()
-        if not gns3_vm.isRunning():
-            gns3_vm.initVM()
-            if gns3_vm.isRemote():
-                gns3_vm.setRunning(True)
-            elif gns3_vm.autoStart():
-                worker = WaitForVMWorker()
-                progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
-                progress_dialog.show()
-                if progress_dialog.exec_():
-                    pass
-                    #gns3_vm.adjustLocalServerIP()
-            Controller.instance().setHttpClient(gns3_vm.httpClient())
+        # FIXME
+        # gns3_vm = GNS3VM.instance()
+        # if not gns3_vm.isRunning():
+        #     gns3_vm.initVM()
+        #     if gns3_vm.isRemote():
+        #         gns3_vm.setRunning(True)
+        #     elif gns3_vm.autoStart():
+        #         worker = WaitForVMWorker()
+        #         progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
+        #         progress_dialog.show()
+        #         if progress_dialog.exec_():
+        #             pass
+        #             #gns3_vm.adjustLocalServerIP()
+        #     Controller.instance().setHttpClient(gns3_vm.httpClient())
 
         # start and connect to the local server if need
         LocalServer.instance().localServerAutoStart()

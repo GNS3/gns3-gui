@@ -19,7 +19,6 @@ import pytest
 from unittest.mock import MagicMock
 
 from gns3.controller import Controller
-from gns3.server import Server
 
 
 @pytest.fixture

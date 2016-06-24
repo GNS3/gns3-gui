@@ -30,7 +30,6 @@ from ..utils import human_filesize
 from ..utils.wait_for_lambda_worker import WaitForLambdaWorker
 from ..utils.progress_dialog import ProgressDialog
 from ..compute_manager import ComputeManager
-from ..gns3_vm import GNS3VM
 from ..local_config import LocalConfig
 
 
