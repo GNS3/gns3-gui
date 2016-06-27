@@ -29,14 +29,17 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
 
     :param path_or_data: Svg element of path to a SVG
     """
-    def __init__(self, path_or_data):
+    def __init__(self, path_or_data=None):
         super().__init__()
+        self.load(path_or_data)
+
+    def load(self, path_or_data):
         if not os.path.exists(path_or_data) and not path_or_data.startswith(":"):
             self._svg = path_or_data
             path_or_data = path_or_data.encode("utf-8")
-            super().load(path_or_data)
+            return super().load(path_or_data)
         else:
-            super().load(path_or_data)
+            return super().load(path_or_data)
             # If we can't render a SVG we load and base64 the image to create a SVG
             if not self.isValid():
                 image = QtGui.QImage(path_or_data)
@@ -48,7 +51,7 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
     </svg>""".format(data=bytes(data.toBase64()).decode(),
                     width=image.rect().width(),
                     height=image.rect().height())
-                super().load(self._svg.encode())
+                return super().load(self._svg.encode())
 
     def svg(self):
         """

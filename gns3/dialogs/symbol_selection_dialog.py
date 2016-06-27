@@ -21,10 +21,12 @@ Dialog to change node symbols.
 
 import os
 
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtCore, QtGui, QtWidgets, qpartial
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
 from ..local_server import LocalServer
+from ..controller import Controller
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -39,7 +41,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
     :param items: list of items
     """
 
-    def __init__(self, parent, items=None, symbol=None):
+    def __init__(self, parent, items=None):
 
         super().__init__(parent)
         self.setupUi(self)
@@ -52,7 +54,6 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self.uiSearchLineEdit.textChanged.connect(self._searchTextChangedSlot)
         self.uiBuiltinSymbolOnlyCheckBox.toggled.connect(self._builtinSymbolOnlyToggledSlot)
         self._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
-        self._symbols_path = LocalServer.instance().localServerSettings()["symbols_path"]
 
         if not self._items:
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).hide()
@@ -60,38 +61,40 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self.uiBuiltInSymbolRadioButton.setChecked(True)
         self.uiSymbolListWidget.setFocus()
         self.uiSymbolListWidget.setIconSize(QtCore.QSize(64, 64))
-        symbol_resources = QtCore.QResource(":/symbols")
         self._symbol_items = []
-        symbols = symbol_resources.children()
 
-        try:
-            for file in os.listdir(self._symbols_path):
-                symbols.append(file)
-        except OSError:
-            pass
+        Controller.instance().get("/symbols", self._listSymbolsCallback)
 
-        symbols.sort()
-        for symbol in symbols:
-            if symbol.endswith(".svg") or symbol.endswith(".png"):
-                name = os.path.splitext(symbol)[0]
-                item = QtWidgets.QListWidgetItem(self.uiSymbolListWidget)
-                self._symbol_items.append(item)
-                item.setText(name)
+    def _listSymbolsCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while listing symbols: {}".format(result["message"]))
+            return
 
+        self._symbol_items = []
+        for symbol in result:
+            name = os.path.splitext(symbol["filename"])[0]
+            item = QtWidgets.QListWidgetItem(self.uiSymbolListWidget)
+            item.setData(QtCore.Qt.UserRole, symbol["builtin"])
+            item.setData(QtCore.Qt.UserRole + 1, symbol["symbol_id"])
+            self._symbol_items.append(item)
+            item.setText(name)
+
+            image = QtGui.QImage(64, 64, QtGui.QImage.Format_ARGB32)
+            # Set the ARGB to 0 to prevent rendering artifacts
+            image.fill(0x00000000)
+            icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
+            item.setIcon(icon)
+
+            def render(item, path):
+                svg_renderer = QImageSvgRenderer(path)
                 image = QtGui.QImage(64, 64, QtGui.QImage.Format_ARGB32)
                 # Set the ARGB to 0 to prevent rendering artifacts
                 image.fill(0x00000000)
-
-                if os.path.exists(os.path.join(self._symbols_path, symbol)):
-                    svg_renderer = QImageSvgRenderer(os.path.join(self._symbols_path, symbol))
-                else:
-                    resource_path = ":/symbols/" + symbol
-                    svg_renderer = QImageSvgRenderer(resource_path)
                 svg_renderer.render(QtGui.QPainter(image))
-
                 icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
                 item.setIcon(icon)
 
+            Controller.instance().getStatic(symbol["url"], qpartial(render, item))
         self.adjustSize()
 
     def _builtinSymbolOnlyToggledSlot(self, checked):
@@ -106,7 +109,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         """
         text = self.uiSearchLineEdit.text()
         for item in self._symbol_items:
-            if self.uiBuiltinSymbolOnlyCheckBox.isChecked() and not QtCore.QResource(":/symbols/{}.svg".format(item.text())).isValid():
+            if self.uiBuiltinSymbolOnlyCheckBox.isChecked() and not item.data(QtCore.Qt.UserRole):
                 item.setHidden(True)
             else:
                 if len(text.strip()) == 0 or text.strip().lower() in item.text().lower():
@@ -157,14 +160,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         if self.uiSymbolListWidget.isEnabled():
             current = self.uiSymbolListWidget.currentItem()
             if current:
-                name = current.text()
-                if QtCore.QResource(":/symbols/{}.svg".format(name)).isValid():
-                    return ":/symbols/{}.svg".format(name)
-                else:
-                    symbol_path = os.path.join(self._symbols_path, "{}.svg".format(name))
-                    if not os.path.exists(symbol_path):
-                        symbol_path = os.path.join(self._symbols_path, "{}.png".format(name))
-                    return symbol_path
+                return current.data(QtCore.Qt.UserRole + 1)
         else:
             return self.uiSymbolLineEdit.text()
         return None

@@ -60,4 +60,4 @@ class FileEditorDialog(QtWidgets.QDialog, Ui_FileEditorDialog):
 
     def _getCallback(self, result, error=False, raw_body=None, **kwargs):
         if not error:
-            self.uiFileTextEdit.setText(raw_body)
+            self.uiFileTextEdit.setText(raw_body.decode("utf-8"))

@@ -194,7 +194,7 @@ class HTTPClient(QtCore.QObject):
         """
         self._executeHTTPQuery("GET", "/version", query, {}, server=server, timeout=5)
 
-    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, server=None, **kwargs):
+    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, server=None, prefix="/v2", **kwargs):
         """
         Call the remote server, if not connected, check connection before
 
@@ -209,14 +209,15 @@ class HTTPClient(QtCore.QObject):
         :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
         :param server: The server where the query will run
         :param timeout: Delay in seconds before raising a timeout
+        :param prefix: Prefix to the path
         :returns: QNetworkReply
         """
 
         if self._connected:
-            return self._executeHTTPQuery(method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout)
+            return self._executeHTTPQuery(method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout, prefix=prefix)
         else:
             log.info("Connection to {}".format(self.url()))
-            query = qpartial(self._callbackConnect, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout)
+            query = qpartial(self._callbackConnect, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout, prefix=prefix)
             self._connect(query, server)
 
     def _connectionError(self, callback, msg="", server=None):
@@ -327,7 +328,7 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
-    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, **kwargs):
+    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", **kwargs):
         """
         Call the remote server
 
@@ -357,11 +358,11 @@ class HTTPClient(QtCore.QObject):
         except ipaddress.AddressValueError:
             host = self._host
 
-        log.debug("{method} {protocol}://{host}:{port}/v2{path} {body}".format(method=method, protocol=self._protocol, host=host, port=self._port, path=path, body=body))
+        log.debug("{method} {protocol}://{host}:{port}{prefix}{path} {body}".format(method=method, protocol=self._protocol, host=host, port=self._port, path=path, body=body, prefix=prefix))
         if self._user:
-            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}/v2{path}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, path=path))
+            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}{prefix}{path}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, path=path, prefix=prefix))
         else:
-            url = QtCore.QUrl("{protocol}://{host}:{port}/v2{path}".format(protocol=self._protocol, host=host, port=self._port, path=path))
+            url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{path}".format(protocol=self._protocol, host=host, port=self._port, path=path, prefix=prefix))
         request = self._request(url)
 
         request = self._addAuth(request)
@@ -500,9 +501,11 @@ class HTTPClient(QtCore.QObject):
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
             try:
-                body = bytes(response.readAll()).decode("utf-8").strip("\0")
+                raw_body = bytes(response.readAll())
+                body = raw_body.decode("utf-8").strip("\0")
             # Some time anti-virus intercept our query and reply with garbage content
             except UnicodeDecodeError:
+                raw_body = None
                 body = None
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             log.debug(body)
@@ -514,7 +517,7 @@ class HTTPClient(QtCore.QObject):
                 if status >= 400:
                     callback(params, error=True, server=server, context=context)
                 else:
-                    callback(params, server=server, context=context, raw_body=body)
+                    callback(params, server=server, context=context, raw_body=raw_body)
         # response.deleteLater()
         if status == 400:
             try:

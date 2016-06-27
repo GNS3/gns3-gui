@@ -15,7 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .qt import QtCore
+import os
+import hashlib
+import tempfile
+
+from .qt import QtCore, qpartial
 
 import logging
 log = logging.getLogger(__name__)
@@ -30,6 +34,7 @@ class Controller(QtCore.QObject):
     def __init__(self):
         super().__init__()
         self._connected = False
+        self._cache_directory = tempfile.TemporaryDirectory()
 
     def connected(self):
         """
@@ -78,3 +83,26 @@ class Controller(QtCore.QObject):
         if not hasattr(Controller, '_instance') or Controller._instance is None:
             Controller._instance = Controller()
         return Controller._instance
+
+    def getStatic(self, url, callback):
+        """
+        Get a URL from the /static on controller and cache it on disk
+
+        :param url: URL without the protocol and host part
+        :param callback: Callback to call when file is ready
+        """
+        m = hashlib.md5()
+        m.update(url.encode())
+        path = os.path.join(self._cache_directory.name, m.hexdigest())
+        if os.path.exists(path):
+            callback(path)
+        else:
+            self._http_client.createHTTPQuery("GET", url, qpartial(self._getStaticCallback, callback, url, path), prefix="")
+
+    def _getStaticCallback(self, callback, url, path, result, error=False, raw_body=None, **kwargs):
+        if error:
+            log.error("Error while downloading file: {}".format(url))
+            return
+        with open(path, "wb+") as f:
+            f.write(raw_body)
+        callback(path)
