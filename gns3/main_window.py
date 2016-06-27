@@ -1715,7 +1715,7 @@ It is your responsability to check if you have the right to distribute the image
         if path is None or len(path) == 0:
             return
 
-        if not path.endswith(".gns3project") or not path.endswith(".gns3p"):
+        if not path.endswith(".gns3project") and not path.endswith(".gns3p"):
             path += ".gns3project"
 
         try:
