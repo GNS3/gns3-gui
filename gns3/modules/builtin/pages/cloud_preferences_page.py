@@ -21,10 +21,11 @@ Configuration page for cloud node preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.controller import Controller
 
 from .. import Builtin
 from ..settings import CLOUD_SETTINGS
@@ -107,8 +108,8 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
             item = QtWidgets.QTreeWidgetItem(self.uiCloudNodesTreeWidget)
             item.setText(0, self._cloud_nodes[key]["name"])
-            item.setIcon(
-                0, QtGui.QIcon(self._cloud_nodes[key]["symbol"]))
+            Controller.instance().getSymbolIcon(self._cloud_nodes["symbol"], qpartial(self._setItemIcon, item))
+
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiCloudNodesTreeWidget.setCurrentItem(item)
@@ -126,7 +127,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(cloud_node["symbol"]))
+                Controller.instance().getSymbolIcon(cloud_node["symbol"], qpartial(self._setItemIcon, item))
                 if cloud_node["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=cloud_node["server"], name=cloud_node["name"])
                     if new_key in self._cloud_nodes:
@@ -163,9 +164,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         for key, cloud_node in self._cloud_nodes.items():
             item = QtWidgets.QTreeWidgetItem(self.uiCloudNodesTreeWidget)
             item.setText(0, cloud_node["name"])
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(cloud_node["symbol"]))
-            item.setIcon(0, icon)
+            Controller.instance().getSymbolIcon(cloud_node["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
@@ -173,6 +172,10 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
             self.uiCloudNodesTreeWidget.setCurrentItem(self._items[0])
             self.uiCloudNodesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
             self.uiCloudNodesTreeWidget.setMaximumWidth(self.uiCloudNodesTreeWidget.sizeHintForColumn(0) + 20)
+
+    def _setItemIcon(self, item, icon):
+        item.setIcon(0, icon)
+        self.uiCloudNodesTreeWidget.setMaximumWidth(self.uiCloudNodesTreeWidget.sizeHintForColumn(0) + 20)
 
     def savePreferences(self):
         """

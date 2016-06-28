@@ -22,10 +22,11 @@ Configuration page for QEMU VM preferences.
 import os
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.controller import Controller
 
 from .. import Qemu
 from ..settings import QEMU_VM_SETTINGS
@@ -175,7 +176,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
             item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, self._qemu_vms[key]["name"])
-            item.setIcon(0, QtGui.QIcon(self._qemu_vms[key]["symbol"]))
+            Controller.instance().getSymbolIcon(self._qemu_vms[key]["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiQemuVMsTreeWidget.setCurrentItem(item)
@@ -231,9 +232,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         for key, qemu_vm in self._qemu_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, qemu_vm["name"])
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(qemu_vm["symbol"]))
-            item.setIcon(0, icon)
+            Controller.instance().getSymbolIcon(qemu_vm["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
@@ -241,6 +240,10 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             self.uiQemuVMsTreeWidget.setCurrentItem(self._items[0])
             self.uiQemuVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
             self.uiQemuVMsTreeWidget.setMaximumWidth(self.uiQemuVMsTreeWidget.sizeHintForColumn(0) + 10)
+
+    def _setItemIcon(self, item, icon):
+        item.setIcon(0, icon)
+        self.uiQemuVMsTreeWidget.setMaximumWidth(self.uiQemuVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):
         """

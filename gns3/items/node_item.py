@@ -22,6 +22,9 @@ Graphical representation of a node on the QGraphicsScene.
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from .note_item import NoteItem
+from ..symbol import Symbol
+from ..controller import Controller
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -108,8 +111,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         if symbol is None:
             symbol = node.defaultSymbol()
         self._symbol = symbol
-        renderer = QImageSvgRenderer(symbol)
-        renderer.setObjectName(symbol)
+        Controller.instance().getStatic(Symbol(symbol_id=symbol).url(), self._symbolLoadedCallback)
+
+    def _symbolLoadedCallback(self, path):
+        renderer = QImageSvgRenderer(path)
+        renderer.setObjectName(path)
         self.setSharedRenderer(renderer)
         self._updateNode()
 

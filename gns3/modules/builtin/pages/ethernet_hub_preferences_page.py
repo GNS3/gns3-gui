@@ -21,10 +21,12 @@ Configuration page for Ethernet hub preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.controller import Controller
 
 from .. import Builtin
 from ..settings import ETHERNET_HUB_SETTINGS
@@ -108,8 +110,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
             item = QtWidgets.QTreeWidgetItem(self.uiEthernetHubsTreeWidget)
             item.setText(0, self._ethernet_hubs[key]["name"])
-            item.setIcon(
-                0, QtGui.QIcon(self._ethernet_hubs[key]["symbol"]))
+            Controller.instance().getSymbolIcon(self._ethernet_hubs[key]["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiEthernetHubsTreeWidget.setCurrentItem(item)
@@ -127,7 +128,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(ethernet_hub["symbol"]))
+                Controller.instance().getSymbolIcon(ethernet_hub["symbol"], qpartial(self._setItemIcon, item))
                 if ethernet_hub["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=ethernet_hub["server"], name=ethernet_hub["name"])
                     if new_key in self._ethernet_hubs:
@@ -164,9 +165,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         for key, ethernet_hub in self._ethernet_hubs.items():
             item = QtWidgets.QTreeWidgetItem(self.uiEthernetHubsTreeWidget)
             item.setText(0, ethernet_hub["name"])
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(ethernet_hub["symbol"]))
-            item.setIcon(0, icon)
+            Controller.instance().getSymbolIcon(ethernet_hub["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
@@ -174,6 +173,10 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
             self.uiEthernetHubsTreeWidget.setCurrentItem(self._items[0])
             self.uiEthernetHubsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
             self.uiEthernetHubsTreeWidget.setMaximumWidth(self.uiEthernetHubsTreeWidget.sizeHintForColumn(0) + 20)
+
+    def _setItemIcon(self, item, icon):
+        item.setIcon(0, icon)
+        self.uiEthernetHubsTreeWidget.setMaximumWidth(self.uiEthernetHubsTreeWidget.sizeHintForColumn(0) + 20)
 
     def savePreferences(self):
         """

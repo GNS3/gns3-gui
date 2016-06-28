@@ -127,7 +127,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, self._virtualbox_vms[key]["name"])
-            item.setIcon(0, QtGui.QIcon(self._virtualbox_vms[key]["symbol"]))
+            Controller.instance().getSymbolIcon(self._virtualbox_vms[key]["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiVirtualBoxVMsTreeWidget.setCurrentItem(item)
@@ -145,7 +145,8 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(vbox_vm["symbol"]))
+                Controller.instance().getSymbolIcon(vbox_vm["symbol"], qpartial(self._setItemIcon, item))
+
                 if vbox_vm["name"] != item.text(0):
                     item.setText(0, vbox_vm["name"])
                 self._refreshInfo(vbox_vm)
@@ -173,9 +174,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         for key, vbox_vm in self._virtualbox_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, vbox_vm["name"])
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(vbox_vm["symbol"]))
-            item.setIcon(0, icon)
+            Controller.instance().getSymbolIcon(vbox_vm["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
@@ -191,3 +190,9 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         # self._vboxVMSaveSlot()
         VirtualBox.instance().setVMs(self._virtualbox_vms)
+
+    def _setItemIcon(self, item, icon):
+        item.setIcon(0, icon)
+        self.uiVirtualBoxVMsTreeWidget.setMaximumWidth(self.uiVirtualBoxVMsTreeWidget.sizeHintForColumn(0) + 10)
+
+

@@ -26,7 +26,9 @@ import math
 import zipfile
 import logging
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.controller import Controller
+
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.utils.progress_dialog import ProgressDialog
@@ -119,7 +121,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             self._ios_routers[key].update(ios_settings)
             item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, self._ios_routers[key]["name"])
-            item.setIcon(0, QtGui.QIcon(self._ios_routers[key]["symbol"]))
+            Controller.instance().getSymbolIcon(self._ios_routers[key]["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiIOSRoutersTreeWidget.setCurrentItem(item)
@@ -137,7 +139,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(ios_router["symbol"]))
+                Controller.instance().getSymbolIcon(self._ios_routers[key]["symbol"], qpartial(self._setItemIcon, item))
+
                 if ios_router["name"] != item.text(0):
                     # rename the IOS router
                     new_key = "{server}:{name}".format(server=ios_router["server"], name=ios_router["name"])
@@ -399,9 +402,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         for key, ios_router in self._ios_routers.items():
             item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, ios_router["name"])
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(ios_router["symbol"]))
-            item.setIcon(0, icon)
+            Controller.instance().getSymbolIcon(ios_router["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
@@ -416,3 +417,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         """
 
         Dynamips.instance().setVMs(self._ios_routers)
+
+    def _setItemIcon(self, item, icon):
+        item.setIcon(0, icon)
+        self.uiIOSRoutersTreeWidget.setMaximumWidth(self.uiIOSRoutersTreeWidget.sizeHintForColumn(0) + 10)

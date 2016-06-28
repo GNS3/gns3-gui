@@ -21,7 +21,9 @@ Configuration page for Ethernet switch preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.controller import Controller
+
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
@@ -113,8 +115,8 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
             item = QtWidgets.QTreeWidgetItem(self.uiEthernetSwitchesTreeWidget)
             item.setText(0, self._ethernet_switches[key]["name"])
-            item.setIcon(
-                0, QtGui.QIcon(self._ethernet_switches[key]["symbol"]))
+            Controller.instance().getSymbolIcon(self._ethernet_switches[key]["symbol"], qpartial(self._setItemIcon, item))
+
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiEthernetSwitchesTreeWidget.setCurrentItem(item)
@@ -132,7 +134,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(ethernet_switch["symbol"]))
+                Controller.instance().getSymbolIcon(ethernet_switches["symbol"], qpartial(self._setItemIcon, item))
                 if ethernet_switch["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=ethernet_switch["server"], name=ethernet_switch["name"])
                     if new_key in self._ethernet_switches:
@@ -169,9 +171,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         for key, ethernet_switch in self._ethernet_switches.items():
             item = QtWidgets.QTreeWidgetItem(self.uiEthernetSwitchesTreeWidget)
             item.setText(0, ethernet_switch["name"])
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(ethernet_switch["symbol"]))
-            item.setIcon(0, icon)
+            Controller.instance().getSymbolIcon(ethernet_switch["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
@@ -186,3 +186,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         """
 
         Builtin.instance().setEthernetSwitches(self._ethernet_switches)
+
+    def _setItemIcon(self, item, icon):
+        item.setIcon(0, icon)
+        self.uiEthernetSwitchesTreeWidget.setMaximumWidth(self.uiEthernetSwitchesTreeWidget.sizeHintForColumn(0) + 20)

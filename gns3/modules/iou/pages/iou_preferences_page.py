@@ -23,7 +23,8 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtCore, QtWidgets, qpartial
+from gns3.controller import Controller
 
 from .. import IOU
 from ..ui.iou_preferences_page_ui import Ui_IOUPreferencesPageWidget

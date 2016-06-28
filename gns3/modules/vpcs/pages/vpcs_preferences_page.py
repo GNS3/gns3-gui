@@ -23,7 +23,9 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtGui, QtWidgets
+from gns3.qt import QtGui, QtWidgets, qpartial
+from gns3.controller import Controller
+
 from gns3.local_server import LocalServer
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node

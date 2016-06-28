@@ -111,7 +111,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
 
             item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
             item.setText(0, self._docker_containers[key]["name"])
-            item.setIcon(0, QtGui.QIcon(self._docker_containers[key]["symbol"]))
+            Controller.instance().getSymbolIcon(self._docker_containers[key]["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiDockerVMsTreeWidget.setCurrentItem(item)
@@ -129,7 +129,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(docker_image["symbol"]))
+                Controller.instance().getSymbolIcon(docker_image["symbol"], qpartial(self._setItemIcon, item))
                 if docker_image["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=docker_image["server"], name=docker_image["name"])
                     if new_key in self._docker_containers:
@@ -166,9 +166,9 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         for key, docker_image in self._docker_containers.items():
             item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
             item.setText(0, docker_image["name"])
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(docker_image["symbol"]))
-            item.setIcon(0, icon)
+
+            Controller.instance().getSymbolIcon(docker_image["symbol"], qpartial(self._setItemIcon, item))
+
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
@@ -183,3 +183,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         """
 
         Docker.instance().setVMs(self._docker_containers)
+
+    def _setItemIcon(self, item, icon):
+        item.setIcon(0, icon)
+        self.uiDockerVMsTreeWidget.setMaximumWidth(self.uiDockerVMsTreeWidget.sizeHintForColumn(0) + 10)

@@ -22,7 +22,8 @@ Configuration page for IOU device preferences.
 import copy
 import os
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.image_manager import ImageManager
@@ -133,7 +134,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
             item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, self._iou_devices[key]["name"])
-            item.setIcon(0, QtGui.QIcon(self._iou_devices[key]["symbol"]))
+            Controller.instance().getSymbolIcon(self._iou_devices[key]["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiIOUDevicesTreeWidget.setCurrentItem(item)
@@ -151,7 +152,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(iou_device["symbol"]))
+                Controller.instance().getSymbolIcon(iou_devices["symbol"], qpartial(self._setItemIcon, item))
                 if iou_device["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=iou_device["server"], name=iou_device["name"])
                     if new_key in self._iou_devices:
@@ -188,9 +189,8 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         for key, iou_device in self._iou_devices.items():
             item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, iou_device["name"])
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(iou_device["symbol"]))
-            item.setIcon(0, icon)
+            Controller.instance().getSymbolIcon(iou_device["symbol"], qpartial(self._setItemIcon, item))
+
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
@@ -269,3 +269,8 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             QtWidgets.QMessageBox.warning(parent, "IOU image", "{} is not executable".format(path))
 
         return path
+
+    def _setItemIcon(self, item, icon):
+        item.setIcon(0, icon)
+        self.uiIOUDevicesTreeWidget.setMaximumWidth(self.uiIOUDevicesTreeWidget.sizeHintForColumn(0) + 10)
+

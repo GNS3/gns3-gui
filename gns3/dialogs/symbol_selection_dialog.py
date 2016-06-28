@@ -26,6 +26,7 @@ from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
 from ..local_server import LocalServer
 from ..controller import Controller
+from ..symbol import Symbol
 
 
 import logging
@@ -41,7 +42,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
     :param items: list of items
     """
 
-    def __init__(self, parent, items=None):
+    def __init__(self, parent, items=None, symbol=None):
 
         super().__init__(parent)
         self.setupUi(self)
@@ -72,10 +73,10 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
 
         self._symbol_items = []
         for symbol in result:
-            name = os.path.splitext(symbol["filename"])[0]
+            symbol = Symbol(**symbol)
+            name = os.path.splitext(symbol.filename())[0]
             item = QtWidgets.QListWidgetItem(self.uiSymbolListWidget)
-            item.setData(QtCore.Qt.UserRole, symbol["builtin"])
-            item.setData(QtCore.Qt.UserRole + 1, symbol["symbol_id"])
+            item.setData(QtCore.Qt.UserRole, symbol)
             self._symbol_items.append(item)
             item.setText(name)
 
@@ -94,7 +95,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                 icon = QtGui.QIcon(QtGui.QPixmap.fromImage(image))
                 item.setIcon(icon)
 
-            Controller.instance().getStatic(symbol["url"], qpartial(render, item))
+            Controller.instance().getStatic(symbol.url(), qpartial(render, item))
         self.adjustSize()
 
     def _builtinSymbolOnlyToggledSlot(self, checked):
@@ -109,7 +110,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         """
         text = self.uiSearchLineEdit.text()
         for item in self._symbol_items:
-            if self.uiBuiltinSymbolOnlyCheckBox.isChecked() and not item.data(QtCore.Qt.UserRole):
+            if self.uiBuiltinSymbolOnlyCheckBox.isChecked() and not item.data(QtCore.Qt.UserRole).builtin():
                 item.setHidden(True)
             else:
                 if len(text.strip()) == 0 or text.strip().lower() in item.text().lower():
@@ -160,7 +161,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         if self.uiSymbolListWidget.isEnabled():
             current = self.uiSymbolListWidget.currentItem()
             if current:
-                return current.data(QtCore.Qt.UserRole + 1)
+                return current.data(QtCore.Qt.UserRole).id()
         else:
             return self.uiSymbolLineEdit.text()
         return None

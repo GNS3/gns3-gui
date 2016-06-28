@@ -21,7 +21,9 @@ Configuration page for Docker preferences.
 
 import sys
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtWidgets, qpartial
+from gns3.controller import Controller
+
 from .. import Docker
 from ..ui.docker_preferences_page_ui import Ui_DockerPreferencesPageWidget
 from ..settings import DOCKER_SETTINGS
