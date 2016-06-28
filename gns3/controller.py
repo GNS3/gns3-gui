@@ -19,8 +19,7 @@ import os
 import hashlib
 import tempfile
 
-from .qt import QtCore, QtGui, qpartial
-from .symbol import Symbol
+from .qt import QtCore, qpartial
 
 import logging
 log = logging.getLogger(__name__)
@@ -96,6 +95,8 @@ class Controller(QtCore.QObject):
         m.update(url.encode())
         if ".svg" in url:
             extension = ".svg"
+        else:
+            extension = ".png"
         path = os.path.join(self._cache_directory.name, m.hexdigest() + extension)
         if os.path.exists(path):
             callback(path)
@@ -110,16 +111,3 @@ class Controller(QtCore.QObject):
             f.write(raw_body)
         callback(path)
 
-    def getSymbolIcon(self, symbol_id, callback):
-        """
-        Get a QIcon for a symbol from the controller
-
-        :param url: URL without the protocol and host part
-        :param callback: Callback to call when file is ready
-        """
-        self.getStatic(Symbol(symbol_id).url(), qpartial(self._getIconCallback, callback))
-
-    def _getIconCallback(self, callback, path):
-        icon = QtGui.QIcon()
-        icon.addFile(path)
-        callback(icon)

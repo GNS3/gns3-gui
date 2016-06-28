@@ -505,7 +505,6 @@ class HTTPClient(QtCore.QObject):
                 body = raw_body.decode("utf-8").strip("\0")
             # Some time anti-virus intercept our query and reply with garbage content
             except UnicodeDecodeError:
-                raw_body = None
                 body = None
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             log.debug(body)

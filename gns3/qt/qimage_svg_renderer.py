@@ -39,19 +39,21 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
             path_or_data = path_or_data.encode("utf-8")
             return super().load(path_or_data)
         else:
-            return super().load(path_or_data)
+            res = super().load(path_or_data)
             # If we can't render a SVG we load and base64 the image to create a SVG
-            if not self.isValid():
-                image = QtGui.QImage(path_or_data)
-                data = QtCore.QByteArray()
-                buf = QtCore.QBuffer(data)
-                image.save(buf, 'PNG')
-                self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}">
-    <image width="{width}" height="{height}" xlink:href="data:image/png;base64,{data}"/>
-    </svg>""".format(data=bytes(data.toBase64()).decode(),
-                    width=image.rect().width(),
-                    height=image.rect().height())
-                return super().load(self._svg.encode())
+            if self.isValid():
+                return res
+
+            image = QtGui.QImage(path_or_data)
+            data = QtCore.QByteArray()
+            buf = QtCore.QBuffer(data)
+            image.save(buf, 'PNG')
+            self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}">
+<image width="{width}" height="{height}" xlink:href="data:image/png;base64,{data}"/>
+</svg>""".format(data=bytes(data.toBase64()).decode(),
+                width=image.rect().width(),
+                height=image.rect().height())
+            return super().load(self._svg.encode())
 
     def svg(self):
         """
