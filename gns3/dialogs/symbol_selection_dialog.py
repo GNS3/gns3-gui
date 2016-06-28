@@ -20,6 +20,7 @@ Dialog to change node symbols.
 """
 
 import os
+import pathlib
 
 from ..qt import QtCore, QtGui, QtWidgets, qpartial
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
@@ -42,6 +43,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
     :param items: list of items
     """
 
+    _symbols_dir = None
+
     def __init__(self, parent, items=None, symbol=None):
 
         super().__init__(parent)
@@ -54,7 +57,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self.uiBuiltInSymbolRadioButton.toggled.connect(self._builtInSymbolToggledSlot)
         self.uiSearchLineEdit.textChanged.connect(self._searchTextChangedSlot)
         self.uiBuiltinSymbolOnlyCheckBox.toggled.connect(self._builtinSymbolOnlyToggledSlot)
-        self._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
+        if not SymbolSelectionDialog._symbols_dir:
+            SymbolSelectionDialog._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
 
         if not self._items:
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).hide()
@@ -163,18 +167,25 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             if current:
                 return current.data(QtCore.Qt.UserRole).id()
         else:
-            return self.uiSymbolLineEdit.text()
+            return os.path.basename(self.uiSymbolLineEdit.text())
         return None
 
     def _symbolBrowserSlot(self):
 
         # supported image file formats
         file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm *.gif);;All files (*.*)"
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._symbols_dir, file_formats)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", SymbolSelectionDialog._symbols_dir, file_formats)
         if not path:
             return
+        SymbolSelectionDialog._symbols_dir = os.path.dirname(path)
 
-        self._symbols_dir = os.path.dirname(path)
+        symbol_id = os.path.basename(path)
+        Controller.instance().post("/symbols/" + symbol_id + "/raw", qpartial(self._finishSymbolUpload, path), body=pathlib.Path(path), progressText="Uploading {}".format(symbol_id), timeout=None)
+
+    def _finishSymbolUpload(self, path, result, error=False, **kwargs):
+        if error:
+            log.error("Error while uploading symbol: {}".format(path))
+            return
         self.uiSymbolLineEdit.clear()
         self.uiSymbolLineEdit.setText(path)
         self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(path))
@@ -186,10 +197,9 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         :param result: boolean (accepted or rejected)
         """
 
-        if result:
-            if not self.uiSymbolListWidget.isEnabled() and not os.path.exists(self.uiSymbolLineEdit.text()):
-                QtWidgets.QMessageBox.critical(self, "Custom symbol", "Invalid path to custom symbol: {}".format(self.uiSymbolLineEdit.text()))
-                result = 0
-            elif result and self._items and not self._applyPreferencesSlot():
-                result = 0
+        if result and self._items and not self._applyPreferencesSlot():
+            result = 0
         super().done(result)
+
+
+
