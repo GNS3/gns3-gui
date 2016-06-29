@@ -97,7 +97,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Slot to refresh the VirtualBox VMs list.
         """
 
-        QtWidgets.QMessageBox.warning(self, "GNS3 VM on VirtualBox", "VirtualBox doesn't support nested virtulization, this means running Qemu based VM could be very slow")
+        QtWidgets.QMessageBox.warning(self, "GNS3 VM on VirtualBox", "VirtualBox doesn't support nested virtualization, this means running Qemu based VM could be very slow")
         self._refreshVMListSlot()
 
     def _refreshVMListSlot(self):
