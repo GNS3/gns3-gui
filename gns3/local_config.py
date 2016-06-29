@@ -105,6 +105,10 @@ class LocalConfig(QtCore.QObject):
         if error:
             log.error("Can't get settings from controller")
             return
+        if result == {} and self._settings != {}:
+            self._saveOnController()
+            return
+
         self._settings.update(result)
         # Update already loaded section
         for section in self._settings.keys():
