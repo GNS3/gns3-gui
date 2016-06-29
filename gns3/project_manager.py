@@ -55,7 +55,7 @@ class ProjectManager(QtCore.QObject):
         if self._project:
             self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
         else:
-            self._main_window.setWindowTitle("GNS3".format(name=self._project.name()))
+            self._main_window.setWindowTitle("GNS3")
         if path:
             self._main_window.updateRecentFileSettings(path)
             self._main_window.updateRecentFileActions()
@@ -94,6 +94,7 @@ class ProjectManager(QtCore.QObject):
         if self._project:
             self._project.close()
         self._project = Project()
+        self._project.project_creation_error_signal.connect(self._projectCreationErrorSlot)
         Topology.instance().project = self._project
         self._main_window.uiGraphicsView.reset()
 
@@ -121,12 +122,19 @@ class ProjectManager(QtCore.QObject):
         if self._project:
             self._project.close()
         self._project = Project()
+        self._project.project_creation_error_signal.connect(self._projectCreationErrorSlot)
         self._main_window.uiGraphicsView.reset()
         self._project.load(path)
         self._main_window.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         self._setCurrent(path)
         self.project_changed_signal.emit()
         return True
+
+    def _projectCreationErrorSlot(self):
+        self._project = None
+        self._setCurrent()
+        self._main_window.uiGraphicsView.reset()
+        self.project_changed_signal.emit()
 
     def deleteProject(self):
         if self._project:

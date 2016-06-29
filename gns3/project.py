@@ -40,6 +40,9 @@ class Project(QtCore.QObject):
     # Called when the project is closed on all servers
     project_closed_signal = QtCore.Signal()
 
+    # Called when the creation of a project failled on the remote server
+    project_creation_error_signal = QtCore.Signal()
+
     def __init__(self):
 
         self._id = None
@@ -245,6 +248,7 @@ class Project(QtCore.QObject):
     def _projectCreatedCallback(self, result, error=False, **kwargs):
         if error:
             log.error("Error while creating project: {}".format(result["message"]))
+            self.project_creation_error_signal.emit()
             return
         self._id = result["project_id"]
         if self._closed:
@@ -262,6 +266,7 @@ class Project(QtCore.QObject):
     def _projectOpenCallback(self, result, error=False, **kwargs):
         if error:
             log.error("Error while opening project: {}".format(result["message"]))
+            self.project_creation_error_signal.emit()
             return
 
         self._id = result["project_id"]
