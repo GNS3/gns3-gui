@@ -187,6 +187,7 @@ class VMware(Module):
         Load the VMware VMs from the client settings file.
         """
 
+        self._vmware_vms = {}
         local_config = LocalConfig.instance()
         settings = local_config.settings()
         if "vms" in settings.get(self.__class__.__name__, {}):

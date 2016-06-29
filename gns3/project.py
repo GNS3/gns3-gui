@@ -23,6 +23,8 @@ from .qt import QtCore, qpartial
 from gns3.controller import Controller
 from gns3.compute_manager import ComputeManager
 from gns3.topology import Topology
+from gns3.local_config import LocalConfig
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -364,5 +366,7 @@ class Project(QtCore.QObject):
         elif result["action"] == "compute.created" or result["action"] == "compute.updated":
             cm = ComputeManager.instance()
             cm.computeDataReceivedCallback(result["event"])
+        elif result["action"] == "settings.updated":
+            LocalConfig.instance().refreshConfigFromController()
         elif result["action"] == "ping":
             pass

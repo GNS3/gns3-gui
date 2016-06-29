@@ -26,6 +26,7 @@ import psutil
 from .qt import QtCore
 from .version import __version__
 from .utils import parse_version
+from .controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
@@ -90,6 +91,26 @@ class LocalConfig(QtCore.QObject):
         self._settings.update(user_settings)
         self._migrateOldConfig()
         self._writeConfig()
+        Controller.instance().connected_signal.connect(self.refreshConfigFromController)
+
+    def refreshConfigFromController(self):
+        """
+        Refresh the configuration from the controller
+        """
+        controller = Controller.instance()
+        if controller.connected():
+            controller.get("/settings", self._getSettingsCallback)
+
+    def _getSettingsCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Can't get settings from controller")
+            return
+        self._settings.update(result)
+        # Update already loaded section
+        for section in self._settings.keys():
+            if isinstance(self._settings[section], dict):
+                self.loadSectionSettings(section, self._settings[section])
+        self.config_changed_signal.emit()
 
     @staticmethod
     def configDirectory():
@@ -191,6 +212,24 @@ class LocalConfig(QtCore.QObject):
             self._last_config_changed = os.stat(self._config_file).st_mtime
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
+        self._saveOnController()
+
+    def _saveOnController(self):
+        """
+        Save some settings on controller for the transition from
+        GUI to a central controller. Will be removed later
+        """
+        if Controller.instance().connected():
+            # We save only non user specific sections
+            section_to_save_on_controller = ["Builtin", "Docker", "IOU", "Qemu", "VMware", "VPCS", "VirtualBox"]
+            controller_settings = {}
+            for key,val in self._settings.items():
+                if key in section_to_save_on_controller:
+                    controller_settings[key] = val
+                # We want only the VM settings on the server
+                elif key == "Server":
+                    controller_settings["Server"]["vm"] = self._settings["Server"]["vm"]
+            Controller.instance().post("/settings", None, body=controller_settings)
 
     def checkConfigChanged(self):
 

@@ -34,7 +34,6 @@ from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.image_manager import ImageManager
 from gns3.compute_manager import ComputeManager
-from gns3.controller import Controller
 
 
 from .. import Dynamips

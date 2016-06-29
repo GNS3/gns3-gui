@@ -148,6 +148,7 @@ class Dynamips(Module):
         Load the IOS routers from the persistent settings file.
         """
 
+        self._ios_routers = {}
         settings = LocalConfig.instance().settings()
         if "routers" in settings.get(self.__class__.__name__, {}):
             for router in settings[self.__class__.__name__]["routers"]:

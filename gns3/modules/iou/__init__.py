@@ -95,6 +95,7 @@ class IOU(Module):
         Load the IOU devices from the persistent settings file.
         """
 
+        self._iou_devices = {}
         settings = LocalConfig.instance().settings()
         if "devices" in settings.get(self.__class__.__name__, {}):
             for device in settings[self.__class__.__name__]["devices"]:

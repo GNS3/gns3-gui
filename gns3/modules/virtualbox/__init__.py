@@ -117,6 +117,7 @@ class VirtualBox(Module):
         Load the VirtualBox VMs from the client settings file.
         """
 
+        self._virtualbox_vms = {}
         settings = LocalConfig.instance().settings()
         if "vms" in settings.get(self.__class__.__name__, {}):
             for vm in settings[self.__class__.__name__]["vms"]:

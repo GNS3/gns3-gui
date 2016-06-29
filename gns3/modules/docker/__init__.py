@@ -58,6 +58,7 @@ class Docker(Module):
         self._settings = local_config.loadSectionSettings(
             self.__class__.__name__, DOCKER_SETTINGS)
 
+        self._docker_containers = {}
         if "containers" in self._settings:
             for image in self._settings["containers"]:
                 name = image.get("name")
