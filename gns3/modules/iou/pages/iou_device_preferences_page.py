@@ -28,6 +28,7 @@ from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.image_manager import ImageManager
 from gns3.compute_manager import ComputeManager
+from gns3.controller import Controller
 
 from .. import IOU
 from ..settings import IOU_DEVICE_SETTINGS

@@ -19,7 +19,9 @@ import os
 import hashlib
 import tempfile
 
-from .qt import QtCore, qpartial
+from .qt import QtCore, QtGui, qpartial
+from .symbol import Symbol
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -111,3 +113,16 @@ class Controller(QtCore.QObject):
             f.write(raw_body)
         callback(path)
 
+    def getSymbolIcon(self, symbol_id, callback):
+        """
+        Get a QIcon for a symbol from the controller
+
+        :param url: URL without the protocol and host part
+        :param callback: Callback to call when file is ready
+        """
+        self.getStatic(Symbol(symbol_id).url(), qpartial(self._getIconCallback, callback))
+
+    def _getIconCallback(self, callback, path):
+        icon = QtGui.QIcon()
+        icon.addFile(path)
+        callback(icon)

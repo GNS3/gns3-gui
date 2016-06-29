@@ -21,10 +21,11 @@ Configuration page for Docker image preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.controller import Controller
 
 from .. import Docker
 from ..settings import DOCKER_CONTAINER_SETTINGS
