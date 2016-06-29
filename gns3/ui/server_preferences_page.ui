@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
-    <height>596</height>
+    <width>550</width>
+    <height>606</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -358,7 +358,7 @@
              <string>VMware</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <attribute name="buttonGroup">
              <string notr="true">buttonGroup</string>
@@ -385,6 +385,9 @@
             </property>
             <property name="text">
              <string>Remote</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
             <attribute name="buttonGroup">
              <string notr="true">buttonGroup</string>

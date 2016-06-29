@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Thu May  5 18:26:47 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ServerPreferencesPageWidget(object):
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
-        ServerPreferencesPageWidget.resize(526, 596)
+        ServerPreferencesPageWidget.resize(550, 606)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -37,6 +36,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalTabWidget.setSizePolicy(sizePolicy)
         self.uiLocalTabWidget.setObjectName("uiLocalTabWidget")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.uiLocalTabWidget)
+        self.gridLayout_6.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.uiGeneralSettingsGroupBox = QtWidgets.QGroupBox(self.uiLocalTabWidget)
         self.uiGeneralSettingsGroupBox.setObjectName("uiGeneralSettingsGroupBox")
@@ -147,6 +147,10 @@ class Ui_ServerPreferencesPageWidget(object):
         self.gridLayout_6.addWidget(self.uiUDPPortRangeGroupBox, 3, 0, 1, 2)
         spacerItem2 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_6.addItem(spacerItem2, 4, 0, 1, 1)
+        self.uiGeneralSettingsGroupBox.raise_()
+        self.uiConsolePortRangeGroupBox.raise_()
+        self.uiUDPPortRangeGroupBox.raise_()
+        self.uiLocalServerAutoStartCheckBox.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiLocalTabWidget, "")
         self.uiGNS3VMTabWidget = QtWidgets.QWidget()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
@@ -156,6 +160,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiGNS3VMTabWidget.setSizePolicy(sizePolicy)
         self.uiGNS3VMTabWidget.setObjectName("uiGNS3VMTabWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.uiGNS3VMTabWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiEnableVMCheckBox = QtWidgets.QCheckBox(self.uiGNS3VMTabWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
@@ -172,7 +177,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.gridLayout_7 = QtWidgets.QGridLayout(self.uiVirtualizationGroupBox)
         self.gridLayout_7.setObjectName("gridLayout_7")
         self.uiVmwareRadioButton = QtWidgets.QRadioButton(self.uiVirtualizationGroupBox)
-        self.uiVmwareRadioButton.setChecked(True)
+        self.uiVmwareRadioButton.setChecked(False)
         self.uiVmwareRadioButton.setObjectName("uiVmwareRadioButton")
         self.buttonGroup = QtWidgets.QButtonGroup(ServerPreferencesPageWidget)
         self.buttonGroup.setObjectName("buttonGroup")
@@ -183,6 +188,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.buttonGroup.addButton(self.uiVirtualBoxRadioButton)
         self.gridLayout_7.addWidget(self.uiVirtualBoxRadioButton, 0, 1, 1, 1)
         self.uiRemoteRadioButton = QtWidgets.QRadioButton(self.uiVirtualizationGroupBox)
+        self.uiRemoteRadioButton.setChecked(True)
         self.uiRemoteRadioButton.setObjectName("uiRemoteRadioButton")
         self.buttonGroup.addButton(self.uiRemoteRadioButton)
         self.gridLayout_7.addWidget(self.uiRemoteRadioButton, 0, 2, 1, 1)
@@ -255,6 +261,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteTabWidget.setSizePolicy(sizePolicy)
         self.uiRemoteTabWidget.setObjectName("uiRemoteTabWidget")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.uiRemoteTabWidget)
+        self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.uiRemoteServersTreeWidget = QtWidgets.QTreeWidget(self.uiRemoteTabWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
@@ -282,6 +289,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.gridLayout_5.addLayout(self.horizontalLayout_3, 1, 0, 1, 2)
         spacerItem6 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_5.addItem(spacerItem6, 2, 0, 1, 1)
+        self.uiRemoteServersTreeWidget.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiRemoteTabWidget, "")
         self.verticalLayout_2.addWidget(self.uiServerPreferenceTabWidget)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
