@@ -1,5 +1,20 @@
 # Change Log
 
+## 1.5.0 27/06/2016
+
+* Fix double extension of portable project
+* Disallow export of project with a cloud
+* Change view grid -> show the grid.
+* Check if a link can be removed from a running node. Fixes #1320.
+* Hide non implemented console options in general preferences. Ref #1315.
+* Improve snap to grid
+* Change grid color
+* Avoid a crash with snap to grid and ostinato logo
+* Add a view grid
+* Fix you can no longer capture if you start stop capture multiple time
+* A button to open the file browser with the configuration file location
+* Add snap to grid feature
+
 ## 1.5.0rc2 15/06/2016
 
 * Ethernet0 => eth0 for docker
