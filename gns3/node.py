@@ -41,6 +41,9 @@ class Node(BaseNode):
         # minimum required base settings
         self._settings = {"name": ""}
 
+    def settings(self):
+        return self._settings
+
     def setSettingValue(self, key, value):
         """
         Set settings
@@ -48,14 +51,25 @@ class Node(BaseNode):
         self._settings[key] = value
 
     def setGraphics(self, x, y, z, symbol, label):
+
         data = {
-            "x": x,
-            "y": y,
-            "z": z,
+            "x": int(x),
+            "y": int(y),
+            "z": int(z),
             "symbol": symbol
         }
         if label is not None:
             data["label"] = label.dump()
+
+
+        # Send the change of if stuff changed
+        changed = False
+        for key in data:
+            if key not in self._settings or self._settings[key] != data[key]:
+                changed = True
+        if not changed:
+            return
+
         # If it's the initialization we don't resend it
         # to the server
         if "x" in self._settings:
@@ -285,6 +299,11 @@ class Node(BaseNode):
         if "properties" in result:
             result.update(result["properties"])
             del result["properties"]
+
+        # Update common element of all nodes
+        for key in ["x", "y", "z", "symbol", "label"]:
+            if key in result:
+                self._settings[key] = result[key]
 
         self._updateCallback(result)
         log.info("{} has been updated".format(self.name()))

@@ -224,14 +224,14 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
         """
 
         note_info = {"text": self.toPlainText(),
-                     "x": self.x(),
-                     "y": self.y()}
+                     "x": int(self.x()),
+                     "y": int(self.y())}
 
         note_info["font"] = self.font().toString()
         note_info["color"] = self.defaultTextColor().name(QtGui.QColor.HexArgb)
         if self.rotation() != 0:
-            note_info["rotation"] = self.rotation()
+            note_info["rotation"] = int(self.rotation())
         if self.zValue() != 2:
-            note_info["z"] = self.zValue()
+            note_info["z"] = int(self.zValue())
 
         return note_info

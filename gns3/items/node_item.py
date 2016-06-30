@@ -46,6 +46,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # attached node
         self._node = node
 
+        self._symbol = None
+
         # node label
         self._node_label = None
 
@@ -112,9 +114,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # create renderer using symbols path/resource
         if symbol is None:
             symbol = node.defaultSymbol()
-        self._symbol = symbol
-        self._node.setSettingValue("symbol", symbol)
-        Controller.instance().getStatic(Symbol(symbol_id=symbol).url(), self._symbolLoadedCallback)
+        if self._symbol != symbol:
+            self._symbol = symbol
+            Controller.instance().getStatic(Symbol(symbol_id=symbol).url(), self._symbolLoadedCallback)
 
     def symbol(self):
         return self._symbol
@@ -123,7 +125,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         renderer = QImageSvgRenderer(path)
         renderer.setObjectName(path)
         self.setSharedRenderer(renderer)
-        self._updateNode()
+        if self._node.settings().get("symbol") != self._symbol:
+            self._updateNode()
 
     def node(self):
         """
@@ -136,8 +139,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
     def setPos(self, *args):
         super().setPos(*args)
-        self._node.setSettingValue("x", self.x())
-        self._node.setSettingValue("y", self.y())
+        self._node.setSettingValue("x", int(self.x()))
+        self._node.setSettingValue("y", int(self.y()))
 
     def addLink(self, link):
         """
@@ -215,6 +218,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if self is None:
             return
+
+        self.setSymbol(self._node.settings()["symbol"])
+        self.setPos(self._node.settings().get("x", 0), self._node.settings().get("y", 0))
+        self.setZValue(self._node.settings().get("z", 0))
+
         if self._node_label:
             if self._node_label.toPlainText() != self._node.name():
                 self._node_label.setPlainText(self._node.name())
@@ -484,6 +492,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 self._node_label.setFlag(self.ItemIsMovable, True)
         for link in self._links:
             link.adjust()
+        self._node.setSettingValue("z", int(value))
 
     def hoverEnterEvent(self, event):
         """
