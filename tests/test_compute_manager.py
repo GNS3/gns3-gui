@@ -52,7 +52,9 @@ def test_listComputesCallback():
             "protocol": "http",
             "host": "localhost",
             "port": 3080,
-            "user": None
+            "user": None,
+            "cpu_usage_percent": None,
+            "memory_usage_percent": None
         }
     ])
     assert cm._computes["local"].name() == "Local server"
@@ -72,7 +74,9 @@ def test_computeDataReceivedCallback():
         "protocol": "http",
         "host": "test.org",
         "port": 3080,
-        "user": None
+        "user": None,
+        "cpu_usage_percent": None,
+        "memory_usage_percent": None
     })
     assert cm._computes["test"].name() == "Test server"
     assert cm._computes["test"].protocol() == "http"
@@ -91,7 +95,9 @@ def test_computeDataReceivedCallback():
         "protocol": "http",
         "host": "test.org",
         "port": 3080,
-        "user": None
+        "user": None,
+        "cpu_usage_percent": None,
+        "memory_usage_percent": None
     })
     assert cm._computes["test"].name() == "Test Compute"
     assert cm._computes["test"].connected()

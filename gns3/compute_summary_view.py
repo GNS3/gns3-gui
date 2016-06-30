@@ -45,9 +45,6 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
         self._parent = parent
         self._status = "unknown"
 
-        #self._compute.connection_connected_signal.connect(self._refreshStatusSlot)
-        #self._compute.connection_closed_signal.connect(self._refreshStatusSlot)
-        #self._compute.system_usage_updated_signal.connect(self._refreshStatusSlot)
         self._refreshStatusSlot()
 
     def _refreshStatusSlot(self):
@@ -58,13 +55,13 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
         usage = None
         text = self._compute.name()
 
-        if usage is not None:
-            text = "{} CPU {}%, RAM {}%".format(text, usage["cpu_usage_percent"], usage["memory_usage_percent"])
+        if self._compute.cpuUsagePercent() is not None:
+            text = "{} CPU {}%, RAM {}%".format(text, self._compute.cpuUsagePercent(), self._compute.memoryUsagePercent())
 
         self.setText(0, text)
         if self._compute.connected():
             self._status = "connected"
-            if usage is None or (usage["cpu_usage_percent"] < 90 and usage["memory_usage_percent"] < 90):
+            if usage is None or (self._compute.cpuUsagePercent() < 90 and self._compute.memoryUsagePercent() < 90):
                 self.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))
             else:
                 self.setIcon(0, QtGui.QIcon(':/icons/led_yellow.svg'))

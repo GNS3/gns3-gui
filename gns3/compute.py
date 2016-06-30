@@ -33,6 +33,8 @@ class Compute:
         self._port = None
         self._user = None
         self._password = None
+        self._cpu_usage_percent = None
+        self._memory_usage_percent = None
 
     def id(self):
         return self._compute_id
@@ -75,6 +77,18 @@ class Compute:
 
     def setHost(self, host):
         self._host = host
+
+    def setCpuUsagePercent(self, usage):
+        self._cpu_usage_percent = usage
+
+    def cpuUsagePercent(self):
+        return self._cpu_usage_percent
+
+    def setMemoryUsagePercent(self, usage):
+        self._memory_usage_percent = usage
+
+    def memoryUsagePercent(self):
+        return self._memory_usage_percent
 
     def __str__(self):
         return self._compute_id
