@@ -41,6 +41,12 @@ class Node(BaseNode):
         # minimum required base settings
         self._settings = {"name": ""}
 
+    def setSettingValue(self, key, value):
+        """
+        Set settings
+        """
+        self._settings[key] = value
+
     def setGraphics(self, x, y, z, symbol, label):
         data = {
             "x": x,
@@ -154,6 +160,13 @@ class Node(BaseNode):
 
         if params is None:
             params = {}
+
+        if "symbol" in self._settings:
+            params["symbol"] = self._settings["symbol"]
+            params["x"] = self._settings["x"]
+            params["y"] = self._settings["y"]
+            if "label" in self._settings:
+                params["label"] = self._settings["label"]
 
         if not name:
             # use the default name format if no name is provided

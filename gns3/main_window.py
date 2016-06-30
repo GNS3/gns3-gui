@@ -409,9 +409,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called when a project finish to load
         """
+        self.uiGraphicsView.reset()
         # No projects
         if self._project_manager.project() is None:
-            self.uiGraphicsView.reset()
             for widget in self.disableWhenNoProjectWidgets:
                 widget.setEnabled(False)
         else:

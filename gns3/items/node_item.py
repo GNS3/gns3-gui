@@ -96,6 +96,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if node.initialized():
             self.createdSlot(node.id())
+        else:
+            self._updateNode()
 
     def _updateNode(self):
         """
@@ -111,7 +113,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         if symbol is None:
             symbol = node.defaultSymbol()
         self._symbol = symbol
+        self._node.setSettingValue("symbol", symbol)
         Controller.instance().getStatic(Symbol(symbol_id=symbol).url(), self._symbolLoadedCallback)
+
+    def symbol(self):
+        return self._symbol
 
     def _symbolLoadedCallback(self, path):
         renderer = QImageSvgRenderer(path)
@@ -127,6 +133,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         return self._node
+
+    def setPos(self, *args):
+        super().setPos(*args)
+        self._node.setSettingValue("x", self.x())
+        self._node.setSettingValue("y", self.y())
 
     def addLink(self, link):
         """
@@ -289,6 +300,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         self._node_label = label
+        self._node.setSettingValue("label", label.dump())
         self._node_label.item_unselected_signal.connect(self._labelUnselectedSlot)
 
     def _labelUnselectedSlot(self):

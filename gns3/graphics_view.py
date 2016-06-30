@@ -1495,9 +1495,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
             QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
             return
 
-        node_module.createNode(node, node_data["name"])
         pos = self.mapToScene(pos)
-        return self.createNodeItem(node, node_data["symbol"], pos.x(), pos.y())
+        node_item =  self.createNodeItem(node, node_data["symbol"], pos.x(), pos.y())
+        node.setGraphics(node_item.pos().x(), node_item.pos().y(), 0, node_item.symbol(), node_item.label())
+        node_module.createNode(node, node_data["name"])
+        return node_item
 
     def createNodeItem(self, node, symbol, x, y):
         node_item = NodeItem(node, symbol)
