@@ -113,7 +113,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         # create renderer using symbols path/resource
         if symbol is None:
-            symbol = node.defaultSymbol()
+            symbol = self._node.defaultSymbol()
+            return
         if self._symbol != symbol:
             self._symbol = symbol
             Controller.instance().getStatic(Symbol(symbol_id=symbol).url(), self._symbolLoadedCallback)
@@ -219,7 +220,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         if self is None:
             return
 
-        self.setSymbol(self._node.settings()["symbol"])
+        self.setSymbol(self._node.settings().get("symbol"))
         self.setPos(self._node.settings().get("x", 0), self._node.settings().get("y", 0))
         self.setZValue(self._node.settings().get("z", 0))
 
