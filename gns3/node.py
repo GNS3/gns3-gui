@@ -298,15 +298,17 @@ class Node(BaseNode):
 
         pass
 
-    def delete(self):
+    def delete(self, skip_controller=False):
         """
         Deletes this node instance.
+
+        :param skip_controller: True to not delete on the controller (often it's when it's already deleted on the server)
         """
 
         log.info("{} is being deleted".format(self.name()))
         # first delete all the links attached to this node
         self.delete_links_signal.emit()
-        if self._node_id:
+        if self._node_id and not skip_controller:
             self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()

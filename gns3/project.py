@@ -346,10 +346,18 @@ class Project(QtCore.QObject):
     def _event_received(self, result, server=None, **kwargs):
 
         log.debug("Event received: %s", result)
-        if result["action"] == "node.updated":
+        if result["action"] == "node.created":
+            node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
+            if node is None:
+                Topology.instance().createNode(result["event"])
+        elif result["action"] == "node.updated":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
                 node.updateNodeCallback(result["event"])
+        elif result["action"] == "node.deleted":
+            node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
+            if node is not None:
+                node.delete(skip_controller=True)
         elif result["action"] == "drawing.created":
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is None:
