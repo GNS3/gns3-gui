@@ -40,6 +40,8 @@ def test_fromSvg(project, controller):
     font = QtGui.QFont()
     font.setPointSize(55)
     font.setFamily("Verdana")
+    font.setBold(True)
+    font.setItalic(True)
     text.setFont(font)
     text.setDefaultTextColor(QtCore.Qt.red)
     text.setPlainText("Hello")
@@ -50,4 +52,7 @@ def test_fromSvg(project, controller):
     assert hex(text2.defaultTextColor().rgba()) == "0xffff0000"
     assert text2.font().pointSize() == 55
     assert text2.font().family() == "Verdana"
+    assert text2.font().italic()
+    assert text2.font().bold()
+
 

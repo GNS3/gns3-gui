@@ -113,6 +113,10 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         text = ET.SubElement(svg, "text")
         text.set("font-family", self.font().family())
         text.set("font-size", str(self.font().pointSize()))
+        if self.font().italic():
+            text.set("font-style", "italic")
+        if self.font().bold():
+            text.set("font-weight", "bold")
         text.set("fill", "#" + hex(self.defaultTextColor().rgba())[4:])
         text.text = self.toPlainText()
 
@@ -129,6 +133,10 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
             self.setDefaultTextColor(self._colorFromSvg(color))
         font.setPointSize(int(text.get("font-size", self.font().pointSize())))
         font.setFamily(text.get("font-family", self.font().family()))
+        if text.get("font-style") == "italic":
+            font.setItalic(True)
+        if text.get("font-weight") == "bold":
+            font.setBold(True)
         self.setFont(font)
         self.setPlainText(text.text)
 
