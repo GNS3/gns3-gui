@@ -20,6 +20,7 @@ Graphical representation of a note on the QGraphicsScene.
 """
 
 from ..qt import QtCore, QtWidgets, QtGui
+from .utils import colorFromSvg
 
 
 class NoteItem(QtWidgets.QGraphicsTextItem):
@@ -188,6 +189,29 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
             self.setFlag(self.ItemIsSelectable, True)
             self.setFlag(self.ItemIsMovable, True)
 
+    def setStyle(self, styles):
+        """
+        Set text style using a SVG style
+        """
+        font = QtGui.QFont()
+        for style in styles.split(";"):
+            if ":" in style:
+                key, val = style.split(":")
+                key = key.strip()
+                val = val.strip()
+
+                if key == "font-size":
+                   font.setPointSize(int(val))
+                elif key == "font-family":
+                    font.setFamily(val)
+                elif key == "font-style" and val == "italic":
+                    font.setItalic(True)
+                elif key == "font-weight" and val == "bold":
+                    font.setBold(True)
+                elif key == "fill":
+                    self.setDefaultTextColor(colorFromSvg(val))
+        self.setFont(font)
+
     def duplicate(self):
         """
         Duplicates this node item.
@@ -229,9 +253,16 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
 
         style = ""
 
+        style += "font-family: {};".format(self.font().family())
+        style += "font-size: {};".format(self.font().pointSize())
 
-        style += "font-family: {}".format(self.font().family())
-        #note_info["color"] = self.defaultTextColor().name(QtGui.QColor.HexArgb)
+        if self.font().italic():
+            style += "font-style: italic;"
+
+        if self.font().bold():
+            style += "font-weight: bold;"
+
+        style += "fill: {};".format("#" + hex(self.defaultTextColor().rgba())[4:])
 
         note_info["style"] = style
 

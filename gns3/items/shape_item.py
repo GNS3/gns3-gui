@@ -22,7 +22,7 @@ Base class for shape items (Rectangle, ellipse etc.).
 import xml.etree.ElementTree as ET
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg
 from .drawing_item import DrawingItem
-
+from .utils import colorFromSvg
 
 import logging
 log = logging.getLogger(__name__)
@@ -229,9 +229,9 @@ class ShapeItem(DrawingItem):
                 if key == "stroke-width":
                     pen.setWidth(int(value))
                 elif key == "stroke":
-                    pen.setColor(self._colorFromSvg(value))
+                    pen.setColor(colorFromSvg(value))
                 elif key == "fill":
-                    brush.setColor(self._colorFromSvg(value))
+                    brush.setColor(colorFromSvg(value))
 
             # Map SVG stroke style (border of the element to the Qt version)
             if not "stroke" in styles:

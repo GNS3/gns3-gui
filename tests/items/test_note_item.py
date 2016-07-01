@@ -27,6 +27,8 @@ def test_dump():
     font = QtGui.QFont()
     font.setPointSize(55)
     font.setFamily("Verdana")
+    font.setBold(True)
+    font.setItalic(True)
     note.setFont(font)
     note.setDefaultTextColor(QtCore.Qt.red)
 
@@ -34,5 +36,27 @@ def test_dump():
         "text": "Test",
         "x": 0,
         "y": 0,
-        "style": "font-family: Verdana"
+        "style": "font-family: Verdana;font-size: 55;font-style: italic;font-weight: bold;fill: #ff0000;"
     }
+
+
+def test_setStyle():
+    note = NoteItem()
+    note.setPlainText("Test")
+    font = QtGui.QFont()
+    font.setPointSize(55)
+    font.setFamily("Verdana")
+    font.setBold(True)
+    font.setItalic(True)
+    note.setFont(font)
+    note.setDefaultTextColor(QtCore.Qt.red)
+
+    style = note.dump()["style"]
+    note2 = NoteItem()
+    note2.setStyle(style)
+    assert note2.font().pointSize() == 55
+    assert note2.font().family() == "Verdana"
+    assert note2.font().italic()
+    assert note2.font().bold()
+    assert note2.defaultTextColor() == QtCore.Qt.red
+

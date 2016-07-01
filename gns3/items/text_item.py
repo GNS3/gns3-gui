@@ -23,6 +23,7 @@ import xml.etree.ElementTree as ET
 
 from ..qt import QtCore, QtWidgets, QtGui
 from .drawing_item import DrawingItem
+from .utils import colorFromSvg
 
 
 class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
@@ -130,7 +131,7 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         font = QtGui.QFont()
         color = text.get("fill")
         if color:
-            self.setDefaultTextColor(self._colorFromSvg(color))
+            self.setDefaultTextColor(colorFromSvg(color))
         font.setPointSize(int(text.get("font-size", self.font().pointSize())))
         font.setFamily(text.get("font-family", self.font().family()))
         if text.get("font-style") == "italic":

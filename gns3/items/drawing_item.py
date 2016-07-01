@@ -127,13 +127,6 @@ class DrawingItem:
         if not self.handleKeyPressEvent(event):
             QtWidgets.QGraphicsItem.keyPressEvent(self, event)
 
-    def _colorFromSvg(self, value):
-        value = value.strip('#')
-        if len(value) == 6: # If alpha channel is missing
-            value = "ff" + value
-        value = int(value, base=16)
-        return QtGui.QColor.fromRgba(value)
-
     def __json__(self):
         data = {
             "x": int(self.pos().x()),

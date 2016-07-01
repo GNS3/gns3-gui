@@ -311,7 +311,6 @@ class Node(BaseNode):
                 self._settings[key] = result[key]
 
         self._updateCallback(result)
-        log.info("{} has been updated".format(self.name()))
         self.updated_signal.emit()
         return True
 

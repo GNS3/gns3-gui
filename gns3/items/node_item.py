@@ -339,6 +339,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             if self._node_label.toPlainText() != self._node.name():
                 self._node_label.setPlainText(self._node.name())
             self._node_label.setPos(label_data["x"], label_data["y"])
+            self._node_label.setStyle(label_data["style"])
         else:
             self._centerLabel()
 
