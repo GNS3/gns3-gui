@@ -49,7 +49,7 @@ class Link(QtCore.QObject):
 
     _instance_count = 1
 
-    def __init__(self, source_node, source_port, destination_node, destination_port, link_id=None):
+    def __init__(self, source_node, source_port, destination_node, destination_port, link_id=None, nodes=[]):
 
         super().__init__()
 
@@ -66,19 +66,31 @@ class Link(QtCore.QObject):
         self._source_port = source_port
         self._destination_node = destination_node
         self._destination_port = destination_port
+        self._source_label = None
+        self._destination_label = None
         self._link_id = link_id
-        self._labels = {}
         self._capturing = False
         self._capture_file_path = None
+
+        # Boolean if True we are creatin the first instance of this node
+        # if false the node already exist in the topology
+        # use to avoid erasing informations when reloading
+        self._creator = False
+
+        self._nodes = []
 
         self._source_node.addLink(self)
         self._destination_node.addLink(self)
 
         body = self._prepareParams()
         if self._link_id:
-            self._linkCreatedCallback({"link_id": self._link_id})
+            self._linkCreatedCallback({"link_id": self._link_id, "nodes": nodes})
         else:
+            self._creator = True
             Controller.instance().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
+
+    def creator(self):
+        return self._creator
 
     def addPortLabel(self, port, label):
         if port.adapterNumber() == self._source_port.adapterNumber() and port.portNumber() == self._source_port.portNumber() and port.destinationNode() == self._destination_node:
@@ -86,12 +98,10 @@ class Link(QtCore.QObject):
         else:
             self._destination_label = label
         label.item_unselected_signal.connect(self.update)
-        self.update()
-
-    def addDestinationLabel(self, label):
-        self._source_label = label
-        label.item_unselected_signal.connect(self.update)
-        self.update()
+        if self.creator():
+            self.update()
+        else:
+            self._updateLabels()
 
     def update(self):
         if not self._link_id:
@@ -103,13 +113,21 @@ class Link(QtCore.QObject):
         if error:
             log.error("Error while creating link: {}".format(result["message"]))
             return
-        for node in result["nodes"]:
+        self._nodes = result["nodes"]
+        self._updateLabels()
+
+    def _updateLabels(self):
+        for node in self._nodes:
             if node["node_id"] == self._source_node.node_id() and node["adapter_number"] == self._source_port.adapterNumber() and node["port_number"] == self._source_port.portNumber():
                 self._updateLabel(self._source_label, node["label"])
-            else:
+            elif node["node_id"] == self._destination_node.node_id() and node["adapter_number"] == self._destination_port.adapterNumber() and node["port_number"] == self._destination_port.portNumber():
                 self._updateLabel(self._destination_label, node["label"])
+            else:
+                raise NotImplementedError
 
     def _updateLabel(self, label, label_data):
+        if not label:
+            return
         label.setPlainText(label_data["text"])
         label.setPos(label_data["x"], label_data["y"])
         label.setStyle(label_data["style"])
@@ -155,11 +173,8 @@ class Link(QtCore.QObject):
         self._link_id = result["link_id"]
 
         if "nodes" in result:
-            for node in result["nodes"]:
-                if node["node_id"] == self._source_node.node_id() and node["adapter_number"] == self._source_port.adapterNumber() and node["port_number"] == self._source_port.portNumber():
-                    self._updateLabel(self._source_label, node["label"])
-                else:
-                    self._updateLabel(self._destination_label, node["label"])
+            self._nodes = result["nodes"]
+            self._updateLabels()
 
     def link_id(self):
         return self._link_id
@@ -342,16 +357,4 @@ class Link(QtCore.QObject):
             return self._destination_port
         return self._source_port
 
-    def dump(self):
-        """
-        Returns a representation of this link.
 
-        :returns: dictionary
-        """
-
-        return {"id": self.id(),
-                "description": str(self),
-                "source_node_id": self._source_node.id(),
-                "source_port_id": self._source_port.id(),
-                "destination_node_id": self._destination_node.id(),
-                "destination_port_id": self._destination_port.id()}

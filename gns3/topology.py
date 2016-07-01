@@ -312,7 +312,7 @@ class Topology(QtCore.QObject):
                 if port.adapterNumber() == link_side["adapter_number"] and port.portNumber() == link_side["port_number"]:
                     destination_port = port
                     break
-        self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, link_id=link_data["link_id"])
+        self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, link_id=link_data["link_id"], nodes=link_data["nodes"])
 
     def createDrawing(self, drawing_data):
         """

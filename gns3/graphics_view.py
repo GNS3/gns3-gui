@@ -243,7 +243,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.scene().addItem(image_item)
         self._topology.addDrawing(image_item)
 
-    def addLink(self, source_node, source_port, destination_node, destination_port, link_id=None):
+    def addLink(self, source_node, source_port, destination_node, destination_port, link_id=None, nodes=[]):
         """
         Creates a Link instance representing a connection between 2 devices.
 
@@ -254,7 +254,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :returns: Link
         """
 
-        link = Link(source_node, source_port, destination_node, destination_port, link_id=link_id)
+        link = Link(source_node, source_port, destination_node, destination_port, link_id=link_id, nodes=nodes)
         # connect the signals that let the graphics view knows about events such as
         # a new link creation or deletion.
         if self._topology.addLink(link):
