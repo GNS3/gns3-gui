@@ -224,10 +224,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setPos(self._node.settings().get("x", 0), self._node.settings().get("y", 0))
         self.setZValue(self._node.settings().get("z", 0))
 
-        if self._node_label:
-            if self._node_label.toPlainText() != self._node.name():
-                self._node_label.setPlainText(self._node.name())
-                self._centerLabel()
+        self._updateLabel()
 
         # update the link tooltips in case the
         # node name has changed
@@ -301,17 +298,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         return self._node_label
 
-    def setLabel(self, label):
-        """
-        Sets the node label.
-
-        :param label: NoteItem instance.
-        """
-
-        self._node_label = label
-        self._node.setSettingValue("label", label.dump())
-        self._node_label.item_unselected_signal.connect(self._labelUnselectedSlot)
-
     def _labelUnselectedSlot(self):
         """
         Called when user unselect the label
@@ -337,9 +323,23 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if not self._node_label:
-            self.setLabel(NoteItem(self))
+            self._node_label = NoteItem(self)
+            self._node_label.item_unselected_signal.connect(self._labelUnselectedSlot)
             self._node_label.setEditable(False)
-            self._node_label.setPlainText(self._node.name())
+            self._updateLabel()
+            self._node.setSettingValue("label", self._node_label.dump())
+
+    def _updateLabel(self):
+        """
+        Update the label using the informations stored in the node
+        """
+        self._node_label.setPlainText(self._node.name())
+        label_data = self._node.settings().get("label")
+        if label_data:
+            if self._node_label.toPlainText() != self._node.name():
+                self._node_label.setPlainText(self._node.name())
+            self._node_label.setPos(label_data["x"], label_data["y"])
+        else:
             self._centerLabel()
 
     def connectToPort(self, unavailable_ports=[]):

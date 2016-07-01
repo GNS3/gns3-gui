@@ -39,7 +39,7 @@ class Node(BaseNode):
         self._always_on = False
 
         # minimum required base settings
-        self._settings = {"name": ""}
+        self._settings = {"name": "", "x": None, "y": None, "z": None, "label": None}
 
     def settings(self):
         return self._settings
@@ -72,7 +72,7 @@ class Node(BaseNode):
 
         # If it's the initialization we don't resend it
         # to the server
-        if "x" in self._settings:
+        if self._settings["x"]:
             self._update(data)
         else:
             self._settings.update(data)
