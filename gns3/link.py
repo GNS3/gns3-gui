@@ -67,39 +67,99 @@ class Link(QtCore.QObject):
         self._destination_node = destination_node
         self._destination_port = destination_port
         self._link_id = link_id
+        self._labels = {}
         self._capturing = False
         self._capture_file_path = None
 
         self._source_node.addLink(self)
         self._destination_node.addLink(self)
 
-        body = {
-            "nodes": [
-                {"node_id": source_node.node_id(), "adapter_number": source_port.adapterNumber(), "port_number": source_port.portNumber()},
-                {"node_id": destination_node.node_id(), "adapter_number": destination_port.adapterNumber(), "port_number": destination_port.portNumber()}
-            ]
-        }
-
+        body = self._prepareParams()
         if self._link_id:
             self._linkCreatedCallback({"link_id": self._link_id})
         else:
             Controller.instance().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
+
+    def addPortLabel(self, port, label):
+        if port.adapterNumber() == self._source_port.adapterNumber() and port.portNumber() == self._source_port.portNumber() and port.destinationNode() == self._destination_node:
+            self._source_label = label
+        else:
+            self._destination_label = label
+        label.item_unselected_signal.connect(self.update)
+        self.update()
+
+    def addDestinationLabel(self, label):
+        self._source_label = label
+        label.item_unselected_signal.connect(self.update)
+        self.update()
+
+    def update(self):
+        if not self._link_id:
+            return
+        body = self._prepareParams()
+        Controller.instance().put("/projects/{project_id}/links/{link_id}".format(project_id=self._source_node.project().id(), link_id=self._link_id), self.updateLinkCallback, body=body)
+
+    def updateLinkCallback(self, result, error=False, *args, **kwargs):
+        if error:
+            log.error("Error while creating link: {}".format(result["message"]))
+            return
+        for node in result["nodes"]:
+            if node["node_id"] == self._source_node.node_id() and node["adapter_number"] == self._source_port.adapterNumber() and node["port_number"] == self._source_port.portNumber():
+                self._updateLabel(self._source_label, node["label"])
+            else:
+                self._updateLabel(self._destination_label, node["label"])
+
+    def _updateLabel(self, label, label_data):
+        label.setPlainText(label_data["text"])
+        label.setPos(label_data["x"], label_data["y"])
+        label.setStyle(label_data["style"])
+        label.setRotation(label_data["rotation"])
+
+    def _prepareParams(self):
+        body = {
+            "nodes": [
+                {
+                    "node_id": self._source_node.node_id(),
+                    "adapter_number": self._source_port.adapterNumber(),
+                    "port_number": self._source_port.portNumber(),
+                },
+                {
+                    "node_id": self._destination_node.node_id(),
+                    "adapter_number": self._destination_port.adapterNumber(),
+                    "port_number": self._destination_port.portNumber()
+                }
+            ]
+        }
+        if self._source_port.label():
+            body["nodes"][0]["label"] = self._source_port.label().dump()
+        if self._destination_port.label():
+            body["nodes"][1]["label"] = self._destination_port.label().dump()
+        return body
 
     def _linkCreatedCallback(self, result, error=False, **kwargs):
         if error:
             log.error("Error while creating link: {}".format(result["message"]))
             return
 
-        # let the GUI know about this link has been deleted
+        # let the GUI know about this link has been created
         self.add_link_signal.emit(self._id)
         self._source_port.setLinkId(self._id)
+        self._source_port.setLink(self)
         self._source_port.setDestinationNode(self._destination_node)
         self._source_port.setDestinationPort(self._destination_port)
         self._destination_port.setLinkId(self._id)
+        self._destination_port.setLink(self)
         self._destination_port.setDestinationNode(self._source_node)
         self._destination_port.setDestinationPort(self._source_port)
 
         self._link_id = result["link_id"]
+
+        if "nodes" in result:
+            for node in result["nodes"]:
+                if node["node_id"] == self._source_node.node_id() and node["adapter_number"] == self._source_port.adapterNumber() and node["port_number"] == self._source_port.portNumber():
+                    self._updateLabel(self._source_label, node["label"])
+                else:
+                    self._updateLabel(self._destination_label, node["label"])
 
     def link_id(self):
         return self._link_id

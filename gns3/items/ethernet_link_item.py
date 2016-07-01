@@ -137,18 +137,17 @@ class EthernetLinkItem(LinkItem):
                     self._source_collision_offset -= 10
 
             source_port_label = self._source_port.label()
+
+            if source_port_label is None:
+                source_port_label = NoteItem(self._source_item)
+                source_port_name = self._source_port.name()
+                source_port_label.setPlainText(source_port_name)
+                source_port_label.setPos(self.mapToItem(self._source_item, point1))
+                self._source_port.setLabel(source_port_label)
+
             if self._draw_port_labels:
-                if source_port_label is None:
-                    source_port_label = NoteItem(self._source_item)
-                    source_port_name = self._source_port.name()
-                    source_port_label.setPlainText(source_port_name)
-                    source_port_label.setPos(self.mapToItem(self._source_item, point1))
-                    self._source_port.setLabel(source_port_label)
-
-                elif source_port_label and not source_port_label.isVisible():
-                    source_port_label.show()
-
-            elif source_port_label:
+                source_port_label.show()
+            else:
                 source_port_label.hide()
 
             painter.drawPoint(point1)
@@ -177,18 +176,17 @@ class EthernetLinkItem(LinkItem):
                     self._destination_collision_offset -= 10
 
             destination_port_label = self._destination_port.label()
+
+            if destination_port_label is None:
+                destination_port_label = NoteItem(self._destination_item)
+                destination_port_name = self._destination_port.name()
+                destination_port_label.setPlainText(destination_port_name)
+                destination_port_label.setPos(self.mapToItem(self._destination_item, point2))
+                self._destination_port.setLabel(destination_port_label)
+
             if self._draw_port_labels:
-                if destination_port_label is None:
-                    destination_port_label = NoteItem(self._destination_item)
-                    destination_port_name = self._destination_port.name()
-                    destination_port_label.setPlainText(destination_port_name)
-                    destination_port_label.setPos(self.mapToItem(self._destination_item, point2))
-                    self._destination_port.setLabel(destination_port_label)
-
-                elif destination_port_label and not destination_port_label.isVisible():
-                    destination_port_label.show()
-
-            elif destination_port_label:
+                destination_port_label.show()
+            else:
                 destination_port_label.hide()
 
             painter.drawPoint(point2)

@@ -87,6 +87,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # by the server.
         self._initialized = False
 
+        # Use to detect the first time we display the label
+        self._first_update_label = True
+
         # contains the last error message received
         # from the server.
         self._last_error = None
@@ -335,14 +338,16 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         self._node_label.setPlainText(self._node.name())
         label_data = self._node.settings().get("label")
-        if label_data:
+
+        if self._node.creator() and self._first_update_label:
+            self._centerLabel()
+        elif label_data:
             if self._node_label.toPlainText() != self._node.name():
                 self._node_label.setPlainText(self._node.name())
             self._node_label.setPos(label_data["x"], label_data["y"])
             self._node_label.setStyle(label_data["style"])
             self._node_label.setRotation(label_data["rotation"])
-        else:
-            self._centerLabel()
+        self._first_update_label = False
 
     def connectToPort(self, unavailable_ports=[]):
         """

@@ -65,6 +65,7 @@ class Port:
         self._port_number = None
         self._adapter_number = None
         self._link_id = None
+        self._link = None
         self._port_label = None
         self._status = Port.stopped
         self._data = {}
@@ -232,6 +233,17 @@ class Port:
 
         self._destination_port = port
 
+    def setLink(self, link):
+        """
+        Adds the link connected to this port.
+
+        :param link: Link object
+        """
+
+        self._link = link
+        if self._link and self._port_label:
+            self._link.addPortLabel(self, self._port_label)
+
     def linkId(self):
         """
         Returns the link id connected to this port.
@@ -273,6 +285,7 @@ class Port:
         """
 
         self._link_id = None
+        self._link = None
         self._destination_node = None
         self._destination_port = None
         self._port_label = None
@@ -357,8 +370,9 @@ class Port:
 
         :param label: NoteItem instance.
         """
-
         self._port_label = label
+        if self._link and self._port_label:
+            self._link.addPortLabel(self, self._port_label)
 
     def deleteLabel(self):
         """
@@ -368,27 +382,6 @@ class Port:
         if self._port_label is not None:
             self._port_label.delete()
             self._port_label = None
-
-    def dump(self):
-        """
-        Returns a representation of this port.
-
-        :returns: dictionary
-        """
-
-        port = {"name": self._name,
-                "id": self._id}
-
-        if self._port_number is not None:
-            port["port_number"] = self._port_number
-        if self._adapter_number is not None:
-            port["adapter_number"] = self._adapter_number
-        if self.description():
-            port["description"] = self.description()
-        if self._link_id is not None:
-            port["link_id"] = self._link_id
-
-        return port
 
     def __str__(self):
 

@@ -47,7 +47,6 @@ from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .items.shape_item import ShapeItem
 from .items.image_item import ImageItem
-from .items.note_item import NoteItem
 from .topology import Topology
 from .http_client import HTTPClient
 from .progress import Progress

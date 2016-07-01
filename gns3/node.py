@@ -38,8 +38,16 @@ class Node(BaseNode):
         self._command_line = None
         self._always_on = False
 
+        # Boolean if True we are creatin the first instance of this node
+        # if false the node already exist in the topology
+        # use to avoid erasing informations when reloading
+        self._creator = False
+
         # minimum required base settings
         self._settings = {"name": "", "x": None, "y": None, "z": None, "width": None, "height": None, "label": None}
+
+    def creator(self):
+        return self._creator
 
     def settings(self):
         return self._settings
@@ -178,6 +186,7 @@ class Node(BaseNode):
         Create the node on the controller
         """
 
+        self._creator = True
         if params is None:
             params = {}
 
@@ -195,6 +204,7 @@ class Node(BaseNode):
         params["name"] = name
         if node_id:
             params["node_id"] = node_id
+
         body = self._prepareBody(params)
         self.controllerHttpPost("/nodes", self.createNodeCallback, body=body, timeout=timeout)
 
