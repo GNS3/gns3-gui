@@ -36,6 +36,7 @@ def test_dump():
         "text": "Test",
         "x": 0,
         "y": 0,
+        "rotation": 0,
         "style": "font-family: Verdana;font-size: 55;font-style: italic;font-weight: bold;fill: #ff0000;"
     }
 

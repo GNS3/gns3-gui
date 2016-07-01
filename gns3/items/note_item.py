@@ -249,7 +249,8 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
 
         note_info = {"text": self.toPlainText(),
                      "x": int(self.x()),
-                     "y": int(self.y())}
+                     "y": int(self.y()),
+                     "rotation": int(self.rotation())}
 
         style = ""
 

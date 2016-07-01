@@ -39,7 +39,7 @@ class Node(BaseNode):
         self._always_on = False
 
         # minimum required base settings
-        self._settings = {"name": "", "x": None, "y": None, "z": None, "width": None, "height": None}
+        self._settings = {"name": "", "x": None, "y": None, "z": None, "width": None, "height": None, "label": None}
 
     def settings(self):
         return self._settings
@@ -66,7 +66,6 @@ class Node(BaseNode):
         if node_item.label() is not None:
             data["label"] = node_item.label().dump()
 
-
         # Send the change of if stuff changed
         changed = False
         for key in data:
@@ -77,7 +76,7 @@ class Node(BaseNode):
 
         # If it's the initialization we don't resend it
         # to the server
-        if self._settings["x"]:
+        if self._settings["x"] is not None:
             self._update(data)
         else:
             self._settings.update(data)
@@ -163,7 +162,9 @@ class Node(BaseNode):
         # No need to send this back to the server because it's read only
         ignore_properties = ("console_host", "symbol_url")
         for key, value in params.items():
-            if key in node_general_properties:
+            if key == "label" and value is None: #FIXME: It's a workaround to avoid erasing the label when reloading a Node. This is due to the inialization of three item Node NodeItem and the label NoteItem. This could be clean but it's not a small and easy task
+                continue
+            elif key in node_general_properties:
                 body[key] = value
             elif key in ignore_properties:
                 pass
