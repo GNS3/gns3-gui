@@ -96,6 +96,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
             # there is a destination
             self._link = link
             self._link.updated_link_signal.connect(self._drawCaptureSymbol)
+            self._link.delete_link_signal.connect(self._linkDeletedSlot)
             self.setFlag(self.ItemIsFocusable)
             source_item.addLink(self)
             destination_item.addLink(self)
@@ -107,18 +108,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         self.adjust()
 
-    def delete(self):
-        """
-        Delete this link
-        """
-
-        if not self._source_port.isHotPluggable() and self._source_item.node().status() == Node.started:
-            QtWidgets.QMessageBox.critical(self._main_window, "Connection", "This link cannot be removed because {} is running".format(self._source_item.node().name()))
-            return
-        if not self._destination_port.isHotPluggable() and self._destination_item.node().status() == Node.started:
-            QtWidgets.QMessageBox.critical(self._main_window, "Connection", "This link cannot be removed because {} is running".format(self._destination_item.node().name()))
-            return
-
+    def _linkDeletedSlot(self, link_id):
         # first delete the port labels if any
         if self._source_port.label():
             self._source_port.label().setParentItem(None)
@@ -129,9 +119,15 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         self._source_item.removeLink(self)
         self._destination_item.removeLink(self)
-        self._link.deleteLink()
+
         if self in self.scene().items():
             self.scene().removeItem(self)
+
+    def delete(self):
+        """
+        Delete this link
+        """
+        self._link.deleteLink()
 
     def link(self):
         """

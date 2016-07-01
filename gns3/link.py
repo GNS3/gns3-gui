@@ -101,6 +101,8 @@ class Link(QtCore.QObject):
 
         self._link_id = result["link_id"]
 
+    def link_id(self):
+        return self._link_id
 
     def setCapturing(self, capturing):
         self._capturing = capturing
@@ -147,7 +149,7 @@ class Link(QtCore.QObject):
             self._destination_port.name())
         return re.sub("[^0-9A-Za-z_-]", "", capture_file_name)
 
-    def deleteLink(self):
+    def deleteLink(self, skip_controller=False):
         """
         Deletes this link.
         """
@@ -157,7 +159,10 @@ class Link(QtCore.QObject):
                                                             self._destination_node.name(),
                                                             self._destination_port.name()))
 
-        Controller.instance().delete("/projects/{project_id}/links/{link_id}".format(project_id=self.project().id(),
+        if skip_controller:
+            self._linkDeletedCallback({})
+        else:
+          Controller.instance().delete("/projects/{project_id}/links/{link_id}".format(project_id=self.project().id(),
                                                                                                      link_id=self._link_id), self._linkDeletedCallback)
 
     def _linkDeletedCallback(self, result, error=False, **kwargs):

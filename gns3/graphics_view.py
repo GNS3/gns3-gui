@@ -255,15 +255,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         link = Link(source_node, source_port, destination_node, destination_port, link_id=link_id)
-
         # connect the signals that let the graphics view knows about events such as
         # a new link creation or deletion.
         if self._topology.addLink(link):
             link.add_link_signal.connect(self.addLinkSlot)
             link.delete_link_signal.connect(self.deleteLinkSlot)
 
-        if link_id:
-            self.addLinkSlot(link.id())
+            if link_id:
+                self.addLinkSlot(link.id())
 
         return link
 
@@ -342,9 +341,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         link = self._topology.getLink(link_id)
-        # disconnect the signals just in case...
-        link.add_link_signal.disconnect()
-        link.delete_link_signal.disconnect()
         self._topology.removeLink(link)
 
     def _userNodeLinking(self, event, item):

@@ -158,6 +158,18 @@ class Topology(QtCore.QObject):
                 return link
         return None
 
+    def getLinkFromUuid(self, link_id):
+        """
+        Lookups for a link using its uuid.
+
+        :returns: Link instance or None
+        """
+
+        for link in self._links:
+            if link.link_id() == link_id:
+                return link
+        return None
+
     def addNote(self, note):
         """
         Adds a new note to this topology.

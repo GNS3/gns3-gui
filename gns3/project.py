@@ -358,6 +358,18 @@ class Project(QtCore.QObject):
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
                 node.delete(skip_controller=True)
+        elif result["action"] == "link.created":
+            link = Topology.instance().getLinkFromUuid(result["event"]["link_id"])
+            if link is None:
+                Topology.instance().createLink(result["event"])
+        elif result["action"] == "link.updated":
+            link = Topology.instance().getLinkFromUuid(result["event"]["link_id"])
+            if link is not None:
+                link.updateLinkCallback(result["event"])
+        elif result["action"] == "link.deleted":
+            link = Topology.instance().getLinkFromUuid(result["event"]["link_id"])
+            if link is not None:
+                link.deleteLink(skip_controller=True)
         elif result["action"] == "drawing.created":
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is None:
