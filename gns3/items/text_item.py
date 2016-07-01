@@ -113,8 +113,6 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         text = ET.SubElement(svg, "text")
         text.set("font-family", self.font().family())
         text.set("font-size", str(self.font().pointSize()))
-        # Strange thing in SVG the Y should be at the bottom of the text
-        text.set("y", str(self.font().pointSize()))
         text.set("fill", "#" + hex(self.defaultTextColor().rgba())[4:])
         text.text = self.toPlainText()
 

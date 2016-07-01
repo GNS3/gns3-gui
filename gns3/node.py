@@ -39,7 +39,7 @@ class Node(BaseNode):
         self._always_on = False
 
         # minimum required base settings
-        self._settings = {"name": "", "x": None, "y": None, "z": None, "label": None}
+        self._settings = {"name": "", "x": None, "y": None, "z": None, "width": None, "height": None}
 
     def settings(self):
         return self._settings
@@ -50,16 +50,21 @@ class Node(BaseNode):
         """
         self._settings[key] = value
 
-    def setGraphics(self, x, y, z, symbol, label):
+    def setGraphics(self, node_item):
+        """
+        Sync the remote object with the node_item
+        """
 
         data = {
-            "x": int(x),
-            "y": int(y),
-            "z": int(z),
-            "symbol": symbol
+            "x": int(node_item.pos().x()),
+            "y": int(node_item.pos().y()),
+            "z": int(node_item.zValue()),
+            "width": int(node_item.boundingRect().width()),
+            "height": int(node_item.boundingRect().height()),
+            "symbol": node_item.symbol()
         }
-        if label is not None:
-            data["label"] = label.dump()
+        if node_item.label() is not None:
+            data["label"] = node_item.label().dump()
 
 
         # Send the change of if stuff changed
@@ -154,7 +159,7 @@ class Node(BaseNode):
 
         # We have two kind of properties. The general properties common to all
         # nodes and the specific that we need to put in the properties field
-        node_general_properties = ("name", "node_id", "console", "console_type", "x", "y", "z", "symbol", "label")
+        node_general_properties = ("name", "node_id", "console", "console_type", "x", "y", "z", "symbol", "label", "width", "height")
         # No need to send this back to the server because it's read only
         ignore_properties = ("console_host", "symbol_url")
         for key, value in params.items():

@@ -105,7 +105,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Sync change to the node
         """
-        self._node.setGraphics(self.x(), self.y(), self.zValue(), self._symbol, self._node_label)
+        self._node.setGraphics(self)
 
     def setSymbol(self, symbol):
         """

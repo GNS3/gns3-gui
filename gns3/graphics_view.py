@@ -1493,7 +1493,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         pos = self.mapToScene(pos)
         node_item =  self.createNodeItem(node, node_data["symbol"], pos.x(), pos.y())
-        node.setGraphics(node_item.pos().x(), node_item.pos().y(), 0, node_item.symbol(), node_item.label())
+        node.setGraphics(node_item)
         node_module.createNode(node, node_data["name"])
         return node_item
 

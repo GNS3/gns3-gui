@@ -227,11 +227,12 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
                      "x": int(self.x()),
                      "y": int(self.y())}
 
-        note_info["font"] = self.font().toString()
-        note_info["color"] = self.defaultTextColor().name(QtGui.QColor.HexArgb)
-        if self.rotation() != 0:
-            note_info["rotation"] = int(self.rotation())
-        if self.zValue() != 2:
-            note_info["z"] = int(self.zValue())
+        style = ""
+
+
+        style += "font-family: {}".format(self.font().family())
+        #note_info["color"] = self.defaultTextColor().name(QtGui.QColor.HexArgb)
+
+        note_info["style"] = style
 
         return note_info
