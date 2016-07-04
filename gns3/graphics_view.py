@@ -1131,6 +1131,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             if not self._import_config_dir:
                 self._import_config_dir = self._main_window.project().filesDir()
+                if not self._import_config_dir:
+                    log.critical("You don't have a project directory for current project. This should not happen. If you know how to reproduce this error please post instructions on https://gns3.com/community. The GNS3 team")
+                    return
 
             item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):
@@ -1201,6 +1204,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             if not self._export_config_dir:
                 self._export_config_dir = self._main_window.project().filesDir()
+                if not self._export_config_dir:
+                    log.critical("You don't have a project directory for current project. This should not happen. If you know how to reproduce this error please post instructions on https://gns3.com/community. The GNS3 team")
+                    return
 
             item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):
