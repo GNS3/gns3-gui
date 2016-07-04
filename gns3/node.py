@@ -147,6 +147,9 @@ class Node(QtCore.QObject):
         :returns: boolean
         """
 
+        if len(name) == 0: # Security to be sure that a name is not empty: https://github.com/GNS3/gns3-gui/issues/1354
+            return True
+
         if name in self._allocated_names:
             return True
         return False
