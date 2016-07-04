@@ -75,7 +75,8 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         """
         Slot to update the node.
         """
-
+        if self is None or sip.isdeleted(self):
+            return
         self.refresh()
 
     def node(self):
