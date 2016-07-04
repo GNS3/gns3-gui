@@ -130,7 +130,10 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                 if node_port.name() == nio and not node_port.isFree():
                     QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
-            self._nios.remove(nio)
+            try:
+                self._nios.remove(nio)
+            except KeyError: # If you ask for delete multiple time with race condition you could have a missing key https://github.com/GNS3/gns3-gui/issues/1352
+                return
             self.uiGenericEthernetListWidget.takeItem(self.uiGenericEthernetListWidget.currentRow())
 
     def _linuxEthernetSelectedSlot(self, index):
