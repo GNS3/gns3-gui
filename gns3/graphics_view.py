@@ -21,6 +21,7 @@ Graphical view on the scene where items are drawn.
 
 import logging
 import os
+import sip
 import pickle
 
 from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial
@@ -437,6 +438,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         is_not_link = True
         item = self.itemAt(event.pos())
+        if item and sip.isdeleted(item):
+            return
+
         if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
             is_not_link = False
         else:
