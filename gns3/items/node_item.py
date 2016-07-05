@@ -76,7 +76,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         node.suspended_signal.connect(self.suspendedSlot)
         node.updated_signal.connect(self.updatedSlot)
         node.deleted_signal.connect(self.deletedSlot)
-        node.delete_links_signal.connect(self.deleteLinksSlot)
         node.error_signal.connect(self.errorSlot)
         node.server_error_signal.connect(self.serverErrorSlot)
 
@@ -241,17 +240,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # node name has changed
         for link in self._links:
             link.setCustomToolTip()
-
-    def deleteLinksSlot(self):
-        """
-        Slot to receive events from the attached Node instance
-        when a all the links must be deleted.
-        """
-
-        if self is None:
-            return
-        for link in self._links.copy():
-            link.delete()
 
     def deletedSlot(self):
         """

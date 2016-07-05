@@ -340,8 +340,6 @@ class Node(BaseNode):
         """
 
         log.info("{} is being deleted".format(self.name()))
-        # first delete all the links attached to this node
-        self.delete_links_signal.emit()
         if self._node_id and not skip_controller:
             self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback)
         else:
