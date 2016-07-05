@@ -1698,7 +1698,7 @@ It is your responsability to check if you have the right to distribute the image
                 return
             try:
                 with open(self._project.readmePathFile(), 'w+') as f:
-                    f.write(text)
+                    f.write(text.encode("utf-8"))
             except OSError as e:
                 QtWidgets.QMessageBox.critical(self, "Export project", "Could not create {}: {}".format(self._project.readmePathFile(), e))
                 return
