@@ -207,6 +207,9 @@ class Link(QtCore.QObject):
         :param port_id: port identifier
         :param lport: local UDP port
         """
+        if not self:
+            return
+
         # check that the node is connected to this link as a source
         if self._source_node and node_id == self._source_node.id() and port_id == self._source_port.id():
             laddr = self._source_node.server().host()
