@@ -183,6 +183,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param base_node_id: base node identifier (integer)
         """
 
+        if self is None:
+            return
         self._initialized = True
         self.update()
         self._showLabel()
@@ -193,6 +195,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has started.
         """
 
+        if self is None:
+            return
         for link in self._links:
             link.update()
 
@@ -202,6 +206,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has stopped.
         """
 
+        if self is None:
+            return
         for link in self._links:
             link.update()
 
@@ -211,6 +217,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a the node has suspended.
         """
 
+        if self is None:
+            return
         for link in self._links:
             link.update()
 
@@ -240,6 +248,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         when a all the links must be deleted.
         """
 
+        if self is None:
+            return
         for link in self._links.copy():
             link.delete()
 

@@ -21,6 +21,7 @@ Graphical view on the scene where items are drawn.
 
 import logging
 import os
+import sip
 import pickle
 
 from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial
@@ -412,6 +413,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         is_not_link = True
         item = self.itemAt(event.pos())
+        if item and sip.isdeleted(item):
+            return
+
         if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
             is_not_link = False
         else:
@@ -1102,6 +1106,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             if not self._import_config_dir:
                 self._import_config_dir = self._main_window.projectManager().project().filesDir()
+                if not self._import_config_dir:
+                    log.critical("You don't have a project directory for current project. This should not happen. If you know how to reproduce this error please post instructions on https://gns3.com/community. The GNS3 team")
+                    return
 
             item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):
@@ -1172,6 +1179,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             if not self._export_config_dir:
                 self._export_config_dir = self._main_window.projectManager().project().filesDir()
+                if not self._export_config_dir:
+                    log.critical("You don't have a project directory for current project. This should not happen. If you know how to reproduce this error please post instructions on https://gns3.com/community. The GNS3 team")
+                    return
 
             item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):

@@ -52,6 +52,9 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
         Changes the icon to show the node status (started, stopped etc.)
         """
 
+        if self is None:
+            return
+
         usage = None
         text = self._compute.name()
 
