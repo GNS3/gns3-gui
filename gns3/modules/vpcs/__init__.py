@@ -138,8 +138,6 @@ class VPCS(Module):
         :param project: Project instance
         """
 
-        log.info("Instantiating node {}".format(node_class))
-
         # create an instance of the node class
         return node_class(self, server, project)
 
