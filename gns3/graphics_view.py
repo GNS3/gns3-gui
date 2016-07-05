@@ -1508,12 +1508,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         return node_item
 
     def createNodeItem(self, node, symbol, x, y):
-        node_item = NodeItem(node, symbol)
-        node_item.setPos(QtCore.QPoint(x, y))
+        node.setSymbol(symbol)
+        node.setPos(x, y)
+        node_item = NodeItem(node)
         self.scene().addItem(node_item)
-        x = node_item.pos().x() - (node_item.boundingRect().width() / 2)
-        y = node_item.pos().y() - (node_item.boundingRect().height() / 2)
-        node_item.setPos(x, y)
         self._topology.addNode(node)
         return node_item
 

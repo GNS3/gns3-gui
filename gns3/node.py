@@ -89,6 +89,22 @@ class Node(BaseNode):
         else:
             self._settings.update(data)
 
+    def setSymbol(self, symbol):
+        self._settings["symbol"] = symbol
+
+    def symbol(self):
+        return self._settings["symbol"]
+
+    def setPos(self, x, y):
+        self._settings["x"] = int(x)
+        self._settings["y"] = int(y)
+
+    def x(self):
+        return self._settings["x"]
+
+    def y(self):
+        return self._settings["y"]
+
     def isAlwaysOn(self):
         """
         Whether the node is always on.

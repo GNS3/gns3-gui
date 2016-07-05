@@ -40,7 +40,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
     show_layer = False
 
-    def __init__(self, node, symbol=None):
+    def __init__(self, node):
         super().__init__()
 
         # attached node
@@ -96,12 +96,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         from ..main_window import MainWindow
         self._main_window = MainWindow.instance()
         self._settings = self._main_window.uiGraphicsView.settings()
-        self.setSymbol(symbol)
 
         if node.initialized():
             self.createdSlot(node.id())
-        else:
-            self._updateNode()
 
     def _updateNode(self):
         """
@@ -184,6 +181,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if self is None:
             return
+        self.setSymbol(self._node.symbol())
+        self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
         self._initialized = True
         self.update()
         self._showLabel()
