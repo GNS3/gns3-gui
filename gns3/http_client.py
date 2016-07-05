@@ -55,6 +55,7 @@ class HTTPClient(QtCore.QObject):
     def __init__(self, settings, network_manager=None):
 
         super().__init__()
+
         self._protocol = settings.get("protocol", "http")
         self._host = settings["host"]
         self._port = int(settings["port"])
@@ -70,6 +71,10 @@ class HTTPClient(QtCore.QObject):
 
         # A buffer used by progress download
         self._buffer = {}
+
+        # List of query waiting for the connection
+        self._query_waiting_connections = []
+
 
     def host(self):
         """
@@ -192,7 +197,6 @@ class HTTPClient(QtCore.QObject):
         :param query: The query to execute when all network stack is ready
         :param query: The Server to connect
         """
-        self._executeHTTPQuery("GET", "/version", query, {}, server=server, timeout=5)
 
     def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, server=None, prefix="/v2", **kwargs):
         """
@@ -213,12 +217,17 @@ class HTTPClient(QtCore.QObject):
         :returns: QNetworkReply
         """
 
+        request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout, prefix=prefix)
+
         if self._connected:
-            return self._executeHTTPQuery(method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout, prefix=prefix)
+            return request()
         else:
-            log.info("Connection to {}".format(self.url()))
-            query = qpartial(self._callbackConnect, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout, prefix=prefix)
-            self._connect(query, server)
+            self._query_waiting_connections.append((request, callback))
+            # If we are not connected and we enqueue the first query we open the conection
+            if len(self._query_waiting_connections) == 1:
+                log.info("Connection to {}".format(self.url()))
+                self._executeHTTPQuery("GET", "/version", self._callbackConnect, {}, server=server, timeout=5)
+
 
     def _connectionError(self, callback, msg="", server=None):
         """
@@ -234,10 +243,12 @@ class HTTPClient(QtCore.QObject):
         else:
             msg = "Cannot connect to {}. Please check if GNS3 is allowed in your antivirus and firewall.".format(self.url())
         log.error(msg)
-        if callback is not None:
-            callback({"message": msg}, error=True, server=server)
+        for request, callback in self._query_waiting_connections:
+            if callback is not None:
+                callback({"message": msg}, error=True, server=server)
+        self._query_waiting_connections = []
 
-    def _callbackConnect(self, method, path, callback, body, original_context, params, error=False, server=None, **kwargs):
+    def _callbackConnect(self, params, error=False, server=None, **kwargs):
         """
         Callback after /version response. Continue execution of query
 
@@ -255,8 +266,10 @@ class HTTPClient(QtCore.QObject):
         if "version" not in params or "local" not in params:
             msg = "The remote server {} is not a GNS3 server".format(self.url())
             log.error(msg)
-            if callback is not None:
-                callback({"message": msg}, error=True, server=server)
+            for request, callback in self._query_waiting_connections:
+                if callback is not None:
+                    callback({"message": msg}, error=True, server=server)
+            self._query_waiting_connections = []
             return
 
         if params["version"] != __version__:
@@ -276,8 +289,9 @@ class HTTPClient(QtCore.QObject):
 
         self._connected = True
         self.connection_connected_signal.emit()
-        kwargs["context"] = original_context
-        self._executeHTTPQuery(method, path, callback, body, server=server, **kwargs)
+        for request, callback in self._query_waiting_connections:
+            request()
+        self._query_waiting_connections = []
 
     def _addBodyToRequest(self, body, request):
         """
