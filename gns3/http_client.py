@@ -261,7 +261,8 @@ class HTTPClient(QtCore.QObject):
 
         if error is not False:
             for request, callback in self._query_waiting_connections:
-                self._connectionError(callback)
+                if callback is not None:
+                    self._connectionError(callback)
             return
 
         if "version" not in params or "local" not in params:
@@ -278,20 +279,23 @@ class HTTPClient(QtCore.QObject):
             log.error(msg)
             # Stable release
             if __version_info__[3] == 0:
-                if callback is not None:
-                    callback({"message": msg}, error=True, server=server)
+                for request, callback in self._query_waiting_connections:
+                    if callback is not None:
+                        callback({"message": msg}, error=True, server=server)
                 return
             # We don't allow different major version to interact even with dev build
             elif parse_version(__version__)[:2] != parse_version(params["version"])[:2]:
-                if callback is not None:
-                    callback({"message": msg}, error=True, server=server)
+                for request, callback in self._query_waiting_connections:
+                    if callback is not None:
+                        callback({"message": msg}, error=True, server=server)
                 return
             log.warning("Use a different client and server version can create bugs. Use it at your own risk.")
 
         self._connected = True
         self.connection_connected_signal.emit()
         for request, callback in self._query_waiting_connections:
-            request()
+            if request:
+                request()
         self._query_waiting_connections = []
 
     def _addBodyToRequest(self, body, request):
