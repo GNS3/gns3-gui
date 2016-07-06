@@ -260,7 +260,8 @@ class HTTPClient(QtCore.QObject):
         """
 
         if error is not False:
-            self._connectionError(callback)
+            for request, callback in self._query_waiting_connections:
+                self._connectionError(callback)
             return
 
         if "version" not in params or "local" not in params:
