@@ -172,7 +172,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
         painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
         painter.setPen(QtCore.Qt.black)
         zval = str(int(self.zValue()))
-        painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
+        painter.drawText(QtCore.QPointF(center.x(), center.y()), zval)
 
     def setZValue(self, value):
         """
