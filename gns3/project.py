@@ -270,6 +270,8 @@ class Project(QtCore.QObject):
             return
 
         self._id = result["project_id"]
+        topo = Topology.instance()
+        topo.project = self
 
         if self._closed:
             self._closed = False

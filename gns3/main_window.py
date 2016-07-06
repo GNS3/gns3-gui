@@ -70,13 +70,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     # signal to tell the view if the user is adding a link or not
     adding_link_signal = QtCore.pyqtSignal(bool)
 
-    # signal to tell the windows is ready to load his first project
-    ready_signal = QtCore.pyqtSignal()
-
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, open_file=None):
+        """
+        :param open_file: Open this file instead of asking for a new project
+        """
 
         super().__init__(parent)
         self.setupUi(self)
+
+        self._open_file_at_startup = open_file
 
         MainWindow._instance = self
         topology = Topology.instance()
@@ -239,9 +241,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # connect the signal to the view
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
 
-        # temporary project created, the application is ready
-        self.ready_signal.connect(self._readySlot)
-
     def _loadSettings(self):
         """
         Loads the settings from the persistent settings file.
@@ -378,31 +377,33 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def loadPath(self, path):
         """Open a file and close the previous project"""
 
-        if path:
-            if self._first_file_load is True:
-                self._first_file_load = False
-                time.sleep(0.5)  # give some time to the server to initialize
+        if not path:
+            return
 
-            if self._project_dialog:
-                self._project_dialog.reject()
-                self._project_dialog = None
+        if self._first_file_load is True:
+            self._first_file_load = False
+            time.sleep(0.5)  # give some time to the server to initialize
 
-            if path.endswith(".gns3project") or path.endswith(".gns3p"):
-                # Portable GNS3 project
-                raise NotImplementedError
-                self._project_dialog = None
+        if self._project_dialog:
+            self._project_dialog.reject()
+            self._project_dialog = None
 
-            elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
-                # GNS3 appliance
-                try:
-                    self._appliance_wizard = ApplianceWizard(self, path)
-                except ApplianceError as e:
-                    QtWidgets.QMessageBox.critical(self, "Appliance", "Error while importing appliance {}: {}".format(path, str(e)))
-                    return
-                self._appliance_wizard.show()
-                self._appliance_wizard.exec_()
-            else:
-                self._project_manager.loadProject(path)
+        if path.endswith(".gns3project") or path.endswith(".gns3p"):
+            # Portable GNS3 project
+            raise NotImplementedError
+            self._project_dialog = None
+
+        elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
+            # GNS3 appliance
+            try:
+                self._appliance_wizard = ApplianceWizard(self, path)
+            except ApplianceError as e:
+                QtWidgets.QMessageBox.critical(self, "Appliance", "Error while importing appliance {}: {}".format(path, str(e)))
+                return
+            self._appliance_wizard.show()
+            self._appliance_wizard.exec_()
+        else:
+            self._project_manager.loadProject(path)
 
     def _projectChangedSlot(self):
         """
@@ -1031,7 +1032,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 setup_wizard.exec_()
 
         self._analytics_client.sendScreenView("Main Window")
-        self.ready_signal.emit()
+
+        if self._open_file_at_startup:
+            self.loadPath(self._open_file_at_startup)
+        else:
+            self._newProjectActionSlot()
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)
@@ -1041,12 +1046,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._checkForUpdateActionSlot(silent=True)
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
-
-    def _readySlot(self):
-        """
-        Called when the application is ready to load a project
-        """
-        self._newProjectActionSlot()
 
     def updateRecentFileSettings(self, path):
         """

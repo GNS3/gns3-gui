@@ -241,12 +241,14 @@ def main():
     exception_file_path = os.path.join(LocalConfig.configDirectory(), exception_file_path)
 
     global mainwindow
-    mainwindow = MainWindow()
+    startup_file = app.open_file_at_startup
+    if not startup_file:
+        startup_file = options.project
+
+    mainwindow = MainWindow(open_file=startup_file)
 
     # On OSX we can receive the file to open from a system event
     # loadPath is smart and will load only if a path is present
-    mainwindow.ready_signal.connect(lambda: mainwindow.loadPath(app.open_file_at_startup))
-    mainwindow.ready_signal.connect(lambda: mainwindow.loadPath(options.project))
     app.file_open_signal.connect(lambda path: mainwindow.loadPath(path))
 
     # Manage Ctrl + C or kill command

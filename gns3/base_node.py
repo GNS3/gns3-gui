@@ -72,6 +72,7 @@ class BaseNode(QtCore.QObject):
 
         self._module = module
         self._compute = compute
+        assert project is not None
         self._project = project
         self._initialized = False
         self._loading = False
