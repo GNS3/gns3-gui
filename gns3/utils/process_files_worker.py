@@ -75,12 +75,12 @@ class ProcessFilesWorker(QtCore.QObject):
             self.finished.emit()
             return
 
-        # count the number of files in the source directory
-        file_count = self._countFiles(self._source)
-
         copied = 0
         # start copying/moving from the source directory
         try:
+            # count the number of files in the source directory
+            file_count = self._countFiles(self._source)
+
             for path, dirs, filenames in os.walk(self._source):
                 dirs[:] = [d for d in dirs if d not in self._skip_dirs]
                 filenames[:] = [f for f in filenames if f not in self._skip_files]
