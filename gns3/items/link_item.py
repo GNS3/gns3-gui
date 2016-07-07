@@ -113,11 +113,12 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         """
 
         if not self._source_port.isHotPluggable() and self._source_item.node().status() == Node.started:
-            QtWidgets.QMessageBox.critical(self._main_window, "Connection", "This link cannot be removed because {} is running".format(self._source_item.node().name()))
-            return
+            self._source_item.node().stop()
+            QtWidgets.QMessageBox.critical(self._main_window, "Connection", "{} has been stopped because it doesn't support hot unlink.".format(self._source_item.node().name()))
         if not self._destination_port.isHotPluggable() and self._destination_item.node().status() == Node.started:
-            QtWidgets.QMessageBox.critical(self._main_window, "Connection", "This link cannot be removed because {} is running".format(self._destination_item.node().name()))
-            return
+            self._destination_item.node().stop()
+            QtWidgets.QMessageBox.critical(self._main_window, "Connection", "{} has been stopped because it doesn't support hot unlink.".format(self._destination_item.node().name()))
+
 
         # first delete the port labels if any
         if self._source_port.label():
