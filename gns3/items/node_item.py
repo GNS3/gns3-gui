@@ -48,6 +48,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         self._symbol = None
 
+        # says if the attached node has been initialized
+        # by the server.
+        self._initialized = False
+
         # node label
         self._node_label = None
 
@@ -82,10 +86,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # used when a port has been selected from the contextual menu
         self._selected_port = None
 
-        # says if the attached node has been initialized
-        # by the server.
-        self._initialized = False
-
         # Use to detect the first time we display the label
         self._first_update_label = True
 
@@ -104,7 +104,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Sync change to the node
         """
-        self._node.setGraphics(self)
+        if self._initialized:
+            self._node.setGraphics(self)
 
     def setSymbol(self, symbol):
         """
@@ -113,7 +114,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # create renderer using symbols path/resource
         if symbol is None:
             symbol = self._node.defaultSymbol()
-            return
         if self._symbol != symbol:
             self._symbol = symbol
             Controller.instance().getStatic(Symbol(symbol_id=symbol).url(), self._symbolLoadedCallback)
@@ -127,6 +127,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setSharedRenderer(renderer)
         if self._node.settings().get("symbol") != self._symbol:
             self._updateNode()
+        if not self._initialized:
+            self._showLabel()
+            self._initialized = True
+            if self._node.creator():
+                self._updateNode()
 
     def node(self):
         """
@@ -181,11 +186,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if self is None:
             return
-        self.setSymbol(self._node.symbol())
         self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
-        self._initialized = True
+        self.setSymbol(self._node.symbol())
         self.update()
-        self._showLabel()
 
     def startedSlot(self):
         """

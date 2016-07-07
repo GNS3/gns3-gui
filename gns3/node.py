@@ -257,7 +257,14 @@ class Node(BaseNode):
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.debug("{} setting up and updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                self._settings[name] = value
+
+                if name == "label" and self._creator:
+                    # We could have race condition where when we create the node
+                    # on controller the label is not yet init properly to avoid
+                    # overwrite overeriding the data we ignore it.
+                    pass
+                else:
+                    self._settings[name] = value
 
         if "properties" in result:
             for name, value in result["properties"].items():
@@ -335,7 +342,13 @@ class Node(BaseNode):
         # Update common element of all nodes
         for key in ["x", "y", "z", "symbol", "label"]:
             if key in result:
-                self._settings[key] = result[key]
+                if key == "label" and self._creator and self._settings["label"] is None:
+                    # We could have race condition where when we create the node
+                    # on controller the label is not yet init properly to avoid
+                    # overwrite overeriding the data we ignore it.
+                    pass
+                else:
+                    self._settings[key] = result[key]
 
         self._updateCallback(result)
         self.updated_signal.emit()
