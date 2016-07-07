@@ -1,5 +1,25 @@
 # Change Log
 
+## 1.5.1 06/07/2016
+
+* Try to fix a crash when reseting interface label
+* Fix a crash with broken file system
+* Fix EtherSwitch default name format
+* Fix crash when you have utf-8 char in the README
+* Fix rare crash when creating a link
+* Stop node before hot unlink
+* Prevent a crash due to issue in Qt
+* Add another security to prevent client to send empty hostname
+* Fix rare crash when deleting interface from the cloud
+* Fix rare crash in topology summary view
+* Ask user to send explanation if they cross a rare error
+* Fix rare crash when deleting a node
+* Hotlink support for Docker
+* Fix typo in the a warning dialog
+* Fix Remote GNS3 VM requires local server
+* Fix AttributeError: 'NoneType' object has no attribute '_server'
+* No timeout when importing a .gns3project
+
 ## 1.5.0 27/06/2016
 
 * Fix double extension of portable project
