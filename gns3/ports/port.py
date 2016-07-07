@@ -430,7 +430,7 @@ class Port:
         """
 
         if self._port_label is not None:
-            self._port_label.delete()
+            self._port_label.deleteLater()
             self._port_label = None
 
     @classmethod
