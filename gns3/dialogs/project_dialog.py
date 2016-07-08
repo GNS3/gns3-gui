@@ -131,11 +131,11 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         if not project_name:
             QtWidgets.QMessageBox.critical(self, "New project", "Project name is empty")
-            return
+            return False
 
         if not project_location:
             QtWidgets.QMessageBox.critical(self, "New project", "Project location is empty")
-            return
+            return False
 
         if os.path.isdir(project_location):
             reply = QtWidgets.QMessageBox.question(self,
@@ -144,17 +144,19 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                                                    QtWidgets.QMessageBox.Yes,
                                                    QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
-                return
+                return False
 
         self._project_settings["project_name"] = project_name
         self._project_settings["project_path"] = os.path.join(project_location, project_name + ".gns3")
         self._project_settings["project_files_dir"] = project_location
+        return True
 
     def done(self, result):
 
         if result:
             if self.uiOpenProjectTabWidget.currentIndex() == 0:
-                self._newProject()
+                if not self._newProject():
+                    return
             else:
                 current = self.uiProjectsTreeWidget.currentItem()
                 if current is None:
