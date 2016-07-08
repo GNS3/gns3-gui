@@ -55,7 +55,7 @@ class ServerItem(QtWidgets.QTreeWidgetItem):
         Changes the icon to show the node status (started, stopped etc.)
         """
 
-        if not self._server:
+        if not self or not self._server:
             return
         usage = self._server.systemUsage()
 
