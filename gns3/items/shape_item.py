@@ -189,6 +189,7 @@ class ShapeItem(DrawingItem):
         style = ""
         pen = self.pen()
         element.set("fill", "#{}".format(hex(self.brush().color().rgba())[4:]))
+        element.set("fill-opacity", str(self.brush().color().alphaF()))
 
         dasharray = self.QT_DASH_TO_SVG[pen.style()]
         if dasharray is None: # No border to the element
@@ -231,7 +232,16 @@ class ShapeItem(DrawingItem):
                 elif key == "stroke":
                     pen.setColor(colorFromSvg(value))
                 elif key == "fill":
-                    brush.setColor(colorFromSvg(value))
+                    new_color = colorFromSvg(value)
+                    color = brush.color()
+                    color.setBlue(new_color.blue())
+                    color.setRed(new_color.red())
+                    color.setGreen(new_color.green())
+                    brush.setColor(color)
+                elif key == "fill-opacity":
+                    color = brush.color()
+                    color.setAlphaF(float(value))
+                    brush.setColor(color)
 
             # Map SVG stroke style (border of the element to the Qt version)
             if not "stroke" in styles:

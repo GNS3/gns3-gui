@@ -32,6 +32,7 @@ def test_toSvg(project, controller):
     assert text.get("font-family") == "TypeWriter"
     assert text.get("font-size") == "10"
     assert text.get("fill") == "#000000"
+    assert text.get("fill-opacity") == "1.0"
     assert text.text == "Hello"
 
 

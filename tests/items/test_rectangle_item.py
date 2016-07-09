@@ -36,18 +36,19 @@ def test_toSvg(project, controller):
     assert rect.get("stroke-width") == "2"
     assert rect.get("stroke") == "#000000"
     assert rect.get("fill", "#ffffff")
+    assert rect.get("fill-opacity", "1")
 
     assert rect.get("stroke-dasharray") == "25, 25"
 
 
 def test_fromSvg(project, controller):
     rect = RectangleItem(project=project)
-    rect.fromSvg("<svg height=\"150\" width=\"250\"><rect height=\"150\" style=\"stroke-width:5;stroke:#0000ff;fill:#ff00ff;\" width=\"150\" stroke-dasharray=\"5, 25, 25\" /></svg>")
+    rect.fromSvg("<svg height=\"150\" width=\"250\"><rect height=\"150\" style=\"stroke-width:5;stroke:#0000ff;fill:#ff00ff;fill-opacity: 0.5;\" width=\"150\" stroke-dasharray=\"5, 25, 25\" /></svg>")
     assert rect.rect().width() == 250
     assert rect.rect().height() == 150
     assert rect.pen().width() == 5
     assert hex(rect.pen().color().rgba()) == "0xff0000ff"
-    assert hex(rect.brush().color().rgba()) == "0xffff00ff"
+    assert hex(rect.brush().color().rgba()) == "0x80ff00ff"
     assert rect.pen().style() == QtCore.Qt.DashDotLine
 
 

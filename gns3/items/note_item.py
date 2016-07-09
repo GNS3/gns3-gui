@@ -209,7 +209,16 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
                 elif key == "font-weight" and val == "bold":
                     font.setBold(True)
                 elif key == "fill":
-                    self.setDefaultTextColor(colorFromSvg(val))
+                    new_color = colorFromSvg(val)
+                    color = self.defaultTextColor()
+                    color.setBlue(new_color.blue())
+                    color.setRed(new_color.red())
+                    color.setGreen(new_color.green())
+                    self.setDefaultTextColor(color)
+                elif key == "fill-opacity":
+                    color = self.defaultTextColor()
+                    color.setAlphaF(float(val))
+                    self.setDefaultTextColor(color)
         self.setFont(font)
 
     def duplicate(self):
@@ -264,6 +273,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
             style += "font-weight: bold;"
 
         style += "fill: {};".format("#" + hex(self.defaultTextColor().rgba())[4:])
+        style += "fill-opacity: {};".format(self.defaultTextColor().alphaF())
 
         note_info["style"] = style
 

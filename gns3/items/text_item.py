@@ -119,6 +119,7 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         if self.font().bold():
             text.set("font-weight", "bold")
         text.set("fill", "#" + hex(self.defaultTextColor().rgba())[4:])
+        text.set("fill-opacity", str(self.defaultTextColor().alphaF()))
         text.text = self.toPlainText()
 
         svg = ET.tostring(svg, encoding="utf-8").decode("utf-8")
@@ -131,13 +132,26 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         font = QtGui.QFont()
         color = text.get("fill")
         if color:
-            self.setDefaultTextColor(colorFromSvg(color))
+            new_color = colorFromSvg(color)
+            color = self.defaultTextColor()
+            color.setBlue(new_color.blue())
+            color.setRed(new_color.red())
+            color.setGreen(new_color.green())
+            self.setDefaultTextColor(color)
+
+        opacity = text.get("fill-opacity")
+        if opacity:
+            color = self.defaultTextColor()
+            color.setAlphaF(float(opacity))
+            self.setDefaultTextColor(color)
+
         font.setPointSize(int(text.get("font-size", self.font().pointSize())))
         font.setFamily(text.get("font-family", self.font().family()))
         if text.get("font-style") == "italic":
             font.setItalic(True)
         if text.get("font-weight") == "bold":
             font.setBold(True)
+
         self.setFont(font)
         self.setPlainText(text.text)
 
