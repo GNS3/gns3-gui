@@ -211,40 +211,28 @@ class ShapeItem(DrawingItem):
         height = float(svg.get("height", self.rect().height()))
         self.setRect(0, 0, width, height)
 
-        try:
-            styles = svg[0].get("style")
-        except IndexError:
-            styles = None
-
         pen = QtGui.QPen()
         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-        if styles:
-            for style in styles.split(";"):
-                try:
-                    key, value = style.split(":")
-                except ValueError:
-                    continue
-                key = key.strip()
-                value = value.strip()
 
-                if key == "stroke-width":
-                    pen.setWidth(int(value))
-                elif key == "stroke":
-                    pen.setColor(colorFromSvg(value))
-                elif key == "fill":
-                    new_color = colorFromSvg(value)
-                    color = brush.color()
-                    color.setBlue(new_color.blue())
-                    color.setRed(new_color.red())
-                    color.setGreen(new_color.green())
-                    brush.setColor(color)
-                elif key == "fill-opacity":
-                    color = brush.color()
-                    color.setAlphaF(float(value))
-                    brush.setColor(color)
+        if len(svg):
+            if svg[0].get("stroke-width"):
+                pen.setWidth(int(svg[0].get("stroke-width")))
+            if svg[0].get("stroke"):
+                pen.setColor(colorFromSvg(svg[0].get("stroke")))
+            if svg[0].get("fill"):
+                new_color = colorFromSvg(svg[0].get("fill"))
+                color = brush.color()
+                color.setBlue(new_color.blue())
+                color.setRed(new_color.red())
+                color.setGreen(new_color.green())
+                brush.setColor(color)
+            if svg[0].get("fill-opacity"):
+                color = brush.color()
+                color.setAlphaF(float(svg[0].get("fill-opacity")))
+                brush.setColor(color)
 
             # Map SVG stroke style (border of the element to the Qt version)
-            if not "stroke" in styles:
+            if not svg[0].get("stroke"):
                 pen.setStyle(QtCore.Qt.NoPen)
             else:
                 pen.setStyle(QtCore.Qt.SolidLine)

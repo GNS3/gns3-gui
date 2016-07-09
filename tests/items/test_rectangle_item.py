@@ -43,7 +43,7 @@ def test_toSvg(project, controller):
 
 def test_fromSvg(project, controller):
     rect = RectangleItem(project=project)
-    rect.fromSvg("<svg height=\"150\" width=\"250\"><rect height=\"150\" style=\"stroke-width:5;stroke:#0000ff;fill:#ff00ff;fill-opacity: 0.5;\" width=\"150\" stroke-dasharray=\"5, 25, 25\" /></svg>")
+    rect.fromSvg('<svg height="150" width="250"><rect height="150" stroke-width="5" stroke="#0000ff" fill="#ff00ff" fill-opacity="0.5" width="150" stroke-dasharray="5, 25, 25" /></svg>')
     assert rect.rect().width() == 250
     assert rect.rect().height() == 150
     assert rect.pen().width() == 5
@@ -54,7 +54,7 @@ def test_fromSvg(project, controller):
 
 def test_fromSvg_solid_stroke(project, controller):
     rect = RectangleItem(project=project)
-    rect.fromSvg("<svg height=\"150\" width=\"250\"><rect height=\"150\" style=\"stroke-width:5;stroke:#0000ff;fill:#ff00ff;\" width=\"150\" /></svg>")
+    rect.fromSvg('<svg height="150" width="250"><rect height="150" stroke-width="5" stroke="#0000ff" fill="#ff00ff" width="150" /></svg>')
     assert rect.pen().style() == QtCore.Qt.SolidLine
 
 
