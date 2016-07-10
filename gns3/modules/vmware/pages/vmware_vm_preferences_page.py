@@ -21,7 +21,8 @@ Configuration page for VMware VM preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtWidgets, qpartial
+from gns3.controller import Controller
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
