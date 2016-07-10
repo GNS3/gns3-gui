@@ -21,6 +21,7 @@ Configuration page for clouds.
 
 from gns3.qt import QtGui, QtCore, QtWidgets
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.controller import Controller
 from gns3.node import Node
 
 from ..ui.cloud_configuration_page_ui import Ui_cloudConfigPageWidget
@@ -37,7 +38,9 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         super().__init__()
         self.setupUi(self)
+        self._node = None
         self._ports = []
+        self._interfaces = []
 
         # add the categories
         for name, category in Node.defaultCategories().items():
@@ -110,13 +113,14 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         Deletes the selected Ethernet interface.
         """
 
-        for item in self.uiEthernetListWidget.selectedItems():
-            interface = item.text()
-            # check we can delete that interface
-            for node_port in self._node.ports():
-                if node_port.name() == interface and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(interface))
-                    return
+        if self._node:
+            for item in self.uiEthernetListWidget.selectedItems():
+                interface = item.text()
+                # check we can delete that interface
+                for node_port in self._node.ports():
+                    if node_port.name() == interface and not node_port.isFree():
+                        QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(interface))
+                        return
 
         for item in self.uiEthernetListWidget.selectedItems():
             interface = item.text()
@@ -124,7 +128,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                 if port["name"] == interface:
                     self._ports.remove(port)
                     self.uiEthernetListWidget.takeItem(self.uiEthernetListWidget.row(item))
-                    for interface in self._node.interfaces():
+                    for interface in self._interfaces:
                         if not self.uiShowSpecialInterfacesCheckBox.isChecked() and Cloud.isSpecialInterface(interface["name"]):
                             continue
                         if interface["name"] == port["name"] and interface["type"] == "ethernet":
@@ -187,13 +191,14 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         Deletes a TAP interface.
         """
 
-        for item in self.uiTAPListWidget.selectedItems():
-            interface = item.text()
-            # check we can delete that interface
-            for node_port in self._node.ports():
-                if node_port.name() == interface and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(interface))
-                    return
+        if self._node:
+            for item in self.uiTAPListWidget.selectedItems():
+                interface = item.text()
+                # check we can delete that interface
+                for node_port in self._node.ports():
+                    if node_port.name() == interface and not node_port.isFree():
+                        QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(interface))
+                        return
 
         for item in self.uiTAPListWidget.selectedItems():
             interface = item.text()
@@ -201,7 +206,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                 if port["name"] == interface:
                     self._ports.remove(port)
                     self.uiTAPListWidget.takeItem(self.uiTAPListWidget.row(item))
-                    for interface in self._node.interfaces():
+                    for interface in self._interfaces:
                         if interface["name"] == port["name"] and interface["type"] == "tap":
                             self.uiTAPComboBox.addItem(interface["name"])
                     break
@@ -278,13 +283,14 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         Deletes an UDP tunnel.
         """
 
-        for item in self.uiUDPTreeWidget.selectedItems():
-            name = item.text(0)
-            # check we can delete that UDP tunnel
-            for node_port in self._node.ports():
-                if node_port.name() == name and not node_port.isFree():
-                    QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(name))
-                    return
+        if self._node:
+            for item in self.uiUDPTreeWidget.selectedItems():
+                name = item.text(0)
+                # check we can delete that UDP tunnel
+                for node_port in self._node.ports():
+                    if node_port.name() == name and not node_port.isFree():
+                        QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to {}, please remove it first".format(name))
+                        return
 
         for item in self.uiUDPTreeWidget.selectedItems():
             name = item.text(0)
@@ -302,7 +308,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         self.uiEthernetComboBox.clear()
         index = 0
-        for interface in self._node.interfaces():
+        for interface in self._interfaces:
             if interface["type"] == "ethernet":
                 if not state and Cloud.isSpecialInterface(interface["name"]):
                     continue
@@ -323,6 +329,38 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             new_symbol_path = dialog.getSymbol()
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
+
+    def _loadNetworkInterfaces(self, interfaces):
+
+        self.uiEthernetComboBox.clear()
+        index = 0
+        for interface in interfaces:
+            if interface["type"] == "ethernet" and not Cloud.isSpecialInterface(interface["name"]):
+                self.uiEthernetComboBox.addItem(interface["name"])
+                index += 1
+
+        # load all TAP interfaces
+        self.uiTAPComboBox.clear()
+        index = 0
+        for interface in interfaces:
+            if interface["type"] == "tap":
+                self.uiTAPComboBox.addItem(interface["name"])
+                index += 1
+
+    def _getInterfacesFromServerCallback(self, result, error=False, **kwargs):
+        """
+        Callback for retrieving the network interfaces
+
+        :param progress_dialog: QProgressDialog instance
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            QtWidgets.QMessageBox.critical(self, "Network interfaces", "{}".format(result["message"]))
+        else:
+            self._interfaces = result
+            self._loadNetworkInterfaces(result)
 
     def loadSettings(self, settings, node=None, group=False):
         """
@@ -356,9 +394,9 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
 
-            for index in range(0, 3):
-                self.uiTabWidget.removeTab(0)
-            self.uiTabWidget.setTabText(0, "Settings")
+            Controller.instance().get("/computes/{}/network/interfaces".format(settings["server"]),
+                                      self._getInterfacesFromServerCallback,
+                                      progressText="Retrieving network interfaces...")
 
         else:
             self.uiDefaultNameFormatLabel.hide()
@@ -370,52 +408,38 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             self.uiCategoryLabel.hide()
             self.uiCategoryComboBox.hide()
             self._node = node
+            self._interfaces = self._node.interfaces()
+            self._loadNetworkInterfaces(self._interfaces)
 
-            # load all Ethernet network interfaces
-            self.uiEthernetComboBox.clear()
-            index = 0
-            for interface in self._node.interfaces():
-                if interface["type"] == "ethernet" and not Cloud.isSpecialInterface(interface["name"]):
-                    self.uiEthernetComboBox.addItem(interface["name"])
-                    index += 1
+        # load the current ports
+        self._ports = []
+        self.uiEthernetListWidget.clear()
+        self.uiTAPListWidget.clear()
+        self.uiUDPTreeWidget.clear()
 
-            # load all TAP interfaces
-            self.uiTAPComboBox.clear()
-            index = 0
-            for interface in self._node.interfaces():
-                if interface["type"] == "tap":
-                    self.uiTAPComboBox.addItem(interface["name"])
-                    index += 1
-
-            # load the current ports
-            self._ports = []
-            self.uiEthernetListWidget.clear()
-            self.uiTAPListWidget.clear()
-            self.uiUDPTreeWidget.clear()
-
-            for port in settings["ports"]:
-                self._ports.append(port)
-                if port["type"] == "ethernet":
-                    self.uiEthernetListWidget.addItem(port["name"])
-                    index = self.uiEthernetComboBox.findText(port["name"])
-                    if index != -1:
-                        self.uiEthernetComboBox.removeItem(index)
-                elif port["type"] == "tap":
-                    self.uiTAPListWidget.addItem(port["name"])
-                    index = self.uiTAPComboBox.findText(port["name"])
-                    if index != -1:
-                        self.uiTAPComboBox.removeItem(index)
-                elif port["type"] == "udp":
-                    item = QtWidgets.QTreeWidgetItem(self.uiUDPTreeWidget)
-                    item.setText(0, port["name"])
-                    item.setText(1, str(port["lport"]))
-                    item.setText(2, port["rhost"])
-                    item.setText(3, str(port["rport"]))
-                    self.uiUDPTreeWidget.addTopLevelItem(item)
-                    self.uiUDPTreeWidget.resizeColumnToContents(0)
-                    self.uiUDPTreeWidget.resizeColumnToContents(1)
-                    self.uiUDPTreeWidget.resizeColumnToContents(2)
-                    self.uiUDPTreeWidget.resizeColumnToContents(3)
+        for port in settings["ports"]:
+            self._ports.append(port)
+            if port["type"] == "ethernet":
+                self.uiEthernetListWidget.addItem(port["name"])
+                index = self.uiEthernetComboBox.findText(port["name"])
+                if index != -1:
+                    self.uiEthernetComboBox.removeItem(index)
+            elif port["type"] == "tap":
+                self.uiTAPListWidget.addItem(port["name"])
+                index = self.uiTAPComboBox.findText(port["name"])
+                if index != -1:
+                    self.uiTAPComboBox.removeItem(index)
+            elif port["type"] == "udp":
+                item = QtWidgets.QTreeWidgetItem(self.uiUDPTreeWidget)
+                item.setText(0, port["name"])
+                item.setText(1, str(port["lport"]))
+                item.setText(2, port["rhost"])
+                item.setText(3, str(port["rport"]))
+                self.uiUDPTreeWidget.addTopLevelItem(item)
+                self.uiUDPTreeWidget.resizeColumnToContents(0)
+                self.uiUDPTreeWidget.resizeColumnToContents(1)
+                self.uiUDPTreeWidget.resizeColumnToContents(2)
+                self.uiUDPTreeWidget.resizeColumnToContents(3)
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -449,6 +473,6 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                 settings["symbol"] = symbol_path
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
-
+            settings["ports"] = self._ports
         else:
             settings["ports"] = self._ports

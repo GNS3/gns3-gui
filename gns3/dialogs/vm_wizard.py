@@ -145,7 +145,7 @@ class VMWizard(QtWidgets.QWizard):
                     return False
                 self._compute_id = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex())
             elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isChecked():
-                gns3_vm_server = Servers.instance().vmServer()
+                gns3_vm_server = Servers.instance().vmServer()  # FIXME
                 if gns3_vm_server is None:
                     QtWidgets.QMessageBox.critical(self, "GNS3 VM", "The GNS3 VM is not running")
                     return False
