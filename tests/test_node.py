@@ -19,7 +19,7 @@ import uuid
 
 
 from unittest.mock import patch, Mock, MagicMock
-from gns3.modules.vpcs.vpcs_device import VPCSDevice
+from gns3.modules.vpcs.vpcs_node import VPCSNode
 from gns3.node import Node
 from gns3.ports.port import Port
 

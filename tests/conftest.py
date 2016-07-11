@@ -31,14 +31,14 @@ def reset_modules():
     """
 
     from gns3.ports.port import Port
-    from gns3.modules.vpcs.vpcs_device import VPCSDevice
+    from gns3.modules.vpcs.vpcs_node import VPCSNode
     from gns3.modules.virtualbox.virtualbox_vm import VirtualBoxVM
     from gns3.modules.iou.iou_device import IOUDevice
     from gns3.compute_manager import ComputeManager
 
     ComputeManager.reset()
     Port.reset()
-    VPCSDevice.reset()
+    VPCSNode.reset()
     VirtualBoxVM.reset()
     IOUDevice.reset()
 
@@ -91,10 +91,10 @@ def gns3vm_server():
 @pytest.fixture
 def vpcs_device(local_server, project):
 
-    from gns3.modules.vpcs.vpcs_device import VPCSDevice
+    from gns3.modules.vpcs.vpcs_node import VPCSNode
     from gns3.modules.vpcs import VPCS
 
-    device = VPCSDevice(VPCS(), local_server, project)
+    device = VPCSNode(VPCS(), local_server, project)
     device._node_id = str(uuid.uuid4())
     device._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
     device.setInitialized(True)

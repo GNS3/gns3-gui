@@ -21,7 +21,7 @@ from unittest.mock import MagicMock
 
 
 from gns3.link import Link
-from gns3.modules.vpcs.vpcs_device import VPCSDevice
+from gns3.modules.vpcs.vpcs_device import VPCSNode
 from gns3.modules.vpcs import VPCS
 from gns3.controller import Controller
 
@@ -31,12 +31,12 @@ def devices(local_server, project):
     """
     Create two VPCS for test
     """
-    device1 = VPCSDevice(VPCS(), local_server, project)
+    device1 = VPCSNode(VPCS(), local_server, project)
     device1._vpcs_id = str(uuid.uuid4())
     device1._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
     device1.setInitialized(True)
 
-    device2 = VPCSDevice(VPCS(), local_server, project)
+    device2 = VPCSNode(VPCS(), local_server, project)
     device2._vpcs_id = str(uuid.uuid4())
     device2._settings = {"name": "VPCS 2", "script_file": "", "console": None, "startup_script": None}
     device2.setInitialized(True)

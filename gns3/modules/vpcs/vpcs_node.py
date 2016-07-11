@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-VPCS device implementation.
+VPCS node implementation.
 """
 
 import os
@@ -28,10 +28,10 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class VPCSDevice(Node):
+class VPCSNode(Node):
 
     """
-    VPCS device.
+    VPCS node.
 
     :param module: parent module for this node
     :param server: GNS3 server instance
@@ -52,7 +52,7 @@ class VPCSDevice(Node):
 
         self.settings().update(vpcs_settings)
 
-        # VPCS devices have only one fixed Ethernet port
+        # VPCS nodes have only one fixed Ethernet port
         port_name = EthernetPort.longNameType() + str(0)
         short_name = EthernetPort.shortNameType() + str(0)
         port = EthernetPort(port_name)
@@ -65,11 +65,11 @@ class VPCSDevice(Node):
 
     def create(self, name=None, node_id=None, additional_settings={}, default_name_format="PC{0}"):
         """
-        Creates this VPCS device.
+        Creates this VPCS node.
 
         :param name: optional name
         :param node_id: Node identifier
-        :param additional_settings: additional settings for this device
+        :param additional_settings: additional settings for this node
         """
 
         params = {}
@@ -92,7 +92,7 @@ class VPCSDevice(Node):
 
     def update(self, new_settings):
         """
-        Updates the settings for this VPCS device.
+        Updates the settings for this VPCS node.
 
         :param new_settings: settings dictionary
         """
@@ -129,7 +129,7 @@ class VPCSDevice(Node):
 
     def info(self):
         """
-        Returns information about this VPCS device.
+        Returns information about this VPCS node.
 
         :returns: formatted string
         """
@@ -139,9 +139,9 @@ class VPCSDevice(Node):
         else:
             state = "stopped"
 
-        info = """Device {name} is {state}
+        info = """Node {name} is {state}
   Local node ID is {id}
-  Server's VPCS device ID is {node_id}
+  Server's VPCS node ID is {node_id}
   VPCS's server runs on {host}, console is on port {console}
 """.format(name=self.name(),
            id=self.id(),
@@ -258,7 +258,7 @@ class VPCSDevice(Node):
 
     def console(self):
         """
-        Returns the console port for this VPCS device.
+        Returns the console port for this VPCS node.
 
         :returns: port (integer)
         """
@@ -272,8 +272,8 @@ class VPCSDevice(Node):
         :returns: QWidget object
         """
 
-        from .pages.vpcs_device_configuration_page import VPCSDeviceConfigurationPage
-        return VPCSDeviceConfigurationPage
+        from .pages.vpcs_node_configuration_page import VPCSNodeConfigurationPage
+        return VPCSNodeConfigurationPage
 
     @staticmethod
     def defaultSymbol():
@@ -293,7 +293,7 @@ class VPCSDevice(Node):
     @staticmethod
     def categories():
         """
-        Returns the node categories the node is part of (used by the device panel).
+        Returns the node categories the node is part of (used by the node panel).
 
         :returns: list of node categories
         """
@@ -302,4 +302,9 @@ class VPCSDevice(Node):
 
     def __str__(self):
 
-        return "VPCS device"
+        return "VPCS node"
+
+
+# for compatibility pre version 2.0
+class VPCSDevice(VPCSNode):
+    pass

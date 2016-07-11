@@ -242,6 +242,7 @@
                         "QemuVM",
                         "DockerVM",
                         "VPCSDevice",
+                        "VPCSNode",
                         "EthernetHub",
                         "EthernetSwitch",
                         "ATMSwitch",

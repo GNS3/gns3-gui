@@ -22,15 +22,15 @@ VPCS module implementation.
 import os
 import shutil
 
-
+from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
-from gns3.utils.get_resource import get_resource
-from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.local_server_config import LocalServerConfig
 
 from ..module import Module
-from .vpcs_device import VPCSDevice
+from ..module_error import ModuleError
+from .vpcs_node import VPCSNode
 from .settings import VPCS_SETTINGS
+from .settings import VPCS_NODES_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -47,11 +47,8 @@ class VPCS(Module):
 
         self._settings = {}
         self._nodes = []
+        self._vpcs_nodes = {}
         self._working_dir = ""
-
-        self._vpcs_multi_host_process = None
-        self._vpcs_multi_host_port = 0
-
         self._loadSettings()
 
     def configChangedSlot(self):
@@ -64,16 +61,14 @@ class VPCS(Module):
         """
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, VPCS_SETTINGS)
-
-        if not self._settings["base_script_file"]:
-            self._settings["base_script_file"] = get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
-
         if not os.path.exists(self._settings["vpcs_path"]):
             vpcs_path = shutil.which("vpcs")
             if vpcs_path:
                 self._settings["vpcs_path"] = os.path.abspath(vpcs_path)
             else:
                 self._settings["vpcs_path"] = ""
+
+        self._loadVPCSNodes()
 
     def _saveSettings(self):
         """
@@ -85,11 +80,54 @@ class VPCS(Module):
 
         if self._settings["vpcs_path"]:
             # save some settings to the server config file
-            server_settings = {
-                "vpcs_path": os.path.normpath(self._settings["vpcs_path"]),
-            }
+            server_settings = {"vpcs_path": os.path.normpath(self._settings["vpcs_path"])}
             config = LocalServerConfig.instance()
             config.saveSettings(self.__class__.__name__, server_settings)
+
+    def _loadVPCSNodes(self):
+        """
+        Load the VPCS nodes from the persistent settings file.
+        """
+
+        self._vpcs_nodes = {}
+        settings = LocalConfig.instance().settings()
+        if "nodes" in settings.get(self.__class__.__name__, {}):
+            for node in settings[self.__class__.__name__]["nodes"]:
+                name = node.get("name")
+                server = node.get("server")
+                key = "{server}:{name}".format(server=server, name=name)
+                if key in self._vpcs_nodes or not name or not server:
+                    continue
+                node_settings = VPCS_NODES_SETTINGS.copy()
+                node_settings.update(node)
+                self._vpcs_nodes[key] = node_settings
+
+    def _saveVPCSNodes(self):
+        """
+        Saves the VPCS nodes to the persistent settings file.
+        """
+
+        self._settings["nodes"] = list(self._vpcs_nodes.values())
+        self._saveSettings()
+
+    def vpcsNodes(self):
+        """
+        Returns VPCS node settings.
+
+        :returns: VPCS node settings (dictionary)
+        """
+
+        return self._vpcs_nodes
+
+    def setVPCSNodes(self, new_vpcs_nodes):
+        """
+        Sets VPCS node settings.
+
+        :param new_vpcs_nodes: VPCS node settings (dictionary)
+        """
+
+        self._vpcs_nodes = new_vpcs_nodes.copy()
+        self._saveVPCSNodes()
 
     def addNode(self, node):
         """
@@ -150,17 +188,44 @@ class VPCS(Module):
         """
 
         log.info("creating node {}".format(node))
-        vm_settings = {}
 
-        script_file = self._settings["base_script_file"]
-        if script_file:
-            vm_settings["script_file"] = script_file
+        vpcs_node = None
+        if node_name:
+            for node_key, info in self._vpcs_nodes.items():
+                if node_name == info["name"]:
+                    vpcs_node = node_key
 
-        default_name_format = VPCS_SETTINGS["default_name_format"]
-        if self._settings["default_name_format"]:
-            default_name_format = self._settings["default_name_format"]
+        if not vpcs_node:
+            selected_nodes = []
+            for vpcs_node, info in self._vpcs_nodes.items():
+                if info["server"] == node.server().host() or (node.server().isLocal() and info["server"] == "local"):
+                    selected_nodes.append(vpcs_node)
 
-        node.create(additional_settings=vm_settings, default_name_format=default_name_format)
+            if not selected_nodes:
+                raise ModuleError("No VPCS node on server {}".format(node.server().host()))
+            elif len(selected_nodes) > 1:
+
+                from gns3.main_window import MainWindow
+                mainwindow = MainWindow.instance()
+
+                (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "VPCS node", "Please choose a node", selected_nodes, 0, False)
+                if ok:
+                    vpcs_node = selection
+                else:
+                    raise ModuleError("Please select a VPCS node")
+            else:
+                vpcs_node = selected_nodes[0]
+
+        node_settings = {}
+        for setting_name, value in self._vpcs_nodes[vpcs_node].items():
+            if setting_name in node.settings() and value != "" and value is not None:
+                node_settings[setting_name] = value
+
+        default_name_format = VPCS_NODES_SETTINGS["default_name_format"]
+        if self._vpcs_nodes[vpcs_node]["default_name_format"]:
+            default_name_format = self._vpcs_nodes[vpcs_node]["default_name_format"]
+
+        node.create(additional_settings=node_settings, default_name_format=default_name_format)
 
     def reset(self):
         """
@@ -206,7 +271,7 @@ class VPCS(Module):
     @staticmethod
     def getNodeType(name, platform=None):
         if name == "vpcs":
-            return VPCSDevice
+            return VPCSNode
         return None
 
     @staticmethod
@@ -217,7 +282,7 @@ class VPCS(Module):
         :returns: list of classes
         """
 
-        return [VPCSDevice]
+        return [VPCSNode]
 
     def nodes(self):
         """
@@ -226,12 +291,15 @@ class VPCS(Module):
         """
 
         nodes = []
-        for node_class in VPCS.classes():
+
+        for node in self._vpcs_nodes.values():
             nodes.append(
-                {"class": node_class.__name__,
-                 "name": node_class.symbolName(),
-                 "categories": [self._settings["category"]],
-                 "symbol": self._settings["symbol"]}
+                {"class": VPCSNode.__name__,
+                 "name": node["name"],
+                 "server": node["server"],
+                 "symbol": node["symbol"],
+                 "categories": [node["category"]]
+                 }
             )
         return nodes
 
@@ -242,7 +310,8 @@ class VPCS(Module):
         """
 
         from .pages.vpcs_preferences_page import VPCSPreferencesPage
-        return [VPCSPreferencesPage]
+        from .pages.vpcs_node_preferences_page import VPCSNodePreferencesPage
+        return [VPCSPreferencesPage, VPCSNodePreferencesPage]
 
     @staticmethod
     def instance():

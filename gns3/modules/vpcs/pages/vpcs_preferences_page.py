@@ -23,12 +23,8 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtGui, QtWidgets, qpartial
-from gns3.controller import Controller
-
+from gns3.qt import QtWidgets
 from gns3.local_server import LocalServer
-from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
-from gns3.node import Node
 
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget
@@ -47,29 +43,9 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         self.setupUi(self)
 
         # connect signals
-        self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
-        self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
-        self._default_configs_dir = LocalServer.instance().localServerSettings()["configs_path"]
-
-        # add the categories
-        for name, category in Node.defaultCategories().items():
-            self.uiCategoryComboBox.addItem(name, category)
-
-    def _symbolBrowserSlot(self):
-        """
-        Slot to open the symbol browser and select a new symbol.
-        """
-
-        symbol_path = self.uiSymbolLineEdit.text()
-        dialog = SymbolSelectionDialog(self, symbol=symbol_path)
-        dialog.show()
-        if dialog.exec_():
-            new_symbol_path = dialog.getSymbol()
-            self.uiSymbolLineEdit.setText(new_symbol_path)
-            self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
 
     def _vpcsPathBrowserSlot(self):
         """
@@ -105,22 +81,6 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
 
         return True
 
-    def _scriptFileBrowserSlot(self):
-        """
-        Slot to open a file browser and select a base script file for VPCS
-        """
-
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select a script file", self._default_configs_dir)
-        if not path:
-            return
-
-        self._default_configs_dir = os.path.dirname(path)
-        if not os.access(path, os.R_OK):
-            QtWidgets.QMessageBox.critical(self, "Script file", "{} cannot be read".format(os.path.basename(path)))
-            return
-
-        self.uiScriptFileEdit.setText(os.path.normpath(path))
-
     def _restoreDefaultsSlot(self):
         """
         Slot to populate the page widgets with the default settings.
@@ -149,14 +109,6 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
 
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiVPCSPathLineEdit.setText(settings["vpcs_path"])
-        self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
-        self.uiScriptFileEdit.setText(settings["base_script_file"])
-        self.uiSymbolLineEdit.setText(settings["symbol"])
-        self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
-
-        index = self.uiCategoryComboBox.findData(settings["category"])
-        if index != -1:
-            self.uiCategoryComboBox.setCurrentIndex(index)
 
     def loadPreferences(self):
         """
@@ -174,25 +126,6 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         vpcs_path = self.uiVPCSPathLineEdit.text().strip()
         if vpcs_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkVPCSPath(vpcs_path):
             return
-
         new_settings = {"vpcs_path": vpcs_path,
-                        "base_script_file": self.uiScriptFileEdit.text(),
-                        "use_local_server": self.uiUseLocalServercheckBox.isChecked(),
-                        "category": self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())}
-
-        # save the symbol path
-        symbol_path = self.uiSymbolLineEdit.text()
-        pixmap = QtGui.QPixmap(symbol_path)
-        if pixmap.isNull():
-            QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
-        else:
-            new_settings["symbol"] = symbol_path
-
-        # save the default name format
-        default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
-        if '{0}' not in default_name_format and '{id}' not in default_name_format:
-            QtWidgets.QMessageBox.critical(self, "Default name format", "The default name format must contain at least {0} or {id}")
-        else:
-            new_settings["default_name_format"] = default_name_format
-
+                        "use_local_server": self.uiUseLocalServercheckBox.isChecked()}
         VPCS.instance().setSettings(new_settings)

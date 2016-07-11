@@ -18,7 +18,7 @@
 import pytest
 
 from unittest.mock import patch, Mock
-from gns3.modules.vpcs.vpcs_device import VPCSDevice
+from gns3.modules.vpcs.vpcs_node import VPCSNode
 from gns3.ports.port import Port
 from gns3.base_node import BaseNode
 from gns3.utils.normalize_filename import normalize_filename
@@ -26,7 +26,7 @@ from gns3.utils.normalize_filename import normalize_filename
 
 def test_vpcs_device_init(local_server, project):
 
-    vpcs_device = VPCSDevice(None, local_server, project)
+    vpcs_device = VPCSNode(None, local_server, project)
 
 
 def test_vpcs_device_create(vpcs_device, project, local_server):

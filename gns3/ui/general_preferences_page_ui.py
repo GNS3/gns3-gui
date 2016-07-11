@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Sun Jul 10 19:52:14 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(660, 722)
+        GeneralPreferencesPageWidget.resize(626, 643)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
@@ -24,7 +25,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiGeneralTab = QtWidgets.QWidget()
         self.uiGeneralTab.setObjectName("uiGeneralTab")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.uiGeneralTab)
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.uiLocalPathsGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
         self.uiLocalPathsGroupBox.setObjectName("uiLocalPathsGroupBox")
@@ -115,7 +115,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiImagesTab = QtWidgets.QWidget()
         self.uiImagesTab.setObjectName("uiImagesTab")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.uiImagesTab)
-        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.uiLocalBinaryImagePathsGroupBox = QtWidgets.QGroupBox(self.uiImagesTab)
         self.uiLocalBinaryImagePathsGroupBox.setObjectName("uiLocalBinaryImagePathsGroupBox")
@@ -173,7 +172,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiConsoleTab = QtWidgets.QWidget()
         self.uiConsoleTab.setObjectName("uiConsoleTab")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiConsoleTab)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiTelnetConsoleSettingsGroupBox = QtWidgets.QGroupBox(self.uiConsoleTab)
         self.uiTelnetConsoleSettingsGroupBox.setObjectName("uiTelnetConsoleSettingsGroupBox")
@@ -251,7 +249,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiVNCTab = QtWidgets.QWidget()
         self.uiVNCTab.setObjectName("uiVNCTab")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.uiVNCTab)
-        self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.uiVNCConsoleSettingsGroupBox = QtWidgets.QGroupBox(self.uiVNCTab)
         self.uiVNCConsoleSettingsGroupBox.setObjectName("uiVNCConsoleSettingsGroupBox")
@@ -287,7 +284,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSceneTab = QtWidgets.QWidget()
         self.uiSceneTab.setObjectName("uiSceneTab")
         self.gridLayout_8 = QtWidgets.QGridLayout(self.uiSceneTab)
-        self.gridLayout_8.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_8.setObjectName("gridLayout_8")
         self.uiSceneWidthLabel = QtWidgets.QLabel(self.uiSceneTab)
         self.uiSceneWidthLabel.setObjectName("uiSceneWidthLabel")
@@ -351,7 +347,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tab)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiAutoScreenshotCheckBox = QtWidgets.QCheckBox(self.tab)
         self.uiAutoScreenshotCheckBox.setChecked(True)
