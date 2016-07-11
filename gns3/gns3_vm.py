@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from gns3.qt import QtWidgets
+from gns3.controller import Controller
 from .settings import SERVERS_SETTINGS
 from .local_config import LocalConfig
 
@@ -32,6 +34,10 @@ class GNS3VM:
         self._is_enabled = False
         self._settings = None
         self._loadSettings()
+        self._ip_address = None
+
+        from .main_window import MainWindow
+        self._main_window = MainWindow.instance()
 
     def isEnabled(self):
 
@@ -43,6 +49,7 @@ class GNS3VM:
         """
 
         self._settings = LocalConfig.instance().loadSectionSettings("Servers", SERVERS_SETTINGS)
+        self.update(self._settings["vm"]) # FIXME: don't load settings locally
 
     def settings(self):
         """
@@ -61,7 +68,53 @@ class GNS3VM:
         """
 
         self._settings["vm"].update(settings)
-        LocalConfig.instance().instance().saveSettings("Servers", settings)
+        LocalConfig.instance().saveSectionSettings("Servers", self._settings)
+
+    def _updateGNS3VMCallback(self, result, error=False, **kwargs):
+        """
+        Callback for ...
+
+        :param progress_dialog: QProgressDialog instance
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            QtWidgets.QMessageBox.critical(self._main_window, "GNS3 VM update", "{}".format(result["message"]))
+        else:
+            print("GNS3 VM successfully updated")
+
+    def _startGNS3VMCallback(self, result, error=False, **kwargs):
+        """
+        Callback for ...
+
+        :param progress_dialog: QProgressDialog instance
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            QtWidgets.QMessageBox.critical(self._main_window, "GNS3 VM start", "{}".format(result["message"]))
+        else:
+            print("GNS3 VM successfully started")
+            self._ip_address = result["ip_address"]
+
+    def ipAddress(self):
+
+        return self._ip_address
+
+    def autoStart(self):
+
+        return self.settings()["auto_start"]
+
+    def start(self):
+
+        Controller.instance().post("/gns3vm/start", self._startGNS3VMCallback, progressText="Starting the GNS3 VM...")
+
+    def update(self, settings):
+
+        self.setSettings(settings)  # FIXME: don't save settings locally
+        Controller.instance().put("/gns3vm", self._updateGNS3VMCallback, body=settings, progressText="Updating the GNS3 VM...")
 
     @staticmethod
     def instance():

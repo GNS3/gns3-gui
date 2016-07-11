@@ -24,7 +24,6 @@ import sys
 import shutil
 
 from gns3.qt import QtWidgets
-from gns3.local_server import LocalServer
 
 from .. import VPCS
 from ..ui.vpcs_preferences_page_ui import Ui_VPCSPreferencesPageWidget

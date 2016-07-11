@@ -20,10 +20,11 @@ import os
 import psutil
 
 from gns3.qt import QtCore, QtWidgets, QtGui
+from gns3.controller import Controller
+from gns3.gns3_vm import GNS3VM
+
 from ..dialogs.preferences_dialog import PreferencesDialog
 from ..ui.setup_wizard_ui import Ui_SetupWizard
-from ..utils.progress_dialog import ProgressDialog
-from ..utils.wait_for_connection_worker import WaitForConnectionWorker
 from ..version import __version__
 
 
@@ -140,57 +141,42 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Validates the settings.
         """
 
-        # FIXME
-        gns3_vm = GNS3VM.instance()
-        servers = Servers.instance()
+        gns3_vm = GNS3VM().instance()
         if self.currentPage() == self.uiVMWizardPage:
             vmname = self.uiVMListComboBox.currentText()
             if vmname:
                 # save the GNS3 VM settings
-                vm_settings = {"auto_start": True,
-                               "vmname": vmname,
-                               "vmx_path": self.uiVMListComboBox.currentData()}
+                vm_settings = {"vmname": vmname,
+                               "auto_start": True}
+
                 if self.uiVmwareRadioButton.isChecked():
-                    vm_settings["virtualization"] = "VMware"
+                    vm_settings["engine"] = "vmware"
                 elif self.uiVirtualBoxRadioButton.isChecked():
-                    vm_settings["virtualization"] = "VirtualBox"
-                gns3_vm.setSettings(vm_settings)
-                servers.save()
+                    vm_settings["engine"] = "virtualbox"
+
+                gns3_vm.update(vm_settings)
 
                 # set the vCPU count and RAM
-                vpcus = self.uiCPUSpinBox.value()
-                ram = self.uiRAMSpinBox.value()
-                if ram < 1024:
-                    QtWidgets.QMessageBox.warning(self, "GNS3 VM memory", "It is recommended to allocate a minimum of 1024 MB of RAM to the GNS3 VM")
-                available_ram = int(psutil.virtual_memory().available / (1024 * 1024))
-                if ram > available_ram:
-                    QtWidgets.QMessageBox.warning(self, "GNS3 VM memory", "You have probably allocated too much memory for the GNS3 VM! (available memory is {} MB)".format(available_ram))
-                if gns3_vm.setvCPUandRAM(vpcus, ram) is False:
-                    QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Could not configure vCPUs and RAM amounts for the GNS3 VM")
+                # vpcus = self.uiCPUSpinBox.value()
+                # ram = self.uiRAMSpinBox.value()
+                # if ram < 1024:
+                #     QtWidgets.QMessageBox.warning(self, "GNS3 VM memory", "It is recommended to allocate a minimum of 1024 MB of RAM to the GNS3 VM")
+                # available_ram = int(psutil.virtual_memory().available / (1024 * 1024))
+                # if ram > available_ram:
+                #     QtWidgets.QMessageBox.warning(self, "GNS3 VM memory", "You have probably allocated too much memory for the GNS3 VM! (available memory is {} MB)".format(available_ram))
+                # if gns3_vm.setvCPUandRAM(vpcus, ram) is False:
+                #     QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Could not configure vCPUs and RAM amounts for the GNS3 VM")
 
                 # start the GNS3 VM
-                servers.initVMServer()
-                worker = WaitForVMWorker()
-                progress_dialog = ProgressDialog(worker, "GNS3 VM", "Starting the GNS3 VM...", "Cancel", busy=True, parent=self, delay=5)
-                progress_dialog.show()
-                if progress_dialog.exec_():
-                    previous_local_server_ip = servers.localServer().host()
-                    new_local_server_ip = gns3_vm.adjustLocalServerIP()
-                    self.uiShowCheckBox.setChecked(True)
-                    # restart the local server if necessary
-                    if new_local_server_ip != previous_local_server_ip:
-                        servers.stopLocalServer(wait=True)
-                        if servers.startLocalServer():
-                            worker = WaitForConnectionWorker(new_local_server_ip, servers.localServer().port())
-                            dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
-                            dialog.show()
-                            dialog.exec_()
+                gns3_vm.start()
+
             else:
                 if not self.uiVmwareRadioButton.isChecked() and not self.uiVirtualBoxRadioButton.isChecked():
                     QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Please select VMware or VirtualBox")
                 else:
                     QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Please select a VM. If no VM is listed, check if the GNS3 VM is correctly imported and press refresh.")
                 return False
+
         elif self.currentPage() == self.uiAddVMsWizardPage:
 
             use_local_server = self.uiLocalRadioButton.isChecked()
@@ -198,7 +184,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 # deactivate the GNS3 VM if using the local server
                 vm_settings = {"auto_start": False}
                 gns3_vm.setSettings(vm_settings)
-                servers.save()
                 self.uiShowCheckBox.setChecked(True)
 
             from gns3.modules import Dynamips
@@ -233,11 +218,10 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Refresh the list of VM available in VMware or VirtualBox.
         """
 
-        server = Servers.instance().localServer()
         if self.uiVmwareRadioButton.isChecked():
-            server.get("/computes/local/vmware/vms", self._getVMsFromServerCallback)
+            Controller.instance().get("/gns3vm/vmware/vms", self._getVMsFromServerCallback, progressText="Retrieving VMware VM list from server...")
         elif self.uiVirtualBoxRadioButton.isChecked():
-            server.get("/computes/local/virtualbox/vms", self._getVMsFromServerCallback)
+            Controller.instance().get("/gns3vm/virtualbox/vms", self._getVMsFromServerCallback, progressText="Retrieving VirtualBox VM list from server...")
 
     def _getVMsFromServerCallback(self, result, error=False, **kwargs):
         """
@@ -253,17 +237,19 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         else:
             self.uiVMListComboBox.clear()
             for vm in result:
-                self.uiVMListComboBox.addItem(vm["vmname"], vm.get("vmx_path", ""))
-            gns3_vm = Servers.instance().vmSettings()
-            index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
+                self.uiVMListComboBox.addItem(vm["vmname"])
+
+            # FIXME: find existing GNS3 VM name
+            # gns3_vm = Servers.instance().vmSettings()
+            # index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
+            # if index != -1:
+            #     self.uiVMListComboBox.setCurrentIndex(index)
+            # else:
+            index = self.uiVMListComboBox.findText("GNS3 VM")
             if index != -1:
                 self.uiVMListComboBox.setCurrentIndex(index)
             else:
-                index = self.uiVMListComboBox.findText("GNS3 VM")
-                if index != -1:
-                    self.uiVMListComboBox.setCurrentIndex(index)
-                else:
-                    QtWidgets.QMessageBox.critical(self, "GNS3 VM", "Could not find a VM named 'GNS3 VM', is it imported in VMware or VirtualBox?")
+                QtWidgets.QMessageBox.critical(self, "GNS3 VM", "Could not find a VM named 'GNS3 VM', is it imported in VMware or VirtualBox?")
 
     def done(self, result):
         """

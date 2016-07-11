@@ -302,6 +302,7 @@ LOCAL_SERVER_SETTINGS = {
     "udp_end_port_range": 20000,
 }
 
+# TODO: remove/refactor this
 SERVERS_SETTINGS = {
     "vm": {
         "auto_start": False,

@@ -30,6 +30,7 @@ from .modules import MODULES
 from .qt import QtGui, QtCore, QtWidgets
 from .controller import Controller
 from .node import Node
+from .gns3_vm import GNS3VM
 from .ui.main_window_ui import Ui_MainWindow
 from .style import Style
 from .project_manager import ProjectManager
@@ -158,8 +159,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiImportProjectAction,
             self.uiScreenshotAction,
             self.uiSnapshotAction,
-            self.uiDeleteProjectAction,
-            self.uiHelpMenu
+            self.uiDeleteProjectAction
         ]
 
         # load initial stuff once the event loop isn't busy
@@ -1004,10 +1004,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
+        # start and connect to the local server if need
+        LocalServer.instance().localServerAutoStart()
+        Controller.instance().setHttpClient(LocalServer.instance().httpClient())
+
         # start the GNS3 VM
         # FIXME
-        # gns3_vm = GNS3VM.instance()
-        # if not gns3_vm.isRunning():
+        gns3_vm = GNS3VM.instance()
+        if gns3_vm.autoStart():
+            gns3_vm.start()
         #     gns3_vm.initVM()
         #     if gns3_vm.isRemote():
         #         gns3_vm.setRunning(True)
@@ -1020,12 +1025,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #             #gns3_vm.adjustLocalServerIP()
         #     Controller.instance().setHttpClient(gns3_vm.httpClient())
 
-        # start and connect to the local server if need
-        LocalServer.instance().localServerAutoStart()
-        Controller.instance().setHttpClient(LocalServer.instance().httpClient())
-
         # show the setup wizard
-        if not self._settings["hide_setup_wizard"] and not gns3_vm.isRunning():
+        if not self._settings["hide_setup_wizard"]:# and not gns3_vm.isRunning():
             with Progress.instance().context(min_duration=0):
                 setup_wizard = SetupWizard(self)
                 setup_wizard.show()
