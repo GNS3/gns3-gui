@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/project_dialog.ui'
 #
-# Created: Sun Jul 10 20:18:38 2016
+# Created: Sun Jul 10 21:52:06 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ class Ui_ProjectDialog(object):
     def setupUi(self, ProjectDialog):
         ProjectDialog.setObjectName("ProjectDialog")
         ProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        ProjectDialog.resize(534, 307)
+        ProjectDialog.resize(534, 280)
         ProjectDialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(ProjectDialog)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -95,8 +95,6 @@ class Ui_ProjectDialog(object):
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem2)
 
         self.retranslateUi(ProjectDialog)
         self.uiOpenProjectTabWidget.setCurrentIndex(0)

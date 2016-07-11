@@ -1012,6 +1012,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 node = item.node()
                 nodes[node.name()] = node
 
+        if not nodes:
+            if len(items) > 1:
+                QtWidgets.QMessageBox.warning(self, "Console", "At least one node must be started before a console can be opened")
+            else:
+                QtWidgets.QMessageBox.warning(self, "Console", "This node must be started before a console can be opened")
+
         delay = self._main_window.settings()["delay_console_all"]
         counter = 0
         for name in sorted(nodes.keys()):
@@ -1066,6 +1072,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole") and item.node().initialized() and item.node().status() == Node.started:
                 node = item.node()
                 nodes[node.name()] = node
+
+        if not nodes:
+            if len(items) > 1:
+                QtWidgets.QMessageBox.warning(self, "Console", "At least one node must be started before a console can be opened")
+            else:
+                QtWidgets.QMessageBox.warning(self, "Console", "This node must be started before a console can be opened")
 
         delay = self._main_window.settings()["delay_console_all"]
         counter = 0
