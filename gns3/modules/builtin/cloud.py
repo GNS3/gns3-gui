@@ -71,12 +71,16 @@ class Cloud(Node):
             params["ports"] = ports
         self._create(name, node_id, params, default_name_format)
 
-    def _createCallback(self, result):
+    def _createCallback(self, result, error=False, **kwargs):
         """
         Callback for create.
 
         :param result: server response
         """
+
+        if error:
+            log.error("Error while creating cloud: {}".format(result["message"]))
+            return
 
         self._interfaces = result["interfaces"].copy()
         if "ports" in result and result["ports"]:
@@ -203,74 +207,6 @@ This is a node for external connections
                         port_info["rport"] = self._settings["ports"][port.portNumber()]["rport"]
                 ports.append(port_info)
         return cloud
-
-    def load(self, node_info):
-        """
-        Loads a cloud representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-        properties = node_info["properties"]
-        name = properties.pop("name")
-
-        # Clouds do not have an UUID before version 2.0
-        node_id = properties.get("node_id", str(uuid.uuid4()))
-
-        ports = []
-        # if "ports" in node_info:
-        #     for port_info in node_info["ports"]:
-        #         ports.append({"port_number": port_info["port_number"],
-        #                       "name": port_info["name"],
-        #                       "type": port_info.get("type", "access"),
-        #                       "vlan": port_info.get("vlan", 1),
-        #                       "ethertype": port_info.get("ethertype", "")})
-
-        log.info("Cloud {} is loading".format(name))
-        self.create(name, node_id, ports)
-
-    # def _updatePortSettings(self):
-    #     """
-    #     Updates port settings when loading a topology.
-    #     """
-    #
-    #     self.loaded_signal.disconnect(self._updatePortSettings)
-    #
-    #     # update the port with the correct IDs
-    #     if "ports" in self._node_info:
-    #         ports = self._node_info["ports"]
-    #         for topology_port in ports:
-    #             for port in self._ports:
-    #                 if topology_port["name"] == port.name():
-    #                     port.setId(topology_port["id"])
-    #                     if topology_port["name"].startswith("nio_gen_eth") or topology_port["name"].startswith("nio_linux_eth"):
-    #                         # lookup if the interface exists
-    #                         available_interface = False
-    #                         topology_port_name = topology_port["name"].split(':', 1)[1]
-    #                         for interface in self._settings["interfaces"]:
-    #                             if interface["name"] == topology_port_name:
-    #                                 available_interface = True
-    #                                 break
-    #                         if not available_interface:
-    #                             alternative_interface = self._module.findAlternativeInterface(self, topology_port_name)
-    #                             if alternative_interface:
-    #                                 if topology_port["name"] in self._settings["nios"]:
-    #                                     self._settings["nios"].remove(topology_port["name"])
-    #                                 topology_port["name"] = topology_port["name"].replace(topology_port_name, alternative_interface)
-    #                                 nio = self._allocateNIO(topology_port["name"])
-    #                                 port.setDefaultNio(nio)
-    #                                 port.setName(topology_port["name"])
-    #                                 self._settings["nios"].append(topology_port["name"])
-    #
-    #     # now we can set the node as initialized and trigger the created signal
-    #     self.setInitialized(True)
-    #     log.info("cloud {} has been loaded".format(self.name()))
-    #     self.created_signal.emit(self.id())
-    #     self._module.addNode(self)
-    #     self._loading = False
-    #     self._node_info = None
 
     def configPage(self):
         """
