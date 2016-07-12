@@ -1009,9 +1009,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Controller.instance().setHttpClient(LocalServer.instance().httpClient())
 
         # start the GNS3 VM
-        # FIXME
+        # FIXME: run in a thead to wait for the VM to be started
         gns3_vm = GNS3VM.instance()
-        if gns3_vm.autoStart():
+        if gns3_vm.isAutoStart():
             gns3_vm.start()
         #     gns3_vm.initVM()
         #     if gns3_vm.isRemote():

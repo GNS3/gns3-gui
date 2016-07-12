@@ -32,7 +32,7 @@ class GNS3VM:
     def __init__(self):
 
         self._is_enabled = False
-        self._settings = None
+        self._settings = {}
         self._loadSettings()
         self._ip_address = None
 
@@ -45,11 +45,14 @@ class GNS3VM:
 
     def _loadSettings(self):
         """
-        Loads the server settings from the persistent settings file.
+        Loads the settings from controller.
         """
 
-        self._settings = LocalConfig.instance().loadSectionSettings("Servers", SERVERS_SETTINGS)
-        self.update(self._settings["vm"]) # FIXME: don't load settings locally
+        status, settings = Controller.instance().getSynchronous("gns3vm")
+        if status == 200:
+            self._settings.update(settings)
+        else:
+            log.error("Could not load GNS3 VM settings")
 
     def settings(self):
         """
@@ -58,17 +61,7 @@ class GNS3VM:
         :returns: GNS3 VM settings (dict)
         """
 
-        return self._settings["vm"]
-
-    def setSettings(self, settings):
-        """
-        Set new GNS3 VM settings.
-
-        :param settings: GNS3 VM settings (dict)
-        """
-
-        self._settings["vm"].update(settings)
-        LocalConfig.instance().saveSectionSettings("Servers", self._settings)
+        return self._settings
 
     def _updateGNS3VMCallback(self, result, error=False, **kwargs):
         """
@@ -83,6 +76,7 @@ class GNS3VM:
             QtWidgets.QMessageBox.critical(self._main_window, "GNS3 VM update", "{}".format(result["message"]))
         else:
             print("GNS3 VM successfully updated")
+            self._settings.update(result)
 
     def _startGNS3VMCallback(self, result, error=False, **kwargs):
         """
@@ -103,7 +97,7 @@ class GNS3VM:
 
         return self._ip_address
 
-    def autoStart(self):
+    def isAutoStart(self):
 
         return self.settings()["auto_start"]
 
@@ -113,7 +107,6 @@ class GNS3VM:
 
     def update(self, settings):
 
-        self.setSettings(settings)  # FIXME: don't save settings locally
         Controller.instance().put("/gns3vm", self._updateGNS3VMCallback, body=settings, progressText="Updating the GNS3 VM...")
 
     @staticmethod

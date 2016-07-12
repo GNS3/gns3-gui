@@ -75,6 +75,9 @@ class Controller(QtCore.QObject):
         """
         return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
 
+    def getSynchronous(self, endpoint, timeout=2):
+        return self._http_client.getSynchronous(endpoint, timeout)
+
     @staticmethod
     def instance():
         """

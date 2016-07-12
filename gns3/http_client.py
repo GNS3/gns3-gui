@@ -19,6 +19,7 @@
 import json
 import copy
 import ipaddress
+import http
 import uuid
 import pathlib
 import urllib.request
