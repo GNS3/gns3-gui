@@ -71,6 +71,9 @@ class NodesView(QtWidgets.QTreeWidget):
                 icon.addPixmap(QtGui.QPixmap.fromImage(image))
                 item.setIcon(0, icon)
 
+        if not self.topLevelItemCount() and category == Node.routers:
+            QtWidgets.QMessageBox.warning(self, 'Routers', 'No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://gns3.com/support/docs">Show documentation</a>')
+
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def mousePressEvent(self, event):
