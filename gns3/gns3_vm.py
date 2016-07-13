@@ -99,7 +99,7 @@ class GNS3VM:
 
     def isAutoStart(self):
 
-        return self.settings()["auto_start"]
+        return self.settings().get("auto_start", False)
 
     def start(self):
 
