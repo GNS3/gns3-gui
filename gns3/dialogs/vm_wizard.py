@@ -111,7 +111,7 @@ class VMWizard(QtWidgets.QWizard):
                 self.uiRemoteRadioButton.setEnabled(False)
             else:
                 for compute in ComputeManager.instance().computes():
-                    if compute.id() != "local":
+                    if compute.id() != "local" and compute.id() != "vm":
                         self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
 
             if hasattr(self, "uiVMRadioButton"):
