@@ -3647,6 +3647,7 @@ class Ui_AboutDialog(object):
 "Paul Sivie\n"
 "BlessLarryAgbemor\n"
 "Richard Miller\n"
+"Francesco Colista\n"
 ""))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("AboutDialog", "&Thanks to"))
         self.uiLicensePlainTextEdit.setPlainText(_translate("AboutDialog", "                    GNU GENERAL PUBLIC LICENSE\n"
