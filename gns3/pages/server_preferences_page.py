@@ -162,8 +162,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
         Slot to enable or not the GNS3 VM settings.
         """
-        #TODO: Make compatible with 2.0
-        return
         if state:
             if not self.uiLocalServerAutoStartCheckBox.isChecked() and not self.uiRemoteRadioButton.isChecked():
                 QtWidgets.QMessageBox.critical(self, "Local GNS3 VM", "The local server must be enabled in order to use a local GNS3 VM")
