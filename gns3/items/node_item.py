@@ -336,6 +336,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Update the label using the informations stored in the node
         """
+        if not self._node_label:
+            return
         self._node_label.setPlainText(self._node.name())
         label_data = self._node.settings().get("label")
 
