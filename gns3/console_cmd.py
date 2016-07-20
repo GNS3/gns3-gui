@@ -184,14 +184,9 @@ class ConsoleCmd(cmd.Cmd):
         :param node: Node instance
         """
 
-        name = node.name()
         console_port = node.console()
-        console_host = node.server().host()
-        try:
-            from .telnet_console import telnetConsole
-            telnetConsole(name, console_host, console_port)
-        except (OSError, ValueError) as e:
-            print("Cannot start console application: {}".format(e))
+        from .telnet_console import nodeTelnetConsole
+        nodeTelnetConsole(node, console_port)
 
     def do_debug(self, args):
         """

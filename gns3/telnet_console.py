@@ -36,12 +36,12 @@ class ConsoleThread(QtCore.QThread):
 
     consoleError = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent, command, name, host, port):
+    def __init__(self, parent, command, node, port):
         super().__init__(parent)
 
         self._command = command
-        self._name = name
-        self._host = host
+        self._name = node.name()
+        self._host = node.consoleHost()
         self._port = port
 
     def exec_command(self, command):
@@ -84,18 +84,22 @@ class ConsoleThread(QtCore.QThread):
                 console_mutex.unlock()
 
 
-def nodeTelnetConsole(name, host, port, command):
+def nodeTelnetConsole(node, port, command=None):
     """
     Start a Telnet console program for a topology node.
 
-    :param name: Name of the console
-    :param port: Port number of the console on remote host
-    :param host: Server where the console is running
+    :param node: The node
     :param command: Console command
     """
 
+    if command is None:
+        general_settings = MainWindow.instance().settings()
+        command = general_settings["telnet_console_command"]
+        if not command:
+            return
+
     log.info('Starting telnet console in thread "{}"'.format(command))
-    console_thread = ConsoleThread(MainWindow.instance(), command, name, host, port)
+    console_thread = ConsoleThread(MainWindow.instance(), command, node, port)
     console_thread.consoleError.connect(_consoleErrorSlot)
     console_thread.start()
 
@@ -104,35 +108,3 @@ def _consoleErrorSlot(message):
     QtWidgets.QMessageBox.critical(MainWindow.instance(), "Error", message)
 
 
-def telnetConsole(name, host, port):
-    """
-    Start a Telnet console program.
-
-    :param host: host or IP address
-    :param port: port number
-    :param callback: Callback called when console die
-    :param server: Server where the console is running
-    """
-
-    general_settings = MainWindow.instance().settings()
-    command = general_settings["telnet_console_command"]
-    if not command:
-        return
-
-    # replace the place-holders by the actual values
-    command = command.replace("%h", host)
-    command = command.replace("%p", str(port))
-    command = command.replace("%d", name)
-
-    try:
-        log.info('starting telnet console "{}"'.format(command))
-        if sys.platform.startswith("win"):
-            # use the string on Windows
-            subprocess.Popen(command)
-        else:
-            # use arguments on other platforms
-            args = shlex.split(command)
-            subprocess.Popen(args, env=os.environ)
-    except (OSError, ValueError, subprocess.SubprocessError) as e:
-        log.warning('could not start Telnet console "{}": {}'.format(command, e))
-        raise

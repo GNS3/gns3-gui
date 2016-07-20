@@ -561,7 +561,7 @@ class Node(BaseNode):
 
         if console_type == "telnet":
             from .telnet_console import nodeTelnetConsole
-            nodeTelnetConsole(self.name(), self.consoleHost(), console_port, command)
+            nodeTelnetConsole(self, console_port, command)
         elif console_type == "vnc":
             from .vnc_console import vncConsole
             vncConsole(self.consoleHost(), console_port, command)
