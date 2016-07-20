@@ -136,6 +136,41 @@ class ProjectManager(QtCore.QObject):
         self._main_window.uiGraphicsView.reset()
         self.project_changed_signal.emit()
 
+    def exportProject(self):
+        include_image_question = """Would you like to include any base image?
+The project will not require additional images to run on another host, however the resulting file will be much bigger.
+It is your responsability to check if you have the right to distribute the image(s) as part of the project.
+        """
+
+        reply = QtWidgets.QMessageBox.question(self._main_window, "Export project", include_image_question,
+                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
+        include_images = int(reply == QtWidgets.QMessageBox.Yes)
+
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        if len(directory) == 0:
+            directory = self.projectsDirPath()
+
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self._main_window, "Export portable project", directory,
+                                                        "GNS3 Portable Project (*.gns3project *.gns3p)",
+                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
+        if path is None or len(path) == 0:
+            return
+
+        if not path.endswith(".gns3project") and not path.endswith(".gns3p"):
+            path += ".gns3project"
+
+        try:
+            open(path, 'wb+').close()
+        except OSError as e:
+            QtWidgets.QMessageBox.critical(self._main_window, "Export project", "Could not write {}: {}".format(path, e))
+            return
+
+        export_worker = ExportProjectWorker(self._project, path, include_images)
+        progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self._main_window)
+        progress_dialog.show()
+        progress_dialog.exec_()
+
     def deleteProject(self):
         if self._project:
            self._project.destroy()

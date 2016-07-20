@@ -42,54 +42,13 @@ class ExportProjectWorker(QtCore.QObject):
     def run(self):
 
         vm_server = None
-        for server in self._project.servers():
-            if server.isGNS3VM():
-                vm_server = server
-
-        if vm_server:
-            self._project.get(vm_server,
-                              "/export",
-                              self._exportVmReceived,
-                              downloadProgressCallback=self._downloadFileProgress)
-        else:
-            self._project.get(LocalServer.instance(),  # FIXME
-                              "/export?include_images={}".format(self._include_images),
-                              self._exportLocalReceived,
+        self._project.get("/export?include_images={}".format(self._include_images),
+                              self._exportReceived,
                               downloadProgressCallback=self._downloadFileProgress)
 
-    def _exportVmReceived(self, content, error=False, server=None, context={}, **kwargs):
+    def _exportReceived(self, content, error=False, server=None, context={}, **kwargs):
         if error:
-            self.error.emit("Can't export the project from the VM", True)
-            self.finished.emit()
-            return
-
-        vm_path = os.path.join(self._project.filesDir(), "servers", "vm")
-        if os.path.exists(vm_path):
-            shutil.rmtree(vm_path, ignore_errors=True)
-        try:
-            os.makedirs(vm_path, exist_ok=True)
-        except OSError as e:
-            self.error.emit("Can't create directory {}: {}".format(vm_path, e), True)
-            self.finished.emit()
-            return
-
-        with zipfile.ZipFile(self._path) as myzip:
-            myzip.extractall(vm_path)
-
-        # We reset the content of the file
-        try:
-            open(self._path, 'wb+').close()
-        except OSError as e:
-            self.error.emit("Can't write project file {}: {}".format(self._path, e), True)
-            self.finished.emit()
-            return
-
-        # FIXME
-        self._project.get(LocalServer.instance(), "/export?include_images={}".format(self._include_images), self._exportLocalReceived, downloadProgressCallback=self._downloadFileProgress)
-
-    def _exportLocalReceived(self, content, error=False, server=None, context={}, **kwargs):
-        if error:
-            self.error.emit("Can't export the project from the local server", True)
+            self.error.emit("Can't export the project from the server", True)
             self.finished.emit()
             return
         self.finished.emit()
