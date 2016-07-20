@@ -55,6 +55,7 @@ from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
 from .dialogs.new_appliance_dialog import NewApplianceDialog
+from .dialogs.file_editor_dialog import FileEditorDialog
 from .registry.appliance import ApplianceError
 
 log = logging.getLogger(__name__)
@@ -174,7 +175,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiNewProjectAction.triggered.connect(self._newProjectActionSlot)
         self.uiOpenProjectAction.triggered.connect(self.openProjectActionSlot)
         self.uiOpenApplianceAction.triggered.connect(self.openApplianceActionSlot)
-        self.uiSaveProjectAction.triggered.connect(self._saveProjectActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
         self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
@@ -417,17 +417,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             for widget in self.disableWhenNoProjectWidgets:
                 widget.setEnabled(True)
-
-    def _saveProjectActionSlot(self):
-        """
-        Slot called to save a project.
-        """
-
-        project = self._project_manager.project()
-        if not project.filesDir():
-            QtWidgets.QMessageBox.critical(self, "Project", "Sorry, no project has been created or initialized")
-            return
-        return self._project_manager.saveProject(project.topologyFile())
 
     def _saveProjectAsActionSlot(self):
         """
@@ -885,18 +874,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to edit the README file
         """
 
-        project = self._project_manager.project()
-
-        log.debug("Opened %s", project.readmePathFile())
-        if not os.path.exists(project.readmePathFile()):
-            try:
-                with open(project.readmePathFile(), "w+") as f:
-                    f.write("Title: My lab\nAuthor: Grass Hopper <grass@hopper.com>\n\nThis lab is about...")
-            except OSError as e:
-                QtWidgets.QMessageBox.critical(self, "README", "Could not create {}".format(project.readmePathFile()))
-                return
-        if QtGui.QDesktopServices.openUrl(QtCore.QUrl('file:///' + project.readmePathFile(), QtCore.QUrl.TolerantMode)) is False:
-            QtWidgets.QMessageBox.critical(self, "README", "Could not open {}".format(project.readmePathFile()))
+        dialog = FileEditorDialog(self._project_manager.project(), "/README.txt", parent=self, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
+        dialog.show()
+        dialog.exec_()
 
     def keyPressEvent(self, event):
         """

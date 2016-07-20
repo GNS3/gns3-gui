@@ -528,24 +528,6 @@ background-none;
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="uiSaveProjectAction">
-   <property name="icon">
-    <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/save.svg</normaloff>:/icons/save.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Save project</string>
-   </property>
-   <property name="toolTip">
-    <string>Save project</string>
-   </property>
-   <property name="statusTip">
-    <string>Save project</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
-  </action>
   <action name="uiOnlineHelpAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">

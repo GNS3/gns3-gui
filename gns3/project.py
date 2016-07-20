@@ -105,35 +105,6 @@ class Project(QtCore.QObject):
 
         self._files_dir = files_dir
 
-    def readmePathFile(self):
-        return os.path.join(self._files_dir, "README.txt")
-
-    def topologyFile(self):
-        """
-        Path to the topology file
-        """
-
-        try:
-            assert self._files_dir is not None
-            assert self._name is not None
-        except AssertionError:
-            exc_type, exc_value, exc_tb = sys.exc_info()
-            lines = traceback.format_exception(exc_type, exc_value, exc_tb)
-            tb = "".join(lines)
-            log.debug("Assertion detected: {}".format(tb))
-            raise
-        return os.path.join(self._files_dir, self._name + ".gns3")
-
-    def setTopologyFile(self, topology_file):
-        """
-        Set path to the topology file and by extension the project directory.
-
-        :params topology_file: Path to a .gns3 file
-        """
-
-        self.setFilesDir(os.path.dirname(topology_file))
-        self._name = os.path.basename(topology_file).replace('.gns3', '')
-
     def start_all_nodes(self):
         """Start all nodes belonging to this project"""
 
@@ -193,6 +164,14 @@ class Project(QtCore.QObject):
         Full arg list in createHTTPQuery
         """
         self._projectHTTPQuery("POST", path, callback, body=body, **kwargs)
+
+    def httpPost(self, *args, **kwargs):
+        #FIXME: use the same methods name for node & project
+        self.post(*args, **kwargs)
+
+    def httpGet(self, *args, **kwargs):
+        #FIXME: use the same methods name for node & project
+        self.get(*args, **kwargs)
 
     def put(self, path, callback, body={}, **kwargs):
         """

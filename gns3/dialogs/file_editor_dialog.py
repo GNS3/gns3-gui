@@ -32,7 +32,7 @@ class FileEditorDialog(QtWidgets.QDialog, Ui_FileEditorDialog):
     check return a tuple result and a message in case of failure.
     """
 
-    def __init__(self, node, path, parent=None):
+    def __init__(self, target, path, parent=None, default=""):
 
         if parent is None:
             from gns3.main_window import MainWindow
@@ -41,10 +41,11 @@ class FileEditorDialog(QtWidgets.QDialog, Ui_FileEditorDialog):
         super().__init__(parent)
         self.setupUi(self)
 
-        self._node = node
+        self._target = target
         self._path = path
+        self._default = default
 
-        self.setWindowTitle(node.name() + " " + os.path.basename(path))
+        self.setWindowTitle(target.name() + " " + os.path.basename(path))
 
         self.uiRefreshButton.pressed.connect(self._refreshSlot)
         self.accepted.connect(self._acceptedCallback)
@@ -53,11 +54,14 @@ class FileEditorDialog(QtWidgets.QDialog, Ui_FileEditorDialog):
 
     def _acceptedCallback(self):
         text = self.uiFileTextEdit.toPlainText()
-        self._node.httpPost("/files" + self._path, None, body=text)
+        self._target.httpPost("/files" + self._path, None, body=text)
 
     def _refreshSlot(self):
-        self._node.httpGet("/files" + self._path, self._getCallback)
+        self._target.httpGet("/files" + self._path, self._getCallback)
 
     def _getCallback(self, result, error=False, raw_body=None, **kwargs):
         if not error:
             self.uiFileTextEdit.setText(raw_body.decode("utf-8"))
+        elif result["status"] == 404:
+            if self._default:
+                self.uiFileTextEdit.setText(self._default)
