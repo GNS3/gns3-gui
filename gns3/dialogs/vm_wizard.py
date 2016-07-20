@@ -18,7 +18,6 @@
 import sys
 
 from gns3.qt import QtWidgets
-from gns3.gns3_vm import GNS3VM
 from gns3.compute_manager import ComputeManager
 
 
@@ -56,8 +55,9 @@ class VMWizard(QtWidgets.QWizard):
         self.uiLocalRadioButton.setChecked(True)
         self._localToggledSlot(True)
 
-        if len(ComputeManager.instance().remoteComputes()) == 0 and ComputeManager.instance().vmCompute() is None:
+        if len(ComputeManager.instance().computes()) == 1:
             # skip the server page if we use the first server
+            self.initializePage(self.uiServerWizardPage)
             self.setStartId(1)
 
     def _vmToggledSlot(self, checked):
@@ -92,35 +92,29 @@ class VMWizard(QtWidgets.QWizard):
             self.uiRemoteServersGroupBox.setEnabled(False)
             self.uiRemoteServersGroupBox.hide()
 
-    def setStartId(self, index):
-        """
-        Which page should we use when starting the Wizard
-        """
-        super().setStartId(index)
-        # If we skip the initial page (choosing a server)
-        # we check the settings
-        if index != 0:
-            self.uiLocalRadioButton.setChecked(True)
-
     def initializePage(self, page_id):
 
         if self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
 
-            if len(ComputeManager.instance().computes()) == 1:
-                self.uiRemoteRadioButton.setEnabled(False)
-            else:
-                for compute in ComputeManager.instance().computes():
-                    if compute.id() != "local" and compute.id() != "vm":
-                        self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
-
+            self.uiRemoteRadioButton.setEnabled(False)
             if hasattr(self, "uiVMRadioButton"):
-                if not GNS3VM.instance().isEnabled():
-                    self.uiVMRadioButton.setEnabled(False)
+                self.uiVMRadioButton.setEnabled(False)
+            self.uiVMRadioButton.setEnabled(False)
+            self.uiLocalRadioButton.setEnabled(False)
+            for compute in ComputeManager.instance().computes():
+                if compute.id() == "local":
+                    self.uiLocalRadioButton.setEnabled(True)
+                elif compute.id() == "vm" and hasattr(self, "uiVMRadioButton"):
+                        self.uiVMRadioButton.setEnabled(True)
                 else:
-                    self.uiVMRadioButton.setEnabled(True)
-            elif self._use_local_server and self.uiLocalRadioButton.isEnabled():
+                    self.uiRemoteRadioButton.setEnabled(True)
+                    self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
+
+            if self._use_local_server and self.uiLocalRadioButton.isEnabled():
                 self.uiLocalRadioButton.setChecked(True)
+            elif self.uiVMRadioButton.isEnabled():
+                self.uiVMRadioButton.setChecked(True)
             else:
                 if self.uiRemoteRadioButton.isEnabled():
                     self.uiRemoteRadioButton.setChecked(True)
