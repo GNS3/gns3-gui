@@ -123,6 +123,9 @@ class ComputeManager(QtCore.QObject):
         """
         for compute_id in copy.copy(self._computes):
             # Delete compute on controller not in the new computes
+            if compute_id in ["local", "vm"]:
+                continue
+
             if compute_id not in [c.id() for c in computes]:
                 log.debug("Delete compute %s", compute_id)
                 self.deleteCompute(compute_id)

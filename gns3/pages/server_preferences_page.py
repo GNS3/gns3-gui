@@ -352,7 +352,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         # load remote server preferences
         self._remote_computes.clear()
         self.uiServersComboBox.clear()
-        for compute in cm.computes():
+        for compute in cm.remoteComputes():
             # We copy to be able to detect the change with the original element
             # when we apply the settings
             self._remote_computes[compute.id()] = copy.copy(compute)
