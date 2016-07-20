@@ -100,7 +100,6 @@ class VMWizard(QtWidgets.QWizard):
             self.uiRemoteRadioButton.setEnabled(False)
             if hasattr(self, "uiVMRadioButton"):
                 self.uiVMRadioButton.setEnabled(False)
-            self.uiVMRadioButton.setEnabled(False)
             self.uiLocalRadioButton.setEnabled(False)
             for compute in ComputeManager.instance().computes():
                 if compute.id() == "local":
