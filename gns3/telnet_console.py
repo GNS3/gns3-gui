@@ -43,6 +43,7 @@ class ConsoleThread(QtCore.QThread):
         self._name = node.name()
         self._host = node.consoleHost()
         self._port = port
+        self._node = node
 
     def exec_command(self, command):
 
@@ -67,6 +68,7 @@ class ConsoleThread(QtCore.QThread):
         command = self._command.replace("%h", host)
         command = command.replace("%p", str(port))
         command = command.replace("%d", self._name)
+        command = command.replace("%i", self._node.project().id())
 
         # If the console use an apple script we lock to avoid multiple console
         # to interact at the same time
