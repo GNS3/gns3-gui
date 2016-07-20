@@ -48,7 +48,7 @@ class VirtualBoxVM(Node):
         super().__init__(module, server, project)
         log.info("VirtualBox VM instance is being created")
         self._linked_clone = False
-        self._port_name_format = None
+        self._port_name_format = "Ethernet{0}"
         self._port_segment_size = 0
         self._first_port_name = None
 
