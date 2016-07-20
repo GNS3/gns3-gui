@@ -48,7 +48,10 @@ class ExportProjectWorker(QtCore.QObject):
 
     def _exportReceived(self, content, error=False, server=None, context={}, **kwargs):
         if error:
-            self.error.emit("Can't export the project from the server", True)
+            if content:
+                self.error.emit(content["message"], True)
+            else:
+                self.error.emit("Can't export the project from the server", True)
             self.finished.emit()
             return
         self.finished.emit()
