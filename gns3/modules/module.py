@@ -46,7 +46,7 @@ class Module(QtCore.QObject):
 
         raise NotImplementedError("Missing configChangedSlot in {}".format(self.__class__.__name__))
 
-    def getNodeType(self, type):
+    def getNodeType(self, type, platform=None):
         raise NotImplementedError("Missing getNodeType in {}".format(self.__class__.__name__))
 
     @staticmethod

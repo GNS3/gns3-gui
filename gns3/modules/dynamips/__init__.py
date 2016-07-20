@@ -404,7 +404,7 @@ class Dynamips(Module):
         return None
 
     @staticmethod
-    def getNodeType(name, platform):
+    def getNodeType(name, platform=None):
         if name == "dynamips":
             return PLATFORM_TO_CLASS[platform]
         return None
