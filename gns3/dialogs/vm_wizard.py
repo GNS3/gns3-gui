@@ -57,7 +57,7 @@ class VMWizard(QtWidgets.QWizard):
 
         if len(ComputeManager.instance().computes()) == 1:
             # skip the server page if we use the first server
-            self.initializePage(self.uiServerWizardPage)
+            self.initializePage(0)
             self.setStartId(1)
 
     def _vmToggledSlot(self, checked):

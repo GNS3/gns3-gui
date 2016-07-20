@@ -115,6 +115,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def setEnabled(self, enabled):
 
         if enabled is False:
+            self.reset()
             item = QtWidgets.QGraphicsTextItem("Please create a project")
             item.setPos(0, 0)
             self.scene().addItem(item)
