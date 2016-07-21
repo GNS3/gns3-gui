@@ -43,6 +43,8 @@ class Project(QtCore.QObject):
     # Called when the creation of a project failled on the remote server
     project_creation_error_signal = QtCore.Signal()
 
+    project_updated_signal = QtCore.Signal()
+
     def __init__(self):
 
         self._id = None
@@ -230,10 +232,12 @@ class Project(QtCore.QObject):
             self.project_creation_error_signal.emit()
             return
         self._id = result["project_id"]
+        self._name = result["name"]
         if self._closed:
             self._closed = False
             self._closing = False
             self._startListenNotifications()
+        self.project_updated_signal.emit()
 
     def load(self, path=None):
         if path:
@@ -249,6 +253,7 @@ class Project(QtCore.QObject):
             return
 
         self._id = result["project_id"]
+        self._name = result["name"]
         topo = Topology.instance()
         topo.project = self
 
@@ -256,6 +261,7 @@ class Project(QtCore.QObject):
             self._closed = False
             self._closing = False
             self._startListenNotifications()
+        self.project_updated_signal.emit()
 
         self.get("/nodes", self._listNodesCallback)
 

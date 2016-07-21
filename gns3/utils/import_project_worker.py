@@ -22,8 +22,8 @@ import os
 import sys
 
 
+from ..controller import Controller
 from ..qt import QtCore
-from ..gns3_vm import GNS3VM
 
 
 class ImportProjectWorker(QtCore.QObject):
@@ -37,33 +37,14 @@ class ImportProjectWorker(QtCore.QObject):
     updated = QtCore.pyqtSignal(int)
     imported = QtCore.pyqtSignal(str)
 
-    def __init__(self, source, new_project_settings):
+    def __init__(self, source):
         super().__init__()
         self._source = source
-        self._new_project_settings = new_project_settings
         self._project_uuid = str(uuid.uuid4())
 
     def run(self):
-
-        self._dst = self._new_project_settings['project_files_dir']
-        name = self._new_project_settings['project_name']
-        self._project_file = self._new_project_settings['project_path']
-        Servers.instance().localServer().post("/projects", self._createProjectCallback,
-                                              body={"project_id": self._project_uuid, "name": name, "path": self._dst},
-                                              timeout=None)
-
-    def _createProjectCallback(self, content, error=False, server=None, context={}, **kwargs):
-        if error:
-            self.error.emit("Can't import the project", True)
-            self.finished.emit()
-            return
-
+        Controller.instance().post("/projects/{}/import".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source), timeout=None)
         self.updated.emit(25)
-        if sys.platform.startswith("linux") and not GNS3VM.instance().isRunning():
-            Servers.instance().localServer().post("/projects/{}/import?gns3vm=0".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source), timeout=None)
-        else:
-            Servers.instance().localServer().post("/projects/{}/import?gns3vm=1".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source), timeout=None)
-
 
     def _importProjectCallback(self, content, error=False, server=None, context={}, **kwargs):
         if error:
@@ -73,38 +54,8 @@ class ImportProjectWorker(QtCore.QObject):
 
         self.updated.emit(50)
 
-        if os.path.exists(os.path.join(self._dst, "servers", "vm")):
-            if Servers.instance().vmServer() is None:
-                self.error.emit("You must configure the GNS3 VM in order to import this project", True)
-                self.finished.emit()
-                return
-
-            self._zippath = os.path.join(self._dst, "servers", "vm.zip")
-            with zipfile.ZipFile(self._zippath, 'w') as z:
-                for root, dirs, files in os.walk(os.path.join(self._dst, "servers", "vm")):
-                    for file in files:
-                        path = os.path.join(root, file)
-                        z.write(path, os.path.relpath(path, os.path.join(self._dst, "servers", "vm")))
-
-            Servers.instance().vmServer().post("/projects/{}/import".format(self._project_uuid), self._importProjectVMCallback, body=pathlib.Path(self._zippath))
-        else:
-            self.finished.emit()
-            self.imported.emit(self._project_file)
-
-    def _importProjectVMCallback(self, content, error=False, server=None, context={}, **kwargs):
-        try:
-            os.remove(self._zippath)
-        except OSError as e:
-            self.error.emit("Can't write the topology {}: {}".format(self._path, str(e)), True)
-            self.finished.emit()
-            return
-
-        if error:
-            self.error.emit("Can't import the project", True)
-            self.finished.emit()
-            return
         self.finished.emit()
-        self.imported.emit(self._project_file)
+        self.imported.emit(self._project_uuid)
 
     def cancel(self):
         pass

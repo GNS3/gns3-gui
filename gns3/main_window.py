@@ -43,7 +43,6 @@ from .dialogs.doctor_dialog import DoctorDialog
 from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .utils.progress_dialog import ProgressDialog
-from .utils.import_project_worker import ImportProjectWorker
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .items.shape_item import ShapeItem
@@ -55,7 +54,6 @@ from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
 from .dialogs.new_appliance_dialog import NewApplianceDialog
-from .dialogs.file_editor_dialog import FileEditorDialog
 from .registry.appliance import ApplianceError
 
 log = logging.getLogger(__name__)
@@ -390,8 +388,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if path.endswith(".gns3project") or path.endswith(".gns3p"):
             # Portable GNS3 project
-            raise NotImplementedError
-            self._project_dialog = None
+            self._project_manager.importProject(path)
 
         elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
             # GNS3 appliance
@@ -873,10 +870,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot to edit the README file
         """
-
-        dialog = FileEditorDialog(self._project_manager.project(), "/README.txt", parent=self, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
-        dialog.show()
-        dialog.exec_()
+        self._project_manager.editReadme()
 
     def keyPressEvent(self, event):
         """
@@ -1110,8 +1104,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called to import a portable project
         """
-
-        self._project_manager.importProject()
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        if len(directory) == 0:
+            directory = self.projectsDirPath()
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
+                                                        "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
+                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
+        if path:
+            self._project_manager.importProject(path)
 
     def _deleteProjectActionSlot(self):
         reply = QtWidgets.QMessageBox.warning(

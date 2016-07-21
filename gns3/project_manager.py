@@ -28,6 +28,9 @@ from .utils.process_files_worker import ProcessFilesWorker
 from .utils.progress_dialog import ProgressDialog
 from .utils.message_box import MessageBox
 from .utils.export_project_worker import ExportProjectWorker
+from .utils.import_project_worker import ImportProjectWorker
+from .dialogs.file_editor_dialog import FileEditorDialog
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -75,7 +78,11 @@ class ProjectManager(QtCore.QObject):
         """
 
         self._project = project
+        self._project.project_updated_signal.connect(self._projectUpdatedSlot)
         self._setCurrent()
+
+    def _projectUpdatedSlot(self):
+        self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
 
     @staticmethod
     def projectsDirPath():
@@ -93,12 +100,13 @@ class ProjectManager(QtCore.QObject):
         """
         if self._project:
             self._project.close()
-        self._project = Project()
+        self.setProject(Project())
         self._project.project_creation_error_signal.connect(self._projectCreationErrorSlot)
         Topology.instance().project = self._project
         self._main_window.uiGraphicsView.reset()
 
-        self._project.setName(project_settings["project_name"])
+        if "project_name" in project_settings:
+            self._project.setName(project_settings["project_name"])
         self._setCurrent(project_settings.get("project_path", None))
 
         if "project_id" in project_settings:
@@ -129,6 +137,11 @@ class ProjectManager(QtCore.QObject):
         self._setCurrent(path)
         self.project_changed_signal.emit()
         return True
+
+    def editReadme(self):
+        dialog = FileEditorDialog(self.project(), "/README.txt", parent=self._main_window, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
+        dialog.show()
+        dialog.exec_()
 
     def _projectCreationErrorSlot(self):
         self._project = None
@@ -166,10 +179,23 @@ It is your responsability to check if you have the right to distribute the image
             QtWidgets.QMessageBox.critical(self._main_window, "Export project", "Could not write {}: {}".format(path, e))
             return
 
+        self.editReadme()
+
         export_worker = ExportProjectWorker(self._project, path, include_images)
         progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self._main_window)
         progress_dialog.show()
         progress_dialog.exec_()
+
+    def importProject(self, path):
+        import_worker = ImportProjectWorker(path)
+        import_worker.imported.connect(self._projectImportedSlot)
+        progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self._main_window)
+        progress_dialog.show()
+        progress_dialog.exec_()
+
+    def _projectImportedSlot(self, project_id):
+        if self:
+            self.createLoadProject({"project_id": project_id})
 
     def deleteProject(self):
         if self._project:
