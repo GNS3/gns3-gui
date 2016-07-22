@@ -43,7 +43,7 @@ def test_project_create(tmpdir, controller):
     assert kwargs["body"] == {"name": "test",
                               "path": str(tmpdir)}
 
-    args[2]({"project_id": uuid})
+    args[2]({"project_id": uuid, "name": "test"})
 
     assert project._closed is False
 
@@ -139,19 +139,3 @@ def test_project_destroy(controller):
 
     assert args[0] == "DELETE"
     assert args[1] == "/projects/{project_id}".format(project_id=project.id())
-
-
-def test_topology_file(tmpdir):
-
-    project = Project()
-    project.setName("test")
-    project.setFilesDir(str(tmpdir))
-    assert project.topologyFile() == str(tmpdir / "test.gns3")
-
-
-def test_set_topology_file(tmpdir):
-
-    project = Project()
-    project.setTopologyFile(str(tmpdir / "test.gns3"))
-    assert project.filesDir() == str(tmpdir)
-    assert project.name() == "test"

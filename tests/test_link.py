@@ -21,7 +21,7 @@ from unittest.mock import MagicMock
 
 
 from gns3.link import Link
-from gns3.modules.vpcs.vpcs_device import VPCSNode
+from gns3.modules.vpcs.vpcs_node import VPCSNode
 from gns3.modules.vpcs import VPCS
 from gns3.controller import Controller
 
