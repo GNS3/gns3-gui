@@ -48,13 +48,18 @@ class FileEditorDialog(QtWidgets.QDialog, Ui_FileEditorDialog):
         self.setWindowTitle(target.name() + " " + os.path.basename(path))
 
         self.uiRefreshButton.pressed.connect(self._refreshSlot)
-        self.accepted.connect(self._acceptedCallback)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Save).clicked.connect(self._okButtonClickedSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel).clicked.connect(self.reject)
 
         self._refreshSlot()
 
-    def _acceptedCallback(self):
+    def _okButtonClickedSlot(self):
         text = self.uiFileTextEdit.toPlainText()
-        self._target.httpPost("/files" + self._path, None, body=text)
+        self._target.httpPost("/files" + self._path, self._saveCallback, body=text)
+
+    def _saveCallback(self, result, error=False, **kwargs):
+        if not error:
+            self.accept()
 
     def _refreshSlot(self):
         self._target.httpGet("/files" + self._path, self._getCallback)

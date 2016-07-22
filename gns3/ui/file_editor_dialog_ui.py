@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/file_editor_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -28,21 +28,21 @@ class Ui_FileEditorDialog(object):
         self.uiRefreshButton = QtWidgets.QPushButton(FileEditorDialog)
         self.uiRefreshButton.setObjectName("uiRefreshButton")
         self.horizontalLayout.addWidget(self.uiRefreshButton)
-        self.uiOkButton = QtWidgets.QDialogButtonBox(FileEditorDialog)
+        self.uiButtonBox = QtWidgets.QDialogButtonBox(FileEditorDialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiOkButton.sizePolicy().hasHeightForWidth())
-        self.uiOkButton.setSizePolicy(sizePolicy)
-        self.uiOkButton.setOrientation(QtCore.Qt.Horizontal)
-        self.uiOkButton.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Save)
-        self.uiOkButton.setObjectName("uiOkButton")
-        self.horizontalLayout.addWidget(self.uiOkButton)
+        sizePolicy.setHeightForWidth(self.uiButtonBox.sizePolicy().hasHeightForWidth())
+        self.uiButtonBox.setSizePolicy(sizePolicy)
+        self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Save)
+        self.uiButtonBox.setObjectName("uiButtonBox")
+        self.horizontalLayout.addWidget(self.uiButtonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.retranslateUi(FileEditorDialog)
-        self.uiOkButton.accepted.connect(FileEditorDialog.accept)
-        self.uiOkButton.rejected.connect(FileEditorDialog.reject)
+        self.uiButtonBox.accepted.connect(FileEditorDialog.accept)
+        self.uiButtonBox.rejected.connect(FileEditorDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(FileEditorDialog)
 
     def retranslateUi(self, FileEditorDialog):

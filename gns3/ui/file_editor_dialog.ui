@@ -60,7 +60,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="uiOkButton">
+      <widget class="QDialogButtonBox" name="uiButtonBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -84,7 +84,7 @@ p, li { white-space: pre-wrap; }
  </resources>
  <connections>
   <connection>
-   <sender>uiOkButton</sender>
+   <sender>uiButtonBox</sender>
    <signal>accepted()</signal>
    <receiver>FileEditorDialog</receiver>
    <slot>accept()</slot>
@@ -100,7 +100,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>uiOkButton</sender>
+   <sender>uiButtonBox</sender>
    <signal>rejected()</signal>
    <receiver>FileEditorDialog</receiver>
    <slot>reject()</slot>
