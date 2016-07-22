@@ -48,7 +48,10 @@ class ImportProjectWorker(QtCore.QObject):
 
     def _importProjectCallback(self, content, error=False, server=None, context={}, **kwargs):
         if error:
-            self.error.emit("Can't import the project", True)
+            if content:
+                self.error.emit(content["message"], True)
+            else:
+                self.error.emit("Can't import the project on the server", True)
             self.finished.emit()
             return
 
