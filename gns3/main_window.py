@@ -1079,7 +1079,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not os.path.exists(self._project.readmePathFile()):
             try:
                 with open(self._project.readmePathFile(), "w+") as f:
-                    f.write("Title: My lab\nAuthor: Grass Hopper <grass@hopper.com>\n\nThis lab is about...")
+                    f.write("Title: My lab\nAuthor: Grace Hopper <grace@example.org>\n\nThis lab is about...")
             except OSError as e:
                 QtWidgets.QMessageBox.critical(self, "README", "Could not create {}".format(self._project.readmePathFile()))
                 return
