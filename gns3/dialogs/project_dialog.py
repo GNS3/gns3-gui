@@ -25,14 +25,15 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
     """
     New project dialog.
-
-    :param parent: parent widget.
-    :param default_project_name: Project name by default
-    has been opened automatically when GNS3 started.
     """
 
-    def __init__(self, parent, default_project_name="untitled"):
-
+    def __init__(self, parent, default_project_name="untitled", show_open_options=True):
+        """
+        :param parent: parent widget.
+        :param default_project_name: Project name by default
+        :param show_open_options: If true allow to open a project from the dialog
+        otherwise it's just for create a project
+        """
         super().__init__(parent)
         self.setupUi(self)
 
@@ -43,8 +44,13 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         self.uiNameLineEdit.textEdited.connect(self._projectNameSlot)
         self.uiLocationBrowserToolButton.clicked.connect(self._projectPathSlot)
-        self.uiOpenProjectPushButton.clicked.connect(self._openProjectActionSlot)
-        self.uiRecentProjectsPushButton.clicked.connect(self._showRecentProjectsSlot)
+
+        if show_open_options:
+            self.uiOpenProjectPushButton.clicked.connect(self._openProjectActionSlot)
+            self.uiRecentProjectsPushButton.clicked.connect(self._showRecentProjectsSlot)
+        else:
+            self.uiOpenProjectGroupBox.hide()
+            self.uiProjectTabWidget.removeTab(1)
 
         Controller.instance().get("/projects", self._projectListCallback)
         self.uiProjectsTreeWidget.itemDoubleClicked.connect(self._projectsTreeWidgetDoubleClickedSlot)
@@ -155,7 +161,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
     def done(self, result):
 
         if result:
-            if self.uiOpenProjectTabWidget.currentIndex() == 0:
+            if self.uiProjectTabWidget.currentIndex() == 0:
                 if not self._newProject():
                     return
             else:

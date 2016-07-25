@@ -188,7 +188,7 @@ It is your responsability to check if you have the right to distribute the image
         progress_dialog.exec_()
 
     def importProject(self, project_file):
-        dialog = ProjectDialog(self._main_window, default_project_name=os.path.basename(project_file).split(".")[0])
+        dialog = ProjectDialog(self._main_window, default_project_name=os.path.basename(project_file).split(".")[0], show_open_options=False)
         dialog.show()
         if not dialog.exec_():
             return
@@ -202,7 +202,7 @@ It is your responsability to check if you have the right to distribute the image
         progress_dialog.exec_()
 
     def saveProjectAs(self):
-        dialog = ProjectDialog(self._main_window, default_project_name=self._project.name())
+        dialog = ProjectDialog(self._main_window, default_project_name=self._project.name(), show_open_options=False)
         dialog.show()
         if dialog.exec_():
             self._project.duplicate(

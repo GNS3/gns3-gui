@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>534</width>
-    <height>280</height>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTabWidget" name="uiOpenProjectTabWidget">
+    <widget class="QTabWidget" name="uiProjectTabWidget">
      <property name="tabPosition">
       <enum>QTabWidget::North</enum>
      </property>
@@ -30,6 +30,9 @@
      </property>
      <property name="currentIndex">
       <number>0</number>
+     </property>
+     <property name="tabBarAutoHide">
+      <bool>true</bool>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -92,7 +95,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="uiOpenProjectGroupBox">
          <property name="title">
           <string>Open project from disk</string>
          </property>
@@ -146,7 +149,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="uiProjectsLibraryTab">
       <attribute name="title">
        <string>Projects library</string>
       </attribute>
