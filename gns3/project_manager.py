@@ -187,8 +187,15 @@ It is your responsability to check if you have the right to distribute the image
         progress_dialog.show()
         progress_dialog.exec_()
 
-    def importProject(self, path):
-        import_worker = ImportProjectWorker(path)
+    def importProject(self, project_file):
+        dialog = ProjectDialog(self._main_window, default_project_name=os.path.basename(project_file).split(".")[0])
+        dialog.show()
+        if not dialog.exec_():
+            return
+
+        import_worker = ImportProjectWorker(project_file,
+                name=dialog.getProjectSettings()["project_name"],
+                path=dialog.getProjectSettings()["project_path"])
         import_worker.imported.connect(self._projectImportedSlot)
         progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self._main_window)
         progress_dialog.show()

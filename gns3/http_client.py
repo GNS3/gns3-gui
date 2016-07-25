@@ -199,7 +199,7 @@ class HTTPClient(QtCore.QObject):
         :param query: The Server to connect
         """
 
-    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, server=None, prefix="/v2", **kwargs):
+    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, server=None, prefix="/v2", params={}, **kwargs):
         """
         Call the remote server, if not connected, check connection before
 
@@ -215,10 +215,11 @@ class HTTPClient(QtCore.QObject):
         :param server: The server where the query will run
         :param timeout: Delay in seconds before raising a timeout
         :param prefix: Prefix to the path
+        :param params: Query arguments parameters
         :returns: QNetworkReply
         """
 
-        request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout, prefix=prefix)
+        request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout, prefix=prefix, params=params)
 
         if self._connected:
             return request()
@@ -348,7 +349,7 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
-    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", **kwargs):
+    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", params={}, **kwargs):
         """
         Call the remote server
 
@@ -363,6 +364,7 @@ class HTTPClient(QtCore.QObject):
         :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
         :param server: The server where the query is executed
         :param timeout: Delay in seconds before raising a timeout
+        :param params: Query arguments parameters
         :returns: QNetworkReply
         """
 
@@ -378,11 +380,16 @@ class HTTPClient(QtCore.QObject):
         except ipaddress.AddressValueError:
             host = self._host
 
-        log.debug("{method} {protocol}://{host}:{port}{prefix}{path} {body}".format(method=method, protocol=self._protocol, host=host, port=self._port, path=path, body=body, prefix=prefix))
-        if self._user:
-            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}{prefix}{path}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, path=path, prefix=prefix))
+        if params == {}:
+            query_string = ""
         else:
-            url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{path}".format(protocol=self._protocol, host=host, port=self._port, path=path, prefix=prefix))
+            query_string = "?" + urllib.parse.urlencode(params)
+
+        log.debug("{method} {protocol}://{host}:{port}{prefix}{path} {body}{query_string}".format(method=method, protocol=self._protocol, host=host, port=self._port, path=path, body=body, prefix=prefix, query_string=query_string))
+        if self._user:
+            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}{prefix}{path}{query_string}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, path=path, prefix=prefix, query_string=query_string))
+        else:
+            url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{path}{query_string}".format(protocol=self._protocol, host=host, port=self._port, path=path, prefix=prefix, query_string=query_string))
         request = self._request(url)
 
         request = self._addAuth(request)

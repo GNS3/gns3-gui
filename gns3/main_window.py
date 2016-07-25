@@ -154,7 +154,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiControlMenu,
             self.uiSaveProjectAsAction,
             self.uiExportProjectAction,
-            self.uiImportProjectAction,
             self.uiScreenshotAction,
             self.uiSnapshotAction,
             self.uiDeleteProjectAction,
