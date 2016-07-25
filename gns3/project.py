@@ -116,6 +116,12 @@ class Project(QtCore.QObject):
 
         Controller.instance().post("/projects/{project_id}/nodes/start".format(project_id=self._id), None, body={})
 
+    def duplicate(self, name=None, path=None):
+        """
+        Duplicate a project
+        """
+        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id), None, body={"name": name, "path": path})
+
     def stop_all_nodes(self):
         """Stop all nodes belonging to this project"""
 

@@ -152,13 +152,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiAnnotationToolBar,
             self.uiControlToolBar,
             self.uiControlMenu,
-            self.uiSaveProjectAction,
             self.uiSaveProjectAsAction,
             self.uiExportProjectAction,
             self.uiImportProjectAction,
             self.uiScreenshotAction,
             self.uiSnapshotAction,
-            self.uiDeleteProjectAction
+            self.uiDeleteProjectAction,
+            self.uiImportExportConfigsAction
         ]
 
         # load initial stuff once the event loop isn't busy

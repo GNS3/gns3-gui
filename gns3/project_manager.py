@@ -30,6 +30,7 @@ from .utils.message_box import MessageBox
 from .utils.export_project_worker import ExportProjectWorker
 from .utils.import_project_worker import ImportProjectWorker
 from .dialogs.file_editor_dialog import FileEditorDialog
+from .dialogs.project_dialog import ProjectDialog
 
 
 import logging
@@ -192,6 +193,15 @@ It is your responsability to check if you have the right to distribute the image
         progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self._main_window)
         progress_dialog.show()
         progress_dialog.exec_()
+
+    def saveProjectAs(self):
+        dialog = ProjectDialog(self._main_window, default_project_name=self._project.name())
+        dialog.show()
+        if dialog.exec_():
+            self._project.duplicate(
+                name=dialog.getProjectSettings()["project_name"],
+                path=dialog.getProjectSettings()["project_path"]
+            )
 
     def _projectImportedSlot(self, project_id):
         if self:

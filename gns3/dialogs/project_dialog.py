@@ -90,6 +90,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                                                                                                self.uiNameLineEdit.text()))
 
         if path:
+            self.uiNameLineEdit.setText(os.path.basename(path))
             self.uiLocationLineEdit.setText(path)
 
     def getProjectSettings(self):
