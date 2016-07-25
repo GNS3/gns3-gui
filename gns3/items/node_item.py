@@ -116,6 +116,12 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             symbol = self._node.defaultSymbol()
         if self._symbol != symbol:
             self._symbol = symbol
+
+            # Temporary symbol during loading
+            renderer = QImageSvgRenderer(":/icons/reload.svg")
+            renderer.setObjectName("symbol_loading")
+            self.setSharedRenderer(renderer)
+
             Controller.instance().getStatic(Symbol(symbol_id=symbol).url(), self._symbolLoadedCallback)
 
     def symbol(self):
