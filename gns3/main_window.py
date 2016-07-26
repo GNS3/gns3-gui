@@ -364,13 +364,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 return
             self.loadPath(path)
 
-    def loadSnapshot(self, path):
-        """Loads a snapshot"""
-
-        self._open_project_path = path
-        self._project_manager.project().project_closed_signal.connect(self._projectClosedContinueLoadPath)
-        self._project_manager.project().close()
-
     def loadPath(self, path):
         """Open a file and close the previous project"""
 
@@ -509,18 +502,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         project = self._project_manager.project()
 
-        # first check if any node doesn't run locally
-        topology = Topology.instance()
-        for node in topology.nodes():
-            if node.compute().id() != "local":
-                QtWidgets.QMessageBox.critical(self, "Snapshots", "Sorry, snapshots can only be created if all the nodes run locally")
-                return
-
-        if self._nodeRunning():
-            QtWidgets.QMessageBox.warning(self, "Snapshots", "Sorry, snapshots can only be created when all nodes are stopped")
-            return
-
-        dialog = SnapshotsDialog(self, project.topologyFile(), project.filesDir())
+        dialog = SnapshotsDialog(self, project, self._project_manager)
         dialog.show()
         dialog.exec_()
 

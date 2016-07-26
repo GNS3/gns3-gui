@@ -78,8 +78,12 @@ class ProjectManager(QtCore.QObject):
         :param project: Project instance
         """
 
+        if self._project:
+            self._project.stopListenNotifications()
+
         self._project = project
-        self._project.project_updated_signal.connect(self._projectUpdatedSlot)
+        if project:
+            self._project.project_updated_signal.connect(self._projectUpdatedSlot)
         self._setCurrent()
 
     def _projectUpdatedSlot(self):

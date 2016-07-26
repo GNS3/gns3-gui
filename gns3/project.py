@@ -324,12 +324,16 @@ class Project(QtCore.QObject):
         if error:
             log.error("Error while closing project {}: {}".format(self._id, result["message"]))
         else:
-            if self._notification_stream:
-                self._notification_stream.abort()
-        log.info("Project {} closed".format(self._id))
+            self.stopListenNotifications()
+            log.info("Project {} closed".format(self._id))
 
         self._closed = True
         self.project_closed_signal.emit()
+
+    def stopListenNotifications(self):
+        if self._notification_stream:
+            self._notification_stream.abort()
+
 
     def _startListenNotifications(self):
 
