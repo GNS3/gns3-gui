@@ -33,11 +33,12 @@ import inspect
 import logging
 log = logging.getLogger(__name__)
 
-from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets
+from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
 sys.modules[__name__ + '.QtCore'] = QtCore
 sys.modules[__name__ + '.QtGui'] = QtGui
 sys.modules[__name__ + '.QtNetwork'] = QtNetwork
 sys.modules[__name__ + '.QtWidgets'] = QtWidgets
+sys.modules[__name__ + '.Qt'] = Qt
 
 try:
     from PyQt5 import QtSvg
