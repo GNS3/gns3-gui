@@ -36,7 +36,12 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
     def __init__(self, image_path=None, pos=None,  svg=None, **kws):
 
         self._image_path = image_path
-        super().__init__(pos=pos, **kws)
+        # Because we call the Qt C++ code we need to handle the case of pos is None otherwise we will get a conversion error
+        if pos:
+            super().__init__(pos=pos, **kws)
+        else:
+            super().__init__(**kws)
+
 
         if self._image_path:
             renderer = QImageSvgRenderer(image_path)
