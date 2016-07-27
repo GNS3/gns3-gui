@@ -46,6 +46,12 @@ class Node(BaseNode):
         # minimum required base settings
         self._settings = {"name": "", "x": None, "y": None, "z": None, "width": None, "height": None, "label": None}
 
+    def get(self, path, *args, **kwargs):
+        return self.controllerHttpGet("/nodes/{node_id}{path}".format(node_id=self._node_id, path=path), *args, **kwargs)
+
+    def post(self, path, *args, **kwargs):
+        return self.controllerHttpPost("/nodes/{node_id}{path}".format(node_id=self._node_id, path=path), *args, **kwargs)
+
     def creator(self):
         return self._creator
 
@@ -304,7 +310,7 @@ class Node(BaseNode):
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         body = self._prepareBody(params)
-        self.controllerHttpPut("/nodes/{node_id}".format(project_id=self._project.id(), node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout)
+        self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout)
 
     def updateNodeCallback(self, result, error=False, **kwargs):
         """

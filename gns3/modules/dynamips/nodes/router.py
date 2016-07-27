@@ -512,21 +512,6 @@ class Router(Node):
         slot_info = self._slot_info()
         return info + slot_info
 
-    def saveConfig(self):
-        """
-        Save the configs
-        """
-
-        self.httpPost("/dynamips/nodes/{node_id}/configs/save".format(node_id=self._node_id), self._saveConfigCallback)
-
-    def _saveConfigCallback(self, result, error=False, context={}, **kwargs):
-
-        if error:
-            log.error("error while saving {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{}: configs have been saved".format(self.name()))
-
     def exportConfig(self, startup_config_export_path, private_config_export_path):
         """
         Exports the startup-config and private-config.
@@ -614,6 +599,15 @@ class Router(Node):
                             f.write(result["private_config_content"].encode("utf-8"))
                 except OSError as e:
                     self.error_signal.emit(self.id(), "Could not export private-config to {}: {}".format(config_path, e))
+
+    def configFiles(self):
+        """
+        Name of the configuration files
+        """
+        return [
+            "configs/i{}_startup-config.cfg".format(self._dynamips_id),
+            "configs/i{}_private-config.cfg".format(self._dynamips_id)
+        ]
 
     def importConfig(self, path):
         """

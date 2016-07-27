@@ -55,14 +55,14 @@ class FileEditorDialog(QtWidgets.QDialog, Ui_FileEditorDialog):
 
     def _okButtonClickedSlot(self):
         text = self.uiFileTextEdit.toPlainText()
-        self._target.httpPost("/files" + self._path, self._saveCallback, body=text)
+        self._target.post("/files/" + self._path, self._saveCallback, body=text)
 
     def _saveCallback(self, result, error=False, **kwargs):
         if not error:
             self.accept()
 
     def _refreshSlot(self):
-        self._target.httpGet("/files" + self._path, self._getCallback)
+        self._target.get("/files/" + self._path, self._getCallback)
 
     def _getCallback(self, result, error=False, raw_body=None, **kwargs):
         if not error:

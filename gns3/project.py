@@ -173,14 +173,6 @@ class Project(QtCore.QObject):
         """
         self._projectHTTPQuery("POST", path, callback, body=body, **kwargs)
 
-    def httpPost(self, *args, **kwargs):
-        #FIXME: use the same methods name for node & project
-        self.post(*args, **kwargs)
-
-    def httpGet(self, *args, **kwargs):
-        #FIXME: use the same methods name for node & project
-        self.get(*args, **kwargs)
-
     def put(self, path, callback, body={}, **kwargs):
         """
         HTTP PUT on the remote server

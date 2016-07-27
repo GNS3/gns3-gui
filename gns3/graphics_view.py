@@ -40,6 +40,7 @@ from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from .dialogs.idlepc_dialog import IdlePCDialog
 from .dialogs.console_command_dialog import ConsoleCommandDialog
+from .dialogs.file_editor_dialog import FileEditorDialog
 from .local_config import LocalConfig
 from .progress import Progress
 from .utils.server_select import server_select
@@ -758,11 +759,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
             export_config_action.triggered.connect(self.exportConfigActionSlot)
             menu.addAction(export_config_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "saveConfig"), items)):
-            save_config_action = QtWidgets.QAction("Save config", menu)
-            save_config_action.setIcon(QtGui.QIcon(':/icons/save.svg'))
-            save_config_action.triggered.connect(self.saveConfigActionSlot)
-            menu.addAction(save_config_action)
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
+            export_config_action = QtWidgets.QAction("Edit config", menu)
+            export_config_action.setIcon(QtGui.QIcon(':/icons/edit.svg'))
+            export_config_action.triggered.connect(self.editConfigActionSlot)
+            menu.addAction(export_config_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepc"), items)):
             idlepc_action = QtWidgets.QAction("Idle-PC", menu)
@@ -1118,10 +1119,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     item.node().importConfigFromDirectory(path)
         else:
             if not self._import_config_dir:
-                self._import_config_dir = self._main_window.projectManager().project().filesDir()
-                if not self._import_config_dir:
-                    log.critical("You don't have a project directory for current project. This should not happen. If you know how to reproduce this error please post instructions on https://gns3.com/community. The GNS3 team")
-                    return
+                self._import_config_dir =  QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
 
             item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):
@@ -1169,6 +1167,31 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     self._import_config_dir = os.path.dirname(path)
                     item.node().importConfig(path)
 
+    def editConfigActionSlot(self):
+        """
+        Slot to receive event to edit the configuration file
+        """
+
+        items = []
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "configFiles") and item.node().initialized():
+                items.append(item)
+
+        if not items:
+            return
+
+        for item in items:
+            if len(item.node().configFiles()) == 1:
+                config_file = item.node().configFiles()[0]
+            else:
+                config_file, ok = QtWidgets.QInputDialog.getItem(self, "Edit file", "File to edit?", item.node().configFiles(), 0, False)
+                if not ok:
+                    continue
+            dialog = FileEditorDialog(item.node(), config_file, parent=self)
+            dialog.show()
+            dialog.exec_()
+
+
     def exportConfigActionSlot(self):
         """
         Slot to receive events from the export config action in the
@@ -1191,10 +1214,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     item.node().exportConfigToDirectory(path)
         else:
             if not self._export_config_dir:
-                self._export_config_dir = self._main_window.projectManager().project().filesDir()
-                if not self._export_config_dir:
-                    log.critical("You don't have a project directory for current project. This should not happen. If you know how to reproduce this error please post instructions on https://gns3.com/community. The GNS3 team")
-                    return
+                self._export_config_dir =  QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
 
             item = items[0]
             if hasattr(item.node(), "importPrivateConfig"):

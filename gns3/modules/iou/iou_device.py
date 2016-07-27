@@ -266,20 +266,11 @@ class IOUDevice(Node):
 
         return info + port_info
 
-    def saveConfig(self):
+    def configFiles(self):
         """
-        Save the configs
+        Name of the configuration files
         """
-
-        self.httpPost("/iou/nodes/{node_id}/configs/save".format(node_id=self._node_id), self._saveConfigCallback)
-
-    def _saveConfigCallback(self, result, error=False, context={}, **kwargs):
-
-        if error:
-            log.error("error while saving {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{}: configs have been saved".format(self.name()))
+        return ["startup-config.cfg", "private-config.cfg"]
 
     def exportConfig(self, startup_config_export_path, private_config_export_path):
         """

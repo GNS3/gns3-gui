@@ -167,7 +167,7 @@ class VPCSNode(Node):
         :param config_export_path: export path for the script file
         """
 
-        self.httpGet("/vpcs/nodes/{node_id}".format(node_id=self._node_id),
+        self.get("/config".format(node_id=self._node_id),
                      self._exportConfigCallback,
                      context={"path": config_export_path})
 
@@ -224,6 +224,12 @@ class VPCSNode(Node):
                         f.write(result["startup_script"].encode("utf-8"))
             except OSError as e:
                 self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(config_path, e))
+
+    def configFiles(self):
+        """
+        Name of the configuration files
+        """
+        return ["startup.vpc"]
 
     def importConfig(self, path):
         """
