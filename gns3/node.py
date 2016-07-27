@@ -17,6 +17,7 @@
 
 
 import os
+import pathlib
 from gns3.local_server import LocalServer
 from gns3.ports.port import Port
 from gns3.qt import QtGui, QtCore
@@ -51,6 +52,15 @@ class Node(BaseNode):
 
     def post(self, path, *args, **kwargs):
         return self.controllerHttpPost("/nodes/{node_id}{path}".format(node_id=self._node_id, path=path), *args, **kwargs)
+
+    def importFile(self, path, source_path):
+        self.post("/files/{path}".format(path=path), self._importFileCallback, body=pathlib.Path(source_path), timeout=None)
+
+    def _importFileCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while importing file: {}".format(result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+            return False
 
     def exportFile(self, path, output_path):
         self.get("/files/{path}".format(path=path), self._exportFileCallback, context={"path": output_path}, raw=True)

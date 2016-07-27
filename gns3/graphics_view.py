@@ -1105,67 +1105,30 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "importConfig") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "configFiles") and item.node().initialized():
                 items.append(item)
 
         if not items:
             return
 
-        if len(items) > 1:
-            path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", self._import_configs_from_dir, QtWidgets.QFileDialog.ShowDirsOnly)
-            if path:
-                self._import_configs_from_dir = os.path.dirname(path)
-                for item in items:
-                    item.node().importConfigFromDirectory(path)
-        else:
+        for item in items:
+            if len(item.node().configFiles()) == 1:
+                config_file = item.node().configFiles()[0]
+            else:
+                config_file, ok = QtWidgets.QInputDialog.getItem(self, "Import file", "File to import?", item.node().configFiles(), 0, False)
+                if not ok:
+                    continue
+
             if not self._import_config_dir:
                 self._import_config_dir =  QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
 
-            item = items[0]
-            if hasattr(item.node(), "importPrivateConfig"):
-                # this node can have one startup-config and one private-config
-                default_startup_config_path = os.path.join(self._import_config_dir, normalize_filename(item.node().name())) + "_startup-config.cfg"
-                if os.path.exists(default_startup_config_path):
-                    default_import_path = default_startup_config_path
-                else:
-                    default_import_path = self._import_config_dir
-                path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                "Import startup-config",
-                                                                default_import_path,
-                                                                "All files (*.*);;Config files (*.cfg)",
-                                                                "Config files (*.cfg)")
-
-                if path:
-                    self._import_config_dir = os.path.dirname(path)
-                    item.node().importConfig(path)
-
-                default_private_config_path = os.path.join(self._import_config_dir, normalize_filename(item.node().name())) + "_private-config.cfg"
-                if os.path.exists(default_private_config_path):
-                    default_import_path = default_private_config_path
-                else:
-                    default_import_path = self._import_config_dir
-                path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                "Import private-config",
-                                                                default_import_path,
-                                                                "All files (*.*);;Config files (*.cfg)",
-                                                                "Config files (*.cfg)")
-                if path:
-                    item.node().importPrivateConfig(path)
-            else:
-                # this node has just one config
-                default_config_path = os.path.join(self._import_config_dir, normalize_filename(item.node().name())) + ".cfg"
-                if os.path.exists(default_config_path):
-                    default_import_path = default_config_path
-                else:
-                    default_import_path = self._import_config_dir
-                path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Import config",
-                                                                default_import_path,
-                                                                "All files (*.*);;Config files (*.cfg)",
-                                                                "Config files (*.cfg)")
-
-                if path:
-                    self._import_config_dir = os.path.dirname(path)
-                    item.node().importConfig(path)
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                            "Import {}".format(os.path.basename(config_file)),
+                                                            self._import_config_dir,
+                                                            "All files (*.*);;Config files (*.cfg)",
+                                                            "Config files (*.cfg)")
+            self._import_config_dir = os.path.dirname(path)
+            item.node().importFile(config_file, path)
 
     def editConfigActionSlot(self):
         """
@@ -1191,7 +1154,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
             dialog.show()
             dialog.exec_()
 
-
     def exportConfigActionSlot(self):
         """
         Slot to receive events from the export config action in the
@@ -1206,7 +1168,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             return
 
+        if not self._export_configs_to_dir:
+            self._export_configs_to_dir =  QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+
         path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.ShowDirsOnly)
+
+        if not path:
+            return
+
+        self._export_configs_to_dir = os.path.dirname(path)
 
         for item in items:
             for config_file in item.node().configFiles():
