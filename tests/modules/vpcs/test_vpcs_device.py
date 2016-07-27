@@ -135,27 +135,6 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
 
 
 @pytest.mark.skip(reason="Need refactor for controller support")
-def test_exportConfig(tmpdir, vpcs_device):
-
-    path = tmpdir / 'startup.vpcs'
-
-    with patch('gns3.base_node.BaseNode.httpGet') as mock:
-        vpcs_device.exportConfig(str(path))
-
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/vpcs/nodes/{node_id}".format(node_id=vpcs_device.node_id())
-
-        # Callback
-        args[1]({"startup_script": "echo TEST"}, context={"path": str(path)})
-
-        assert path.exists()
-
-        with open(str(path)) as f:
-            assert f.read() == "echo TEST"
-
-
-@pytest.mark.skip(reason="Need refactor for controller support")
 def test_exportConfigToDirectory(tmpdir, vpcs_device):
 
     path = tmpdir / normalize_filename(vpcs_device.name()) + '_startup.vpc'

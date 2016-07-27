@@ -747,13 +747,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             aux_console_action.triggered.connect(self.auxConsoleActionSlot)
             menu.addAction(aux_console_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "importConfig"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
             import_config_action = QtWidgets.QAction("Import config", menu)
             import_config_action.setIcon(QtGui.QIcon(':/icons/import_config.svg'))
             import_config_action.triggered.connect(self.importConfigActionSlot)
             menu.addAction(import_config_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "exportConfig"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
             export_config_action = QtWidgets.QAction("Export config", menu)
             export_config_action.setIcon(QtGui.QIcon(':/icons/export_config.svg'))
             export_config_action.triggered.connect(self.exportConfigActionSlot)
@@ -1200,47 +1200,17 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "exportConfig") and item.node().initialized():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "configFiles") and item.node().initialized():
                 items.append(item)
 
         if not items:
             return
 
-        if len(items) > 1:
-            path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.ShowDirsOnly)
-            if path:
-                self._export_configs_to_dir = os.path.dirname(path)
-                for item in items:
-                    item.node().exportConfigToDirectory(path)
-        else:
-            if not self._export_config_dir:
-                self._export_config_dir =  QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.ShowDirsOnly)
 
-            item = items[0]
-            if hasattr(item.node(), "importPrivateConfig"):
-                # this node can have one startup-config and one private-config
-                default_startup_config_path = os.path.join(self._export_config_dir, normalize_filename(item.node().name())) + "_startup-config.cfg"
-                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export startup-config", default_startup_config_path)
-                self._export_config_dir = os.path.dirname(config_path)
-                default_private_config_path = os.path.join(self._export_config_dir, normalize_filename(item.node().name())) + "_private-config.cfg"
-                private_config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export private-config", default_private_config_path)
-                item.node().exportConfig(config_path, private_config_path)
-            else:
-                # this node has just one config
-                default_config_path = os.path.join(self._export_config_dir, normalize_filename(item.node().name())) + ".cfg"
-                config_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export config", default_config_path)
-                self._export_config_dir = os.path.dirname(config_path)
-                item.node().exportConfig(config_path)
-
-    def saveConfigActionSlot(self):
-        """
-        Slot to receive events from the save config action in the
-        contextual menu.
-        """
-
-        for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "saveConfig") and item.node().initialized():
-                item.node().saveConfig()
+        for item in items:
+            for config_file in item.node().configFiles():
+                item.node().exportFile(config_file, os.path.join(path, os.path.basename(config_file)))
 
     def getCommandLineSlot(self):
         """

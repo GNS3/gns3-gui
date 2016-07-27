@@ -160,38 +160,6 @@ class VPCSNode(Node):
 
         return info + port_info
 
-    def exportConfig(self, config_export_path):
-        """
-        Exports the script file.
-
-        :param config_export_path: export path for the script file
-        """
-
-        self.get("/config".format(node_id=self._node_id),
-                     self._exportConfigCallback,
-                     context={"path": config_export_path})
-
-    def _exportConfigCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for exportConfig.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        elif "startup_script" in result:
-            path = context["path"]
-            try:
-                with open(path, "wb") as f:
-                    log.info("saving {} script file to {}".format(self.name(), path))
-                    if result["startup_script"]:
-                        f.write(result["startup_script"].encode("utf-8"))
-            except OSError as e:
-                self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(path, e))
-
     def exportConfigToDirectory(self, directory):
         """
         Exports the script-file to a directory.

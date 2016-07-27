@@ -512,51 +512,6 @@ class Router(Node):
         slot_info = self._slot_info()
         return info + slot_info
 
-    def exportConfig(self, startup_config_export_path, private_config_export_path):
-        """
-        Exports the startup-config and private-config.
-
-        :param startup_config_export_path: export path for the startup-config
-        :param private_config_export_path: export path for the private-config
-        """
-
-        self.httpGet("/dynamips/nodes/{node_id}/configs".format(node_id=self._node_id),
-                     self._exportConfigCallback,
-                     context={"startup_config_path": startup_config_export_path,
-                              "private_config_path": private_config_export_path})
-
-    def _exportConfigCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for exportConfig.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            startup_config_path = context["startup_config_path"]
-            private_config_path = context["private_config_path"]
-            if startup_config_path:
-                try:
-                    with open(startup_config_path, "wb") as f:
-                        log.info("Saving {} startup-config to {}".format(self.name(), startup_config_path))
-                        if "startup_config_content" in result and result["startup_config_content"]:
-                            f.write(result["startup_config_content"].encode("utf-8"))
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "Could not export startup-config to {}: {}".format(startup_config_path, e))
-
-            if private_config_path:
-                try:
-                    with open(private_config_path, "wb") as f:
-                        log.info("Saving {} private-config to {}".format(self.name(), private_config_path))
-                        if "private_config_content" in result and result["private_config_content"]:
-                            f.write(result["private_config_content"].encode("utf-8"))
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "Could not export private-config to {}: {}".format(private_config_path, e))
-
     def exportConfigToDirectory(self, directory):
         """
         Exports the startup-config and private-config to a directory.

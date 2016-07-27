@@ -190,28 +190,6 @@ def test_update_startup_config(iou_device, tmpdir):
         args[1]({"properties": {}})
 
 
-@pytest.mark.skip(reason="Need refactor to support controller")
-def test_exportConfig(iou_device, tmpdir):
-
-    startup_path = str(tmpdir / "startup_config.cfg")
-    private_path = str(tmpdir / "private_config.cfg")
-
-    with patch("gns3.base_node.BaseNode.httpGet") as mock:
-        iou_device.exportConfig(startup_path, private_path)
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/iou/nodes/{node_id}/configs".format(node_id=iou_device.node_id())
-
-        # Callback
-        args[1]({"startup_config_content": "TEST", "private_config_content": "PRIVATE"}, context=kwargs["context"])
-
-        with open(startup_path) as f:
-            assert f.read() == "TEST"
-
-        with open(private_path) as f:
-            assert f.read() == "PRIVATE"
-
-
 @pytest.mark.skip(reason="Need refactor  to support controller")
 def test_exportConfigToDirectory(iou_device, tmpdir):
 

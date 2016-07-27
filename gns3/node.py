@@ -52,6 +52,14 @@ class Node(BaseNode):
     def post(self, path, *args, **kwargs):
         return self.controllerHttpPost("/nodes/{node_id}{path}".format(node_id=self._node_id, path=path), *args, **kwargs)
 
+    def exportFile(self, path, output_path):
+        self.get("/files/{path}".format(path=path), self._exportFileCallback, context={"path": output_path}, raw=True)
+
+    def _exportFileCallback(self, result, error=False, raw_body=None, context={}, **kwargs):
+        if not error:
+            with open(context["path"], "wb+") as f:
+                f.write(raw_body)
+
     def creator(self):
         return self._creator
 
