@@ -1169,18 +1169,18 @@ class GraphicsView(QtWidgets.QGraphicsView):
             return
 
         if not self._export_configs_to_dir:
-            self._export_configs_to_dir =  QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.ShowDirsOnly)
-
-        if not path:
-            return
-
-        self._export_configs_to_dir = os.path.dirname(path)
+            self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
 
         for item in items:
             for config_file in item.node().configFiles():
-                item.node().exportFile(config_file, os.path.join(path, os.path.basename(config_file)))
+                    path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_configs_to_dir, item.node().name() + "_" + os.path.basename(config_file)),  "All files (*.*);;Config files (*.cfg)")
+
+                    if not path:
+                        continue
+
+                    self._export_configs_to_dir = os.path.dirname(path)
+
+                    item.node().exportFile(config_file, path)
 
     def getCommandLineSlot(self):
         """
