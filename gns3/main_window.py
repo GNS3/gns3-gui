@@ -1693,7 +1693,7 @@ It is your responsability to check if you have the right to distribute the image
         if not os.path.exists(self._project.readmePathFile()):
             text, ok = QtWidgets.QInputDialog.getMultiLineText(self, "Export project",
                                                                "Please provide a description for the project, especially if you want to share it. \nThe description will be saved in README.txt inside the project file",
-                                                               "Project title\n\nAuthor: Grace Hopper <grace@hopper.com>\n\nThis project is about...")
+                                                               "Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
             if not ok:
                 return
             try:
