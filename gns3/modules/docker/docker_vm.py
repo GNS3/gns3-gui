@@ -201,11 +201,11 @@ class DockerVM(Node):
         """
         return ":/symbols/docker_guest.svg"
 
-    def networkInterfacesPath(self):
+    def configFiles(self):
         """
         Return path of the /etc/network/interfaces
         """
-        return "/project-files/docker/{}/etc/network/interfaces".format(self._node_id)
+        return ["etc/network/interfaces"]
 
     @staticmethod
     def symbolName():

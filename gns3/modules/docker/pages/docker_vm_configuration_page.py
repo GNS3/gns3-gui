@@ -108,7 +108,7 @@ class DockerVMConfigurationPage(
             self.uiSymbolToolButton.hide()
 
     def _networkConfigEditSlot(self):
-        dialog = FileEditorDialog(self._node, self._node.networkInterfacesPath())
+        dialog = FileEditorDialog(self._node, self._node.configFiles()[0])
         dialog.setModal(True)
         self.stackUnder(dialog)
         dialog.show()
