@@ -182,7 +182,11 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                 if node_port.name() == nio and not node_port.isFree():
                     QtWidgets.QMessageBox.critical(self, self._node.name(), "A link is connected to NIO {}, please remove it first".format(nio))
                     return
-            self._nios.remove(nio)
+            try:
+                self._nios.remove(nio)
+            # An interface could have been removed and no longer exists in nios
+            except KeyError:
+                pass
             self.uiLinuxEthernetListWidget.takeItem(self.uiLinuxEthernetListWidget.currentRow())
 
     def _NIONATSelectedSlot(self, index):
