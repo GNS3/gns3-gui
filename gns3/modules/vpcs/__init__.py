@@ -304,26 +304,11 @@ class VPCS(Module):
         in the nodes view and create a node on the scene.
         """
 
-        if self._settings["use_local_server"]:
-            server = "local"
-        elif GNS3VM.instance().isRunning():
-            server = "vm"
-        else:
-            remote_server = next(iter(Servers.instance()))
-            if remote_server:
-                server = remote_server.url()
-            else:
-                # If user has no server configured and has uncheck the checkbox
-                # it's a mistake. We use the GNS3VM in order to show a correct
-                # error message
-                server = "vm"
-
         nodes = []
         for node_class in VPCS.classes():
             nodes.append(
                 {"class": node_class.__name__,
                  "name": node_class.symbolName(),
-                 "server": server,
                  "categories": [self._settings["category"]],
                  "symbol": self._settings["symbol"]}
             )
