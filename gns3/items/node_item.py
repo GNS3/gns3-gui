@@ -48,6 +48,12 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         self._symbol = None
 
+        # Temporary symbol during loading
+        self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
+        renderer = QImageSvgRenderer(":/icons/reload.svg")
+        renderer.setObjectName("symbol_loading")
+        self.setSharedRenderer(renderer)
+
         # says if the attached node has been initialized
         # by the server.
         self._initialized = False
@@ -96,6 +102,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         from ..main_window import MainWindow
         self._main_window = MainWindow.instance()
         self._settings = self._main_window.uiGraphicsView.settings()
+
 
         if node.initialized():
             self.createdSlot(node.id())
