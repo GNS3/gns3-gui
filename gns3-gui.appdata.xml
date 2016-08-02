@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2016 Athmane Madjoudj <athmane@fedoraproject.org> -->
+<!--
+EmailAddress: athmane@fedoraproject.org
+SentUpstream: 2016-08-02
+-->
+<application>
+  <id type="desktop">gns3-gui.desktop</id>
+  <metadata_license>GPLv3</metadata_license>
+  <project_license>GPLv3</project_license>
+  <description>
+    <p>
+     GNS3 is a graphical network simulator that allows you to design complex network
+     topologies. You may run simulations or configure devices ranging from simple
+     workstations to powerful routers.
+    </p>
+  </description>
+  <url type="homepage">http://www.gns3.com/</url>
+</application>
