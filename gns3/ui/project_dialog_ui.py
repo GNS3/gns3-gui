@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/project_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/project_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Thu Aug  4 10:41:59 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -19,12 +20,11 @@ class Ui_ProjectDialog(object):
         self.uiProjectTabWidget = QtWidgets.QTabWidget(ProjectDialog)
         self.uiProjectTabWidget.setTabPosition(QtWidgets.QTabWidget.North)
         self.uiProjectTabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
-        self.uiProjectTabWidget.setTabBarAutoHide(True)
+        self.uiProjectTabWidget.setProperty("tabBarAutoHide", False)
         self.uiProjectTabWidget.setObjectName("uiProjectTabWidget")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.tab)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.groupBox = QtWidgets.QGroupBox(self.tab)
         self.groupBox.setObjectName("groupBox")
@@ -82,7 +82,6 @@ class Ui_ProjectDialog(object):
         self.uiProjectsLibraryTab = QtWidgets.QWidget()
         self.uiProjectsLibraryTab.setObjectName("uiProjectsLibraryTab")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiProjectsLibraryTab)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiProjectsTreeWidget = QtWidgets.QTreeWidget(self.uiProjectsLibraryTab)
         self.uiProjectsTreeWidget.setObjectName("uiProjectsTreeWidget")
