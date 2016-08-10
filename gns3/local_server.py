@@ -174,13 +174,30 @@ class LocalServer():
 
         settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
         self._settings = copy.copy(settings)
-        if settings["auth"] is True and len(settings["user"]) == 0:
+
+        # user & password
+        if settings["auth"] is True and not settings["user"].strip():
             settings["user"] = "admin"
             settings["password"] = self._passwordGenerate()
-        if len(settings["path"]) == 0:
-               settings["path"] = shutil.which("gns3server")
-        if len(settings["ubridge_path"]) == 0:
-               settings["ubridge_path"] = shutil.which("ubridge")
+
+        # local GNS3 server path
+        local_server_path = shutil.which(settings["path"].strip())
+        if local_server_path is None:
+            default_server_path = shutil.which("gns3server")
+            if default_server_path is not None:
+                settings["path"] = os.path.abspath(default_server_path)
+        else:
+            settings["path"] = os.path.abspath(local_server_path)
+
+        # uBridge path
+        ubridge_path = shutil.which(settings["ubridge_path"].strip())
+        if ubridge_path is None:
+            default_ubridge_path = shutil.which("ubridge")
+            if default_ubridge_path is not None:
+                settings["ubridge_path"] = os.path.abspath(default_ubridge_path)
+        else:
+            settings["ubridge_path"] = os.path.abspath(ubridge_path)
+
         if self._settings != settings:
             self.setLocalServerSettings(settings)
             self._settings = settings
