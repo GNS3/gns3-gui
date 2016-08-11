@@ -35,9 +35,11 @@ class GNS3VM:
         self._settings = {}
         self._loadSettings()
         self._ip_address = None
+        self._parent = None
 
-        from .main_window import MainWindow
-        self._main_window = MainWindow.instance()
+        if self._parent is None:
+            from .main_window import MainWindow
+            self._parent = MainWindow.instance()
 
     def isEnabled(self):
 
@@ -73,9 +75,9 @@ class GNS3VM:
         """
 
         if error:
-            QtWidgets.QMessageBox.critical(self._main_window, "GNS3 VM update", "{}".format(result["message"]))
+            QtWidgets.QMessageBox.critical(self._parent, "Updating the GNS3 VM", "Could not update the GNS3 VM: {}".format(result["message"]))
         else:
-            print("GNS3 VM successfully updated")
+            log.info("GNS3 VM successfully updated")
             self._settings.update(result)
 
     def _startGNS3VMCallback(self, result, error=False, **kwargs):
@@ -88,9 +90,9 @@ class GNS3VM:
         """
 
         if error:
-            QtWidgets.QMessageBox.critical(self._main_window, "GNS3 VM start", "{}".format(result["message"]))
+            QtWidgets.QMessageBox.critical(self._parent, "Starting the GNS3 VM", "Could not start the GNS3 VM: {}".format(result["message"]))
         else:
-            print("GNS3 VM successfully started")
+            log.info("GNS3 VM successfully started")
             self._ip_address = result["ip_address"]
 
     def ipAddress(self):
@@ -110,7 +112,7 @@ class GNS3VM:
         Controller.instance().put("/gns3vm", self._updateGNS3VMCallback, body=settings, progressText="Updating the GNS3 VM...")
 
     @staticmethod
-    def instance():
+    def instance(parent=None):
         """
         Singleton to return only on instance of GNS3VM
 
@@ -119,4 +121,6 @@ class GNS3VM:
 
         if not hasattr(GNS3VM, "_instance") or GNS3VM._instance is None:
             GNS3VM._instance = GNS3VM()
+        if parent is not None:
+            GNS3VM._instance._parent = parent
         return GNS3VM._instance

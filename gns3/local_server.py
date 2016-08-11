@@ -210,6 +210,7 @@ class LocalServer():
         :param settings: local server settings (dict)
         """
 
+        self._port = settings["port"]
         LocalServerConfig.instance().saveSettings("Server", settings)
 
     def shouldLocalServerAutoStart(self):
@@ -258,7 +259,7 @@ class LocalServer():
         # We check if two gui are not launched at the same time
         # to avoid killing the server of the other GUI
         if not LocalConfig.isMainGui():
-           log.info("Not the main GUI, will not autostart the server")
+           log.info("Not the main GUI, will not auto start the server")
            return True
 
         if self.isLocalServerRunning():

@@ -17,13 +17,15 @@
 
 import sys
 import os
-import psutil
+import shutil
 
-from gns3.qt import QtCore, QtWidgets, QtGui
+from gns3.qt import QtCore, QtWidgets, QtGui, QtNetwork
 from gns3.controller import Controller
 from gns3.gns3_vm import GNS3VM
+from gns3.local_server import LocalServer
+from gns3.utils.progress_dialog import ProgressDialog
+from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker
 
-from ..dialogs.preferences_dialog import PreferencesDialog
 from ..ui.setup_wizard_ui import Ui_SetupWizard
 from ..version import __version__
 
@@ -44,7 +46,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             # we want to see the cancel button on OSX
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
-        #self._server = Servers.instance().localServer()
         self.uiGNS3VMDownloadLinkUrlLabel.setText('')
         self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
@@ -59,10 +60,36 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         self.uiVmwareRadioButton.setChecked(False)
         self.uiVirtualBoxRadioButton.setChecked(False)
 
+        # Mandatory fields
+        self.uiLocalServerWizardPage.registerField("path*", self.uiLocalServerPathLineEdit)
+
+        # load all available addresses
+        for address in QtNetwork.QNetworkInterface.allAddresses():
+            address_string = address.toString()
+            # if address.protocol() == QtNetwork.QAbstractSocket.IPv6Protocol:
+            # we do not want the scope id when using an IPv6 address...
+            # address.setScopeId("")
+            self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
+
         if sys.platform.startswith("darwin"):
             self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_fusion_banner.jpg"))
         else:
             self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_workstation_banner.jpg"))
+
+    def _localServerBrowserSlot(self):
+        """
+        Slot to open a file browser and select a local server.
+        """
+
+        filter = ""
+        if sys.platform.startswith("win"):
+            filter = "Executable (*.exe);;All files (*.*)"
+        server_path = shutil.which("gns3server")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the local server", server_path, filter)
+        if not path:
+            return
+
+        self.uiLocalServerPathLineEdit.setText(path)
 
     def _VMwareBannerButtonClickedSlot(self):
         if sys.platform.startswith("darwin"):
@@ -125,23 +152,59 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         super().initializePage(page_id)
+        gns3_vm = GNS3VM().instance(parent=self)
+        gns3_vm_settings = gns3_vm.settings()
         if self.page(page_id) == self.uiVMWizardPage:
-            # limit the number of vCPUs to the number of physical cores (hyper thread CPUs are excluded)
-            # because this is likely to degrade performances.
-            cpu_count = psutil.cpu_count(logical=False)
-            self.uiCPUSpinBox.setValue(cpu_count)
-            # we want to allocate half of the available physical memory
-            ram = int(psutil.virtual_memory().total / (1024 * 1024) / 2)
-            # value must be a multiple of 4 (VMware requirement)
-            ram -= ram % 4
-            self.uiRAMSpinBox.setValue(ram)
+            if not gns3_vm_settings:
+                QtWidgets.QMessageBox.critical(self, "GNS3 VM", "Could not retrieve the GNS3 VM settings from the controller")
+                return
+            if gns3_vm_settings["engine"] == "vmware":
+                self.uiVmwareRadioButton.setChecked(True)
+                self._listVMwareVMsSlot()
+            elif gns3_vm_settings["engine"] == "virtualbox":
+                self.uiVirtualBoxRadioButton.setChecked(True)
+                self._listVirtualBoxVMsSlot()
+            self.uiCPUSpinBox.setValue(gns3_vm_settings["vcpus"])
+            self.uiRAMSpinBox.setValue(gns3_vm_settings["ram"])
+
+        elif self.page(page_id) == self.uiLocalServerWizardPage:
+            local_server_settings = LocalServer.instance().localServerSettings()
+            self.uiLocalServerPathLineEdit.setText(local_server_settings["path"])
+            index = self.uiLocalServerHostComboBox.findData(local_server_settings["host"])
+            if index != -1:
+                self.uiLocalServerHostComboBox.setCurrentIndex(index)
+            self.uiLocalServerPortSpinBox.setValue(local_server_settings["port"])
+
+        elif self.page(page_id) == self.uiSummaryWizardPage:
+            use_local_server = self.uiLocalRadioButton.isChecked()
+            self.uiSummaryTreeWidget.clear()
+            if use_local_server:
+                local_server_settings = LocalServer.instance().localServerSettings()
+                self._addSummaryEntry("Server type:", "Local")
+                self._addSummaryEntry("Path:", local_server_settings["path"])
+                self._addSummaryEntry("Host:", local_server_settings["host"])
+                self._addSummaryEntry("Port:", str(local_server_settings["port"]))
+            else:
+                self._addSummaryEntry("Server type:", "GNS3 Virtual Machine")
+                self._addSummaryEntry("VM engine:", gns3_vm_settings["engine"].capitalize())
+                self._addSummaryEntry("VM name:", gns3_vm_settings["vmname"])
+                self._addSummaryEntry("VM vCPUs:", str(gns3_vm_settings["vcpus"]))
+                self._addSummaryEntry("VM RAM:", str(gns3_vm_settings["ram"]) + " MB")
+
+    def _addSummaryEntry(self, name, value):
+
+        item = QtWidgets.QTreeWidgetItem(self.uiSummaryTreeWidget, [name, value])
+        item.setText(0, name)
+        font = item.font(0)
+        font.setBold(True)
+        item.setFont(0, font)
 
     def validateCurrentPage(self):
         """
         Validates the settings.
         """
 
-        gns3_vm = GNS3VM().instance()
+        gns3_vm = GNS3VM().instance(parent=self)
         if self.currentPage() == self.uiVMWizardPage:
             vmname = self.uiVMListComboBox.currentText()
             if vmname:
@@ -154,18 +217,16 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 elif self.uiVirtualBoxRadioButton.isChecked():
                     vm_settings["engine"] = "virtualbox"
 
-                gns3_vm.update(vm_settings)
-
                 # set the vCPU count and RAM
-                # vpcus = self.uiCPUSpinBox.value()
-                # ram = self.uiRAMSpinBox.value()
-                # if ram < 1024:
-                #     QtWidgets.QMessageBox.warning(self, "GNS3 VM memory", "It is recommended to allocate a minimum of 1024 MB of RAM to the GNS3 VM")
-                # available_ram = int(psutil.virtual_memory().available / (1024 * 1024))
-                # if ram > available_ram:
-                #     QtWidgets.QMessageBox.warning(self, "GNS3 VM memory", "You have probably allocated too much memory for the GNS3 VM! (available memory is {} MB)".format(available_ram))
-                # if gns3_vm.setvCPUandRAM(vpcus, ram) is False:
-                #     QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Could not configure vCPUs and RAM amounts for the GNS3 VM")
+                vpcus = self.uiCPUSpinBox.value()
+                ram = self.uiRAMSpinBox.value()
+                if ram < 1024:
+                    QtWidgets.QMessageBox.warning(self, "GNS3 VM memory", "It is recommended to allocate a minimum of 1024 MB of memory to the GNS3 VM")
+                vm_settings["vcpus"] = vpcus
+                vm_settings["ram"] = ram
+
+                # update the GNS3 VM
+                gns3_vm.update(vm_settings)
 
                 # start the GNS3 VM
                 gns3_vm.start()
@@ -177,15 +238,41 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                     QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Please select a VM. If no VM is listed, check if the GNS3 VM is correctly imported and press refresh.")
                 return False
 
-        elif self.currentPage() == self.uiAddVMsWizardPage:
+        elif self.currentPage() == self.uiLocalServerWizardPage:
 
+            local_server_settings = LocalServer.instance().localServerSettings()
+            local_server_settings["auto_start"] = True
+            local_server_settings["path"] = self.uiLocalServerPathLineEdit.text().strip()
+            local_server_settings["host"] = self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex())
+            local_server_settings["port"] = self.uiLocalServerPortSpinBox.value()
+
+            if not os.path.isfile(local_server_settings["path"]):
+                QtWidgets.QMessageBox.critical(self, "Local server", "Could not find local server {}".format(local_server_settings["path"]))
+                return False
+            if not os.access(local_server_settings["path"], os.X_OK):
+                QtWidgets.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_settings["path"]))
+                return False
+
+            LocalServer.instance().setLocalServerSettings(local_server_settings)
+            print(local_server_settings)
+            LocalServer.instance().stopLocalServer(wait=True)
+            if LocalServer.instance().startLocalServer():
+                worker = WaitForConnectionWorker(local_server_settings["host"], local_server_settings["port"])
+                dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
+                dialog.show()
+                dialog.exec_()
+                Controller.instance().setHttpClient(LocalServer.instance().httpClient())
+            else:
+                QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(local_server_settings["path"]))
+
+        elif self.currentPage() == self.uiSummaryWizardPage:
             use_local_server = self.uiLocalRadioButton.isChecked()
             if use_local_server:
                 # deactivate the GNS3 VM if using the local server
                 vm_settings = {"auto_start": False}
-                gns3_vm.setSettings(vm_settings)
-                self.uiShowCheckBox.setChecked(True)
+                gns3_vm.update(vm_settings)
 
+            # update the modules so they use the local server
             from gns3.modules import Dynamips
             Dynamips.instance().setSettings({"use_local_server": use_local_server})
             if sys.platform.startswith("linux"):
@@ -197,20 +284,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             from gns3.modules import VPCS
             VPCS.instance().setSettings({"use_local_server": use_local_server})
 
-            dialog = PreferencesDialog(self)
-            if self.uiAddIOSRouterCheckBox.isChecked():
-                self._setPreferencesPane(dialog, "Dynamips").uiNewIOSRouterPushButton.clicked.emit(False)
-            if self.uiAddIOUDeviceCheckBox.isChecked():
-                self._setPreferencesPane(dialog, "IOS on UNIX").uiNewIOUDevicePushButton.clicked.emit(False)
-            if self.uiAddQemuVMcheckBox.isChecked():
-                self._setPreferencesPane(dialog, "QEMU").uiNewQemuVMPushButton.clicked.emit(False)
-            if self.uiAddVirtualBoxVMcheckBox.isChecked():
-                self._setPreferencesPane(dialog, "VirtualBox").uiNewVirtualBoxVMPushButton.clicked.emit(False)
-            if self.uiAddVMwareVMcheckBox.isChecked():
-                self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
-            if self.uiAddDockerVMCheckBox.isChecked():
-                self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
-            dialog.exec_()
         return True
 
     def _refreshVMListSlot(self):
@@ -239,17 +312,16 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             for vm in result:
                 self.uiVMListComboBox.addItem(vm["vmname"])
 
-            # FIXME: find existing GNS3 VM name
-            # gns3_vm = Servers.instance().vmSettings()
-            # index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
-            # if index != -1:
-            #     self.uiVMListComboBox.setCurrentIndex(index)
-            # else:
-            index = self.uiVMListComboBox.findText("GNS3 VM")
+            gns3_vm = GNS3VM().instance().settings()
+            index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
             if index != -1:
                 self.uiVMListComboBox.setCurrentIndex(index)
             else:
-                QtWidgets.QMessageBox.critical(self, "GNS3 VM", "Could not find a VM named 'GNS3 VM', is it imported in VMware or VirtualBox?")
+                index = self.uiVMListComboBox.findText("GNS3 VM")
+                if index != -1:
+                    self.uiVMListComboBox.setCurrentIndex(index)
+                else:
+                    QtWidgets.QMessageBox.critical(self, "GNS3 VM", "Could not find a VM named 'GNS3 VM', is it imported in VMware or VirtualBox?")
 
     def done(self, result):
         """
@@ -269,7 +341,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         current_id = self.currentId()
-        if self.page(current_id) == self.uiServerWizardPage and not self.uiVMRadioButton.isChecked():
-            # skip the GNS3 VM page if using the local server.
-            return self.uiServerWizardPage.nextId() + 1
+        if self.page(current_id) == self.uiServerWizardPage and self.uiVMRadioButton.isChecked():
+            # skip the local server page if using the GNS3 VM
+            return self.uiLocalServerWizardPage.nextId()
+        if self.page(current_id) == self.uiLocalServerWizardPage:
+            return self.uiVMWizardPage.nextId()
         return QtWidgets.QWizard.nextId(self)

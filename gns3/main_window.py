@@ -959,7 +959,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
-        # start and connect to the local server if need
+        # start and connect to the local server if needed
         LocalServer.instance().localServerAutoStart()
         Controller.instance().setHttpClient(LocalServer.instance().httpClient())
 

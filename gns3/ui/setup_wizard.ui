@@ -90,12 +90,76 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiLocalServerWizardPage">
+   <property name="title">
+    <string>Local server configuration</string>
+   </property>
+   <property name="subTitle">
+    <string>Please configure the following GNS3 local server settings</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiLocalServerPathLabel">
+      <property name="text">
+       <string>Server path:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLineEdit" name="uiLocalServerPathLineEdit"/>
+      </item>
+      <item>
+       <widget class="QToolButton" name="uiLocalServerToolButton">
+        <property name="text">
+         <string>&amp;Browse...</string>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextOnly</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiLocalServerHostLabel">
+      <property name="text">
+       <string>Host binding:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="uiLocalServerHostComboBox"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="uiLocalServerPortLabel">
+      <property name="text">
+       <string>Port:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QSpinBox" name="uiLocalServerPortSpinBox">
+      <property name="suffix">
+       <string notr="true"> TCP</string>
+      </property>
+      <property name="maximum">
+       <number>65535</number>
+      </property>
+      <property name="value">
+       <number>3080</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="uiVMWizardPage">
    <property name="title">
     <string>GNS3 VM</string>
    </property>
    <property name="subTitle">
-    <string>In order to run the GNS3 VM you must first have VMware or VirtualBox installed and the GNS3 VM.ova imported in one of these.</string>
+    <string>In order to run the GNS3 VM you must first have VMware or VirtualBox installed and the GNS3 VM.ova imported with one of these software.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -265,94 +329,35 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiAddVMsWizardPage">
+  <widget class="QWizardPage" name="uiSummaryWizardPage">
    <property name="title">
-    <string>Add virtual machines</string>
+    <string>Summary</string>
    </property>
    <property name="subTitle">
-    <string>Now that you have configured the server type you can choose to add one or more virtual machines (VMs) of different types.</string>
+    <string>The server type has been configured, please see the summary of the settings below</string>
    </property>
-   <widget class="QCheckBox" name="uiAddIOSRouterCheckBox">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>469</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&amp;Add an IOS router using a real IOS image (supported by Dynamips)</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="uiAddIOUDeviceCheckBox">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>37</y>
-      <width>426</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&amp;Add an IOU (IOS on UNIX) device using a L3 or L2 IOU image</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="uiAddQemuVMcheckBox">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>65</y>
-      <width>219</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&amp;Add a Qemu virtual machine</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="uiAddVirtualBoxVMcheckBox">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>93</y>
-      <width>249</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&amp;Add a VirtualBox virtual machine</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="uiAddVMwareVMcheckBox">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>121</y>
-      <width>233</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&amp;Add a VMware virtual machine</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="uiAddDockerVMCheckBox">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>150</y>
-      <width>233</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&amp;Add a Docker container</string>
-    </property>
-   </widget>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QTreeWidget" name="uiSummaryTreeWidget">
+      <property name="rootIsDecorated">
+       <bool>false</bool>
+      </property>
+      <attribute name="headerVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources>
