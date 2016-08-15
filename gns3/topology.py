@@ -110,14 +110,14 @@ class Topology(QtCore.QObject):
         else:
             self._main_window.setWindowTitle("GNS3")
 
-        # if path:
-        #     self._main_window.updateRecentFileSettings(path)
-        #     self._main_window.updateRecentFileActions()
-
         self.project_changed_signal.emit()
 
     def _projectUpdatedSlot(self):
         self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
+        project_file = os.path.join(self._project.filesDir(), self._project.filename())
+        if os.path.exists(project_file):
+            self._main_window.updateRecentFileSettings(project_file)
+            self._main_window.updateRecentFileActions()
 
     def createLoadProject(self, project_settings):
         """

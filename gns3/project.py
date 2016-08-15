@@ -53,6 +53,7 @@ class Project(QtCore.QObject):
         self._files_dir = None
         self._images_dir = None
         self._name = "untitled"
+        self._filename = None
 
         self._notification_stream = None
 
@@ -106,6 +107,12 @@ class Project(QtCore.QObject):
     def setFilesDir(self, files_dir):
 
         self._files_dir = files_dir
+
+    def filename(self):
+        """
+        Project filename
+        """
+        return self._filename
 
     def start_all_nodes(self):
         """Start all nodes belonging to this project"""
@@ -231,6 +238,8 @@ class Project(QtCore.QObject):
             return
         self._id = result["project_id"]
         self._name = result["name"]
+        self._filename = result["filename"]
+        self._files_dir = result["path"]
         if self._closed:
             self._closed = False
             self._closing = False
@@ -252,6 +261,8 @@ class Project(QtCore.QObject):
 
         self._id = result["project_id"]
         self._name = result["name"]
+        self._filename = result["filename"]
+        self._files_dir = result["path"]
         topo = Topology.instance()
         topo.setProject(self)
 
