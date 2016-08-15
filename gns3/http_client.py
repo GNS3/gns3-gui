@@ -76,7 +76,6 @@ class HTTPClient(QtCore.QObject):
         # List of query waiting for the connection
         self._query_waiting_connections = []
 
-
     def host(self):
         """
         Host display to user
@@ -119,6 +118,14 @@ class HTTPClient(QtCore.QObject):
         """Returns current server url"""
 
         return "{}://{}:{}".format(self.protocol(), self.host(), self.port())
+
+    def fullUrl(self):
+        """Returns current server url including user and password"""
+
+        if self._user:
+            return "{}://{}:{}@{}:{}".format(self.protocol(), self._user, self._password, self.host(), self.port())
+        else:
+            return "{}://{}:{}".format(self.protocol(), self.host(), self.port())
 
     def password(self):
         return self._password

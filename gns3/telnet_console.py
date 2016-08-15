@@ -26,6 +26,7 @@ import sys
 import shlex
 import subprocess
 from .main_window import MainWindow
+from .controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
@@ -69,6 +70,7 @@ class ConsoleThread(QtCore.QThread):
         command = command.replace("%p", str(port))
         command = command.replace("%d", self._name)
         command = command.replace("%i", self._node.project().id())
+        command = command.replace("%c", Controller.instance().httpClient().fullUrl())
 
         # If the console use an apple script we lock to avoid multiple console
         # to interact at the same time

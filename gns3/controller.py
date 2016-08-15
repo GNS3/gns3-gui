@@ -44,6 +44,12 @@ class Controller(QtCore.QObject):
         """
         return self._connected
 
+    def httpClient(self):
+        """
+        :returns: HTTP client for connected to the controller
+        """
+        return self._http_client
+
     def setHttpClient(self, http_client):
         """
         :param http_client: Instance of HTTP client to communicate with the server
