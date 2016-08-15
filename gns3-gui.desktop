@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=GNS3
+GenericName=Graphical Network Simulator 3
+Comment=Graphical Network Simulator 3
+Exec=gns3
+Icon=gns3
+Terminal=false
+Type=Application
+Categories=Application;Network;Qt;
