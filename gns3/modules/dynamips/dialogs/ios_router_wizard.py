@@ -24,6 +24,7 @@ import re
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.node import Node
+from gns3.topology import Topology
 from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
@@ -213,18 +214,16 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         Slot for the idle-PC finder.
         """
 
-        from gns3.main_window import MainWindow
-        main_window = MainWindow.instance()
         module = Dynamips.instance()
         platform = self.uiPlatformComboBox.currentText()
         ios_image = self.uiIOSImageLineEdit.text()
         ram = self.uiRamSpinBox.value()
         router_class = PLATFORM_TO_CLASS[platform]
 
-        if main_window.projectManager().project() is None:
+        if Topology.instance().project() is None:
             QtWidgets.QMessageBox.critical(self, "Idle PC", "You need to create a project before computing Idle PC")
             return False
-        self._router = router_class(module, ComputeManager.instance().getCompute(self._compute_id), main_window.projectManager().project())
+        self._router = router_class(module, ComputeManager.instance().getCompute(self._compute_id), Topology.instance().project())
         self._router.create(ios_image, ram, name="AUTOIDLEPC")
         self._router.created_signal.connect(self.createdSlot)
         self._router.server_error_signal.connect(self.serverErrorSlot)

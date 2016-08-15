@@ -19,6 +19,7 @@ import os
 from ..qt import QtCore, QtGui, QtWidgets
 from ..ui.project_dialog_ui import Ui_ProjectDialog
 from ..controller import Controller
+from ..topology import Topology
 
 
 class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
@@ -40,7 +41,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         self._main_window = parent
         self._project_settings = {}
         self.uiNameLineEdit.setText(default_project_name)
-        self.uiLocationLineEdit.setText(os.path.join(self._main_window.projectsDirPath(), default_project_name))
+        self.uiLocationLineEdit.setText(os.path.join(Topology.instance().projectsDirPath(), default_project_name))
 
         self.uiNameLineEdit.textEdited.connect(self._projectNameSlot)
         self.uiLocationBrowserToolButton.clicked.connect(self._projectPathSlot)
@@ -83,7 +84,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
     def _projectNameSlot(self, text):
 
-        project_dir = self._main_window.projectsDirPath()
+        project_dir = Topology.instance().projectsDirPath()
         if os.path.dirname(self.uiLocationLineEdit.text()) == project_dir:
             self.uiLocationLineEdit.setText(os.path.join(project_dir, text))
 
@@ -92,7 +93,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         Slot to select the a new project location.
         """
 
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Project location", os.path.join(self._main_window.projectsDirPath(),
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Project location", os.path.join(Topology.instance().projectsDirPath(),
                                                                                                self.uiNameLineEdit.text()))
 
         if path:

@@ -241,7 +241,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param image_path: path to the image
         """
 
-        image_item = ImageItem(image_path=image_path, project=self._main_window.projectManager().project())
+        image_item = ImageItem(image_path=image_path, project=self._topology.project())
 
         self.scene().addItem(image_item)
         self._topology.addDrawing(image_item)
@@ -1465,7 +1465,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
-            node = node_module.instantiateNode(node_class, self.allocateCompute(node_data, instance), self._main_window.projectManager().project())
+            node = node_module.instantiateNode(node_class, self.allocateCompute(node_data, instance), self._topology.project())
             node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
             node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
             node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
@@ -1490,13 +1490,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
     def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, drawing_id=None):
         if type == "ellipse":
-            item = EllipseItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
+            item = EllipseItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "rect":
-            item = RectangleItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
+            item = RectangleItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
-            item = ImageItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
+            item = ImageItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "text":
-            item = TextItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._main_window.projectManager().project(), drawing_id=drawing_id, svg=svg)
+            item = TextItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         self.scene().addItem(item)
         self._topology.addDrawing(item)
         return item

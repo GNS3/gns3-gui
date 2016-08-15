@@ -33,7 +33,6 @@ from .node import Node
 from .gns3_vm import GNS3VM
 from .ui.main_window_ui import Ui_MainWindow
 from .style import Style
-from .project_manager import ProjectManager
 from .dialogs.about_dialog import AboutDialog
 from .dialogs.project_dialog import ProjectDialog
 from .dialogs.preferences_dialog import PreferencesDialog
@@ -83,12 +82,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         MainWindow._instance = self
         topology = Topology.instance()
         topology.setMainWindow(self)
+        topology.project_changed_signal.connect(self._projectChangedSlot)
 
         self._settings = {}
         HTTPClient.setProgressCallback(Progress.instance(self))
 
-        self._project_manager = ProjectManager(self)
-        self._project_manager.project_changed_signal.connect(self._projectChangedSlot)
         self._first_file_load = True
         self._open_project_path = None
         self._loadSettings()
@@ -278,13 +276,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.uiGraphicsView.viewport().update()
 
-    def projectManager(self):
-        """
-        Return the project manager.
-        """
-
-        return self._project_manager
-
     def analyticsClient(self):
         """
         Return the analytics client
@@ -309,10 +300,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiNodesDockWidget.setWindowTitle("")
 
         if create_new_project:
-            self._project_manager.createLoadProject(self._project_dialog.getProjectSettings())
+            Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
         else:
             # User cancel but a project is already open, renable widgets
-            if self._project_manager.project():
+            if Topology.instance().project():
                 for widget in self.disableWhenNoProjectWidgets:
                     widget.setEnabled(True)
 
@@ -333,7 +324,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
         if len(directory) == 0:
-            directory = self.projectsDirPath()
+            directory = Topology.instance().projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
                                                         "All files (*.*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
                                                         "GNS3 Appliance (*.gns3appliance *.gns3a)")
@@ -345,7 +336,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to open a project.
         """
 
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", self.projectsDirPath(),
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", Topology.instance().projectsDirPath(),
                                                         "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
                                                         "GNS3 Project (*.gns3)")
         if path:
@@ -380,7 +371,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if path.endswith(".gns3project") or path.endswith(".gns3p"):
             # Portable GNS3 project
-            self._project_manager.importProject(path)
+            Topology.instance().importProject(path)
 
         elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
             # GNS3 appliance
@@ -392,15 +383,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._appliance_wizard.show()
             self._appliance_wizard.exec_()
         else:
-            self._project_manager.loadProject(path)
+            Topology.instance().loadProject(path)
 
     def _projectChangedSlot(self):
         """
         Called when a project finish to load
         """
-        self.uiGraphicsView.reset()
         # No projects
-        if self._project_manager.project() is None:
+        if Topology.instance().project() is None:
             for widget in self.disableWhenNoProjectWidgets:
                 widget.setEnabled(False)
         else:
@@ -412,7 +402,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to save a project to another location/name.
         """
 
-        self._project_manager.saveProjectAs()
+        Topology.instance().saveProjectAs()
 
     def _importExportConfigsActionSlot(self):
         """
@@ -500,9 +490,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to open the snapshot dialog.
         """
 
-        project = self._project_manager.project()
+        project = Topology.instance().project()
 
-        dialog = SnapshotsDialog(self, project, self._project_manager)
+        dialog = SnapshotsDialog(self, project)
         dialog.show()
         dialog.exec_()
 
@@ -604,7 +594,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when starting all the nodes.
         """
 
-        project = self._project_manager.project()
+        project = Topology.instance().project()
         if project is not None:
             project.start_all_nodes()
 
@@ -613,7 +603,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when suspending all the nodes.
         """
 
-        project = self._project_manager.project()
+        project = Topology.instance().project()
         if project is not None:
             project.suspend_all_nodes()
 
@@ -622,7 +612,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when stopping all the nodes.
         """
 
-        project = self._project_manager.project()
+        project = Topology.instance().project()
         if project is not None:
             project.stop_all_nodes()
 
@@ -631,7 +621,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when reloading all the nodes.
         """
 
-        project = self._project_manager.project()
+        project = Topology.instance().project()
         if project is not None:
             project.reload_all_nodes()
 
@@ -741,7 +731,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to display a window for exporting debug information
         """
 
-        dialog = ExportDebugDialog(self, self._project_manager.project())
+        dialog = ExportDebugDialog(self, Topology.instance().project())
         dialog.show()
         dialog.exec_()
 
@@ -851,7 +841,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot to edit the README file
         """
-        self._project_manager.editReadme()
+        Topology.instance().editReadme()
 
     def keyPressEvent(self, event):
         """
@@ -882,7 +872,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         log.debug("Close the Main Window")
         self._analytics_client.sendScreenView("Main Window", session_start=False)
 
-        project = self._project_manager.project()
+        project = Topology.instance().project()
         if not project:
             self._finish_application_closing(close_windows=False)
             event.accept()
@@ -930,7 +920,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         # check if any node is running
         topology = Topology.instance()
-        topology.project = self._project_manager.project()
+        topology.project = Topology.instance().project()
         for node in topology.nodes():
             if not node.isAlwaysOn() and node.status() == Node.started:
                 return True
@@ -1054,16 +1044,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if size:
             self._recent_file_actions_separator.setVisible(True)
 
-    @staticmethod
-    def projectsDirPath():
-        """
-        Returns the projects directory path.
-
-        :returns: path to the default projects directory
-        """
-
-        return ProjectManager.projectsDirPath()
-
     def run_later(self, counter, callback):
         """
         Run a function after X milliseconds
@@ -1079,7 +1059,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to export a portable project
         """
 
-        self._project_manager.exportProject()
+        Topology.instance().exportProject()
 
     def _importProjectActionSlot(self):
         """
@@ -1087,12 +1067,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
         if len(directory) == 0:
-            directory = self.projectsDirPath()
+            directory = Topology.instance().projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
                                                         "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
                                                         "GNS3 Portable Project (*.gns3project *.gns3p)")
         if path:
-            self._project_manager.importProject(path)
+            Topology.instance().importProject(path)
 
     def _deleteProjectActionSlot(self):
         reply = QtWidgets.QMessageBox.warning(
@@ -1101,7 +1081,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             "The project will be deleted from disk. All files will be removed including the project subdirectories. Continue?",
             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
-            self._project_manager.deleteProject()
+            Topology.instance().deleteProject()
 
     def _setStyle(self, style_name):
         """

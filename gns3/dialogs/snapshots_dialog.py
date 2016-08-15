@@ -31,7 +31,6 @@ from ..ui.snapshots_dialog_ui import Ui_SnapshotsDialog
 from ..topology import Topology
 from ..node import Node
 from ..controller import Controller
-from ..project_manager import ProjectManager
 
 from datetime import datetime
 
@@ -47,13 +46,12 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
     :param parent: parent widget
     """
 
-    def __init__(self, parent, project, project_manager):
+    def __init__(self, parent, project):
 
         super().__init__(parent)
         self.setupUi(self)
 
         self._project = project
-        self._project_manager = project_manager
 
         self.uiCreatePushButton.clicked.connect(self._createSnapshotSlot)
         self.uiDeletePushButton.clicked.connect(self._deleteSnapshotSlot)
@@ -148,8 +146,8 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
             if result:
                 log.error(result["message"])
             return
-        self._project_manager.setProject(None)
-        self._project_manager.createLoadProject({"project_id": result["project_id"]})
+        Topology.instance().setProject(None)
+        Topology.instance().createLoadProject({"project_id": result["project_id"]})
         self.accept()
 
     def _snapshotDoubleClickedSlot(self, item):

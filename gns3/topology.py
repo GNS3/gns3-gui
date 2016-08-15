@@ -19,9 +19,23 @@
 Contains this entire topology: nodes and links.
 """
 
+import os
+import json
 import xml.etree.ElementTree as ET
 
+
 from .qt import QtCore
+from .local_server import LocalServer
+from .node import Node
+from .qt import QtCore, QtWidgets
+
+from .utils.process_files_worker import ProcessFilesWorker
+from .utils.progress_dialog import ProgressDialog
+from .utils.message_box import MessageBox
+from .utils.export_project_worker import ExportProjectWorker
+from .utils.import_project_worker import ImportProjectWorker
+from .dialogs.file_editor_dialog import FileEditorDialog
+
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .items.node_item import NodeItem
@@ -55,7 +69,15 @@ class Topology(QtCore.QObject):
     def setMainWindow(self, main_window):
         self._main_window = main_window
 
-    @property
+    def projectsDirPath(self):
+        """
+        Returns the projects directory path.
+
+        :returns: path to the default projects directory
+        """
+
+        return LocalServer.instance().localServerSettings()["projects_path"]
+
     def project(self):
         """
         Get topology project
@@ -65,16 +87,146 @@ class Topology(QtCore.QObject):
 
         return self._project
 
-    @project.setter
-    def project(self, project):
+    def setProject(self, project):
         """
-        Set topology project
+        Set current project
 
-        :params project: Project
+        :param project: Project instance
         """
+
+        if self._project and project != self._project:
+            self._project.stopListenNotifications()
+            self._project.close()
+
+        self._main_window.uiGraphicsView.reset()
 
         self._project = project
+        if project:
+            self._project.project_updated_signal.connect(self._projectUpdatedSlot)
+            self._project.project_creation_error_signal.connect(self._projectCreationErrorSlot)
+            self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
+        else:
+            self._main_window.setWindowTitle("GNS3")
+
+        # if path:
+        #     self._main_window.updateRecentFileSettings(path)
+        #     self._main_window.updateRecentFileActions()
+
         self.project_changed_signal.emit()
+
+    def _projectUpdatedSlot(self):
+        self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
+
+    def createLoadProject(self, project_settings):
+        """
+        Create load a project based on settings, not on the .gns3
+        """
+        from .project import Project
+        self.setProject(Project())
+
+        if "project_name" in project_settings:
+            self._project.setName(project_settings["project_name"])
+
+        if "project_id" in project_settings:
+            self._project.setId(project_settings["project_id"])
+            self._project.load()
+            self._main_window.uiStatusBar.showMessage("Project loaded", 2000)
+        else:
+            self._project.setFilesDir(os.path.dirname(project_settings["project_path"]))
+            self._project.create()
+            self._main_window.uiStatusBar.showMessage("Project created", 2000)
+
+    def loadProject(self, path):
+        """
+        Loads a project into GNS3.
+
+        :param path: path to project file
+        """
+
+        from .project import Project
+        self.setProject(Project())
+        self._project.load(path)
+        self._main_window.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
+        return True
+
+    def editReadme(self):
+        dialog = FileEditorDialog(self.project(), "/README.txt", parent=self._main_window, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
+        dialog.show()
+        dialog.exec_()
+
+    def _projectCreationErrorSlot(self):
+        self.setProject(None)
+
+    def exportProject(self):
+        include_image_question = """Would you like to include any base image?
+The project will not require additional images to run on another host, however the resulting file will be much bigger.
+It is your responsability to check if you have the right to distribute the image(s) as part of the project.
+        """
+
+        reply = QtWidgets.QMessageBox.question(self._main_window, "Export project", include_image_question,
+                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
+        include_images = int(reply == QtWidgets.QMessageBox.Yes)
+
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        if len(directory) == 0:
+            directory = self.projectsDirPath()
+
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self._main_window, "Export portable project", directory,
+                                                        "GNS3 Portable Project (*.gns3project *.gns3p)",
+                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
+        if path is None or len(path) == 0:
+            return
+
+        if not path.endswith(".gns3project") and not path.endswith(".gns3p"):
+            path += ".gns3project"
+
+        try:
+            open(path, 'wb+').close()
+        except OSError as e:
+            QtWidgets.QMessageBox.critical(self._main_window, "Export project", "Could not write {}: {}".format(path, e))
+            return
+
+        self.editReadme()
+
+        export_worker = ExportProjectWorker(self._project, path, include_images)
+        progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self._main_window)
+        progress_dialog.show()
+        progress_dialog.exec_()
+
+    def importProject(self, project_file):
+        from .dialogs.project_dialog import ProjectDialog
+        dialog = ProjectDialog(self._main_window, default_project_name=os.path.basename(project_file).split(".")[0], show_open_options=False)
+        dialog.show()
+        if not dialog.exec_():
+            return
+
+        import_worker = ImportProjectWorker(project_file,
+                name=dialog.getProjectSettings()["project_name"],
+                path=dialog.getProjectSettings()["project_path"])
+        import_worker.imported.connect(self._projectImportedSlot)
+        progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self._main_window)
+        progress_dialog.show()
+        progress_dialog.exec_()
+
+    def saveProjectAs(self):
+        from .dialogs.project_dialog import ProjectDialog
+        dialog = ProjectDialog(self._main_window, default_project_name=self._project.name(), show_open_options=False)
+        dialog.show()
+        if dialog.exec_():
+            self._project.duplicate(
+                name=dialog.getProjectSettings()["project_name"],
+                path=dialog.getProjectSettings()["project_path"]
+            )
+
+    def _projectImportedSlot(self, project_id):
+        if self:
+            self.createLoadProject({"project_id": project_id})
+
+    def deleteProject(self):
+        if self._project:
+           self._project.destroy()
+        self.setProject(None)
 
     def addNode(self, node):
         """

@@ -253,7 +253,7 @@ class Project(QtCore.QObject):
         self._id = result["project_id"]
         self._name = result["name"]
         topo = Topology.instance()
-        topo.project = self
+        topo.setProject(self)
 
         if self._closed:
             self._closed = False
@@ -371,6 +371,8 @@ class Project(QtCore.QObject):
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is not None:
                 drawing.delete(skip_controller=True)
+        # elif result["action"] == "project.closed":
+        #     Topology.instance().setProject(None)
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":
