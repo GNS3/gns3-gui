@@ -146,7 +146,6 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
             if result:
                 log.error(result["message"])
             return
-        Topology.instance().setProject(None)
         Topology.instance().createLoadProject({"project_id": result["project_id"]})
         self.accept()
 

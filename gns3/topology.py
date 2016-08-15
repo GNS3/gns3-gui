@@ -96,7 +96,9 @@ class Topology(QtCore.QObject):
 
         if self._project and project != self._project:
             self._project.stopListenNotifications()
-            self._project.close()
+            # If we reload the same project don't send a close signal (snapshots)
+            if not project or (self._project.id() != project.id()):
+                self._project.close()
 
         self._main_window.uiGraphicsView.reset()
 
@@ -122,18 +124,20 @@ class Topology(QtCore.QObject):
         Create load a project based on settings, not on the .gns3
         """
         from .project import Project
-        self.setProject(Project())
+        project = Project()
 
         if "project_name" in project_settings:
-            self._project.setName(project_settings["project_name"])
+            project.setName(project_settings["project_name"])
 
         if "project_id" in project_settings:
-            self._project.setId(project_settings["project_id"])
-            self._project.load()
+            project.setId(project_settings["project_id"])
+            self.setProject(project)
+            project.load()
             self._main_window.uiStatusBar.showMessage("Project loaded", 2000)
         else:
-            self._project.setFilesDir(os.path.dirname(project_settings["project_path"]))
-            self._project.create()
+            project.setFilesDir(os.path.dirname(project_settings["project_path"]))
+            self.setProject(project)
+            project.create()
             self._main_window.uiStatusBar.showMessage("Project created", 2000)
 
     def loadProject(self, path):

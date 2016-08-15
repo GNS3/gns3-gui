@@ -313,7 +313,8 @@ class Project(QtCore.QObject):
 
     def _projectClosedCallback(self, result, error=False, server=None, **kwargs):
 
-        if error:
+        # Status 404 could be when someone else already closed the project
+        if error and result["status"] != 404:
             log.error("Error while closing project {}: {}".format(self._id, result["message"]))
         else:
             self.stopListenNotifications()
@@ -371,8 +372,8 @@ class Project(QtCore.QObject):
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is not None:
                 drawing.delete(skip_controller=True)
-        # elif result["action"] == "project.closed":
-        #     Topology.instance().setProject(None)
+        elif result["action"] == "project.closed":
+            Topology.instance().setProject(None)
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":
