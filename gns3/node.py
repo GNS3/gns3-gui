@@ -262,45 +262,7 @@ class Node(BaseNode):
             self.server_error_signal.emit(self.id(), result["message"])
             return False
 
-        if "name" in result:
-            # set the node name first to have meaningful logs and facilitate debugging
-            self.setName(result["name"])
-
-        self._node_id = result["node_id"]
-        if not self._node_id:
-            self.error_signal.emit(self.id(), "returned ID from server is null")
-            return False
-
-        if "node_directory" in result:
-            self._node_directory = result["node_directory"]
-
-        if "command_line" in result:
-            self._command_line = result["command_line"]
-
-        # update the settings using the defaults sent by the server
-        for name, value in result.items():
-            if name in self._settings and self._settings[name] != value:
-                log.debug("{} setting up and updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-
-                if name == "label" and self._creator:
-                    # We could have race condition where when we create the node
-                    # on controller the label is not yet init properly to avoid
-                    # overwrite overeriding the data we ignore it.
-                    pass
-                else:
-                    self._settings[name] = value
-
-        if "properties" in result:
-            for name, value in result["properties"].items():
-                if name in self._settings and self._settings[name] != value:
-                    log.debug("{} setting up and updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                    self._settings[name] = value
-
-            # For compatibility with old API
-            # FIXME: review this
-            result.update(result["properties"])
-            del result["properties"]
-
+        result = self._parseResponse(result)
         self._createCallback(result)
 
         if self._loading:
@@ -343,11 +305,26 @@ class Node(BaseNode):
             self.server_error_signal.emit(self.id(), result["message"])
             return False
 
+        result = self._parseResponse(result)
+
+        self._updateCallback(result)
+        self.updated_signal.emit()
+        return True
+
+    def _parseResponse(self, result):
+        """
+        Parse node object from API
+        """
+        self._node_id = result["node_id"]
+
         if "name" in result:
             self.setName(result["name"])
 
         if "command_line" in result:
             self._command_line = result["command_line"]
+
+        if "node_directory" in result:
+            self._node_directory = result["node_directory"]
 
         if "status" in result:
             if result["status"] == "started":
@@ -357,8 +334,6 @@ class Node(BaseNode):
             elif result["status"] == "suspended":
                 self.setStatus(Node.suspended)
 
-        # For compatibility with old API
-        # FIXME: review this
         if "properties" in result:
             result.update(result["properties"])
             del result["properties"]
@@ -373,10 +348,7 @@ class Node(BaseNode):
                     pass
                 else:
                     self._settings[key] = result[key]
-
-        self._updateCallback(result)
-        self.updated_signal.emit()
-        return True
+        return result
 
     def _updateCallback(self, result):
         """

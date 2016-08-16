@@ -320,10 +320,7 @@ class Project(QtCore.QObject):
             self.project_creation_error_signal.emit()
             return
 
-        self._id = result["project_id"]
-        self._name = result["name"]
-        self._filename = result["filename"]
-        self._files_dir = result["path"]
+        self._parseResponse(result)
         topo = Topology.instance()
         topo.setProject(self)
 
