@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/project_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/project_dialog.ui'
 #
-# Created: Thu Aug  4 10:41:59 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -20,11 +19,12 @@ class Ui_ProjectDialog(object):
         self.uiProjectTabWidget = QtWidgets.QTabWidget(ProjectDialog)
         self.uiProjectTabWidget.setTabPosition(QtWidgets.QTabWidget.North)
         self.uiProjectTabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
-        self.uiProjectTabWidget.setProperty("tabBarAutoHide", False)
+        self.uiProjectTabWidget.setTabBarAutoHide(False)
         self.uiProjectTabWidget.setObjectName("uiProjectTabWidget")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.tab)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.groupBox = QtWidgets.QGroupBox(self.tab)
         self.groupBox.setObjectName("groupBox")
@@ -82,6 +82,7 @@ class Ui_ProjectDialog(object):
         self.uiProjectsLibraryTab = QtWidgets.QWidget()
         self.uiProjectsLibraryTab.setObjectName("uiProjectsLibraryTab")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiProjectsLibraryTab)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiProjectsTreeWidget = QtWidgets.QTreeWidget(self.uiProjectsLibraryTab)
         self.uiProjectsTreeWidget.setObjectName("uiProjectsTreeWidget")
@@ -90,6 +91,9 @@ class Ui_ProjectDialog(object):
         self.verticalLayout.addWidget(self.uiProjectTabWidget)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.uiDeleteProjectButton = QtWidgets.QPushButton(ProjectDialog)
+        self.uiDeleteProjectButton.setObjectName("uiDeleteProjectButton")
+        self.horizontalLayout.addWidget(self.uiDeleteProjectButton)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(ProjectDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
         self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
@@ -98,7 +102,7 @@ class Ui_ProjectDialog(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.retranslateUi(ProjectDialog)
-        self.uiProjectTabWidget.setCurrentIndex(0)
+        self.uiProjectTabWidget.setCurrentIndex(1)
         self.uiButtonBox.accepted.connect(ProjectDialog.accept)
         self.uiButtonBox.rejected.connect(ProjectDialog.reject)
         self.uiNameLineEdit.returnPressed.connect(ProjectDialog.accept)
@@ -120,4 +124,5 @@ class Ui_ProjectDialog(object):
         self.uiProjectsTreeWidget.headerItem().setText(1, _translate("ProjectDialog", "Status"))
         self.uiProjectsTreeWidget.headerItem().setText(2, _translate("ProjectDialog", "Path"))
         self.uiProjectTabWidget.setTabText(self.uiProjectTabWidget.indexOf(self.uiProjectsLibraryTab), _translate("ProjectDialog", "Projects library"))
+        self.uiDeleteProjectButton.setText(_translate("ProjectDialog", "Delete"))
 

@@ -29,9 +29,9 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
-     <property name="tabBarAutoHide" stdset="0">
+     <property name="tabBarAutoHide">
       <bool>false</bool>
      </property>
      <widget class="QWidget" name="tab">
@@ -179,6 +179,13 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="uiDeleteProjectButton">
+       <property name="text">
+        <string>Delete</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QDialogButtonBox" name="uiButtonBox">
        <property name="orientation">

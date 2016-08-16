@@ -22,6 +22,10 @@ from ..controller import Controller
 from ..topology import Topology
 
 
+import logging
+log = logging.getLogger(__name__)
+
+
 class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
     """
@@ -55,12 +59,37 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         Controller.instance().get("/projects", self._projectListCallback)
         self.uiProjectsTreeWidget.itemDoubleClicked.connect(self._projectsTreeWidgetDoubleClickedSlot)
+        self.uiDeleteProjectButton.clicked.connect(self._deleteProjectSlot)
 
     def _projectsTreeWidgetDoubleClickedSlot(self, item, column):
         self.done(True)
 
+    def _deleteProjectSlot(self):
+        current = self.uiProjectsTreeWidget.currentItem()
+        if current is None:
+            QtWidgets.QMessageBox.critical(self, "Delete project", "No project selected")
+            return
+
+        project_id = current.data(0, QtCore.Qt.UserRole)
+        project_name = current.data(1, QtCore.Qt.UserRole)
+
+        reply = QtWidgets.QMessageBox.warning(self,
+                                       "Delete project",
+                                       "Delete project {}?\nThis can not be revert.".format(project_name),
+                                       QtWidgets.QMessageBox.Yes,
+                                       QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            Controller.instance().delete("/projects/{}".format(project_id), self._deleteProjectCallback)
+
+    def _deleteProjectCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while deleting project: {}".format(result["message"]))
+            return
+        Controller.instance().get("/projects", self._projectListCallback)
+
     def _projectListCallback(self, result, error=False, **kwargs):
         self.uiProjectsTreeWidget.clear()
+        self.uiDeleteProjectButton.setEnabled(False)
         if not error:
             for project in result:
                 path = os.path.join(project["path"], project["filename"])
@@ -69,6 +98,10 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 item.setData(1, QtCore.Qt.UserRole, project["name"])
                 item.setData(2, QtCore.Qt.UserRole, path)
                 self.uiProjectsTreeWidget.addTopLevelItem(item)
+
+            if len(result):
+                self.uiDeleteProjectButton.setEnabled(True)
+
             self.uiProjectsTreeWidget.resizeColumnToContents(0)
             self.uiProjectsTreeWidget.resizeColumnToContents(1)
             self.uiProjectsTreeWidget.resizeColumnToContents(2)
