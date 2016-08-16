@@ -129,7 +129,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         menu = QtWidgets.QMenu()
         menu.triggered.connect(self._menuTriggeredSlot)
-        for action in self._main_window._recent_file_actions:
+        for action in self._main_window._recent_project_actions:
             menu.addAction(action)
         menu.exec_(QtGui.QCursor.pos())
 

@@ -265,6 +265,7 @@ GENERAL_SETTINGS = {
     "hide_setup_wizard": False,
     "hide_new_appliance_template_button": False,
     "recent_files": [],
+    "recent_projects": [],
     "geometry": "",
     "state": "",
     "preferences_dialog_geometry": "",

@@ -95,6 +95,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._max_recent_files = 5
         self._project_dialog = None
         self._recent_file_actions = []
+        self._recent_project_actions = []
         self._start_time = time.time()
         local_config = LocalConfig.instance()
         local_config.config_changed_signal.connect(self._localConfigChangedSlot)
@@ -132,6 +133,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._recent_file_actions_separator = self.uiFileMenu.insertSeparator(self.uiQuitAction)
         self._recent_file_actions_separator.setVisible(False)
         self.updateRecentFileActions()
+
+
+        # add recent file actions to the File menu
+        for i in range(0, self._max_recent_files):
+            action = QtWidgets.QAction(self.uiProjectMenu)
+            action.setVisible(False)
+            action.triggered.connect(self.openRecentProjectSlot)
+            self._recent_project_actions.append(action)
+        self._recent_project_actions_separator = self.uiProjectMenu.addSeparator()
+        self._recent_project_actions_separator.setVisible(False)
+
+        self.uiProjectMenu.addActions(self._recent_project_actions)
+
+        self.updateRecentProjectActions()
 
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
@@ -357,6 +372,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 QtWidgets.QMessageBox.critical(self, "Recent file", "{}: no such file".format(path))
                 return
             self.loadPath(path)
+
+    def openRecentProjectSlot(self):
+        """
+        Slot called to open recent project from the project menu.
+        """
+
+        action = self.sender()
+        if action:
+            project_id = action.data()
+            Topology.instance().createLoadProject({"project_id": project_id})
 
     def loadPath(self, path):
         """Open a file and close the previous project"""
@@ -995,6 +1020,56 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._checkForUpdateActionSlot(silent=True)
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
+
+    def updateRecentProjectsSettings(self, project_id, project_name):
+        """
+        Updates the recent project settings.
+
+        :param project_id: The ID of the project
+        :param project_name: The name of the project
+        """
+
+        # Projects are stored as a list of project_id:project_name
+        key = "{}:{}".format(project_id, project_name)
+
+        recent_projects = []
+        for project in self._settings["recent_projects"]:
+            recent_projects.append(project)
+
+        # Because the name can change we compare only the project id
+        for project_key in list(recent_projects):
+            if project_key.split(":")[0] == project_id:
+                recent_projects.remove(project_key)
+
+        recent_projects.insert(0, key)
+        if len(recent_projects) > self._max_recent_files:
+            recent_projects.pop()
+
+        # write the recent file list
+        self._settings["recent_projects"] = recent_projects
+        self.setSettings(self._settings)
+
+    def updateRecentProjectActions(self):
+        """
+        Updates recent project actions.
+        """
+
+        index = 0
+        size = len(self._settings["recent_projects"])
+        for project in self._settings["recent_projects"]:
+            # Projects are stored as a list of project_id:project_name
+            project_id, project_name = project.split(":", maxsplit=1)
+            action = self._recent_project_actions[index]
+            action.setText(" {}. {}".format(index + 1, project_name))
+            action.setData(project_id)
+            action.setVisible(True)
+            index += 1
+
+        for index in range(size + 1, self._max_recent_files):
+            self._recent_project_actions[index].setVisible(False)
+
+        if size:
+            self._recent_project_actions_separator.setVisible(True)
 
     def updateRecentFileSettings(self, path):
         """

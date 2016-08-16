@@ -166,7 +166,7 @@ background-none;
      <string>&amp;Tools</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menuProject">
+   <widget class="QMenu" name="uiProjectMenu">
     <property name="title">
      <string>Project</string>
     </property>
@@ -180,7 +180,7 @@ background-none;
    <addaction name="uiEditMenu"/>
    <addaction name="uiViewMenu"/>
    <addaction name="uiControlMenu"/>
-   <addaction name="menuProject"/>
+   <addaction name="uiProjectMenu"/>
    <addaction name="uiDeviceMenu"/>
    <addaction name="uiAnnotateMenu"/>
    <addaction name="uiToolsMenu"/>
