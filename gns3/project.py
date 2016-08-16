@@ -74,7 +74,8 @@ class Project(QtCore.QObject):
         """
 
         assert name is not None
-        self._name = name
+        if len(name) > 0:
+            self._name = name
 
     def closed(self):
         """
@@ -231,20 +232,44 @@ class Project(QtCore.QObject):
         }
         Controller.instance().post("/projects", self._projectCreatedCallback, body=body)
 
+    def update(self):
+        """
+        Update the project on remote server
+        """
+        body = {
+            "name": self._name
+        }
+        self.put("", self._projectUpdatedCallback, body=body)
+
+
+    def _projectUpdatedCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while updating project: {}".format(result["message"]))
+            self.project_creation_error_signal.emit()
+            return
+        self._parseResponse(result)
+        self.project_updated_signal.emit()
+
     def _projectCreatedCallback(self, result, error=False, **kwargs):
         if error:
             log.error("Error while creating project: {}".format(result["message"]))
             self.project_creation_error_signal.emit()
             return
-        self._id = result["project_id"]
-        self._name = result["name"]
-        self._filename = result["filename"]
-        self._files_dir = result["path"]
+        self._parseResponse(result)
         if self._closed:
             self._closed = False
             self._closing = False
             self._startListenNotifications()
         self.project_updated_signal.emit()
+
+    def _parseResponse(self, result):
+        """
+        Parse response from API and update the object
+        """
+        self._id = result["project_id"]
+        self._name = result["name"]
+        self._filename = result["filename"]
+        self._files_dir = result["path"]
 
     def load(self, path=None):
         if path:
@@ -385,6 +410,8 @@ class Project(QtCore.QObject):
                 drawing.delete(skip_controller=True)
         elif result["action"] == "project.closed":
             Topology.instance().setProject(None)
+        elif result["action"] == "project.updated":
+            self._projectUpdatedCallback(result["event"])
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":

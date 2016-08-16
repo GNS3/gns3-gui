@@ -39,6 +39,7 @@ from .dialogs.preferences_dialog import PreferencesDialog
 from .dialogs.snapshots_dialog import SnapshotsDialog
 from .dialogs.export_debug_dialog import ExportDebugDialog
 from .dialogs.doctor_dialog import DoctorDialog
+from .dialogs.edit_project_dialog import EditProjectDialog
 from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .utils.progress_dialog import ProgressDialog
@@ -154,6 +155,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiExportProjectAction,
             self.uiScreenshotAction,
             self.uiSnapshotAction,
+            self.uiEditProjectAction,
             self.uiDeleteProjectAction,
             self.uiImportExportConfigsAction
         ]
@@ -176,6 +178,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiImportExportConfigsAction.triggered.connect(self._importExportConfigsActionSlot)
         self.uiScreenshotAction.triggered.connect(self._screenshotActionSlot)
         self.uiSnapshotAction.triggered.connect(self._snapshotActionSlot)
+        self.uiEditProjectAction.triggered.connect(self._editProjectActionSlot)
         self.uiDeleteProjectAction.triggered.connect(self._deleteProjectActionSlot)
 
         # edit menu connections
@@ -1073,6 +1076,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                         "GNS3 Portable Project (*.gns3project *.gns3p)")
         if path:
             Topology.instance().importProject(path)
+
+    def _editProjectActionSlot(self):
+        dialog = EditProjectDialog(self)
+        dialog.show()
+        dialog.exec_()
 
     def _deleteProjectActionSlot(self):
         reply = QtWidgets.QMessageBox.warning(

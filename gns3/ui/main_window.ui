@@ -173,6 +173,7 @@ background-none;
     <addaction name="uiSnapshotAction"/>
     <addaction name="uiScreenshotAction"/>
     <addaction name="uiImportExportConfigsAction"/>
+    <addaction name="uiEditProjectAction"/>
     <addaction name="uiDeleteProjectAction"/>
    </widget>
    <addaction name="uiFileMenu"/>
@@ -1217,6 +1218,15 @@ background-none;
    </property>
    <property name="text">
     <string>Show the grid</string>
+   </property>
+  </action>
+  <action name="uiEditProjectAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/edit.svg</normaloff>:/icons/edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edit project</string>
    </property>
   </action>
  </widget>
