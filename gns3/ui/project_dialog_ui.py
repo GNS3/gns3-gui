@@ -102,7 +102,7 @@ class Ui_ProjectDialog(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.retranslateUi(ProjectDialog)
-        self.uiProjectTabWidget.setCurrentIndex(1)
+        self.uiProjectTabWidget.setCurrentIndex(0)
         self.uiButtonBox.accepted.connect(ProjectDialog.accept)
         self.uiButtonBox.rejected.connect(ProjectDialog.reject)
         self.uiNameLineEdit.returnPressed.connect(ProjectDialog.accept)
