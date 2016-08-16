@@ -52,6 +52,9 @@ class Project(QtCore.QObject):
         self._closing = False
         self._files_dir = None
         self._images_dir = None
+        self._auto_start = False
+        self._auto_open = False
+        self._auto_close = False
         self._name = "untitled"
         self._filename = None
 
@@ -65,6 +68,33 @@ class Project(QtCore.QObject):
         """
 
         return self._name
+
+    def setAutoOpen(self, val):
+        """
+        Open the project with GNS3 server
+        """
+        self._auto_open = val
+
+    def autoOpen(self):
+        return self._auto_open
+
+    def setAutoClose(self, val):
+        """
+        Close the project when last client is disconnected from the notification feed
+        """
+        self._auto_close = val
+
+    def autoClose(self):
+        return self._auto_close
+
+    def setAutoStart(self, val):
+        """
+        Start the project when opened
+        """
+        self._auto_start = val
+
+    def autoStart(self):
+        return self._auto_start
 
     def setName(self, name):
         """
@@ -237,7 +267,10 @@ class Project(QtCore.QObject):
         Update the project on remote server
         """
         body = {
-            "name": self._name
+            "name": self._name,
+            "auto_open": self._auto_open,
+            "auto_close": self._auto_close,
+            "auto_start": self._auto_start
         }
         self.put("", self._projectUpdatedCallback, body=body)
 
@@ -270,6 +303,9 @@ class Project(QtCore.QObject):
         self._name = result["name"]
         self._filename = result["filename"]
         self._files_dir = result["path"]
+        self._auto_start = result["auto_start"]
+        self._auto_open = result["auto_open"]
+        self._auto_close = result["auto_close"]
 
     def load(self, path=None):
         if path:

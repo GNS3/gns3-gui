@@ -34,6 +34,9 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         self.setupUi(self)
         self._project = Topology.instance().project()
         self.uiProjectNameLineEdit.setText(self._project.name())
+        self.uiProjectAutoOpenCheckBox.setChecked(self._project.autoOpen())
+        self.uiProjectAutoCloseCheckBox.setChecked(not self._project.autoClose())
+        self.uiProjectAutoStartCheckBox.setChecked(self._project.autoStart())
 
     def done(self, result):
         """
@@ -44,5 +47,8 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
 
         if result:
             self._project.setName(self.uiProjectNameLineEdit.text())
+            self._project.setAutoOpen(self.uiProjectAutoOpenCheckBox.isChecked())
+            self._project.setAutoClose(not self.uiProjectAutoCloseCheckBox.isChecked())
+            self._project.setAutoStart(self.uiProjectAutoStartCheckBox.isChecked())
             self._project.update()
         super().done(result)

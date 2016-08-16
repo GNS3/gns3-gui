@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>107</height>
+    <width>525</width>
+    <height>169</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,6 +31,41 @@
      </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="uiProjectNameLineEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="uiProjectAutoCloseCheckBox">
+       <property name="text">
+        <string>Leave this project open when closing GNS3</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="uiProjectAutoOpenCheckBox">
+       <property name="text">
+        <string>Open the project in background when GNS3 server start</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="uiProjectAutoStartCheckBox">
+       <property name="text">
+        <string>Start nodes when project is open</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
