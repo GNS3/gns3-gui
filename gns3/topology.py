@@ -94,11 +94,10 @@ class Topology(QtCore.QObject):
         :param project: Project instance
         """
 
-        if self._project and project != self._project:
+        if self._project:
+            # Assert to detect when we create a new project object for the same project
+            assert project is None or (project != self._project and project.id != self._project.id)
             self._project.stopListenNotifications()
-            # If we reload the same project don't send a close signal (snapshots)
-            if not project or (self._project.id() != project.id()):
-                self._project.close()
 
         self._main_window.uiGraphicsView.reset()
 

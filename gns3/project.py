@@ -321,8 +321,6 @@ class Project(QtCore.QObject):
             return
 
         self._parseResponse(result)
-        topo = Topology.instance()
-        topo.setProject(self)
 
         if self._closed:
             self._closed = False

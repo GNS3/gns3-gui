@@ -305,11 +305,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called to create a new project.
         """
-
-        # Disable all control
-        for widget in self.disableWhenNoProjectWidgets:
-            widget.setEnabled(False)
-
         self._project_dialog = ProjectDialog(self)
         self._project_dialog.show()
         create_new_project = self._project_dialog.exec_()
@@ -319,11 +314,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if create_new_project:
             Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
-        else:
-            # User cancel but a project is already open, renable widgets
-            if Topology.instance().project():
-                for widget in self.disableWhenNoProjectWidgets:
-                    widget.setEnabled(True)
 
         self._project_dialog = None
 
@@ -905,7 +895,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._finish_application_closing(close_windows=False)
             event.accept()
             self.uiConsoleTextEdit.closeIO()
-        elif project.closed():
+        elif project.closed() or not project.autoClose():
             log.debug("Project is closed killing server and closing main windows")
             self._finish_application_closing(close_windows=False)
             event.accept()
@@ -961,7 +951,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if not LocalConfig.instance().isMainGui():
             reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
-                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
                 self.close()
                 return
