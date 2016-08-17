@@ -20,7 +20,7 @@ Progress dialog that blocking tasks (file operations, network connections etc.)
 """
 
 import sip
-from ..qt import QtWidgets, QtCore
+from ..qt import QtWidgets, QtCore, qslot
 
 import logging
 log = logging.getLogger(__name__)
@@ -77,6 +77,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
             self._countdownTimer.start()
             self._updateCountdownSlot()
 
+    @qslot
     def _updateCountdownSlot(self):
         """
         Called every second for countdown before
@@ -96,17 +97,15 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self._thread.start()
         log.debug("{} thread started".format(self._worker.objectName()))
 
+    @qslot
     def _canceledSlot(self):
 
         self._worker.cancel()
         log.debug("{} thread canceled".format(self._worker.objectName()))
         self._cleanup()
 
+    @qslot
     def accept(self):
-
-        if not self:
-            return
-
         log.debug("{} thread finished".format(self._worker.objectName()))
         self._cleanup()
         super().accept()
@@ -115,15 +114,13 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
         self._cleanup()
 
+    @qslot
     def _cleanup(self):
         """
         Delete the thread.
         """
 
-        if not self:
-            return
-
-        if self._countdownTimer and not sip.isdeleted(self):
+        if self._countdownTimer:
             self._countdownTimer.stop()
 
         if self._thread and not sip.isdeleted(self._thread):
@@ -138,27 +135,25 @@ class ProgressDialog(QtWidgets.QProgressDialog):
                 log.debug("{} thread destroyed".format(self._worker.objectName()))
                 thread.deleteLater()
 
-    def _updateProgress(self, value):
+    @qslot
+    def _updateProgressSlot(self, value):
         """
         Slot to update the progress bar value.
 
         :param value: value for the progress bar (integer)
         """
 
-        if self and self._thread:
+        if self._thread:
             # It seems in some cases this is called on a deleted object and crash
-            if not sip.isdeleted(self):
-                self.setValue(value)
+            self.setValue(value)
 
+    @qslot
     def _error(self, message, stop=False):
         """
         Slot to show an error message sent by the thread.
 
         :param message: message
         """
-
-        if not self or sip.isdeleted(self):
-            return
 
         if stop:
             log.critical("{} thread stopping with an error: {}".format(self._worker.objectName(), message))
