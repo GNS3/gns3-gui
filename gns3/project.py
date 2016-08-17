@@ -381,7 +381,7 @@ class Project(QtCore.QObject):
     def _projectClosedCallback(self, result, error=False, server=None, **kwargs):
 
         # Status 404 could be when someone else already closed the project
-        if error and result["status"] != 404:
+        if error and "status" in result and result["status"] != 404:
             log.error("Error while closing project {}: {}".format(self._id, result["message"]))
         else:
             self.stopListenNotifications()
