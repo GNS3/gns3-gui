@@ -92,9 +92,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # used when a port has been selected from the contextual menu
         self._selected_port = None
 
-        # Use to detect the first time we display the label
-        self._first_update_label = True
-
         # contains the last error message received
         # from the server.
         self._last_error = None
@@ -143,8 +140,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         if not self._initialized:
             self._showLabel()
             self._initialized = True
-            if self._node.creator():
-                self._updateNode()
+            self._updateNode()
 
     def node(self):
         """
@@ -332,6 +328,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         label_x_pos = node_middle.x() - text_middle.x()
         label_y_pos = -25
         self._node_label.setPos(label_x_pos, label_y_pos)
+        return
 
     def _showLabel(self):
         """
@@ -354,15 +351,15 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self._node_label.setPlainText(self._node.name())
         label_data = self._node.settings().get("label")
 
-        if self._node.creator() and self._first_update_label:
+        if self._node_label.toPlainText() != label_data["text"]:
+            self._node_label.setPlainText(label_data["text"])
+        self._node_label.setStyle(label_data["style"])
+        self._node_label.setRotation(label_data["rotation"])
+        if label_data["x"] is None:
             self._centerLabel()
-        elif label_data:
-            if self._node_label.toPlainText() != self._node.name():
-                self._node_label.setPlainText(self._node.name())
+            self._updateNode()
+        else:
             self._node_label.setPos(label_data["x"], label_data["y"])
-            self._node_label.setStyle(label_data["style"])
-            self._node_label.setRotation(label_data["rotation"])
-        self._first_update_label = False
 
     def connectToPort(self, unavailable_ports=[]):
         """

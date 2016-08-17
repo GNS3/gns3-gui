@@ -39,13 +39,8 @@ class Node(BaseNode):
         self._command_line = None
         self._always_on = False
 
-        # Boolean if True we are creatin the first instance of this node
-        # if false the node already exist in the topology
-        # use to avoid erasing informations when reloading
-        self._creator = False
-
         # minimum required base settings
-        self._settings = {"name": "", "x": None, "y": None, "z": None, "label": None}
+        self._settings = {"name": "", "x": None, "y": None, "z": None}
 
     def get(self, path, *args, **kwargs):
         return self.controllerHttpGet("/nodes/{node_id}{path}".format(node_id=self._node_id, path=path), *args, **kwargs)
@@ -208,9 +203,7 @@ class Node(BaseNode):
         # No need to send this back to the server because it's read only
         ignore_properties = ("console_host", "symbol_url", "width", "height")
         for key, value in params.items():
-            if key == "label" and value is None: #FIXME: It's a workaround to avoid erasing the label when reloading a Node. This is due to the inialization of three item Node NodeItem and the label NoteItem. This could be clean but it's not a small and easy task
-                continue
-            elif key in node_general_properties:
+            if key in node_general_properties:
                 body[key] = value
             elif key in ignore_properties:
                 pass
@@ -339,13 +332,7 @@ class Node(BaseNode):
         # Update common element of all nodes
         for key in ["x", "y", "z", "symbol", "label"]:
             if key in result:
-                if key == "label" and self._creator and self._settings["label"] is None:
-                    # We could have race condition where when we create the node
-                    # on controller the label is not yet init properly to avoid
-                    # overwrite overeriding the data we ignore it.
-                    pass
-                else:
-                    self._settings[key] = result[key]
+                self._settings[key] = result[key]
         return result
 
     def _updateCallback(self, result):
