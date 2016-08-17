@@ -45,7 +45,7 @@ class Node(BaseNode):
         self._creator = False
 
         # minimum required base settings
-        self._settings = {"name": "", "x": None, "y": None, "z": None, "width": None, "height": None, "label": None}
+        self._settings = {"name": "", "x": None, "y": None, "z": None, "label": None}
 
     def get(self, path, *args, **kwargs):
         return self.controllerHttpGet("/nodes/{node_id}{path}".format(node_id=self._node_id, path=path), *args, **kwargs)
@@ -91,8 +91,6 @@ class Node(BaseNode):
             "x": int(node_item.pos().x()),
             "y": int(node_item.pos().y()),
             "z": int(node_item.zValue()),
-            "width": int(node_item.boundingRect().width()),
-            "height": int(node_item.boundingRect().height()),
             "symbol": node_item.symbol()
         }
         if node_item.label() is not None:
@@ -206,9 +204,9 @@ class Node(BaseNode):
 
         # We have two kind of properties. The general properties common to all
         # nodes and the specific that we need to put in the properties field
-        node_general_properties = ("name", "node_id", "console", "console_type", "x", "y", "z", "symbol", "label", "width", "height")
+        node_general_properties = ("name", "node_id", "console", "console_type", "x", "y", "z", "symbol", "label")
         # No need to send this back to the server because it's read only
-        ignore_properties = ("console_host", "symbol_url")
+        ignore_properties = ("console_host", "symbol_url", "width", "height")
         for key, value in params.items():
             if key == "label" and value is None: #FIXME: It's a workaround to avoid erasing the label when reloading a Node. This is due to the inialization of three item Node NodeItem and the label NoteItem. This could be clean but it's not a small and easy task
                 continue
