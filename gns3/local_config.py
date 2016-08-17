@@ -225,7 +225,7 @@ class LocalConfig(QtCore.QObject):
         """
         if Controller.instance().connected():
             # We save only non user specific sections
-            section_to_save_on_controller = ["Builtin", "Docker", "IOU", "Qemu", "VMware", "VPCS", "VirtualBox"]
+            section_to_save_on_controller = ["Builtin", "Docker", "IOU", "Qemu", "VMware", "VPCS", "VirtualBox", "GraphicsView"]
             controller_settings = {}
             for key,val in self._settings.items():
                 if key in section_to_save_on_controller:
