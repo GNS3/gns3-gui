@@ -199,19 +199,19 @@ class LocalServer():
             settings["ubridge_path"] = os.path.abspath(ubridge_path)
 
         if self._settings != settings:
-            self.setLocalServerSettings(settings)
-            self._settings = settings
+            self.updateLocalServerSettings(settings)
         return settings
 
-    def setLocalServerSettings(self, settings):
+    def updateLocalServerSettings(self, new_settings):
         """
-        Set new local server settings.
-
-        :param settings: local server settings (dict)
+        Update the local server settings. Keep the key not in new_settings
         """
-
-        self._port = settings["port"]
-        LocalServerConfig.instance().saveSettings("Server", settings)
+        if not self._settings:
+            self._settings = new_settings
+        else:
+            self._settings.update(new_settings)
+        self._port = self._settings["port"]
+        LocalServerConfig.instance().saveSettings("Server", self._settings)
 
     def shouldLocalServerAutoStart(self):
         """

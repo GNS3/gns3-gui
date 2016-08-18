@@ -411,10 +411,10 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                 if len(topology.nodes()):
                     MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing the local server settings")
                     return
-                LocalServer.instance().setLocalServerSettings(new_local_server_settings)
+                LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
                 restart_local_server = True
         else:
-            LocalServer.instance().setLocalServerSettings(new_local_server_settings)
+            LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
             LocalServer.instance().stopLocalServer(wait=True)
 
         # save the GNS3 VM preferences

@@ -253,8 +253,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 QtWidgets.QMessageBox.critical(self, "Local server", "{} is not an executable".format(local_server_settings["path"]))
                 return False
 
-            LocalServer.instance().setLocalServerSettings(local_server_settings)
-            print(local_server_settings)
+            LocalServer.instance().updateLocalServerSettings(local_server_settings)
             LocalServer.instance().stopLocalServer(wait=True)
             if LocalServer.instance().startLocalServer():
                 worker = WaitForConnectionWorker(local_server_settings["host"], local_server_settings["port"])
