@@ -27,6 +27,7 @@ import sys
 import sip
 import os
 import re
+import types
 import functools
 import inspect
 
@@ -209,3 +210,15 @@ def qpartial(func, *args, **kwargs):
 
     return functools.partial(func, *args, **kwargs)
 
+
+def qslot(func):
+    """
+    Decorated slot are protected against already destroyed element
+    in SIP but not in Python
+    """
+    def func_wrapper(*args, **kwargs):
+        if isinstance(func, types.MethodType):
+            if func is None or sip.isdeleted(func):
+                return lambda: True
+        return func(*args, **kwargs)
+    return func_wrapper
