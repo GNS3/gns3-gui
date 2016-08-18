@@ -116,13 +116,16 @@ class EthernetLinkItem(LinkItem):
             if self._source_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
+                shape = QtCore.Qt.RoundCap
             elif self._source_port.status() == Port.suspended:
                 # port is suspended
                 color = QtCore.Qt.yellow
+                shape = QtCore.Qt.RoundCap
             else:
                 color = QtCore.Qt.red
+                shape = QtCore.Qt.SquareCap
 
-            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.MiterJoin))
+            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, shape, QtCore.Qt.MiterJoin))
             point1 = QtCore.QPointF(self.source + self.edge_offset) + QtCore.QPointF((self.dx * self._source_collision_offset) / self.length, (self.dy * self._source_collision_offset) / self.length)
 
             # avoid any collision of the status point with the source node
@@ -155,13 +158,16 @@ class EthernetLinkItem(LinkItem):
             if self._destination_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
+                shape = QtCore.Qt.RoundCap
             elif self._destination_port.status() == Port.suspended:
                 # port is suspended
                 color = QtCore.Qt.yellow
+                shape = QtCore.Qt.RoundCap
             else:
                 color = QtCore.Qt.red
+                shape = QtCore.Qt.SquareCap
 
-            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.MiterJoin))
+            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, shape, QtCore.Qt.MiterJoin))
             point2 = QtCore.QPointF(self.destination - self.edge_offset) - QtCore.QPointF((self.dx * self._destination_collision_offset) / self.length, (self.dy * self._destination_collision_offset) / self.length)
 
             # avoid any collision of the status point with the destination node

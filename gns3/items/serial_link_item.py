@@ -117,11 +117,14 @@ class SerialLinkItem(LinkItem):
             # source point color
             if self._source_port.status() == Port.started:
                 # port is active
+                shape = QtCore.Qt.RoundCap
                 color = QtCore.Qt.green
             elif self._source_port.status() == Port.suspended:
                 # port is suspended
+                shape = QtCore.Qt.RoundCap
                 color = QtCore.Qt.yellow
             else:
+                shape = QtCore.Qt.SquareCap
                 color = QtCore.Qt.red
 
             painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.MiterJoin))
@@ -145,13 +148,16 @@ class SerialLinkItem(LinkItem):
             if self._destination_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
+                shape = QtCore.Qt.RoundCap
             elif self._destination_port.status() == Port.suspended:
                 # port is suspended
                 color = QtCore.Qt.yellow
+                shape = QtCore.Qt.RoundCap
             else:
                 color = QtCore.Qt.red
+                shape = QtCore.Qt.SquareCap
 
-            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.MiterJoin))
+            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, shape, QtCore.Qt.MiterJoin))
 
             destination_port_label = self._destination_port.label()
 
