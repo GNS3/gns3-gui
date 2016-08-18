@@ -299,15 +299,15 @@ class Project(QtCore.QObject):
         """
         self._id = result["project_id"]
         self._name = result["name"]
-        self._filename = result["filename"]
-        self._files_dir = result["path"]
-        self._auto_start = result["auto_start"]
-        self._auto_open = result["auto_open"]
-        self._auto_close = result["auto_close"]
+        self._filename = result.get("filename")
+        self._files_dir = result.get("path")
+        self._auto_start = result.get("auto_start", False)
+        self._auto_open = result.get("auto_open", True)
+        self._auto_close = result.get("auto_close", False)
 
     def load(self, path=None):
         if path:
-            body =  {"path": path}
+            body = {"path": path}
             Controller.instance().post("/projects/load", self._projectOpenCallback, body=body)
         else:
             self.post("/open", self._projectOpenCallback)

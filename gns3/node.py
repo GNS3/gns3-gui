@@ -308,7 +308,8 @@ class Node(BaseNode):
         """
         Parse node object from API
         """
-        self._node_id = result["node_id"]
+        if "node_id" in result:
+            self._node_id = result["node_id"]
 
         if "name" in result:
             self.setName(result["name"])
@@ -328,6 +329,11 @@ class Node(BaseNode):
                 self.setStatus(Node.suspended)
 
         if "properties" in result:
+            for name, value in result["properties"].items():
+                if name in self._settings and self._settings[name] != value:
+                    log.debug("{} setting up and updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
+                    self._settings[name] = value
+
             result.update(result["properties"])
             del result["properties"]
 
@@ -335,6 +341,7 @@ class Node(BaseNode):
         for key in ["x", "y", "z", "symbol", "label"]:
             if key in result:
                 self._settings[key] = result[key]
+
         return result
 
     def _updateCallback(self, result):
