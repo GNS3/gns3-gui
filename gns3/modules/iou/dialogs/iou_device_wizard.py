@@ -49,7 +49,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
 
         if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
             # Cannot use IOU locally on Windows and Mac
-            self.uiLocalRadioButton.setEnabled(False)
+            self._disableLocalServer()
 
         # Available types
         self.uiTypeComboBox.addItems(["L2 image", "L3 image"])

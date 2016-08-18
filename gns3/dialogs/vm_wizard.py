@@ -57,7 +57,6 @@ class VMWizard(QtWidgets.QWizard):
 
         if len(ComputeManager.instance().computes()) == 1:
             # skip the server page if we use the first server
-            self.initializePage(0)
             self.setStartId(1)
 
     def _vmToggledSlot(self, checked):
@@ -110,7 +109,7 @@ class VMWizard(QtWidgets.QWizard):
                     self.uiRemoteRadioButton.setEnabled(True)
                     self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
 
-            if self._use_local_server and self.uiLocalRadioButton.isEnabled():
+            if self._use_local_server and self.uiLocalRadioButton.isEnabled() and self.uiLocalRadioButton.isVisible():
                 self.uiLocalRadioButton.setChecked(True)
             elif self.uiVMRadioButton.isEnabled():
                 self.uiVMRadioButton.setChecked(True)
@@ -120,11 +119,15 @@ class VMWizard(QtWidgets.QWizard):
                 else:
                     self.uiLocalRadioButton.setChecked(True)
 
-    def validateCurrentPage(self):
-        """
-        Validates the server.
-        """
 
+    def _disableLocalServer(self):
+        """
+        Turn off the local server
+        """
+        self.uiLocalRadioButton.hide()
+        self.setStartId(0)
+
+    def validateCurrentPage(self):
         if hasattr(self, "uiNameWizardPage") and self.currentPage() == self.uiNameWizardPage:
             name = self.uiNameLineEdit.text()
             for device in self._devices.values():
@@ -132,6 +135,11 @@ class VMWizard(QtWidgets.QWizard):
                     QtWidgets.QMessageBox.critical(self, "Name", "{} is already used, please choose another name".format(name))
                     return False
         elif self.currentPage() == self.uiServerWizardPage:
+            # If the local button is not visible it's because it's not supported
+            if self.uiLocalRadioButton.isChecked() and self.uiLocalRadioButton.isHidden():
+                QtWidgets.QMessageBox.critical(self, "New device", "Please configure before the GNS3 VM in order to use this device.")
+                return False
+
             if self.uiRemoteRadioButton.isChecked():
                 if self.uiRemoteServersComboBox.count() == 0:
                     QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
