@@ -33,10 +33,11 @@ from ..topology import Topology
 from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.wait_for_connection_worker import WaitForConnectionWorker
-from ..settings import SERVERS_SETTINGS
+from ..settings import LOCAL_SERVER_SETTINGS, SERVERS_SETTINGS
 from ..gns3_vm import GNS3VM
 from ..dialogs.edit_compute_dialog import EditComputeDialog
 from ..local_server import LocalServer
+from ..local_config import LocalConfig
 from ..compute_manager import ComputeManager
 
 
@@ -201,7 +202,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Slot to restore default settings
         """
 
-        self._populateWidgets(SERVERS_SETTINGS)
+        self._populateWidgets(SERVER_SETTINGS, SERVERS_SETTINGS["vm"])
 
     def _localServerBrowserSlot(self):
         """
@@ -279,31 +280,28 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         if dialog.exec_():
             self._populateRemoteServersTree()
 
-    def _populateWidgets(self, servers_settings):
+    def _populateWidgets(self, servers_settings, vm_settings):
         """
         Populates the widgets with the settings.
 
         :param servers_settings: servers settings
         """
 
-        # local server settings
-        local_server_settings = LocalServer.instance().localServerSettings()
-        self.uiLocalServerPathLineEdit.setText(local_server_settings["path"])
-        self.uiUbridgePathLineEdit.setText(local_server_settings["ubridge_path"])
-        index = self.uiLocalServerHostComboBox.findData(local_server_settings["host"])
+        self.uiLocalServerPathLineEdit.setText(servers_settings["path"])
+        self.uiUbridgePathLineEdit.setText(servers_settings["ubridge_path"])
+        index = self.uiLocalServerHostComboBox.findData(servers_settings["host"])
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
-        self.uiLocalServerPortSpinBox.setValue(local_server_settings["port"])
-        self.uiLocalServerAutoStartCheckBox.setChecked(local_server_settings["auto_start"])
-        self.uiLocalServerAuthCheckBox.setChecked(local_server_settings["auth"])
-        self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(local_server_settings["allow_console_from_anywhere"])
-        self.uiConsoleStartPortSpinBox.setValue(local_server_settings["console_start_port_range"])
-        self.uiConsoleEndPortSpinBox.setValue(local_server_settings["console_end_port_range"])
-        self.uiUDPStartPortSpinBox.setValue(local_server_settings["udp_start_port_range"])
-        self.uiUDPEndPortSpinBox.setValue(local_server_settings["udp_end_port_range"])
+        self.uiLocalServerPortSpinBox.setValue(servers_settings["port"])
+        self.uiLocalServerAutoStartCheckBox.setChecked(servers_settings["auto_start"])
+        self.uiLocalServerAuthCheckBox.setChecked(servers_settings["auth"])
+        self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(servers_settings["allow_console_from_anywhere"])
+        self.uiConsoleStartPortSpinBox.setValue(servers_settings["console_start_port_range"])
+        self.uiConsoleEndPortSpinBox.setValue(servers_settings["console_end_port_range"])
+        self.uiUDPStartPortSpinBox.setValue(servers_settings["udp_start_port_range"])
+        self.uiUDPEndPortSpinBox.setValue(servers_settings["udp_end_port_range"])
 
         # Local GNS3 VM settings
-        vm_settings = servers_settings["vm"]
         self.uiEnableVMCheckBox.setChecked(vm_settings["auto_start"])
         self.uiShutdownCheckBox.setChecked(vm_settings["auto_stop"])
         self.uiAdjustLocalServerIPCheckBox.setChecked(vm_settings["adjust_local_server_ip"])
@@ -343,10 +341,10 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Loads the server preferences.
         """
 
-        #servers = Servers.instance()
-        # load the servers settings
-        #servers_settings = servers.settings()
-        #self._populateWidgets(servers_settings)
+        # Settings from the gns3_server.conf
+        vm_settings = LocalConfig.instance().loadSectionSettings("Servers", SERVERS_SETTINGS)["vm"]
+        local_server_settings = LocalServer.instance().localServerSettings()
+        self._populateWidgets(local_server_settings, vm_settings)
 
         cm = ComputeManager.instance()
         # load remote server preferences
