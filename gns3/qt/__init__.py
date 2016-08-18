@@ -216,8 +216,9 @@ def qslot(func):
     in SIP but not in Python
     """
     def func_wrapper(*args, **kwargs):
-        if isinstance(func, types.MethodType):
-            if func is None or sip.isdeleted(func):
+        if len(args) > 0:
+            # args[0] = self
+            if args[0] is None or sip.isdeleted(args[0]):
                 return lambda: True
         return func(*args, **kwargs)
     return func_wrapper

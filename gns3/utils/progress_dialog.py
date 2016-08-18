@@ -62,7 +62,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self._worker.setObjectName(worker.__class__.__name__)
         self._worker.moveToThread(self._thread)
         self._worker.finished.connect(self.accept)
-        self._worker.updated.connect(self._updateProgress)
+        self._worker.updated.connect(self._updateProgressSlot)
         self._worker.error.connect(self._error)
         self._thread.started.connect(self._worker.run)
 
