@@ -1,13 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>symbols/router.svg</file>
-        <file>symbols/gateway.svg</file>
         <file>symbols/iosv_virl.svg</file>
         <file>symbols/label_switch_router.svg</file>
         <file>symbols/optical_router.svg</file>
-        <file>symbols/edge_label_switch_router.svg</file>
-        <file>symbols/router_firewall.svg</file>
-        <file>symbols/router.awp.svg</file>
         <file>symbols/PIX_firewall.svg</file>
         <file>symbols/firewall.svg</file>
         <file>symbols/computer.svg</file>
@@ -16,26 +12,14 @@
         <file>symbols/vpcs_guest.svg</file>
         <file>symbols/vmware_guest.svg</file>
         <file>symbols/docker_guest.svg</file>
-        <file>symbols/server.svg</file>
-        <file>symbols/router_netflow.svg</file>
-        <file>symbols/access_server.svg</file>
-        <file>symbols/printer.svg</file>
-        <file>symbols/dslam.svg</file>
-        <file>symbols/sip_server.svg</file>
-        <file>symbols/PBX.svg</file>
-        <file>symbols/ip_phone.svg</file>
-        <file>symbols/voice_access_server.svg</file>
-        <file>symbols/call_manager.svg</file>
         <file>symbols/voice_router.svg</file>
         <file>symbols/ids.svg</file>
         <file>symbols/asa.svg</file>
-        <file>symbols/route_switch_processor.svg</file>
         <file>symbols/multilayer_switch.svg</file>
         <file>symbols/iosv_l2_virl.svg</file>
         <file>symbols/lightweight_ap.svg</file>
         <file>symbols/wlan_controller.svg</file>
         <file>symbols/atm_switch.svg</file>
-        <file>symbols/atm_bridge.svg</file>
         <file>symbols/frame_relay_switch.svg</file>
         <file>symbols/ethernet_switch.svg</file>
         <file>symbols/access_point.svg</file>
@@ -79,7 +63,6 @@
         <file>icons/quit.svg</file>
         <file>icons/applications.svg</file>
         <file>icons/calculate.svg</file>
-        <file>icons/console_port.svg</file>
         <file>icons/wireshark.png</file>
         <file>icons/virtualbox.png</file>
         <file>icons/qemu.svg</file>
@@ -129,7 +112,6 @@
         <file>classic_icons/add-note.svg</file>
         <file>classic_icons/add-note-hover.svg</file>
         <file>classic_icons/edit.svg</file>
-        <file>classic_icons/edit-hover.svg</file>
         <file>classic_icons/browse-all-icons.svg</file>
         <file>classic_icons/browse-all-icons-hover.svg</file>
         <file>classic_icons/camera-photo.svg</file>
@@ -194,7 +176,6 @@
         <file>charcoal_icons/add-note.svg</file>
         <file>charcoal_icons/add-note-hover.svg</file>
         <file>charcoal_icons/edit.svg</file>
-        <file>charcoal_icons/edit-hover.svg</file>
         <file>charcoal_icons/browse-all-icons.svg</file>
         <file>charcoal_icons/browse-all-icons-hover.svg</file>
         <file>charcoal_icons/camera-photo.svg</file>
