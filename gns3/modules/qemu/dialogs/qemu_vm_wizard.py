@@ -64,10 +64,6 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         if super().validateCurrentPage() is False:
             return False
 
-        if self.currentPage() == self.uiServerWizardPage:
-            if self.uiLocalRadioButton.isChecked() and not sys.platform.startswith("linux"):
-                QtWidgets.QMessageBox.warning(self, "QEMU on Windows or Mac", "The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM")
-
         if self.currentPage() == self.uiNameWizardPage:
             if self.uiLegacyASACheckBox.isChecked():
                 QtWidgets.QMessageBox.warning(self, "Legacy ASA VM", "Running ASA (with initrd/kernel) is not recommended, please use ASAv instead")
@@ -88,6 +84,10 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
+
+        if self.currentPage() == self.uiNameWizardPage:
+            QtWidgets.QMessageBox.warning(self, "QEMU on Windows or Mac", "The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM")
+
         if self.page(page_id) in [self.uiDiskWizardPage, self.uiInitrdKernelImageWizardPage]:
             self.loadImagesList("/qemu/images")
         elif self.page(page_id) == self.uiBinaryMemoryWizardPage:
