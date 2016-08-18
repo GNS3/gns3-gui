@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.5.2 18/08/2016
+
+* Make more clear that VMware VM are not ESXi
+* Add AppData and Desktop files
+* Fix you can not select the server for VPCS
+* Fix error when removing an interface from a cloud
+* Fix crash when scanning a directory for image and you don't have permission on a file
+* Bring back the warning dialog when no router is configured
+* Fix rare crash in server summary
+* Fix crash during export
+
 ## 1.5.1 06/07/2016
 
 * Try to fix a crash when reseting interface label
