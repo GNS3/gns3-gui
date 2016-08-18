@@ -21,7 +21,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your new VMware VM.</string>
+    <string>Please choose a server type to run your new VMware VM (Workstation, Player or Fusion).</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
@@ -33,7 +33,7 @@
        <item>
         <widget class="QRadioButton" name="uiRemoteRadioButton">
          <property name="text">
-          <string>Run the VMware VM on a remote computer</string>
+          <string>Run the VMware VM on a remote GNS3 computer</string>
          </property>
          <property name="checked">
           <bool>true</bool>
