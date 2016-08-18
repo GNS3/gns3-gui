@@ -159,8 +159,9 @@ class Topology(QtCore.QObject):
         dialog.show()
         dialog.exec_()
 
-    def _projectCreationErrorSlot(self):
+    def _projectCreationErrorSlot(self, message):
         self.setProject(None)
+        QtWidgets.QMessageBox.critical(self._main_window, "New project", message)
 
     def exportProject(self):
         include_image_question = """Would you like to include any base image?
