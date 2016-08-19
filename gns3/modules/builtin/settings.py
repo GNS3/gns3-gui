@@ -25,6 +25,15 @@ BUILTIN_SETTINGS = {
     "use_local_server": True,
 }
 
+
+NAT_SETTINGS = {
+    "name": "",
+    "default_name_format": "Nat{0}",
+    "symbol": ":/symbols/cloud.svg",
+    "category": Node.end_devices,
+    "ports": [],
+}
+
 CLOUD_SETTINGS = {
     "name": "",
     "default_name_format": "Cloud{0}",

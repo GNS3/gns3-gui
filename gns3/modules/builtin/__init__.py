@@ -24,6 +24,7 @@ from gns3.local_config import LocalConfig
 
 from ..module import Module
 from .cloud import Cloud
+from .nat import Nat
 from .ethernet_hub import EthernetHub
 from .ethernet_switch import EthernetSwitch
 from .frame_relay_switch import FrameRelaySwitch
@@ -32,6 +33,7 @@ from .atm_switch import ATMSwitch
 from .settings import (
     BUILTIN_SETTINGS,
     CLOUD_SETTINGS,
+    NAT_SETTINGS,
     ETHERNET_HUB_SETTINGS,
     ETHERNET_SWITCH_SETTINGS
 )
@@ -52,6 +54,7 @@ class Builtin(Module):
         self._settings = {}
         self._nodes = []
         self._cloud_nodes = {}
+        self._nat_nodes = {}
         self._ethernet_hubs = {}
         self._ethernet_switches = {}
 
@@ -239,6 +242,11 @@ class Builtin(Module):
                 if node_name == info["name"]:
                     node.create(ports=info["ports"], default_name_format=info["default_name_format"])
                     return
+        elif isinstance(node, Nat):
+            for key, info in self._nat_nodes.items():
+                if node_name == info["name"]:
+                    node.create(default_name_format=info["default_name_format"])
+                    return
         elif isinstance(node, EthernetHub):
             for key, info in self._ethernet_hubs.items():
                 if node_name == info["name"]:
@@ -289,6 +297,8 @@ class Builtin(Module):
     def getNodeType(name, platform=None):
         if name == "cloud":
             return Cloud
+        elif name == "nat":
+            return Nat
         elif name == "ethernet_hub":
             return EthernetHub
         elif name == "ethernet_switch":
@@ -307,7 +317,7 @@ class Builtin(Module):
         :returns: list of classes
         """
 
-        return [Cloud, EthernetHub, EthernetSwitch, FrameRelaySwitch, ATMSwitch]
+        return [Nat, Cloud, EthernetHub, EthernetSwitch, FrameRelaySwitch, ATMSwitch]
 
     def nodes(self):
         """
