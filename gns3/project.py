@@ -391,9 +391,7 @@ class Project(QtCore.QObject):
         if self._notification_stream:
             self._notification_stream.abort()
 
-
     def _startListenNotifications(self):
-
         path = "/projects/{project_id}/notifications".format(project_id=self._id)
         self._notification_stream = Controller.instance().createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True)
 
@@ -440,6 +438,8 @@ class Project(QtCore.QObject):
             Topology.instance().setProject(None)
         elif result["action"] == "project.updated":
             self._projectUpdatedCallback(result["event"])
+        elif result["action"] == "snapshot.restored":
+            Topology.instance().createLoadProject({"project_id": result["event"]["project_id"]})
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":

@@ -458,14 +458,18 @@ It is your responsability to check if you have the right to distribute the image
 
     def createLink(self, link_data):
         if len(link_data["nodes"]) == 2:
+            source_node = self.getNodeFromUuid(link_data["nodes"][0]["node_id"])
+            destination_node = self.getNodeFromUuid(link_data["nodes"][1]["node_id"])
+            if source_node is None or destination_node is None:
+                return
+
             link_side = link_data["nodes"][0]
-            source_node = self.getNodeFromUuid(link_side["node_id"])
+
             for port in source_node.ports():
                 if port.adapterNumber() == link_side["adapter_number"] and port.portNumber() == link_side["port_number"]:
                     source_port = port
                     break
             link_side = link_data["nodes"][1]
-            destination_node = self.getNodeFromUuid(link_side["node_id"])
             for port in destination_node.ports():
                 if port.adapterNumber() == link_side["adapter_number"] and port.portNumber() == link_side["port_number"]:
                     destination_port = port

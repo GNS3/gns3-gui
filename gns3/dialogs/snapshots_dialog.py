@@ -28,7 +28,6 @@ from ..qt import QtCore, QtWidgets
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.process_files_worker import ProcessFilesWorker
 from ..ui.snapshots_dialog_ui import Ui_SnapshotsDialog
-from ..topology import Topology
 from ..node import Node
 from ..controller import Controller
 
@@ -146,7 +145,6 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
             if result:
                 log.error(result["message"])
             return
-        Topology.instance().createLoadProject({"project_id": result["project_id"]})
         self.accept()
 
     def _snapshotDoubleClickedSlot(self, item):
