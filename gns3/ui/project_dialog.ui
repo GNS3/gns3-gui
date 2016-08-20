@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>534</width>
-    <height>317</height>
+    <height>311</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <property name="tabBarAutoHide">
+     <property name="tabBarAutoHide" stdset="0">
       <bool>false</bool>
      </property>
      <widget class="QWidget" name="tab">
