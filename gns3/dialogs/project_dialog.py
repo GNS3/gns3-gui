@@ -75,7 +75,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         reply = QtWidgets.QMessageBox.warning(self,
                                        "Delete project",
-                                       "Delete project {}?\nThis can not be revert.".format(project_name),
+                                       'Delete project "{}"?\nThis cannot be reverted.'.format(project_name),
                                        QtWidgets.QMessageBox.Yes,
                                        QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
