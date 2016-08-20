@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>523</width>
-    <height>360</height>
+    <width>579</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Server</string>
+   <string>Edit server settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -57,7 +57,7 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="currentText">
+        <property name="currentText" stdset="0">
          <string>HTTP</string>
         </property>
         <item>
@@ -148,7 +148,7 @@
          <bool>true</bool>
         </property>
         <property name="inputMethodHints">
-         <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+         <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
         </property>
         <property name="echoMode">
          <enum>QLineEdit::Password</enum>
@@ -161,7 +161,7 @@
    <item>
     <widget class="QLabel" name="uiWarningLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;WARNING&lt;/span&gt;: Change a server with authentication enabled will reset the password.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;WARNING&lt;/span&gt;: Changing a server with authentication enabled will reset the password.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

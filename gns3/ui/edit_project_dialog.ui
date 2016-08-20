@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>169</height>
+    <width>563</width>
+    <height>176</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,60 +16,39 @@
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QFormLayout" name="formLayout">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::ExpandingFieldsGrow</enum>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Project Name:</string>
      </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Name:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="uiProjectNameLineEdit"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="uiProjectAutoCloseCheckBox">
-       <property name="text">
-        <string>Leave this project open when closing GNS3</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QCheckBox" name="uiProjectAutoOpenCheckBox">
-       <property name="text">
-        <string>Open the project in background when GNS3 server start</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QCheckBox" name="uiProjectAutoStartCheckBox">
-       <property name="text">
-        <string>Start nodes when project is open</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    </widget>
    </item>
-   <item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="uiProjectNameLineEdit"/>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QCheckBox" name="uiProjectAutoCloseCheckBox">
+     <property name="text">
+      <string>Leave this project open when closing GNS3</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QCheckBox" name="uiProjectAutoStartCheckBox">
+     <property name="text">
+      <string>Start all nodes when this project is loaded</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QCheckBox" name="uiProjectAutoOpenCheckBox">
+     <property name="text">
+      <string>Open this project in the background when GNS3 server starts</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
     <widget class="QDialogButtonBox" name="uiButtonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -78,6 +57,19 @@
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
+   </item>
+   <item row="5" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
