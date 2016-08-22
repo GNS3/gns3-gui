@@ -24,26 +24,25 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class Cloud(Node):
+class Nat(Node):
 
     """
-    Cloud node
+    Nat node
 
     :param module: parent module for this node
     :param server: GNS3 server instance
     :param project: Project instance
     """
 
-    URL_PREFIX = "cloud"
+    URL_PREFIX = "nat"
 
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
         self.setStatus(Node.started)
         self._always_on = True
-        self._interfaces = {}
-        self._cloud_settings = {"ports": []}
-        self.settings().update(self._cloud_settings)
+        self._nat_settings = {"ports": []}
+        self.settings().update(self._nat_settings)
 
     def interfaces(self):
 
@@ -57,18 +56,15 @@ class Cloud(Node):
                 return True
         return False
 
-    def create(self, name=None, node_id=None, ports=None, default_name_format="Cloud{0}"):
+    def create(self, name=None, node_id=None, default_name_format="Nat{0}"):
         """
-        Creates this cloud.
+        Creates this nat.
 
-        :param name: optional name for this cloud
+        :param name: optional name for this nat
         :param node_id: Node identifier on the server
-        :param ports: ports to be automatically added when creating this cloud
         """
 
         params = {}
-        if ports:
-            params["ports"] = ports
         self._create(name, node_id, params, default_name_format)
 
     def _createCallback(self, result, error=False, **kwargs):
@@ -79,34 +75,13 @@ class Cloud(Node):
         """
 
         if error:
-            log.error("Error while creating cloud: {}".format(result["message"]))
+            log.error("Error while creating nat: {}".format(result["message"]))
             return
-
-        self._interfaces = result["interfaces"].copy()
-        if "ports" in result and result["ports"]:
-            for port_info in result["ports"]:
-                port = Port(port_info["name"])
-                port.setAdapterNumber(0)  # adapter number is always 0
-                port.setPortNumber(port_info["port_number"])
-                port.setStatus(Port.started)
-                self._ports.append(port)
-                log.debug("port {} has been added".format(port_info["port_number"]))
-        else:
-            port_number = 1
-            settings = {"ports": []}
-            for interface in self._interfaces:
-                if self.isSpecialInterface(interface["name"]):
-                    continue
-                settings["ports"].append({"name": interface["name"],
-                                          "port_number": port_number,
-                                          "type": interface["type"],
-                                          "interface": interface["name"]})
-                port_number += 1
-            self.update(settings)
+        self._parseResponse(result)
 
     def update(self, new_settings):
         """
-        Updates the settings for this cloud.
+        Updates the settings for this nat.
 
         :param new_settings: settings dictionary
         """
@@ -135,13 +110,19 @@ class Cloud(Node):
         self._ports.append(port)
         log.debug("port {} has been added".format(port_number))
 
-    def _updateCallback(self, result):
+    def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
 
         :param result: server response
         """
+        if error:
+            log.error("Error while creating nat: {}".format(result["message"]))
+            return
 
+        self._parseServerResponse(result)
+
+    def _parseServerResponse(self, result):
         if "ports" in result:
             updated_port_list = []
             # add/update ports
@@ -157,17 +138,14 @@ class Cloud(Node):
 
             self._settings["ports"] = result["ports"].copy()
 
-        if "interfaces" in result:
-            self._interfaces = result["interfaces"].copy()
-
     def info(self):
         """
-        Returns information about this cloud.
+        Returns information about this nat.
 
         :returns: formatted string
         """
 
-        info = """Cloud device {name} is always-on
+        info = """Nat device {name} is always-on
 This is a node for external connections
 """.format(name=self.name())
 
@@ -181,22 +159,10 @@ This is a node for external connections
 
         return info + port_info
 
-
-
-    def configPage(self):
-        """
-        Returns the configuration page widget to be used by the node properties dialog.
-
-        :returns: QWidget object
-        """
-
-        from .pages.cloud_configuration_page import CloudConfigurationPage
-        return CloudConfigurationPage
-
     @staticmethod
     def defaultSymbol():
         """
-        Returns the default symbol path for this cloud.
+        Returns the default symbol path for this nat.
 
         :returns: symbol path (or resource).
         """
@@ -206,7 +172,7 @@ This is a node for external connections
     @staticmethod
     def symbolName():
 
-        return "Cloud"
+        return "Nat"
 
     @staticmethod
     def categories():
@@ -220,4 +186,4 @@ This is a node for external connections
 
     def __str__(self):
 
-        return "Cloud"
+        return "Nat"

@@ -237,16 +237,6 @@ class BaseNode(QtCore.QObject):
 
         return categories
 
-    def configPage(self):
-        """
-        Returns the configuration page widget to be used by the node properties dialog.
-        Must be overloaded.
-
-        :returns: QWidget instance
-        """
-
-        raise NotImplementedError()
-
     @staticmethod
     def defaultSymbol():
         """

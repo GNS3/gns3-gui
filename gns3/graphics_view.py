@@ -616,7 +616,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             items = []
             for item in self.scene().selectedItems():
-                if isinstance(item, NodeItem) and item.node().initialized():
+                if isinstance(item, NodeItem) and item.node().initialized() and hasattr(item.node(), "configPage"):
                     items.append(item)
         with Progress.instance().context(min_duration=0):
             node_properties = NodePropertiesDialog(items, self._main_window)
@@ -704,18 +704,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             return
 
-        if True in list(map(lambda item: isinstance(item, NodeItem), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configPage"), items)):
             configure_action = QtWidgets.QAction("Configure", menu)
             configure_action.setIcon(QtGui.QIcon(':/icons/configuration.svg'))
             configure_action.triggered.connect(self.configureActionSlot)
             menu.addAction(configure_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem), items)):
             # Action: Change hostname
             change_hostname_action = QtWidgets.QAction("Change hostname", menu)
             change_hostname_action.setIcon(QtGui.QIcon(':/icons/show-hostname.svg'))
             change_hostname_action.triggered.connect(self.changeHostnameActionSlot)
             menu.addAction(change_hostname_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem), items)):
             # Action: Change symbol
             change_symbol_action = QtWidgets.QAction("Change symbol", menu)
             change_symbol_action.setIcon(QtGui.QIcon(':/icons/node_conception.svg'))

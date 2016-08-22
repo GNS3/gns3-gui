@@ -247,7 +247,6 @@ class Node(BaseNode):
         :param error: indicates an error (boolean)
         :returns: Boolean success or not
         """
-
         if error:
             log.error("Error while setting up node: {}".format(result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
