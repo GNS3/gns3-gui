@@ -174,16 +174,19 @@ class BaseNode(QtCore.QObject):
                 # set ports as started
                 port.setStatus(Port.started)
             self.started_signal.emit()
+            log.info("{} has started".format(self.name()))
         elif status == self.stopped:
             for port in self._ports:
                 # set ports as stopped
                 port.setStatus(Port.stopped)
             self.stopped_signal.emit()
+            log.info("{} has stopped".format(self.name()))
         elif status == self.suspended:
             for port in self._ports:
                 # set ports as suspended
                 port.setStatus(Port.suspended)
             self.suspended_signal.emit()
+            log.info("{} has suspended".format(self.name()))
 
     def initialized(self):
         """

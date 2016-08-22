@@ -379,12 +379,18 @@ class Node(BaseNode):
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
+    def isStarted(self):
+        """
+        :returns: Boolean True if started
+        """
+        return self.status() == Node.started
+
     def start(self):
         """
         Starts this node instance.
         """
 
-        if self.status() == Node.started:
+        if self.isStarted():
             log.debug("{} is already running".format(self.name()))
             return
 
@@ -403,12 +409,7 @@ class Node(BaseNode):
             log.error("error while starting {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            log.info("{} has started".format(self.name()))
-            self.setStatus(Node.started)
-
-            # FIXME: why?
-            #if result:
-            #    self.updateCallback(result)
+            self._parseResponse(result)
 
     def stop(self):
         """
@@ -437,8 +438,7 @@ class Node(BaseNode):
             if not "status" in result or result["status"] == 404:
                 self.setStatus(Node.stopped)
         else:
-            log.info("{} has stopped".format(self.name()))
-            self.setStatus(Node.stopped)
+            self._parseResponse(result)
 
     def suspend(self):
         """
@@ -464,12 +464,7 @@ class Node(BaseNode):
             log.error("error while suspending {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
-            log.info("{} has suspended".format(self.name()))
-            self.setStatus(Node.suspended)
-            for port in self._ports:
-                # set ports as suspended
-                port.setStatus(Port.suspended)
-            self.suspended_signal.emit()
+            self._parseResponse(result)
 
     def reload(self):
         """

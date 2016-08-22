@@ -96,6 +96,9 @@ def nodeTelnetConsole(node, port, command=None):
     :param command: Console command
     """
 
+    if not node.isStarted():
+        return
+
     if command is None:
         general_settings = MainWindow.instance().settings()
         command = general_settings["telnet_console_command"]
