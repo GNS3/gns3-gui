@@ -87,7 +87,7 @@ class LocalServer():
         self._http_client = None
         self._local_server_path = ""
         self._local_server_process = None
-        self._config_directory = LocalConfig.configDirectory()
+        self._config_directory = LocalConfig.instance().configDirectory()
         self._pid_path = os.path.join(self._config_directory, "gns3_server.pid")
         self.localServerSettings()
         self._port = self._settings["port"]
@@ -373,6 +373,9 @@ class LocalServer():
         command = '"{executable}" --host={host} --port={port} --local --controller'.format(executable=path,
                                                                               host=host,
                                                                               port=port)
+
+        if LocalConfig.instance().profil():
+            command += " --profil {}".format(LocalConfig.instance().profil())
 
         if self._settings["allow_console_from_anywhere"]:
             # allow connections to console from remote addresses

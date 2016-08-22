@@ -55,7 +55,7 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
         try:
             with ZipFile(path, 'w') as zip:
                 zip.writestr("debug.txt", self._getDebugData())
-                dir = LocalConfig.configDirectory()
+                dir = LocalConfig.instance().configDirectory()
                 for filename in os.listdir(dir):
                     path = os.path.join(dir, filename)
                     if os.path.isfile(path):
