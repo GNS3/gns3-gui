@@ -23,6 +23,7 @@ import os
 import urllib
 
 from .image import Image
+from ..local_config import LocalConfig
 
 import logging
 log = logging.getLogger(__name__)
@@ -44,7 +45,7 @@ class Config:
 
         self.path = path
         if self.path is None:
-            self.path = self._get_standard_config_file_path()
+            self.path = LocalConfig.instance.configFilePath()
 
         with open(self.path, encoding="utf-8") as f:
             self._config = json.load(f)
@@ -77,22 +78,6 @@ class Config:
                 if "url" in server:
                     servers.append(server["url"])
         return servers
-
-    def _get_standard_config_file_path(self):
-
-        if sys.platform.startswith("win"):
-            filename = "gns3_gui.ini"
-        else:
-            filename = "gns3_gui.conf"
-
-        appname = "GNS3"
-
-        if sys.platform.startswith("win"):
-            appdata = os.path.expandvars("%APPDATA%")
-            return os.path.join(appdata, appname, filename)
-        else:
-            home = os.path.expanduser("~")
-            return os.path.join(home, ".config", appname, filename)
 
     def is_name_available(self, name):
         """
