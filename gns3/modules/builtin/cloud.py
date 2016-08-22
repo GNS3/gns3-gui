@@ -52,7 +52,7 @@ class Cloud(Node):
     @staticmethod
     def isSpecialInterface(interface):
 
-        for special_interface in ("lo", "vmnet", "vboxnet", "docker", "lxcbr", "virbr", "ovs-system", "veth"):
+        for special_interface in ("lo", "vmnet", "vboxnet", "docker", "lxcbr", "virbr", "ovs-system", "veth", "fw", "p2p"):
             if interface.lower().startswith(special_interface):
                 return True
         return False
