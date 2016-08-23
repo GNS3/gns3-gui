@@ -175,6 +175,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiImportExportConfigsAction
         ]
 
+
+        # This widgets are not enabled if it's a remote controller (no access to the local file system)
+        self.disableWhenRemoteContollerWidgets = [
+            self.uiNewProjectAction,
+            self.uiSaveProjectAsAction,
+            self.uiImportExportConfigsAction
+        ]
+
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
 
@@ -401,12 +409,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._appliance_wizard.show()
             self._appliance_wizard.exec_()
         else:
+            if Controller.instance().isRemote():
+                QtWidgets.QMessageBox.critical(self, "Project", "You can't remote open a .gns3 please use import / export in order to provide to the remote server the full project")
+                return
             Topology.instance().loadProject(path)
 
     def _projectChangedSlot(self):
         """
         Called when a project finish to load
         """
+        self._refreshVisibleWidgets()
+
+    def _refreshVisibleWidgets(self):
+        """
+        Refresh widgets that should be visible or not
+        """
+        for widget in self.disableWhenRemoteContollerWidgets:
+            widget.setVisible(not Controller.instance().isRemote())
+
         # No projects
         if Topology.instance().project() is None:
             for widget in self.disableWhenNoProjectWidgets:
@@ -967,6 +987,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
+        Controller.instance().connected_signal.connect(self._controllerConnectedSlot)
+
         # start and connect to the local server if needed
         LocalServer.instance().localServerAutoStart()
 
@@ -1104,11 +1126,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             except UnicodeEncodeError:
                 pass
 
-        for index in range(size + 1, self._max_recent_files):
-            self._recent_file_actions[index].setVisible(False)
+        if not Controller.instance().isRemote():
+            for index in range(size + 1, self._max_recent_files):
+                self._recent_file_actions[index].setVisible(False)
 
-        if size:
-            self._recent_file_actions_separator.setVisible(True)
+            if size:
+                self._recent_file_actions_separator.setVisible(True)
+        else:
+            for index in range(0, self._max_recent_files):
+                self._recent_file_actions[index].setVisible(False)
+            self._recent_file_actions_separator.setVisible(False)
+
+    def _controllerConnectedSlot(self):
+        self.updateRecentFileActions()
+        self._refreshVisibleWidgets()
 
     def run_later(self, counter, callback):
         """

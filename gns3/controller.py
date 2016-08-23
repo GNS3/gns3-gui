@@ -21,6 +21,8 @@ import tempfile
 
 from .qt import QtCore, QtGui, qpartial
 from .symbol import Symbol
+from .local_server_config import LocalServerConfig
+from .settings import LOCAL_SERVER_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -37,6 +39,13 @@ class Controller(QtCore.QObject):
         self._connected = False
         self._cache_directory = tempfile.TemporaryDirectory()
         self._http_client = None
+
+    def isRemote(self):
+        """
+        :returns Boolean: True if the controller is remote
+        """
+        settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
+        return not settings["auto_start"]
 
     def connected(self):
         """

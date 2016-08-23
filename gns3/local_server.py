@@ -221,12 +221,12 @@ class LocalServer(QtCore.QObject):
             if self._settings["auto_start"]:
                 self.stopLocalServer(wait=True)
                 if self.startLocalServer():
-                    worker = WaitForConnectionWorker(new_local_server_settings["host"], new_local_server_settings["port"])
+                    worker = WaitForConnectionWorker(self._settings["host"], new_local_server_settings["port"])
                     dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self.parent())
                     dialog.show()
                     dialog.exec_()
                 else:
-                    QtWidgets.QMessageBox.critical(self.parent(), "Local server", "Could not start the local server process: {}".format(new_local_server_settings["path"]))
+                    QtWidgets.QMessageBox.critical(self.parent(), "Local server", "Could not start the local server process: {}".format(self._settings["path"]))
             # If the controller is remote:
             else:
                 self.stopLocalServer(wait=True)
