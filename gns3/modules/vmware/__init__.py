@@ -141,7 +141,6 @@ class VMware(Module):
                     log.error("Could not execute {}: {}".format("".join(command), e))
                     return "ws"
             else:
-                log.error("vmware command not found")
                 return "ws"
         if "VMware Player" in output:
             return "player"
