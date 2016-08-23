@@ -86,11 +86,15 @@ class Controller(QtCore.QObject):
     def delete(self, *args, **kwargs):
         return self.createHTTPQuery("DELETE", *args, **kwargs)
 
-    def createHTTPQuery(self, method, path, *args, **kwargs):
+    def createHTTPQuery(self, method, path, callback, *args, **kwargs):
         """
         Forward the query to the HTTP client or controller depending of the path
         """
-        return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
+        if not self._connected:
+            if callback:
+                callback({"message": "Not connected to the GNS3 server"}, error=True)
+            return
+        return self._http_client.createHTTPQuery(method, path, callback, *args, **kwargs)
 
     def getSynchronous(self, endpoint, timeout=2):
         return self._http_client.getSynchronous(endpoint, timeout)
