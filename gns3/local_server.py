@@ -221,7 +221,7 @@ class LocalServer(QtCore.QObject):
             if self._settings["auto_start"]:
                 self.stopLocalServer(wait=True)
                 if self.startLocalServer():
-                    worker = WaitForConnectionWorker(self._settings["host"], new_local_server_settings["port"])
+                    worker = WaitForConnectionWorker(self._settings["host"], self._settings["port"])
                     dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self.parent())
                     dialog.show()
                     dialog.exec_()
