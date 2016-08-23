@@ -120,13 +120,11 @@ def main():
     parser.add_argument("--version", help="show the version", action="version", version=__version__)
     parser.add_argument("--debug", help="print out debug messages", action="store_true", default=False)
     parser.add_argument("--config", help="Configuration file")
+    parser.add_argument("--profil", help="Settings profil (blank will use default settings files)")
     options = parser.parse_args()
     exception_file_path = "exceptions.log"
 
-    if options.config:
-        LocalConfig.instance(config_file=options.config)
-    else:
-        LocalConfig.instance()
+    LocalConfig.instance(config_file=options.config, profil=options.profil)
 
     if hasattr(sys, "frozen"):
         # We add to the path where the OS search executable our binary location starting by GNS3
@@ -229,7 +227,7 @@ def main():
     app = Application(sys.argv)
 
     # save client logging info to a file
-    logfile = os.path.join(LocalConfig.configDirectory(), "gns3_gui.log")
+    logfile = os.path.join(LocalConfig.instance().configDirectory(), "gns3_gui.log")
 
     # on debug enable logging to stdout
     if options.debug:
@@ -238,7 +236,7 @@ def main():
         root_logger = init_logger(logging.INFO, logfile)
 
     # update the exception file path to have it in the same directory as the settings file.
-    exception_file_path = os.path.join(LocalConfig.configDirectory(), exception_file_path)
+    exception_file_path = os.path.join(LocalConfig.instance().configDirectory(), exception_file_path)
 
     global mainwindow
     startup_file = app.open_file_at_startup

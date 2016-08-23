@@ -40,10 +40,15 @@ class LocalConfig(QtCore.QObject):
 
     config_changed_signal = QtCore.Signal()
 
-    def __init__(self, config_file=None):
+    def __init__(self, config_file=None, profil=None):
+        """
+        :param config_file: Path of the config file
+        :param profil: Configuration profil by default will use the standard configuration directory
+        """
 
         super().__init__()
         self._settings = {}
+        self._profil = profil
         self._last_config_changed = None
 
         if sys.platform.startswith("win"):
@@ -67,7 +72,7 @@ class LocalConfig(QtCore.QObject):
         if config_file:
             self._config_file = config_file
         else:
-            self._config_file = os.path.join(LocalConfig.configDirectory(), filename)
+            self._config_file = os.path.join(self.configDirectory(), filename)
 
         # First load system wide settings
         if os.path.exists(system_wide_config_file):
@@ -93,6 +98,12 @@ class LocalConfig(QtCore.QObject):
         self._writeConfig()
         Controller.instance().connected_signal.connect(self.refreshConfigFromController)
 
+    def profil(self):
+        """
+        :returns: Current settings profil
+        """
+        return self._profil
+
     def refreshConfigFromController(self):
         """
         Refresh the configuration from the controller
@@ -116,8 +127,7 @@ class LocalConfig(QtCore.QObject):
                 self.loadSectionSettings(section, self._settings[section])
         self.config_changed_signal.emit()
 
-    @staticmethod
-    def configDirectory():
+    def configDirectory(self):
         """
         Get the configuration directory
         """
@@ -127,6 +137,10 @@ class LocalConfig(QtCore.QObject):
         else:
             home = os.path.expanduser("~")
             path = os.path.join(home, ".config", "GNS3")
+
+        if self._profil is not None:
+            path = os.path.join(path, "profiles", self._profil)
+
         return os.path.normpath(path)
 
     def _migrateOldConfigPath(self):
@@ -348,7 +362,7 @@ class LocalConfig(QtCore.QObject):
         return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["experimental_features"]
 
     @staticmethod
-    def instance(config_file=None):
+    def instance(config_file=None, profil=None):
         """
         Singleton to return only on instance of LocalConfig.
 
@@ -356,7 +370,7 @@ class LocalConfig(QtCore.QObject):
         """
 
         if not hasattr(LocalConfig, "_instance") or LocalConfig._instance is None:
-            LocalConfig._instance = LocalConfig(config_file=config_file)
+            LocalConfig._instance = LocalConfig(config_file=config_file, profil=profil)
         return LocalConfig._instance
 
     @staticmethod
@@ -366,7 +380,7 @@ class LocalConfig(QtCore.QObject):
         """
 
         my_pid = os.getpid()
-        pid_path = os.path.join(LocalConfig.configDirectory(), "gns3_gui.pid")
+        pid_path = os.path.join(LocalConfig.instance().configDirectory(), "gns3_gui.pid")
 
         if os.path.exists(pid_path):
             try:

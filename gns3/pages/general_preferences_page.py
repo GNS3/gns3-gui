@@ -217,7 +217,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         """
         Slot to open a file browser into the configuration directory
         """
-        QtGui.QDesktopServices.openUrl(QtCore.QUrl("file://" + LocalConfig.configDirectory()))
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl("file://" + LocalConfig.instance().configDirectory()))
 
     def _exportConfigurationFileSlot(self):
         """
