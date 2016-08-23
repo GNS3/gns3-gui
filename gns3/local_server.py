@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 #
 # Copyright (C) 2016 GNS3 Technologies Inc.
@@ -91,8 +90,11 @@ class LocalServer(QtCore.QObject):
         self._pid_path = os.path.join(self._config_directory, "gns3_server.pid")
         self.localServerSettings()
         self._port = self._settings["port"]
-        self._http_client = HTTPClient(self._settings)
-        Controller.instance().setHttpClient(self._http_client)
+
+        #
+        if not self._settings["auto_start"]:
+            self._http_client = HTTPClient(self._settings)
+            Controller.instance().setHttpClient(self._http_client)
 
     def parent(self):
         """
@@ -220,13 +222,7 @@ class LocalServer(QtCore.QObject):
         if old_settings != self._settings:
             if self._settings["auto_start"]:
                 self.stopLocalServer(wait=True)
-                if self.startLocalServer():
-                    worker = WaitForConnectionWorker(self._settings["host"], self._settings["port"])
-                    dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self.parent())
-                    dialog.show()
-                    dialog.exec_()
-                else:
-                    QtWidgets.QMessageBox.critical(self.parent(), "Local server", "Could not start the local server process: {}".format(self._settings["path"]))
+                self.localServerAutoStartIfRequire()
             # If the controller is remote:
             else:
                 self.stopLocalServer(wait=True)
@@ -269,7 +265,7 @@ class LocalServer(QtCore.QObject):
             # Permission issue, or process no longer exists, or file is empty
             return
 
-    def localServerAutoStart(self):
+    def localServerAutoStartIfRequire(self):
         """
         Try to start the embed gns3 server.
         """
@@ -306,6 +302,9 @@ class LocalServer(QtCore.QObject):
             progress_dialog.show()
             if not progress_dialog.exec_():
                 return False
+
+        self._http_client = HTTPClient(self._settings)
+        Controller.instance().setHttpClient(self._http_client)
 
         return True
 

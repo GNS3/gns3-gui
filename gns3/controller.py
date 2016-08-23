@@ -19,7 +19,7 @@ import os
 import hashlib
 import tempfile
 
-from .qt import QtCore, QtGui, qpartial
+from .qt import QtCore, QtGui, QtWidgets, qpartial
 from .symbol import Symbol
 from .local_server_config import LocalServerConfig
 from .settings import LOCAL_SERVER_SETTINGS
@@ -34,7 +34,7 @@ class Controller(QtCore.QObject):
     """
     connected_signal = QtCore.Signal()
 
-    def __init__(self):
+    def __init__(self, parent=None):
         super().__init__()
         self._connected = False
         self._cache_directory = tempfile.TemporaryDirectory()
@@ -67,7 +67,14 @@ class Controller(QtCore.QObject):
         if self._http_client:
             self._http_client.connection_connected_signal.connect(self._httpClientConnectedSlot)
             self._connected = False
-            self.get('/version', None)
+            self.get('/version', self._versionGetSlot)
+
+    def _versionGetSlot(self, result, error=False, **kwargs):
+        """
+        Called after the inital version get
+        """
+        if error and "message" in result:
+            QtWidgets.QMessageBox.critical(self.parent(), "Connection", result["message"])
 
     def _httpClientConnectedSlot(self):
         if not self._connected:
@@ -90,10 +97,6 @@ class Controller(QtCore.QObject):
         """
         Forward the query to the HTTP client or controller depending of the path
         """
-        if not self._connected:
-            if callback:
-                callback({"message": "Not connected to the GNS3 server"}, error=True)
-            return
         return self._http_client.createHTTPQuery(method, path, callback, *args, **kwargs)
 
     def getSynchronous(self, endpoint, timeout=2):

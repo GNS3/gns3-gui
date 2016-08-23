@@ -84,6 +84,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.setMainWindow(self)
         topology.project_changed_signal.connect(self._projectChangedSlot)
+        Controller.instance().setParent(self)
 
         self._settings = {}
         HTTPClient.setProgressCallback(Progress.instance(self))
@@ -992,7 +993,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Controller.instance().connected_signal.connect(self._controllerConnectedSlot)
 
         # start and connect to the local server if needed
-        LocalServer.instance().localServerAutoStart()
+        LocalServer.instance().localServerAutoStartIfRequire()
 
         # start the GNS3 VM
         # FIXME: run in a thead to wait for the VM to be started
