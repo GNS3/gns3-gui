@@ -178,8 +178,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # This widgets are not enabled if it's a remote controller (no access to the local file system)
         self.disableWhenRemoteContollerWidgets = [
-            self.uiNewProjectAction,
-            self.uiSaveProjectAsAction,
             self.uiImportExportConfigsAction
         ]
 
@@ -352,11 +350,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to open a project.
         """
 
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", Topology.instance().projectsDirPath(),
-                                                        "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
-                                                        "GNS3 Project (*.gns3)")
-        if path:
-            self.loadPath(path)
+        if Controller.instance().isRemote():
+            # If the server is remote we use the new project windows with the project library
+            self._newProjectActionSlot()
+        else:
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", Topology.instance().projectsDirPath(),
+                                                            "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
+                                                            "GNS3 Project (*.gns3)")
+            if path:
+                self.loadPath(path)
 
     def openRecentFileSlot(self):
         """

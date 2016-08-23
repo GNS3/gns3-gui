@@ -57,6 +57,13 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             self.uiOpenProjectGroupBox.hide()
             self.uiProjectTabWidget.removeTab(1)
 
+        # If the controller is remote we hide option for local file system
+        if Controller.instance().isRemote():
+            self.uiLocationLabel.setVisible(False)
+            self.uiLocationLineEdit.setVisible(False)
+            self.uiLocationBrowserToolButton.setVisible(False)
+            self.uiOpenProjectPushButton.setVisible(False)
+
         Controller.instance().get("/projects", self._projectListCallback)
         self.uiProjectsTreeWidget.itemDoubleClicked.connect(self._projectsTreeWidgetDoubleClickedSlot)
         self.uiDeleteProjectButton.clicked.connect(self._deleteProjectSlot)
@@ -168,28 +175,29 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
     def _newProject(self):
         project_name = self.uiNameLineEdit.text()
-        project_location = self.uiLocationLineEdit.text()
 
         if not project_name:
             QtWidgets.QMessageBox.critical(self, "New project", "Project name is empty")
             return False
+        self._project_settings["project_name"] = project_name
 
-        if not project_location:
-            QtWidgets.QMessageBox.critical(self, "New project", "Project location is empty")
-            return False
-
-        if os.path.isdir(project_location):
-            reply = QtWidgets.QMessageBox.question(self,
-                                                   "New project",
-                                                   "Location {} already exists, overwrite it?".format(project_location),
-                                                   QtWidgets.QMessageBox.Yes,
-                                                   QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.No:
+        if not Controller.instance().isRemote():
+            project_location = self.uiLocationLineEdit.text()
+            if not project_location:
+                QtWidgets.QMessageBox.critical(self, "New project", "Project location is empty")
                 return False
 
-        self._project_settings["project_name"] = project_name
-        self._project_settings["project_path"] = os.path.join(project_location, project_name + ".gns3")
-        self._project_settings["project_files_dir"] = project_location
+            if os.path.isdir(project_location):
+                reply = QtWidgets.QMessageBox.question(self,
+                                                       "New project",
+                                                       "Location {} already exists, overwrite it?".format(project_location),
+                                                       QtWidgets.QMessageBox.Yes,
+                                                       QtWidgets.QMessageBox.No)
+                if reply == QtWidgets.QMessageBox.No:
+                    return False
+
+            self._project_settings["project_path"] = os.path.join(project_location, project_name + ".gns3")
+            self._project_settings["project_files_dir"] = project_location
         return True
 
     def done(self, result):

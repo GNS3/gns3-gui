@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>534</width>
-    <height>311</height>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Local project</string>
+       <string>New project</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -107,7 +107,7 @@
        <item>
         <widget class="QGroupBox" name="uiOpenProjectGroupBox">
          <property name="title">
-          <string>Open project from disk</string>
+          <string>Open project</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
@@ -115,7 +115,7 @@
             <item>
              <widget class="QPushButton" name="uiOpenProjectPushButton">
               <property name="text">
-               <string>&amp;Open a project</string>
+               <string>&amp;Open a project from disk</string>
               </property>
              </widget>
             </item>

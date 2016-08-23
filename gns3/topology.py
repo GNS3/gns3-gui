@@ -144,7 +144,8 @@ class Topology(QtCore.QObject):
             project.load()
             self._main_window.uiStatusBar.showMessage("Project loaded", 2000)
         else:
-            project.setFilesDir(os.path.dirname(project_settings["project_path"]))
+            if "project_path" in project_settings:
+                project.setFilesDir(os.path.dirname(project_settings["project_path"]))
             self.setProject(project)
             project.create()
             self._main_window.uiStatusBar.showMessage("Project created", 2000)
@@ -230,7 +231,7 @@ It is your responsability to check if you have the right to distribute the image
         if dialog.exec_():
             self._project.duplicate(
                 name=dialog.getProjectSettings()["project_name"],
-                path=dialog.getProjectSettings()["project_path"]
+                path=dialog.getProjectSettings().get("project_path") # None when using remote controller
             )
 
     def _projectImportedSlot(self, project_id):
