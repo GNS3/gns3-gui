@@ -24,7 +24,7 @@ from gns3.controller import Controller
 @pytest.fixture
 def controller():
     c = Controller()
-    c.setHttpClient(MagicMock())
+    c._http_client = MagicMock()
     return c
 
 

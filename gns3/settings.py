@@ -297,6 +297,7 @@ LOCAL_SERVER_SETTINGS = {
     "auth": True,
     "user": "",
     "password": "",
+    "protocol": "http",
     "console_start_port_range": 5000,
     "console_end_port_range": 10000,
     "udp_start_port_range": 10000,

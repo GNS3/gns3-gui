@@ -22,7 +22,6 @@ import tempfile
 from .qt import QtCore, QtGui, qpartial
 from .symbol import Symbol
 
-
 import logging
 log = logging.getLogger(__name__)
 
@@ -37,6 +36,7 @@ class Controller(QtCore.QObject):
         super().__init__()
         self._connected = False
         self._cache_directory = tempfile.TemporaryDirectory()
+        self._http_client = None
 
     def connected(self):
         """
@@ -55,8 +55,10 @@ class Controller(QtCore.QObject):
         :param http_client: Instance of HTTP client to communicate with the server
         """
         self._http_client = http_client
-        self._http_client.connection_connected_signal.connect(self._httpClientConnectedSlot)
-        self.get('/version', None)
+        if self._http_client:
+            self._http_client.connection_connected_signal.connect(self._httpClientConnectedSlot)
+            self._connected = False
+            self.get('/version', None)
 
     def _httpClientConnectedSlot(self):
         if not self._connected:

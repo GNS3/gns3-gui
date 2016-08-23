@@ -40,7 +40,7 @@ from .modules import MODULES
 from .modules.module_error import ModuleError
 from .items.node_item import NodeItem
 from .compute_manager import ComputeManager
-
+from .controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
@@ -65,6 +65,14 @@ class Topology(QtCore.QObject):
         self._images = []
         self._project = None
         self._main_window = None
+        Controller.instance().connected_signal.connect(self._controllerConnectedSlot)
+
+    def _controllerConnectedSlot(self):
+        """
+        We reset current project because the remote controller could have
+        change location
+        """
+        self.setProject(None)
 
     def setMainWindow(self, main_window):
         self._main_window = main_window

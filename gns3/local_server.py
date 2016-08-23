@@ -40,6 +40,7 @@ from gns3.utils.progress_dialog import ProgressDialog
 from gns3.utils.http import getSynchronous
 from gns3.utils.sudo import sudo
 from gns3.http_client import HTTPClient
+from gns3.controller import Controller
 
 
 import logging
@@ -75,7 +76,7 @@ class StopLocalServerWorker(QtCore.QObject):
         return
 
 
-class LocalServer():
+class LocalServer(QtCore.QObject):
     """
     Manage the local server process
     """
@@ -84,13 +85,14 @@ class LocalServer():
 
         super().__init__()
         self._parent = parent
-        self._http_client = None
         self._local_server_path = ""
         self._local_server_process = None
         self._config_directory = LocalConfig.instance().configDirectory()
         self._pid_path = os.path.join(self._config_directory, "gns3_server.pid")
         self.localServerSettings()
         self._port = self._settings["port"]
+        self._http_client = HTTPClient(self._settings)
+        Controller.instance().setHttpClient(self._http_client)
 
     def parent(self):
         """
@@ -206,12 +208,31 @@ class LocalServer():
         """
         Update the local server settings. Keep the key not in new_settings
         """
+        old_settings = copy.copy(self._settings)
         if not self._settings:
             self._settings = new_settings
         else:
             self._settings.update(new_settings)
         self._port = self._settings["port"]
         LocalServerConfig.instance().saveSettings("Server", self._settings)
+
+        # Settings have changed we need to restart the server
+        if old_settings != self._settings:
+            if self._settings["auto_start"]:
+                self.stopLocalServer(wait=True)
+                if self.startLocalServer():
+                    worker = WaitForConnectionWorker(new_local_server_settings["host"], new_local_server_settings["port"])
+                    dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self.parent())
+                    dialog.show()
+                    dialog.exec_()
+                else:
+                    QtWidgets.QMessageBox.critical(self.parent(), "Local server", "Could not start the local server process: {}".format(new_local_server_settings["path"]))
+            # If the controller is remote:
+            else:
+                self.stopLocalServer(wait=True)
+
+            self._http_client = HTTPClient(self._settings)
+            Controller.instance().setHttpClient(self._http_client)
 
     def shouldLocalServerAutoStart(self):
         """
@@ -356,11 +377,6 @@ class LocalServer():
         with socket.socket() as s:
             s.bind((host, 0))
             return s.getsockname()[1]
-
-    def httpClient(self):
-        if self._http_client is None:
-            self._http_client = HTTPClient(self._settings)
-        return self._http_client
 
     def startLocalServer(self):
         """

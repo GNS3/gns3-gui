@@ -969,7 +969,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # start and connect to the local server if needed
         LocalServer.instance().localServerAutoStart()
-        Controller.instance().setHttpClient(LocalServer.instance().httpClient())
 
         # start the GNS3 VM
         # FIXME: run in a thead to wait for the VM to be started
@@ -986,7 +985,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #         if progress_dialog.exec_():
         #             pass
         #             #gns3_vm.adjustLocalServerIP()
-        #     Controller.instance().setHttpClient(gns3_vm.httpClient())
 
         # show the setup wizard
         if not self._settings["hide_setup_wizard"]:# and not gns3_vm.isRunning():

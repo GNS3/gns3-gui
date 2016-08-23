@@ -254,15 +254,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 return False
 
             LocalServer.instance().updateLocalServerSettings(local_server_settings)
-            LocalServer.instance().stopLocalServer(wait=True)
-            if LocalServer.instance().startLocalServer():
-                worker = WaitForConnectionWorker(local_server_settings["host"], local_server_settings["port"])
-                dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
-                dialog.show()
-                dialog.exec_()
-                Controller.instance().setHttpClient(LocalServer.instance().httpClient())
-            else:
-                QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(local_server_settings["path"]))
 
         elif self.currentPage() == self.uiSummaryWizardPage:
             use_local_server = self.uiLocalRadioButton.isChecked()

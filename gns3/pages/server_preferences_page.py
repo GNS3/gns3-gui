@@ -32,7 +32,6 @@ from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..topology import Topology
 from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
-from ..utils.wait_for_connection_worker import WaitForConnectionWorker
 from ..settings import LOCAL_SERVER_SETTINGS, SERVERS_SETTINGS
 from ..gns3_vm import GNS3VM
 from ..dialogs.edit_compute_dialog import EditComputeDialog
@@ -75,9 +74,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
             address_string = address.toString()
-            # if address.protocol() == QtNetwork.QAbstractSocket.IPv6Protocol:
-            # we do not want the scope id when using an IPv6 address...
-            # address.setScopeId("")
             self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
 
         # default is 127.0.0.1
@@ -185,17 +181,19 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         """
 
         if state:
-            self.uiGeneralSettingsGroupBox.setEnabled(True)
-            self.uiConsolePortRangeGroupBox.setEnabled(True)
-            self.uiUDPPortRangeGroupBox.setEnabled(True)
+            self.uiGeneralSettingsGroupBox.setVisible(True)
+            self.uiConsolePortRangeGroupBox.setVisible(True)
+            self.uiUDPPortRangeGroupBox.setVisible(True)
+            self.uiRemoteMainServerGroupBox.setVisible(False)
         else:
             if self.uiEnableVMCheckBox.isChecked() and not self.uiRemoteRadioButton.isChecked():
                 QtWidgets.QMessageBox.critical(self, "Local GNS3 VM", "The local server need to be enable in order to use a local GNS3 VM. Please deactivate the local GNS3 VM before turning off the local server.")
                 self.uiLocalServerAutoStartCheckBox.setChecked(True)
                 return
-            self.uiGeneralSettingsGroupBox.setEnabled(False)
-            self.uiConsolePortRangeGroupBox.setEnabled(False)
-            self.uiUDPPortRangeGroupBox.setEnabled(False)
+            self.uiRemoteMainServerGroupBox.setVisible(True)
+            self.uiGeneralSettingsGroupBox.setVisible(False)
+            self.uiConsolePortRangeGroupBox.setVisible(False)
+            self.uiUDPPortRangeGroupBox.setVisible(False)
 
     def _restoreDefaultsSlot(self):
         """
@@ -293,7 +291,16 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
         self.uiLocalServerPortSpinBox.setValue(servers_settings["port"])
+
+        self.uiRemoteMainServerHostLineEdit.setText(servers_settings["host"])
+        self.uiRemoteMainServerPortSpinBox.setValue(servers_settings["port"])
+        self.uiRemoteMainServerUserLineEdit.setText(servers_settings["user"])
+        self.uiRemoteMainServerPasswordLineEdit.setText(servers_settings["password"])
+        self.uiRemoteMainServerProtocolComboBox.setCurrentText(servers_settings["protocol"])
+
         self.uiLocalServerAutoStartCheckBox.setChecked(servers_settings["auto_start"])
+        self._useLocalServerAutoStartSlot(servers_settings["auto_start"])
+
         self.uiLocalServerAuthCheckBox.setChecked(servers_settings["auth"])
         self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(servers_settings["allow_console_from_anywhere"])
         self.uiConsoleStartPortSpinBox.setValue(servers_settings["console_start_port_range"])
@@ -410,10 +417,13 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                     MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing the local server settings")
                     return
                 LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
-                restart_local_server = True
         else:
+            new_local_server_settings["host"] = self.uiRemoteMainServerHostLineEdit.text()
+            new_local_server_settings["port"] = self.uiRemoteMainServerPortSpinBox.value()
+            new_local_server_settings["protocol"] = self.uiRemoteMainServerProtocolComboBox.currentText()
+            new_local_server_settings["user"] = self.uiRemoteMainServerUserLineEdit.text()
+            new_local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
             LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
-            LocalServer.instance().stopLocalServer(wait=True)
 
         # save the GNS3 VM preferences
         # new_gns3vm_settings = servers_settings["vm"].copy()
@@ -471,15 +481,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         #                     restart_local_server = True
         #                     self.uiLocalServerHostComboBox.setCurrentIndex(index)
         #
-        # start or restart the local server if required
-        if restart_local_server:
-            LocalServer.instance().stopLocalServer(wait=True)
-            if LocalServer.instance().startLocalServer():
-                worker = WaitForConnectionWorker(new_local_server_settings["host"], new_local_server_settings["port"])
-                dialog = ProgressDialog(worker, "Local server", "Connecting...", "Cancel", busy=True, parent=self)
-                dialog.show()
-                dialog.exec_()
-            else:
-                QtWidgets.QMessageBox.critical(self, "Local server", "Could not start the local server process: {}".format(new_local_server_settings["path"]))
+
+
 
         self.loadPreferences()
