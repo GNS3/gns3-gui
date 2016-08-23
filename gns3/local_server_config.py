@@ -40,12 +40,11 @@ class LocalServerConfig:
         else:
             filename = "gns3_server.conf"
 
+        from .local_config import LocalConfig
         if sys.platform.startswith("win"):
-            appdata = os.path.expandvars("%APPDATA%")
-            self._config_file = os.path.join(appdata, appname, filename)
+            self._config_file = os.path.join(LocalConfig.instance().configDirectory(), filename)
         else:
-            home = os.path.expanduser("~")
-            self._config_file = os.path.join(home, ".config", appname, filename)
+            self._config_file = os.path.join(LocalConfig.instance().configDirectory(),  filename)
 
         try:
             # create the config file if it doesn't exist
