@@ -76,7 +76,8 @@ class CrashReport:
             if not RAVEN_AVAILABLE:
                 return
             if os.path.exists(".git"):
-                log.warning("A .git directory exist crash report is turn off for developers")
+                log.warning("A .git directory exist crash report is turn off for developers. Instant exit")
+                sys.exit(1)
                 return
 
             if hasattr(exception, "fingerprint"):
