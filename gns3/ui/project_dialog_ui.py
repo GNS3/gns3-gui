@@ -12,7 +12,7 @@ class Ui_ProjectDialog(object):
     def setupUi(self, ProjectDialog):
         ProjectDialog.setObjectName("ProjectDialog")
         ProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        ProjectDialog.resize(534, 317)
+        ProjectDialog.resize(568, 317)
         ProjectDialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(ProjectDialog)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -98,6 +98,11 @@ class Ui_ProjectDialog(object):
         self.verticalLayout.addWidget(self.uiProjectTabWidget)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.uiSettingsPushButton = QtWidgets.QPushButton(ProjectDialog)
+        self.uiSettingsPushButton.setObjectName("uiSettingsPushButton")
+        self.horizontalLayout.addWidget(self.uiSettingsPushButton)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem3)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(ProjectDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
         self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
@@ -129,4 +134,5 @@ class Ui_ProjectDialog(object):
         self.uiProjectsTreeWidget.headerItem().setText(2, _translate("ProjectDialog", "Path"))
         self.uiDeleteProjectButton.setText(_translate("ProjectDialog", "Delete"))
         self.uiProjectTabWidget.setTabText(self.uiProjectTabWidget.indexOf(self.uiProjectsLibraryTab), _translate("ProjectDialog", "Projects library"))
+        self.uiSettingsPushButton.setText(_translate("ProjectDialog", "Settings"))
 

@@ -206,7 +206,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # edit menu connections
         self.uiSelectAllAction.triggered.connect(self._selectAllActionSlot)
         self.uiSelectNoneAction.triggered.connect(self._selectNoneActionSlot)
-        self.uiPreferencesAction.triggered.connect(self._preferencesActionSlot)
+        self.uiPreferencesAction.triggered.connect(self.preferencesActionSlot)
 
         # view menu connections
         self.uiActionFullscreen.triggered.connect(self._fullScreenActionSlot)
@@ -865,7 +865,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiAddLinkAction.setText("Cancel")
             self.adding_link_signal.emit(True)
 
-    def _preferencesActionSlot(self):
+    def preferencesActionSlot(self):
         """
         Slot to show the preferences dialog.
         """

@@ -49,6 +49,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         self.uiNameLineEdit.textEdited.connect(self._projectNameSlot)
         self.uiLocationBrowserToolButton.clicked.connect(self._projectPathSlot)
+        self.uiSettingsPushButton.clicked.connect(self._settingsClickedSlot)
 
         if show_open_options:
             self.uiOpenProjectPushButton.clicked.connect(self._openProjectActionSlot)
@@ -64,9 +65,17 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             self.uiLocationBrowserToolButton.setVisible(False)
             self.uiOpenProjectPushButton.setVisible(False)
 
+
         Controller.instance().get("/projects", self._projectListCallback)
         self.uiProjectsTreeWidget.itemDoubleClicked.connect(self._projectsTreeWidgetDoubleClickedSlot)
         self.uiDeleteProjectButton.clicked.connect(self._deleteProjectSlot)
+
+    def _settingsClickedSlot(self):
+        """
+        When the user click on the settings button
+        """
+        self.reject()
+        self._main_window.preferencesActionSlot()
 
     def _projectsTreeWidgetDoubleClickedSlot(self, item, column):
         self.done(True)
