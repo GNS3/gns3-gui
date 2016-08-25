@@ -24,6 +24,7 @@ from ..ui.preferences_dialog_ui import Ui_PreferencesDialog
 from ..pages.server_preferences_page import ServerPreferencesPage
 from ..pages.general_preferences_page import GeneralPreferencesPage
 from ..pages.packet_capture_preferences_page import PacketCapturePreferencesPage
+from ..pages.gns3_vm_preferences_page import GNS3VMPreferencesPage
 from ..modules import MODULES
 
 
@@ -80,6 +81,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         pages = [
             GeneralPreferencesPage,
             ServerPreferencesPage,
+            GNS3VMPreferencesPage,
             PacketCapturePreferencesPage,
         ]
 

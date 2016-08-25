@@ -21,7 +21,6 @@ import shutil
 
 from gns3.qt import QtCore, QtWidgets, QtGui, QtNetwork
 from gns3.controller import Controller
-from gns3.gns3_vm import GNS3VM
 from gns3.local_server import LocalServer
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker

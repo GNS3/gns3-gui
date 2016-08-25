@@ -304,25 +304,6 @@ LOCAL_SERVER_SETTINGS = {
     "udp_end_port_range": 20000,
 }
 
-# TODO: remove/refactor this
-SERVERS_SETTINGS = {
-    "vm": {
-        "auto_start": False,
-        "auto_stop": False,
-        "headless": False,
-        "adjust_local_server_ip": True,
-        "vmname": "GNS3 VM",
-        "vmx_path": "",
-        "virtualization": "VMware",
-        "remote_vm_url": "",
-        "remote_vm_protocol": "http",
-        "remote_vm_host": "",
-        "remote_vm_port": 3080,
-        "remote_vm_user": "",
-        "remote_vm_password": ""
-    },
-    "remote_servers": [],
-}
 
 PACKET_CAPTURE_SETTINGS = {
     "packet_capture_reader_command": DEFAULT_PACKET_CAPTURE_READER_COMMAND,
