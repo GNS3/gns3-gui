@@ -87,14 +87,18 @@ class LocalServer(QtCore.QObject):
         self._local_server_path = ""
         self._local_server_process = None
         self._config_directory = LocalConfig.instance().configDirectory()
-        self._pid_path = os.path.join(self._config_directory, "gns3_server.pid")
         self.localServerSettings()
         self._port = self._settings["port"]
 
-        #
         if not self._settings["auto_start"]:
             self._http_client = HTTPClient(self._settings)
             Controller.instance().setHttpClient(self._http_client)
+
+    def _pid_path(self):
+        """
+        :returns: Path of the PID file
+        """
+        return os.path.join(self._config_directory, "gns3_server.pid")
 
     def parent(self):
         """
@@ -255,8 +259,8 @@ class LocalServer(QtCore.QObject):
         This will not kill server started by hand.
         """
         try:
-            if os.path.exists(self._pid_path):
-                with open(self._pid_path) as f:
+            if os.path.exists(self._pid_path()):
+                with open(self._pid_path()) as f:
                     pid = int(f.read())
                 process = psutil.Process(pid=pid)
                 log.info("Kill already running server with PID %d", pid)
@@ -383,11 +387,7 @@ class LocalServer(QtCore.QObject):
         """
 
         path = self.localServerPath()
-        host = self._settings["host"]
-        port = self._port
-        command = '"{executable}" --host={host} --port={port} --local --controller'.format(executable=path,
-                                                                              host=host,
-                                                                              port=port)
+        command = '"{executable}" --local --controller'.format(executable=path)
 
         if LocalConfig.instance().profil():
             command += " --profil {}".format(LocalConfig.instance().profil())
@@ -411,7 +411,7 @@ class LocalServer(QtCore.QObject):
                     pass
                 except OSError as e:
                     log.warn("could not delete server log file {}: {}".format(logpath, e))
-            command += ' --log="{}" --pid="{}"'.format(logpath, self._pid_path)
+            command += ' --log="{}" --pid="{}"'.format(logpath, self._pid_path())
 
         log.info("Starting local server process with {}".format(command))
         try:

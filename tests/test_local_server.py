@@ -18,6 +18,7 @@
 import sys
 import json
 import pytest
+import logging
 import subprocess
 from unittest.mock import MagicMock, patch
 
@@ -32,17 +33,16 @@ def local_server_path(tmpdir):
 
 @pytest.fixture
 def local_server(local_server_path, tmpdir):
-    with patch("gns3.local_config.LocalConfig.configDirectory") as mock_local_config:
-        mock_local_config.return_value = str(tmpdir)
-        LocalServer._instance = None
-        local_server = LocalServer.instance()
-        local_server._settings = {
-            "host": "127.0.0.1",
-            "path": local_server_path,
-            "port": 3080,
-            "allow_console_from_anywhere": False
-        }
-        return local_server
+    with open(str(tmpdir / "test.cfg"), "w+") as f:
+        f.write("""
+[Server]
+path={}""".format(local_server_path))
+
+    LocalServerConfig.instance().setConfigFile(str(tmpdir / "test.cfg"))
+    LocalServer._instance = None
+    local_server = LocalServer.instance()
+    local_server._config_directory = str(tmpdir)
+    return local_server
 
 
 def test_loadSettings_EmptySettings(tmpdir, local_server):
@@ -54,7 +54,6 @@ def test_loadSettings_EmptySettings(tmpdir, local_server):
     assert local_server.localServerSettings()["port"] == 3080
     assert len(local_server.localServerSettings()["password"]) == 64
     assert local_server.localServerSettings()["user"] == "admin"
-
 
 
 def test_loadSettings(tmpdir, local_server):
@@ -69,13 +68,10 @@ password=hello""")
     assert local_server.localServerSettings()["password"] == "hello"
 
 
-def test_httpClient(local_server):
-    client = local_server.httpClient()
-    assert client.host() == "127.0.0.1"
-
-
 @pytest.mark.skipif(sys.platform.startswith('win') is True, reason='Not for windows')
 def test_startLocalServer(tmpdir, local_server, local_server_path):
+    logging.getLogger().setLevel(logging.DEBUG) # Make sure we are using debug level in order to get the --debug
+
     process_mock = MagicMock()
     with patch("subprocess.Popen", return_value=process_mock) as mock:
 
@@ -84,8 +80,6 @@ def test_startLocalServer(tmpdir, local_server, local_server_path):
 
         LocalServer.instance().startLocalServer()
         mock.assert_called_with([local_server_path,
-                                 '--host=127.0.0.1',
-                                 '--port=3080',
                                  '--local',
                                  '--controller',
                                  '--debug',
@@ -95,7 +89,7 @@ def test_startLocalServer(tmpdir, local_server, local_server_path):
 
 
 def test_killAlreadyRunningServer(local_server):
-    with open(local_server._pid_path, "w+") as f:
+    with open(local_server._pid_path(), "w+") as f:
         f.write("42")
 
     mock_process = MagicMock()
