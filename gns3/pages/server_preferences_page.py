@@ -235,7 +235,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             # We copy to be able to detect the change with the original element
             # when we apply the settings
             self._remote_computes[compute.id()] = copy.copy(compute)
-            self.uiServersComboBox.addItem(compute.name(), compute)
         self._populateRemoteServersTree()
 
     def savePreferences(self):
