@@ -466,6 +466,8 @@ It is your responsability to check if you have the right to distribute the image
         self._main_window.uiGraphicsView.createNodeItem(node, node_data["symbol"], node_data["x"], node_data["y"])
 
     def createLink(self, link_data):
+        source_port = None
+        destination_port = None
         if len(link_data["nodes"]) == 2:
             source_node = self.getNodeFromUuid(link_data["nodes"][0]["node_id"])
             destination_node = self.getNodeFromUuid(link_data["nodes"][1]["node_id"])
@@ -483,6 +485,8 @@ It is your responsability to check if you have the right to distribute the image
                 if port.adapterNumber() == link_side["adapter_number"] and port.portNumber() == link_side["port_number"]:
                     destination_port = port
                     break
+        if source_port is None or destination_port is None:
+                return
         self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, link_id=link_data["link_id"], nodes=link_data["nodes"])
 
     def createDrawing(self, drawing_data):
