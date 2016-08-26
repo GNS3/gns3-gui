@@ -70,7 +70,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         self.uiTreeWidget.setMaximumWidth(self.uiTreeWidget.sizeHintForColumn(0) + 10)
 
         # Something has change?
-        self._modified = False
+        self._modified_pages = set()
 
     def _loadPreferencePages(self):
         """
@@ -136,10 +136,16 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
 
     def _preferenceChangeSlot(self, *args):
         """
-        Called when somthing change in the preference dialog
+        Called when something change in the preference dialog
         """
+
+        # Found the page with the change
+        widget = self.sender()
+        while widget.parent() != self.uiStackedWidget:
+            widget = widget.parent()
+
         self._applyButton.setEnabled(True)
-        self._modified = True
+        self._modified_pages.add(widget)
 
     def _showPreferencesPageSlot(self, current, previous):
         """
@@ -179,7 +185,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
                 success = False
         if success:
             self._applyButton.setEnabled(False)
-            self._modified = False
+            self._modified_pages = set()
         return success
 
     def reject(self):
@@ -187,10 +193,12 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         Closes this dialog.
         """
 
-        if self._modified:
+        if len(self._modified_pages) > 0:
+            # Get the title of pages with modifications
+            pages_title = ', '.join([ page.windowTitle() for page in self._modified_pages])
             reply = QtWidgets.QMessageBox.warning(self,
                                                   "Preferences",
-                                                  "You have unsaved preferences.\n\nContinue without saving?",
+                                                  "You have unsaved preferences in {}.\n\nContinue without saving?".format(pages_title),
                                                   QtWidgets.QMessageBox.Yes,
                                                   QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
