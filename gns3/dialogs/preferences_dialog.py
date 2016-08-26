@@ -124,7 +124,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         # Class name, changed signal
         widget_to_watch = {
             QtWidgets.QLineEdit: "textChanged",
-            QtWidgets.QTreeWidget: "itemChanged",
+            #QtWidgets.QTreeWidget: "itemChanged",
             QtWidgets.QComboBox: "currentIndexChanged",
             QtWidgets.QSpinBox: "valueChanged",
             QtWidgets.QAbstractButton: "pressed"
@@ -144,8 +144,10 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         while widget.parent() != self.uiStackedWidget:
             widget = widget.parent()
 
-        self._applyButton.setEnabled(True)
-        self._modified_pages.add(widget)
+        # The widget can trigger signal before the end of init due to async api call
+        if not hasattr(widget, 'pageInitialized') or widget.pageInitialized():
+            self._applyButton.setEnabled(True)
+            self._modified_pages.add(widget)
 
     def _showPreferencesPageSlot(self, current, previous):
         """

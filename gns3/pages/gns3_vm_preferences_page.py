@@ -40,9 +40,16 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.setupUi(self)
         self._engines = []
         self._old_settings = None
-        self.uiGNS3VMEngineComboBox.currentIndexChanged.connect(self._engineChangedSlot)
+        self._initialized = False
         self.uiRefreshPushButton.clicked.connect(self._refreshVMSlot)
+        self.uiGNS3VMEngineComboBox.currentIndexChanged.connect(self._engineChangedSlot)
         Controller.instance().connected_signal.connect(self.loadPreferences)
+
+    def pageInitialized(self):
+        """
+        :returns: Boolean True when the preference page is initialized
+        """
+        return self._initialized
 
     def _engineChangedSlot(self, index):
         index = self.uiGNS3VMEngineComboBox.currentIndex()
@@ -54,7 +61,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         """
         Loads the preference from controller.
         """
-        Controller.instance().get("/gns3vm/engines", self._listEnginesCallback)
+        Controller.instance().get("/gns3vm", self._getSettingsCallback)
 
     def _getSettingsCallback(self, result, error=False, **kwargs):
         if error:
@@ -70,6 +77,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
         index = self.uiGNS3VMEngineComboBox.findData(self._settings["engine"])
         self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
+        Controller.instance().get("/gns3vm/engines", self._listEnginesCallback)
 
     def _listEnginesCallback(self, result, error=False, **kwargs):
         self.uiGNS3VMEngineComboBox.clear()
@@ -77,7 +85,8 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         for engine in self._engines:
             self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
             self.uiGNS3VMEngineComboBox.setItemData(self.uiGNS3VMEngineComboBox.count() - 1, engine["description"], QtCore.Qt.UserRole + 1)
-        Controller.instance().get("/gns3vm", self._getSettingsCallback)
+        index = self.uiGNS3VMEngineComboBox.findData(self._settings["engine"])
+        self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
 
     def _refreshVMSlot(self):
         engine_id = self.uiGNS3VMEngineComboBox.currentData()
@@ -92,6 +101,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.uiVMListComboBox.clear()
         for vm in result:
             self.uiVMListComboBox.addItem(vm["vmname"], vm["vmname"])
+        self._initialized = True
 
     def savePreferences(self):
         """
@@ -100,7 +110,6 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         if not self._old_settings:
             return
 
-        #TODO: How to handle when no VM in the list?
         settings = {
             "enable": self.uiEnableVMCheckBox.isChecked(),
             "vmname": self.uiVMListComboBox.currentData(),
