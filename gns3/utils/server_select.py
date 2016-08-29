@@ -20,13 +20,14 @@ from ..compute_manager import ComputeManager
 from ..qt import QtWidgets
 
 
-def server_select(parent, allow_local_server=True):
+def server_select(parent, node_type=None, allow_local_server=True):
     """
     Show a popup asking user to choose a server
 
     If only local server is available return it by default
 
     :params parent: Parent window
+    :param node_type: Compute should support this node type (None allow all)
     :params allow_local_server: Boolean Is local server allowed
     :returns: Server or None
     """
@@ -34,15 +35,13 @@ def server_select(parent, allow_local_server=True):
     server_list = []
 
     for compute in ComputeManager.instance().computes():
-        if compute.id() == "local" and allow_local_server:
-            server_list.append(compute.name())
-
-    for compute in ComputeManager.instance().computes():
-        if not compute.id() == "local":
+        if (compute.id() == "local" and allow_local_server) or compute.id() != "local":
+            if node_type and node_type not in compute.capabilities().get("node_types", []):
+                continue
             server_list.append(compute.name())
 
     if len(server_list) == 0:
-        raise ValueError("No server available")
+        raise ValueError("No server available for this node type")
     elif len(server_list) == 1:
         selection = server_list[0]
     else:

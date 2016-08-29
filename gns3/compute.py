@@ -35,6 +35,9 @@ class Compute:
         self._password = None
         self._cpu_usage_percent = None
         self._memory_usage_percent = None
+        self._capabilities = {
+            "node_types": []
+        }
 
     def id(self):
         return self._compute_id
@@ -89,6 +92,12 @@ class Compute:
 
     def memoryUsagePercent(self):
         return self._memory_usage_percent
+
+    def capabilities(self):
+        return self._capabilities
+
+    def setCapabilities(self, val):
+        self._capabilities = val
 
     def __str__(self):
         return self._compute_id

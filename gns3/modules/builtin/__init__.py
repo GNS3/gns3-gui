@@ -332,7 +332,9 @@ class Builtin(Module):
                  "name": node_class.symbolName(),
                  "categories": node_class.categories(),
                  "symbol": node_class.defaultSymbol(),
-                 "builtin": True}
+                 "builtin": True,
+                 "node_type": node_class.URL_PREFIX
+                }
             )
 
         # add custom cloud node templates

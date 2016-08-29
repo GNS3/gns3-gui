@@ -85,3 +85,19 @@ def test_server_select_local_server_and_remote_user_cancel(main_window, remote_s
         assert mock.called
         args, kwargs = mock.call_args
         assert server is None
+
+
+
+def test_server_select_node_type(main_window, remote_server, local_server):
+    """
+    If only one server support this node type select it by default
+    """
+
+    remote_server.setCapabilities({"node_types": ["dynamips", "nat"]})
+    local_server.setCapabilities({"node_types": ["dynamips", "cloud"]})
+    with patch("gns3.qt.QtWidgets.QInputDialog.getItem", return_value=(local_server.name(), True)) as mock:
+        server = server_select(main_window, node_type="nat")
+
+        assert not mock.called
+        assert server == remote_server
+

@@ -84,6 +84,7 @@ class ComputeManager(QtCore.QObject):
         self._computes[compute_id].setUser(compute["user"])
         self._computes[compute_id].setCpuUsagePercent(compute["cpu_usage_percent"])
         self._computes[compute_id].setMemoryUsagePercent(compute["memory_usage_percent"])
+        self._computes[compute_id].setCapabilities(compute["capabilities"])
 
         if new_node:
             self.created_signal.emit(compute_id)

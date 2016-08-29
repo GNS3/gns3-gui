@@ -1441,7 +1441,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             allow_local_server = True
         else:
             allow_local_server = module_instance.settings()["use_local_server"]
-        server = server_select(mainwindow, allow_local_server=allow_local_server)
+        server = server_select(mainwindow, node_data.get("node_type"), allow_local_server=allow_local_server)
         if server is None:
             raise ModuleError("Please select a server")
         return server
