@@ -22,6 +22,7 @@ from .controller import Controller
 
 import copy
 import logging
+import datetime
 log = logging.getLogger(__name__)
 
 
@@ -36,6 +37,19 @@ class ComputeManager(QtCore.QObject):
         self._controller = Controller.instance()
         self._controller.connected_signal.connect(self._controllerConnectedSlot)
         self._controllerConnectedSlot()
+
+        # If we receive fresh data from the notification feed no need to refresh via an API call
+        self._last_computes_refresh = datetime.datetime.now().timestamp()
+
+        self._timer = QtCore.QTimer()
+        self._timer.setInterval(1000)
+        self._timer.timeout.connect(self._refreshComputesSlot)
+        self._timer.start()
+
+    def _refreshComputesSlot(self):
+        if self._controller.connected() and datetime.datetime.now().timestamp() - self._last_computes_refresh > 5:
+            self._last_computes_refresh = datetime.datetime.now().timestamp()
+            self._controller.get("/computes", self._listComputesCallback)
 
     def _controllerConnectedSlot(self):
         if self._controller.connected():
@@ -54,6 +68,8 @@ class ComputeManager(QtCore.QObject):
         Called when we received data from a compute
         node.
         """
+        self._last_computes_refresh = datetime.datetime.now().timestamp()
+
         new_node = False
         compute_id = compute["compute_id"]
         if compute_id not in self._computes:
