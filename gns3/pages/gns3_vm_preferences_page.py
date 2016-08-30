@@ -53,8 +53,13 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
 
     def _engineChangedSlot(self, index):
         index = self.uiGNS3VMEngineComboBox.currentIndex()
-        description = self.uiGNS3VMEngineComboBox.itemData(index, QtCore.Qt.UserRole + 1)
-        self.uiEngineDescriptionLabel.setText(description)
+        engine_id = self.uiGNS3VMEngineComboBox.itemData(index, QtCore.Qt.UserRole)
+        for engine in self._engines:
+            if engine["engine_id"] == engine_id:
+                break
+        self.uiEngineDescriptionLabel.setText(engine["description"])
+        self.uiHeadlessCheckBox.setVisible(engine["support_headless"])
+        self.uiShutdownCheckBox.setVisible(engine["support_auto_stop"])
         self._refreshVMSlot()
 
     def loadPreferences(self):
@@ -84,7 +89,6 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self._engines = result
         for engine in self._engines:
             self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
-            self.uiGNS3VMEngineComboBox.setItemData(self.uiGNS3VMEngineComboBox.count() - 1, engine["description"], QtCore.Qt.UserRole + 1)
         index = self.uiGNS3VMEngineComboBox.findData(self._settings["engine"])
         self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
 
