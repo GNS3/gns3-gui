@@ -78,8 +78,6 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.uiEnableVMCheckBox.setChecked(self._settings["enable"])
         self.uiShutdownCheckBox.setChecked(self._settings["auto_stop"])
         self.uiHeadlessCheckBox.setChecked(self._settings["headless"])
-        index = self.uiGNS3VMEngineComboBox.findText(self._settings["vmname"])
-        self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
         index = self.uiGNS3VMEngineComboBox.findData(self._settings["engine"])
         self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
         Controller.instance().get("/gns3vm/engines", self._listEnginesCallback)
@@ -105,6 +103,12 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.uiVMListComboBox.clear()
         for vm in result:
             self.uiVMListComboBox.addItem(vm["vmname"], vm["vmname"])
+        index = self.uiVMListComboBox.findText(self._settings["vmname"])
+        if index == -1:
+            index = self.uiVMListComboBox.findText("GNS3 VM")
+            if index == -1:
+                index = 0
+        self.uiVMListComboBox.setCurrentIndex(index)
         self._initialized = True
 
     def savePreferences(self):
