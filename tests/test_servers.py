@@ -20,6 +20,8 @@ import json
 import pytest
 import binascii
 import subprocess
+import logging
+
 
 from gns3.servers import Servers
 from gns3.qt import QtWidgets
@@ -206,6 +208,9 @@ def test_handle_handleSslErrors():
 
 @pytest.mark.skipif(sys.platform.startswith('win') is True, reason='Not for windows')
 def test_startLocalServer(tmpdir, local_config):
+    # Make sure test run at Debug log level
+    logging.getLogger().setLevel(logging.DEBUG)
+
     local_server_path = str(tmpdir / "gns3server")
     open(local_server_path, "w+").close()
 
