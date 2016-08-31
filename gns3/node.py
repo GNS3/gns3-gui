@@ -17,6 +17,7 @@
 
 
 import os
+import uuid
 import pathlib
 from gns3.local_server import LocalServer
 from gns3.ports.port import Port
@@ -34,7 +35,9 @@ class Node(BaseNode):
 
         super().__init__(module, compute, project)
 
-        self._node_id = None
+        self._created = False
+        self._node_id = str(uuid.uuid4())
+
         self._node_directory = None
         self._command_line = None
         self._always_on = False
@@ -193,15 +196,17 @@ class Node(BaseNode):
         """
         :returns: Body for Create and update
         """
+        assert self._node_id is not None
         body = {"properties": {},
                 "node_type": self.URL_PREFIX,
+                "node_id": self._node_id,
                 "compute_id": self._compute.id()}
 
         # We have two kind of properties. The general properties common to all
         # nodes and the specific that we need to put in the properties field
-        node_general_properties = ("name", "node_id", "console", "console_type", "x", "y", "z", "symbol", "label")
+        node_general_properties = ("name", "console", "console_type", "x", "y", "z", "symbol", "label")
         # No need to send this back to the server because it's read only
-        ignore_properties = ("console_host", "symbol_url", "width", "height")
+        ignore_properties = ("console_host", "symbol_url", "width", "height", "node_id")
         for key, value in params.items():
             if key in node_general_properties:
                 body[key] = value
@@ -233,8 +238,8 @@ class Node(BaseNode):
             name = default_name_format
 
         params["name"] = name
-        if node_id:
-            params["node_id"] = node_id
+        if node_id is not None:
+            self._node_id = node_id
 
         body = self._prepareBody(params)
         self.controllerHttpPost("/nodes", self.createNodeCallback, body=body, timeout=timeout)
@@ -255,6 +260,7 @@ class Node(BaseNode):
             return False
 
         result = self._parseResponse(result)
+        self._created = True
         self._createCallback(result)
 
         if self._loading:
@@ -277,12 +283,10 @@ class Node(BaseNode):
         Update the node on the controller
         """
 
-        if not self._node_id:
-            return
-
-        log.debug("{} is updating settings: {}".format(self.name(), params))
-        body = self._prepareBody(params)
-        self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout)
+        if self._created:
+            log.debug("{} is updating settings: {}".format(self.name(), params))
+            body = self._prepareBody(params)
+            self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout)
 
     def updateNodeCallback(self, result, error=False, **kwargs):
         """
@@ -358,7 +362,7 @@ class Node(BaseNode):
         """
 
         log.info("{} is being deleted".format(self.name()))
-        if self._node_id and not skip_controller:
+        if not skip_controller:
             self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()

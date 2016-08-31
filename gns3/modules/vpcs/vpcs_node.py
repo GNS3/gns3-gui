@@ -43,7 +43,6 @@ class VPCSNode(Node):
         super().__init__(module, server, project)
 
         log.info("VPCS instance is being created")
-        self._node_id = None
 
         vpcs_settings = {"console_host": None,
                          "startup_script": None,

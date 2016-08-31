@@ -17,6 +17,7 @@
 
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg
 
+import uuid
 import logging
 import binascii
 log = logging.getLogger(__name__)
@@ -32,6 +33,8 @@ class DrawingItem:
 
     def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, rotation=0, **kws):
         self._id = drawing_id
+        if self._id is None:
+            self._id = str(uuid.uuid4())
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable | QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
 
         from ..main_window import MainWindow
@@ -129,6 +132,7 @@ class DrawingItem:
 
     def __json__(self):
         data = {
+            "drawing_id": self._id,
             "x": int(self.pos().x()),
             "y": int(self.pos().y()),
             "z": int(self.zValue()),

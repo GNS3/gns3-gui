@@ -48,7 +48,6 @@ class IOUDevice(Node):
         super().__init__(module, server, project)
 
         log.info("IOU instance is being created")
-        self._node_id = None
 
         iou_device_settings = {"path": "",
                                "md5sum": "",

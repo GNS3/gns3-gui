@@ -20,6 +20,7 @@ Manages and stores everything needed for a connection between 2 devices.
 """
 
 import re
+import uuid
 
 from .qt import QtCore
 from .controller import Controller
@@ -86,6 +87,7 @@ class Link(QtCore.QObject):
         if self._link_id:
             self._linkCreatedCallback({"link_id": self._link_id, "nodes": nodes})
         else:
+            self._link_id = str(uuid.uuid4())
             self._creator = True
             Controller.instance().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
 
