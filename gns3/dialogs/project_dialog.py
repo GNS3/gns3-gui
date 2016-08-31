@@ -66,10 +66,13 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             self.uiLocationBrowserToolButton.setVisible(False)
             self.uiOpenProjectPushButton.setVisible(False)
 
-
-        Controller.instance().get("/projects", self._projectListCallback)
         self.uiProjectsTreeWidget.itemDoubleClicked.connect(self._projectsTreeWidgetDoubleClickedSlot)
         self.uiDeleteProjectButton.clicked.connect(self._deleteProjectSlot)
+        self.uiRefreshProjectsPushButton.clicked.connect(self._refreshProjects)
+        self._refreshProjects()
+
+    def _refreshProjects(self):
+        Controller.instance().get("/projects", self._projectListCallback)
 
     def _settingsClickedSlot(self):
         """
@@ -87,15 +90,20 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             QtWidgets.QMessageBox.critical(self, "Delete project", "No project selected")
             return
 
-        project_id = current.data(0, QtCore.Qt.UserRole)
-        project_name = current.data(1, QtCore.Qt.UserRole)
+        projects_to_delete = set()
+        for project in self.uiProjectsTreeWidget.selectedItems():
+            project_id = project.data(0, QtCore.Qt.UserRole)
+            project_name = project.data(1, QtCore.Qt.UserRole)
 
-        reply = QtWidgets.QMessageBox.warning(self,
-                                       "Delete project",
-                                       'Delete project "{}"?\nThis cannot be reverted.'.format(project_name),
-                                       QtWidgets.QMessageBox.Yes,
-                                       QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+            reply = QtWidgets.QMessageBox.warning(self,
+                                           "Delete project",
+                                           'Delete project "{}"?\nThis cannot be reverted.'.format(project_name),
+                                           QtWidgets.QMessageBox.Yes,
+                                           QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                projects_to_delete.add(project_id)
+
+        for project_id in projects_to_delete:
             Controller.instance().delete("/projects/{}".format(project_id), self._deleteProjectCallback)
 
     def _deleteProjectCallback(self, result, error=False, **kwargs):
@@ -190,7 +198,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 log.error("Error while overwrite project: {}".format(result["message"]))
             return
         self._projects = []
-        Controller.instance().get("/projects", self._projectListCallback)
+        self._refreshProjects()
         self.done(True)
 
     def _newProject(self):

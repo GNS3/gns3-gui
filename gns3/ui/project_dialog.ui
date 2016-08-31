@@ -153,6 +153,18 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QTreeWidget" name="uiProjectsTreeWidget">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerShowSortIndicator" stdset="0">
+          <bool>true</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>Name</string>
@@ -191,6 +203,13 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiRefreshProjectsPushButton">
+           <property name="text">
+            <string>Refresh list</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
