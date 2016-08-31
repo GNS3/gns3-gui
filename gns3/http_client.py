@@ -414,7 +414,12 @@ class HTTPClient(QtCore.QObject):
         response.finished.connect(qpartial(self._processResponse, response, server, callback, context, body, ignoreErrors))
 
         if downloadProgressCallback is not None:
-            response.downloadProgress.connect(qpartial(self._processDownloadProgress, response, downloadProgressCallback, context, server))
+            response.readyRead.connect(qpartial(self._readyReadySlot, response, downloadProgressCallback, context, server))
+
+
+        if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
+            request_canceled = qpartial(self._requestCanceled, response, context)
+            HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
 
         if showProgress:
             response.uploadProgress.connect(qpartial(self._notify_progress_upload, context["query_id"]))
@@ -428,21 +433,12 @@ class HTTPClient(QtCore.QObject):
 
         return response
 
-    def _timeoutSlot(self, response):
-        """
-        Beware it's call for all request you need to check the status of the response
-        """
-        # We check if we received HTTP headers
-        if not len(response.rawHeaderList()) > 0:
-            response.abort()
-
-    def _processDownloadProgress(self, response, callback, context, server, bytesReceived, bytesTotal):
+    def _readyReadySlot(self, response, callback, context, server):
         """
         Process a packet receive on the notification feed.
         The feed can contains qpartial JSON. If we found a
         part of a JSON we keep it for the next packet
         """
-
         if response.error() != QtNetwork.QNetworkReply.NoError:
             return
 
@@ -468,9 +464,14 @@ class HTTPClient(QtCore.QObject):
         else:
             callback(content, server=server, context=context)
 
-        if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
-            request_canceled = qpartial(self._requestCanceled, response, context)
-            HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
+
+    def _timeoutSlot(self, response):
+        """
+        Beware it's call for all request you need to check the status of the response
+        """
+        # We check if we received HTTP headers
+        if not len(response.rawHeaderList()) > 0:
+            response.abort()
 
     def _requestCanceled(self, response, context):
 
