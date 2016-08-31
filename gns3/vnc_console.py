@@ -40,6 +40,7 @@ def vncConsole(host, port, command):
     # replace the place-holders by the actual values
     command = command.replace("%h", host)
     command = command.replace("%p", str(port))
+    command = command.replace("%P", str(port - 5900))
 
     try:
         log.info('starting VNC program "{}"'.format(command))
