@@ -43,6 +43,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         self.setupUi(self)
 
         self._main_window = parent
+        self._projects = []
         self._project_settings = {}
         self.uiNameLineEdit.setText(default_project_name)
         self.uiLocationLineEdit.setText(os.path.join(Topology.instance().projectsDirPath(), default_project_name))
@@ -107,6 +108,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         self.uiProjectsTreeWidget.clear()
         self.uiDeleteProjectButton.setEnabled(False)
         if not error:
+            self._projects = result
             for project in result:
                 path = os.path.join(project["path"], project["filename"])
                 item =  QtWidgets.QTreeWidgetItem([project["name"], project["status"], path])
@@ -182,12 +184,38 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             menu.addAction(action)
         menu.exec_(QtGui.QCursor.pos())
 
+    def _overwriteProjectCallback(self, result, error=False, **kwargs):
+        if error:
+            if "message" in result:
+                log.error("Error while overwrite project: {}".format(result["message"]))
+            return
+        self._projects = []
+        Controller.instance().get("/projects", self._projectListCallback)
+        self.done(True)
+
     def _newProject(self):
         project_name = self.uiNameLineEdit.text()
 
         if not project_name:
             QtWidgets.QMessageBox.critical(self, "New project", "Project name is empty")
             return False
+
+        for existing_project in self._projects:
+            if project_name == existing_project["name"]:
+                reply = QtWidgets.QMessageBox.warning(self,
+                                                       "New project",
+                                                       "Project {} already exists, overwrite it?".format(project_name),
+                                                       QtWidgets.QMessageBox.Yes,
+                                                       QtWidgets.QMessageBox.No)
+
+                if reply == QtWidgets.QMessageBox.Yes:
+                    Controller.instance().delete("/projects/{}".format(existing_project["project_id"]), self._overwriteProjectCallback)
+
+                # In all cases we cancel the new project and if project success to delete
+                # we will call done again
+                return False
+
+
         self._project_settings["project_name"] = project_name
 
         if not Controller.instance().isRemote():
@@ -195,15 +223,6 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             if not project_location:
                 QtWidgets.QMessageBox.critical(self, "New project", "Project location is empty")
                 return False
-
-            if os.path.isdir(project_location):
-                reply = QtWidgets.QMessageBox.question(self,
-                                                       "New project",
-                                                       "Location {} already exists, overwrite it?".format(project_location),
-                                                       QtWidgets.QMessageBox.Yes,
-                                                       QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.No:
-                    return False
 
             self._project_settings["project_path"] = os.path.join(project_location, project_name + ".gns3")
             self._project_settings["project_files_dir"] = project_location
