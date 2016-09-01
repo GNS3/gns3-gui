@@ -745,6 +745,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to open the setup wizard.
         """
 
+        #FIXME: Setup wizard has been turn off until we move it to 2.0
+        return
         with Progress.instance().context(min_duration=0):
             setup_wizard = SetupWizard(self)
             setup_wizard.show()
