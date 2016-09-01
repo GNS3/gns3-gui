@@ -1004,6 +1004,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self._analytics_client.sendScreenView("Main Window")
 
+        self.uiGraphicsView.setEnabled(False)
         if self._open_file_at_startup:
             self.loadPath(self._open_file_at_startup)
         else:
