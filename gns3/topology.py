@@ -24,14 +24,12 @@ import json
 import xml.etree.ElementTree as ET
 
 
-from .qt import QtCore
 from .local_server import LocalServer
 from .node import Node
 from .qt import QtCore, QtWidgets
 
 from .utils.process_files_worker import ProcessFilesWorker
 from .utils.progress_dialog import ProgressDialog
-from .utils.message_box import MessageBox
 from .utils.export_project_worker import ExportProjectWorker
 from .utils.import_project_worker import ImportProjectWorker
 from .dialogs.file_editor_dialog import FileEditorDialog

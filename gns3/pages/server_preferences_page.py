@@ -30,7 +30,6 @@ log = logging.getLogger(__name__)
 from gns3.qt import QtNetwork, QtWidgets
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..topology import Topology
-from ..utils.message_box import MessageBox
 from ..utils.progress_dialog import ProgressDialog
 from ..settings import LOCAL_SERVER_SETTINGS
 from ..dialogs.edit_compute_dialog import EditComputeDialog
@@ -280,7 +279,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                 local_nodes = []
                 topology = Topology.instance()
                 if len(topology.nodes()):
-                    MessageBox(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing the local server settings")
+                    QtWidgets.QMessageBox.critical(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing the local server settings")
                     return
                 LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
         else:
