@@ -65,6 +65,9 @@ class Topology(QtCore.QObject):
         self._images = []
         self._project = None
         self._main_window = None
+        # If set the project is loaded when we got connection to the controller
+        # usefull when we open a project from cli
+        self._project_to_load_path = None
         Controller.instance().connected_signal.connect(self._controllerConnectedSlot)
 
     def _controllerConnectedSlot(self):
@@ -72,7 +75,13 @@ class Topology(QtCore.QObject):
         We reset current project because the remote controller could have
         change location
         """
-        self.setProject(None)
+
+        if self._project_to_load_path:
+            path = self._project_to_load_path
+            self.__project_to_load_path = None
+            self.loadProject(path)
+        else:
+            self.setProject(None)
 
     def setMainWindow(self, main_window):
         self._main_window = main_window
@@ -120,6 +129,8 @@ class Topology(QtCore.QObject):
         self.project_changed_signal.emit()
 
     def _projectUpdatedSlot(self):
+        if not self._project:
+            return
         self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
         project_file = os.path.join(self._project.filesDir(), self._project.filename())
         if os.path.exists(project_file):
@@ -157,6 +168,9 @@ class Topology(QtCore.QObject):
         :param path: path to project file
         """
 
+        if not Controller.instance().connected():
+            self._project_to_load_path = path
+            return
         from .project import Project
         self.setProject(Project())
         self._project.load(path)
