@@ -132,5 +132,5 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
     def _saveSettingsCallback(self, result, error=False, **kwargs):
         if error:
             if "message" in result:
-                log.error("Error while save settings: {}".format(result["message"]))
+                QtWidgets.QMessageBox.critical(self, "Save settings", "Error while save settings: {}".format(result["message"]))
             return

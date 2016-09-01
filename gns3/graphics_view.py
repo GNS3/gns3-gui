@@ -1468,9 +1468,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 raise ModuleError("Could not find any module for {}".format(node_class))
 
             node = node_module.instantiateNode(node_class, self.allocateCompute(node_data, instance), self._topology.project())
-            node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
-            node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
-            node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
         # If no server is available a ValueError is raised
         except (ModuleError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
@@ -1488,7 +1485,25 @@ class GraphicsView(QtWidgets.QGraphicsView):
         node_item = NodeItem(node)
         self.scene().addItem(node_item)
         self._topology.addNode(node)
+
+        node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
+        node.error_signal.connect(self._displayNodeErrorSlot)
+        node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
+        node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
+        node.server_error_signal.connect(self._displayNodeErrorSlot)
+
         return node_item
+
+    def _displayNodeErrorSlot(self, node_id, message):
+        """
+        Show error send by a node to the user
+        """
+        node = Topology.instance().getNode(node_id)
+        name = "Node"
+        if node:
+            if node.name():
+                name = node.name()
+        QtWidgets.QMessageBox.critical(self._main_window, name, message.strip())
 
     def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, drawing_id=None):
         if type == "ellipse":

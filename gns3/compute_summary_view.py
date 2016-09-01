@@ -62,6 +62,8 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
             text = "{} CPU {}%, RAM {}%".format(text, self._compute.cpuUsagePercent(), self._compute.memoryUsagePercent())
 
         self.setText(0, text)
+        self.setToolTip(0, text)
+
         if self._compute.connected():
             self._status = "connected"
             if usage is None or (self._compute.cpuUsagePercent() < 90 and self._compute.memoryUsagePercent() < 90):

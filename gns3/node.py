@@ -253,8 +253,7 @@ class Node(BaseNode):
         :returns: Boolean success or not
         """
         if error:
-            log.error("Error while setting up node: {}".format(result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
+            self.server_error_signal.emit(self.id(), "Error while setting up node: {}".format(result["message"]))
             self.deleted_signal.emit()
             self._module.removeNode(self)
             return False

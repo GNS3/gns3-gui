@@ -470,9 +470,6 @@ It is your responsability to check if you have the right to distribute the image
             raise ModuleError("Could not find any module for {}".format(node_class))
 
         node = node_module.instantiateNode(node_class, ComputeManager.instance().getCompute(node_data["compute_id"]), self._project)
-        node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
-        node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
-        node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
         node.createNodeCallback(node_data)
 
         self._main_window.uiGraphicsView.createNodeItem(node, node_data["symbol"], node_data["x"], node_data["y"])

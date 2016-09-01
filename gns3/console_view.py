@@ -235,7 +235,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         text = "Server error {server}:{name} {message}".format(server=server,
                                                                name=name,
                                                                message=message)
-        self.write(text, error=True)
+        self.write(text.strip(), error=True)
         self.write("\n")
 
     def _run(self):
