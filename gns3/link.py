@@ -276,7 +276,10 @@ class Link(QtCore.QObject):
         if error:
             log.error("Error while starting capture on link: {}".format(result["message"]))
             return
-        self._capture_file_path = result["capture_file_path"]
+        if Controller.instance().isRemote():
+            pass
+        else:
+            self._capture_file_path = result["capture_file_path"]
         self.setCapturing(True)
 
     def stopCapture(self):

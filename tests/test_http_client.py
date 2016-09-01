@@ -168,7 +168,7 @@ def test_progress_callback(http_client, response):
     assert progress.remove_query_signal.emit.called
 
 
-def test_processDownloadProgress(http_client):
+def test_readyReadySlot(http_client):
 
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
@@ -179,14 +179,14 @@ def test_processDownloadProgress(http_client):
 
     response.readAll.return_value = b'{"action": "ping"}'
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
+    http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
 
     assert callback.called
     args, kwargs = callback.call_args
     assert args[0] == {"action": "ping"}
 
 
-def test_processDownloadProgressHTTPError(http_client):
+def test_readyReadySlotHTTPError(http_client):
 
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
@@ -195,12 +195,12 @@ def test_processDownloadProgressHTTPError(http_client):
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 404
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
+    http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
 
     assert not callback.called
 
 
-def test_processDownloadProgressConnectionRefusedError(http_client):
+def test_readyReadySlotConnectionRefusedError(http_client):
 
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
@@ -209,12 +209,12 @@ def test_processDownloadProgressConnectionRefusedError(http_client):
     response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
     response.attribute.return_value = 200
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
+    http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
 
     assert not callback.called
 
 
-def test_processDownloadProgressPartialJSON(http_client):
+def test_readyReadySlotPartialJSON(http_client):
     """
     We can read an incomplete JSON on the network and we need
     to wait for the next part"""
@@ -226,19 +226,19 @@ def test_processDownloadProgressPartialJSON(http_client):
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 200
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
+    http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
 
     assert not callback.called
 
     response.readAll.return_value = b'}\n{"a": "b"'
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
+    http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
 
     assert callback.call_count == 1
     args, kwargs = callback.call_args
     assert args[0] == {"action": "ping"}
 
 
-def test_processDownloadProgressPartialBytes(http_client):
+def test_readyReadySlotPartialBytes(http_client):
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
     server = unittest.mock.MagicMock()
@@ -247,7 +247,7 @@ def test_processDownloadProgressPartialBytes(http_client):
     response.error.return_value = QtNetwork.QNetworkReply.NoError
     response.attribute.return_value = 200
 
-    http_client._processDownloadProgress(response, callback, {"query_id": "bla"}, server, 10, 100)
+    http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
 
     assert callback.call_count == 1
     args, kwargs = callback.call_args

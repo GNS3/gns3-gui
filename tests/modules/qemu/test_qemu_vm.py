@@ -34,6 +34,7 @@ def test_qemu_vm_create(qemu_vm, project):
         mock.assert_called_with("/nodes",
                                 qemu_vm.createNodeCallback,
                                 body={
+                                    'node_id': qemu_vm._node_id,
                                     'name': 'VMNAME',
                                     'properties': {
                                         'linked_clone': True,
@@ -66,6 +67,7 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
         mock.assert_called_with("/nodes",
                                 qemu_vm.createNodeCallback,
                                 body={
+                                    'node_id': qemu_vm._node_id,
                                     'name': 'VMNAME',
                                     'properties': {
                                         'linked_clone': True,
@@ -104,7 +106,10 @@ def test_update(qemu_vm):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=qemu_vm.node_id())
-        assert kwargs["body"] == {'compute_id': 'local', 'name': 'QEMU2', 'node_type': 'qemu', 'properties': {}}
+        assert kwargs["body"] == {
+            'node_id': qemu_vm._node_id,
+            'compute_id': 'local',
+            'name': 'QEMU2', 'node_type': 'qemu', 'properties': {}}
 
         # Callback
         args[1]({"name": "QEMU2"})

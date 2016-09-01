@@ -35,7 +35,6 @@ class Node(BaseNode):
 
         super().__init__(module, compute, project)
 
-        self._created = False
         self._node_id = str(uuid.uuid4())
 
         self._node_directory = None
@@ -282,7 +281,7 @@ class Node(BaseNode):
         Update the node on the controller
         """
 
-        if self._created:
+        if self.initialized():
             log.debug("{} is updating settings: {}".format(self.name(), params))
             body = self._prepareBody(params)
             self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout)

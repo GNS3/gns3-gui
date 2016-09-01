@@ -56,7 +56,9 @@ def test_iou_device_create(iou_device, project, fake_iourc):
         iou_device.create("/tmp/iou.bin", name="PC 1")
         mock.assert_called_with("/nodes",
                                 iou_device.createNodeCallback,
-                                body={'name': 'PC 1',
+                                body={
+                                      'node_id': iou_device._node_id,
+                                      'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
                                           'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
@@ -160,7 +162,9 @@ def test_update(iou_device):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=iou_device.node_id())
-        assert kwargs["body"] == {'name': 'Unreal IOU', 'compute_id': 'local', 'node_type': 'iou', 'properties': {}}
+        assert kwargs["body"] == {
+            'node_id': iou_device._node_id,
+            'name': 'Unreal IOU', 'compute_id': 'local', 'node_type': 'iou', 'properties': {}}
 
         # Callback
         args[1]({"properties": {}})

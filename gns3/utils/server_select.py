@@ -34,11 +34,26 @@ def server_select(parent, node_type=None, allow_local_server=True):
 
     server_list = []
 
+    server_priority = {}
+
     for compute in ComputeManager.instance().computes():
         if (compute.id() == "local" and allow_local_server) or compute.id() != "local":
             if node_type and node_type not in compute.capabilities().get("node_types", []):
                 continue
+
+            # We want local an VM first
+            if compute.id() == "local":
+                server_priority[compute.name()] = 0
+            elif compute.id() == "vm":
+                server_priority[compute.name()] = 5
+            else:
+                server_priority[compute.name()] = 10
             server_list.append(compute.name())
+
+    # Alpha sort
+    server_list = sorted(server_list)
+    # Local and VM first
+    server_list = sorted(server_list, key=lambda compute_name: server_priority[compute_name])
 
     if len(server_list) == 0:
         raise ValueError("No server available for this node type")

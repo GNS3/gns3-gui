@@ -37,6 +37,7 @@ def test_vpcs_device_create(vpcs_device, project, local_server):
         args, kwargs = mock.call_args
         assert args[0] == "/nodes"
         assert kwargs["body"] == {
+            "node_id": vpcs_device._node_id,
             "name": "PC 1",
             "compute_id": local_server.id(),
             "node_type": "vpcs",
@@ -168,7 +169,9 @@ def test_update(vpcs_device):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=vpcs_device.node_id())
-        assert kwargs["body"] == {'name': 'Unreal VPCS', 'compute_id': 'local', 'node_type': 'vpcs', 'properties': {}}
+        assert kwargs["body"] == {
+            'node_id': vpcs_device._node_id,
+            'name': 'Unreal VPCS', 'compute_id': 'local', 'node_type': 'vpcs', 'properties': {}}
 
         # Callback
         args[1]({"startup_script": "echo TEST", "name": "Unreal VPCS"})
@@ -190,4 +193,5 @@ def test_importConfig(vpcs_device, tmpdir):
         assert args[0] == "/nodes/{node_id}".format(node_id=vpcs_device.node_id())
         assert kwargs["body"] == {'compute_id': 'local',
               'node_type': 'vpcs',
+              'node_id': vpcs_device._node_id,
               'properties': {'startup_script': 'echo TEST'}}

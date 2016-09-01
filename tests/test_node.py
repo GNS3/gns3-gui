@@ -32,6 +32,7 @@ def test_create(vpcs_device, local_server):
         assert args[0] == "/nodes"
         assert kwargs["body"] == {
             "name": "PC 1",
+            "node_id": vpcs_device._node_id,
             "compute_id": local_server.id(),
             "node_type": "vpcs",
             "properties": {

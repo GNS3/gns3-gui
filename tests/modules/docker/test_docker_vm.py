@@ -34,6 +34,7 @@ def test_docker_vm_create(project, local_server):
         mock.assert_called_with("/nodes",
                                 docker_vm.createNodeCallback,
                                 body={
+                                    "node_id": docker_vm._node_id,
                                     "compute_id": "local",
                                     "node_type": "docker",
                                     "properties": {
