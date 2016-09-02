@@ -416,7 +416,6 @@ class HTTPClient(QtCore.QObject):
         if downloadProgressCallback is not None:
             response.readyRead.connect(qpartial(self._readyReadySlot, response, downloadProgressCallback, context, server))
 
-
         if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
             request_canceled = qpartial(self._requestCanceled, response, context)
             HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
@@ -433,7 +432,7 @@ class HTTPClient(QtCore.QObject):
 
         return response
 
-    def _readyReadySlot(self, response, callback, context, server):
+    def _readyReadySlot(self, response, callback, context, server, *args):
         """
         Process a packet receive on the notification feed.
         The feed can contains qpartial JSON. If we found a
@@ -463,7 +462,6 @@ class HTTPClient(QtCore.QObject):
                 self._buffer[context["query_id"]] = content
         else:
             callback(content, server=server, context=context)
-
 
     def _timeoutSlot(self, response):
         """

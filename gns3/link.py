@@ -19,8 +19,10 @@
 Manages and stores everything needed for a connection between 2 devices.
 """
 
+import os
 import re
 import uuid
+import tempfile
 
 from .qt import QtCore
 from .controller import Controller
@@ -276,18 +278,48 @@ class Link(QtCore.QObject):
         if error:
             log.error("Error while starting capture on link: {}".format(result["message"]))
             return
+
+        # If the controller is remote we need to stream the PCAP
         if Controller.instance().isRemote():
-            pass
+            (handle, self._capture_file_path) = tempfile.mkstemp()
+            Controller.instance().get(
+                "/projects/{project_id}/links/{link_id}/pcap".format(
+                    project_id=self.project().id(),
+                    link_id=self._link_id),
+                    None,
+                    showProgress=False,
+                    downloadProgressCallback=self._downloadPcapProgress,
+                    timeout=None)
         else:
             self._capture_file_path = result["capture_file_path"]
         self.setCapturing(True)
 
+    def _downloadPcapProgress(self, content, server=None, context={}, **kwargs):
+        """
+        Called for each part of the file of the PCAP
+        """
+        if not self._capture_file_path:
+            return
+        try:
+            with open(self._capture_file_path, 'ab') as f:
+                f.write(content)
+        except OSError as e:
+            log.error("Can't write file {}: {}".format(self._path, e), True)
+            return
+
     def stopCapture(self):
+        if Controller.instance().isRemote():
+            try:
+                os.remove(self._capture_file_path)
+            except OSError as e:
+                log.error("Can't remove file {}".format(self._capture_file_path))
+        self._capture_file_path = None
         Controller.instance().post(
             "/projects/{project_id}/links/{link_id}/stop_capture".format(
                 project_id=self.project().id(),
                 link_id=self._link_id),
             self._stopCaptureCallback)
+
 
     def _stopCaptureCallback(self, result, error=False, **kwargs):
         if error:
