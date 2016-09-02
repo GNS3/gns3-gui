@@ -43,6 +43,7 @@ class ConsoleThread(QtCore.QThread):
         self._command = command
         self._name = node.name()
         self._host = node.consoleHost()
+        assert self._host
         self._port = port
         self._node = node
 
