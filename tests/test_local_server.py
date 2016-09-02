@@ -31,7 +31,7 @@ def local_server_path(tmpdir):
     return str(tmpdir / "gns3server")
 
 
-@pytest.fixture
+@pytest.yield_fixture
 def local_server(local_server_path, tmpdir):
     with open(str(tmpdir / "test.cfg"), "w+") as f:
         f.write("""
@@ -40,9 +40,10 @@ path={}""".format(local_server_path))
 
     LocalServerConfig.instance().setConfigFile(str(tmpdir / "test.cfg"))
     LocalServer._instance = None
-    local_server = LocalServer.instance()
-    local_server._config_directory = str(tmpdir)
-    return local_server
+    with patch("gns3.local_server.LocalServer.localServerAutoStartIfRequire"):
+        local_server = LocalServer.instance()
+        local_server._config_directory = str(tmpdir)
+        yield local_server
 
 
 def test_loadSettings_EmptySettings(tmpdir, local_server):
