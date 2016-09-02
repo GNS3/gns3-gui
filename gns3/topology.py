@@ -496,7 +496,7 @@ It is your responsability to check if you have the right to distribute the image
                     break
         if source_port is None or destination_port is None:
                 return
-        self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, link_id=link_data["link_id"], nodes=link_data["nodes"])
+        self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, **link_data)
 
     def createDrawing(self, drawing_data):
         """

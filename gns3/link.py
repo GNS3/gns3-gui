@@ -52,7 +52,10 @@ class Link(QtCore.QObject):
 
     _instance_count = 1
 
-    def __init__(self, source_node, source_port, destination_node, destination_port, link_id=None, nodes=[]):
+    def __init__(self, source_node, source_port, destination_node, destination_port, link_id=None, **link_data):
+        """
+        :param link_data: Link information from the API
+        """
 
         super().__init__()
 
@@ -74,6 +77,7 @@ class Link(QtCore.QObject):
         self._link_id = link_id
         self._capturing = False
         self._capture_file_path = None
+        self._initialized = False
 
         # Boolean if True we are creatin the first instance of this node
         # if false the node already exist in the topology
@@ -87,14 +91,41 @@ class Link(QtCore.QObject):
 
         body = self._prepareParams()
         if self._link_id:
-            self._linkCreatedCallback({"link_id": self._link_id, "nodes": nodes})
+            link_data["link_id"] = self._link_id
+            self._linkCreatedCallback(link_data)
         else:
             self._link_id = str(uuid.uuid4())
             self._creator = True
             Controller.instance().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
 
+    def _parseResponse(self, result):
+        self._capturing = result.get("capturing", False)
+
+        # If the controller is remote the capture path should be rewrite to something local
+        if Controller.instance().isRemote():
+            if self._capture_file_path is None and result.get("capture_file_path", None) is not None:
+                (handle, self._capture_file_path) = tempfile.mkstemp()
+                Controller.instance().get(
+                    "/projects/{project_id}/links/{link_id}/pcap".format(
+                        project_id=self.project().id(),
+                        link_id=self._link_id),
+                        None,
+                        showProgress=False,
+                        downloadProgressCallback=self._downloadPcapProgress,
+                        timeout=None)
+        else:
+            self._capture_file_path = result["capture_file_path"]
+
+        if "nodes" in result:
+            self._nodes = result["nodes"]
+            self._updateLabels()
+        self.updated_link_signal.emit(self._id)
+
     def creator(self):
         return self._creator
+
+    def initialized(self):
+        return self._initialized
 
     def addPortLabel(self, port, label):
         if port.adapterNumber() == self._source_port.adapterNumber() and port.portNumber() == self._source_port.portNumber() and port.destinationNode() == self._destination_node:
@@ -117,8 +148,7 @@ class Link(QtCore.QObject):
         if error:
             log.error("Error while creating link: {}".format(result["message"]))
             return
-        self._nodes = result["nodes"]
-        self._updateLabels()
+        self._parseResponse(result)
 
     def _updateLabels(self):
         for node in self._nodes:
@@ -163,6 +193,8 @@ class Link(QtCore.QObject):
             log.error("Error while creating link: {}".format(result["message"]))
             return
 
+        self._initialized = True
+
         # let the GUI know about this link has been created
         self.add_link_signal.emit(self._id)
         self._source_port.setLinkId(self._id)
@@ -175,17 +207,10 @@ class Link(QtCore.QObject):
         self._destination_port.setDestinationPort(self._source_port)
 
         self._link_id = result["link_id"]
-
-        if "nodes" in result:
-            self._nodes = result["nodes"]
-            self._updateLabels()
+        self._parseResponse(result)
 
     def link_id(self):
         return self._link_id
-
-    def setCapturing(self, capturing):
-        self._capturing = capturing
-        self.updated_link_signal.emit(self._id)
 
     def capturing(self):
         """
@@ -278,21 +303,7 @@ class Link(QtCore.QObject):
         if error:
             log.error("Error while starting capture on link: {}".format(result["message"]))
             return
-
-        # If the controller is remote we need to stream the PCAP
-        if Controller.instance().isRemote():
-            (handle, self._capture_file_path) = tempfile.mkstemp()
-            Controller.instance().get(
-                "/projects/{project_id}/links/{link_id}/pcap".format(
-                    project_id=self.project().id(),
-                    link_id=self._link_id),
-                    None,
-                    showProgress=False,
-                    downloadProgressCallback=self._downloadPcapProgress,
-                    timeout=None)
-        else:
-            self._capture_file_path = result["capture_file_path"]
-        self.setCapturing(True)
+        self._parseResponse(result)
 
     def _downloadPcapProgress(self, content, server=None, context={}, **kwargs):
         """
@@ -304,15 +315,16 @@ class Link(QtCore.QObject):
             with open(self._capture_file_path, 'ab') as f:
                 f.write(content)
         except OSError as e:
-            log.error("Can't write file {}: {}".format(self._path, e), True)
+            log.error("Can't write file {}: {}".format(self._capture_file_path, e), True)
             return
 
     def stopCapture(self):
         if Controller.instance().isRemote():
-            try:
-                os.remove(self._capture_file_path)
-            except OSError as e:
-                log.error("Can't remove file {}".format(self._capture_file_path))
+            if self._capture_file_path:
+                try:
+                    os.remove(self._capture_file_path)
+                except OSError as e:
+                    log.error("Can't remove file {}".format(self._capture_file_path))
         self._capture_file_path = None
         Controller.instance().post(
             "/projects/{project_id}/links/{link_id}/stop_capture".format(
@@ -320,12 +332,11 @@ class Link(QtCore.QObject):
                 link_id=self._link_id),
             self._stopCaptureCallback)
 
-
     def _stopCaptureCallback(self, result, error=False, **kwargs):
         if error:
             log.error("Error while stopping capture on link: {}".format(result["message"]))
             return
-        self.setCapturing(False)
+        self._parseResponse(result)
 
     def get(self, path, callback, **kwargs):
         """
