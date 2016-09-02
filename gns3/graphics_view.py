@@ -242,7 +242,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         image_item = ImageItem(image_path=image_path, project=self._topology.project())
-
+        image_item.create()
         self.scene().addItem(image_item)
         self._topology.addDrawing(image_item)
 
@@ -1506,6 +1506,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         QtWidgets.QMessageBox.critical(self._main_window, name, message.strip())
 
     def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, drawing_id=None):
+
         if type == "ellipse":
             item = EllipseItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "rect":
@@ -1514,6 +1515,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
             item = ImageItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "text":
             item = TextItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+
+        if drawing_id is None:
+            item.create()
+
         self.scene().addItem(item)
         self._topology.addDrawing(item)
         return item

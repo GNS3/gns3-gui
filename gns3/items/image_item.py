@@ -56,9 +56,6 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
         if svg:
             svg = self.fromSvg(svg)
 
-        if self._id is None:
-            self.create()
-
     def paint(self, painter, option, widget=None):
         """
         Paints the contents of an item in local coordinates.

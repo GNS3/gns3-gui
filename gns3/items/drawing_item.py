@@ -54,7 +54,6 @@ class DrawingItem:
         if rotation:
             self.setRotation(rotation)
 
-
     def drawing_id(self):
         return self._id
 
