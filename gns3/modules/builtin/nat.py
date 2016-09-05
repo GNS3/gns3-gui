@@ -77,7 +77,7 @@ class Nat(Node):
         if error:
             log.error("Error while creating nat: {}".format(result["message"]))
             return
-        self._parseResponse(result)
+        self._parseServerResponse(result)
 
     def update(self, new_settings):
         """
