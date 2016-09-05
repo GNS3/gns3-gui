@@ -251,7 +251,6 @@ class HTTPClient(QtCore.QObject):
             msg = "Cannot connect to server {}: {}".format(self.url(), msg)
         else:
             msg = "Cannot connect to {}. Please check if GNS3 is allowed in your antivirus and firewall.".format(self.url())
-        log.error(msg)
         for request, callback in self._query_waiting_connections:
             if callback is not None:
                 callback({"message": msg}, error=True, server=server)

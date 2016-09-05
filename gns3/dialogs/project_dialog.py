@@ -65,6 +65,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             self.uiLocationLineEdit.setVisible(False)
             self.uiLocationBrowserToolButton.setVisible(False)
             self.uiOpenProjectPushButton.setVisible(False)
+        Controller.instance().connected_signal.connect(self._refreshProjects)
 
         self.uiProjectsTreeWidget.itemDoubleClicked.connect(self._projectsTreeWidgetDoubleClickedSlot)
         self.uiDeleteProjectButton.clicked.connect(self._deleteProjectSlot)

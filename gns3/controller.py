@@ -39,6 +39,8 @@ class Controller(QtCore.QObject):
         self._connected = False
         self._cache_directory = tempfile.TemporaryDirectory()
         self._http_client = None
+        # If it's the first error we display an alert box to the user
+        self._first_error = True
 
     def isRemote(self):
         """
@@ -73,8 +75,14 @@ class Controller(QtCore.QObject):
         """
         Called after the inital version get
         """
-        if error and "message" in result:
-            QtWidgets.QMessageBox.critical(self.parent(), "Connection", result["message"])
+        if error:
+            if "message" in result and self._first_error:
+                QtWidgets.QMessageBox.critical(self.parent(), "Connection", result["message"])
+            # Try to connect again in 1 seconds
+            QtCore.QTimer.singleShot(1000, qpartial(self.get, '/version', self._versionGetSlot))
+            self._first_error = False
+        else:
+            self._first_error = True
 
     def _httpClientConnectedSlot(self):
         if not self._connected:
