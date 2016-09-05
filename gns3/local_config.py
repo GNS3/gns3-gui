@@ -193,6 +193,16 @@ class LocalConfig(QtCore.QObject):
                     if self._settings["MainWindow"]["telnet_console_command"] not in PRECONFIGURED_TELNET_CONSOLE_COMMANDS.values():
                         self._settings["MainWindow"]["telnet_console_command"] = DEFAULT_TELNET_CONSOLE_COMMAND
 
+        # Migrate 1.X to 2.0
+        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("2.0.0"):
+            if "Qemu" in self._settings:
+                # The internet VM is replaced by the nat Node
+                # we remove it from the list of available VM
+                vms = []
+                for vm in self._settings["Qemu"]["vms"]:
+                    if vm["hda_disk_image"] != "core-linux-6.4-internet-0.1.img":
+                        vms.append(vm)
+                self._settings["Qemu"]["vms"] = vms
 
     def _readConfig(self, config_path):
         """

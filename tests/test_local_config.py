@@ -227,7 +227,7 @@ def test_migrate13ConfigOldOsxServerPath(tmpdir):
 
     # The old config should not be erased in order to avoid losing data when rollback to 1.3
     assert local_config._settings["LocalServer"]["path"] == "/Applications/GNS3.app/Contents/Resources/server/Contents/MacOS/gns3server"
-    assert local_config._settings["Servers"]["local_server"]["path"] == "/Applications/GNS3.app/Contents/MacOS/gns3server"
+    assert local_config._settings["Servers"]["local_server"]["path"] == "gns3server"
 
 
 def test_isMainGui_pid_file_not_exist(tmpdir):
@@ -270,3 +270,112 @@ def test_isMainGui_pid_file_exist_but_same_pid(tmpdir):
         with patch("gns3.local_config.LocalConfig.configDirectory") as mock_config_directory:
             mock_config_directory.return_value = str(tmpdir)
             assert LocalConfig().isMainGui() is True
+
+
+def test_migrateRemoveInternetVM(tmpdir):
+    """
+    In 2.0 the internet VM is replaced by the nat node
+    """
+    local_config = LocalConfig()
+
+    config_file = str(tmpdir / "gns3_gui.conf")
+
+    server_config = {
+        "allow_console_from_anywhere": True,
+        "auth": False,
+        "auto_start": True,
+        "console_end_port_range": 5000,
+        "console_start_port_range": 2001,
+        "host": "127.0.0.1",
+        "images_path": "/home/gns3/GNS3/images",
+        "password": "",
+        "path": "/bin/gns3server",
+        "port": 8001,
+        "projects_path": "/home/gns3/GNS3/projects",
+        "report_errors": False,
+        "udp_end_port_range": 20000,
+        "udp_start_port_range": 10000,
+        "user": ""
+    }
+
+    with open(config_file, "w+") as f:
+        f.write(json.dumps({
+        "Qemu": {
+                "use_local_server": True,
+                "enable_kvm": True,
+                "vms": [
+                    {
+                        "kernel_image": "",
+                        "kernel_command_line": "",
+                        "first_port_name": "",
+                        "cpus": 1,
+                        "legacy_networking": False,
+                        "process_priority": "normal",
+                        "port_name_format": "Ethernet{0}",
+                        "port_segment_size": 0,
+                        "default_name_format": "{name}-{0}",
+                        "mac_address": "",
+                        "usage": "",
+                        "qemu_path": "/usr/local/bin/qemu-system-x86_64",
+                        "ram": 256,
+                        "symbol": ":/symbols/qemu_guest.svg",
+                        "category": 2,
+                        "server": "local",
+                        "console_type": "telnet",
+                        "hdc_disk_interface": "ide",
+                        "hda_disk_image": "linux-microcore-6.4.img",
+                        "initrd": "",
+                        "hda_disk_interface": "ide",
+                        "cpu_throttling": 0,
+                        "adapter_type": "e1000",
+                        "options": "-nographic",
+                        "acpi_shutdown": False,
+                        "boot_priority": "c",
+                        "hdb_disk_interface": "ide",
+                        "name": "dsfgsdf",
+                        "hdd_disk_image": "",
+                        "adapters": 1,
+                        "cdrom_image": "",
+                        "hdb_disk_image": "",
+                        "linked_base": True,
+                        "hdd_disk_interface": "ide",
+                        "hdc_disk_image": "",
+                        "platform": ""
+                    },
+                    {
+                        "kernel_image": "",
+                        "kernel_command_line": "",
+                        "server": "vm",
+                        "legacy_networking": False,
+                        "process_priority": "normal",
+                        "qemu_path": "/usr/bin/qemu-system-i386",
+                        "name": "Internet 0.1",
+                        "symbol": ":/symbols/cloud.svg",
+                        "category": 0,
+                        "usage": "Just connect stuff to the appliance. Everything is automated.",
+                        "console_type": "telnet",
+                        "initrd": "",
+                        "hda_disk_image": "core-linux-6.4-internet-0.1.img",
+                        "hdc_disk_interface": "ide",
+                        "hda_disk_interface": "ide",
+                        "cpu_throttling": 0,
+                        "adapter_type": "e1000",
+                        "options": "-device e1000,netdev=internet0 -netdev vde,sock=/var/run/vde2/qemu0.ctl,id=internet0 -nographic",
+                        "hdb_disk_interface": "ide",
+                        "hdd_disk_image": "",
+                        "adapters": 1,
+                        "cdrom_image": "",
+                        "hdb_disk_image": "",
+                        "hdd_disk_interface": "ide",
+                        "hdc_disk_image": "",
+                        "ram": 64
+                    }
+                ]
+            },
+            "type": "settings",
+            "version": "1.5.2"}))
+
+    local_config._readConfig(config_file)
+    local_config._migrateOldConfig()
+
+    assert len(local_config._settings["Qemu"]["vms"]) == 1
