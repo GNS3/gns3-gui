@@ -318,7 +318,8 @@ class Router(Node):
                         self._addAdapterPorts(adapter, slot_number)
                     elif self._settings[name]:
                         self._removeAdapterPorts(slot_number)
-                if name.startswith("wic"):
+                    self._settings[name] = value
+                elif name.startswith("wic"):
                     # create or remove WIC ports
                     wic_slot_number = int(name[-1])
                     if value:
@@ -328,7 +329,7 @@ class Router(Node):
                         self._addWICPorts(wic, wic_slot_number)
                     elif self._settings[name]:
                         self._removeWICPorts(self._settings[name], wic_slot_number)
-                self._settings[name] = value
+                    self._settings[name] = value
         self._updateWICNumbering()
 
     def computeIdlepcs(self, callback):

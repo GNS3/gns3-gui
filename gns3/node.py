@@ -331,7 +331,22 @@ class Node(BaseNode):
 
         if "properties" in result:
             for name, value in result["properties"].items():
-                if name in self._settings and self._settings[name] != value:
+                #FIXME: Special case for dynamips interface
+                if name.startswith("slot") or name.startswith("wic"):
+                    pass
+                elif name == "adapters" and self._settings[name] != value:
+                    self._settings[name] = value
+                    log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
+                    # TODO: dynamically add/remove adapters
+                    self._ports.clear()
+                    self._addAdapters(self._settings["adapters"])
+                elif name in ["ethernet_adapters", "serial_adapters"] and self._settings[name] != value:
+                    self._settings[name] = value
+                    log.debug("number of adapters has changed: Ethernet={} Serial={}".format(self._settings["ethernet_adapters"], self._settings["serial_adapters"]))
+                    # TODO: dynamically add/remove adapters
+                    self._ports.clear()
+                    self._addAdapters(self._settings["ethernet_adapters"], self._settings["serial_adapters"])
+                elif name in self._settings and self._settings[name] != value:
                     log.debug("{} setting up and updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                     self._settings[name] = value
 

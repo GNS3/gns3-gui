@@ -159,27 +159,6 @@ class QemuVM(Node):
         if params:
             self._update(params)
 
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-
-        nb_adapters_changed = False
-        for name, value in result.items():
-            if name in self._settings and self._settings[name] != value:
-                log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                if name == "adapters":
-                    nb_adapters_changed = True
-                self._settings[name] = value
-
-        if nb_adapters_changed:
-            log.debug("number of adapters has changed to {}".format(self._settings["adapters"]))
-            # TODO: dynamically add/remove adapters
-            self._ports.clear()
-            self._addAdapters(self._settings["adapters"])
-
     def info(self):
         """
         Returns information about this QEMU VM instance.

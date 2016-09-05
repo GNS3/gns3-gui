@@ -114,18 +114,6 @@ class VPCSNode(Node):
         if params:
             self._update(params)
 
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response (dict)
-        """
-
-        for name, value in result.items():
-            if name in self._settings and self._settings[name] != value:
-                log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                self._settings[name] = value
-
     def info(self):
         """
         Returns information about this VPCS node.
