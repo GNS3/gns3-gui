@@ -105,7 +105,8 @@ class Controller(QtCore.QObject):
         """
         Forward the query to the HTTP client or controller depending of the path
         """
-        return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
+        if self._http_client:
+            return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
 
     def getSynchronous(self, endpoint, timeout=2):
         return self._http_client.getSynchronous(endpoint, timeout)
