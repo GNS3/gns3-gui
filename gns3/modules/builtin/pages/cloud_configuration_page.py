@@ -466,11 +466,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                 settings["default_name_format"] = default_name_format
 
             symbol_path = self.uiSymbolLineEdit.text()
-            pixmap = QtGui.QPixmap(symbol_path)
-            if pixmap.isNull():
-                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
-            else:
-                settings["symbol"] = symbol_path
+            settings["symbol"] = symbol_path
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
             settings["ports"] = self._ports

@@ -153,7 +153,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                Controller.instance().getSymbolIcon(iou_devices["symbol"], qpartial(self._setItemIcon, item))
+                Controller.instance().getSymbolIcon(iou_device["symbol"], qpartial(self._setItemIcon, item))
                 if iou_device["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=iou_device["server"], name=iou_device["name"])
                     if new_key in self._iou_devices:

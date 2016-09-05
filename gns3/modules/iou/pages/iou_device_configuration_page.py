@@ -274,13 +274,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
                 else:
                     QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
 
-            symbol_path = self.uiSymbolLineEdit.text()
-            pixmap = QtGui.QPixmap(symbol_path)
-            if pixmap.isNull():
-                QtWidgets.QMessageBox.critical(self, "Symbol", "Invalid file or format not supported")
-            else:
-                settings["symbol"] = symbol_path
-
+            settings["symbol"] = self.uiSymbolLineEdit.text()
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         # save advanced settings
