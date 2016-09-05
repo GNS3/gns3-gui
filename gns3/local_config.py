@@ -173,7 +173,7 @@ class LocalConfig(QtCore.QObject):
 
                 # We migrate the server binary for OSX due to the change from py2app to CX freeze
                 if servers["local_server"]["path"] == "/Applications/GNS3.app/Contents/Resources/server/Contents/MacOS/gns3server":
-                    servers["local_server"]["path"] = "/Applications/GNS3.app/Contents/MacOS/gns3server"
+                    servers["local_server"]["path"] = "gns3server"
 
             if "RemoteServers" in self._settings:
                 servers["remote_servers"] = copy.copy(self._settings["RemoteServers"])
