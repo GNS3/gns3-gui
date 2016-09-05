@@ -354,7 +354,7 @@ class Node(BaseNode):
             del result["properties"]
 
         # Update common element of all nodes
-        for key in ["x", "y", "z", "symbol", "label", "console_host"]:
+        for key in ["x", "y", "z", "symbol", "label", "console_host", "console", "console_type"]:
             if key in result:
                 self._settings[key] = result[key]
 
