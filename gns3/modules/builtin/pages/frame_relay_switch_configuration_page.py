@@ -170,7 +170,6 @@ class FrameRelaySwitchConfigurationPage(QtWidgets.QWidget, Ui_frameRelaySwitchCo
                 QtWidgets.QMessageBox.critical(self, "Name", "Frame relay switch name cannot be empty!")
             else:
                 settings["name"] = name
-        else:
-            del settings["name"]
 
         settings["mappings"] = self._mapping.copy()
+        return settings

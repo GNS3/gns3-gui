@@ -226,7 +226,6 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         # these settings cannot be shared by nodes and updated
         # in the node properties dialog.
         if not group:
-
             # set the device name
             name = self.uiNameLineEdit.text()
             if not name:
@@ -240,9 +239,6 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             ios_path = self.uiIOUImageLineEdit.text().strip()
             if ios_path:
                 settings["path"] = ios_path
-        else:
-            del settings["name"]
-            del settings["console"]
 
         if not node:
             # these are template settings
@@ -290,7 +286,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             raise ConfigurationError()
 
         if node:
-            if settings["ethernet_adapters"] != ethernet_adapters or settings["serial_adapters"] != serial_adapters:
+            if node.settings()["ethernet_adapters"] != ethernet_adapters or node.settings()["serial_adapters"] != serial_adapters:
                 # check if the adapters settings have changed
                 node_ports = node.ports()
                 for node_port in node_ports:
@@ -300,6 +296,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
 
         settings["ethernet_adapters"] = ethernet_adapters
         settings["serial_adapters"] = serial_adapters
+        return settings
 
     def _configFileValid(self, path):
         """

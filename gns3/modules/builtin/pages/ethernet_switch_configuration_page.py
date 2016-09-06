@@ -250,8 +250,6 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
                 QtWidgets.QMessageBox.critical(self, "Name", "Ethernet switch name cannot be empty!")
             else:
                 settings["name"] = name
-        else:
-            del settings["name"]
 
         if not node:
             # these are template settings
@@ -269,3 +267,4 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         settings["ports"] = list(self._ports.values())
+        return settings

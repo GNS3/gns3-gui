@@ -166,11 +166,6 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
 
             settings["enable_remote_console"] = self.uiEnableConsoleCheckBox.isChecked()
 
-        else:
-            del settings["name"]
-            del settings["console"]
-            del settings["enable_remote_console"]
-
         if not node:
             # these are template settings
 
@@ -205,10 +200,11 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
 
         adapters = self.uiAdaptersSpinBox.value()
-        if node and settings["adapters"] != adapters:
+        if node and node.settings()["adapters"] != adapters:
             # check if the adapters settings have changed
             for node_port in node.ports():
                 if not node_port.isFree():
                     QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
                     raise ConfigurationError()
         settings["adapters"] = adapters
+        return settings

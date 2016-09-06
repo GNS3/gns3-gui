@@ -403,9 +403,10 @@ class Project(QtCore.QObject):
             if node is None:
                 Topology.instance().createNode(result["event"])
         elif result["action"] == "node.updated":
-            node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
-            if node is not None:
-                node.updateNodeCallback(result["event"])
+            pass
+            # node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
+            # if node is not None:
+            #     node.updateNodeCallback(result["event"])
         elif result["action"] == "node.deleted":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:

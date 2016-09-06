@@ -491,17 +491,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             # save the IOS image path
             settings["image"] = self.uiIOSImageLineEdit.text()
 
-        else:
-            del settings["name"]
-            del settings["console"]
-            del settings["aux"]
-            del settings["mac_addr"]
-            if "startup_config" in settings:
-                del settings["startup_config"]
-            if "private_config" in settings:
-                del settings["private_config"]
-            del settings["image"]
-
         if not node:
             # these are template settings
 
@@ -536,8 +525,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         # get the platform and chassis if applicable
-        platform = settings["platform"]
-        if "chassis" in settings:
+        platform = settings.get("platform", node.settings()["platform"])
+        if "chassis" in settings or (node and node.settings.get("chassis")):
             settings["chassis"] = self.uiChassisTextLabel.text()
 
         if platform == "c7200":
@@ -603,6 +592,9 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 break
             module = widget.currentText()
             if module:
+                if node:
+                    settings["slot" + str(slot_number)] = node.settings().get("slot" + str(slot_number))
+
                 if settings["slot" + str(slot_number)] and settings["slot" + str(slot_number)] != module:
                     if node:
                         self._checkForLinkConnectedToAdapter(slot_number, settings, node)
@@ -617,6 +609,9 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 break
             wic_name = str(widget.currentText())
             if wic_name:
+                if node:
+                    settings["wic" + str(wic_number)] = node.settings().get("wic" + str(wic_number))
+
                 if settings["wic" + str(wic_number)] and settings["wic" + str(wic_number)] != wic_name:
                     if node:
                         self._checkForLinkConnectedToWIC(wic_number, settings, node)
@@ -625,6 +620,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if node:
                     self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = None
+        return settings
 
     def _configFileValid(self, path):
         """

@@ -169,11 +169,6 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
 
             settings["enable_remote_console"] = self.uiEnableConsoleCheckBox.isChecked()
 
-        else:
-            del settings["name"]
-            del settings["console"]
-            del settings["enable_remote_console"]
-
         if not node:
             # these are template settings
 
@@ -210,7 +205,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
 
         adapters = self.uiAdaptersSpinBox.value()
         if node:
-            if settings["adapters"] != adapters:
+            if node.settings()["adapters"] != adapters:
                 # check if the adapters settings have changed
                 node_ports = node.ports()
                 for node_port in node_ports:
@@ -218,3 +213,4 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
                         QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
                         raise ConfigurationError()
         settings["adapters"] = adapters
+        return settings

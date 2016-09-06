@@ -141,8 +141,6 @@ class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
                 QtWidgets.QMessageBox.critical(self, "Name", "VPCS node name cannot be empty!")
             else:
                 settings["name"] = name
-        else:
-            del settings["name"]
 
         if not node:
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
@@ -164,6 +162,7 @@ class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
                     settings["base_script_file"] = base_script_file
                 else:
                     QtWidgets.QMessageBox.critical(self, "Base script config file", "Cannot read the base script config file")
+        return settings
 
     def _configFileValid(self, path):
         """

@@ -195,7 +195,5 @@ class ATMSwitchConfigurationPage(QtWidgets.QWidget, Ui_atmSwitchConfigPageWidget
                 QtWidgets.QMessageBox.critical(self, "Name", "ATM switch name cannot be empty!")
             else:
                 settings["name"] = name
-        else:
-            del settings["name"]
-
         settings["mappings"] = self._mapping.copy()
+        return settings

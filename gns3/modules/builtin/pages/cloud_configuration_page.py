@@ -452,8 +452,6 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         if not group:
             settings["name"] = self.uiNameLineEdit.text()
-        else:
-            del settings["name"]
 
         if not node:
             # these are template settings
@@ -472,3 +470,4 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             settings["ports"] = self._ports
         else:
             settings["ports"] = self._ports
+        return settings

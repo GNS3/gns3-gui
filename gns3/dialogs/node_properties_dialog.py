@@ -178,12 +178,10 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
                 # all children for that group
                 self.previousItem = None
                 self.previousNode = None
-                settings = item.child(0).settings().copy()
                 node = item.child(0).node()
-                page.saveSettings(settings, node, group=True)
+                settings = page.saveSettings({}, node, group=True)
                 for index in range(0, item.childCount()):
                     child = item.child(index)
-                    # child.node().update(settings)  #TODO: delete
                     child.settings().update(settings)
 
         # update the nodes with the settings

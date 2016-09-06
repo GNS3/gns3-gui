@@ -471,23 +471,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             else:
                 settings["mac_address"] = None
 
-        else:
-            del settings["name"]
-            if "console" in settings:
-                del settings["console"]
-            del settings["hda_disk_image"]
-            del settings["hdb_disk_image"]
-            del settings["hdc_disk_image"]
-            del settings["hdd_disk_image"]
-            del settings["hda_disk_interface"]
-            del settings["hdb_disk_interface"]
-            del settings["hdc_disk_interface"]
-            del settings["hdd_disk_interface"]
-            del settings["cdrom_image"]
-            del settings["initrd"]
-            del settings["kernel_image"]
-            del settings["mac_address"]
-
         if not node:
             # these are template settings
 
@@ -526,7 +509,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         settings["kernel_command_line"] = self.uiKernelCommandLineEdit.text()
 
         adapters = self.uiAdaptersSpinBox.value()
-        if node and settings["adapters"] != adapters:
+        if node and node.settings()["adapters"] != adapters:
             # check if the adapters settings have changed
             node_ports = node.ports()
             for node_port in node_ports:
@@ -545,3 +528,4 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             settings["cpu_throttling"] = 0
         settings["process_priority"] = self.uiProcessPriorityComboBox.currentText().lower()
         settings["options"] = self.uiQemuOptionsLineEdit.text()
+        return settings

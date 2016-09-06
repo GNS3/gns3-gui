@@ -161,3 +161,4 @@ class DockerVMConfigurationPage(
 
             symbol_path = self.uiSymbolLineEdit.text()
             settings["symbol"] = symbol_path
+        return settings

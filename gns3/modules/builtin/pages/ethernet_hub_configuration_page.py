@@ -118,8 +118,6 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
                 QtWidgets.QMessageBox.critical(self, "Name", "Ethernet hub name cannot be empty!")
             else:
                 settings["name"] = name
-        else:
-            del settings["name"]
 
         nb_ports = self.uiPortsSpinBox.value()
 
@@ -151,3 +149,4 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
         for port_number in range(1, nb_ports + 1):
             settings["ports"].append({"port_number": int(port_number),
                                       "name": "Ethernet{}".format(port_number)})
+        return settings
