@@ -48,9 +48,6 @@ class VirtualBoxVM(Node):
         super().__init__(module, server, project)
         log.info("VirtualBox VM instance is being created")
         self._linked_clone = False
-        self._port_name_format = "Ethernet{0}"
-        self._port_segment_size = 0
-        self._first_port_name = None
 
         virtualbox_vm_settings = {"vmname": "",
                                   "console": None,
@@ -61,7 +58,10 @@ class VirtualBoxVM(Node):
                                   "ram": VBOX_VM_SETTINGS["ram"],
                                   "headless": VBOX_VM_SETTINGS["headless"],
                                   "acpi_shutdown": VBOX_VM_SETTINGS["acpi_shutdown"],
-                                  "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"]}
+                                  "enable_remote_console": VBOX_VM_SETTINGS["enable_remote_console"],
+                                  "port_name_format": "Ethernet0",
+                                  "port_segment_size": 0,
+                                  "first_port_name": None}
 
         self.settings().update(virtualbox_vm_settings)
 
@@ -74,10 +74,10 @@ class VirtualBoxVM(Node):
 
         interface_number = segment_number = 0
         for adapter_number in range(0, adapters):
-            if self._first_port_name and adapter_number == 0:
-                port_name = self._first_port_name
+            if self._settings["first_port_name"] and adapter_number == 0:
+                port_name = self._settings["first_port_name"]
             else:
-                port_name = self._port_name_format.format(
+                port_name = self._settings["port_name_format"].format(
                     interface_number,
                     segment_number,
                     port0 = interface_number,
@@ -86,7 +86,7 @@ class VirtualBoxVM(Node):
                     segment1 = 1 + segment_number
                 )
                 interface_number += 1
-                if self._port_segment_size and interface_number % self._port_segment_size == 0:
+                if self._settings["port_segment_size"] and interface_number % self._settings["port_segment_size"] == 0:
                     segment_number += 1
                     interface_number = 0
             new_port = EthernetPort(port_name)
@@ -112,10 +112,10 @@ class VirtualBoxVM(Node):
 
         self._linked_clone = linked_clone
         params = {"vmname": vmname,
-                  "linked_clone": linked_clone}
-        self._port_name_format = port_name_format
-        self._port_segment_size = port_segment_size
-        self._first_port_name = first_port_name
+                  "linked_clone": linked_clone,
+                  "port_name_format": port_name_format,
+                  "port_segment_size": port_segment_size,
+                  "first_port_name": first_port_name}
         params.update(additional_settings)
         self._create(name, node_id, params, default_name_format)
 

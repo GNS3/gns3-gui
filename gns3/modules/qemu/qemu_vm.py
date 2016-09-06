@@ -43,9 +43,6 @@ class QemuVM(Node):
         super().__init__(module, server, project)
 
         log.info("QEMU VM instance is being created")
-        self._port_name_format = None
-        self._port_segment_size = 0
-        self._first_port_name = None
         self._linked_clone = True
 
         qemu_vm_settings = {"usage": "",
@@ -83,7 +80,10 @@ class QemuVM(Node):
                             "kernel_image": "",
                             "initrd_md5sum": "",
                             "kernel_image_md5sum": "",
-                            "kernel_command_line": ""}
+                            "kernel_command_line": "",
+                            "port_name_format": "Ethernet{0}",
+                            "port_segment_size": 0,
+                            "first_port_name": ""}
 
         self.settings().update(qemu_vm_settings)
 
@@ -96,10 +96,10 @@ class QemuVM(Node):
 
         interface_number = segment_number = 0
         for adapter_number in range(0, adapters):
-            if self._first_port_name and adapter_number == 0:
-                port_name = self._first_port_name
+            if self._settings["first_port_name"] and adapter_number == 0:
+                port_name = self._settings["first_port_name"]
             else:
-                port_name = self._port_name_format.format(
+                port_name = self._settings["port_name_format"].format(
                     interface_number,
                     segment_number,
                     port0=interface_number,
@@ -107,13 +107,12 @@ class QemuVM(Node):
                     segment0=segment_number,
                     segment1=1 + segment_number)
                 interface_number += 1
-                if self._port_segment_size and interface_number % self._port_segment_size == 0:
+                if self._settings["port_segment_size"] and interface_number % self._settings["port_segment_size"] == 0:
                     segment_number += 1
                     interface_number = 0
             new_port = EthernetPort(port_name)
             new_port.setAdapterNumber(adapter_number)
             new_port.setPortNumber(0)
-            #new_port.setHotPluggable(False)  # FIXME: should not hot pluggable if not using uBridge
             self._ports.append(new_port)
             log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
 
@@ -128,10 +127,10 @@ class QemuVM(Node):
 
         self._linked_clone = linked_clone
         params = {"qemu_path": qemu_path,
-                  "linked_clone": linked_clone}
-        self._port_name_format = port_name_format
-        self._port_segment_size = port_segment_size
-        self._first_port_name = first_port_name
+                  "linked_clone": linked_clone,
+                  "port_name_format": port_name_format,
+                  "port_segment_size": port_segment_size,
+                  "first_port_name": first_port_name}
         params.update(additional_settings)
         self._create(name, node_id, params, default_name_format)
 

@@ -50,9 +50,6 @@ class VMwareVM(Node):
         super().__init__(module, server, project)
         log.info("VMware VM instance is being created")
         self._linked_clone = False
-        self._port_name_format = None
-        self._port_segment_size = 0
-        self._first_port_name = None
 
         vmware_vm_settings = {"vmx_path": "",
                               "console": None,
@@ -62,7 +59,10 @@ class VMwareVM(Node):
                               "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
                               "headless": VMWARE_VM_SETTINGS["headless"],
                               "acpi_shutdown": VMWARE_VM_SETTINGS["acpi_shutdown"],
-                              "enable_remote_console": VMWARE_VM_SETTINGS["enable_remote_console"]}
+                              "enable_remote_console": VMWARE_VM_SETTINGS["enable_remote_console"],
+                              "port_name_format": "Ethernet{0}",
+                              "port_segment_size": 0,
+                              "first_port_name": None}
 
         self.settings().update(vmware_vm_settings)
 
@@ -75,10 +75,10 @@ class VMwareVM(Node):
 
         interface_number = segment_number = 0
         for adapter_number in range(0, adapters):
-            if self._first_port_name and adapter_number == 0:
-                port_name = self._first_port_name
+            if self._settings["first_port_name"] and adapter_number == 0:
+                port_name = self._settings["first_port_name"]
             else:
-                port_name = self._port_name_format.format(
+                port_name = self._settings["port_name_format"].format(
                     interface_number,
                     segment_number,
                     port0 = interface_number,
@@ -87,7 +87,7 @@ class VMwareVM(Node):
                     segment1 = 1 + segment_number
                 )
                 interface_number += 1
-                if self._port_segment_size and interface_number % self._port_segment_size == 0:
+                if self._settings["port_segment_size"] and interface_number % self._settings["port_segment_size"] == 0:
                     segment_number += 1
                     interface_number = 0
             new_port = EthernetPort(port_name)
@@ -110,10 +110,10 @@ class VMwareVM(Node):
 
         self._linked_clone = linked_clone
         params = {"vmx_path": vmx_path,
-                  "linked_clone": linked_clone}
-        self._port_name_format = port_name_format
-        self._port_segment_size = port_segment_size
-        self._first_port_name = first_port_name
+                  "linked_clone": linked_clone,
+                  "port_name_format": port_name_format,
+                  "port_segment_size": port_segment_size,
+                  "first_port_name": first_port_name}
         params.update(additional_settings)
         self._create(name, node_id, params, default_name_format)
 
