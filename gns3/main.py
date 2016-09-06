@@ -241,7 +241,7 @@ def main():
     # We disallow to run GNS3 from outside the /Applications folder to avoid
     # issue when people run GNS3 from the .dmg
     if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
-        if not os.environ["_"].startswith("/Applications"):
+        if not os.path.realpath(__file__).startswith("/Applications"):
             QtWidgets.QMessageBox.critical(None, "Error", "You need to copy GNS3 in your /Applications folder before using it.")
             sys.exit(1)
 
