@@ -20,10 +20,13 @@ Nodes view that list all the available nodes to be dragged and dropped on the QG
 """
 
 import pickle
+import sip
+
 from .qt import QtCore, QtGui, QtWidgets, qpartial
 from .qt.qimage_svg_renderer import QImageSvgRenderer
 from .modules import MODULES
 from .node import Node
+from .controller import Controller
 from .dialogs.configuration_dialog import ConfigurationDialog
 
 
@@ -43,6 +46,8 @@ class NodesView(QtWidgets.QTreeWidget):
         # enables the possibility to drag items.
         self.setDragEnabled(True)
 
+        Controller.instance().connected_signal.connect(self.refresh)
+
     def refresh(self):
         self.clear()
         self.populateNodesView(self._current_category)
@@ -55,6 +60,8 @@ class NodesView(QtWidgets.QTreeWidget):
         :param category: category of device to list
         """
 
+        if not Controller.instance().connected():
+            return
         self._current_category = category
         for module in MODULES:
             for node in module.instance().nodes():
@@ -63,19 +70,16 @@ class NodesView(QtWidgets.QTreeWidget):
                 item = QtWidgets.QTreeWidgetItem(self)
                 item.setText(0, node["name"])
                 item.setData(0, QtCore.Qt.UserRole, node)
-                image = QtGui.QImage(32, 32, QtGui.QImage.Format_ARGB32)
-                # Set the ARGB to 0 to prevent rendering artifacts
-                image.fill(0x00000000)
-                svg_renderer = QImageSvgRenderer(node["symbol"])
-                svg_renderer.render(QtGui.QPainter(image))
-                icon = QtGui.QIcon()
-                icon.addPixmap(QtGui.QPixmap.fromImage(image))
-                item.setIcon(0, icon)
+                Controller.instance().getSymbolIcon(node["symbol"], qpartial(self._setItemIcon, item))
 
         if not self.topLevelItemCount() and category == Node.routers:
             QtWidgets.QMessageBox.warning(self, 'Routers', 'No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://gns3.com/support/docs">Show documentation</a>')
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
+
+    def _setItemIcon(self, item, icon):
+        if not sip.isdeleted(item):
+            item.setIcon(0, icon)
 
     def mousePressEvent(self, event):
         """
