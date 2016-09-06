@@ -275,6 +275,28 @@ class VPCS(Module):
         return None
 
     @staticmethod
+    def vmConfigurationPage():
+        from .pages.vpcs_node_configuration_page import VPCSNodeConfigurationPage
+        return VPCSNodeConfigurationPage
+
+    def VMs(self):
+        """
+        Returns list of VPCS nodes
+        """
+
+        return self._vpcs_nodes
+
+    def setVMs(self, new_vpcs_nodes):
+        """
+        Sets VPCS list
+
+        :param new_vpcs_vms: VPCS node list
+        """
+
+        self._vpcs_nodes = new_vpcs_nodes.copy()
+        self._saveSettings()
+
+    @staticmethod
     def classes():
         """
         Returns all the node classes supported by this module.
