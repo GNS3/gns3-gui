@@ -93,6 +93,11 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
             self.uiNodesTreeWidget.setCurrentItem(item)
             self.showConfigurationPageSlot(item, 0)
             self.splitter.setSizes([0, 600])
+        elif len(self._parent_items) > 0:
+            # We have multiple node we select the first group
+            item = next(iter(self._parent_items.values()))
+            self.uiNodesTreeWidget.setCurrentItem(item)
+            self.showConfigurationPageSlot(item, 0)
 
     def showConfigurationPageSlot(self, item, column):
         """
