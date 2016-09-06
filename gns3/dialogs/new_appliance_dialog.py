@@ -61,6 +61,8 @@ class NewApplianceDialog(QtWidgets.QDialog, Ui_NewApplianceDialog):
             self._setPreferencesPane(dialog, "VMware").uiNewVMwareVMPushButton.clicked.emit(False)
         elif self.uiAddDockerVMRadioButton.isChecked():
             self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
+        elif self.uiAddVPCSRadioButton.isChecked():
+            self._setPreferencesPane(dialog, "VPCS").uiNewVPCSPushButton.clicked.emit(False)
         else:
             return
         dialog.exec_()

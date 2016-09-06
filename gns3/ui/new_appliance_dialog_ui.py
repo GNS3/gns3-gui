@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/new_appliance_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/new_appliance_dialog.ui'
 #
-# Created: Thu May  5 17:18:11 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.7
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -46,6 +45,9 @@ class Ui_NewApplianceDialog(object):
         self.uiAddDockerVMRadioButton = QtWidgets.QRadioButton(NewApplianceDialog)
         self.uiAddDockerVMRadioButton.setObjectName("uiAddDockerVMRadioButton")
         self.verticalLayout.addWidget(self.uiAddDockerVMRadioButton)
+        self.uiAddVPCSRadioButton = QtWidgets.QRadioButton(NewApplianceDialog)
+        self.uiAddVPCSRadioButton.setObjectName("uiAddVPCSRadioButton")
+        self.verticalLayout.addWidget(self.uiAddVPCSRadioButton)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -74,5 +76,6 @@ class Ui_NewApplianceDialog(object):
         self.uiAddVirtualBoxVMRadioButton.setText(_translate("NewApplianceDialog", "&Add a VirtualBox virtual machine"))
         self.uiAddVMwareVMRadioButton.setText(_translate("NewApplianceDialog", "&Add a VMware virtual machine"))
         self.uiAddDockerVMRadioButton.setText(_translate("NewApplianceDialog", "&Add a Docker container"))
+        self.uiAddVPCSRadioButton.setText(_translate("NewApplianceDialog", "Add a VPCS"))
 
 from . import resources_rc

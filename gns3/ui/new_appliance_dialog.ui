@@ -83,6 +83,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QRadioButton" name="uiAddVPCSRadioButton">
+     <property name="text">
+      <string>Add a VPCS</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
