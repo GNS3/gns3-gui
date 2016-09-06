@@ -55,7 +55,7 @@ class VPCSNodeWizard(VMWizard,Ui_VPCSNodeWizard):
 
         settings = {"name": self.uiNameLineEdit.text(),
                     "base_script_file": get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt"))),
-                    "symbol": ":/symbols/computer.svg",
+                    "symbol": ":/symbols/vpcs_guest.svg",
                     "category": Node.end_devices,
                     "server": self._compute_id}
 

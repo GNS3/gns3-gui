@@ -244,7 +244,7 @@ class VPCSNode(Node):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/computer.svg"
+        return ":/symbols/vpcs_guest.svg"
 
     @staticmethod
     def symbolName():
