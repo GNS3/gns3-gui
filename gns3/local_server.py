@@ -62,10 +62,10 @@ class StopLocalServerWorker(QtCore.QObject):
 
     def run(self):
         precision = 1
-        remaining_trial = 4 / precision # 4 Seconds
+        remaining_trial = 4 / precision  # 4 Seconds
         while remaining_trial > 0:
             if self._local_server_process.returncode is None:
-                remaining_trial -=1
+                remaining_trial -= 1
                 self.thread().sleep(precision)
             else:
                 break
@@ -280,8 +280,10 @@ class LocalServer(QtCore.QObject):
         # We check if two gui are not launched at the same time
         # to avoid killing the server of the other GUI
         if not LocalConfig.isMainGui():
-           log.info("Not the main GUI, will not auto start the server")
-           return True
+            log.info("Not the main GUI, will not auto start the server")
+            self._http_client = HTTPClient(self._settings)
+            Controller.instance().setHttpClient(self._http_client)
+            return True
 
         if self.isLocalServerRunning():
             log.info("A local server already running on this host")
@@ -506,7 +508,6 @@ class LocalServer(QtCore.QObject):
 
             if proceed == QtWidgets.QMessageBox.Yes:
                 self._local_server_process.kill()
-
 
     @staticmethod
     def instance():
