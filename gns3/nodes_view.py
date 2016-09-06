@@ -70,6 +70,7 @@ class NodesView(QtWidgets.QTreeWidget):
                 item = QtWidgets.QTreeWidgetItem(self)
                 item.setText(0, node["name"])
                 item.setData(0, QtCore.Qt.UserRole, node)
+                item.setSizeHint(0, QtCore.QSize(32, 32))
                 Controller.instance().getSymbolIcon(node["symbol"], qpartial(self._setItemIcon, item))
 
         if not self.topLevelItemCount() and category == Node.routers:
