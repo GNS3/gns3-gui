@@ -40,7 +40,10 @@ def test_virtualbox_vm_create(virtualbox_vm, project):
                                     'node_type': 'virtualbox',
                                     'properties': {
                                         'linked_clone': False,
-                                        'vmname': 'VMNAME'
+                                        'vmname': 'VMNAME',
+                                        'port_name_format': 'Ethernet{0}',
+                                        'port_segment_size': 0,
+                                        'first_port_name': ''
                                     }
                                 },
                                 context={},
