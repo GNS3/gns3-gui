@@ -73,6 +73,7 @@ class DrawingItem:
             log.error("Error while setting up drawing: {}".format(result["message"]))
             return False
         self._id = result["drawing_id"]
+        self.updateDrawingCallback(result)
 
     def updateDrawing(self):
         if self._id:

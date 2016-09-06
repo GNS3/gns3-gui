@@ -45,14 +45,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         # attached node
         self._node = node
-
+        # link items connected to this node item.
+        self._links = []
         self._symbol = None
-
-        # Temporary symbol during loading
-        self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
-        renderer = QImageSvgRenderer(":/icons/reload.svg")
-        renderer.setObjectName("symbol_loading")
-        self.setSharedRenderer(renderer)
 
         # says if the attached node has been initialized
         # by the server.
@@ -61,8 +56,12 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # node label
         self._node_label = None
 
-        # link items connected to this node item.
-        self._links = []
+        # Temporary symbol during loading
+        self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
+        self.setZValue(self._node.z())
+        renderer = QImageSvgRenderer(":/icons/reload.svg")
+        renderer.setObjectName("symbol_loading")
+        self.setSharedRenderer(renderer)
 
         effect = QtWidgets.QGraphicsColorizeEffect()
         effect.setColor(QtGui.QColor("black"))
@@ -76,7 +75,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable)
         self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
-        self.setZValue(1)
 
         # connect signals to know about some events
         # e.g. when the node has been started, stopped or suspended etc.
@@ -99,7 +97,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         from ..main_window import MainWindow
         self._main_window = MainWindow.instance()
         self._settings = self._main_window.uiGraphicsView.settings()
-
 
         if node.initialized():
             self.createdSlot(node.id())
@@ -534,4 +531,3 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if not self.isSelected():
             self.graphicsEffect().setEnabled(False)
-

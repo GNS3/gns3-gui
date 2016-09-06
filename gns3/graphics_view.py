@@ -234,7 +234,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._adding_ellipse = False
             self.setCursor(QtCore.Qt.ArrowCursor)
 
-    def addImage(self,image_path):
+    def addImage(self, image_path):
         """
         Adds an image.
 
@@ -1122,7 +1122,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     continue
 
             if not self._import_config_dir:
-                self._import_config_dir =  QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+                self._import_config_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
 
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                             "Import {}".format(os.path.basename(config_file)),
@@ -1175,14 +1175,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in items:
             for config_file in item.node().configFiles():
-                    path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_configs_to_dir, item.node().name() + "_" + os.path.basename(config_file)),  "All files (*.*);;Config files (*.cfg)")
+                path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_configs_to_dir, item.node().name() + "_" + os.path.basename(config_file)), "All files (*.*);;Config files (*.cfg)")
 
-                    if not path:
-                        continue
+                if not path:
+                    continue
 
-                    self._export_configs_to_dir = os.path.dirname(path)
+                self._export_configs_to_dir = os.path.dirname(path)
 
-                    item.node().exportFile(config_file, path)
+                item.node().exportFile(config_file, path)
 
     def getCommandLineSlot(self):
         """
@@ -1296,7 +1296,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     type = "rect"
                 else:
                     type = "image"
-                self.createDrawingItem(type, item.pos().x() + 20,  item.pos().x() + 20, item.zValue(), rotation=item.rotation(), svg=item.toSvg())
+                self.createDrawingItem(type, item.pos().x() + 20, item.pos().x() + 20, item.zValue(), rotation=item.rotation(), svg=item.toSvg())
 
     def styleActionSlot(self):
         """
@@ -1474,7 +1474,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             return
 
         pos = self.mapToScene(pos)
-        node_item =  self.createNodeItem(node, node_data["symbol"], pos.x(), pos.y())
+        node_item = self.createNodeItem(node, node_data["symbol"], pos.x(), pos.y())
         node.setGraphics(node_item)
         node_module.createNode(node, node_data["name"])
         return node_item
@@ -1508,13 +1508,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, drawing_id=None):
 
         if type == "ellipse":
-            item = EllipseItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = EllipseItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "rect":
-            item = RectangleItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = RectangleItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
-            item = ImageItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = ImageItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "text":
-            item = TextItem(pos=QtCore.QPoint(x, y), rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = TextItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
 
         if drawing_id is None:
             item.create()
@@ -1526,7 +1526,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)
         if self._main_window.uiShowGridAction.isChecked():
-            gridSize = 75;
+            gridSize = 75
             painter.save()
             painter.setPen(QtGui.QPen(QtGui.QColor(190, 190, 190)))
 

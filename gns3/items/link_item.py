@@ -59,7 +59,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         super().__init__()
         self.setAcceptHoverEvents(True)
-        self.setZValue(-1)
+        self.setZValue(-0.5)
         self._link = None
 
         from ..main_window import MainWindow
@@ -358,7 +358,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         # links must always be below node items on the scene
         if not self._adding_flag:
             min_zvalue = min([self._source_item.zValue(), self._destination_item.zValue()])
-            self.setZValue(min_zvalue - 1)
+            self.setZValue(min_zvalue - 0.5)
 
         self.prepareGeometryChange()
         source_rect = self._source_item.boundingRect()

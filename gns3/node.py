@@ -124,6 +124,9 @@ class Node(BaseNode):
     def y(self):
         return self._settings["y"]
 
+    def z(self):
+        return self._settings["z"]
+
     def isAlwaysOn(self):
         """
         Whether the node is always on.
@@ -331,7 +334,7 @@ class Node(BaseNode):
 
         if "properties" in result:
             for name, value in result["properties"].items():
-                #FIXME: Special case for dynamips interface
+                # FIXME: Special case for dynamips interface
                 if name.startswith("slot") or name.startswith("wic"):
                     pass
                 elif name == "adapters" and self._settings[name] != value:
@@ -452,7 +455,7 @@ class Node(BaseNode):
             log.error("error while stopping {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
             # To avoid blocking the client we consider node as stopped if the node no longer exists or server doesn't answer
-            if not "status" in result or result["status"] == 404:
+            if "status" not in result or result["status"] == 404:
                 self.setStatus(Node.stopped)
         else:
             self._parseResponse(result)
