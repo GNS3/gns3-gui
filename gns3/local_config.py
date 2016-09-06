@@ -199,8 +199,8 @@ class LocalConfig(QtCore.QObject):
                 # The internet VM is replaced by the nat Node
                 # we remove it from the list of available VM
                 vms = []
-                for vm in self._settings["Qemu"]["vms"]:
-                    if vm["hda_disk_image"] != "core-linux-6.4-internet-0.1.img":
+                for vm in self._settings["Qemu"].get("vms", []):
+                    if vm.get("hda_disk_image") != "core-linux-6.4-internet-0.1.img":
                         vms.append(vm)
                 self._settings["Qemu"]["vms"] = vms
 
