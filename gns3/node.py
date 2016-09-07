@@ -42,7 +42,7 @@ class Node(BaseNode):
         self._always_on = False
 
         # minimum required base settings
-        self._settings = {"name": "", "x": None, "y": None, "z": None}
+        self._settings = {"name": "", "x": None, "y": None, "z": 1}
 
     def get(self, path, *args, **kwargs):
         return self.controllerHttpGet("/nodes/{node_id}{path}".format(node_id=self._node_id, path=path), *args, **kwargs)

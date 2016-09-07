@@ -129,6 +129,10 @@ class Controller(QtCore.QObject):
         :param url: URL without the protocol and host part
         :param callback: Callback to call when file is ready
         """
+
+        if not self._http_client:
+            return
+
         m = hashlib.md5()
         m.update(url.encode())
         if ".svg" in url:
