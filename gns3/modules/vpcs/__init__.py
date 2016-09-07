@@ -193,39 +193,9 @@ class VPCS(Module):
         if node_name:
             for node_key, info in self._vpcs_nodes.items():
                 if node_name == info["name"]:
-                    vpcs_node = node_key
-
-        if not vpcs_node:
-            selected_nodes = []
-            for vpcs_node, info in self._vpcs_nodes.items():
-                if info["server"] == node.server().host() or (node.server().isLocal() and info["server"] == "local"):
-                    selected_nodes.append(vpcs_node)
-
-            if not selected_nodes:
-                raise ModuleError("No VPCS node on server {}".format(node.server().host()))
-            elif len(selected_nodes) > 1:
-
-                from gns3.main_window import MainWindow
-                mainwindow = MainWindow.instance()
-
-                (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "VPCS node", "Please choose a node", selected_nodes, 0, False)
-                if ok:
-                    vpcs_node = selection
-                else:
-                    raise ModuleError("Please select a VPCS node")
-            else:
-                vpcs_node = selected_nodes[0]
-
-        node_settings = {}
-        for setting_name, value in self._vpcs_nodes[vpcs_node].items():
-            if setting_name in node.settings() and value != "" and value is not None:
-                node_settings[setting_name] = value
-
-        default_name_format = VPCS_NODES_SETTINGS["default_name_format"]
-        if self._vpcs_nodes[vpcs_node]["default_name_format"]:
-            default_name_format = self._vpcs_nodes[vpcs_node]["default_name_format"]
-
-        node.create(additional_settings=node_settings, default_name_format=default_name_format)
+                    node.create(default_name_format=info["default_name_format"])
+                    return
+        node.create()
 
     def reset(self):
         """
@@ -313,6 +283,17 @@ class VPCS(Module):
         """
 
         nodes = []
+
+        # Add a default VPCS not linked to a specific server
+        nodes.append(
+            {
+                "class": VPCSNode.__name__,
+                "name": "VPCS",
+                "categories": [VPCSNode.end_devices],
+                "symbol": VPCSNode.defaultSymbol(),
+                "builtin": True
+            }
+        )
 
         for node in self._vpcs_nodes.values():
             nodes.append(
