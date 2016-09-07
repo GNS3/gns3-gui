@@ -88,6 +88,7 @@ class NewApplianceDialog(QtWidgets.QDialog, Ui_NewApplianceDialog):
         pane = dialog.uiTreeWidget.findItems(name, QtCore.Qt.MatchFixedString)[0]
         child_pane = pane.child(0)
         dialog.uiTreeWidget.setCurrentItem(child_pane)
+        dialog.addModifiedPage(dialog.uiStackedWidget.currentWidget())
         return dialog.uiStackedWidget.currentWidget()
 
 if __name__ == '__main__':

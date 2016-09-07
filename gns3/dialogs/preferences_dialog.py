@@ -124,7 +124,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         # Class name, changed signal
         widget_to_watch = {
             QtWidgets.QLineEdit: "textChanged",
-            #QtWidgets.QTreeWidget: "itemChanged",
+            # QtWidgets.QTreeWidget: "itemChanged",
             QtWidgets.QComboBox: "currentIndexChanged",
             QtWidgets.QSpinBox: "valueChanged",
             QtWidgets.QAbstractButton: "pressed"
@@ -144,6 +144,9 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         while widget.parent() != self.uiStackedWidget:
             widget = widget.parent()
 
+        self.addModifiedPage(widget)
+
+    def addModifiedPage(self, widget):
         # The widget can trigger signal before the end of init due to async api call
         if not hasattr(widget, 'pageInitialized') or widget.pageInitialized():
             self._applyButton.setEnabled(True)
@@ -169,7 +172,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             self.uiTitleLabel.setText("{} preferences".format(name))
         index = self.uiStackedWidget.indexOf(preferences_page)
         widget = self.uiStackedWidget.widget(index)
-        #self.uiStackedWidget.setMinimumSize(widget.size())
+        # self.uiStackedWidget.setMinimumSize(widget.size())
         self.uiStackedWidget.resize(widget.size())
         self.uiStackedWidget.setCurrentIndex(index)
 
@@ -196,7 +199,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
 
         if len(self._modified_pages) > 0:
             # Get the title of pages with modifications
-            pages_title = ', '.join([ page.windowTitle() for page in self._modified_pages])
+            pages_title = ', '.join([page.windowTitle() for page in self._modified_pages])
             reply = QtWidgets.QMessageBox.warning(self,
                                                   "Preferences",
                                                   "You have unsaved preferences in {}.\n\nContinue without saving?".format(pages_title),
