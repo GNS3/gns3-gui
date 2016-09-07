@@ -525,7 +525,10 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         # get the platform and chassis if applicable
-        platform = settings.get("platform", node.settings()["platform"])
+        if node:
+            platform = node.settings().get("platform")
+        else:
+            platform = settings.get("platform")
         if "chassis" in settings or (node and node.settings.get("chassis")):
             settings["chassis"] = self.uiChassisTextLabel.text()
 
