@@ -289,6 +289,8 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiVNCConsoleCommandLineEdit.setText(settings["vnc_console_command"])
         self.uiVNCConsoleCommandLineEdit.setCursorPosition(0)
 
+        self.uiMultiProfilesCheckBox.setChecked(settings["multi_profiles"])
+
         self.uiImageDirectoriesListWidget.clear()
         for path in local_server["additional_image_paths"].split(":"):
             if len(path) > 0:
@@ -345,19 +347,21 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
 
         new_general_settings = {
-                                "auto_screenshot": self.uiAutoScreenshotCheckBox.isChecked(),
-                                "style": self.uiStyleComboBox.currentText(),
-                                "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
-                                "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
-                                "link_manual_mode": self.uiLinkManualModeCheckBox.isChecked(),
-                                "slow_device_start_all": self.uiSlowStartAllSpinBox.value(),
-                                "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
-                                "serial_console_command": self.uiSerialConsoleCommandLineEdit.text(),
-                                "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
-                                "auto_close_console": self.uiCloseConsoleWindowsOnDeleteCheckBox.isChecked(),
-                                "bring_console_to_front": self.uiBringConsoleWindowToFrontCheckBox.isChecked(),
-                                "delay_console_all": self.uiDelayConsoleAllSpinBox.value(),
-                                "send_stats": self.uiStatsCheckBox.isChecked()}
+            "auto_screenshot": self.uiAutoScreenshotCheckBox.isChecked(),
+            "style": self.uiStyleComboBox.currentText(),
+            "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
+            "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
+            "link_manual_mode": self.uiLinkManualModeCheckBox.isChecked(),
+            "slow_device_start_all": self.uiSlowStartAllSpinBox.value(),
+            "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
+            "serial_console_command": self.uiSerialConsoleCommandLineEdit.text(),
+            "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
+            "auto_close_console": self.uiCloseConsoleWindowsOnDeleteCheckBox.isChecked(),
+            "bring_console_to_front": self.uiBringConsoleWindowToFrontCheckBox.isChecked(),
+            "delay_console_all": self.uiDelayConsoleAllSpinBox.value(),
+            "send_stats": self.uiStatsCheckBox.isChecked(),
+            "multi_profiles": self.uiMultiProfilesCheckBox.isChecked()
+        }
 
         from ..main_window import MainWindow
         MainWindow.instance().setSettings(new_general_settings)

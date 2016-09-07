@@ -58,6 +58,7 @@ from gns3.crash_report import CrashReport
 from gns3.local_config import LocalConfig
 from gns3.application import Application
 from gns3.utils import parse_version
+from gns3.dialogs.profile_select import ProfileSelectDialog
 
 
 import logging
@@ -120,11 +121,9 @@ def main():
     parser.add_argument("--version", help="show the version", action="version", version=__version__)
     parser.add_argument("--debug", help="print out debug messages", action="store_true", default=False)
     parser.add_argument("--config", help="Configuration file")
-    parser.add_argument("--profil", help="Settings profil (blank will use default settings files)")
+    parser.add_argument("--profile", help="Settings profile (blank will use default settings files)")
     options = parser.parse_args()
     exception_file_path = "exceptions.log"
-
-    LocalConfig.instance(config_file=options.config, profil=options.profil)
 
     if hasattr(sys, "frozen"):
         # We add to the path where the OS search executable our binary location starting by GNS3
@@ -226,6 +225,20 @@ def main():
     global app
     app = Application(sys.argv)
 
+    local_config = LocalConfig.instance()
+    if local_config.multiProfiles():
+        profile_select = ProfileSelectDialog()
+        profile_select.show()
+        profile_select.exec_()
+        options.profile = profile_select.profile()
+
+    # Init the config
+    if options.config:
+        local_config.setConfigFilePath(options.config)
+    elif options.profile:
+        local_config.setProfile(options.profile)
+    profile = options.profile
+
     # save client logging info to a file
     logfile = os.path.join(LocalConfig.instance().configDirectory(), "gns3_gui.log")
 
@@ -269,7 +282,6 @@ def main():
 
     signal.signal(signal.SIGINT, orig_sigint)
     signal.signal(signal.SIGTERM, orig_sigterm)
-
 
     delattr(MainWindow, "_instance")
 

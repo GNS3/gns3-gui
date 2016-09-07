@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
+    <width>633</width>
     <height>643</height>
    </rect>
   </property>
@@ -775,6 +775,13 @@
         <widget class="QCheckBox" name="uiExperimentalFeaturesCheckBox">
          <property name="text">
           <string>Enable experimental features (dangerous, restart required)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="uiMultiProfilesCheckBox">
+         <property name="text">
+          <string>Ask for settings profile at application startup  (work profile / home profile)</string>
          </property>
         </widget>
        </item>

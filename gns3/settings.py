@@ -74,32 +74,32 @@ elif sys.platform.startswith("darwin"):
                     " -e 'end tell'",
         'Terminal tabbed (experimental)': "osascript -e 'tell application \"Terminal\"'"
                     " -e 'activate'"
-                        " -e 'tell application \"System Events\" to tell process \"Terminal\" to keystroke \"t\" using command down'"
-                        " -e 'if (the (count of the window) = 0) then'"
-                            " -e 'repeat while contents of selected tab of window 1 starts with linefeed'"
-                                " -e 'delay 0.01'"
-                            " -e 'end repeat'"
-                            " -e 'tell application \"System Events\" to keystroke \"n\" using command down'"
-                        " -e 'end if'"
-                        " -e 'repeat while the busy of window 1 = true'"
-                            " -e 'delay 0.01'"
-                        " -e 'end repeat'"
-                        " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\" ; telnet %h %p ; exit\" in window 1'"
+        " -e 'tell application \"System Events\" to tell process \"Terminal\" to keystroke \"t\" using command down'"
+        " -e 'if (the (count of the window) = 0) then'"
+        " -e 'repeat while contents of selected tab of window 1 starts with linefeed'"
+        " -e 'delay 0.01'"
+        " -e 'end repeat'"
+        " -e 'tell application \"System Events\" to keystroke \"n\" using command down'"
+        " -e 'end if'"
+        " -e 'repeat while the busy of window 1 = true'"
+        " -e 'delay 0.01'"
+        " -e 'end repeat'"
+        " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\" ; telnet %h %p ; exit\" in window 1'"
                     " -e 'end tell'",
         'iTerm2 2.x': "osascript -e 'tell application \"iTerm\"'"
-                 " -e 'activate'"
-                 " -e 'if (count of terminals) = 0 then'"
-                 " -e '  set t to (make new terminal)'"
-                 " -e 'else'"
-                 " -e '  set t to current terminal'"
-                 " -e 'end if'"
-                 " -e 'tell t'"
-                 " -e '  set s to (make new session at the end of sessions)'"
-                 " -e '  tell s'"
-                 " -e '    exec command (\"telnet %h %p\")'"
-                 " -e '  end tell'"
-                 " -e 'end tell'"
-                 " -e 'end tell'",
+        " -e 'activate'"
+        " -e 'if (count of terminals) = 0 then'"
+        " -e '  set t to (make new terminal)'"
+        " -e 'else'"
+        " -e '  set t to current terminal'"
+        " -e 'end if'"
+        " -e 'tell t'"
+        " -e '  set s to (make new session at the end of sessions)'"
+        " -e '  tell s'"
+        " -e '    exec command (\"telnet %h %p\")'"
+        " -e '  end tell'"
+        " -e 'end tell'"
+        " -e 'end tell'",
         'iTerm2 3.x': "osascript -e 'tell application \"iTerm\"'"
                     " -e 'activate'"
                     " -e 'if (count of windows) = 0 then'"
@@ -271,6 +271,7 @@ GENERAL_SETTINGS = {
     "state": "",
     "preferences_dialog_geometry": "",
     "debug_level": 0,
+    "multi_profiles": False
 }
 
 GRAPHICS_VIEW_SETTINGS = {

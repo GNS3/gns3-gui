@@ -40,28 +40,32 @@ class LocalConfig(QtCore.QObject):
 
     config_changed_signal = QtCore.Signal()
 
-    def __init__(self, config_file=None, profil=None):
+    def __init__(self):
         """
-        :param config_file: Path of the config file
-        :param profil: Configuration profil by default will use the standard configuration directory
+        :param profile: Configuration profile by default will use the standard configuration directory
         """
 
         super().__init__()
-        self._settings = {}
-        self._profil = profil
-        self._last_config_changed = None
+        self._profile = None
+        self._config_file = None
+        self._migrateOldConfigPath()
+        self._resetLoadConfig()
 
+    def _resetLoadConfig(self):
+        """
+        Reload the config from scratch everything is clean
+
+        """
+        self._settings = {}
+        self._last_config_changed = None
         if sys.platform.startswith("win"):
             filename = "gns3_gui.ini"
         else:
             filename = "gns3_gui.conf"
 
-        self._migrateOldConfigPath()
-
         appname = "GNS3"
 
         if sys.platform.startswith("win"):
-
             # On windows, the system wide configuration file location is %COMMON_APPDATA%/GNS3/gns3_gui.conf
             common_appdata = os.path.expandvars("%COMMON_APPDATA%")
             system_wide_config_file = os.path.join(common_appdata, appname, filename)
@@ -69,9 +73,7 @@ class LocalConfig(QtCore.QObject):
             # On UNIX-like platforms, the system wide configuration file location is /etc/xdg/GNS3/gns3_gui.conf
             system_wide_config_file = os.path.join("/etc/xdg", appname, filename)
 
-        if config_file:
-            self._config_file = config_file
-        else:
+        if not self._config_file:
             self._config_file = os.path.join(self.configDirectory(), filename)
 
         # First load system wide settings
@@ -98,11 +100,21 @@ class LocalConfig(QtCore.QObject):
         self._writeConfig()
         Controller.instance().connected_signal.connect(self.refreshConfigFromController)
 
-    def profil(self):
+    def profile(self):
         """
-        :returns: Current settings profil
+        :returns: Current settings profile
         """
-        return self._profil
+        return self._profile
+
+    def setProfile(self, profile):
+        previous_profile = self._profile
+        if profile == "default":
+            self._profile = None
+        else:
+            self._profile = profile
+        if previous_profile != self._profile:
+            self._config_file = None
+            self._resetLoadConfig()
 
     def refreshConfigFromController(self):
         """
@@ -138,8 +150,8 @@ class LocalConfig(QtCore.QObject):
             home = os.path.expanduser("~")
             path = os.path.join(home, ".config", "GNS3")
 
-        if self._profil is not None:
-            path = os.path.join(path, "profiles", self._profil)
+        if self._profile is not None:
+            path = os.path.join(path, "profiles", self._profile)
 
         return os.path.normpath(path)
 
@@ -251,7 +263,7 @@ class LocalConfig(QtCore.QObject):
             # We save only non user specific sections
             section_to_save_on_controller = ["Builtin", "Docker", "IOU", "Qemu", "VMware", "VPCS", "VirtualBox", "GraphicsView"]
             controller_settings = {}
-            for key,val in self._settings.items():
+            for key, val in self._settings.items():
                 if key in section_to_save_on_controller:
                     controller_settings[key] = val
                 # We want only the VM settings on the server
@@ -286,7 +298,7 @@ class LocalConfig(QtCore.QObject):
         """
 
         self._config_file = config_file
-        self._readConfig(self._config_file)
+        self._resetLoadConfig()
 
     def settings(self):
         """
@@ -371,8 +383,22 @@ class LocalConfig(QtCore.QObject):
         from gns3.settings import GENERAL_SETTINGS
         return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["experimental_features"]
 
+    def multiProfiles(self):
+        """
+        :returns: Boolean. True if multi_profiles is enabled
+        """
+
+        from gns3.settings import GENERAL_SETTINGS
+        return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["multi_profiles"]
+
+    def setMultiProfiles(self, value):
+        from gns3.settings import GENERAL_SETTINGS
+        settings = self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)
+        settings["multi_profiles"] = value
+        self.saveSectionSettings("MainWindow", settings)
+
     @staticmethod
-    def instance(config_file=None, profil=None):
+    def instance():
         """
         Singleton to return only on instance of LocalConfig.
 
@@ -380,7 +406,7 @@ class LocalConfig(QtCore.QObject):
         """
 
         if not hasattr(LocalConfig, "_instance") or LocalConfig._instance is None:
-            LocalConfig._instance = LocalConfig(config_file=config_file, profil=profil)
+            LocalConfig._instance = LocalConfig()
         return LocalConfig._instance
 
     @staticmethod

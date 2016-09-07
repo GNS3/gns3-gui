@@ -391,8 +391,8 @@ class LocalServer(QtCore.QObject):
         path = self.localServerPath()
         command = '"{executable}" --local'.format(executable=path)
 
-        if LocalConfig.instance().profil():
-            command += " --profil {}".format(LocalConfig.instance().profil())
+        if LocalConfig.instance().profile():
+            command += " --profile {}".format(LocalConfig.instance().profile())
 
         if self._settings["allow_console_from_anywhere"]:
             # allow connections to console from remote addresses
