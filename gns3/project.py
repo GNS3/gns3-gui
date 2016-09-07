@@ -274,7 +274,6 @@ class Project(QtCore.QObject):
         }
         self.put("", self._projectUpdatedCallback, body=body)
 
-
     def _projectUpdatedCallback(self, result, error=False, **kwargs):
         if error:
             self.project_creation_error_signal.emit(result["message"])
@@ -403,10 +402,9 @@ class Project(QtCore.QObject):
             if node is None:
                 Topology.instance().createNode(result["event"])
         elif result["action"] == "node.updated":
-            pass
-            # node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
-            # if node is not None:
-            #     node.updateNodeCallback(result["event"])
+            node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
+            if node is not None:
+                node.updateNodeCallback(result["event"])
         elif result["action"] == "node.deleted":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
