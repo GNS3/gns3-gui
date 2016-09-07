@@ -86,7 +86,7 @@ elif sys.platform.startswith("darwin"):
                         " -e 'end repeat'"
                         " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\" ; telnet %h %p ; exit\" in window 1'"
                     " -e 'end tell'",
-        'iTerm': "osascript -e 'tell application \"iTerm\"'"
+        'iTerm2 2.x': "osascript -e 'tell application \"iTerm\"'"
                  " -e 'activate'"
                  " -e 'if (count of terminals) = 0 then'"
                  " -e '  set t to (make new terminal)'"
@@ -100,7 +100,7 @@ elif sys.platform.startswith("darwin"):
                  " -e '  end tell'"
                  " -e 'end tell'"
                  " -e 'end tell'",
-        'iTerm 2.9': "osascript -e 'tell application \"iTerm\"'"
+        'iTerm2 3.x': "osascript -e 'tell application \"iTerm\"'"
                     " -e 'activate'"
                     " -e 'if (count of windows) = 0 then'"
                     " -e '   set t to (create window with default profile)'"
@@ -108,10 +108,11 @@ elif sys.platform.startswith("darwin"):
                     " -e '   set t to current window'"
                     " -e 'end if'"
                     " -e 'tell t'"
-                    " -e '    create tab with default profile'"
+                    " -e '    create tab with default profile command \"sh\"'"
                     " -e '    set s to current session'"
                     " -e '    tell s'"
-                    " -e '        write text \"telnet %h %p\"'"
+                    " -e '        set name to \"%d\"'"
+                    " -e '        write text \"exec telnet %h %p\"'"
                     " -e '    end tell'"
                     " -e 'end tell'"
                     " -e 'end tell'",
