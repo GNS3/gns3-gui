@@ -108,7 +108,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
             item = QtWidgets.QTreeWidgetItem(self.uiCloudNodesTreeWidget)
             item.setText(0, self._cloud_nodes[key]["name"])
-            Controller.instance().getSymbolIcon(self._cloud_nodes["symbol"], qpartial(self._setItemIcon, item))
+            Controller.instance().getSymbolIcon(self._cloud_nodes[key]["symbol"], qpartial(self._setItemIcon, item))
 
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
