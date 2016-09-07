@@ -8,11 +8,13 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_NewApplianceDialog(object):
+
     def setupUi(self, NewApplianceDialog):
         NewApplianceDialog.setObjectName("NewApplianceDialog")
         NewApplianceDialog.setWindowModality(QtCore.Qt.WindowModal)
-        NewApplianceDialog.resize(487, 326)
+        NewApplianceDialog.resize(458, 317)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -48,16 +50,23 @@ class Ui_NewApplianceDialog(object):
         self.uiAddVPCSRadioButton = QtWidgets.QRadioButton(NewApplianceDialog)
         self.uiAddVPCSRadioButton.setObjectName("uiAddVPCSRadioButton")
         self.verticalLayout.addWidget(self.uiAddVPCSRadioButton)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem)
+        self.uiAddCloudRadioButton = QtWidgets.QRadioButton(NewApplianceDialog)
+        self.uiAddCloudRadioButton.setObjectName("uiAddCloudRadioButton")
+        self.verticalLayout.addWidget(self.uiAddCloudRadioButton)
+        self.uiAddEthernetHubRadioButton = QtWidgets.QRadioButton(NewApplianceDialog)
+        self.uiAddEthernetHubRadioButton.setObjectName("uiAddEthernetHubRadioButton")
+        self.verticalLayout.addWidget(self.uiAddEthernetHubRadioButton)
+        self.uiAddEthernetSwitchRadioButton = QtWidgets.QRadioButton(NewApplianceDialog)
+        self.uiAddEthernetSwitchRadioButton.setObjectName("uiAddEthernetSwitchRadioButton")
+        self.verticalLayout.addWidget(self.uiAddEthernetSwitchRadioButton)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(20)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(NewApplianceDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Help|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Help | QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -77,5 +86,8 @@ class Ui_NewApplianceDialog(object):
         self.uiAddVMwareVMRadioButton.setText(_translate("NewApplianceDialog", "&Add a VMware virtual machine"))
         self.uiAddDockerVMRadioButton.setText(_translate("NewApplianceDialog", "&Add a Docker container"))
         self.uiAddVPCSRadioButton.setText(_translate("NewApplianceDialog", "Add a VPCS"))
+        self.uiAddCloudRadioButton.setText(_translate("NewApplianceDialog", "Add a cloud"))
+        self.uiAddEthernetHubRadioButton.setText(_translate("NewApplianceDialog", "Add a generic ethernet hub"))
+        self.uiAddEthernetSwitchRadioButton.setText(_translate("NewApplianceDialog", "Add a generic ethernet switch"))
 
 from . import resources_rc

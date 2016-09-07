@@ -63,6 +63,12 @@ class NewApplianceDialog(QtWidgets.QDialog, Ui_NewApplianceDialog):
             self._setPreferencesPane(dialog, "Docker").uiNewDockerVMPushButton.clicked.emit(False)
         elif self.uiAddVPCSRadioButton.isChecked():
             self._setPreferencesPane(dialog, "VPCS").uiNewVPCSPushButton.clicked.emit(False)
+        elif self.uiAddCloudRadioButton.isChecked():
+            self._setPreferencesPane(dialog, "Cloud nodes").uiNewCloudNodePushButton.clicked.emit(False)
+        elif self.uiAddEthernetHubRadioButton.isChecked():
+            self._setPreferencesPane(dialog, "Ethernet hubs").uiNewEthernetHubPushButton.clicked.emit(False)
+        elif self.uiAddEthernetSwitchRadioButton.isChecked():
+            self._setPreferencesPane(dialog, "Ethernet switches").uiNewEthernetSwitchPushButton.clicked.emit(False)
         else:
             return
         dialog.exec_()
@@ -85,16 +91,31 @@ class NewApplianceDialog(QtWidgets.QDialog, Ui_NewApplianceDialog):
         :returns: current QWidget
         """
 
-        pane = dialog.uiTreeWidget.findItems(name, QtCore.Qt.MatchFixedString)[0]
-        child_pane = pane.child(0)
-        dialog.uiTreeWidget.setCurrentItem(child_pane)
+        panes = dialog.uiTreeWidget.findItems(name, QtCore.Qt.MatchFixedString)
+        if len(panes) > 0:
+            child_pane = panes[0].child(0)
+            dialog.uiTreeWidget.setCurrentItem(child_pane)
+        else:
+            i = 0
+            root = dialog.uiTreeWidget.invisibleRootItem()
+            while i < root.childCount():
+                root_item = root.child(i)
+                x = 0
+                while x < root_item.childCount():
+                    item = root_item.child(x)
+                    x += 1
+                    if item.text(0) == name:
+                        dialog.uiTreeWidget.setCurrentItem(item)
+                i += 1
         dialog.addModifiedPage(dialog.uiStackedWidget.currentWidget())
         return dialog.uiStackedWidget.currentWidget()
+
 
 if __name__ == '__main__':
     import sys
     app = QtWidgets.QApplication(sys.argv)
     main = QtWidgets.QMainWindow()
-    dialog = NewApplianceDialog(main, console=True)
+    dialog = NewApplianceDialog(main)
+    dialog._setPreferencesPane(PreferencesDialog(main), "Ethernet hubs").uiNewEthernetHubPushButton.clicked.emit(False)
     dialog.show()
     exit_code = app.exec_()
