@@ -389,7 +389,7 @@ class LocalServer(QtCore.QObject):
         """
 
         path = self.localServerPath()
-        command = '"{executable}" --local --controller'.format(executable=path)
+        command = '"{executable}" --local'.format(executable=path)
 
         if LocalConfig.instance().profil():
             command += " --profil {}".format(LocalConfig.instance().profil())

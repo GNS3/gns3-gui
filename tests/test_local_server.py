@@ -71,7 +71,7 @@ password=hello""")
 
 @pytest.mark.skipif(sys.platform.startswith('win') is True, reason='Not for windows')
 def test_startLocalServer(tmpdir, local_server, local_server_path):
-    logging.getLogger().setLevel(logging.DEBUG) # Make sure we are using debug level in order to get the --debug
+    logging.getLogger().setLevel(logging.DEBUG)  # Make sure we are using debug level in order to get the --debug
 
     process_mock = MagicMock()
     with patch("subprocess.Popen", return_value=process_mock) as mock:
@@ -82,11 +82,10 @@ def test_startLocalServer(tmpdir, local_server, local_server_path):
         LocalServer.instance().startLocalServer()
         mock.assert_called_with([local_server_path,
                                  '--local',
-                                 '--controller',
                                  '--debug',
-                                 '--log='  + str(tmpdir / "gns3_server.log"),
+                                 '--log=' + str(tmpdir / "gns3_server.log"),
                                  '--pid=' + str(tmpdir / "gns3_server.pid")
-                                ])
+                                 ])
 
 
 def test_killAlreadyRunningServer(local_server):
@@ -98,5 +97,3 @@ def test_killAlreadyRunningServer(local_server):
         LocalServer.instance()._killAlreadyRunningServer()
         mock.assert_called_with(pid=42)
         assert mock_process.kill.called
-
-
