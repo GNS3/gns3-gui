@@ -134,7 +134,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._recent_file_actions_separator.setVisible(False)
         self.updateRecentFileActions()
 
-
         # add recent file actions to the File menu
         for i in range(0, self._max_recent_files):
             action = QtWidgets.QAction(self.uiProjectMenu)
@@ -174,7 +173,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiDeleteProjectAction,
             self.uiImportExportConfigsAction
         ]
-
 
         # This widgets are not enabled if it's a remote controller (no access to the local file system)
         self.disableWhenRemoteContollerWidgets = [
@@ -745,7 +743,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to open the setup wizard.
         """
 
-        #FIXME: Setup wizard has been turn off until we move it to 2.0
+        # FIXME: Setup wizard has been turn off until we move it to 2.0
         return
         with Progress.instance().context(min_duration=0):
             setup_wizard = SetupWizard(self)
@@ -974,7 +972,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if not LocalConfig.instance().isMainGui():
             reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
                 self.close()
                 return
@@ -997,10 +995,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # show the setup wizard
         if not self._settings["hide_setup_wizard"]:
-            with Progress.instance().context(min_duration=0):
-                setup_wizard = SetupWizard(self)
-                setup_wizard.show()
-                setup_wizard.exec_()
+            # FIXME: Setup wizard has been turn off until we move it to 2.0
+            pass
+            # with Progress.instance().context(min_duration=0):
+            #     setup_wizard = SetupWizard(self)
+            #     setup_wizard.show()
+            #     setup_wizard.exec_()
 
         self._analytics_client.sendScreenView("Main Window")
 
