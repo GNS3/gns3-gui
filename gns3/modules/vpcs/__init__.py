@@ -189,13 +189,22 @@ class VPCS(Module):
 
         log.info("creating node {}".format(node))
 
-        vpcs_node = None
         if node_name:
             for node_key, info in self._vpcs_nodes.items():
                 if node_name == info["name"]:
-                    node.create(default_name_format=info["default_name_format"])
+                    vm_settings = {}
+                    for setting_name, value in self._vpcs_nodes[node_key].items():
+
+                        if setting_name in node.settings() and setting_name != "name" and value != "" and value is not None:
+                            vm_settings[setting_name] = value
+
+                    node.create(default_name_format=info["default_name_format"], additional_settings=vm_settings)
                     return
-        node.create()
+
+        vm_settings = {
+            "base_script_file": self._settings["base_script_file"]
+        }
+        node.create(additional_settings=vm_settings)
 
     def reset(self):
         """

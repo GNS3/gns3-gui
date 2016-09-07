@@ -47,6 +47,7 @@ class VPCSNode(Node):
         vpcs_settings = {"console_host": None,
                          "startup_script": None,
                          "startup_script_path": None,
+                         "base_script_file": None,
                          "console": None}
 
         self.settings().update(vpcs_settings)
@@ -58,7 +59,7 @@ class VPCSNode(Node):
         port.setShortName(short_name)
         port.setAdapterNumber(0)
         port.setPortNumber(0)
-        #port.setHotPluggable(False)   # FIXME: should not hot pluggable if not using uBridge
+        # port.setHotPluggable(False)   # FIXME: should not hot pluggable if not using uBridge
         self._ports.append(port)
         log.debug("port {} has been added".format(port_name))
 
@@ -72,12 +73,12 @@ class VPCSNode(Node):
         """
 
         params = {}
-        if "script_file" in additional_settings:
-            if os.path.isfile(additional_settings["script_file"]):
-                base_config_content = self._readBaseConfig(additional_settings["script_file"])
+        if "base_script_file" in additional_settings:
+            if os.path.isfile(additional_settings["base_script_file"]):
+                base_config_content = self._readBaseConfig(additional_settings["base_script_file"])
                 if base_config_content is not None:
                     additional_settings["startup_script"] = base_config_content
-            del additional_settings["script_file"]
+            del additional_settings["base_script_file"]
 
         if "startup_script_path" in additional_settings:
             del additional_settings["startup_script_path"]
@@ -102,6 +103,9 @@ class VPCSNode(Node):
                 if base_config_content is not None:
                     new_settings["startup_script"] = base_config_content
             del new_settings["script_file"]
+
+        if "base_script_file" in new_settings:
+            del new_settings["base_script_file"]
 
         if "startup_script_path" in new_settings:
             del new_settings["startup_script_path"]
