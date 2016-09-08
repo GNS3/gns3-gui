@@ -23,7 +23,7 @@ import copy
 
 import psutil
 
-from .qt import QtCore
+from .qt import QtCore, QtWidgets
 from .version import __version__
 from .utils import parse_version
 
@@ -125,6 +125,16 @@ class LocalConfig(QtCore.QObject):
         Migrate pre 1.4 config
         """
 
+        # Display an error if settings come from a more recent version of GNS3
+        # patch level version are compatible (ex 1.5.3 and 1.5.2). But if you open
+        # settings from 1.6.1 with 1.5.1 you will have an error
+        if "version" in self._settings:
+            if parse_version(self._settings["version"])[:2] > parse_version(__version__)[:2]:
+                app = QtWidgets.QApplication(sys.argv)  # We need to create an application because settings are load before Qt init
+                QtWidgets.QMessageBox.critical(None, "Version error", "Your settings are for version {} of GNS3. You can not use a previous version without risk of losing your data.".format(self._settings["version"]))
+                # Exit immediately not clean but we want to avoid any side effect that could corrupt the file
+                sys.exit(1)
+
         if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0alpha1"):
 
             servers = self._settings.get("Servers", {})
@@ -153,7 +163,6 @@ class LocalConfig(QtCore.QObject):
                 if "MainWindow" in self._settings:
                     if self._settings["MainWindow"]["telnet_console_command"] not in PRECONFIGURED_TELNET_CONSOLE_COMMANDS.values():
                         self._settings["MainWindow"]["telnet_console_command"] = DEFAULT_TELNET_CONSOLE_COMMAND
-
 
     def _readConfig(self, config_path):
         """
