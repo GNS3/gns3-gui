@@ -61,6 +61,7 @@ class NodesView(QtWidgets.QTreeWidget):
 
         if not Controller.instance().connected():
             return
+        self.setIconSize(QtCore.QSize(32, 32))
         self._current_category = category
         for module in MODULES:
             for node in module.instance().nodes():
