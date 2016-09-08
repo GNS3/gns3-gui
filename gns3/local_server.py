@@ -476,7 +476,7 @@ class LocalServer(QtCore.QObject):
             # local server is running, let's stop it
             # TODO: Main GUI
             if self._http_client:
-                self._http_client.createHTTPQuery("POST", "/shutdown", None, showProgress=False)
+                self._http_client.shutdown()
             if wait:
                 worker = StopLocalServerWorker(self._local_server_process)
                 progress_dialog = ProgressDialog(worker, "Local server", "Waiting for the local server to stop...", None, busy=True, parent=self.parent())

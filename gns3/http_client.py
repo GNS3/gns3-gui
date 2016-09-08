@@ -63,6 +63,7 @@ class HTTPClient(QtCore.QObject):
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
         self._connected = False
+        self._shutdown = False  # Shutdown in progress
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
 
         if network_manager:
@@ -132,6 +133,13 @@ class HTTPClient(QtCore.QObject):
 
     def setPassword(self, password):
         self._password = password
+
+    def shutdown(self):
+        """
+        Stop the server and stop to accept queries
+        """
+        self.createHTTPQuery("POST", "/shutdown", None, showProgress=False)
+        self._shutdown = True
 
     def _notify_progress_start_query(self, query_id, progress_text, response):
         """
@@ -226,6 +234,10 @@ class HTTPClient(QtCore.QObject):
         :returns: QNetworkReply
         """
 
+        # Shutdown in progress do not execute the query
+        if self._shutdown:
+            return
+
         request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout, prefix=prefix, params=params)
 
         if self._connected:
@@ -236,7 +248,6 @@ class HTTPClient(QtCore.QObject):
             if len(self._query_waiting_connections) == 1:
                 log.info("Connection to {}".format(self.url()))
                 self._executeHTTPQuery("GET", "/version", self._callbackConnect, {}, server=server, timeout=5)
-
 
     def _connectionError(self, callback, msg="", server=None):
         """
@@ -374,7 +385,7 @@ class HTTPClient(QtCore.QObject):
         :returns: QNetworkReply
         """
 
-        #TODO: remove it when all call are migrated
+        # TODO: remove it when all call are migrated
         if "compute/" in path:
             log.warning("Legacy compute direct call %s", path)
 
@@ -494,7 +505,7 @@ class HTTPClient(QtCore.QObject):
             error_message = response.errorString()
 
             if not ignore_errors:
-                log.info("Response error: %s (error: %d)", error_message, error_code)
+                log.debug("Response error: %s (error: %d)", error_message, error_code)
 
             if error_code < 200:
                 if not ignore_errors:
