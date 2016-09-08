@@ -474,7 +474,6 @@ class LocalServer(QtCore.QObject):
         if self.localServerProcessIsRunning():
             log.info("Stopping local server (PID={})".format(self._local_server_process.pid))
             # local server is running, let's stop it
-            # TODO: Main GUI
             if self._http_client:
                 self._http_client.shutdown()
             if wait:
