@@ -125,6 +125,14 @@ class VMWizard(QtWidgets.QWizard):
                 else:
                     self.uiLocalRadioButton.setChecked(True)
 
+    def _disableLocalServer(self):
+        """
+        Turn off the local server
+        """
+        self.uiLocalRadioButton.hide()
+        self.uiLocalRadioButton.setEnabled(False)
+        self.setStartId(0)
+
     def validateCurrentPage(self):
         """
         Validates the server.
@@ -149,5 +157,9 @@ class VMWizard(QtWidgets.QWizard):
                     return False
                 self._server = gns3_vm_server
             else:
-                self._server = Servers.instance().localServer()
+                if self.uiLocalRadioButton.isEnabled():
+                    self._server = Servers.instance().localServer()
+                else:
+                    QtWidgets.QMessageBox.critical(self, "Server", "No available server support this type of node. You probably need to setup the GNS3 VM")
+                    return False
         return True

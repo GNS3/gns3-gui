@@ -45,7 +45,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
 
         if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
             # Cannot use Docker locally on Windows and Mac
-            self.uiLocalRadioButton.setEnabled(False)
+            self._disableLocalServer()
 
     def _existingImageRadioButtonToggledSlot(self, status):
         if self.uiExistingImageRadioButton.isChecked():
