@@ -786,29 +786,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="uiSlowStartAllLabel">
-         <property name="text">
-          <string>Delay between each device start when starting all devices:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="uiSlowStartAllSpinBox">
-         <property name="suffix">
-          <string> seconds</string>
-         </property>
-         <property name="minimum">
-          <number>0</number>
-         </property>
-         <property name="maximum">
-          <number>10000</number>
-         </property>
-         <property name="value">
-          <number>0</number>
-         </property>
-        </widget>
-       </item>
-       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

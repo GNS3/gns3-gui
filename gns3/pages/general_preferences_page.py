@@ -274,7 +274,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiLinkManualModeCheckBox.setChecked(settings["link_manual_mode"])
         self.uiExperimentalFeaturesCheckBox.setChecked(settings["experimental_features"])
-        self.uiSlowStartAllSpinBox.setValue(settings["slow_device_start_all"])
         self.uiTelnetConsoleCommandLineEdit.setText(settings["telnet_console_command"])
         self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
         index = self.uiStyleComboBox.findText(settings["style"])
@@ -352,7 +351,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
             "link_manual_mode": self.uiLinkManualModeCheckBox.isChecked(),
-            "slow_device_start_all": self.uiSlowStartAllSpinBox.value(),
             "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
             "serial_console_command": self.uiSerialConsoleCommandLineEdit.text(),
             "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
