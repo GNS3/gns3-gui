@@ -24,7 +24,7 @@ import copy
 import logging
 log = logging.getLogger(__name__)
 
-from gns3.qt import QtWidgets, QtCore
+from gns3.qt import QtWidgets, QtCore, qpartial
 from gns3.controller import Controller
 from ..ui.gns3_vm_preferences_page_ui import Ui_GNS3VMPreferencesPageWidget
 
@@ -62,7 +62,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.uiWhenExitKeepRadioButton.setVisible(engine["support_when_exit"])
         self.uiWhenExitSuspendRadioButton.setVisible(engine["support_when_exit"])
         self.uiWhenExitStopRadioButton.setVisible(engine["support_when_exit"])
-        self._refreshVMSlot()
+        self._refreshVMSlot(ignore_error=True)
 
     def loadPreferences(self):
         """
@@ -97,15 +97,16 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         index = self.uiGNS3VMEngineComboBox.findData(self._settings["engine"])
         self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
 
-    def _refreshVMSlot(self):
+    def _refreshVMSlot(self, ignore_error=False):
         engine_id = self.uiGNS3VMEngineComboBox.currentData()
         if engine_id:
-            Controller.instance().get("/gns3vm/engines/{}/vms".format(engine_id), self._listVMsCallback)
+            Controller.instance().get("/gns3vm/engines/{}/vms".format(engine_id), qpartial(self._listVMsCallback, ignore_error=ignore_error))
 
-    def _listVMsCallback(self, result, error=False, **kwargs):
+    def _listVMsCallback(self, result, ignore_error=False, error=False, **kwargs):
         if error:
             if "message" in result:
-                QtWidgets.QMessageBox.critical(self, "List vms", "Error while listing vms: {}".format(result["message"]))
+                if not ignore_error:
+                    QtWidgets.QMessageBox.critical(self, "List vms", "Error while listing vms: {}".format(result["message"]))
             return
         self.uiVMListComboBox.clear()
         for vm in result:
