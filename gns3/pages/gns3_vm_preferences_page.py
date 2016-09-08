@@ -105,7 +105,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
     def _listVMsCallback(self, result, error=False, **kwargs):
         if error:
             if "message" in result:
-                log.error("Error while listing vms: {}".format(result["message"]))
+                QtWidgets.QMessageBox.critical(self, "List vms", "Error while listing vms: {}".format(result["message"]))
             return
         self.uiVMListComboBox.clear()
         for vm in result:
