@@ -46,6 +46,7 @@ class Ui_GNS3VMPreferencesPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiEngineDescriptionLabel.sizePolicy().hasHeightForWidth())
         self.uiEngineDescriptionLabel.setSizePolicy(sizePolicy)
         self.uiEngineDescriptionLabel.setWordWrap(True)
+        self.uiEngineDescriptionLabel.setOpenExternalLinks(True)
         self.uiEngineDescriptionLabel.setObjectName("uiEngineDescriptionLabel")
         self.verticalLayout_2.addWidget(self.uiEngineDescriptionLabel)
         self.verticalLayout.addWidget(self.uiVirtualizationGroupBox)
