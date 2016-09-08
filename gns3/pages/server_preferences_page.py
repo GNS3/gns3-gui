@@ -82,10 +82,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             self.uiUDPPortRangeGroupBox.setVisible(True)
             self.uiRemoteMainServerGroupBox.setVisible(False)
         else:
-            if self.uiEnableVMCheckBox.isChecked() and not self.uiRemoteRadioButton.isChecked():
-                QtWidgets.QMessageBox.critical(self, "Local GNS3 VM", "The local server need to be enable in order to use a local GNS3 VM. Please deactivate the local GNS3 VM before turning off the local server.")
-                self.uiLocalServerAutoStartCheckBox.setChecked(True)
-                return
             self.uiRemoteMainServerGroupBox.setVisible(True)
             self.uiGeneralSettingsGroupBox.setVisible(False)
             self.uiConsolePortRangeGroupBox.setVisible(False)
