@@ -59,7 +59,9 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
                 break
         self.uiEngineDescriptionLabel.setText(engine["description"])
         self.uiHeadlessCheckBox.setVisible(engine["support_headless"])
-        self.uiShutdownCheckBox.setVisible(engine["support_auto_stop"])
+        self.uiWhenExitKeepRadioButton.setVisible(engine["support_when_exit"])
+        self.uiWhenExitSuspendRadioButton.setVisible(engine["support_when_exit"])
+        self.uiWhenExitStopRadioButton.setVisible(engine["support_when_exit"])
         self._refreshVMSlot()
 
     def loadPreferences(self):
@@ -76,7 +78,12 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self._old_settings = copy.copy(result)
         self._settings = result
         self.uiEnableVMCheckBox.setChecked(self._settings["enable"])
-        self.uiShutdownCheckBox.setChecked(self._settings["auto_stop"])
+        if self._settings["when_exit"] == "keep":
+            self.uiWhenExitKeepRadioButton.setChecked(True)
+        elif self._settings["when_exit"] == "suspend":
+            self.uiWhenExitSuspendRadioButton.setChecked(True)
+        else:
+            self.uiWhenExitStopRadioButton.setChecked(True)
         self.uiHeadlessCheckBox.setChecked(self._settings["headless"])
         index = self.uiGNS3VMEngineComboBox.findData(self._settings["engine"])
         self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
@@ -118,15 +125,22 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         if not self._old_settings:
             return
 
+        if self.uiWhenExitKeepRadioButton.isChecked():
+            when_exit = "keep"
+        elif self.uiWhenExitSuspendRadioButton.isChecked():
+            when_exit = "suspend"
+        else:
+            when_exit = "stop"
+
         settings = {
             "enable": self.uiEnableVMCheckBox.isChecked(),
             "vmname": self.uiVMListComboBox.currentData(),
-            "auto_stop": self.uiShutdownCheckBox.isChecked(),
             "headless": self.uiHeadlessCheckBox.isChecked(),
+            "when_exit": when_exit,
             "engine": self.uiGNS3VMEngineComboBox.currentData()
         }
         if self._old_settings != settings:
-            Controller.instance().put("/gns3vm", self._saveSettingsCallback, settings)
+            Controller.instance().put("/gns3vm", self._saveSettingsCallback, settings, timeout=60 * 5)
             self._old_settings = copy.copy(settings)
 
     def _saveSettingsCallback(self, result, error=False, **kwargs):
