@@ -40,14 +40,14 @@ class LocalConfig(QtCore.QObject):
 
     config_changed_signal = QtCore.Signal()
 
-    def __init__(self):
+    def __init__(self, config_file=None):
         """
-        :param profile: Configuration profile by default will use the standard configuration directory
+        :param config_file: Path to the config file (override all other config, usefull for tests)
         """
 
         super().__init__()
         self._profile = None
-        self._config_file = None
+        self._config_file = config_file
         self._migrateOldConfigPath()
         self._resetLoadConfig()
 

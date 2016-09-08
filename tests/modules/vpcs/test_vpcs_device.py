@@ -107,7 +107,7 @@ def test_vpcs_device_setup_script_file(vpcs_device, project, tmpdir, local_serve
         f.write("echo TEST")
 
     with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
-        vpcs_device.create(name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"script_file": path})
+        vpcs_device.create(name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"base_script_file": path})
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes"
@@ -192,6 +192,6 @@ def test_importConfig(vpcs_device, tmpdir):
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}".format(node_id=vpcs_device.node_id())
         assert kwargs["body"] == {'compute_id': 'local',
-              'node_type': 'vpcs',
-              'node_id': vpcs_device._node_id,
-              'properties': {'startup_script': 'echo TEST'}}
+                                  'node_type': 'vpcs',
+                                  'node_id': vpcs_device._node_id,
+                                  'properties': {'startup_script': 'echo TEST'}}
