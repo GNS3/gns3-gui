@@ -104,7 +104,7 @@ class VMWizard(QtWidgets.QWizard):
                 if compute.id() == "local":
                     self.uiLocalRadioButton.setEnabled(True)
                 elif compute.id() == "vm" and hasattr(self, "uiVMRadioButton"):
-                        self.uiVMRadioButton.setEnabled(True)
+                    self.uiVMRadioButton.setEnabled(True)
                 else:
                     self.uiRemoteRadioButton.setEnabled(True)
                     self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
@@ -119,12 +119,12 @@ class VMWizard(QtWidgets.QWizard):
                 else:
                     self.uiLocalRadioButton.setChecked(True)
 
-
     def _disableLocalServer(self):
         """
         Turn off the local server
         """
         self.uiLocalRadioButton.hide()
+        self.uiLocalRadioButton.setEnabled(False)
         self.setStartId(0)
 
     def validateCurrentPage(self):
@@ -148,5 +148,9 @@ class VMWizard(QtWidgets.QWizard):
             elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isChecked():
                 self._compute_id = "vm"
             else:
-                self._compute_id = "local"
+                if self.uiLocalRadioButton.isEnabled():
+                    self._compute_id = "local"
+                else:
+                    QtWidgets.QMessageBox.critical(self, "Server", "No available server support this type of node. You probably need to setup the GNS3 VM")
+                    return False
         return True
