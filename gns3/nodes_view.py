@@ -23,7 +23,6 @@ import pickle
 import sip
 
 from .qt import QtCore, QtGui, QtWidgets, qpartial
-from .qt.qimage_svg_renderer import QImageSvgRenderer
 from .modules import MODULES
 from .node import Node
 from .controller import Controller

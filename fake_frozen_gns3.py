@@ -33,7 +33,7 @@ sys.path.insert(0, os.path.dirname(sys.executable))
 sys.path.insert(0, os.path.join(os.path.dirname(sys.executable), 'site-packages'))
 
 sys.frozen = True
-
+sys.executable = "/Applications/GNS3.app/Contents/MacOS/gns3"
 os.environ["_"] = "/Applications/GNS3.app/Contents/MacOS/gns3"
 
 module = importlib.import_module("gns3.main")

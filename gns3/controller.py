@@ -151,6 +151,7 @@ class Controller(QtCore.QObject):
             return
         with open(path, "wb+") as f:
             f.write(raw_body)
+        log.debug("File stored {} for {}".format(path, url))
         callback(path)
 
     def getSymbolIcon(self, symbol_id, callback):
