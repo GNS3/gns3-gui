@@ -41,7 +41,7 @@ class Nat(Node):
         super().__init__(module, server, project)
         self.setStatus(Node.started)
         self._always_on = True
-        self._nat_settings = {"ports": []}
+        self._nat_settings = {"ports_mapping": []}
         self.settings().update(self._nat_settings)
 
     def interfaces(self):
@@ -123,10 +123,10 @@ class Nat(Node):
         self._parseServerResponse(result)
 
     def _parseServerResponse(self, result):
-        if "ports" in result:
+        if "ports_mapping" in result:
             updated_port_list = []
             # add/update ports
-            for port_info in result["ports"]:
+            for port_info in result["ports_mapping"]:
                 self._updatePort(port_info["name"], port_info["port_number"])
                 updated_port_list.append(port_info["port_number"])
 
@@ -136,7 +136,7 @@ class Nat(Node):
                     self._ports.remove(port)
                     log.debug("port {} has been removed".format(port.portNumber()))
 
-            self._settings["ports"] = result["ports"].copy()
+            self._settings["ports_mapping"] = result["ports_mapping"].copy()
 
     def info(self):
         """

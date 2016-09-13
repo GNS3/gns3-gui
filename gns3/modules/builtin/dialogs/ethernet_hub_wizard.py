@@ -58,6 +58,6 @@ class EthernetHubWizard(VMWizard, Ui_EthernetHubWizard):
                     "symbol": ":/symbols/hub.svg",
                     "category": Node.switches,
                     "server": self._compute_id,
-                    "ports": ports}
+                    "ports_mapping": ports}
 
         return settings

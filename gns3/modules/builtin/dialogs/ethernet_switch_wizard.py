@@ -61,6 +61,6 @@ class EthernetSwitchWizard(VMWizard, Ui_EthernetSwitchWizard):
                     "symbol": ":/symbols/ethernet_switch.svg",
                     "category": Node.switches,
                     "server": self._compute_id,
-                    "ports": ports}
+                    "ports_mapping": ports}
 
         return settings

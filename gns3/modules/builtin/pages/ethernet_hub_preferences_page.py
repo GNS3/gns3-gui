@@ -71,7 +71,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ethernet_hub["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ethernet_hub["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_hub["server"]).name()])
-        QtWidgets.QTreeWidgetItem(section_item, ["Number of ports:", str(len(ethernet_hub["ports"]))])
+        QtWidgets.QTreeWidgetItem(section_item, ["Number of ports:", str(len(ethernet_hub["ports_mapping"]))])
 
         self.uiEthernetHubInfoTreeWidget.expandAll()
         self.uiEthernetHubInfoTreeWidget.resizeColumnToContents(0)

@@ -39,7 +39,7 @@ class EthernetHub(Node):
         # this is an always-on node
         self.setStatus(Node.started)
         self._always_on = True
-        self.settings().update({"ports": []})
+        self.settings().update({"ports_mapping": []})
 
     def create(self, name=None, node_id=None, ports=None, default_name_format="Hub{0}"):
         """
@@ -52,7 +52,7 @@ class EthernetHub(Node):
 
         params = {}
         if ports:
-            params["ports"] = ports
+            params["ports_mapping"] = ports
         self._create(name, node_id, params, default_name_format)
 
     def _createCallback(self, result):
@@ -62,8 +62,8 @@ class EthernetHub(Node):
         :param result: server response (dict)
         """
 
-        if "ports" in result:
-            for port_info in result["ports"]:
+        if "ports_mapping" in result:
+            for port_info in result["ports_mapping"]:
                 port = EthernetPort(port_info["name"])
                 port.setAdapterNumber(0)  # adapter number is always 0
                 port.setPortNumber(port_info["port_number"])
@@ -81,8 +81,8 @@ class EthernetHub(Node):
         params = {}
         if "name" in new_settings:
             params["name"] = new_settings["name"]
-        if "ports" in new_settings:
-            params["ports"] = new_settings["ports"]
+        if "ports_mapping" in new_settings:
+            params["ports_mapping"] = new_settings["ports_mapping"]
         if params:
             self._update(params)
 
@@ -110,10 +110,10 @@ class EthernetHub(Node):
         :param result: server response
         """
 
-        if "ports" in result:
+        if "ports_mapping" in result:
             updated_port_list = []
             # add/update ports
-            for port_info in result["ports"]:
+            for port_info in result["ports_mapping"]:
                 self._updatePort(port_info["name"], port_info["port_number"])
                 updated_port_list.append(port_info["port_number"])
 
@@ -123,7 +123,7 @@ class EthernetHub(Node):
                     self._ports.remove(port)
                     log.debug("port {} has been removed".format(port.portNumber()))
 
-            self._settings["ports"] = list(map(int, updated_port_list))
+            self._settings["ports_mapping"] = list(map(int, updated_port_list))
 
     def info(self):
         """
@@ -177,8 +177,8 @@ class EthernetHub(Node):
         node_id = properties.get("node_id", str(uuid.uuid4()))
 
         ports = []
-        if "ports" in node_info:
-            ports = [{"port_number": port["port_number"], "name": port["name"]} for port in node_info["ports"]]
+        if "ports_mapping" in node_info:
+            ports = [{"port_number": port["port_number"], "name": port["name"]} for port in node_info["ports_mapping"]]
 
         log.info("Ethernet hub {} is loading".format(name))
         self.create(name, node_id, ports)

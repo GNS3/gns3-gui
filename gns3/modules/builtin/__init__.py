@@ -240,7 +240,7 @@ class Builtin(Module):
         if isinstance(node, Cloud):
             for key, info in self._cloud_nodes.items():
                 if node_name == info["name"]:
-                    node.create(ports=info["ports"], default_name_format=info["default_name_format"])
+                    node.create(ports=info["ports_mapping"], default_name_format=info["default_name_format"])
                     return
         elif isinstance(node, Nat):
             for key, info in self._nat_nodes.items():
@@ -250,12 +250,12 @@ class Builtin(Module):
         elif isinstance(node, EthernetHub):
             for key, info in self._ethernet_hubs.items():
                 if node_name == info["name"]:
-                    node.create(ports=info["ports"], default_name_format=info["default_name_format"])
+                    node.create(ports=info["ports_mapping"], default_name_format=info["default_name_format"])
                     return
         elif isinstance(node, EthernetSwitch):
             for key, info in self._ethernet_switches.items():
                 if node_name == info["name"]:
-                    node.create(ports=info["ports"], default_name_format=info["default_name_format"])
+                    node.create(ports=info["ports_mapping"], default_name_format=info["default_name_format"])
                     return
         node.create()
 

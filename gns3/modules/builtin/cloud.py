@@ -42,7 +42,7 @@ class Cloud(Node):
         self.setStatus(Node.started)
         self._always_on = True
         self._interfaces = {}
-        self._cloud_settings = {"ports": []}
+        self._cloud_settings = {"ports_mapping": []}
         self.settings().update(self._cloud_settings)
 
     def interfaces(self):
@@ -68,7 +68,7 @@ class Cloud(Node):
 
         params = {}
         if ports:
-            params["ports"] = ports
+            params["ports_mapping"] = ports
         self._create(name, node_id, params, default_name_format)
 
     def _createCallback(self, result, error=False, **kwargs):
@@ -83,8 +83,8 @@ class Cloud(Node):
             return
 
         self._interfaces = result["interfaces"].copy()
-        if "ports" in result and result["ports"]:
-            for port_info in result["ports"]:
+        if "ports_mapping" in result and result["ports_mapping"]:
+            for port_info in result["ports_mapping"]:
                 port = Port(port_info["name"])
                 port.setAdapterNumber(0)  # adapter number is always 0
                 port.setPortNumber(port_info["port_number"])
@@ -93,11 +93,11 @@ class Cloud(Node):
                 log.debug("port {} has been added".format(port_info["port_number"]))
         else:
             port_number = 1
-            settings = {"ports": []}
+            settings = {"ports_mapping": []}
             for interface in self._interfaces:
                 if self.isSpecialInterface(interface["name"]):
                     continue
-                settings["ports"].append({"name": interface["name"],
+                settings["ports_mapping"].append({"name": interface["name"],
                                           "port_number": port_number,
                                           "type": interface["type"],
                                           "interface": interface["name"]})
@@ -142,10 +142,10 @@ class Cloud(Node):
         :param result: server response
         """
 
-        if "ports" in result:
+        if "ports_mapping" in result:
             updated_port_list = []
             # add/update ports
-            for port_info in result["ports"]:
+            for port_info in result["ports_mapping"]:
                 self._updatePort(port_info["name"], port_info["port_number"])
                 updated_port_list.append(port_info["port_number"])
 
@@ -155,7 +155,7 @@ class Cloud(Node):
                     self._ports.remove(port)
                     log.debug("port {} has been removed".format(port.portNumber()))
 
-            self._settings["ports"] = result["ports"].copy()
+            self._settings["ports_mapping"] = result["ports_mapping"].copy()
 
         if "interfaces" in result:
             self._interfaces = result["interfaces"].copy()

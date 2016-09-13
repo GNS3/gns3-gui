@@ -417,7 +417,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiTAPListWidget.clear()
         self.uiUDPTreeWidget.clear()
 
-        for port in settings["ports"]:
+        for port in settings["ports_mapping"]:
             self._ports.append(port)
             if port["type"] == "ethernet":
                 self.uiEthernetListWidget.addItem(port["name"])
@@ -467,7 +467,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             settings["symbol"] = symbol_path
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
-            settings["ports"] = self._ports
+            settings["ports_mapping"] = self._ports
         else:
-            settings["ports"] = self._ports
+            settings["ports_mapping"] = self._ports
         return settings

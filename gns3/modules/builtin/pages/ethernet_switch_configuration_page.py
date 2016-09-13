@@ -220,7 +220,7 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
             self.uiCategoryLabel.hide()
             self.uiCategoryComboBox.hide()
 
-        for port_info in settings["ports"]:
+        for port_info in settings["ports_mapping"]:
             item = TreeWidgetItem(self.uiPortsTreeWidget)
             item.setText(0, str(port_info["port_number"]))
             item.setText(1, str(port_info["vlan"]))
@@ -266,5 +266,5 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
-        settings["ports"] = list(self._ports.values())
+        settings["ports_mapping"] = list(self._ports.values())
         return settings

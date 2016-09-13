@@ -31,7 +31,7 @@ NAT_SETTINGS = {
     "default_name_format": "Nat{0}",
     "symbol": ":/symbols/cloud.svg",
     "category": Node.end_devices,
-    "ports": [],
+    "ports_mapping": [],
 }
 
 CLOUD_SETTINGS = {
@@ -39,7 +39,7 @@ CLOUD_SETTINGS = {
     "default_name_format": "Cloud{0}",
     "symbol": ":/symbols/cloud.svg",
     "category": Node.end_devices,
-    "ports": [],
+    "ports_mapping": [],
 }
 
 ETHERNET_HUB_SETTINGS = {
@@ -47,7 +47,7 @@ ETHERNET_HUB_SETTINGS = {
     "default_name_format": "Hub{0}",
     "symbol": ":/symbols/hub.svg",
     "category": Node.switches,
-    "ports": [],
+    "ports_mapping": [],
 }
 
 ETHERNET_SWITCH_SETTINGS = {
@@ -55,5 +55,5 @@ ETHERNET_SWITCH_SETTINGS = {
     "default_name_format": "Switch{0}",
     "symbol": ":/symbols/ethernet_switch.svg",
     "category": Node.switches,
-    "ports": [],
+    "ports_mapping": [],
 }

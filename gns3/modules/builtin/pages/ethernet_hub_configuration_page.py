@@ -99,7 +99,7 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
             self.uiCategoryLabel.hide()
             self.uiCategoryComboBox.hide()
 
-        nb_ports = len(settings["ports"])
+        nb_ports = len(settings["ports_mapping"])
         self.uiPortsSpinBox.setValue(nb_ports)
 
     def saveSettings(self, settings, node=None, group=False):
@@ -145,8 +145,8 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
-        settings["ports"] = []
+        settings["ports_mapping"] = []
         for port_number in range(1, nb_ports + 1):
-            settings["ports"].append({"port_number": int(port_number),
+            settings["ports_mapping"].append({"port_number": int(port_number),
                                       "name": "Ethernet{}".format(port_number)})
         return settings

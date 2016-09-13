@@ -580,8 +580,8 @@ class Node(BaseNode):
         self.loaded_signal.disconnect(self._updatePortSettings)
 
         # assign the correct names and IDs to the ports
-        if "ports" in self._node_info:
-            ports = self._node_info["ports"]
+        if "ports_mapping" in self._node_info:
+            ports = self._node_info["ports_mapping"]
 
             port_initialized = set()
 
