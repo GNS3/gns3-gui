@@ -140,8 +140,8 @@ class FrameRelaySwitch(Node):
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self._server.host(),
-           port=self._server.port())
+           host=self._compute.host(),
+           port=self._compute.port())
 
         port_info = ""
         for port in self._ports:
