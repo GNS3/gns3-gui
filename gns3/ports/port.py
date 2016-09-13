@@ -301,22 +301,6 @@ class Port:
             return False
         return True
 
-    def setHotPluggable(self, hot_pluggable):
-        """
-        :param hot_pluggable: either the port is hot pluggable.
-        """
-
-        self._hot_pluggable = hot_pluggable
-
-    def isHotPluggable(self):
-        """
-        Checks if this port is hot pluggable.
-
-        :returns: boolean
-        """
-
-        return self._hot_pluggable
-
     @staticmethod
     def linkType():
         """

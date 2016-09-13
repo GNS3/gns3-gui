@@ -59,7 +59,6 @@ class VPCSNode(Node):
         port.setShortName(short_name)
         port.setAdapterNumber(0)
         port.setPortNumber(0)
-        # port.setHotPluggable(False)   # FIXME: should not hot pluggable if not using uBridge
         self._ports.append(port)
         log.debug("port {} has been added".format(port_name))
 
