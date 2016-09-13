@@ -14,20 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 """
 WICS matrix to create Port objects with the correct parameters.
 """
 
-from gns3.ports.ethernet_port import EthernetPort
-from gns3.ports.serial_port import SerialPort
-
-WIC_MATRIX = {"WIC-1ENET": {"nb_ports": 1,
-                            "port": EthernetPort},
-
-              "WIC-1T": {"nb_ports": 1,
-                         "port": SerialPort},
-
-              "WIC-2T": {"nb_ports": 2,
-                         "port": SerialPort}
-              }
+WIC_MATRIX = {"WIC-1ENET": {"nb_ports": 1},
+              "WIC-1T": {"nb_ports": 1},
+              "WIC-2T": {"nb_ports": 2}}

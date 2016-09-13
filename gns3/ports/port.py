@@ -45,6 +45,8 @@ class Port:
         self._status = Port.stopped
         self._destination_node = None
         self._destination_port = None
+        self._data_link_types = {}
+        self._link_id = None
 
     def name(self):
         """
@@ -83,6 +85,12 @@ class Port:
         """
 
         self._short_name = short_name
+
+    def dataLinkTypes(self):
+        return self._data_link_types
+
+    def setDataLinkTypes(self, data_link_types):
+        self._data_link_types = data_link_types
 
     def status(self):
         """

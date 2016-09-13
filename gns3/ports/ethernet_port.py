@@ -27,30 +27,5 @@ class EthernetPort(Port):
 
     """
     Ethernet port.
-
-    :param name: port name (string)
     """
-
-    def __init__(self, name):
-
-        super().__init__(name)
-
-    @staticmethod
-    def longNameType():
-        """
-        Returns the long name type for this port.
-
-        :returns: string
-        """
-
-        return "Ethernet"
-
-    @staticmethod
-    def shortNameType():
-        """
-        Returns the short name type for this port.
-
-        :returns: string
-        """
-
-        return "e"
+    pass

@@ -88,134 +88,6 @@ class Router(Node):
 
         self.settings().update(router_settings)
 
-    def _addAdapterPorts(self, adapter, slot_number):
-        """
-        Adds ports based on what adapter is inserted in which slot.
-
-        :param adapter: adapter name
-        :param slot_number: slot number (integer)
-        """
-
-        nb_ports = ADAPTER_MATRIX[adapter]["nb_ports"]
-        for port_number in range(0, nb_ports):
-            port = ADAPTER_MATRIX[adapter]["port"]
-            if "chassis" in self._settings and self._settings["chassis"] in ("1720", "1721", "1750"):
-                # these chassis show their interface without a slot number
-                port_name = port.longNameType() + str(port_number)
-                short_name = port.shortNameType() + str(port_number)
-            else:
-                port_name = port.longNameType() + str(slot_number) + "/" + str(port_number)
-                short_name = port.shortNameType() + str(slot_number) + "/" + str(port_number)
-            new_port = port(port_name)
-            new_port.setShortName(short_name)
-            new_port.setPortNumber(port_number)
-            new_port.setAdapterNumber(slot_number)
-            self._ports.append(new_port)
-            log.debug("port {} has been added".format(port_name))
-
-    def _removeAdapterPorts(self, slot_number):
-        """
-        Removes ports when an adapter is removed from a slot.
-
-        :param slot_number: slot number (integer)
-        """
-
-        for port in self._ports.copy():
-            if port.adapterNumber() == slot_number:
-                self._ports.remove(port)
-                log.debug("port {} has been removed".format(port.name()))
-
-    def _addWICPorts(self, wic, wic_slot_number):
-        """
-        Adds ports based on what WIC is inserted in which slot.
-
-        :param wic: WIC name
-        :param wic_slot_number: WIC slot number (integer)
-        """
-
-        nb_ports = WIC_MATRIX[wic]["nb_ports"]
-        base = 16 * (wic_slot_number + 1)
-        for port_number in range(0, nb_ports):
-            port = WIC_MATRIX[wic]["port"]
-            # Dynamips WICs port number start on a multiple of 16.
-            port_name = port.longNameType() + str(base + port_number)
-            short_name = port.shortNameType() + str(base + port_number)
-            new_port = port(port_name)
-            new_port.setShortName(short_name)
-            new_port.setPortNumber(base + port_number)
-            # WICs are always in adapter slot 0.
-            new_port.setAdapterNumber(0)
-            self._ports.append(new_port)
-            log.debug("port {} has been added".format(port_name))
-
-    def _removeWICPorts(self, wic, wic_slot_number):
-        """
-        Removes ports when a WIC is removed from a slot.
-
-        :param wic_slot_number: WIC slot identifier (integer)
-        """
-
-        wic_ports_to_delete = []
-        nb_ports = WIC_MATRIX[wic]["nb_ports"]
-        base = 16 * (wic_slot_number + 1)
-        for port_number in range(0, nb_ports):
-            wic_ports_to_delete.append(base + port_number)
-        for port in self._ports.copy():
-            if port.adapterNumber() == 0 and port.portNumber() in wic_ports_to_delete:
-                self._ports.remove(port)
-                log.debug("port {} has been removed".format(port.name()))
-
-    def _updateWICNumbering(self):
-        """
-        Updates the port names that are located on a WIC adapter
-        (based on the number of WICs and their slot number).
-        """
-
-        wic_ethernet_port_count = 0
-        wic_serial_port_count = 0
-        for wic_slot_number in range(0, 3):
-            base = 16 * (wic_slot_number + 1)
-            wic_slot = "wic" + str(wic_slot_number)
-            if self._settings[wic_slot]:
-                wic = self._settings[wic_slot]
-                nb_ports = WIC_MATRIX[wic]["nb_ports"]
-                for port_number in range(0, nb_ports):
-                    for port in self._ports:
-                        if port.adapterNumber() == 0 and port.portNumber() == base + port_number:
-                            if port.linkType() == "Serial":
-                                wic_port_number = wic_serial_port_count
-                                wic_serial_port_count += 1
-                            else:
-                                wic_port_number = wic_ethernet_port_count
-                                wic_ethernet_port_count += 1
-                            old_name = port.name()
-                            if "chassis" in self._settings and self._settings["chassis"] in ("1720", "1721", "1750"):
-                                # these chassis show their interface without a slot number
-                                port.setName(port.longNameType() + str(wic_port_number))
-                                port.setShortName(port.shortNameType() + str(wic_port_number))
-                            else:
-                                port.setName(port.longNameType() + "0/" + str(wic_port_number))
-                                port.setShortName(port.shortNameType() + "0/" + str(wic_port_number))
-                            log.debug("port {} renamed to {}".format(old_name, port.name()))
-
-    def _insertAdapters(self, vm_settings):
-        """
-        Insert adapters and create ports.
-
-        :param vm_settings: VM settings
-        """
-
-        for name, value in vm_settings.items():
-            if name.startswith("slot") and value:
-                slot_number = int(name[-1])
-                adapter = value
-                self._addAdapterPorts(adapter, slot_number)
-            if name.startswith("wic") and value:
-                wic_slot_number = int(name[-1])
-                wic = value
-                self._addWICPorts(wic, wic_slot_number)
-        self._updateWICNumbering()
-
     def create(self, image, ram, name=None, node_id=None, dynamips_id=None, additional_settings={}, default_name_format="R{0}"):
         """
         Creates this router.
@@ -267,9 +139,6 @@ class Router(Node):
 
         self._dynamips_id = result["dynamips_id"]
 
-        # create the ports on the client side
-        self._insertAdapters(self._settings)
-
     def update(self, new_settings):
         """
         Updates the settings for this router.
@@ -308,29 +177,7 @@ class Router(Node):
         for name, value in result.items():
             if name in self._settings and self._settings[name] != value:
                 log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                if name.startswith("slot"):
-                    # add or remove adapters ports
-                    slot_number = int(name[-1])
-                    if value:
-                        adapter = value
-                        if adapter != self._settings[name]:
-                            self._removeAdapterPorts(slot_number)
-                        self._addAdapterPorts(adapter, slot_number)
-                    elif self._settings[name]:
-                        self._removeAdapterPorts(slot_number)
-                    self._settings[name] = value
-                elif name.startswith("wic"):
-                    # create or remove WIC ports
-                    wic_slot_number = int(name[-1])
-                    if value:
-                        wic = value
-                        if self._settings[name] and wic != self._settings[name]:
-                            self._removeWICPorts(self._settings[name], wic_slot_number)
-                        self._addWICPorts(wic, wic_slot_number)
-                    elif self._settings[name]:
-                        self._removeWICPorts(self._settings[name], wic_slot_number)
-                    self._settings[name] = value
-        self._updateWICNumbering()
+                self._settings[name] = value
 
     def computeIdlepcs(self, callback):
         """

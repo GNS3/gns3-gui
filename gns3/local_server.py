@@ -87,10 +87,11 @@ class LocalServer(QtCore.QObject):
         self._local_server_path = ""
         self._local_server_process = None
         self._config_directory = LocalConfig.instance().configDirectory()
+        self._settings = {}
         self.localServerSettings()
-        self._port = self._settings["port"]
+        self._port = self._settings.get("port", 3080)
 
-        if not self._settings["auto_start"]:
+        if not self._settings.get("auto_start", True):
             self._http_client = HTTPClient(self._settings)
             Controller.instance().setHttpClient(self._http_client)
 

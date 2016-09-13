@@ -22,8 +22,6 @@ IOU device implementation.
 import os
 import re
 from gns3.node import Node
-from gns3.ports.ethernet_port import EthernetPort
-from gns3.ports.serial_port import SerialPort
 from gns3.utils.normalize_filename import normalize_filename
 from gns3.image_manager import ImageManager
 from .settings import IOU_DEVICE_SETTINGS
@@ -65,43 +63,6 @@ class IOUDevice(Node):
 
         self.settings().update(iou_device_settings)
 
-    def _addAdapters(self, nb_ethernet_adapters, nb_serial_adapters):
-        """
-        Adds ports based on what adapter is inserted in which slot.
-
-        :param nb_ethernet_adapters: number of Ethernet adapters
-        :param nb_serial_adapters: number of Serial adapters
-        """
-
-        nb_adapters = nb_ethernet_adapters + nb_serial_adapters
-        for slot_number in range(0, nb_adapters):
-            for port_number in range(0, 4):
-                if slot_number < nb_ethernet_adapters:
-                    port = EthernetPort
-                else:
-                    port = SerialPort
-                port_name = port.longNameType() + str(slot_number) + "/" + str(port_number)
-                short_name = port.shortNameType() + str(slot_number) + "/" + str(port_number)
-                new_port = port(port_name)
-                new_port.setShortName(short_name)
-                new_port.setPortNumber(port_number)
-                new_port.setAdapterNumber(slot_number)
-                self._ports.append(new_port)
-                log.debug("port {} has been added".format(port_name))
-
-    def _removeAdapters(self, nb_ethernet_adapters, nb_serial_adapters):
-        """
-        Removes ports when an adapter is removed from a slot.
-
-        :param slot_number: slot number (integer)
-        """
-
-        for port in self._ports.copy():
-            if (port.adapterNumber() >= nb_ethernet_adapters and port.linkType() == "Ethernet") or \
-                    (port.adapterNumber() >= nb_serial_adapters and port.linkType() == "Serial"):
-                self._ports.remove(port)
-                log.info("port {} has been removed".format(port.name()))
-
     def create(self, iou_path, name=None, node_id=None, additional_settings={}, default_name_format="IOU{0}"):
         """
         Creates this IOU device.
@@ -110,7 +71,6 @@ class IOUDevice(Node):
         :param name: optional name
         :param console: optional TCP console port
         """
-
 
         params = {"path": iou_path}
         # push the startup-config
@@ -137,9 +97,7 @@ class IOUDevice(Node):
 
         :param result: server response
         """
-
-        # create the ports on the client side
-        self._addAdapters(self._settings.get("ethernet_adapters", 0), self._settings.get("serial_adapters", 0))
+        pass
 
     def start(self):
         """

@@ -17,7 +17,6 @@
 
 import uuid
 from gns3.node import Node
-from gns3.ports.ethernet_port import EthernetPort
 
 import logging
 log = logging.getLogger(__name__)
@@ -61,15 +60,7 @@ class EthernetHub(Node):
 
         :param result: server response (dict)
         """
-
-        if "ports_mapping" in result:
-            for port_info in result["ports_mapping"]:
-                port = EthernetPort(port_info["name"])
-                port.setAdapterNumber(0)  # adapter number is always 0
-                port.setPortNumber(port_info["port_number"])
-                port.setStatus(EthernetPort.started)
-                self._ports.append(port)
-                log.debug("port {} has been added".format(port_info["port_number"]))
+        self.settings()["ports_mapping"] = result["ports_mapping"]
 
     def update(self, new_settings):
         """
@@ -86,44 +77,13 @@ class EthernetHub(Node):
         if params:
             self._update(params)
 
-    def _updatePort(self, port_name, port_number):
-
-        # update the port if existing
-        for port in self._ports:
-            if port.portNumber() == port_number:
-                port.setName(port_name)
-                log.debug("port {} has been updated".format(port_number))
-                return
-
-        # otherwise create a new port
-        port = EthernetPort(port_name)
-        port.setAdapterNumber(0)  # adapter number is always 0
-        port.setPortNumber(port_number)
-        port.setStatus(EthernetPort.started)
-        self._ports.append(port)
-        log.debug("port {} has been added".format(port_number))
-
     def _updateCallback(self, result):
         """
         Callback for update.
 
         :param result: server response
         """
-
-        if "ports_mapping" in result:
-            updated_port_list = []
-            # add/update ports
-            for port_info in result["ports_mapping"]:
-                self._updatePort(port_info["name"], port_info["port_number"])
-                updated_port_list.append(port_info["port_number"])
-
-            # delete ports
-            for port in self._ports.copy():
-                if port.isFree() and port.portNumber() not in updated_port_list:
-                    self._ports.remove(port)
-                    log.debug("port {} has been removed".format(port.portNumber()))
-
-            self._settings["ports_mapping"] = list(map(int, updated_port_list))
+        self.settings()["ports_mapping"] = result["ports_mapping"]
 
     def info(self):
         """
@@ -150,38 +110,6 @@ class EthernetHub(Node):
                                                                      description=port.description())
 
         return info + port_info
-
-    def dump(self):
-        """
-        Returns a representation of this Ethernet hub
-        (to be saved in a topology file)
-
-        :returns: representation of the node (dictionary)
-        """
-
-        return super().dump()
-
-    def load(self, node_info):
-        """
-        Loads an Ethernet hub representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-        properties = node_info["properties"]
-        name = properties.pop("name")
-
-        # Ethernet hubs do not have an UUID before version 2.0
-        node_id = properties.get("node_id", str(uuid.uuid4()))
-
-        ports = []
-        if "ports_mapping" in node_info:
-            ports = [{"port_number": port["port_number"], "name": port["name"]} for port in node_info["ports_mapping"]]
-
-        log.info("Ethernet hub {} is loading".format(name))
-        self.create(name, node_id, ports)
 
     def configPage(self):
         """

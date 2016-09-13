@@ -19,7 +19,6 @@
 import uuid
 
 from gns3.node import Node
-from gns3.ports.frame_relay_port import FrameRelayPort
 
 import logging
 log = logging.getLogger(__name__)
@@ -45,37 +44,6 @@ class FrameRelaySwitch(Node):
         self._always_on = True
         self.settings().update({"mappings": {}})
 
-    def _updatePortsFromMappings(self, mappings):
-        """
-        Updates the ports based on the Frame Relay mappings.
-
-        :param mappings: Frame Relay mappings
-        """
-
-        ports_to_create = []
-        for source, destination in mappings.items():
-            source_port = source.split(":")[0]
-            destination_port = destination.split(":")[0]
-            if source_port not in ports_to_create:
-                ports_to_create.append(source_port)
-            if destination_port not in ports_to_create:
-                ports_to_create.append(destination_port)
-
-        for port in self._ports.copy():
-            if port.isFree():
-                self._ports.remove(port)
-                log.debug("port {} has been removed".format(port.name()))
-            else:
-                ports_to_create.remove(port.name())
-
-        for port_name in ports_to_create:
-            port = FrameRelayPort(port_name)
-            port.setAdapterNumber(0)  # adapter number is always 0
-            port.setPortNumber(int(port_name))
-            port.setStatus(FrameRelayPort.started)
-            self._ports.append(port)
-            log.debug("port {} has been added".format(port_name))
-
     def create(self, name=None, node_id=None, mappings={}, default_name_format="FR{0}"):
         """
         Creates this Frame Relay switch.
@@ -96,9 +64,7 @@ class FrameRelaySwitch(Node):
 
         :param result: server response (dict)
         """
-
-        if "mappings" in result:
-            self._updatePortsFromMappings(result["mappings"])
+        self.settings()["mappings"] = result["mappings"]
 
     def update(self, new_settings):
         """
@@ -120,10 +86,7 @@ class FrameRelaySwitch(Node):
 
         :param result: server response
         """
-
-        if "mappings" in result:
-            self._updatePortsFromMappings(result["mappings"])
-            self._settings["mappings"] = result["mappings"].copy()
+        self.settings()["mappings"] = result["mappings"]
 
     def info(self):
         """
@@ -170,41 +133,6 @@ class FrameRelaySwitch(Node):
                     break
 
         return info + port_info
-
-    def dump(self):
-        """
-        Returns a representation of this Frame Relay switch
-        (to be saved in a topology file).
-
-        :returns: representation of the node (dictionary)
-        """
-
-        frsw = super().dump()
-        if self._settings["mappings"]:
-            frsw["properties"]["mappings"] = self._settings["mappings"]
-        return frsw
-
-    def load(self, node_info):
-        """
-        Loads a Frame Relay switch representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-        properties = node_info["properties"]
-        name = properties.pop("name")
-
-        # Frame Relay switches do not have an UUID before version 2.0
-        node_id = properties.get("node_id", str(uuid.uuid4()))
-
-        mappings = {}
-        if "mappings" in properties:
-            mappings = properties["mappings"]
-
-        log.info("Frame-Relay switch {} is loading".format(name))
-        self.create(name, node_id, mappings)
 
     def configPage(self):
         """

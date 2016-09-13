@@ -93,23 +93,6 @@ class Nat(Node):
         if params:
             self._update(params)
 
-    def _updatePort(self, port_name, port_number):
-
-        # update the port if existing
-        for port in self._ports:
-            if port.portNumber() == port_number:
-                port.setName(port_name)
-                log.debug("port {} has been updated".format(port_number))
-                return
-
-        # otherwise create a new port
-        port = Port(port_name)
-        port.setAdapterNumber(0)  # adapter number is always 0
-        port.setPortNumber(port_number)
-        port.setStatus(Port.started)
-        self._ports.append(port)
-        log.debug("port {} has been added".format(port_number))
-
     def _updateCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
@@ -123,20 +106,7 @@ class Nat(Node):
         self._parseServerResponse(result)
 
     def _parseServerResponse(self, result):
-        if "ports_mapping" in result:
-            updated_port_list = []
-            # add/update ports
-            for port_info in result["ports_mapping"]:
-                self._updatePort(port_info["name"], port_info["port_number"])
-                updated_port_list.append(port_info["port_number"])
-
-            # delete ports
-            for port in self._ports.copy():
-                if port.isFree() and port.portNumber() not in updated_port_list:
-                    self._ports.remove(port)
-                    log.debug("port {} has been removed".format(port.portNumber()))
-
-            self._settings["ports_mapping"] = result["ports_mapping"].copy()
+        self._settings["ports_mapping"] = result["ports_mapping"]
 
     def info(self):
         """

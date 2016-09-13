@@ -20,7 +20,6 @@ import re
 import uuid
 
 from gns3.node import Node
-from gns3.ports.atm_port import ATMPort
 
 import logging
 log = logging.getLogger(__name__)
@@ -45,37 +44,6 @@ class ATMSwitch(Node):
         self._always_on = True
         self.settings().update({"mappings": {}})
 
-    def _updatePortsFromMappings(self, mappings):
-        """
-        Updates the ports based on the ATM mappings.
-
-        :param mappings: ATM mappings
-        """
-
-        ports_to_create = []
-        for source, destination in mappings.items():
-            source_port = source.split(":")[0]
-            destination_port = destination.split(":")[0]
-            if source_port not in ports_to_create:
-                ports_to_create.append(source_port)
-            if destination_port not in ports_to_create:
-                ports_to_create.append(destination_port)
-
-        for port in self._ports.copy():
-            if port.isFree():
-                self._ports.remove(port)
-                log.debug("port {} has been removed".format(port.name()))
-            else:
-                ports_to_create.remove(port.name())
-
-        for port_name in ports_to_create:
-            port = ATMPort(port_name)
-            port.setAdapterNumber(0)  # adapter number is always 0
-            port.setPortNumber(int(port_name))
-            port.setStatus(ATMPort.started)
-            self._ports.append(port)
-            log.debug("port {} has been added".format(port_name))
-
     def create(self, name=None, node_id=None, mappings=None, default_name_format="ATM{0}"):
         """
         Creates this ATM switch.
@@ -96,9 +64,7 @@ class ATMSwitch(Node):
 
         :param result: server response (dict)
         """
-
-        if "mappings" in result:
-            self._updatePortsFromMappings(result["mappings"])
+        self.settings()["mappings"] = result["mappings"]
 
     def update(self, new_settings):
         """
@@ -120,10 +86,7 @@ class ATMSwitch(Node):
 
         :param result: server response
         """
-
-        if "mappings" in result:
-            self._updatePortsFromMappings(result["mappings"])
-            self._settings["mappings"] = result["mappings"].copy()
+        self.settings()["mappings"] = result["mappings"]
 
     def info(self):
         """

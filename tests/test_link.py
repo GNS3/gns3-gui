@@ -21,6 +21,7 @@ from unittest.mock import MagicMock
 
 
 from gns3.link import Link
+from gns3.ports.ethernet_port import EthernetPort
 from gns3.modules.vpcs.vpcs_node import VPCSNode
 from gns3.modules.vpcs import VPCS
 from gns3.controller import Controller
@@ -36,10 +37,20 @@ def devices(local_server, project):
     device1._settings = {"name": "VPCS 1", "script_file": "", "console": None, "startup_script": None}
     device1.setInitialized(True)
 
+    port = EthernetPort("E1")
+    port.setAdapterNumber(0)
+    port.setPortNumber(0)
+    device1._ports.append(port)
+
     device2 = VPCSNode(VPCS(), local_server, project)
     device2._vpcs_id = str(uuid.uuid4())
     device2._settings = {"name": "VPCS 2", "script_file": "", "console": None, "startup_script": None}
     device2.setInitialized(True)
+
+    port = EthernetPort("E2")
+    port.setAdapterNumber(0)
+    port.setPortNumber(0)
+    device2._ports.append(port)
 
     return (device1, device2)
 

@@ -22,6 +22,8 @@ from unittest.mock import patch, Mock, MagicMock
 from gns3.modules.vpcs.vpcs_node import VPCSNode
 from gns3.node import Node
 from gns3.ports.port import Port
+from gns3.ports.ethernet_port import EthernetPort
+from gns3.ports.serial_port import SerialPort
 
 
 def test_create(vpcs_device, local_server):
@@ -54,10 +56,10 @@ def test_setupVMCallback(vpcs_device):
     assert vpcs_device._node_id == node_id
     assert vpcs_device._settings["startup_script"] == "echo TEST"
     vpcs_device._createCallback.assert_called_with({
-            "name": "PC 1",
-            "node_id": node_id,
-            "startup_script": "echo TEST"
-        }
+        "name": "PC 1",
+        "node_id": node_id,
+        "startup_script": "echo TEST"
+    }
     )
 
 
@@ -102,3 +104,71 @@ def test_readBaseConfigRelative(vpcs_device, tmpdir):
     with patch('gns3.local_server.LocalServer.localServerSettings', return_value={'configs_path': str(tmpdir)}):
         assert vpcs_device._readBaseConfig(str("test.cfg")) == "42"
 
+
+def test_updatePorts(vpcs_device):
+    vpcs_device._updatePorts([
+        {
+            "name": "Ethernet0/0",
+            "short_name": "e0/0",
+            "data_link_types": {"Ethernet": "DLT_EN10MB"},
+            "port_number": 0,
+            "adapter_number": 0,
+            "link_type": "ethernet"
+        }
+    ])
+    assert len(vpcs_device._ports) == 1
+    port = vpcs_device._ports[0]
+    assert port.name() == "Ethernet0/0"
+    assert port.shortName() == "e0/0"
+    assert port.portNumber() == 0
+    assert port.adapterNumber() == 0
+    assert port.dataLinkTypes() == {"Ethernet": "DLT_EN10MB"}
+    assert port.status() == Port.stopped
+    assert isinstance(port, EthernetPort)
+
+    vpcs_device.setStatus(Node.started)
+    vpcs_device._updatePorts([
+        {
+            "name": "Serial0/0",
+            "short_name": "s0/0",
+            "data_link_types": {},
+            "port_number": 0,
+            "adapter_number": 0,
+            "link_type": "serial"
+        }
+    ])
+    assert len(vpcs_device._ports) == 1
+    port = vpcs_device._ports[0]
+    assert port.status() == Port.started
+    assert isinstance(port, SerialPort)
+
+
+def test_updatePorts_PortChange(vpcs_device):
+    """
+    If the same port we do not recreate it but just update his informations
+    """
+    vpcs_device._updatePorts([
+        {
+            "name": "Ethernet0/0",
+            "short_name": "e0/0",
+            "data_link_types": {"Ethernet": "DLT_EN10MB"},
+            "port_number": 0,
+            "adapter_number": 0,
+            "link_type": "ethernet"
+        }
+    ])
+    port = vpcs_device._ports[0]
+
+    vpcs_device.setStatus(Node.started)
+    vpcs_device._updatePorts([
+        {
+            "name": "Ethernet0/0",
+            "short_name": "e0/0",
+            "data_link_types": {"Ethernet": "DLT_EN10MB"},
+            "port_number": 0,
+            "adapter_number": 0,
+            "link_type": "ethernet"
+        }
+    ])
+    assert port == vpcs_device._ports[0]
+    assert port.status() == Port.started

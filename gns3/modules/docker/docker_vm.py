@@ -20,7 +20,6 @@ Docker VM implementation.
 """
 
 from gns3.node import Node
-from gns3.ports.ethernet_port import EthernetPort
 from .settings import DOCKER_CONTAINER_SETTINGS
 
 import logging
@@ -55,21 +54,6 @@ class DockerVM(Node):
 
         self.settings().update(docker_vm_settings)
 
-    def _addAdapters(self, adapters):
-        """Adds adapters.
-
-        :param adapters: number of adapters
-        """
-        for adapter_number in range(0, adapters):
-            adapter_name = "eth" + str(adapter_number)
-            short_name = EthernetPort.shortNameType() + str(adapter_number)
-            new_port = EthernetPort(adapter_name)
-            new_port.setShortName(short_name)
-            new_port.setAdapterNumber(adapter_number)
-            new_port.setPortNumber(0)
-            self._ports.append(new_port)
-            log.debug("Adapter {} has been added".format(adapter_name))
-
     def create(self, image, name=None, base_name=None, node_id=None, additional_settings={}, default_name_format="{name}-{0}"):
         """Creates this Docker container.
 
@@ -93,8 +77,7 @@ class DockerVM(Node):
 
         :param result: server response
         """
-
-        self._addAdapters(self._settings.get("adapters", 0))
+        pass
 
     def update(self, new_settings):
         """

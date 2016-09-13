@@ -23,55 +23,7 @@ from .port import Port
 
 
 class SerialPort(Port):
-
     """
     Serial port.
-
-    :param name: port name (string)
     """
-
-    def __init__(self, name):
-
-        super().__init__(name)
-
-    @staticmethod
-    def longNameType():
-        """
-        Returns the long name type for this port.
-
-        :returns: string
-        """
-
-        return "Serial"
-
-    @staticmethod
-    def shortNameType():
-        """
-        Returns the short name type for this port.
-
-        :returns: string
-        """
-
-        return "s"
-
-    @staticmethod
-    def linkType():
-        """
-        Returns the link type to be used to connect this port.
-
-        :returns: string
-        """
-
-        return "Serial"
-
-    @staticmethod
-    def dataLinkTypes():
-        """
-        Returns the supported PCAP DLTs.
-
-        :return: dictionary
-        """
-
-        return {"Frame Relay": "DLT_FRELAY",
-                "Cisco HDLC": "DLT_C_HDLC",
-                "Cisco PPP": "DLT_PPP_SERIAL"}
+    pass

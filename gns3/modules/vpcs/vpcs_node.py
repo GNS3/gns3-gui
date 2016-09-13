@@ -21,7 +21,6 @@ VPCS node implementation.
 
 import os
 from gns3.node import Node
-from gns3.ports.ethernet_port import EthernetPort
 from gns3.utils.normalize_filename import normalize_filename
 
 import logging
@@ -51,16 +50,6 @@ class VPCSNode(Node):
                          "console": None}
 
         self.settings().update(vpcs_settings)
-
-        # VPCS nodes have only one fixed Ethernet port
-        port_name = EthernetPort.longNameType() + str(0)
-        short_name = EthernetPort.shortNameType() + str(0)
-        port = EthernetPort(port_name)
-        port.setShortName(short_name)
-        port.setAdapterNumber(0)
-        port.setPortNumber(0)
-        self._ports.append(port)
-        log.debug("port {} has been added".format(port_name))
 
     def create(self, name=None, node_id=None, additional_settings={}, default_name_format="PC{0}"):
         """

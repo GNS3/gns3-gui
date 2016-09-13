@@ -24,7 +24,6 @@ import os
 import tempfile
 
 from gns3.node import Node
-from gns3.ports.ethernet_port import EthernetPort
 from .settings import VBOX_VM_SETTINGS
 
 import logging
@@ -65,38 +64,8 @@ class VirtualBoxVM(Node):
 
         self.settings().update(virtualbox_vm_settings)
 
-    def _addAdapters(self, adapters):
-        """
-        Adds adapters.
-
-        :param adapters: number of adapters
-        """
-
-        interface_number = segment_number = 0
-        for adapter_number in range(0, adapters):
-            if self._settings["first_port_name"] and adapter_number == 0:
-                port_name = self._settings["first_port_name"]
-            else:
-                port_name = self._settings["port_name_format"].format(
-                    interface_number,
-                    segment_number,
-                    port0 = interface_number,
-                    port1 = 1 + interface_number,
-                    segment0 = segment_number,
-                    segment1 = 1 + segment_number
-                )
-                interface_number += 1
-                if self._settings["port_segment_size"] and interface_number % self._settings["port_segment_size"] == 0:
-                    segment_number += 1
-                    interface_number = 0
-            new_port = EthernetPort(port_name)
-            new_port.setAdapterNumber(adapter_number)
-            new_port.setPortNumber(0)
-            self._ports.append(new_port)
-            log.debug("Adapter {} with port {} has been added".format(adapter_number, port_name))
-
     def create(self, vmname, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
-              first_port_name="", linked_clone=False, additional_settings={}, default_name_format=None):
+               first_port_name="", linked_clone=False, additional_settings={}, default_name_format=None):
         """
         Creates this VirtualBox VM.
 
@@ -125,9 +94,7 @@ class VirtualBoxVM(Node):
 
         :param result: server response (dict)
         """
-
-        # create the ports on the client side
-        self._addAdapters(self._settings.get("adapters", 0))
+        pass
 
     def update(self, new_settings):
         """

@@ -49,14 +49,6 @@ class Cloud(Node):
 
         return self._interfaces
 
-    @staticmethod
-    def isSpecialInterface(interface):
-
-        for special_interface in ("lo", "vmnet", "vboxnet", "docker", "lxcbr", "virbr", "ovs-system", "veth", "fw", "p2p"):
-            if interface.lower().startswith(special_interface):
-                return True
-        return False
-
     def create(self, name=None, node_id=None, ports=None, default_name_format="Cloud{0}"):
         """
         Creates this cloud.
@@ -77,30 +69,22 @@ class Cloud(Node):
 
         :param result: server response
         """
+        if "ports_mapping" in result:
+            self._settings["ports_mapping"] = result["ports_mapping"].copy()
 
-        if error:
-            log.error("Error while creating cloud: {}".format(result["message"]))
-            return
+        if "interfaces" in result:
+            self._interfaces = result["interfaces"].copy()
 
-        self._interfaces = result["interfaces"].copy()
-        if "ports_mapping" in result and result["ports_mapping"]:
-            for port_info in result["ports_mapping"]:
-                port = Port(port_info["name"])
-                port.setAdapterNumber(0)  # adapter number is always 0
-                port.setPortNumber(port_info["port_number"])
-                port.setStatus(Port.started)
-                self._ports.append(port)
-                log.debug("port {} has been added".format(port_info["port_number"]))
-        else:
-            port_number = 1
+        # If the cloud is empty fill it with all interfaces (like the 1.X host node)
+        if "ports_mapping" not in result or len(result["ports_mapping"]) == 0:
             settings = {"ports_mapping": []}
             for interface in self._interfaces:
-                if self.isSpecialInterface(interface["name"]):
+                if interface["special"]:
                     continue
                 settings["ports_mapping"].append({"name": interface["name"],
-                                          "port_number": port_number,
-                                          "type": interface["type"],
-                                          "interface": interface["name"]})
+                                                  "port_number": port_number,
+                                                  "type": interface["type"],
+                                                  "interface": interface["name"]})
                 port_number += 1
             self.update(settings)
 
@@ -118,23 +102,6 @@ class Cloud(Node):
         if params:
             self._update(params)
 
-    def _updatePort(self, port_name, port_number):
-
-        # update the port if existing
-        for port in self._ports:
-            if port.portNumber() == port_number:
-                port.setName(port_name)
-                log.debug("port {} has been updated".format(port_number))
-                return
-
-        # otherwise create a new port
-        port = Port(port_name)
-        port.setAdapterNumber(0)  # adapter number is always 0
-        port.setPortNumber(port_number)
-        port.setStatus(Port.started)
-        self._ports.append(port)
-        log.debug("port {} has been added".format(port_number))
-
     def _updateCallback(self, result):
         """
         Callback for update.
@@ -143,18 +110,6 @@ class Cloud(Node):
         """
 
         if "ports_mapping" in result:
-            updated_port_list = []
-            # add/update ports
-            for port_info in result["ports_mapping"]:
-                self._updatePort(port_info["name"], port_info["port_number"])
-                updated_port_list.append(port_info["port_number"])
-
-            # delete ports
-            for port in self._ports.copy():
-                if port.isFree() and port.portNumber() not in updated_port_list:
-                    self._ports.remove(port)
-                    log.debug("port {} has been removed".format(port.portNumber()))
-
             self._settings["ports_mapping"] = result["ports_mapping"].copy()
 
         if "interfaces" in result:
@@ -180,8 +135,6 @@ This is a node for external connections
                                                                      description=port.description())
 
         return info + port_info
-
-
 
     def configPage(self):
         """

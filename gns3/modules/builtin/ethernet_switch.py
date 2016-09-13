@@ -18,7 +18,6 @@
 import uuid
 
 from gns3.node import Node
-from gns3.ports.ethernet_port import EthernetPort
 
 import logging
 log = logging.getLogger(__name__)
@@ -63,15 +62,7 @@ class EthernetSwitch(Node):
 
         :param result: server response (dict)
         """
-
-        if "ports_mapping" in result:
-            for port_info in result["ports_mapping"]:
-                port = EthernetPort(port_info["name"])
-                port.setAdapterNumber(0)  # adapter number is always 0
-                port.setPortNumber(port_info["port_number"])
-                port.setStatus(EthernetPort.started)
-                self._ports.append(port)
-                log.debug("port {} has been added".format(port_info["port_number"]))
+        self.settings()["ports_mapping"] = result["ports_mapping"]
 
     def update(self, new_settings):
         """
@@ -87,44 +78,13 @@ class EthernetSwitch(Node):
         if params:
             self._update(params)
 
-    def _updatePort(self, port_name, port_number):
-
-        # update the port if existing
-        for port in self._ports:
-            if port.portNumber() == port_number:
-                port.setName(port_name)
-                log.debug("port {} has been updated".format(port_number))
-                return
-
-        # otherwise create a new port
-        port = EthernetPort(port_name)
-        port.setAdapterNumber(0)  # adapter number is always 0
-        port.setPortNumber(port_number)
-        port.setStatus(EthernetPort.started)
-        self._ports.append(port)
-        log.debug("port {} has been added".format(port_number))
-
     def _updateCallback(self, result):
         """
         Callback for update.
 
         :param result: server response
         """
-
-        if "ports_mapping" in result:
-            updated_port_list = []
-            # add/update ports
-            for port_info in result["ports_mapping"]:
-                self._updatePort(port_info["name"], port_info["port_number"])
-                updated_port_list.append(port_info["port_number"])
-
-            # delete ports
-            for port in self._ports.copy():
-                if port.isFree() and port.portNumber() not in updated_port_list:
-                    self._ports.remove(port)
-                    log.debug("port {} has been removed".format(port.portNumber()))
-
-            self._settings["ports_mapping"] = result["ports_mapping"].copy()
+        self.settings()["ports_mapping"] = result["ports_mapping"]
 
     def info(self):
         """
@@ -171,55 +131,6 @@ class EthernetSwitch(Node):
                     break
 
         return info + port_info
-
-    def dump(self):
-        """
-        Returns a representation of this Ethernet switch
-        (to be saved in a topology file)
-
-        :returns: dictionary
-        """
-
-        switch = super().dump()
-        # add the ports
-        if self._ports:
-            ports = switch["ports_mapping"] = []
-            for port in self._ports:
-                port_info = port.dump()
-                if port.portNumber() in self._settings["ports_mapping"]:
-                    port_info["type"] = self._settings["ports_mapping"][port.portNumber()]["type"]
-                    if port_info["type"] == "qinq" and "ethertype" != "0x8100":
-                        port_info["ethertype"] = self._settings["ports_mapping"][port.portNumber()]["ethertype"]
-                    port_info["vlan"] = self._settings["ports_mapping"][port.portNumber()]["vlan"]
-                ports.append(port_info)
-        return switch
-
-    def load(self, node_info):
-        """
-        Loads an Ethernet switch representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-        properties = node_info["properties"]
-        name = properties.pop("name")
-
-        # Ethernet switches do not have an UUID before version 2.0
-        node_id = properties.get("node_id", str(uuid.uuid4()))
-
-        ports = []
-        if "ports_mapping" in node_info:
-            for port_info in node_info["ports_mapping"]:
-                ports.append({"port_number": port_info["port_number"],
-                              "name": port_info["name"],
-                              "type": port_info.get("type", "access"),
-                              "vlan": port_info.get("vlan", 1),
-                              "ethertype": port_info.get("ethertype", "")})
-
-        log.info("Ethernet switch {} is loading".format(name))
-        self.create(name, node_id, ports)
 
     def configPage(self):
         """

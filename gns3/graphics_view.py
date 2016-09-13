@@ -137,7 +137,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
         # nodes, links and ports
         Node.reset()
         Link.reset()
-        Port.reset()
 
         # reset the topology
         self._topology.reset()
