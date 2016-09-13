@@ -37,7 +37,6 @@ def reset_modules():
     from gns3.compute_manager import ComputeManager
 
     ComputeManager.reset()
-    Port.reset()
     VPCSNode.reset()
     VirtualBoxVM.reset()
     IOUDevice.reset()

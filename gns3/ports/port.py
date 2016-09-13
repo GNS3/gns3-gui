@@ -19,19 +19,8 @@
 Base class for port objects.
 """
 
-import os
-import sys
-import tempfile
-import shutil
-import subprocess
-import shlex
 import logging
-
 log = logging.getLogger(__name__)
-
-from gns3.utils.normalize_filename import normalize_filename
-from ..local_config import LocalConfig
-from ..settings import PACKET_CAPTURE_SETTINGS
 
 
 class Port:
@@ -42,66 +31,20 @@ class Port:
     :param name: port name (string)
     """
 
-    _instance_count = 1
-    _settings = {}
-
     # port statuses
     stopped = 0
     started = 1
     suspended = 2
 
     def __init__(self, name):
-
-        # create an unique ID
-        self._id = Port._instance_count
-        Port._instance_count += 1
-
-        # In 1.3.3 and 1.3.4 we have issue with port name not a string
-        # see: https://github.com/gns3/gns3-gui/issues/393
-        assert isinstance(name, str)
-
         self._name = name
         self._short_name = None
         self._port_number = None
         self._adapter_number = None
-        self._link_id = None
-        self._link = None
         self._port_label = None
         self._status = Port.stopped
-        self._data = {}
         self._destination_node = None
         self._destination_port = None
-        self._hot_pluggable = True
-
-    def id(self):
-        """
-        Returns an unique identifier for this port.
-
-        :returns: port identifier (integer)
-        """
-
-        return self._id
-
-    def setId(self, new_id):
-        """
-        Sets an identifier for this port.
-
-        :param new_id: node identifier (integer)
-        """
-
-        self._id = new_id
-
-        # update the instance count to avoid conflicts
-        if new_id >= Port._instance_count:
-            Port._instance_count = new_id + 1
-
-    @classmethod
-    def reset(cls):
-        """
-        Reset the instance count.
-        """
-
-        cls._instance_count = 1
 
     def name(self):
         """
@@ -320,24 +263,6 @@ class Port:
         """
 
         return {"Ethernet": "DLT_EN10MB"}
-
-    def data(self):
-        """
-        Returns the data associated with this port.
-
-        :returns: current port data (dictionary)
-        """
-
-        return self._data
-
-    def setData(self, new_data):
-        """
-        Sets data to be associated with this port.
-
-        :param new_data: new port data (dictionary)
-        """
-
-        self._data = new_data
 
     def label(self):
         """

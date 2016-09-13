@@ -572,42 +572,6 @@ class Node(BaseNode):
         elif console_type == "http" or console_type == "https":
             QtGui.QDesktopServices.openUrl(QtCore.QUrl("{console_type}://{host}:{port}{path}".format(console_type=console_type, host=self.consoleHost(), port=console_port, path=self.consoleHttpPath())))
 
-    def _updatePortSettings(self):
-        """
-        Updates port settings when loading a topology.
-        """
-
-        self.loaded_signal.disconnect(self._updatePortSettings)
-
-        # assign the correct names and IDs to the ports
-        if "ports_mapping" in self._node_info:
-            ports = self._node_info["ports_mapping"]
-
-            port_initialized = set()
-
-            for topology_port in ports:
-                for port in self._ports:
-                    if topology_port["port_number"] == port.portNumber():
-                        # If the adapter is missing we consider that adapter_number == port_number
-                        adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
-                        if port.adapterNumber() is None or adapter_number == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber():
-
-                            if port in port_initialized:
-                                msg = "Topology corrupted port {} already exists for {}".format(port, self.name())
-                                log.error(msg)
-                            else:
-                                port.setName(topology_port["name"])
-                                port.setId(topology_port["id"])
-                                port_initialized.add(port)
-
-        # now we can set the node as initialized and trigger the created signal
-        self.setInitialized(True)
-        log.info("{} has been loaded".format(self.name()))
-        self.created_signal.emit(self.id())
-        self._module.addNode(self)
-        self._loading = False
-        self._node_info = None
-
     def setName(self, name):
         """
         Set a name for a node.
