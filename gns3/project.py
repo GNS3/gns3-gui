@@ -18,7 +18,7 @@
 import os
 import sys
 import traceback
-from .qt import QtCore, qpartial
+from .qt import QtCore, qpartial, QtWidgets
 
 from gns3.controller import Controller
 from gns3.compute_manager import ComputeManager
@@ -158,7 +158,13 @@ class Project(QtCore.QObject):
         """
         Duplicate a project
         """
-        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id), None, body={"name": name, "path": path})
+        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id), self._duplicateCallback, body={"name": name, "path": path})
+
+    def _duplicateCallback(self, result, error=False, **kwargs):
+        if error:
+            if "message" in result:
+                QtWidgets.QMessageBox.critical(None, "Duplicate project", "Error while duplicate: {}".format(result["message"]))
+            return
 
     def stop_all_nodes(self):
         """Stop all nodes belonging to this project"""
