@@ -77,6 +77,7 @@ class Cloud(Node):
 
         # If the cloud is empty fill it with all interfaces (like the 1.X host node)
         if "ports_mapping" not in result or len(result["ports_mapping"]) == 0:
+            port_number = 0
             settings = {"ports_mapping": []}
             for interface in self._interfaces:
                 if interface["special"]:

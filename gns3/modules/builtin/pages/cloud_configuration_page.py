@@ -129,7 +129,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                     self._ports.remove(port)
                     self.uiEthernetListWidget.takeItem(self.uiEthernetListWidget.row(item))
                     for interface in self._interfaces:
-                        if not self.uiShowSpecialInterfacesCheckBox.isChecked() and Cloud.isSpecialInterface(interface["name"]):
+                        if not self.uiShowSpecialInterfacesCheckBox.isChecked() and interface["special"]:
                             continue
                         if interface["name"] == port["name"] and interface["type"] == "ethernet":
                             self.uiEthernetComboBox.addItem(interface["name"])
@@ -335,7 +335,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiEthernetComboBox.clear()
         index = 0
         for interface in interfaces:
-            if interface["type"] == "ethernet" and not Cloud.isSpecialInterface(interface["name"]):
+            if interface["type"] == "ethernet" and not interface["special"]:
                 self.uiEthernetComboBox.addItem(interface["name"])
                 index += 1
 
