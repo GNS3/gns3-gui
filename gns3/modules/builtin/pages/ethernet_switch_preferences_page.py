@@ -152,12 +152,11 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         """
         Deletes an Ethernet switch template.
         """
-
-        for item in self.uiEthernetSwitchsTreeWidget.selectedItems():
+        for item in self.uiEthernetSwitchesTreeWidget.selectedItems():
             if item:
                 key = item.data(0, QtCore.Qt.UserRole)
                 del self._ethernet_switches[key]
-                self.uiEthernetSwitchsTreeWidget.takeTopLevelItem(self.uiEthernetSwitchsTreeWidget.indexOfTopLevelItem(item))
+                self.uiEthernetSwitchesTreeWidget.takeTopLevelItem(self.uiEthernetSwitchesTreeWidget.indexOfTopLevelItem(item))
 
     def loadPreferences(self):
         """
