@@ -229,8 +229,8 @@ It is your responsability to check if you have the right to distribute the image
             return
 
         import_worker = ImportProjectWorker(project_file,
-                name=dialog.getProjectSettings()["project_name"],
-                path=dialog.getProjectSettings()["project_path"])
+                                            name=dialog.getProjectSettings()["project_name"],
+                                            path=dialog.getProjectSettings()["project_files_dir"])
         import_worker.imported.connect(self._projectImportedSlot)
         progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self._main_window)
         progress_dialog.show()
@@ -243,7 +243,7 @@ It is your responsability to check if you have the right to distribute the image
         if dialog.exec_():
             self._project.duplicate(
                 name=dialog.getProjectSettings()["project_name"],
-                path=dialog.getProjectSettings().get("project_path") # None when using remote controller
+                path=dialog.getProjectSettings().get("project_files_dir")  # None when using remote controller
             )
 
     def _projectImportedSlot(self, project_id):
@@ -252,7 +252,7 @@ It is your responsability to check if you have the right to distribute the image
 
     def deleteProject(self):
         if self._project:
-           self._project.destroy()
+            self._project.destroy()
         self.setProject(None)
 
     def addNode(self, node):
@@ -495,7 +495,7 @@ It is your responsability to check if you have the right to distribute the image
                     destination_port = port
                     break
         if source_port is None or destination_port is None:
-                return
+            return
         self._main_window.uiGraphicsView.addLink(source_node, source_port, destination_node, destination_port, **link_data)
 
     def createDrawing(self, drawing_data):
@@ -506,7 +506,7 @@ It is your responsability to check if you have the right to distribute the image
         """
         svg = ET.fromstring(drawing_data["svg"])
         try:
-            #If SVG is more complex we consider it as an image
+            # If SVG is more complex we consider it as an image
             if len(svg[0]) != 0:
                 type = "image"
             else:
