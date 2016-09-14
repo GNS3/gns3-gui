@@ -531,3 +531,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if not self.isSelected():
             self.graphicsEffect().setEnabled(False)
+
+    def mouseRelease(self):
+        """
+        Handle all mouse release for this item.
+        It the item is select but mouse is not on it the event
+        is send also
+        """
+        self._updateNode()

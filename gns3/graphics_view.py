@@ -489,13 +489,17 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param: QMouseEvent instance
         """
 
-        item = self.itemAt(event.pos())
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem):
+                item.mouseRelease()
+
         # If the left  mouse button is not still pressed TOGETHER with the SHIFT key and neither is the middle button
         # this means the user is no longer trying to drag the view
         if self._dragging and not (event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ShiftModifier) and not event.buttons() & QtCore.Qt.MidButton:
             self._dragging = False
             self.setCursor(QtCore.Qt.ArrowCursor)
         else:
+            item = self.itemAt(event.pos())
             if item is not None and not event.modifiers() & QtCore.Qt.ControlModifier:
                 item.setSelected(True)
             super().mouseReleaseEvent(event)
