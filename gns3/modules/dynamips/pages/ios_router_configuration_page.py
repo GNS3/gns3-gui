@@ -529,7 +529,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             platform = node.settings().get("platform")
         else:
             platform = settings.get("platform")
-        if "chassis" in settings or (node and node.settings.get("chassis")):
+        if "chassis" in settings or (node and node.settings().get("chassis")):
             settings["chassis"] = self.uiChassisTextLabel.text()
 
         if platform == "c7200":
@@ -605,7 +605,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             elif settings["slot" + str(slot_number)]:
                 if node:
                     self._checkForLinkConnectedToAdapter(slot_number, settings, node)
-                settings["slot" + str(slot_number)] = None
+                settings["slot" + str(slot_number)] = ""
 
         for wic_number, widget in self._widget_wics.items():
             if not widget.isEnabled():
@@ -622,7 +622,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             elif settings["wic" + str(wic_number)]:
                 if node:
                     self._checkForLinkConnectedToWIC(wic_number, settings, node)
-                settings["wic" + str(wic_number)] = None
+                settings["wic" + str(wic_number)] = ""
         return settings
 
     def _configFileValid(self, path):
