@@ -94,6 +94,8 @@ class LocalServer(QtCore.QObject):
         if not self._settings.get("auto_start", True):
             self._http_client = HTTPClient(self._settings)
             Controller.instance().setHttpClient(self._http_client)
+        else:
+            self._http_client = None
 
     def _pid_path(self):
         """
