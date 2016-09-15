@@ -45,7 +45,7 @@ class Config:
 
         self.path = path
         if self.path is None:
-            self.path = LocalConfig.instance.configFilePath()
+            self.path = LocalConfig.instance().configFilePath()
 
         with open(self.path, encoding="utf-8") as f:
             self._config = json.load(f)
