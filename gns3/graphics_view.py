@@ -1293,7 +1293,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     type = "rect"
                 else:
                     type = "image"
-                self.createDrawingItem(type, item.pos().x() + 20, item.pos().x() + 20, item.zValue(), rotation=item.rotation(), svg=item.toSvg())
+                self.createDrawingItem(type, item.pos().x() + 20, item.pos().y() + 20, item.zValue(), rotation=item.rotation(), svg=item.toSvg())
 
     def styleActionSlot(self):
         """

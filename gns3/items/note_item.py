@@ -201,7 +201,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
                 val = val.strip()
 
                 if key == "font-size":
-                   font.setPointSize(int(val))
+                    font.setPointSize(int(val))
                 elif key == "font-family":
                     font.setFamily(val)
                 elif key == "font-style" and val == "italic":
@@ -220,22 +220,6 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
                     color.setAlphaF(float(val))
                     self.setDefaultTextColor(color)
         self.setFont(font)
-
-    def duplicate(self):
-        """
-        Duplicates this node item.
-
-        :return: NoteItem instance
-        """
-
-        note_item = NoteItem(self.parent())
-        note_item.setPlainText(self.toPlainText())
-        note_item.setPos(self.x() + 20, self.y() + 20)
-        note_item.setZValue(self.zValue())
-        note_item.setFont(self.font())
-        note_item.setDefaultTextColor(self.defaultTextColor())
-        note_item.setRotation(self.rotation())
-        return note_item
 
     def itemChange(self, change, value):
         """
