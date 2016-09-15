@@ -275,12 +275,12 @@ class Config:
 
         path = os.path.join(self.symbols_dir, symbol)
         if os.path.exists(path):
-            return path
+            return os.path.basename(path)
 
         url = "https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/{}".format(symbol)
         try:
             urllib.request.urlretrieve(url, path)
-            return path
+            return os.path.basename(path)
         except OSError:
             return None
 
