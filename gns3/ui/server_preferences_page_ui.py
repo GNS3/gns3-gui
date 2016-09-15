@@ -2,13 +2,15 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ServerPreferencesPageWidget(object):
+
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
         ServerPreferencesPageWidget.resize(659, 802)
@@ -171,17 +173,17 @@ class Ui_ServerPreferencesPageWidget(object):
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.uiRemoteMainServerPortSpinBox)
         self.label_4 = QtWidgets.QLabel(self.uiRemoteMainServerGroupBox)
         self.label_4.setObjectName("label_4")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_4)
+        self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_4)
         self.uiRemoteMainServerUserLineEdit = QtWidgets.QLineEdit(self.uiRemoteMainServerGroupBox)
         self.uiRemoteMainServerUserLineEdit.setObjectName("uiRemoteMainServerUserLineEdit")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.uiRemoteMainServerUserLineEdit)
+        self.formLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.uiRemoteMainServerUserLineEdit)
         self.label_5 = QtWidgets.QLabel(self.uiRemoteMainServerGroupBox)
         self.label_5.setObjectName("label_5")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_5)
+        self.formLayout.setWidget(6, QtWidgets.QFormLayout.LabelRole, self.label_5)
         self.uiRemoteMainServerPasswordLineEdit = QtWidgets.QLineEdit(self.uiRemoteMainServerGroupBox)
         self.uiRemoteMainServerPasswordLineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.uiRemoteMainServerPasswordLineEdit.setObjectName("uiRemoteMainServerPasswordLineEdit")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.uiRemoteMainServerPasswordLineEdit)
+        self.formLayout.setWidget(6, QtWidgets.QFormLayout.FieldRole, self.uiRemoteMainServerPasswordLineEdit)
         self.label_6 = QtWidgets.QLabel(self.uiRemoteMainServerGroupBox)
         self.label_6.setObjectName("label_6")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_6)
@@ -190,6 +192,13 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteMainServerProtocolComboBox.addItem("")
         self.uiRemoteMainServerProtocolComboBox.addItem("")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.uiRemoteMainServerProtocolComboBox)
+        self.uiRemoteMainServerAuthCheckBox = QtWidgets.QCheckBox(self.uiRemoteMainServerGroupBox)
+        self.uiRemoteMainServerAuthCheckBox.setText("")
+        self.uiRemoteMainServerAuthCheckBox.setObjectName("uiRemoteMainServerAuthCheckBox")
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.uiRemoteMainServerAuthCheckBox)
+        self.label = QtWidgets.QLabel(self.uiRemoteMainServerGroupBox)
+        self.label.setObjectName("label")
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label)
         self.verticalLayout_3.addWidget(self.uiRemoteMainServerGroupBox)
         spacerItem2 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem2)
@@ -298,6 +307,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.label_6.setText(_translate("ServerPreferencesPageWidget", "Protocol:"))
         self.uiRemoteMainServerProtocolComboBox.setItemText(0, _translate("ServerPreferencesPageWidget", "http"))
         self.uiRemoteMainServerProtocolComboBox.setItemText(1, _translate("ServerPreferencesPageWidget", "https"))
+        self.label.setText(_translate("ServerPreferencesPageWidget", "Auth:"))
         self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiLocalTabWidget), _translate("ServerPreferencesPageWidget", "Main server"))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("ServerPreferencesPageWidget", "Name"))
         self.uiRemoteServersTreeWidget.headerItem().setText(4, _translate("ServerPreferencesPageWidget", "User"))
@@ -306,4 +316,3 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete"))
         self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults"))
-

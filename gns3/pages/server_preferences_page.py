@@ -189,6 +189,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteMainServerUserLineEdit.setText(servers_settings["user"])
         self.uiRemoteMainServerPasswordLineEdit.setText(servers_settings["password"])
         self.uiRemoteMainServerProtocolComboBox.setCurrentText(servers_settings["protocol"])
+        self.uiRemoteMainServerAuthCheckBox.setChecked(servers_settings["auth"])
 
         self.uiLocalServerAutoStartCheckBox.setChecked(servers_settings["auto_start"])
         self._useLocalServerAutoStartSlot(servers_settings["auto_start"])
@@ -284,6 +285,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             new_local_server_settings["protocol"] = self.uiRemoteMainServerProtocolComboBox.currentText()
             new_local_server_settings["user"] = self.uiRemoteMainServerUserLineEdit.text()
             new_local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
+            new_local_server_settings["auth"] = self.uiRemoteMainServerAuthCheckBox.isChecked()
             LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
 
         ComputeManager.instance().updateList(self._remote_computes.values())
