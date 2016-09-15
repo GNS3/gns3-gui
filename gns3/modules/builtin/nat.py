@@ -41,7 +41,7 @@ class Nat(Node):
         super().__init__(module, server, project)
         self.setStatus(Node.started)
         self._always_on = True
-        self._nat_settings = {"ports_mapping": []}
+        self._nat_settings = {}
         self.settings().update(self._nat_settings)
 
     def interfaces(self):
@@ -77,7 +77,6 @@ class Nat(Node):
         if error:
             log.error("Error while creating nat: {}".format(result["message"]))
             return
-        self._parseServerResponse(result)
 
     def update(self, new_settings):
         """
@@ -102,11 +101,6 @@ class Nat(Node):
         if error:
             log.error("Error while creating nat: {}".format(result["message"]))
             return
-
-        self._parseServerResponse(result)
-
-    def _parseServerResponse(self, result):
-        self._settings["ports_mapping"] = result["ports_mapping"]
 
     def info(self):
         """
