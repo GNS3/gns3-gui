@@ -54,6 +54,7 @@ class Router(Node):
         self._dynamips_id = None
 
         router_settings = {"platform": platform,
+                           "chassis": "",
                            "image": "",
                            "image_md5sum": "",
                            "startup_config": "",
@@ -66,6 +67,7 @@ class Router(Node):
                            "idlepc": "",
                            "idlemax": 500,
                            "idlesleep": 30,
+                           "iomem": 15,
                            "exec_area": 64,
                            "disk0": 0,
                            "disk1": 0,
@@ -161,8 +163,12 @@ class Router(Node):
             del new_settings["private_config"]
 
         for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
+            if name in self._settings:
+                if self._settings[name] != value:
+                    params[name] = value
+            else:
+                # All key should be known
+                raise ValueError(name)
 
         if params:
             self._update(params)
@@ -175,9 +181,13 @@ class Router(Node):
         """
 
         for name, value in result.items():
-            if name in self._settings and self._settings[name] != value:
-                log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                self._settings[name] = value
+            if name in self._settings:
+                if self._settings[name] != value:
+                    log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
+                    self._settings[name] = value
+            elif name not in ("project_id", "port_name_format", "port_segment_size", "first_port_name", "node_directory", "status", "node_id"):
+                # All key should be known
+                raise ValueError(name)
 
     def computeIdlepcs(self, callback):
         """
