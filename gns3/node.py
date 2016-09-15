@@ -357,11 +357,12 @@ class Node(BaseNode):
     def _updatePorts(self, ports):
         self._settings["ports"] = ports
         old_ports = self._ports.copy()
+        self._ports = []
         for port in ports:
             new_port = None
 
             # Update port if already exist
-            for old_port in self._ports:
+            for old_port in old_ports:
                 if old_port.adapterNumber() == port["adapter_number"] and old_port.portNumber() == port["port_number"] and old_port.name() == port["name"]:
                     new_port = old_port
                     old_ports.remove(old_port)
@@ -378,10 +379,6 @@ class Node(BaseNode):
             new_port.setDataLinkTypes(port["data_link_types"])
             new_port.setStatus(self.status())
             self._ports.append(new_port)
-
-        # Delete removed port
-        for old_port in old_ports:
-            self._ports.remove(old_port)
 
     def _updateCallback(self, result):
         """

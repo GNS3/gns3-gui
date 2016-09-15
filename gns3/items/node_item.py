@@ -387,7 +387,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 ports_dict[port.portNumber()] = port
             else:
                 ports_dict[port.name()] = port
-
         try:
             ports = sorted(ports_dict.keys(), key=int)
         except ValueError:
