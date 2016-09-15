@@ -24,7 +24,7 @@ import re
 import uuid
 import tempfile
 
-from .qt import QtCore
+from .qt import QtCore, QtWidgets
 from .controller import Controller
 
 
@@ -109,10 +109,10 @@ class Link(QtCore.QObject):
                     "/projects/{project_id}/links/{link_id}/pcap".format(
                         project_id=self.project().id(),
                         link_id=self._link_id),
-                        None,
-                        showProgress=False,
-                        downloadProgressCallback=self._downloadPcapProgress,
-                        timeout=None)
+                    None,
+                    showProgress=False,
+                    downloadProgressCallback=self._downloadPcapProgress,
+                    timeout=None)
         else:
             self._capture_file_path = result["capture_file_path"]
 
@@ -146,7 +146,7 @@ class Link(QtCore.QObject):
 
     def updateLinkCallback(self, result, error=False, *args, **kwargs):
         if error:
-            log.error("Error while creating link: {}".format(result["message"]))
+            QtWidgets.QMessageBox.warning(None, "Update link", "Error while updating link: {}".format(result["message"]))
             return
         self._parseResponse(result)
 
@@ -190,7 +190,7 @@ class Link(QtCore.QObject):
 
     def _linkCreatedCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while creating link: {}".format(result["message"]))
+            QtWidgets.QMessageBox.warning(None, "Create link", "Error while creating link: {}".format(result["message"]))
             return
 
         self._initialized = True
@@ -266,8 +266,8 @@ class Link(QtCore.QObject):
         if skip_controller:
             self._linkDeletedCallback({})
         else:
-          Controller.instance().delete("/projects/{project_id}/links/{link_id}".format(project_id=self.project().id(),
-                                                                                                     link_id=self._link_id), self._linkDeletedCallback)
+            Controller.instance().delete("/projects/{project_id}/links/{link_id}".format(project_id=self.project().id(),
+                                                                                         link_id=self._link_id), self._linkDeletedCallback)
 
     def _linkDeletedCallback(self, result, error=False, **kwargs):
         """
@@ -296,8 +296,8 @@ class Link(QtCore.QObject):
             "/projects/{project_id}/links/{link_id}/start_capture".format(
                 project_id=self.project().id(),
                 link_id=self._link_id),
-                self._startCaptureCallback,
-                body=data)
+            self._startCaptureCallback,
+            body=data)
 
     def _startCaptureCallback(self, result, error=False, **kwargs):
         if error:
@@ -404,5 +404,3 @@ class Link(QtCore.QObject):
         if self._destination_node == node:
             return self._destination_port
         return self._source_port
-
-
