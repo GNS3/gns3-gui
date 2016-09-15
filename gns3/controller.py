@@ -79,7 +79,7 @@ class Controller(QtCore.QObject):
             if "message" in result and self._first_error:
                 QtWidgets.QMessageBox.critical(self.parent(), "Connection", result["message"])
             # Try to connect again in 1 seconds
-            QtCore.QTimer.singleShot(1000, qpartial(self.get, '/version', self._versionGetSlot))
+            QtCore.QTimer.singleShot(1000, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
             self._first_error = False
         else:
             self._first_error = True
