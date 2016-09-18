@@ -48,14 +48,6 @@ class Nat(Node):
 
         return self._interfaces
 
-    @staticmethod
-    def isSpecialInterface(interface):
-
-        for special_interface in ("lo", "vmnet", "vboxnet", "docker", "lxcbr", "virbr", "ovs-system", "veth", "fw", "p2p"):
-            if interface.lower().startswith(special_interface):
-                return True
-        return False
-
     def create(self, name=None, node_id=None, default_name_format="Nat{0}"):
         """
         Creates this nat.

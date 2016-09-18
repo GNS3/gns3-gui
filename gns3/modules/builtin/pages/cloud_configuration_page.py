@@ -310,7 +310,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         index = 0
         for interface in self._interfaces:
             if interface["type"] == "ethernet":
-                if not state and Cloud.isSpecialInterface(interface["name"]):
+                if not state and interface["special"]:
                     continue
                 if self.uiEthernetListWidget.findItems(interface["name"], QtCore.Qt.MatchFixedString):
                     continue
