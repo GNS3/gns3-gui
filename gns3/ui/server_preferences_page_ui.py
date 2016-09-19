@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Mon Sep 19 11:12:35 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_ServerPreferencesPageWidget(object):
-
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
-        ServerPreferencesPageWidget.resize(659, 802)
+        ServerPreferencesPageWidget.resize(659, 830)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -38,7 +37,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiLocalTabWidget.setSizePolicy(sizePolicy)
         self.uiLocalTabWidget.setObjectName("uiLocalTabWidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiLocalTabWidget)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiLocalServerAutoStartCheckBox = QtWidgets.QCheckBox(self.uiLocalTabWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
@@ -202,11 +201,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.verticalLayout_3.addWidget(self.uiRemoteMainServerGroupBox)
         spacerItem2 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem2)
-        self.uiGeneralSettingsGroupBox.raise_()
-        self.uiConsolePortRangeGroupBox.raise_()
-        self.uiUDPPortRangeGroupBox.raise_()
-        self.uiLocalServerAutoStartCheckBox.raise_()
-        self.uiRemoteMainServerGroupBox.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiLocalTabWidget, "")
         self.uiRemoteTabWidget = QtWidgets.QWidget()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
@@ -216,7 +210,7 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiRemoteTabWidget.setSizePolicy(sizePolicy)
         self.uiRemoteTabWidget.setObjectName("uiRemoteTabWidget")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.uiRemoteTabWidget)
-        self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_5.setContentsMargins(10, 10, 10, 10)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.uiRemoteServersTreeWidget = QtWidgets.QTreeWidget(self.uiRemoteTabWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
@@ -248,7 +242,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.gridLayout_5.addLayout(self.horizontalLayout_3, 1, 0, 1, 2)
         spacerItem4 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_5.addItem(spacerItem4, 2, 0, 1, 1)
-        self.uiRemoteServersTreeWidget.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiRemoteTabWidget, "")
         self.verticalLayout_2.addWidget(self.uiServerPreferenceTabWidget)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -316,3 +309,4 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete"))
         self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults"))
+

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>568</width>
-    <height>317</height>
+    <height>318</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,11 +31,14 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="uiNewProjectTab">
       <attribute name="title">
        <string>New project</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
@@ -151,6 +154,9 @@
        <string>Projects library</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QTreeWidget" name="uiProjectsTreeWidget">
          <property name="alternatingRowColors">

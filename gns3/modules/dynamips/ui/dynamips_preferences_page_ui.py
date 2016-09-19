@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Thu May  5 18:51:18 2016
+# Created: Mon Sep 19 11:16:52 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,6 +20,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiGeneralSettingsTabWidget = QtWidgets.QWidget()
         self.uiGeneralSettingsTabWidget.setObjectName("uiGeneralSettingsTabWidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiGeneralSettingsTabWidget)
+        self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiUseLocalServercheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsTabWidget)
         self.uiUseLocalServercheckBox.setChecked(True)
@@ -52,6 +53,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiAdvancedSettingsTabWidget = QtWidgets.QWidget()
         self.uiAdvancedSettingsTabWidget.setObjectName("uiAdvancedSettingsTabWidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiAdvancedSettingsTabWidget)
+        self.verticalLayout_3.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiMemoryUsageOptimisationGroupBox = QtWidgets.QGroupBox(self.uiAdvancedSettingsTabWidget)
         self.uiMemoryUsageOptimisationGroupBox.setObjectName("uiMemoryUsageOptimisationGroupBox")

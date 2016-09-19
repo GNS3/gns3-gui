@@ -30,6 +30,9 @@
        <string>General</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiLocalPathsGroupBox">
          <property name="title">
@@ -214,6 +217,9 @@
        <string>Binary images</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiLocalBinaryImagePathsGroupBox">
          <property name="title">
@@ -345,6 +351,9 @@
        <string>Console applications</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiTelnetConsoleSettingsGroupBox">
          <property name="title">
@@ -500,6 +509,9 @@
        <string>VNC</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiVNCConsoleSettingsGroupBox">
          <property name="title">
@@ -569,6 +581,9 @@
        <string>Topology view</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_8">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="uiSceneWidthLabel">
          <property name="text">
@@ -726,11 +741,14 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="uiMiscTab">
       <attribute name="title">
        <string>Miscellaneous</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QCheckBox" name="uiAutoScreenshotCheckBox">
          <property name="text">

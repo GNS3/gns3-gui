@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/about_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/about_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Mon Sep 19 11:12:35 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -20,7 +21,6 @@ class Ui_AboutDialog(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.gridLayout = QtWidgets.QGridLayout(self.tab)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -40,7 +40,6 @@ class Ui_AboutDialog(object):
         self.tab_4 = QtWidgets.QWidget()
         self.tab_4.setObjectName("tab_4")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.tab_4)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTeamTextEdit = QtWidgets.QTextEdit(self.tab_4)
         self.uiTeamTextEdit.setReadOnly(True)
@@ -51,7 +50,6 @@ class Ui_AboutDialog(object):
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.tab_2)
-        self.vboxlayout.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiThanksPlainTextEdit = QtWidgets.QPlainTextEdit(self.tab_2)
         self.uiThanksPlainTextEdit.setReadOnly(True)
@@ -61,7 +59,6 @@ class Ui_AboutDialog(object):
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
         self.vboxlayout1 = QtWidgets.QVBoxLayout(self.tab_3)
-        self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout1.setObjectName("vboxlayout1")
         self.uiLicensePlainTextEdit = QtWidgets.QPlainTextEdit(self.tab_3)
         self.uiLicensePlainTextEdit.setReadOnly(True)

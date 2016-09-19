@@ -24,6 +24,9 @@
        <string>General settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiLocalServerGroupBox">
          <property name="title">

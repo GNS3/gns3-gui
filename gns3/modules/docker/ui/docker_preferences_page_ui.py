@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_preferences_page.ui'
 #
-# Created: Thu May  5 18:51:18 2016
+# Created: Mon Sep 19 11:16:52 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,6 +21,7 @@ class Ui_DockerPreferencesPageWidget(object):
         self.uiServerSettingsTabWidget = QtWidgets.QWidget()
         self.uiServerSettingsTabWidget.setObjectName("uiServerSettingsTabWidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiServerSettingsTabWidget)
+        self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiUseLocalServercheckBox = QtWidgets.QCheckBox(self.uiServerSettingsTabWidget)
         self.uiUseLocalServercheckBox.setChecked(True)

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/project_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/project_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created: Mon Sep 19 11:03:44 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +13,7 @@ class Ui_ProjectDialog(object):
     def setupUi(self, ProjectDialog):
         ProjectDialog.setObjectName("ProjectDialog")
         ProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        ProjectDialog.resize(568, 317)
+        ProjectDialog.resize(568, 318)
         ProjectDialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(ProjectDialog)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -20,12 +21,12 @@ class Ui_ProjectDialog(object):
         self.uiProjectTabWidget.setTabPosition(QtWidgets.QTabWidget.North)
         self.uiProjectTabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.uiProjectTabWidget.setObjectName("uiProjectTabWidget")
-        self.tab = QtWidgets.QWidget()
-        self.tab.setObjectName("tab")
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.tab)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.uiNewProjectTab = QtWidgets.QWidget()
+        self.uiNewProjectTab.setObjectName("uiNewProjectTab")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiNewProjectTab)
+        self.verticalLayout_3.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.groupBox = QtWidgets.QGroupBox(self.tab)
+        self.groupBox = QtWidgets.QGroupBox(self.uiNewProjectTab)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.groupBox)
         self.gridLayout.setObjectName("gridLayout")
@@ -61,7 +62,7 @@ class Ui_ProjectDialog(object):
         self.verticalLayout_3.addWidget(self.groupBox)
         spacerItem = QtWidgets.QSpacerItem(5, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem)
-        self.uiOpenProjectGroupBox = QtWidgets.QGroupBox(self.tab)
+        self.uiOpenProjectGroupBox = QtWidgets.QGroupBox(self.uiNewProjectTab)
         self.uiOpenProjectGroupBox.setObjectName("uiOpenProjectGroupBox")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.uiOpenProjectGroupBox)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -77,11 +78,11 @@ class Ui_ProjectDialog(object):
         self.horizontalLayout_2.addItem(spacerItem1)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.uiOpenProjectGroupBox)
-        self.uiProjectTabWidget.addTab(self.tab, "")
+        self.uiProjectTabWidget.addTab(self.uiNewProjectTab, "")
         self.uiProjectsLibraryTab = QtWidgets.QWidget()
         self.uiProjectsLibraryTab.setObjectName("uiProjectsLibraryTab")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiProjectsLibraryTab)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiProjectsTreeWidget = QtWidgets.QTreeWidget(self.uiProjectsLibraryTab)
         self.uiProjectsTreeWidget.setAlternatingRowColors(True)
@@ -134,7 +135,7 @@ class Ui_ProjectDialog(object):
         self.uiOpenProjectGroupBox.setTitle(_translate("ProjectDialog", "Open project"))
         self.uiOpenProjectPushButton.setText(_translate("ProjectDialog", "&Open a project from disk"))
         self.uiRecentProjectsPushButton.setText(_translate("ProjectDialog", "&Recent projects..."))
-        self.uiProjectTabWidget.setTabText(self.uiProjectTabWidget.indexOf(self.tab), _translate("ProjectDialog", "New project"))
+        self.uiProjectTabWidget.setTabText(self.uiProjectTabWidget.indexOf(self.uiNewProjectTab), _translate("ProjectDialog", "New project"))
         self.uiProjectsTreeWidget.setSortingEnabled(True)
         self.uiProjectsTreeWidget.headerItem().setText(0, _translate("ProjectDialog", "Name"))
         self.uiProjectsTreeWidget.headerItem().setText(1, _translate("ProjectDialog", "Status"))

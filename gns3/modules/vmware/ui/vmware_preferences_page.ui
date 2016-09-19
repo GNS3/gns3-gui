@@ -27,6 +27,9 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item row="0" column="0">
         <widget class="QCheckBox" name="uiUseLocalServercheckBox">
          <property name="text">
@@ -104,6 +107,9 @@
           <string>Managed VMnet interfaces (VMnet8 excluded)</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="margin">
+           <number>10</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
