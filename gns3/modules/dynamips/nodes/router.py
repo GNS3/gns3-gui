@@ -378,9 +378,9 @@ class Router(Node):
         :param directory: destination directory path
         """
 
-        self.httpGet("/dynamips/nodes/{node_id}/configs".format(node_id=self._node_id),
-                     self._exportConfigToDirectoryCallback,
-                     context={"directory": directory})
+        self.controllerHttpGet("/nodes/{node_id}".format(node_id=self._node_id),
+                               self._exportConfigToDirectoryCallback,
+                               context={"directory": directory})
 
     def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -394,6 +394,7 @@ class Router(Node):
             log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
         else:
+            result = result["properties"]
             directory = context["directory"]
             if "startup_config_content" in result:
                 config_path = os.path.join(directory, normalize_filename(self.name())) + "_startup-config.cfg"

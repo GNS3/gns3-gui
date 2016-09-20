@@ -176,7 +176,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # This widgets are not enabled if it's a remote controller (no access to the local file system)
         self.disableWhenRemoteContollerWidgets = [
-            self.uiImportExportConfigsAction
+            # self.uiImportExportConfigsAction
         ]
 
         # load initial stuff once the event loop isn't busy

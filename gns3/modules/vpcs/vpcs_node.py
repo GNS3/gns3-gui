@@ -146,9 +146,9 @@ class VPCSNode(Node):
         :param directory: destination directory path
         """
 
-        self.httpGet("/vpcs/nodes/{node_id}".format(node_id=self._node_id),
-                     self._exportConfigToDirectoryCallback,
-                     context={"directory": directory})
+        self.controllerHttpGet("/nodes/{node_id}".format(node_id=self._node_id),
+                               self._exportConfigToDirectoryCallback,
+                               context={"directory": directory})
 
     def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -161,14 +161,14 @@ class VPCSNode(Node):
         if error:
             log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        elif "startup_script" in result:
+        elif "startup_script" in result["properties"]:
             export_directory = context["directory"]
             config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_startup.vpc"
             try:
                 with open(config_path, "wb") as f:
                     log.info("saving {} script file to {}".format(self.name(), config_path))
-                    if result["startup_script"]:
-                        f.write(result["startup_script"].encode("utf-8"))
+                    if result["properties"]["startup_script"]:
+                        f.write(result["properties"]["startup_script"].encode("utf-8"))
             except OSError as e:
                 self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(config_path, e))
 

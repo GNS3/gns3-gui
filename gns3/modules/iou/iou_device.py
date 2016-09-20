@@ -215,9 +215,9 @@ class IOUDevice(Node):
         :param directory: destination directory path
         """
 
-        self.httpGet("/iou/nodes/{node_id}/configs".format(node_id=self._node_id),
-                     self._exportConfigToDirectoryCallback,
-                     context={"directory": directory})
+        self.controllerHttpGet("/nodes/{node_id}".format(node_id=self._node_id),
+                               self._exportConfigToDirectoryCallback,
+                               context={"directory": directory})
 
     def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
         """
@@ -233,6 +233,7 @@ class IOUDevice(Node):
             return
         export_directory = context["directory"]
 
+        result = result["properties"]
         if "startup_config_content" in result:
             startup_config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_startup-config.cfg"
             try:
