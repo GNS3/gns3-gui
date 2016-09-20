@@ -207,7 +207,7 @@ class Node(BaseNode):
 
         # We have two kind of properties. The general properties common to all
         # nodes and the specific that we need to put in the properties field
-        node_general_properties = ("name", "console", "console_type", "x", "y", "z", "symbol", "label")
+        node_general_properties = ("name", "console", "console_type", "x", "y", "z", "symbol", "label", "port_name_format", "port_segment_size", "first_port_name")
         # No need to send this back to the server because it's read only
         ignore_properties = ("console_host", "symbol_url", "width", "height", "node_id")
         for key, value in params.items():
