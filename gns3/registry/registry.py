@@ -87,6 +87,6 @@ class Registry:
                                         log.debug("Found images  %s (%s) from ova in %s", filename, md5sum, path)
                                         return Image(path)
                         except OSError as e:
-                            log.eror("Can't scan {}: {}".format(path, str(e)))
+                            log.error("Can't scan {}: {}".format(path, str(e)))
 
         return None

@@ -45,7 +45,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
 
         if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
             # Cannot use Docker locally on Windows and Mac
-            self.uiLocalRadioButton.setEnabled(False)
+            self._disableLocalServer()
 
     def _existingImageRadioButtonToggledSlot(self, status):
         if self.uiExistingImageRadioButton.isChecked():
@@ -97,10 +97,13 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
                     self, "Docker images",
                     "There are no Docker images selected!")
                 return False
-            self.uiNameLineEdit.setText(self._getImageName().split(":")[0])
+            self.uiNameLineEdit.setText(self._getImageName().split(":")[0].replace("/", "-"))
 
         if self.currentPage() == self.uiNameWizardPage:
-            if self.uiNameLineEdit.text() in [ d["name"] for d in self._docker_containers.values() ]:
+            if "/" in self.uiNameLineEdit.text():
+                QtWidgets.QMessageBox.critical(self, "Container name", "/ is not allowed in container name")
+                return False
+            if self.uiNameLineEdit.text() in [d["name"] for d in self._docker_containers.values()]:
                 QtWidgets.QMessageBox.critical(self, "Container name", "This name already exist!")
                 return False
         return True

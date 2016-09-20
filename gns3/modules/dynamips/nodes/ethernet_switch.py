@@ -166,8 +166,8 @@ class EthernetSwitch(Device):
             self.server_error_signal.emit(self.id(), result["message"])
         else:
             if "name" in result:
-                self._settings["name"] = result["name"]
                 self.updateAllocatedName(result["name"])
+                self._settings["name"] = result["name"]
             log.info("{} has been updated".format(self.name()))
             self.updated_signal.emit()
 
