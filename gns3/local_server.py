@@ -112,6 +112,21 @@ class LocalServer(QtCore.QObject):
             return MainWindow.instance()
         return self._parent
 
+    def _checkWindowsService(self, service_name):
+        import pywintypes
+        import win32service
+        import win32serviceutil
+
+        try:
+            if win32serviceutil.QueryServiceStatus(service_name, None)[1] != win32service.SERVICE_RUNNING:
+                return False
+        except pywintypes.error as e:
+            if e.winerror == 1060:
+                return False
+            else:
+                log.error("Could not check if the {} service is running: {}".format(service_name, e.strerror))
+        return True
+
     def _checkUbridgePermissions(self):
         """
         Checks that uBridge can interact with network interfaces.
@@ -323,6 +338,11 @@ class LocalServer(QtCore.QObject):
         """
 
         self._checkUbridgePermissions()
+
+        if sys.platform.startswith('win'):
+            if not self._checkWindowsService("npf") and not self._checkWindowsService("npcap"):
+                QtWidgets.QMessageBox.critical(self.parent(), "Error", "The NPF or NPCAP service is not installed, please install Winpcap or Npcap and reboot.")
+                return
 
         self._port = self._settings["port"]
 
