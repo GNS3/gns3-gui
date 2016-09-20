@@ -33,7 +33,7 @@
        <item>
         <widget class="QRadioButton" name="uiRemoteRadioButton">
          <property name="text">
-          <string>Run the VirtualBox VM on a remote computer</string>
+          <string>Run this VirtualBox VM on a remote computer</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -43,7 +43,7 @@
        <item>
         <widget class="QRadioButton" name="uiLocalRadioButton">
          <property name="text">
-          <string>Run the VirtualBox VM on your local computer</string>
+          <string>Run this VirtualBox VM on my local computer</string>
          </property>
         </widget>
        </item>

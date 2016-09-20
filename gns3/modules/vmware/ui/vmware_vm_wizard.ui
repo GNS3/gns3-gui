@@ -33,7 +33,7 @@
        <item>
         <widget class="QRadioButton" name="uiRemoteRadioButton">
          <property name="text">
-          <string>Run the VMware VM on a remote GNS3 computer</string>
+          <string>Run this VMware VM on a remote GNS3 computer</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -43,7 +43,7 @@
        <item>
         <widget class="QRadioButton" name="uiLocalRadioButton">
          <property name="text">
-          <string>Run the VMware VM on your local computer</string>
+          <string>Run this VMware VM on my local computer</string>
          </property>
         </widget>
        </item>

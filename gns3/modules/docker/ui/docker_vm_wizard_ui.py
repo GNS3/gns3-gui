@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
 #
-# Created: Sun May  8 10:33:23 2016
+# Created: Tue Sep 20 17:45:46 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -199,9 +199,9 @@ class Ui_DockerVMWizard(object):
         self.uiServerWizardPage.setTitle(_translate("DockerVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a server type to run your new Docker VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("DockerVMWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("DockerVMWizard", "Run the Docker VM on a remote computer"))
-        self.uiVMRadioButton.setText(_translate("DockerVMWizard", "Run the Docker VM on the GNS3 VM"))
-        self.uiLocalRadioButton.setText(_translate("DockerVMWizard", "Run the Docker VM on your local computer"))
+        self.uiRemoteRadioButton.setText(_translate("DockerVMWizard", "Run this Docker VM on a remote computer"))
+        self.uiVMRadioButton.setText(_translate("DockerVMWizard", "Run this Docker VM on the GNS3 VM"))
+        self.uiLocalRadioButton.setText(_translate("DockerVMWizard", "Run this Docker VM on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("DockerVMWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("DockerVMWizard", "Run on:"))
         self.uiImageWizardPage.setTitle(_translate("DockerVMWizard", "Docker Virtual Machine"))

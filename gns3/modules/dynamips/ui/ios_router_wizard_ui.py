@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Fri Jun 10 21:30:53 2016
+# Created: Tue Sep 20 17:45:46 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -289,9 +289,9 @@ class Ui_IOSRouterWizard(object):
         self.uiServerWizardPage.setTitle(_translate("IOSRouterWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose a server type to run your new IOS router."))
         self.uiServerTypeGroupBox.setTitle(_translate("IOSRouterWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on a remote computer"))
-        self.uiVMRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on the GNS3 VM"))
-        self.uiLocalRadioButton.setText(_translate("IOSRouterWizard", "Run the IOS on your local computer"))
+        self.uiRemoteRadioButton.setText(_translate("IOSRouterWizard", "Run this IOS router on a remote computer"))
+        self.uiVMRadioButton.setText(_translate("IOSRouterWizard", "Run this IOS router on the GNS3 VM"))
+        self.uiLocalRadioButton.setText(_translate("IOSRouterWizard", "Run this IOS router on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("IOSRouterWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("IOSRouterWizard", "Run on:"))
         self.uiIOSImageWizardPage.setTitle(_translate("IOSRouterWizard", "IOS image"))
