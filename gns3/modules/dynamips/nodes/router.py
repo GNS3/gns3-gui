@@ -185,9 +185,10 @@ class Router(Node):
                 if self._settings[name] != value:
                     log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                     self._settings[name] = value
-            elif name not in ("project_id", "port_name_format", "port_segment_size", "first_port_name", "node_directory", "status", "node_id"):
-                # All key should be known
-                raise ValueError(name)
+            elif name not in ("project_id", "port_name_format", "port_segment_size", "first_port_name", "node_directory", "status", "node_id", "width", "height", "compute_id", "node_type", "startup_config_content", "private_config_content", "dynamips_id", "command_line"):
+                # All key should be known, but we raise error only in debug
+                if logging.getLogger().isEnabledFor(logging.DEBUG):
+                    raise ValueError(name)
 
     def computeIdlepcs(self, callback):
         """
