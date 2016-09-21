@@ -62,6 +62,11 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.uiWhenExitKeepRadioButton.setVisible(engine["support_when_exit"])
         self.uiWhenExitSuspendRadioButton.setVisible(engine["support_when_exit"])
         self.uiWhenExitStopRadioButton.setVisible(engine["support_when_exit"])
+        self.uiActionCloseLabel.setVisible(engine["support_when_exit"])
+        self.uiCpuLabel.setVisible(engine["support_ram"])
+        self.uiRamLabel.setVisible(engine["support_ram"])
+        self.uiRamSpinBox.setVisible(engine["support_ram"])
+        self.uiCpuSpinBox.setVisible(engine["support_ram"])
         self._refreshVMSlot(ignore_error=True)
 
     def loadPreferences(self):
@@ -77,6 +82,8 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             return
         self._old_settings = copy.copy(result)
         self._settings = result
+        self.uiRamSpinBox.setValue(self._settings["ram"])
+        self.uiCpuSpinBox.setValue(self._settings["vcpus"])
         self.uiEnableVMCheckBox.setChecked(self._settings["enable"])
         if self._settings["when_exit"] == "keep":
             self.uiWhenExitKeepRadioButton.setChecked(True)
@@ -138,7 +145,9 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             "vmname": self.uiVMListComboBox.currentData(),
             "headless": self.uiHeadlessCheckBox.isChecked(),
             "when_exit": when_exit,
-            "engine": self.uiGNS3VMEngineComboBox.currentData()
+            "engine": self.uiGNS3VMEngineComboBox.currentData(),
+            "ram": self.uiRamSpinBox.value(),
+            "vcpus": self.uiCpuSpinBox.value()
         }
         if self._old_settings != settings:
             Controller.instance().put("/gns3vm", self._saveSettingsCallback, settings, timeout=60 * 5)
