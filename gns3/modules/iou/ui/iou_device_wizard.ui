@@ -33,7 +33,7 @@
        <item>
         <widget class="QRadioButton" name="uiRemoteRadioButton">
          <property name="text">
-          <string>Run the IOU on a remote computers</string>
+          <string>Run this IOU device on a remote computers</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -43,14 +43,14 @@
        <item>
         <widget class="QRadioButton" name="uiVMRadioButton">
          <property name="text">
-          <string>Run the IOU on the GNS3 VM</string>
+          <string>Run this IOU device on the GNS3 VM</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QRadioButton" name="uiLocalRadioButton">
          <property name="text">
-          <string>Run the IOU on your local computer</string>
+          <string>Run this IOU device on my local computer</string>
          </property>
         </widget>
        </item>

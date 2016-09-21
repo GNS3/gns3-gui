@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created: Tue Sep 20 17:45:47 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -77,8 +78,8 @@ class Ui_VirtualBoxVMWizard(object):
         self.uiServerWizardPage.setTitle(_translate("VirtualBoxVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a server type to run your new VirtualBox VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("VirtualBoxVMWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("VirtualBoxVMWizard", "Run the VirtualBox VM on a remote computer"))
-        self.uiLocalRadioButton.setText(_translate("VirtualBoxVMWizard", "Run the VirtualBox VM on your local computer"))
+        self.uiRemoteRadioButton.setText(_translate("VirtualBoxVMWizard", "Run this VirtualBox VM on a remote computer"))
+        self.uiLocalRadioButton.setText(_translate("VirtualBoxVMWizard", "Run this VirtualBox VM on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("VirtualBoxVMWizard", "Remote servers"))
         self.uiRemoteServersLabel.setText(_translate("VirtualBoxVMWizard", "Run on server:"))
         self.uiVirtualBoxWizardPage.setTitle(_translate("VirtualBoxVMWizard", "VirtualBox Virtual Machine"))

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created: Wed Mar 30 13:46:11 2016
+# Created: Tue Sep 20 17:45:47 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -200,9 +200,9 @@ class Ui_QemuVMWizard(object):
         self.uiServerWizardPage.setTitle(_translate("QemuVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a server type to run your new QEMU VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("QemuVMWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("QemuVMWizard", "Run the Qemu VM on a remote computer"))
-        self.uiVMRadioButton.setText(_translate("QemuVMWizard", "Run the Qemu VM  on the GNS3 VM"))
-        self.uiLocalRadioButton.setText(_translate("QemuVMWizard", "Run the Qemu VM  on your local computer"))
+        self.uiRemoteRadioButton.setText(_translate("QemuVMWizard", "Run this Qemu VM on a remote computer"))
+        self.uiVMRadioButton.setText(_translate("QemuVMWizard", "Run this Qemu VM  on the GNS3 VM"))
+        self.uiLocalRadioButton.setText(_translate("QemuVMWizard", "Run this Qemu VM on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("QemuVMWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("QemuVMWizard", "Run on:"))
         self.uiNameWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM name"))

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Tue Sep 20 17:45:46 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -77,8 +78,8 @@ class Ui_VMwareVMWizard(object):
         self.uiServerWizardPage.setTitle(_translate("VMwareVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a server type to run your new VMware VM (Workstation, Player or Fusion)."))
         self.uiServerTypeGroupBox.setTitle(_translate("VMwareVMWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("VMwareVMWizard", "Run the VMware VM on a remote GNS3 computer"))
-        self.uiLocalRadioButton.setText(_translate("VMwareVMWizard", "Run the VMware VM on your local computer"))
+        self.uiRemoteRadioButton.setText(_translate("VMwareVMWizard", "Run this VMware VM on a remote GNS3 computer"))
+        self.uiLocalRadioButton.setText(_translate("VMwareVMWizard", "Run this VMware VM on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("VMwareVMWizard", "Remote servers"))
         self.uiRemoteServersLabel.setText(_translate("VMwareVMWizard", "Run on server:"))
         self.uiVirtualBoxWizardPage.setTitle(_translate("VMwareVMWizard", "VMware Virtual Machine"))

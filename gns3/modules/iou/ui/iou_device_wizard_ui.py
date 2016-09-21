@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
 #
-# Created: Fri Jun 10 21:29:04 2016
+# Created: Tue Sep 20 17:45:46 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -122,9 +122,9 @@ class Ui_IOUDeviceWizard(object):
         self.uiServerWizardPage.setTitle(_translate("IOUDeviceWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a server type to run your new IOU device."))
         self.uiServerTypeGroupBox.setTitle(_translate("IOUDeviceWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on a remote computers"))
-        self.uiVMRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on the GNS3 VM"))
-        self.uiLocalRadioButton.setText(_translate("IOUDeviceWizard", "Run the IOU on your local computer"))
+        self.uiRemoteRadioButton.setText(_translate("IOUDeviceWizard", "Run this IOU device on a remote computers"))
+        self.uiVMRadioButton.setText(_translate("IOUDeviceWizard", "Run this IOU device on the GNS3 VM"))
+        self.uiLocalRadioButton.setText(_translate("IOUDeviceWizard", "Run this IOU device on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("IOUDeviceWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("IOUDeviceWizard", "Run on:"))
         self.uiNameWizardPage.setTitle(_translate("IOUDeviceWizard", "Name and image"))
