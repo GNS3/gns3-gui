@@ -658,13 +658,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 integer, ok = QtWidgets.QInputDialog.getInt(self, "Nodes", "Number of nodes:", 2, 1, 100, 1)
                 if ok:
                     for node_number in range(integer):
-                        node_item = self.createNode(node_data, event.pos())
+                        x = event.pos().x() - (150 / 2) + (node_number % max_nodes_per_line) * offset
+                        y = event.pos().y() - (70 / 2) + (node_number // max_nodes_per_line) * offset
+                        node_item = self.createNode(node_data, QtCore.QPoint(x, y))
                         if node_item is None:
                             # stop if there is any error
                             break
-                        x = node_item.pos().x() - (node_item.boundingRect().width() / 2) + (node_number % max_nodes_per_line) * offset
-                        y = node_item.pos().y() - (node_item.boundingRect().height() / 2) + (node_number // max_nodes_per_line) * offset
-                        node_item.setPos(x, y)
             else:
                 self.createNode(node_data, event.pos())
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
