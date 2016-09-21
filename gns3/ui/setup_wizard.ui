@@ -320,7 +320,7 @@
        <number>1000000000</number>
       </property>
       <property name="singleStep">
-       <number>1024</number>
+       <number>512</number>
       </property>
       <property name="value">
        <number>2048</number>

@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/setup_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/setup_wizard.ui'
 #
-# Created: Wed Aug 10 18:09:32 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_SetupWizard(object):
+
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName("SetupWizard")
         SetupWizard.resize(775, 539)
@@ -146,7 +147,7 @@ class Ui_SetupWizard(object):
         self.uiRAMSpinBox.setSizePolicy(sizePolicy)
         self.uiRAMSpinBox.setMinimum(512)
         self.uiRAMSpinBox.setMaximum(1000000000)
-        self.uiRAMSpinBox.setSingleStep(1024)
+        self.uiRAMSpinBox.setSingleStep(512)
         self.uiRAMSpinBox.setProperty("value", 2048)
         self.uiRAMSpinBox.setObjectName("uiRAMSpinBox")
         self.verticalLayout_2.addWidget(self.uiRAMSpinBox)
@@ -171,7 +172,7 @@ class Ui_SetupWizard(object):
         self.uiServerWizardPage.setTitle(_translate("SetupWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("SetupWizard", "Please choose a server type to run your GNS3 network simulations. The GNS3 VM is strongly recommended on Windows and Mac OS X."))
         self.uiVMRadioButton.setToolTip(_translate("SetupWizard", "Dynamips, IOU, VPCS and Qemu will use this virtual machine."))
-        self.uiVMRadioButton.setText(_translate("SetupWizard", "Local GNS3 VM"))
+        self.uiVMRadioButton.setText(_translate("SetupWizard", "Local GNS3 VM (recommended)"))
         self.uiLocalRadioButton.setToolTip(_translate("SetupWizard", "Eveything that is supported by your system will run on your computer."))
         self.uiLocalRadioButton.setText(_translate("SetupWizard", "Local server"))
         self.uiShowCheckBox.setText(_translate("SetupWizard", "Don\'t show this again"))
