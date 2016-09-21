@@ -66,7 +66,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
         if self.currentPage() == self.uiNameWizardPage:
             if self.uiLegacyASACheckBox.isChecked():
-                QtWidgets.QMessageBox.warning(self, "Legacy ASA VM", "Running ASA (with initrd/kernel) is not recommended, please use ASAv instead")
+                QtWidgets.QMessageBox.warning(self, "Legacy ASA VM", "Running ASA (with initrd/kernel) is not recommended and will not work on Windows 10, please use ASAv instead")
                 self.uiRamSpinBox.setValue(1024)
             else:
                 self.uiRamSpinBox.setValue(256)
