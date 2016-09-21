@@ -743,8 +743,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to open the setup wizard.
         """
 
-        # FIXME: Setup wizard has been turn off until we move it to 2.0
-        return
         with Progress.instance().context(min_duration=0):
             setup_wizard = SetupWizard(self)
             setup_wizard.show()
@@ -995,12 +993,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # show the setup wizard
         if not self._settings["hide_setup_wizard"]:
-            # FIXME: Setup wizard has been turn off until we move it to 2.0
-            pass
-            # with Progress.instance().context(min_duration=0):
-            #     setup_wizard = SetupWizard(self)
-            #     setup_wizard.show()
-            #     setup_wizard.exec_()
+            with Progress.instance().context(min_duration=0):
+                setup_wizard = SetupWizard(self)
+                setup_wizard.show()
+                setup_wizard.exec_()
 
         self._analytics_client.sendScreenView("Main Window")
 

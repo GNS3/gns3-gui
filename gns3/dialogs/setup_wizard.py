@@ -40,6 +40,16 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         super().__init__(parent)
         self.setupUi(self)
 
+        self._gns3_vm_settings = {
+            "enable": True,
+            "headless": False,
+            "when_exit": "stop",
+            "engine": "vmware",
+            "vcpus": 1,
+            "ram": 2048,
+            "vmname": "GNS3 VM"
+        }
+
         self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
@@ -143,6 +153,13 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         dialog.uiTreeWidget.setCurrentItem(child_pane)
         return dialog.uiStackedWidget.currentWidget()
 
+    def _getSettingsCallback(self, result, error=False, **kwargs):
+        if error:
+            if "message" in result:
+                log.error("Error while get gettings: {}".format(result["message"]))
+            return
+        self._gns3_vm_settings = result
+
     def initializePage(self, page_id):
         """
         Initialize Wizard pages.
@@ -151,20 +168,17 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         super().initializePage(page_id)
-        gns3_vm = GNS3VM().instance(parent=self)
-        gns3_vm_settings = gns3_vm.settings()
-        if self.page(page_id) == self.uiVMWizardPage:
-            if not gns3_vm_settings:
-                QtWidgets.QMessageBox.critical(self, "GNS3 VM", "Could not retrieve the GNS3 VM settings from the controller")
-                return
-            if gns3_vm_settings["engine"] == "vmware":
+        if self.page(page_id) == self.uiServerWizardPage:
+            Controller.instance().get("/gns3vm", self._getSettingsCallback)
+        elif self.page(page_id) == self.uiVMWizardPage:
+            if self._GNS3VMSettings()["engine"] == "vmware":
                 self.uiVmwareRadioButton.setChecked(True)
                 self._listVMwareVMsSlot()
-            elif gns3_vm_settings["engine"] == "virtualbox":
+            elif self._GNS3VMSettings()["engine"] == "virtualbox":
                 self.uiVirtualBoxRadioButton.setChecked(True)
                 self._listVirtualBoxVMsSlot()
-            self.uiCPUSpinBox.setValue(gns3_vm_settings["vcpus"])
-            self.uiRAMSpinBox.setValue(gns3_vm_settings["ram"])
+            self.uiCPUSpinBox.setValue(self._GNS3VMSettings()["vcpus"])
+            self.uiRAMSpinBox.setValue(self._GNS3VMSettings()["ram"])
 
         elif self.page(page_id) == self.uiLocalServerWizardPage:
             local_server_settings = LocalServer.instance().localServerSettings()
@@ -185,10 +199,22 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 self._addSummaryEntry("Port:", str(local_server_settings["port"]))
             else:
                 self._addSummaryEntry("Server type:", "GNS3 Virtual Machine")
-                self._addSummaryEntry("VM engine:", gns3_vm_settings["engine"].capitalize())
-                self._addSummaryEntry("VM name:", gns3_vm_settings["vmname"])
-                self._addSummaryEntry("VM vCPUs:", str(gns3_vm_settings["vcpus"]))
-                self._addSummaryEntry("VM RAM:", str(gns3_vm_settings["ram"]) + " MB")
+                self._addSummaryEntry("VM engine:", self._GNS3VMSettings()["engine"].capitalize())
+                self._addSummaryEntry("VM name:", self._GNS3VMSettings()["vmname"])
+                self._addSummaryEntry("VM vCPUs:", str(self._GNS3VMSettings()["vcpus"]))
+                self._addSummaryEntry("VM RAM:", str(self._GNS3VMSettings()["ram"]) + " MB")
+
+    def _GNS3VMSettings(self):
+        return self._gns3_vm_settings
+
+    def _setGNS3VMSettings(self, settings):
+        Controller.instance().put("/gns3vm", self._saveSettingsCallback, settings, timeout=60 * 5)
+
+    def _saveSettingsCallback(self, result, error=False, **kwargs):
+        if error:
+            if "message" in result:
+                QtWidgets.QMessageBox.critical(self, "Save settings", "Error while save settings: {}".format(result["message"]))
+            return
 
     def _addSummaryEntry(self, name, value):
 
@@ -203,13 +229,13 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Validates the settings.
         """
 
-        gns3_vm = GNS3VM().instance(parent=self)
         if self.currentPage() == self.uiVMWizardPage:
             vmname = self.uiVMListComboBox.currentText()
             if vmname:
                 # save the GNS3 VM settings
-                vm_settings = {"vmname": vmname,
-                               "auto_start": True}
+                vm_settings = self._GNS3VMSettings()
+                vm_settings["enable"] = True
+                vm_settings["vmname"] = vmname
 
                 if self.uiVmwareRadioButton.isChecked():
                     vm_settings["engine"] = "vmware"
@@ -224,21 +250,14 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 vm_settings["vcpus"] = vpcus
                 vm_settings["ram"] = ram
 
-                # update the GNS3 VM
-                gns3_vm.update(vm_settings)
-
-                # start the GNS3 VM
-                gns3_vm.start()
-
+                self._setGNS3VMSettings(vm_settings)
             else:
                 if not self.uiVmwareRadioButton.isChecked() and not self.uiVirtualBoxRadioButton.isChecked():
                     QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Please select VMware or VirtualBox")
                 else:
                     QtWidgets.QMessageBox.warning(self, "GNS3 VM", "Please select a VM. If no VM is listed, check if the GNS3 VM is correctly imported and press refresh.")
                 return False
-
         elif self.currentPage() == self.uiLocalServerWizardPage:
-
             local_server_settings = LocalServer.instance().localServerSettings()
             local_server_settings["auto_start"] = True
             local_server_settings["path"] = self.uiLocalServerPathLineEdit.text().strip()
@@ -258,20 +277,21 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             use_local_server = self.uiLocalRadioButton.isChecked()
             if use_local_server:
                 # deactivate the GNS3 VM if using the local server
-                vm_settings = {"auto_start": False}
-                gns3_vm.update(vm_settings)
+                vm_settings = self._GNS3VMSettings()
+                vm_settings["enable"] = False
+                self._setGNS3VMSettings(vm_settings)
 
-            # update the modules so they use the local server
-            from gns3.modules import Dynamips
-            Dynamips.instance().setSettings({"use_local_server": use_local_server})
-            if sys.platform.startswith("linux"):
-                # IOU only works on Linux
-                from gns3.modules import IOU
-                IOU.instance().setSettings({"use_local_server": use_local_server})
-            from gns3.modules import Qemu
-            Qemu.instance().setSettings({"use_local_server": use_local_server})
-            from gns3.modules import VPCS
-            VPCS.instance().setSettings({"use_local_server": use_local_server})
+                # update the modules so they use the local server
+                from gns3.modules import Dynamips
+                Dynamips.instance().setSettings({"use_local_server": use_local_server})
+                if sys.platform.startswith("linux"):
+                    # IOU only works on Linux
+                    from gns3.modules import IOU
+                    IOU.instance().setSettings({"use_local_server": use_local_server})
+                from gns3.modules import Qemu
+                Qemu.instance().setSettings({"use_local_server": use_local_server})
+                from gns3.modules import VPCS
+                VPCS.instance().setSettings({"use_local_server": use_local_server})
 
         return True
 
@@ -281,9 +301,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         if self.uiVmwareRadioButton.isChecked():
-            Controller.instance().get("/gns3vm/vmware/vms", self._getVMsFromServerCallback, progressText="Retrieving VMware VM list from server...")
+            Controller.instance().get("/gns3vm/engines/vmware/vms", self._getVMsFromServerCallback, progressText="Retrieving VMware VM list from server...")
         elif self.uiVirtualBoxRadioButton.isChecked():
-            Controller.instance().get("/gns3vm/virtualbox/vms", self._getVMsFromServerCallback, progressText="Retrieving VirtualBox VM list from server...")
+            Controller.instance().get("/gns3vm/engines/virtualbox/vms", self._getVMsFromServerCallback, progressText="Retrieving VirtualBox VM list from server...")
 
     def _getVMsFromServerCallback(self, result, error=False, **kwargs):
         """
@@ -301,8 +321,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             for vm in result:
                 self.uiVMListComboBox.addItem(vm["vmname"])
 
-            gns3_vm = GNS3VM().instance().settings()
-            index = self.uiVMListComboBox.findText(gns3_vm["vmname"])
+            index = self.uiVMListComboBox.findText(self._GNS3VMSettings()["vmname"])
             if index != -1:
                 self.uiVMListComboBox.setCurrentIndex(index)
             else:

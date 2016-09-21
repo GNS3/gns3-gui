@@ -48,7 +48,7 @@
        <string>Dynamips, IOU, VPCS and Qemu will use this virtual machine.</string>
       </property>
       <property name="text">
-       <string>Local GNS3 VM</string>
+       <string>Local GNS3 VM (recommended)</string>
       </property>
       <property name="checked">
        <bool>true</bool>
