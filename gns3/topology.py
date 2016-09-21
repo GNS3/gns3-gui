@@ -115,12 +115,12 @@ class Topology(QtCore.QObject):
             self._project.stopListenNotifications()
 
         self._main_window.uiGraphicsView.reset()
-
         self._project = project
         if project:
             self._project.project_updated_signal.connect(self._projectUpdatedSlot)
             self._project.project_creation_error_signal.connect(self._projectCreationErrorSlot)
             self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
+            self._main_window.uiGraphicsView.setSceneSize(project.sceneWidth(), project.sceneHeight())
         else:
             self._main_window.setWindowTitle("GNS3")
 
@@ -131,6 +131,7 @@ class Topology(QtCore.QObject):
             return
         self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
         project_file = os.path.join(self._project.filesDir(), self._project.filename())
+        self._main_window.uiGraphicsView.setSceneSize(self._project.sceneWidth(), self._project.sceneHeight())
         if os.path.exists(project_file):
             self._main_window.updateRecentFileSettings(project_file)
             self._main_window.updateRecentFileActions()

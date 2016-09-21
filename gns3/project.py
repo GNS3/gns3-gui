@@ -24,6 +24,7 @@ from gns3.controller import Controller
 from gns3.compute_manager import ComputeManager
 from gns3.topology import Topology
 from gns3.local_config import LocalConfig
+from gns3.settings import GRAPHICS_VIEW_SETTINGS
 
 
 import logging
@@ -55,6 +56,11 @@ class Project(QtCore.QObject):
         self._auto_start = False
         self._auto_open = False
         self._auto_close = False
+
+        graphic_settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, GRAPHICS_VIEW_SETTINGS)
+        self._scene_width = graphic_settings["scene_width"]
+        self._scene_height = graphic_settings["scene_height"]
+
         self._name = "untitled"
         self._filename = None
 
@@ -68,6 +74,18 @@ class Project(QtCore.QObject):
         """
 
         return self._name
+
+    def setSceneWidth(self, val):
+        self._scene_width = val
+
+    def sceneWidth(self):
+        return self._scene_width
+
+    def setSceneHeight(self, val):
+        self._scene_height = val
+
+    def sceneHeight(self):
+        return self._scene_height
 
     def setAutoOpen(self, val):
         """
@@ -276,7 +294,9 @@ class Project(QtCore.QObject):
             "name": self._name,
             "auto_open": self._auto_open,
             "auto_close": self._auto_close,
-            "auto_start": self._auto_start
+            "auto_start": self._auto_start,
+            "scene_width": self._scene_width,
+            "scene_height": self._scene_height
         }
         self.put("", self._projectUpdatedCallback, body=body)
 
@@ -309,6 +329,8 @@ class Project(QtCore.QObject):
         self._auto_start = result.get("auto_start", False)
         self._auto_open = result.get("auto_open", True)
         self._auto_close = result.get("auto_close", False)
+        self._scene_width = result.get("scene_width", 2000)
+        self._scene_height = result.get("scene_height", 1000)
 
     def load(self, path=None):
         if path:

@@ -96,8 +96,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         scene = QtWidgets.QGraphicsScene(parent=self)
         width = self._settings["scene_width"]
         height = self._settings["scene_height"]
-        scene.setSceneRect(-(width / 2), -(height / 2), width, height)
         self.setScene(scene)
+        self.setSceneSize(width, height)
 
         # set the custom flags for this view
         self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
@@ -112,6 +112,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._export_config_dir = ""
 
         self._local_addresses = ['0.0.0.0', '127.0.0.1', 'localhost', '::1', '0:0:0:0:0:0:0:1', '::', QtNetwork.QHostInfo.localHostName()]
+
+    def setSceneSize(self, width, height):
+        self.scene().setSceneRect(-(width / 2), -(height / 2), width, height)
 
     def setEnabled(self, enabled):
 

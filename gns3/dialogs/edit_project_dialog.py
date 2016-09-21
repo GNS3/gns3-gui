@@ -37,6 +37,8 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         self.uiProjectAutoOpenCheckBox.setChecked(self._project.autoOpen())
         self.uiProjectAutoCloseCheckBox.setChecked(not self._project.autoClose())
         self.uiProjectAutoStartCheckBox.setChecked(self._project.autoStart())
+        self.uiSceneWidthSpinBox.setValue(self._project.sceneWidth())
+        self.uiSceneHeightSpinBox.setValue(self._project.sceneHeight())
 
     def done(self, result):
         """
@@ -50,5 +52,7 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
             self._project.setAutoOpen(self.uiProjectAutoOpenCheckBox.isChecked())
             self._project.setAutoClose(not self.uiProjectAutoCloseCheckBox.isChecked())
             self._project.setAutoStart(self.uiProjectAutoStartCheckBox.isChecked())
+            self._project.setSceneHeight(self.uiSceneHeightSpinBox.value())
+            self._project.setSceneWidth(self.uiSceneWidthSpinBox.value())
             self._project.update()
         super().done(result)
