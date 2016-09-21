@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/gns3_vm_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/gns3_vm_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created: Tue Sep 20 19:46:42 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_GNS3VMPreferencesPageWidget(object):
-
     def setupUi(self, GNS3VMPreferencesPageWidget):
         GNS3VMPreferencesPageWidget.setObjectName("GNS3VMPreferencesPageWidget")
-        GNS3VMPreferencesPageWidget.resize(542, 346)
+        GNS3VMPreferencesPageWidget.resize(599, 384)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -52,11 +51,13 @@ class Ui_GNS3VMPreferencesPageWidget(object):
         self.verticalLayout.addWidget(self.uiVirtualizationGroupBox)
         self.uiGNS3VMSettingsGroupBox = QtWidgets.QGroupBox(GNS3VMPreferencesPageWidget)
         self.uiGNS3VMSettingsGroupBox.setObjectName("uiGNS3VMSettingsGroupBox")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.uiGNS3VMSettingsGroupBox)
-        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.gridLayout = QtWidgets.QGridLayout(self.uiGNS3VMSettingsGroupBox)
+        self.gridLayout.setObjectName("gridLayout")
         self.uiVMNameLabel = QtWidgets.QLabel(self.uiGNS3VMSettingsGroupBox)
         self.uiVMNameLabel.setObjectName("uiVMNameLabel")
-        self.gridLayout_2.addWidget(self.uiVMNameLabel, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiVMNameLabel, 0, 0, 1, 1)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.uiVMListComboBox = QtWidgets.QComboBox(self.uiGNS3VMSettingsGroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -64,29 +65,26 @@ class Ui_GNS3VMPreferencesPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiVMListComboBox.sizePolicy().hasHeightForWidth())
         self.uiVMListComboBox.setSizePolicy(sizePolicy)
         self.uiVMListComboBox.setObjectName("uiVMListComboBox")
-        self.gridLayout_2.addWidget(self.uiVMListComboBox, 2, 2, 1, 1)
+        self.horizontalLayout.addWidget(self.uiVMListComboBox)
         self.uiRefreshPushButton = QtWidgets.QPushButton(self.uiGNS3VMSettingsGroupBox)
         self.uiRefreshPushButton.setObjectName("uiRefreshPushButton")
-        self.gridLayout_2.addWidget(self.uiRefreshPushButton, 2, 3, 1, 1)
+        self.horizontalLayout.addWidget(self.uiRefreshPushButton)
+        self.gridLayout.addLayout(self.horizontalLayout, 0, 1, 1, 1)
+        self.uiHeadlessCheckBox = QtWidgets.QCheckBox(self.uiGNS3VMSettingsGroupBox)
+        self.uiHeadlessCheckBox.setObjectName("uiHeadlessCheckBox")
+        self.gridLayout.addWidget(self.uiHeadlessCheckBox, 1, 0, 1, 2)
         self.label = QtWidgets.QLabel(self.uiGNS3VMSettingsGroupBox)
         self.label.setObjectName("label")
-        self.gridLayout_2.addWidget(self.label, 5, 0, 1, 1)
-        self.uiWhenExitSuspendRadioButton = QtWidgets.QRadioButton(self.uiGNS3VMSettingsGroupBox)
-        self.uiWhenExitSuspendRadioButton.setObjectName("uiWhenExitSuspendRadioButton")
-        self.gridLayout_2.addWidget(self.uiWhenExitSuspendRadioButton, 6, 2, 1, 1)
-        self.uiWhenExitStopRadioButton = QtWidgets.QRadioButton(self.uiGNS3VMSettingsGroupBox)
-        self.uiWhenExitStopRadioButton.setObjectName("uiWhenExitStopRadioButton")
-        self.gridLayout_2.addWidget(self.uiWhenExitStopRadioButton, 7, 2, 1, 1)
+        self.gridLayout.addWidget(self.label, 2, 0, 1, 2)
         self.uiWhenExitKeepRadioButton = QtWidgets.QRadioButton(self.uiGNS3VMSettingsGroupBox)
         self.uiWhenExitKeepRadioButton.setObjectName("uiWhenExitKeepRadioButton")
-        self.gridLayout_2.addWidget(self.uiWhenExitKeepRadioButton, 5, 2, 1, 1)
-        self.uiHeadlessCheckBox = QtWidgets.QCheckBox(self.uiGNS3VMSettingsGroupBox)
-        self.uiHeadlessCheckBox.setText("")
-        self.uiHeadlessCheckBox.setObjectName("uiHeadlessCheckBox")
-        self.gridLayout_2.addWidget(self.uiHeadlessCheckBox, 1, 2, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.uiGNS3VMSettingsGroupBox)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_2.addWidget(self.label_2, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiWhenExitKeepRadioButton, 3, 0, 1, 2)
+        self.uiWhenExitSuspendRadioButton = QtWidgets.QRadioButton(self.uiGNS3VMSettingsGroupBox)
+        self.uiWhenExitSuspendRadioButton.setObjectName("uiWhenExitSuspendRadioButton")
+        self.gridLayout.addWidget(self.uiWhenExitSuspendRadioButton, 4, 0, 1, 2)
+        self.uiWhenExitStopRadioButton = QtWidgets.QRadioButton(self.uiGNS3VMSettingsGroupBox)
+        self.uiWhenExitStopRadioButton.setObjectName("uiWhenExitStopRadioButton")
+        self.gridLayout.addWidget(self.uiWhenExitStopRadioButton, 5, 0, 1, 2)
         self.verticalLayout.addWidget(self.uiGNS3VMSettingsGroupBox)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
@@ -98,13 +96,14 @@ class Ui_GNS3VMPreferencesPageWidget(object):
         _translate = QtCore.QCoreApplication.translate
         GNS3VMPreferencesPageWidget.setWindowTitle(_translate("GNS3VMPreferencesPageWidget", "GNS3 VM"))
         self.uiEnableVMCheckBox.setText(_translate("GNS3VMPreferencesPageWidget", "Enable the GNS3 VM"))
-        self.uiVirtualizationGroupBox.setTitle(_translate("GNS3VMPreferencesPageWidget", "Virtualization software"))
+        self.uiVirtualizationGroupBox.setTitle(_translate("GNS3VMPreferencesPageWidget", "Virtualization engine"))
         self.uiEngineDescriptionLabel.setText(_translate("GNS3VMPreferencesPageWidget", "Description"))
         self.uiGNS3VMSettingsGroupBox.setTitle(_translate("GNS3VMPreferencesPageWidget", "Settings"))
         self.uiVMNameLabel.setText(_translate("GNS3VMPreferencesPageWidget", "VM name:"))
         self.uiRefreshPushButton.setText(_translate("GNS3VMPreferencesPageWidget", "&Refresh"))
-        self.label.setText(_translate("GNS3VMPreferencesPageWidget", "When exit GNS3:"))
+        self.uiHeadlessCheckBox.setText(_translate("GNS3VMPreferencesPageWidget", "Run the VM in headless mode"))
+        self.label.setText(_translate("GNS3VMPreferencesPageWidget", "Action when closing GNS3:"))
+        self.uiWhenExitKeepRadioButton.setText(_translate("GNS3VMPreferencesPageWidget", "keep the GNS3 VM running"))
         self.uiWhenExitSuspendRadioButton.setText(_translate("GNS3VMPreferencesPageWidget", "suspend the GNS3 VM"))
         self.uiWhenExitStopRadioButton.setText(_translate("GNS3VMPreferencesPageWidget", "stop the GNS3 VM"))
-        self.uiWhenExitKeepRadioButton.setText(_translate("GNS3VMPreferencesPageWidget", "keep the GNS3 VM running"))
-        self.label_2.setText(_translate("GNS3VMPreferencesPageWidget", "Headless:"))
+

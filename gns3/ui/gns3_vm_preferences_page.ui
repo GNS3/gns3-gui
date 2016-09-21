@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
-    <height>346</height>
+    <width>599</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -51,7 +51,7 @@
    <item>
     <widget class="QGroupBox" name="uiVirtualizationGroupBox">
      <property name="title">
-      <string>Virtualization software</string>
+      <string>Virtualization engine</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -84,70 +84,67 @@
      <property name="title">
       <string>Settings</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="2" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
        <widget class="QLabel" name="uiVMNameLabel">
         <property name="text">
          <string>VM name:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
-       <widget class="QComboBox" name="uiVMListComboBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QComboBox" name="uiVMListComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="uiRefreshPushButton">
+          <property name="text">
+           <string>&amp;Refresh</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="2" column="3">
-       <widget class="QPushButton" name="uiRefreshPushButton">
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="uiHeadlessCheckBox">
         <property name="text">
-         <string>&amp;Refresh</string>
+         <string>Run the VM in headless mode</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
+      <item row="2" column="0" colspan="2">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>When exit GNS3:</string>
+         <string>Action when closing GNS3:</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="2">
-       <widget class="QRadioButton" name="uiWhenExitSuspendRadioButton">
-        <property name="text">
-         <string>suspend the GNS3 VM</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="2">
-       <widget class="QRadioButton" name="uiWhenExitStopRadioButton">
-        <property name="text">
-         <string>stop the GNS3 VM</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2">
+      <item row="3" column="0" colspan="2">
        <widget class="QRadioButton" name="uiWhenExitKeepRadioButton">
         <property name="text">
          <string>keep the GNS3 VM running</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="uiHeadlessCheckBox">
+      <item row="4" column="0" colspan="2">
+       <widget class="QRadioButton" name="uiWhenExitSuspendRadioButton">
         <property name="text">
-         <string/>
+         <string>suspend the GNS3 VM</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
+      <item row="5" column="0" colspan="2">
+       <widget class="QRadioButton" name="uiWhenExitStopRadioButton">
         <property name="text">
-         <string>Headless:</string>
+         <string>stop the GNS3 VM</string>
         </property>
        </widget>
       </item>
