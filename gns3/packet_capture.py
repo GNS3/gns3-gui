@@ -51,7 +51,6 @@ class PacketCapture:
     def settings(self):
         return LocalConfig.instance().loadSectionSettings("PacketCapture", PACKET_CAPTURE_SETTINGS)
 
-
     def startCapture(self, link):
         """
         Start the packet capture reader on this port
@@ -119,7 +118,11 @@ class PacketCapture:
         capture_file_path = link.capture_file_path()
 
         if not os.path.isfile(capture_file_path):
-            open(capture_file_path, 'w+').close()
+            try:
+                open(capture_file_path, 'w+').close()
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't create capture file {}: {}".format(capture_file_path, str(e)))
+                return
 
         if link in self._tail_process and self._tail_process[link].poll() is None:
             self._tail_process[link].kill()
