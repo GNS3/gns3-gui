@@ -72,20 +72,6 @@ class Cloud(Node):
         if "interfaces" in result:
             self._interfaces = result["interfaces"].copy()
 
-        # If the cloud is empty fill it with all interfaces (like the 1.X host node)
-        if "ports_mapping" not in result or len(result["ports_mapping"]) == 0:
-            port_number = 0
-            settings = {"ports_mapping": []}
-            for interface in self._interfaces:
-                if interface["special"]:
-                    continue
-                settings["ports_mapping"].append({"name": interface["name"],
-                                                  "port_number": port_number,
-                                                  "type": interface["type"],
-                                                  "interface": interface["name"]})
-                port_number += 1
-            self.update(settings)
-
     def update(self, new_settings):
         """
         Updates the settings for this cloud.
