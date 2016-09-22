@@ -55,6 +55,7 @@ from PyQt5.QtWidgets import QFileDialog as OldFileDialog
 
 
 class QFileDialog(OldFileDialog):
+
     @staticmethod
     def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.ShowDirsOnly):
         path = OldFileDialog.getExistingDirectory(parent, caption, dir, options)
@@ -100,7 +101,6 @@ class LogQMessageBox(QtWidgets.QMessageBox):
     def warning(parent, title, message, *args):
         log.warning(message)
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).warning(parent, title, message, *args)
-
 
     @staticmethod
     def stack_info():
@@ -218,7 +218,6 @@ def qslot(func):
     """
     def func_wrapper(*args, **kwargs):
         if len(args) > 0:
-            # args[0] = self
             if args[0] is None or sip.isdeleted(args[0]):
                 return lambda: True
         return func(*args, **kwargs)

@@ -19,9 +19,7 @@
 Topology summary view that list all the nodes, their status and connections.
 """
 
-import sip
-
-from .qt import QtGui, QtCore, QtWidgets
+from .qt import QtGui, QtCore, QtWidgets, qslot
 from .node import Node
 from .topology import Topology
 from .items.node_item import NodeItem
@@ -59,12 +57,11 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         self._refreshStatusSlot()
         self._refreshNodeSlot()
 
+    @qslot
     def _refreshStatusSlot(self):
         """
         Changes the icon to show the node status (started, stopped etc.)
         """
-        if self is None or sip.isdeleted(self):
-            return
         self.setText(0, self._node.name())
         if self._node.status() == Node.started:
             self.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))
@@ -73,12 +70,11 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         else:
             self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
 
-    def _refreshNodeSlot(self):
+    @qslot
+    def _refreshNodeSlot(self, *args):
         """
         Slot to update the node.
         """
-        if self is None or sip.isdeleted(self):
-            return
         self.refresh()
 
     def node(self):
@@ -127,6 +123,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
 
         self.sortChildren(0, QtCore.Qt.AscendingOrder)
 
+    @qslot
     def _deletedNodeSlot(self):
         """
         Removes the node from the view.
@@ -155,6 +152,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self.setExpandsOnDoubleClick(False)
         self.itemDoubleClicked.connect(self._itemDoubleClickedSlot)
 
+    @qslot
     def _projectChangedSlot(self):
         """
         Clears all the topology summary.
@@ -174,6 +172,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                 continue
             child.refreshLinks()
 
+    @qslot
     def _nodeAddedSlot(self, base_node_id):
         """
         Received events for node creation.
@@ -192,6 +191,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
 
         TopologyNodeItem(self, node)
 
+    @qslot
     def _itemSelectionChangedSlot(self):
         """
         Slot called when an item is selected in the TreeWidget.
@@ -213,6 +213,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                         if item.sourcePort() == port or item.destinationPort() == port:
                             item.setHovered(True)
 
+    @qslot
     def _itemDoubleClickedSlot(self, current_item):
         """
         When user double click on an element we center the topology on it
@@ -241,7 +242,6 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             self._showContextualMenu()
         else:
             super().mousePressEvent(event)
-
 
     def _showContextualMenu(self):
         """
@@ -291,6 +291,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
 
         menu.exec_(QtGui.QCursor.pos())
 
+    @qslot
     def _expandAllSlot(self):
         """
         Expands all items.
@@ -298,6 +299,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
 
         self.expandAll()
 
+    @qslot
     def _collapseAllSlot(self):
         """
         Collapses all items.
@@ -305,6 +307,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
 
         self.collapseAll()
 
+    @qslot
     def _devicesWithCaptureSlot(self):
         """
         Show only devices with captures.
@@ -313,6 +316,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self.show_only_devices_with_capture = True
         self.refreshAllLinks()
 
+    @qslot
     def _showAllDevicesSlot(self):
         """
         Show all devices items.
@@ -321,6 +325,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self.show_only_devices_with_capture = False
         self.refreshAllLinks()
 
+    @qslot
     def _stopAllCapturesSlot(self):
         """
         Stop all packet captures.
