@@ -164,7 +164,6 @@ def test_add_appliance_docker(empty_config, iou_l3):
     }
 
 
-
 def test_add_appliance_dynamips(empty_config, cisco_3745):
     with open("tests/registry/appliances/cisco-3745.gns3a", encoding="utf-8") as f:
         config = json.load(f)
@@ -284,7 +283,7 @@ def test_add_appliance_with_symbol_from_symbols_dir(empty_config, linux_microcor
     open(symbol_path, 'w+').close()
 
     empty_config.add_appliance(config, "local")
-    assert empty_config._config["Qemu"]["vms"][0]["symbol"] == symbol_path
+    assert empty_config._config["Qemu"]["vms"][0]["symbol"] == "linux_guest.svg"
 
 
 def test_add_appliance_with_symbol_from_web(empty_config, linux_microcore_img, symbols_dir):
@@ -303,7 +302,7 @@ def test_add_appliance_with_symbol_from_web(empty_config, linux_microcore_img, s
     with patch("urllib.request.urlretrieve") as mock:
         empty_config.add_appliance(config, "local")
         mock.assert_called_with("https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/linux_guest.svg", symbol_path)
-    assert empty_config._config["Qemu"]["vms"][0]["symbol"] == symbol_path
+    assert empty_config._config["Qemu"]["vms"][0]["symbol"] == "linux_guest.svg"
 
 
 def test_add_appliance_with_symbol_from_web_error(empty_config, linux_microcore_img, symbols_dir):

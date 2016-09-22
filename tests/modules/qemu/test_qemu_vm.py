@@ -38,11 +38,11 @@ def test_qemu_vm_create(qemu_vm, project):
                                     'name': 'VMNAME',
                                     'properties': {
                                         'linked_clone': True,
-                                        'qemu_path': '/bin/fake',
-                                        'port_name_format': 'Ethernet{0}',
-                                        'first_port_name': '',
-                                        'port_segment_size': 0
+                                        'qemu_path': '/bin/fake'
                                     },
+                                    'port_name_format': 'Ethernet{0}',
+                                    'first_port_name': '',
+                                    'port_segment_size': 0,
                                     'compute_id': 'local',
                                     'node_type': 'qemu'
                                 },
@@ -74,11 +74,11 @@ def test_qemu_vm_setup_command_line(qemu_vm, project):
                                     'name': 'VMNAME',
                                     'properties': {
                                         'linked_clone': True,
-                                        'qemu_path': '/bin/fake',
-                                        'port_name_format': 'Ethernet{0}',
-                                        'first_port_name': '',
-                                        'port_segment_size': 0
+                                        'qemu_path': '/bin/fake'
                                     },
+                                    'port_name_format': 'Ethernet{0}',
+                                    'first_port_name': '',
+                                    'port_segment_size': 0,
                                     'compute_id': 'local',
                                     'node_type': 'qemu'
                                 },
