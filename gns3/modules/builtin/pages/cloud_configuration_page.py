@@ -92,7 +92,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                     return
             self.uiEthernetListWidget.addItem(interface)
             self._ports.append({"name": interface,
-                                "port_number": len(self._ports) + 1,
+                                "port_number": len(self._ports),
                                 "type": "ethernet",
                                 "interface": interface})
             index = self.uiEthernetComboBox.findText(interface)
@@ -170,7 +170,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
                     return
             self.uiTAPListWidget.addItem(interface)
             self._ports.append({"name": interface,
-                                "port_number": len(self._ports) + 1,
+                                "port_number": len(self._ports),
                                 "type": "tap",
                                 "interface": interface})
             index = self.uiTAPComboBox.findText(interface)
@@ -261,7 +261,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             item.setText(3, str(remote_port))
             self.uiUDPTreeWidget.addTopLevelItem(item)
             self._ports.append({"name": name,
-                                "port_number": len(self._ports) + 1,
+                                "port_number": len(self._ports),
                                 "type": "udp",
                                 "lport": local_port,
                                 "rhost": remote_host,
