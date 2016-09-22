@@ -97,10 +97,10 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             project_name = project.data(1, QtCore.Qt.UserRole)
 
             reply = QtWidgets.QMessageBox.warning(self,
-                                           "Delete project",
-                                           'Delete project "{}"?\nThis cannot be reverted.'.format(project_name),
-                                           QtWidgets.QMessageBox.Yes,
-                                           QtWidgets.QMessageBox.No)
+                                                  "Delete project",
+                                                  'Delete project "{}"?\nThis cannot be reverted.'.format(project_name),
+                                                  QtWidgets.QMessageBox.Yes,
+                                                  QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
                 projects_to_delete.add(project_id)
 
@@ -118,21 +118,26 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         self.uiDeleteProjectButton.setEnabled(False)
         if not error:
             self._projects = result
+            self.uiProjectsTreeWidget.setUpdatesEnabled(False)
+            items = []
             for project in result:
                 path = os.path.join(project["path"], project["filename"])
-                item =  QtWidgets.QTreeWidgetItem([project["name"], project["status"], path])
+                item = QtWidgets.QTreeWidgetItem([project["name"], project["status"], path])
                 item.setData(0, QtCore.Qt.UserRole, project["project_id"])
                 item.setData(1, QtCore.Qt.UserRole, project["name"])
                 item.setData(2, QtCore.Qt.UserRole, path)
-                self.uiProjectsTreeWidget.addTopLevelItem(item)
+                items.append(item)
+            self.uiProjectsTreeWidget.addTopLevelItems(items)
 
             if len(result):
                 self.uiDeleteProjectButton.setEnabled(True)
 
+            self.uiProjectsTreeWidget.header().setResizeContentsPrecision(100)  # How many row is checked for the resize for performance reason
             self.uiProjectsTreeWidget.resizeColumnToContents(0)
             self.uiProjectsTreeWidget.resizeColumnToContents(1)
             self.uiProjectsTreeWidget.resizeColumnToContents(2)
             self.uiProjectsTreeWidget.sortItems(0, QtCore.Qt.AscendingOrder)
+            self.uiProjectsTreeWidget.setUpdatesEnabled(True)
 
     def keyPressEvent(self, e):
         """
@@ -212,10 +217,10 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         for existing_project in self._projects:
             if project_name == existing_project["name"]:
                 reply = QtWidgets.QMessageBox.warning(self,
-                                                       "New project",
-                                                       "Project {} already exists, overwrite it?".format(project_name),
-                                                       QtWidgets.QMessageBox.Yes,
-                                                       QtWidgets.QMessageBox.No)
+                                                      "New project",
+                                                      "Project {} already exists, overwrite it?".format(project_name),
+                                                      QtWidgets.QMessageBox.Yes,
+                                                      QtWidgets.QMessageBox.No)
 
                 if reply == QtWidgets.QMessageBox.Yes:
                     Controller.instance().delete("/projects/{}".format(existing_project["project_id"]), self._overwriteProjectCallback)
@@ -223,7 +228,6 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 # In all cases we cancel the new project and if project success to delete
                 # we will call done again
                 return False
-
 
         self._project_settings["project_name"] = project_name
 
