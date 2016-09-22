@@ -202,7 +202,7 @@ class VPCS(Module):
                     return
 
         vm_settings = {
-            "base_script_file": self._settings["base_script_file"]
+            "base_script_file": self._settings.get("base_script_file", "")
         }
         node.create(additional_settings=vm_settings)
 
