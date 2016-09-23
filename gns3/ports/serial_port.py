@@ -26,4 +26,6 @@ class SerialPort(Port):
     """
     Serial port.
     """
-    pass
+
+    def linkType(self):
+        return "Serial"
