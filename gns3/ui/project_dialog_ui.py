@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/project_dialog.ui'
 #
-# Created: Mon Sep 19 11:03:44 2016
+# Created: Thu Sep 22 22:09:19 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ class Ui_ProjectDialog(object):
     def setupUi(self, ProjectDialog):
         ProjectDialog.setObjectName("ProjectDialog")
         ProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        ProjectDialog.resize(568, 318)
+        ProjectDialog.resize(520, 282)
         ProjectDialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(ProjectDialog)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -60,8 +60,6 @@ class Ui_ProjectDialog(object):
         self.uiLocationLabel.setObjectName("uiLocationLabel")
         self.gridLayout.addWidget(self.uiLocationLabel, 1, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.groupBox)
-        spacerItem = QtWidgets.QSpacerItem(5, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_3.addItem(spacerItem)
         self.uiOpenProjectGroupBox = QtWidgets.QGroupBox(self.uiNewProjectTab)
         self.uiOpenProjectGroupBox.setObjectName("uiOpenProjectGroupBox")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.uiOpenProjectGroupBox)
@@ -74,9 +72,11 @@ class Ui_ProjectDialog(object):
         self.uiRecentProjectsPushButton = QtWidgets.QPushButton(self.uiOpenProjectGroupBox)
         self.uiRecentProjectsPushButton.setObjectName("uiRecentProjectsPushButton")
         self.horizontalLayout_2.addWidget(self.uiRecentProjectsPushButton)
-        spacerItem1 = QtWidgets.QSpacerItem(239, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
+        spacerItem = QtWidgets.QSpacerItem(239, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(5, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem1, 1, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.uiOpenProjectGroupBox)
         self.uiProjectTabWidget.addTab(self.uiNewProjectTab, "")
         self.uiProjectsLibraryTab = QtWidgets.QWidget()
