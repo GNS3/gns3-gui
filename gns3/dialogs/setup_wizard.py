@@ -85,6 +85,12 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         else:
             self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_workstation_banner.jpg"))
 
+        if sys.platform.startswith("linux"):
+            self.uiVMRadioButton.setText("Run the topologies in an isolated and standard VM")
+            self.uiLocalRadioButton.setText("Run the topologies on my computer")
+            self.uiLocalRadioButton.setChecked(True)
+            self.uiLocalLabel.setVisible(False)
+
     def _localServerBrowserSlot(self):
         """
         Slot to open a file browser and select a local server.
