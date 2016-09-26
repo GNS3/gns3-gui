@@ -24,6 +24,7 @@ from gns3.controller import Controller
 from gns3.local_server import LocalServer
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker
+from gns3.dialogs.new_appliance_dialog import NewApplianceDialog
 
 from ..ui.setup_wizard_ui import Ui_SetupWizard
 from ..version import __version__
@@ -348,6 +349,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         settings["hide_setup_wizard"] = self.uiShowCheckBox.isChecked()
         self.parentWidget().setSettings(settings)
         super().done(result)
+        dialog = NewApplianceDialog(self.parentWidget())
+        dialog.show()
 
     def nextId(self):
         """
