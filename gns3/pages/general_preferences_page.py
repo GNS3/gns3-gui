@@ -291,7 +291,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiMultiProfilesCheckBox.setChecked(settings["multi_profiles"])
 
         self.uiImageDirectoriesListWidget.clear()
-        for path in local_server["additional_image_paths"].split(":"):
+        for path in local_server["additional_images_paths"].split(";"):
             if len(path) > 0:
                 self.uiImageDirectoriesListWidget.addItem(path)
 
@@ -332,17 +332,17 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         Saves the general preferences.
         """
 
-        additional_image_paths = set()
+        additional_images_paths = set()
         for i in range(0, self.uiImageDirectoriesListWidget.count()):
             item = self.uiImageDirectoriesListWidget.item(i)
-            additional_image_paths.add(item.text())
+            additional_images_paths.add(item.text())
 
         new_local_server_settings = {"images_path": self.uiImagesPathLineEdit.text(),
                                      "projects_path": self.uiProjectsPathLineEdit.text(),
                                      "symbols_path": self.uiSymbolsPathLineEdit.text(),
                                      "configs_path": self.uiConfigsPathLineEdit.text(),
                                      "report_errors": self.uiCrashReportCheckBox.isChecked(),
-                                     "additional_image_paths": ":".join(additional_image_paths)}
+                                     "additional_images_paths": ":".join(additional_images_paths)}
         LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
 
         new_general_settings = {
