@@ -59,6 +59,8 @@ class HTTPClient(QtCore.QObject):
 
         self._protocol = settings.get("protocol", "http")
         self._host = settings["host"]
+        if self._host == "0.0.0.0":
+            self._host = "127.0.0.1"
         self._port = int(settings["port"])
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
