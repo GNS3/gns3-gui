@@ -243,7 +243,8 @@ def test_isMainGui_pid_file_exist_but_different(tmpdir):
 
     mock_process = MagicMock()
     mock_process.name.return_value = "gns3.exe"
-    mock_process.uids.return_value = (os.getuid(), os.getuid(), os.getuid())
+    if not sys.platform.startswith("win"):
+        mock_process.uids.return_value = (os.getuid(), os.getuid(), os.getuid())
     with patch("psutil.Process", return_value=mock_process) as mock:
         with patch("gns3.local_config.LocalConfig.configDirectory") as mock_config_directory:
             mock_config_directory.return_value = str(tmpdir)

@@ -8,6 +8,8 @@ import urllib.request
 import sys
 sys._called_from_test = True
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 # If the QT application is not initialized we can got segfault
 from gns3.qt.QtWidgets import QApplication
 app = QApplication([])
