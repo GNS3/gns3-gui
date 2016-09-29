@@ -48,6 +48,9 @@ class HTTPClient(QtCore.QObject):
     :param network_manager: A QT network manager
     """
 
+    # How many times we need to retry a connection
+    MAX_RETRY_CONNECTION = 5
+
     # Callback class used for displaying progress
     _progress_callback = None
 
@@ -64,6 +67,8 @@ class HTTPClient(QtCore.QObject):
         self._port = int(settings["port"])
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
+        # How many time we have retry connection
+        self._retry = 0
         self._connected = False
         self._shutdown = False  # Shutdown in progress
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
@@ -269,6 +274,11 @@ class HTTPClient(QtCore.QObject):
                 callback({"message": msg}, error=True, server=server)
         self._query_waiting_connections = []
 
+    def _retryConnection(self, server=None):
+        log.debug("Retry connection to {}".format(self.url()))
+        self._retry += 1
+        QtCore.QTimer.singleShot(1000, qpartial(self._executeHTTPQuery, "GET", "/version", self._callbackConnect, {}, server=server, timeout=5))
+
     def _callbackConnect(self, params, error=False, server=None, **kwargs):
         """
         Callback after /version response. Continue execution of query
@@ -281,12 +291,18 @@ class HTTPClient(QtCore.QObject):
         """
 
         if error is not False:
+            if self._retry < self.MAX_RETRY_CONNECTION:
+                self._retryConnection(server=server)
+                return
             for request, callback in self._query_waiting_connections:
                 if callback is not None:
                     self._connectionError(callback)
             return
 
         if "version" not in params or "local" not in params:
+            if self._retry < self.MAX_RETRY_CONNECTION:
+                self._retryConnection(server=server)
+                return
             msg = "The remote server {} is not a GNS3 server".format(self.url())
             log.error(msg)
             for request, callback in self._query_waiting_connections:
@@ -313,6 +329,7 @@ class HTTPClient(QtCore.QObject):
             log.warning("Use a different client and server version can create bugs. Use it at your own risk.")
 
         self._connected = True
+        self._retry = 0
         self.connection_connected_signal.emit()
         for request, callback in self._query_waiting_connections:
             if request:

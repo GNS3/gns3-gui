@@ -135,6 +135,7 @@ def test_post_not_connected(http_client, http_request, network_manager, response
 
 def test_post_not_connected_connection_failed(http_client, http_request, network_manager, response):
 
+    http_client.MAX_RETRY_CONNECTION = 0
     http_client._connected = False
     callback = unittest.mock.MagicMock()
 
@@ -150,6 +151,31 @@ def test_post_not_connected_connection_failed(http_client, http_request, network
     response.finished.emit()
 
     assert callback.called
+
+
+def test_post_not_connected_connection_failed_retry(http_client, http_request, network_manager, response):
+    """
+    The client shoud retry connection
+    """
+
+    http_client.MAX_RETRY_CONNECTION = 5
+    http_client._connected = False
+    http_client._retryConnection = unittest.mock.MagicMock()
+    callback = unittest.mock.MagicMock()
+
+    response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
+
+    http_client.createHTTPQuery("POST", "/test", callback)
+
+    args, kwargs = network_manager.sendCustomRequest.call_args
+    assert args[0] == http_request
+    assert args[1] == b"GET"
+
+    # Trigger the completion of /version
+    response.finished.emit()
+
+    assert http_client._retryConnection.called
+    assert not callback.called
 
 
 def test_progress_callback(http_client, response):
@@ -299,6 +325,7 @@ def test_callbackConnect_minor_version_invalid(http_client):
 
 def test_callbackConnect_non_gns3_server(http_client):
 
+    http_client.MAX_RETRY_CONNECTION = 0
     params = {
         "virus": True,
     }
