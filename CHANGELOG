@@ -1,5 +1,38 @@
 # Change Log
 
+## 2.0.0 alpha 1 29/09/2016
+* Save as you go
+* Smart packet capture
+* Capture on any link between any node
+* Select where to run a VPCS node
+* Delete a project from the GUI
+* Project options
+* The cloud is a real node
+* Cloud templates
+* New cloud interface
+* VPCS / Ethernet Switch / Ethernet Hub templates
+* Search OS images in multiple locations
+* Periodic extraction of startup configs for Dynamips and IOU
+* Custom cloud, Ethernet hub and Ethernet switch templates
+* Snap to grid for all objects
+* Synchronize the node templates when using multiple GUI
+* Link label style
+* New place holders in command line for opening consoles
+* %i will be replaced by the project UUID
+* %c will be replaced by the connection string
+* Export a portable project from multiple remote servers
+* New save as
+* Snapshots with remote servers
+* Better start / stop / suspend all nodes
+* Edit config
+* NAT node
+* Support for colorblind users
+* Support for non local server
+* Support for profiles
+* Suspend the GNS3VM when closing GNS3
+* Edit the scene size
+* New API
+
 ## 1.5.2 18/08/2016
 
 * Make more clear that VMware VM are not ESXi
