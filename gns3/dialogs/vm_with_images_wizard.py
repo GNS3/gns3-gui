@@ -21,7 +21,6 @@ from gns3.qt import QtWidgets
 from gns3.controller import Controller
 
 
-
 class VMWithImagesWizard(VMWizard):
     """
     Base class for VM wizard with image management (Qemu, IOU...)
@@ -144,7 +143,7 @@ class VMWithImagesWizard(VMWizard):
         :param endpoint: server endpoint with the list of Images
         """
 
-        Controller.instance().get("/computes/{}{}".format(self._compute_id, endpoint), self._getImagesFromServerCallback)
+        Controller.instance().getCompute(endpoint, self._compute_id, self._getImagesFromServerCallback)
 
     def _getImagesFromServerCallback(self, result, error=False, **kwargs):
         """
@@ -183,10 +182,8 @@ class VMWithImagesWizard(VMWizard):
                 for vm in result:
                     combo_box.addItem(vm["path"], vm)
 
-
     def _widgetOnCurrentPage(self, widget):
         """
         :returns Boolean True if widget is current active Wizard page
         """
         return self.currentPage().findChild(widget.__class__, widget.objectName()) is not None
-

@@ -21,8 +21,11 @@ from .compute import Compute
 from .controller import Controller
 
 import copy
-import logging
+import urllib
 import datetime
+
+
+import logging
 log = logging.getLogger(__name__)
 
 
@@ -122,6 +125,12 @@ class ComputeManager(QtCore.QObject):
         return [c for c in self._computes.values() if c.id() != "local" and c.id() != "vm"]
 
     def getCompute(self, compute_id):
+        if compute_id.startswith("http:") or compute_id.startswith("https:"):
+            u = urllib.parse.urlsplit(compute_id)
+            for compute in self._computes.values():
+                if "{}:{}".format(compute.host(), compute.port()) == u.netloc:
+                    return compute
+            raise KeyError("Compute {} is missing.".format(compute_id))
         if compute_id not in self._computes:
             self._computes[compute_id] = Compute(compute_id)
             self.created_signal.emit(compute_id)

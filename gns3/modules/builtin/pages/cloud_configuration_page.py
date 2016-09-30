@@ -394,9 +394,9 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
 
-            Controller.instance().get("/computes/{}/network/interfaces".format(settings["server"]),
-                                      self._getInterfacesFromServerCallback,
-                                      progressText="Retrieving network interfaces...")
+            Controller.instance().getCompute("/network/interfaces", settings["server"],
+                                             self._getInterfacesFromServerCallback,
+                                             progressText="Retrieving network interfaces...")
 
         else:
             self.uiDefaultNameFormatLabel.hide()

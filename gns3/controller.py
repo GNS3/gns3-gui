@@ -92,8 +92,36 @@ class Controller(QtCore.QObject):
     def get(self, *args, **kwargs):
         return self.createHTTPQuery("GET", *args, **kwargs)
 
+    def getCompute(self, path, compute_id, *args, **kwargs):
+        """
+        API get on a specific compute
+        """
+        compute_id = self.__fix_compute_id(compute_id)
+        path = "/computes/{}{}".format(compute_id, path)
+        return self.get(path, *args, **kwargs)
+
     def post(self, *args, **kwargs):
         return self.createHTTPQuery("POST", *args, **kwargs)
+
+    def postCompute(self, path, compute_id, *args, **kwargs):
+        """
+        API post on a specific compute
+        """
+        compute_id = self.__fix_compute_id(compute_id)
+        path = "/computes/{}{}".format(compute_id, path)
+        return self.post(path, *args, **kwargs)
+
+    def __fix_compute_id(self, compute_id):
+        """
+        Support for remote server <= 1.5
+        This fix should be not require after the 2.1
+        when all the appliance template will be managed
+        on server
+        """
+        if compute_id.startswith("http:") or compute_id.startswith("https:"):
+            from .compute_manager import ComputeManager
+            return ComputeManager.instance().getCompute(compute_id).id()
+        return compute_id
 
     def put(self, *args, **kwargs):
         return self.createHTTPQuery("PUT", *args, **kwargs)

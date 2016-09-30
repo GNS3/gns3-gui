@@ -267,7 +267,7 @@ class Qemu(Module):
         request_body = None
         if archs is not None:
             request_body = {"archs": archs}
-        Controller.instance().get("/computes/{}/qemu/binaries".format(compute_id), callback, body=request_body)
+        Controller.instance().getCompute("/qemu/binaries", compute_id, callback, body=request_body)
 
     def getQemuImgBinariesFromServer(self, compute_id, callback):
         """
@@ -277,7 +277,7 @@ class Qemu(Module):
         :param callback: callback for the reply from the server
         """
 
-        Controller.instance().get(r"/computes/{}/qemu/img-binaries".format(compute_id), callback)
+        Controller.instance().getCompute("/qemu/img-binaries", compute_id, callback)
 
     def getQemuCapabilitiesFromServer(self, compute_id, callback):
         """
@@ -287,7 +287,7 @@ class Qemu(Module):
         :param callback: callback for the reply from the server
         """
 
-        Controller.instance().get(r"/computes/{}/qemu/capabilities".format(compute_id), callback)
+        Controller.instance().getCompute("/qemu/capabilities", compute_id, callback)
 
     def createDiskImage(self, compute_id, callback, options):
         """
@@ -298,7 +298,7 @@ class Qemu(Module):
         :param options: Options for the image creation
         """
 
-        Controller.instance().post(r"/computes/{}/qemu/img".format(compute_id), callback, body=options)
+        Controller.instance().postCompute("/qemu/img", compute_id, callback, body=options)
 
     @staticmethod
     def getNodeClass(name):

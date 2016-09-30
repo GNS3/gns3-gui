@@ -28,6 +28,28 @@ def test_getCompute():
     assert cm.getCompute("local") == compute
 
 
+def test_getComputeRemote1X():
+    """
+    It should convert old server id
+    """
+    cm = ComputeManager()
+    cm.computeDataReceivedCallback({
+        "compute_id": "aaecb19d-5a32-4c18-ac61-f54f92a0f594",
+        "name": "Test Compute",
+        "connected": True,
+        "protocol": "http",
+        "host": "test.org",
+        "port": 3080,
+        "user": None,
+        "cpu_usage_percent": None,
+        "memory_usage_percent": None,
+        "capabilities": {"test": "a"}
+    })
+
+    compute = cm.getCompute("aaecb19d-5a32-4c18-ac61-f54f92a0f594")
+    assert cm.getCompute("http://test.org:3080") == compute
+
+
 def test_deleteCompute(controller):
     callback_delete = MagicMock()
     cm = ComputeManager()

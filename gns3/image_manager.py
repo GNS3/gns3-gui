@@ -97,7 +97,7 @@ class ImageManager:
 
         filename = self._getRelativeImagePath(path, node_type).replace("\\", "/")
 
-        Controller.instance().post(r'/computes/{}{}/{}'.format(server, upload_endpoint, filename), None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
+        Controller.instance().postCompute('{}/{}'.format(upload_endpoint, filename), server, None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
         return filename
 
     def _askForUploadMissingImage(self, filename, server):

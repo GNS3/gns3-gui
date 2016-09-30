@@ -202,7 +202,7 @@ class Docker(Module):
         :param server: server to send the request to
         :param callback: callback for the reply from the server
         """
-        Controller.instance().get("/computes/{}/docker/images".format(compute_id), callback)
+        Controller.instance().getCompute("/docker/images", compute_id, callback)
 
     @staticmethod
     def getNodeClass(name):
