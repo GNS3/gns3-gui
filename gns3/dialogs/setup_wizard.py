@@ -349,8 +349,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         settings["hide_setup_wizard"] = self.uiShowCheckBox.isChecked()
         self.parentWidget().setSettings(settings)
         super().done(result)
-        dialog = NewApplianceDialog(self.parentWidget())
-        dialog.show()
+        if result:
+            dialog = NewApplianceDialog(self.parentWidget())
+            dialog.show()
 
     def nextId(self):
         """
