@@ -24,6 +24,8 @@ import urllib
 
 from .image import Image
 from ..local_config import LocalConfig
+from ..local_server_config import LocalServerConfig
+from ..settings import LOCAL_SERVER_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -55,14 +57,14 @@ class Config:
         """
         :returns: Location of the images directory on the server
         """
-        return self._config["Servers"]["local_server"]["images_path"]
+        return LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)["images_path"]
 
     @property
     def symbols_dir(self):
         """
         :returns: Location of the symbols directory
         """
-        return self._config["Servers"]["local_server"]["symbols_path"]
+        return LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)["symbols_path"]
 
     @property
     def servers(self):

@@ -30,21 +30,25 @@ class LocalServerConfig:
     Local server configuration.
     """
 
-    def __init__(self):
+    def __init__(self, config_file=None):
 
         appname = "GNS3"
 
         self._config = configparser.RawConfigParser()
-        if sys.platform.startswith("win"):
-            filename = "gns3_server.ini"
-        else:
-            filename = "gns3_server.conf"
 
-        from .local_config import LocalConfig
-        if sys.platform.startswith("win"):
-            self._config_file = os.path.join(LocalConfig.instance().configDirectory(), filename)
+        if config_file:
+            self._config_file = config_file
         else:
-            self._config_file = os.path.join(LocalConfig.instance().configDirectory(),  filename)
+            if sys.platform.startswith("win"):
+                filename = "gns3_server.ini"
+            else:
+                filename = "gns3_server.conf"
+
+            from .local_config import LocalConfig
+            if sys.platform.startswith("win"):
+                self._config_file = os.path.join(LocalConfig.instance().configDirectory(), filename)
+            else:
+                self._config_file = os.path.join(LocalConfig.instance().configDirectory(), filename)
 
         try:
             # create the config file if it doesn't exist

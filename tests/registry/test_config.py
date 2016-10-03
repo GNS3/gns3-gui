@@ -23,27 +23,17 @@ import os
 from unittest.mock import MagicMock, patch
 
 from gns3.registry.config import Config, ConfigException
+from gns3.settings import LOCAL_SERVER_SETTINGS
 
 
 @pytest.fixture(scope="function")
-def empty_config(tmpdir, images_dir, symbols_dir):
+def empty_config(tmpdir, images_dir, symbols_dir, local_server_config):
+    settings = local_server_config.loadSettings("Server", LOCAL_SERVER_SETTINGS)
+    settings["images_path"] = images_dir
+    settings["symbols_path"] = symbols_dir
+    local_server_config.saveSettings("Server", settings)
     config = {
         "Servers": {
-            "local_server": {
-                "allow_console_from_anywhere": False,
-                "auto_start": False,
-                "console_end_port_range": 5000,
-                "console_start_port_range": 2001,
-                "host": "127.0.0.1",
-                "images_path": images_dir,
-                "symbols_path": symbols_dir,
-                "path": "",
-                "port": 3080,
-                "projects_path": str(tmpdir),
-                "report_errors": False,
-                "udp_end_port_range": 20000,
-                "udp_start_port_range": 10000
-            }
         },
         "Dynamips": {
             "allocate_aux_console_ports": False,
