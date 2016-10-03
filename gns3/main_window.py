@@ -27,7 +27,7 @@ import logging
 from .local_config import LocalConfig
 from .local_server import LocalServer
 from .modules import MODULES
-from .qt import QtGui, QtCore, QtWidgets
+from .qt import QtGui, QtCore, QtWidgets, qslot
 from .controller import Controller
 from .node import Node
 from .ui.main_window_ui import Ui_MainWindow
@@ -329,7 +329,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec_()
 
-    def openApplianceActionSlot(self):
+    @qslot
+    def openApplianceActionSlot(self, *args):
         """
         Slot called to open an appliance.
         """
