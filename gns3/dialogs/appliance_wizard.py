@@ -372,6 +372,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
             if self.uiQemuListComboBox.count() == 1:
                 self.next()
+            else:
+                i = self.uiQemuListComboBox.findText(self._appliance["qemu"]["arch"], QtCore.Qt.MatchContains)
+                if i != -1:
+                    self.uiQemuListComboBox.setCurrentIndex(i)
 
     def _install(self, version):
         """
