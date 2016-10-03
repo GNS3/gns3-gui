@@ -22,6 +22,7 @@ class Compute:
     """
     A compute node on the remote server
     """
+
     def __init__(self, compute_id=None):
         if compute_id is None:
             compute_id = str(uuid.uuid4())
@@ -30,7 +31,7 @@ class Compute:
         self._connected = False
         self._protocol = None
         self._host = None
-        self._port = None
+        self._port = 3080
         self._user = None
         self._password = None
         self._cpu_usage_percent = None
