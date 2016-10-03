@@ -296,7 +296,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiImportPushButton.show()
 
     @qslot
-    def _downloadPushButtonClickedSlot(self):
+    def _downloadPushButtonClickedSlot(self, *args):
         """
         Called when user want to download an appliance images.
         He should have selected the file before.
@@ -317,7 +317,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 QtGui.QDesktopServices.openUrl(QtCore.QUrl(data["download_url"]))
 
     @qslot
-    def _createVersionPushButtonClickedSlot(self):
+    def _createVersionPushButtonClickedSlot(self, *args):
         """
         Allow user to create a new version of an appliance
         """
@@ -328,7 +328,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self._refreshVersions()
 
     @qslot
-    def _importPushButtonClickedSlot(self):
+    def _importPushButtonClickedSlot(self, *args):
         """
         Called when user want to import an appliance images.
         He should have selected the file before.
