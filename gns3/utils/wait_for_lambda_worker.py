@@ -19,6 +19,8 @@
 Thread showing a progress dialog and running the code from a lambda
 """
 
+import sip
+
 from ..qt import QtCore
 
 import logging
@@ -57,6 +59,8 @@ class WaitForLambdaWorker(QtCore.QObject):
         try:
             self._lambda_runner()
         except Exception as e:
+            if not self or sip.isdeleted(self):
+                return
             # This exceptions will only show an error dialog
             # it's a normal application behavior like a file permission denied
             for ex in self._allowed_exceptions:
@@ -64,6 +68,8 @@ class WaitForLambdaWorker(QtCore.QObject):
                     self.error.emit(str(e), True)
                     return
             raise e
+        if not self or sip.isdeleted(self):
+            return
         self.finished.emit()
 
     def cancel(self):
