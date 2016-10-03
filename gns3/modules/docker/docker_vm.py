@@ -69,7 +69,7 @@ class DockerVM(Node):
         params.update(additional_settings)
         if base_name:
             default_name_format = default_name_format.replace('{name}', base_name)
-        self._create(name=name, node_id=node_id, params=params, default_name_format=default_name_format)
+        self._create(name=name, node_id=node_id, params=params, default_name_format=default_name_format, timeout=None)
 
     def _createCallback(self, result):
         """
