@@ -362,12 +362,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
             source_port = source_item.connectToPort()
             if not source_port:
                 return
-            if not source_item.node().initialized():
-                QtWidgets.QMessageBox.critical(self, "Connection", "This node hasn't been initialized correctly")
-                return
-            if not source_port.isFree():
-                QtWidgets.QMessageBox.critical(self, "Connection", "Port {} isn't free".format(source_port.name()))
-                return
             if source_port.linkType() == "Serial":
                 self._newlink = SerialLinkItem(source_item, source_port, self.mapToScene(event.pos()), None, adding_flag=True)
             else:
@@ -377,24 +371,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             source_item = self._newlink.sourceItem()
             source_port = self._newlink.sourcePort()
             destination_item = item
-            if source_item == destination_item:
-                QtWidgets.QMessageBox.critical(self, "Connection", "Cannot connect to itself!")
-                return
             destination_port = destination_item.connectToPort()
             if not destination_port:
-                return
-            if not destination_item.node().initialized():
-                QtWidgets.QMessageBox.critical(self, "Connection", "This node hasn't been initialized correctly")
-                return
-            if not destination_port.isFree():
-                QtWidgets.QMessageBox.critical(self, "Connection", "Port {} isn't free".format(destination_port.name()))
-                return
-            elif source_port.linkType() != destination_port.linkType():
-                QtWidgets.QMessageBox.critical(self, "Connection", "Cannot connect this port!")
-                return
-
-            if isinstance(source_item.node(), Cloud) and isinstance(destination_item.node(), Cloud):
-                QtWidgets.QMessageBox.critical(self, "Connection", "Sorry, you cannot connect a cloud to another cloud!")
                 return
 
             if self._newlink in self.scene().items():
