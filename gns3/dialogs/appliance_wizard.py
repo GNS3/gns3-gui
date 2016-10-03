@@ -18,7 +18,7 @@
 import os
 import sys
 
-from ..qt import QtWidgets, QtCore, QtGui, qpartial
+from ..qt import QtWidgets, QtCore, QtGui, qpartial, qslot
 from ..ui.appliance_wizard_ui import Ui_ApplianceWizard
 from ..image_manager import ImageManager
 from ..modules import Qemu
@@ -166,7 +166,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiCheckServerLabel.setText("Please wait while checking server capacities...")
             if 'qemu' in self._appliance:
                 if self._appliance['qemu'].get('kvm', 'require') == 'require':
-                    self._server_check = False # If the server as the capacities for running the appliance
+                    self._server_check = False  # If the server as the capacities for running the appliance
                     Qemu.instance().getQemuCapabilitiesFromServer(self._server, qpartial(self._qemuServerCapabilitiesCallback))
                     return
             self.uiCheckServerLabel.setText("")
@@ -264,7 +264,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         """
 
         # Docker do not have versions
-        if not "versions" in self._appliance:
+        if "versions" not in self._appliance:
             return
 
         for version in self._appliance["versions"]:
@@ -277,6 +277,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 else:
                     image["status"] = "Missing"
 
+    @qslot
     def _applianceVersionCurrentItemChangedSlot(self, current, previous):
         """
         Called when user select a different item in the list of appliance files
@@ -294,6 +295,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 self.uiDownloadPushButton.show()
             self.uiImportPushButton.show()
 
+    @qslot
     def _downloadPushButtonClickedSlot(self):
         """
         Called when user want to download an appliance images.
@@ -314,6 +316,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 QtWidgets.QMessageBox.warning(self, "Add appliance", "Download will redirect you where the required file can be downloaded, you may have to be registered with the vendor in order to download the file.")
                 QtGui.QDesktopServices.openUrl(QtCore.QUrl(data["download_url"]))
 
+    @qslot
     def _createVersionPushButtonClickedSlot(self):
         """
         Allow user to create a new version of an appliance
@@ -324,6 +327,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self._appliance.create_new_version(new_version)
             self._refreshVersions()
 
+    @qslot
     def _importPushButtonClickedSlot(self):
         """
         Called when user want to import an appliance images.
@@ -471,6 +475,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         return True
 
+    @qslot
     def _vmToggledSlot(self, checked):
         """
         Slot for when the VM radio button is toggled.
@@ -481,6 +486,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiRemoteServersGroupBox.setEnabled(False)
             self.uiRemoteServersGroupBox.hide()
 
+    @qslot
     def _remoteServerToggledSlot(self, checked):
         """
         Slot for when the remote server radio button is toggled.
@@ -492,6 +498,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiRemoteServersGroupBox.setEnabled(True)
             self.uiRemoteServersGroupBox.show()
 
+    @qslot
     def _localToggledSlot(self, checked):
         """
         Slot for when the local server radio button is toggled.
