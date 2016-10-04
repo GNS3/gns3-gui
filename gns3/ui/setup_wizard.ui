@@ -239,6 +239,26 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiLocalServerStatusWizardPage">
+   <property name="title">
+    <string>Local server status</string>
+   </property>
+   <property name="subTitle">
+    <string>Validation of the configuration of the local server</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_7">
+    <item>
+     <widget class="QLabel" name="uiLocalServerStatusLabel">
+      <property name="text">
+       <string>Local server status</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="uiVMWizardPage">
    <property name="title">
     <string>GNS3 VM</string>

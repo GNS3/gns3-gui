@@ -33,10 +33,12 @@ class Controller(QtCore.QObject):
     An instance of the GNS3 server controller
     """
     connected_signal = QtCore.Signal()
+    connection_failed_signal = QtCore.Signal()
 
     def __init__(self, parent=None):
         super().__init__()
         self._connected = False
+        self._connecting = False
         self._cache_directory = tempfile.TemporaryDirectory()
         self._http_client = None
         # If it's the first error we display an alert box to the user
@@ -48,6 +50,12 @@ class Controller(QtCore.QObject):
         """
         settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
         return not settings["auto_start"]
+
+    def connecting(self):
+        """
+        :returns: True if connection is in progress
+        """
+        return self._connecting
 
     def connected(self):
         """
@@ -69,6 +77,7 @@ class Controller(QtCore.QObject):
         if self._http_client:
             self._http_client.connection_connected_signal.connect(self._httpClientConnectedSlot)
             self._connected = False
+            self._connecting = True
             self.get('/version', self._versionGetSlot)
 
     def _versionGetSlot(self, result, error=False, **kwargs):
@@ -76,8 +85,11 @@ class Controller(QtCore.QObject):
         Called after the inital version get
         """
         if error:
-            if "message" in result and self._first_error:
-                QtWidgets.QMessageBox.critical(self.parent(), "Connection", result["message"])
+            if self._first_error:
+                self._connecting = False
+                self.connection_failed_signal.emit()
+                if "message" in result:
+                    QtWidgets.QMessageBox.critical(self.parent(), "Connection", result["message"])
             # Try to connect again in 1 seconds
             QtCore.QTimer.singleShot(1000, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
             self._first_error = False
@@ -87,6 +99,7 @@ class Controller(QtCore.QObject):
     def _httpClientConnectedSlot(self):
         if not self._connected:
             self._connected = True
+            self._connecting = False
             self.connected_signal.emit()
 
     def get(self, *args, **kwargs):

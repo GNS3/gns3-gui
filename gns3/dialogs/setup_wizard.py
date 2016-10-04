@@ -19,7 +19,7 @@ import sys
 import os
 import shutil
 
-from gns3.qt import QtCore, QtWidgets, QtGui, QtNetwork
+from gns3.qt import QtCore, QtWidgets, QtGui, QtNetwork, qslot
 from gns3.controller import Controller
 from gns3.local_server import LocalServer
 from gns3.utils.progress_dialog import ProgressDialog
@@ -27,6 +27,9 @@ from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker
 
 from ..ui.setup_wizard_ui import Ui_SetupWizard
 from ..version import __version__
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
@@ -90,6 +93,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             self.uiLocalRadioButton.setText("Run the topologies on my computer")
             self.uiLocalRadioButton.setChecked(True)
             self.uiLocalLabel.setVisible(False)
+
+        Controller.instance().connected_signal.connect(self._refreshLocalServerStatusSlot)
+        Controller.instance().connection_failed_signal.connect(self._refreshLocalServerStatusSlot)
 
     def _localServerBrowserSlot(self):
         """
@@ -202,6 +208,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             self.uiRemoteMainServerPasswordLineEdit.setText(local_server_settings["password"])
             self.uiRemoteMainServerProtocolComboBox.setCurrentText(local_server_settings["protocol"])
             self.uiRemoteMainServerAuthCheckBox.setChecked(local_server_settings["auth"])
+        elif self.page(page_id) == self.uiLocalServerStatusWizardPage:
+            self._refreshLocalServerStatusSlot()
 
         elif self.page(page_id) == self.uiSummaryWizardPage:
             self.uiSummaryTreeWidget.clear()
@@ -223,6 +231,19 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 self._addSummaryEntry("VM name:", self._GNS3VMSettings()["vmname"])
                 self._addSummaryEntry("VM vCPUs:", str(self._GNS3VMSettings()["vcpus"]))
                 self._addSummaryEntry("VM RAM:", str(self._GNS3VMSettings()["ram"]) + " MB")
+
+    @qslot
+    def _refreshLocalServerStatusSlot(self):
+        """
+        Refresh the local server status page
+        """
+        if Controller.instance().connected():
+            self.uiLocalServerStatusLabel.setText("Connection to local server successfull")
+        elif Controller.instance().connecting():
+            self.uiLocalServerStatusLabel.setText("Please wait connection to the GNS3 server")
+        else:
+            local_server_settings = LocalServer.instance().localServerSettings()
+            self.uiLocalServerStatusLabel.setText("Connection to local server failed.\n* Make sure GNS3 is authorized in your firewall.\n* Go back and try to change server port\n* Please check in a browser if you can connect to {protocol}://{host}:{port}.\n* If it's not working try to run {path} in a terminal to see if you have an error.".format(protocol=local_server_settings["protocol"], host=local_server_settings["host"], port=local_server_settings["port"], path=local_server_settings["path"]))
 
     def _GNS3VMSettings(self):
         return self._gns3_vm_settings
@@ -323,6 +344,10 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 from gns3.modules import VPCS
                 VPCS.instance().setSettings({"use_local_server": use_local_server})
 
+        elif self.currentPage() == self.uiLocalServerStatusWizardPage:
+            if not Controller.instance().connected():
+                return False
+
         return True
 
     def _refreshVMListSlot(self):
@@ -371,6 +396,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         settings = self.parentWidget().settings()
         if result:
             settings["hide_setup_wizard"] = True
+        else:
+            settings["hide_setup_wizard"] = self.uiShowCheckBox.isChecked()
+
         self.parentWidget().setSettings(settings)
         super().done(result)
 
@@ -380,14 +408,13 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         current_id = self.currentId()
-        if self.page(current_id) == self.uiServerWizardPage and self.uiVMRadioButton.isChecked():
-            # skip the local server page if using the GNS3 VM
-            return self._pageId(self.uiVMWizardPage)
+        if self.page(current_id) == self.uiLocalServerStatusWizardPage and not self.uiVMRadioButton.isChecked():
+            return self._pageId(self.uiSummaryWizardPage)
 
         if self.page(current_id) == self.uiServerWizardPage and self.uiRemoteControllerRadioButton.isChecked():
             return self._pageId(self.uiRemoteControllerWizardPage)
 
-        if self.page(current_id) == self.uiLocalServerWizardPage or self.page(current_id) == self.uiVMWizardPage:
+        if self.page(current_id) == self.uiVMWizardPage:
             return self._pageId(self.uiSummaryWizardPage)
         return QtWidgets.QWizard.nextId(self)
 
