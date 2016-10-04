@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/new_appliance_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ class Ui_NewApplianceDialog(object):
 
     def setupUi(self, NewApplianceDialog):
         NewApplianceDialog.setObjectName("NewApplianceDialog")
-        NewApplianceDialog.setWindowModality(QtCore.Qt.WindowModal)
+        NewApplianceDialog.setWindowModality(QtCore.Qt.ApplicationModal)
         NewApplianceDialog.resize(458, 317)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)

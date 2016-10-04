@@ -329,6 +329,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec_()
 
+        # No projects
+        if Topology.instance().project() is None:
+            if self._open_file_at_startup:
+                self.loadPath(self._open_file_at_startup)
+                self._open_file_at_startup = None
+            else:
+                self._newProjectActionSlot()
+
     @qslot
     def openApplianceActionSlot(self, *args):
         """
@@ -747,7 +755,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         with Progress.instance().context(min_duration=0):
             setup_wizard = SetupWizard(self)
             setup_wizard.show()
-            setup_wizard.exec_()
+            if setup_wizard.exec_():
+                self._newApplianceActionSlot()
 
     def _aboutQtActionSlot(self):
         """
@@ -992,20 +1001,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # start and connect to the local server if needed
         LocalServer.instance().localServerAutoStartIfRequire()
 
+        self._analytics_client.sendScreenView("Main Window")
+        self.uiGraphicsView.setEnabled(False)
+
         # show the setup wizard
         if not self._settings["hide_setup_wizard"]:
-            with Progress.instance().context(min_duration=0):
-                setup_wizard = SetupWizard(self)
-                setup_wizard.show()
-                setup_wizard.exec_()
-
-        self._analytics_client.sendScreenView("Main Window")
-
-        self.uiGraphicsView.setEnabled(False)
-        if self._open_file_at_startup:
-            self.loadPath(self._open_file_at_startup)
+            self._setupWizardActionSlot()
         else:
-            self._newProjectActionSlot()
+            if self._open_file_at_startup:
+                self.loadPath(self._open_file_at_startup)
+                self._open_file_at_startup = None
+            else:
+                self._newProjectActionSlot()
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)
