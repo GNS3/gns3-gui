@@ -195,15 +195,29 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 self.uiLocalServerHostComboBox.setCurrentIndex(index)
             self.uiLocalServerPortSpinBox.setValue(local_server_settings["port"])
 
+        elif self.page(page_id) == self.uiRemoteControllerWizardPage:
+            local_server_settings = LocalServer.instance().localServerSettings()
+            self.uiRemoteMainServerHostLineEdit.setText(local_server_settings["host"])
+            self.uiRemoteMainServerPortSpinBox.setValue(local_server_settings["port"])
+            self.uiRemoteMainServerUserLineEdit.setText(local_server_settings["user"])
+            self.uiRemoteMainServerPasswordLineEdit.setText(local_server_settings["password"])
+            self.uiRemoteMainServerProtocolComboBox.setCurrentText(local_server_settings["protocol"])
+            self.uiRemoteMainServerAuthCheckBox.setChecked(local_server_settings["auth"])
+
         elif self.page(page_id) == self.uiSummaryWizardPage:
-            use_local_server = self.uiLocalRadioButton.isChecked()
             self.uiSummaryTreeWidget.clear()
-            if use_local_server:
+            if self.uiLocalRadioButton.isChecked():
                 local_server_settings = LocalServer.instance().localServerSettings()
                 self._addSummaryEntry("Server type:", "Local")
                 self._addSummaryEntry("Path:", local_server_settings["path"])
                 self._addSummaryEntry("Host:", local_server_settings["host"])
                 self._addSummaryEntry("Port:", str(local_server_settings["port"]))
+            elif self.uiRemoteControllerRadioButton.isChecked():
+                local_server_settings = LocalServer.instance().localServerSettings()
+                self._addSummaryEntry("Server type:", "Remote")
+                self._addSummaryEntry("Host:", local_server_settings["host"])
+                self._addSummaryEntry("Port:", str(local_server_settings["port"]))
+                self._addSummaryEntry("User:", local_server_settings["user"])
             else:
                 self._addSummaryEntry("Server type:", "GNS3 Virtual Machine")
                 self._addSummaryEntry("VM engine:", self._GNS3VMSettings()["engine"].capitalize())
@@ -280,9 +294,19 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
             LocalServer.instance().updateLocalServerSettings(local_server_settings)
 
+        elif self.currentPage() == self.uiRemoteControllerWizardPage:
+            local_server_settings = LocalServer.instance().localServerSettings()
+            local_server_settings["auto_start"] = False
+            local_server_settings["host"] = self.uiRemoteMainServerHostLineEdit.text()
+            local_server_settings["port"] = self.uiRemoteMainServerPortSpinBox.value()
+            local_server_settings["protocol"] = self.uiRemoteMainServerProtocolComboBox.currentText()
+            local_server_settings["user"] = self.uiRemoteMainServerUserLineEdit.text()
+            local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
+            local_server_settings["auth"] = self.uiRemoteMainServerAuthCheckBox.isChecked()
+            LocalServer.instance().updateLocalServerSettings(local_server_settings)
+
         elif self.currentPage() == self.uiSummaryWizardPage:
-            use_local_server = self.uiLocalRadioButton.isChecked()
-            if use_local_server:
+            if self.uiLocalRadioButton.isChecked():
                 # deactivate the GNS3 VM if using the local server
                 vm_settings = self._GNS3VMSettings()
                 vm_settings["enable"] = False
@@ -361,7 +385,20 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         current_id = self.currentId()
         if self.page(current_id) == self.uiServerWizardPage and self.uiVMRadioButton.isChecked():
             # skip the local server page if using the GNS3 VM
-            return self.uiLocalServerWizardPage.nextId()
-        if self.page(current_id) == self.uiLocalServerWizardPage:
-            return self.uiVMWizardPage.nextId()
+            return self._pageId(self.uiVMWizardPage)
+
+        if self.page(current_id) == self.uiServerWizardPage and self.uiRemoteControllerRadioButton.isChecked():
+            return self._pageId(self.uiRemoteControllerWizardPage)
+
+        if self.page(current_id) == self.uiLocalServerWizardPage or self.page(current_id) == self.uiVMWizardPage:
+            return self._pageId(self.uiSummaryWizardPage)
         return QtWidgets.QWizard.nextId(self)
+
+    def _pageId(self, page):
+        """
+        Return id of the page
+        """
+        for id in self.pageIds():
+            if self.page(id) == page:
+                return id
+        raise KeyError
