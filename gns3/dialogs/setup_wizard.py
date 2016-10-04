@@ -369,7 +369,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         settings = self.parentWidget().settings()
-        settings["hide_setup_wizard"] = self.uiShowCheckBox.isChecked()
+        if result:
+            settings["hide_setup_wizard"] = True
         self.parentWidget().setSettings(settings)
         super().done(result)
 
