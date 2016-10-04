@@ -44,7 +44,7 @@ def test_docker_vm_create(project, local_server):
                                     "name": "ubuntu-{0}"
                                 },
                                 context={},
-                                timeout=120)
+                                timeout=None)
 
 
 def test_createCallback(project, local_server):
@@ -63,5 +63,3 @@ def test_createCallback(project, local_server):
     assert docker_vm.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
     assert docker_vm.name() == "DOCKER1"
     assert docker_vm._settings["image"] == "ubuntu"
-
-
