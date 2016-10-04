@@ -58,6 +58,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             # we want to see the cancel button on OSX
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
+        self.uiLocalServerToolButton.clicked.connect(self._localServerBrowserSlot)
+
         self.uiGNS3VMDownloadLinkUrlLabel.setText('')
         self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
