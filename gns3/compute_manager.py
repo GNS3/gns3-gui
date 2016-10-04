@@ -118,6 +118,14 @@ class ComputeManager(QtCore.QObject):
         except KeyError:
             return None
 
+    def localPlatform(self):
+        """
+        Return the platform of the local compute.
+
+        With a remote controller it could be different of our local platform
+        """
+        return self.localCompute().capabilities()["platform"]
+
     def remoteComputes(self):
         """
         :returns: List of non local and non VM computes

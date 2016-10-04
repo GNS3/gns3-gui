@@ -210,7 +210,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Run the appliance on a remote computer</string>
+          <string>Run the appliance on a remote server</string>
          </property>
          <property name="checked">
           <bool>true</bool>

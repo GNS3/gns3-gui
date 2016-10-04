@@ -30,6 +30,7 @@ from ..utils import human_filesize
 from ..utils.wait_for_lambda_worker import WaitForLambdaWorker
 from ..utils.progress_dialog import ProgressDialog
 from ..compute_manager import ComputeManager
+from ..controller import Controller
 from ..local_config import LocalConfig
 
 
@@ -60,6 +61,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiVMRadioButton.toggled.connect(self._vmToggledSlot)
 
         self.uiLocalRadioButton.toggled.connect(self._localToggledSlot)
+        if Controller.instance().isRemote():
+            self.uiLocalRadioButton.setText("Run the appliance on the main server")
+
         self.uiServerWizardPage.isComplete = self._uiServerWizardPage_isComplete
 
     def initializePage(self, page_id):
@@ -122,7 +126,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if not ComputeManager.instance().vmCompute():
                 self.uiVMRadioButton.setEnabled(False)
 
-            if (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
+            if (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
                 if type == "qemu":
                     # Qemu has issues on OSX and Windows we disallow usage of the local server
                     if not LocalConfig.instance().experimental():
@@ -461,7 +465,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isChecked():
                 self._server = "vm"
             else:
-                if (sys.platform.startswith("darwin") or sys.platform.startswith("win")):
+                if (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
                     if "qemu" in self._appliance:
                         reply = QtWidgets.QMessageBox.question(self, "Appliance", "Qemu on Windows and MacOSX is not supported by the GNS3 team. Are you sur to continue?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
                         if reply == QtWidgets.QMessageBox.No:
