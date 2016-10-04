@@ -336,15 +336,15 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
                 # update the modules so they use the local server
                 from gns3.modules import Dynamips
-                Dynamips.instance().setSettings({"use_local_server": use_local_server})
+                Dynamips.instance().setSettings({"use_local_server": True})
                 if sys.platform.startswith("linux"):
                     # IOU only works on Linux
                     from gns3.modules import IOU
-                    IOU.instance().setSettings({"use_local_server": use_local_server})
+                    IOU.instance().setSettings({"use_local_server": True})
                 from gns3.modules import Qemu
-                Qemu.instance().setSettings({"use_local_server": use_local_server})
+                Qemu.instance().setSettings({"use_local_server": True})
                 from gns3.modules import VPCS
-                VPCS.instance().setSettings({"use_local_server": use_local_server})
+                VPCS.instance().setSettings({"use_local_server": True})
 
         elif self.currentPage() == self.uiLocalServerStatusWizardPage:
             if not Controller.instance().connected():
