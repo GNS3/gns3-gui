@@ -27,6 +27,8 @@ from gns3.node import Node
 from gns3.utils.get_resource import get_resource
 from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
+from gns3.compute_manager import ComputeManager
+
 
 from ..ui.iou_device_wizard_ui import Ui_IOUDeviceWizard
 from .. import IOU
@@ -47,7 +49,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
 
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
-        if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
+        if ComputeManager.instance().localPlatform().startswith("win") or ComputeManager.instance().localPlatform().startswith("darwin"):
             # Cannot use IOU locally on Windows and Mac
             self._disableLocalServer()
 

@@ -25,6 +25,7 @@ from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.node import Node
 from gns3.modules.module_error import ModuleError
 from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
+from gns3.compute_manager import ComputeManager
 
 from .. import Qemu
 from ..ui.qemu_vm_wizard_ui import Ui_QemuVMWizard
@@ -86,7 +87,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         super().initializePage(page_id)
 
         if self.currentPage() == self.uiNameWizardPage:
-            if self.uiLocalRadioButton.isChecked() and not sys.platform.startswith("linux"):
+            if self.uiLocalRadioButton.isChecked() and not ComputeManager.instance().localPlatform().startswith("linux"):
                 QtWidgets.QMessageBox.warning(self, "QEMU on Windows or Mac", "The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM")
 
         if self.page(page_id) in [self.uiDiskWizardPage, self.uiInitrdKernelImageWizardPage]:
@@ -116,8 +117,8 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
                     self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
 
             is_64bit = sys.maxsize > 2 ** 32
-            if sys.platform.startswith("win"):
-                if self.uiLegacyASACheckBox.isChecked() and self.uiLocalRadioButton.isChecked():
+            if ComputeManager.instance().localPlatform().startswith("win") and self.uiLocalRadioButton.isChecked():
+                if self.uiLegacyASACheckBox.isChecked():
                     search_string = r"qemu-0.13.0\qemu-system-i386w.exe"
                 elif is_64bit:
                     # default is qemu-system-x86_64w.exe on Windows 64-bit with a remote server
@@ -125,7 +126,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
                 else:
                     # default is qemu-system-i386w.exe on Windows 32-bit with a remote server
                     search_string = "i386w.exe"
-            elif sys.platform.startswith("darwin") and hasattr(sys, "frozen") and self.uiLocalRadioButton.isChecked():
+            elif ComputeManager.instance().localPlatform().startswith("darwin") and hasattr(sys, "frozen") and self.uiLocalRadioButton.isChecked():
                 search_string = "GNS3.app/Contents/Resources/qemu/bin/qemu-system-x86_64"
             elif is_64bit:
                 # default is qemu-system-x86_64 on other 64-bit platforms

@@ -21,6 +21,7 @@ import sys
 
 from gns3.qt import QtGui, QtWidgets
 from gns3.dialogs.vm_wizard import VMWizard
+from gns3.compute_manager import ComputeManager
 
 from ..ui.docker_vm_wizard_ui import Ui_DockerVMWizard
 from .. import Docker
@@ -43,7 +44,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
         self._existingImageRadioButtonToggledSlot(False)
         self.uiExistingImageRadioButton.toggled.connect(self._existingImageRadioButtonToggledSlot)
 
-        if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
+        if ComputeManager.instance().localPlatform().startswith("win") or ComputeManager.instance().localPlatform().startswith("darwin"):
             # Cannot use Docker locally on Windows and Mac
             self._disableLocalServer()
 

@@ -19,6 +19,7 @@ import sys
 
 from gns3.qt import QtWidgets
 from gns3.compute_manager import ComputeManager
+from gns3.controller import Controller
 
 
 class VMWizard(QtWidgets.QWizard):
@@ -49,6 +50,8 @@ class VMWizard(QtWidgets.QWizard):
             self.uiVMRadioButton.toggled.connect(self._vmToggledSlot)
 
         self.uiLocalRadioButton.toggled.connect(self._localToggledSlot)
+        if Controller.instance().isRemote():
+            self.uiLocalRadioButton.setText("Run device on the main server")
 
         # By default we use the local server
         self._compute_id = ComputeManager.instance().computes()[0].id()
