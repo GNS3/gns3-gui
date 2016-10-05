@@ -438,7 +438,9 @@ class HTTPClient(QtCore.QObject):
             msg = "Cannot connect to {}: {}".format(server, msg)
         else:
             if self.isLocal():
-                msg = "Cannot connect to {}. Please check if GNS3 is allowed in your antivirus and firewall.".format(server)
+                msg = "Cannot connect to {}. Please check if GNS3 is allowed in your antivirus and firewall."
+            elif self.isGNS3VM():
+                msg = "Cannot connect to {}. Please check if GNS3 VM version is also {}".format(server, __version__)
             else:
                 msg = "Cannot connect to {}".format(server)
         log.error(msg)
@@ -764,5 +766,5 @@ class HTTPClient(QtCore.QObject):
         return self._usage
 
     def setSystemUsage(self, usage):
-       self._usage = usage
-       self.system_usage_updated_signal.emit()
+        self._usage = usage
+        self.system_usage_updated_signal.emit()
