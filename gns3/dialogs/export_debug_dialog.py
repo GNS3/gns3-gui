@@ -61,12 +61,13 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
                     if os.path.isfile(path):
                         zip.write(path, filename)
 
-                dir = self._project.filesDir()
-                if dir:
-                    for filename in os.listdir(dir):
-                        path = os.path.join(dir, filename)
-                        if os.path.isfile(path):
-                            zip.write(path, filename)
+                if self._project:
+                    dir = self._project.filesDir()
+                    if dir:
+                        for filename in os.listdir(dir):
+                            path = os.path.join(dir, filename)
+                            if os.path.isfile(path):
+                                zip.write(path, filename)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "Debug", "Can't export debug information: {}".format(str(e)))
         self.accept()
