@@ -20,6 +20,7 @@ from .qt import QtCore
 from .compute import Compute
 from .controller import Controller
 
+import sys
 import copy
 import urllib
 import datetime
@@ -124,7 +125,7 @@ class ComputeManager(QtCore.QObject):
 
         With a remote controller it could be different of our local platform
         """
-        return self.localCompute().capabilities()["platform"]
+        return self.localCompute().capabilities().get("platform", sys.platform)
 
     def remoteComputes(self):
         """
