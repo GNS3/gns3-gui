@@ -268,7 +268,7 @@ class HTTPClient(QtCore.QObject):
         if len(msg) > 0:
             msg = "Cannot connect to server {}: {}".format(self.url(), msg)
         else:
-            msg = "Cannot connect to {}. Please check if GNS3 is allowed in your antivirus and firewall.".format(self.url())
+            msg = "Cannot connect to {}. Please check if GNS3 is allowed in your antivirus and firewall. And that server version is {}.".format(self.url(), __version__)
         for request, callback in self._query_waiting_connections:
             if callback is not None:
                 callback({"message": msg}, error=True, server=server)
@@ -610,7 +610,6 @@ class HTTPClient(QtCore.QObject):
                 urllib.request.install_opener(opener)
             else:
                 log.debug("Synchronous get {} (no authentication)".format(url))
-
             response = urllib.request.urlopen(url, timeout=timeout)
             content_type = response.getheader("CONTENT-TYPE")
             if response.status == 200:
