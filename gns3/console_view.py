@@ -37,23 +37,27 @@ class ConsoleLogHandler(logging.StreamHandler):
     """
     Display log event to the console
     """
+
     def emit(self, record):
         message = self.format(record)
         level_no = record.levelno
         if level_no >= logging.ERROR:
-            self._console_view.write("{}\n".format(message), error=True)
+            self._console_view.write_message_signal.emit("{}\n".format(message), "error")
         elif level_no >= logging.WARNING:
-            self._console_view.write("{}\n".format(message), warning=True)
+            self._console_view.write_message_signal.emit("{}\n".format(message), "warning")
         elif level_no >= logging.INFO:
             # To avoid noise on console we display all event only if log level is debug
             # or if we force the display in the log record
             if "show" in record.__dict__ or logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-                self._console_view.write("{}\n".format(message))
+                self._console_view.write_message_signal.emit("{}\n".format(message), "debug")
         elif level_no >= logging.DEBUG:
-            self._console_view.write("{}\n".format(message))
+            self._console_view.write_message_signal.emit("{}\n".format(message), "debug")
 
 
 class ConsoleView(PyCutExt, ConsoleCmd):
+
+    # Emit this signal to write a message on console
+    write_message_signal = QtCore.Signal(str, str)
 
     def __init__(self, parent):
 
@@ -89,16 +93,25 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         self._handleLogs()
 
         if LocalConfig.instance().experimental():
-           log.warning("WARNING: Experimental features enable. You can use some unfinished features and lost data.")
+            log.warning("WARNING: Experimental features enable. You can use some unfinished features and lost data.")
 
         for module in MODULES:
             instance = module.instance()
             instance.notification_signal.connect(self.writeNotification)
 
+        self.write_message_signal.connect(self._writeMessageSlot)
+
         # required for Cmd module (do_help etc.)
         self.stdout = sys.stdout
         self._topology = Topology.instance()
 
+    def _writeMessageSlot(self, message, level):
+        if level == "error":
+            self.write(message, error=True)
+        elif level == "warning":
+            self.write(message, warning=True)
+        else:
+            self.write(message)
 
     def _handleLogs(self):
         """
