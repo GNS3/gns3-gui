@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/gns3_vm_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/gns3_vm_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Sat Oct  8 14:06:27 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_GNS3VMPreferencesPageWidget(object):
-
     def setupUi(self, GNS3VMPreferencesPageWidget):
         GNS3VMPreferencesPageWidget.setObjectName("GNS3VMPreferencesPageWidget")
-        GNS3VMPreferencesPageWidget.resize(476, 446)
+        GNS3VMPreferencesPageWidget.resize(476, 450)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -125,5 +124,7 @@ class Ui_GNS3VMPreferencesPageWidget(object):
         self.uiVMNameLabel.setText(_translate("GNS3VMPreferencesPageWidget", "VM name:"))
         self.uiRefreshPushButton.setText(_translate("GNS3VMPreferencesPageWidget", "&Refresh"))
         self.uiWhenExitStopRadioButton.setText(_translate("GNS3VMPreferencesPageWidget", "stop the GNS3 VM"))
-        self.uiRamLabel.setText(_translate("GNS3VMPreferencesPageWidget", "Ram:"))
-        self.uiCpuLabel.setText(_translate("GNS3VMPreferencesPageWidget", "vCpus:"))
+        self.uiRamLabel.setText(_translate("GNS3VMPreferencesPageWidget", "RAM:"))
+        self.uiRamSpinBox.setSuffix(_translate("GNS3VMPreferencesPageWidget", " MB"))
+        self.uiCpuLabel.setText(_translate("GNS3VMPreferencesPageWidget", "vCPUs:"))
+
