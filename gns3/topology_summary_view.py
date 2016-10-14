@@ -58,7 +58,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         self._refreshNodeSlot()
 
     @qslot
-    def _refreshStatusSlot(self):
+    def _refreshStatusSlot(self, *args):
         """
         Changes the icon to show the node status (started, stopped etc.)
         """
@@ -124,7 +124,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         self.sortChildren(0, QtCore.Qt.AscendingOrder)
 
     @qslot
-    def _deletedNodeSlot(self):
+    def _deletedNodeSlot(self, *args):
         """
         Removes the node from the view.
         """
@@ -153,7 +153,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self.itemDoubleClicked.connect(self._itemDoubleClickedSlot)
 
     @qslot
-    def _projectChangedSlot(self):
+    def _projectChangedSlot(self, *args):
         """
         Clears all the topology summary.
         """
@@ -173,7 +173,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             child.refreshLinks()
 
     @qslot
-    def _nodeAddedSlot(self, base_node_id):
+    def _nodeAddedSlot(self, base_node_id, *args):
         """
         Received events for node creation.
 
@@ -192,7 +192,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         TopologyNodeItem(self, node)
 
     @qslot
-    def _itemSelectionChangedSlot(self):
+    def _itemSelectionChangedSlot(self, *args):
         """
         Slot called when an item is selected in the TreeWidget.
         """
@@ -214,7 +214,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                             item.setHovered(True)
 
     @qslot
-    def _itemDoubleClickedSlot(self, current_item):
+    def _itemDoubleClickedSlot(self, current_item, *args):
         """
         When user double click on an element we center the topology on it
         """
@@ -292,7 +292,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         menu.exec_(QtGui.QCursor.pos())
 
     @qslot
-    def _expandAllSlot(self):
+    def _expandAllSlot(self, *args):
         """
         Expands all items.
         """
@@ -300,7 +300,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self.expandAll()
 
     @qslot
-    def _collapseAllSlot(self):
+    def _collapseAllSlot(self, *args):
         """
         Collapses all items.
         """
@@ -308,7 +308,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self.collapseAll()
 
     @qslot
-    def _devicesWithCaptureSlot(self):
+    def _devicesWithCaptureSlot(self, *args):
         """
         Show only devices with captures.
         """
@@ -317,7 +317,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self.refreshAllLinks()
 
     @qslot
-    def _showAllDevicesSlot(self):
+    def _showAllDevicesSlot(self, *args):
         """
         Show all devices items.
         """
@@ -326,7 +326,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self.refreshAllLinks()
 
     @qslot
-    def _stopAllCapturesSlot(self):
+    def _stopAllCapturesSlot(self, *args):
         """
         Stop all packet captures.
         """
