@@ -135,7 +135,7 @@ class Topology(QtCore.QObject):
         if os.path.exists(project_file):
             self._main_window.updateRecentFileSettings(project_file)
             self._main_window.updateRecentFileActions()
-        self._main_window.updateRecentProjectsSettings(self._project.id(), self._project.name())
+        self._main_window.updateRecentProjectsSettings(self._project.id(), self._project.name(), self._project.path())
         self._main_window.updateRecentProjectActions()
 
     def createLoadProject(self, project_settings):
@@ -148,14 +148,16 @@ class Topology(QtCore.QObject):
         if "project_name" in project_settings:
             project.setName(project_settings["project_name"])
 
+        if "project_path" in project_settings:
+            project.setFilesDir(os.path.dirname(project_settings["project_path"]))
+            project.setFilename(os.path.basename(project_settings["project_path"]))
+
         if "project_id" in project_settings:
             project.setId(project_settings["project_id"])
             self.setProject(project)
             project.load()
             self._main_window.uiStatusBar.showMessage("Project loaded", 2000)
         else:
-            if "project_path" in project_settings:
-                project.setFilesDir(os.path.dirname(project_settings["project_path"]))
             self.setProject(project)
             project.create()
             self._main_window.uiStatusBar.showMessage("Project created", 2000)

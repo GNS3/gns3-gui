@@ -146,6 +146,14 @@ class Project(QtCore.QObject):
 
         self._id = project_id
 
+    def path(self):
+        """
+        Return the path of the .gns3
+        """
+        if self._files_dir:
+            return os.path.join(self._files_dir, self._filename)
+        return None
+
     def filesDir(self):
         """
         Project directory on the local server
@@ -162,6 +170,12 @@ class Project(QtCore.QObject):
         Project filename
         """
         return self._filename
+
+    def setFilename(self, name):
+        """
+        Set project filename
+        """
+        self._filename = name
 
     def start_all_nodes(self):
         """Start all nodes belonging to this project"""
@@ -333,6 +347,8 @@ class Project(QtCore.QObject):
         self._scene_height = result.get("scene_height", 1000)
 
     def load(self, path=None):
+        if not path:
+            path = self.path()
         if path:
             body = {"path": path}
             Controller.instance().post("/projects/load", self._projectOpenCallback, body=body)

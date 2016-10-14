@@ -387,8 +387,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         action = self.sender()
         if action:
-            project_id = action.data()
-            Topology.instance().createLoadProject({"project_id": project_id})
+            if len(action.data()) == 2:
+                project_id, project_path = action.data()
+                Topology.instance().createLoadProject({
+                    "project_path": project_path,
+                    "project_id": project_id})
+            else:
+                (project_id, ) = action.data()
+                Topology.instance().createLoadProject({"project_id": project_id})
 
     def loadPath(self, path):
         """Open a file and close the previous project"""
@@ -1023,16 +1029,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
 
-    def updateRecentProjectsSettings(self, project_id, project_name):
+    def updateRecentProjectsSettings(self, project_id, project_name, project_path):
         """
         Updates the recent project settings.
 
         :param project_id: The ID of the project
         :param project_name: The name of the project
+        :param project_path: The project path
         """
 
         # Projects are stored as a list of project_id:project_name
-        key = "{}:{}".format(project_id, project_name)
+        key = "{}:{}:{}".format(project_id, project_name, project_path)
 
         recent_projects = []
         for project in self._settings["recent_projects"]:
@@ -1060,10 +1067,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         size = len(self._settings["recent_projects"])
         for project in self._settings["recent_projects"]:
             # Projects are stored as a list of project_id:project_name
-            project_id, project_name = project.split(":", maxsplit=1)
+            try:
+                project_id, project_name, project_path = project.split(":", maxsplit=2)
+            except ValueError:  # Compatible with 2.0.0a1
+                project_path = None
+                project_id, project_name = project.split(":", maxsplit=1)
             action = self._recent_project_actions[index]
-            action.setText(" {}. {}".format(index + 1, project_name))
-            action.setData(project_id)
+            if project_path and os.path.exists(project_path):
+                action.setText(" {}. {} [{}]".format(index + 1, project_name, project_path))
+                action.setData((project_id, project_path, ))
+            else:
+                action.setText(" {}. {}".format(index + 1, project_name))
+                action.setData((project_id, ))
             action.setVisible(True)
             index += 1
 
