@@ -44,6 +44,9 @@ class Controller(QtCore.QObject):
         # If it's the first error we display an alert box to the user
         self._first_error = True
 
+    def host(self):
+        return self._http_client.host()
+
     def isRemote(self):
         """
         :returns Boolean: True if the controller is remote

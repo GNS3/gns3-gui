@@ -20,6 +20,7 @@ import os
 import uuid
 import pathlib
 from gns3.local_server import LocalServer
+from gns3.controller import Controller
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
 from gns3.qt import QtGui, QtCore
@@ -166,7 +167,10 @@ class Node(BaseNode):
 
     def consoleHost(self):
 
-        return self.settings()["console_host"]
+        host = self.settings()["console_host"]
+        if host is None or host == "::" or host == "0.0.0.0":
+            host = Controller.instance().host()
+        return host
 
     def node_id(self):
         """

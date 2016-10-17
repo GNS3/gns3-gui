@@ -64,6 +64,8 @@ class HTTPClient(QtCore.QObject):
         self._host = settings["host"]
         if self._host == "0.0.0.0":
             self._host = "127.0.0.1"
+        elif ":" in self._host and str(ipaddress.IPv6Address(self._host)) == "::":
+            self._host = "::1"
         self._port = int(settings["port"])
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
@@ -125,15 +127,20 @@ class HTTPClient(QtCore.QObject):
     def url(self):
         """Returns current server url"""
 
+        if ":" in self.host():
+            return "{}://[{}]:{}".format(self.protocol(), self.host(), self.port())
         return "{}://{}:{}".format(self.protocol(), self.host(), self.port())
 
     def fullUrl(self):
         """Returns current server url including user and password"""
+        host = self.host()
+        if ":" in self.host():
+            host = "[{}]".format(host)
 
         if self._user:
-            return "{}://{}:{}@{}:{}".format(self.protocol(), self._user, self._password, self.host(), self.port())
+            return "{}://{}:{}@{}:{}".format(self.protocol(), self._user, self._password, host, self.port())
         else:
-            return "{}://{}:{}".format(self.protocol(), self.host(), self.port())
+            return "{}://{}:{}".format(self.protocol(), host, self.port())
 
     def password(self):
         return self._password
