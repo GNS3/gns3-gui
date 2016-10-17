@@ -114,7 +114,7 @@ class VMWizard(QtWidgets.QWizard):
 
             if self._use_local_server and self.uiLocalRadioButton.isEnabled() and self.uiLocalRadioButton.isVisible():
                 self.uiLocalRadioButton.setChecked(True)
-            elif self.uiVMRadioButton.isEnabled():
+            elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isEnabled():
                 self.uiVMRadioButton.setChecked(True)
             else:
                 if self.uiRemoteRadioButton.isEnabled():
