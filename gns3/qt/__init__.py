@@ -94,12 +94,12 @@ class LogQMessageBox(QtWidgets.QMessageBox):
     """
     @staticmethod
     def critical(parent, title, message, *args):
-        log.critical(message, stack_info=LogQMessageBox.stack_info())
+        log.critical(re.sub(r"<[^<]+?>", "", message), stack_info=LogQMessageBox.stack_info())
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).critical(parent, title, message, *args)
 
     @staticmethod
     def warning(parent, title, message, *args):
-        log.warning(message)
+        log.warning(re.sub(r"<[^<]+?>", "", message))
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).warning(parent, title, message, *args)
 
     @staticmethod
