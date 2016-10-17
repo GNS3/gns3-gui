@@ -329,6 +329,7 @@ class LocalConfig(QtCore.QObject):
         if self._settings != settings:
             self._settings.update(settings)
             self._writeConfig()
+            self.config_changed_signal.emit()
 
     def loadSectionSettings(self, section, default_settings):
         """

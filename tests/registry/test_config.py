@@ -470,44 +470,6 @@ def test_add_appliance_path_non_relative_to_images_dir(empty_config, tmpdir, ima
     assert os.path.exists(os.path.join(images_dir, "QEMU", "a.img"))
 
 
-def test_save(empty_config, linux_microcore_img):
-
-    with open("tests/registry/appliances/microcore-linux.gns3a", encoding="utf-8") as f:
-        config = json.load(f)
-
-    config["images"] = [
-        {
-            "type": "hda_disk_image",
-            "filename": "linux-microcore-3.4.1.img",
-            "path": linux_microcore_img
-        }
-    ]
-
-    empty_config.add_appliance(config, "local")
-    empty_config.save()
-    with open(empty_config.path) as f:
-        assert "Micro Core" in f.read()
-
-
-def test_is_name_available(empty_config, linux_microcore_img):
-
-    with open("tests/registry/appliances/microcore-linux.gns3a", encoding="utf-8") as f:
-        config = json.load(f)
-
-    config["images"] = [
-        {
-            "type": "hda_disk_image",
-            "filename": "linux-microcore-3.4.1.img",
-            "path": linux_microcore_img
-        }
-    ]
-
-    assert empty_config.is_name_available(config["name"]) is True
-    empty_config.add_appliance(config, "local")
-    empty_config.save()
-    assert empty_config.is_name_available(config["name"]) is False
-
-
 def test_relative_image_path(empty_config, images_dir, tmpdir):
 
     # Image in image directory no need to copy it
