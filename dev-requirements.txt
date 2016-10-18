@@ -1,6 +1,6 @@
 -rrequirements.txt
 
-pep8
+pep8==1.7.0
 pytest
 pytest-pythonpath # useful for running tests outside tox
 pytest-timeout
