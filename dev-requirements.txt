@@ -2,6 +2,6 @@
 
 pep8==1.7.0
 pytest==3.0.3
-pytest-pythonpath # useful for running tests outside tox
+pytest-pythonpath==0.7.1 # useful for running tests outside tox
 pytest-timeout
 pytest-capturelog==0.7
