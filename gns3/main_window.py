@@ -1045,10 +1045,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for project in self._settings["recent_projects"]:
             recent_projects.append(project)
 
-        # Because the name can change we compare only the project id
+        # Because the name can change we compare only the project id and path
         for project_key in list(recent_projects):
             if project_key.split(":")[0] == project_id:
                 recent_projects.remove(project_key)
+        for project_key in list(recent_projects):
+            try:
+                if project_key.split(":")[2] == project_path:
+                    recent_projects.remove(project_key)
+            # 2.0.0 alpha1 compatible
+            except IndexError:
+                pass
 
         recent_projects.insert(0, key)
         if len(recent_projects) > self._max_recent_files:
