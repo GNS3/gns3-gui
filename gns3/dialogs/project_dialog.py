@@ -204,7 +204,9 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             if "status" not in result or result["status"] != 404:
                 return
             elif "message" in result:
-                QtWidgets.QMessageBox.critical("Error while overwrite project: {}".format(result["message"]))
+                QtWidgets.QMessageBox.critical(self,
+                                               "New Project",
+                                               "Error while overwrite project: {}".format(result["message"]))
         self._projects = []
         self._refreshProjects()
         self.done(True)
