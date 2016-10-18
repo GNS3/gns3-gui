@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/project_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/project_dialog.ui'
 #
-# Created: Thu Sep 22 22:09:19 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ProjectDialog(object):
+
     def setupUi(self, ProjectDialog):
         ProjectDialog.setObjectName("ProjectDialog")
         ProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        ProjectDialog.resize(520, 282)
+        ProjectDialog.resize(520, 301)
         ProjectDialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(ProjectDialog)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -95,6 +96,9 @@ class Ui_ProjectDialog(object):
         self.uiDeleteProjectButton = QtWidgets.QPushButton(self.uiProjectsLibraryTab)
         self.uiDeleteProjectButton.setObjectName("uiDeleteProjectButton")
         self.horizontalLayout_4.addWidget(self.uiDeleteProjectButton)
+        self.uiDuplicateProjectPushButton = QtWidgets.QPushButton(self.uiProjectsLibraryTab)
+        self.uiDuplicateProjectPushButton.setObjectName("uiDuplicateProjectPushButton")
+        self.horizontalLayout_4.addWidget(self.uiDuplicateProjectPushButton)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem2)
         self.uiRefreshProjectsPushButton = QtWidgets.QPushButton(self.uiProjectsLibraryTab)
@@ -112,7 +116,7 @@ class Ui_ProjectDialog(object):
         self.horizontalLayout.addItem(spacerItem3)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(ProjectDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -141,7 +145,7 @@ class Ui_ProjectDialog(object):
         self.uiProjectsTreeWidget.headerItem().setText(1, _translate("ProjectDialog", "Status"))
         self.uiProjectsTreeWidget.headerItem().setText(2, _translate("ProjectDialog", "Path"))
         self.uiDeleteProjectButton.setText(_translate("ProjectDialog", "Delete"))
+        self.uiDuplicateProjectPushButton.setText(_translate("ProjectDialog", "Duplicate"))
         self.uiRefreshProjectsPushButton.setText(_translate("ProjectDialog", "Refresh list"))
         self.uiProjectTabWidget.setTabText(self.uiProjectTabWidget.indexOf(self.uiProjectsLibraryTab), _translate("ProjectDialog", "Projects library"))
         self.uiSettingsPushButton.setText(_translate("ProjectDialog", "Settings"))
-

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>520</width>
-    <height>282</height>
+    <height>301</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,16 @@
        <string>New project</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
@@ -154,7 +163,16 @@
        <string>Projects library</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
@@ -194,6 +212,13 @@
           <widget class="QPushButton" name="uiDeleteProjectButton">
            <property name="text">
             <string>Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiDuplicateProjectPushButton">
+           <property name="text">
+            <string>Duplicate</string>
            </property>
           </widget>
          </item>

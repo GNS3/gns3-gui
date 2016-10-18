@@ -69,6 +69,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         self.uiProjectsTreeWidget.itemDoubleClicked.connect(self._projectsTreeWidgetDoubleClickedSlot)
         self.uiDeleteProjectButton.clicked.connect(self._deleteProjectSlot)
+        self.uiDuplicateProjectPushButton.clicked.connect(self._duplicateProjectSlot)
         self.uiRefreshProjectsPushButton.clicked.connect(self._refreshProjects)
         self._refreshProjects()
 
@@ -86,8 +87,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         self.done(True)
 
     def _deleteProjectSlot(self):
-        current = self.uiProjectsTreeWidget.currentItem()
-        if current is None:
+        if len(self.uiProjectsTreeWidget.selectedItems()) == 0:
             QtWidgets.QMessageBox.critical(self, "Delete project", "No project selected")
             return
 
@@ -110,6 +110,41 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
     def _deleteProjectCallback(self, result, error=False, **kwargs):
         if error:
             log.error("Error while deleting project: {}".format(result["message"]))
+            return
+        Controller.instance().get("/projects", self._projectListCallback)
+
+    def _duplicateProjectSlot(self):
+        if len(self.uiProjectsTreeWidget.selectedItems()) == 0:
+            QtWidgets.QMessageBox.critical(self, "Duplicate project", "No project selected")
+            return
+
+        if len(self.uiProjectsTreeWidget.selectedItems()) > 1:
+            QtWidgets.QMessageBox.critical(self, "Duplicate project", "Please select only one project to duplicate")
+            return
+
+        for project in self.uiProjectsTreeWidget.selectedItems():
+            project_id = project.data(0, QtCore.Qt.UserRole)
+            project_name = project.data(1, QtCore.Qt.UserRole)
+
+            new_project_name = project_name + "-1"
+            existing_project_name = [p["name"] for p in self._projects]
+            i = 1
+            while new_project_name in existing_project_name:
+                new_project_name = "{}-{}".format(project_name, i)
+                i += 1
+
+            name, reply = QtWidgets.QInputDialog.getText(self,
+                                                         "Duplicate project",
+                                                         'Duplicate project "{}"?.'.format(project_name),
+                                                         QtWidgets.QLineEdit.Normal,
+                                                         new_project_name)
+            name = name.strip()
+            if reply and len(name) > 0:
+                Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id), self._duplicateCallback, body={"name": name})
+
+    def _duplicateCallback(self, result, error=False, **kwargs):
+        if error:
+            log.error("Error while duplicate project: {}".format(result["message"]))
             return
         Controller.instance().get("/projects", self._projectListCallback)
 
