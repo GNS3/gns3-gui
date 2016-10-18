@@ -1,7 +1,7 @@
 -rrequirements.txt
 
-pep8
-pytest
-pytest-pythonpath # useful for running tests outside tox
-pytest-timeout
-pytest-capturelog
+pep8==1.7.0
+pytest==3.0.3
+pytest-pythonpath==0.7.1 # useful for running tests outside tox
+pytest-timeout==1.0.0
+pytest-capturelog==0.7
