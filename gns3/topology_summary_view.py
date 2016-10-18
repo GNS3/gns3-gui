@@ -189,6 +189,14 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             log.error("could not find node with ID {}".format(base_node_id))
             return
 
+        # We check if we don't already have this node because it seem
+        # sometimes we can get twice the signal
+        root = self.invisibleRootItem()
+        for index in range(0, root.childCount()):
+            child = root.child(index)
+            if child.node() == node:
+                return
+
         TopologyNodeItem(self, node)
 
     @qslot
