@@ -200,9 +200,11 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
     def _overwriteProjectCallback(self, result, error=False, **kwargs):
         if error:
-            if "message" in result:
-                log.error("Error while overwrite project: {}".format(result["message"]))
-            return
+            # A 404 could arrive if someone else as deleted the project
+            if "status" not in result or result["status"] != 404:
+                return
+            elif "message" in result:
+                QtWidgets.QMessageBox.critical("Error while overwrite project: {}".format(result["message"]))
         self._projects = []
         self._refreshProjects()
         self.done(True)
