@@ -84,7 +84,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         from gns3.modules import VMware
         settings = VMware.instance().settings()
         if not os.path.exists(settings["vmrun_path"]):
-            QtWidgets.QMessageBox.critical(self, "VMware", "VMware vmrun tool could not be found, VMware or the VIX API (required for VMware player) is probably not installed. You can download it from https://www.vmware.com/support/developer/vix-api/")
+            QtWidgets.QMessageBox.critical(self, "VMware", "VMware vmrun tool could not be found, VMware or the VIX API (required for VMware player) is probably not installed. You can download it from https://www.vmware.com/support/developer/vix-api/. After installation you need to restart GNS3.")
             return
         self._refreshVMListSlot()
 
@@ -100,7 +100,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         from gns3.modules import VirtualBox
         settings = VirtualBox.instance().settings()
         if not os.path.exists(settings["vboxmanage_path"]):
-            QtWidgets.QMessageBox.critical(self, "VirtualBox", "VBoxManage could not be found, VirtualBox is probably not installed")
+            QtWidgets.QMessageBox.critical(self, "VirtualBox", "VBoxManage could not be found, VirtualBox is probably not installed. After installation you need to restart GNS3.")
             return
         self._refreshVMListSlot()
 
