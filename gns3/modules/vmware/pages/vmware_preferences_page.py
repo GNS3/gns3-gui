@@ -49,12 +49,6 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         self.uiConfigureVmnetPushButton.clicked.connect(self._configureVmnetSlot)
         self.uiResetVmnetPushButton.clicked.connect(self._resetVmnetSlot)
 
-        if sys.platform.startswith("darwin"):
-            self.uiHostTypeComboBox.addItem("VMware Fusion", "fusion")
-        else:
-            self.uiHostTypeComboBox.addItem("VMware Player", "player")
-            self.uiHostTypeComboBox.addItem("VMware Workstation", "ws")
-
         if sys.platform.startswith("win"):
             # VMnet limit on Windows is 19
             self.uiVMnetEndRangeSpinBox.setMaximum(19)
@@ -110,12 +104,10 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         if state:
             self.uiVmrunPathLineEdit.setEnabled(True)
             self.uiVmrunPathToolButton.setEnabled(True)
-            self.uiHostTypeComboBox.setEnabled(True)
             self.uiNetworkTab.setEnabled(True)
         else:
             self.uiVmrunPathLineEdit.setEnabled(False)
             self.uiVmrunPathToolButton.setEnabled(False)
-            self.uiHostTypeComboBox.setEnabled(False)
             self.uiNetworkTab.setEnabled(False)
 
     def _getGNS3Vmnet(self):
@@ -161,9 +153,6 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         """
 
         self.uiVmrunPathLineEdit.setText(settings["vmrun_path"])
-        index = self.uiHostTypeComboBox.findData(settings["host_type"])
-        if index != -1:
-            self.uiHostTypeComboBox.setCurrentIndex(index)
         self.uiVMnetStartRangeSpinBox.setValue(settings["vmnet_start_range"])
         self.uiVMnetEndRangeSpinBox.setValue(settings["vmnet_end_range"])
         self.uiBlockHostTrafficCheckBox.setChecked(settings["block_host_traffic"])
@@ -187,12 +176,8 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
             return
 
         new_settings = {"vmrun_path": vmrun_path,
-                        "host_type": self.uiHostTypeComboBox.itemData(self.uiHostTypeComboBox.currentIndex()),
                         "vmnet_start_range": self.uiVMnetStartRangeSpinBox.value(),
                         "vmnet_end_range": self.uiVMnetEndRangeSpinBox.value(),
                         "block_host_traffic": self.uiBlockHostTrafficCheckBox.isChecked(),
                         "use_local_server": self.uiUseLocalServercheckBox.isChecked()}
         VMware.instance().setSettings(new_settings)
-
-
-
