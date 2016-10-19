@@ -194,8 +194,8 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         root = self.invisibleRootItem()
         for index in range(0, root.childCount()):
             child = root.child(index)
-            if child.node() == node:
-                return
+            if child.node().id() == node.id():
+                self.takeTopLevelItem(self.indexOfTopLevelItem(child))
 
         TopologyNodeItem(self, node)
 
