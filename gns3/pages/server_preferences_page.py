@@ -63,8 +63,9 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
-            address_string = address.toString()
-            self.uiLocalServerHostComboBox.addItem(address_string, address_string)
+            if address.protocol() == QtNetwork.QAbstractSocket.IPv4Protocol:
+                address_string = address.toString()
+                self.uiLocalServerHostComboBox.addItem(address_string, address_string)
         self.uiLocalServerHostComboBox.addItem("0.0.0.0", "0.0.0.0")
 
         # default is 127.0.0.1
