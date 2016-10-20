@@ -114,7 +114,7 @@ class Appliance(collections.Mapping):
         Duplicate a version in order to create a new version
         """
         ref = self._appliance["versions"][0]
-        new_version= {'name': version_name}
+        new_version = {'name': version_name}
         new_version['images'] = {}
 
         for disk_type in ref['images']:
@@ -141,7 +141,7 @@ class Appliance(collections.Mapping):
                 for image_type, image in version["images"].items():
                     image["type"] = image_type
 
-                    img = self._registry.search_image_file(image["filename"], image.get("md5sum"), image.get("filesize"))
+                    img = self._registry.search_image_file(self.emulator(), image["filename"], image.get("md5sum"), image.get("filesize"))
                     if img is None:
                         if "md5sum" in image:
                             raise ApplianceError("File {} with checksum {} not found for {}".format(image["filename"], image["md5sum"], appliance["name"]))
@@ -149,6 +149,7 @@ class Appliance(collections.Mapping):
                             raise ApplianceError("File {} not found for {}".format(image["filename"], appliance["name"]))
 
                     image["path"] = img.path
+                    image["location"] = img.location
 
                     if "md5sum" not in image:
                         image["md5sum"] = img.md5sum
@@ -184,13 +185,9 @@ class Appliance(collections.Mapping):
         except ApplianceError:
             return False
 
-    def image_dir_name(self):
-        """
-        :returns: The name of directory where image should be located
-        """
+    def emulator(self):
         if "qemu" in self._appliance:
-            return "QEMU"
+            return "qemu"
         if "iou" in self._appliance:
-            return "IOU"
-        return "IOS"
-
+            return "iou"
+        return "dynamips"

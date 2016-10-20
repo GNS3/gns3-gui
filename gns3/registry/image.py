@@ -18,8 +18,12 @@
 import re
 import os
 import hashlib
-import shutil
 import tarfile
+import pathlib
+
+
+from gns3.controller import Controller
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -33,14 +37,30 @@ class Image:
     # Cache md5sum in order to improve performances
     _cache = {}
 
-    def __init__(self, path):
+    def __init__(self, emulator, path):
         """
+        :params: Emulator type
         :params: path of the image
         """
 
+        self._location = "local"
+        self._emulator = emulator
         self.path = path
         self._md5sum = None
         self._version = None
+        self._filesize = None
+
+    @property
+    def location(self):
+        """
+        :returns: remote or local. Where the file is store.
+        If local we will need to upload it at the end of the process
+        """
+        return self._location
+
+    @location.setter
+    def location(self, val):
+        self._location = val
 
     @property
     def filename(self):
@@ -96,47 +116,30 @@ class Image:
         Image._cache[self.path] = self._md5sum
         return self._md5sum
 
+    @md5sum.setter
+    def md5sum(self, val):
+        self._md5sum = val
+
     @property
     def filesize(self):
         """
         Return image file size
         """
+        if self._filesize is not None:
+            return self._filesize
         try:
-            return os.path.getsize(self.path)
+            self._filesize = os.path.getsize(self.path)
+            return self._filesize
         except OSError:
             return 0
 
-    def copy(self, directory, filename):
+    @filesize.setter
+    def filesize(self, val):
+        self._filesize = val
+
+    def upload(self, compute_id, callback=None):
         """
-        Copy the image to a directory. Extract the image if it's an OVA.
-
-        The destination directory is created if not exists
-
-        :param directory: Destination directory
+        Upload image to the controller
         """
-        log.debug("Copy %s to %s", directory, filename)
-
-        is_tar = False
-        if tarfile.is_tarfile(self.path):
-            if '/' in filename or '\\' in filename:
-                # In case of OVA we want to update the OVA name
-                base_file = re.split(r'[/\\]', filename)[0]
-            else:
-                base_file = filename
-            dst = os.path.join(directory, base_file)
-
-            # is_tarfile can have false positive if file start with 00000 like ISO
-            # we check if we have file in the tar
-            tar = tarfile.open(self.path)
-            if len(tar.getnames()) > 0:
-                is_tar = True
-                os.makedirs(dst, exist_ok=True)
-                tar.extractall(path=dst)
-            tar.close()
-
-        if not is_tar:
-            dst = os.path.join(directory, filename)
-            os.makedirs(directory, exist_ok=True)
-            shutil.copy(self.path, dst)
-        with open(dst + ".md5sum", "w+", encoding="utf-8") as f:
-            f.write(self.md5sum)
+        upload_endpoint = "/{}/images".format(self._emulator)
+        Controller.instance().postCompute('{}/{}'.format(upload_endpoint, self.filename), compute_id, callback, body=pathlib.Path(self.path), progressText="Uploading {}".format(self.filename), timeout=None)

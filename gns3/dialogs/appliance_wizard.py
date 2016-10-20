@@ -17,6 +17,7 @@
 
 import os
 import sys
+import sip
 
 from ..qt import QtWidgets, QtCore, QtGui, qpartial, qslot
 from ..ui.appliance_wizard_ui import Ui_ApplianceWizard
@@ -35,23 +36,31 @@ from ..local_config import LocalConfig
 
 
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
+    images_changed_signal = QtCore.Signal()
 
     def __init__(self, parent, path):
         super().__init__(parent)
+        self.setupUi(self)
+        self.images_changed_signal.connect(self._refreshVersions, QtCore.Qt.QueuedConnection)
+
+        self._refreshing = False
 
         self._path = path
-        self.setupUi(self)
+        # Count how many images are curently uploading
+        self._image_uploading_count = 0
+
         images_directories = list()
         images_directories.append(os.path.dirname(self._path))
         download_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
         if download_directory != "" and download_directory != os.path.dirname(self._path):
             images_directories.append(download_directory)
         self._registry = Registry(images_directories)
+        self._registry.image_list_changed_signal.connect(self.images_changed_signal.emit)
+
         self._appliance = Appliance(self._registry, self._path)
-        self._registry.appendImageDirectory(os.path.join(ImageManager.instance().getDirectory(), self._appliance.image_dir_name()))
 
         self.uiApplianceVersionTreeWidget.currentItemChanged.connect(self._applianceVersionCurrentItemChangedSlot)
-        self.uiRefreshPushButton.clicked.connect(self._refreshVersions)
+        self.uiRefreshPushButton.clicked.connect(self.images_changed_signal.emit)
         self.uiDownloadPushButton.clicked.connect(self._downloadPushButtonClickedSlot)
         self.uiImportPushButton.clicked.connect(self._importPushButtonClickedSlot)
         self.uiCreateVersionPushButton.clicked.connect(self._createVersionPushButtonClickedSlot)
@@ -120,8 +129,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.page(page_id) == self.uiServerWizardPage:
             self.uiRemoteServersComboBox.clear()
-            for compute in ComputeManager.instance().remoteComputes():
-                self.uiRemoteServersComboBox.addItem(compute.name(), compute)
+            if len(ComputeManager.instance().remoteComputes()) == 0:
+                self.uiRemoteRadioButton.setEnabled(False)
+            else:
+                self.uiRemoteRadioButton.setEnabled(True)
+                for compute in ComputeManager.instance().remoteComputes():
+                    self.uiRemoteServersComboBox.addItem(compute.name(), compute)
 
             if not ComputeManager.instance().vmCompute():
                 self.uiVMRadioButton.setEnabled(False)
@@ -136,18 +149,18 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
             if ComputeManager.instance().vmCompute():
                 self.uiVMRadioButton.setChecked(True)
-            elif ComputeManager.instance().localCompute():
+            elif ComputeManager.instance().localCompute() and self.uiLocalRadioButton.isEnabled():
                 self.uiLocalRadioButton.setChecked(True)
-            elif len(ComputeManager.instance().remoteComputes()) > 0:
+            elif self.uiRemoteRadioButton.isEnabled():
                 self.uiRemoteRadioButton.setChecked(True)
             else:
                 self.uiRemoteRadioButton.setChecked(False)
 
         elif self.page(page_id) == self.uiFilesWizardPage:
-            self._refreshVersions()
+            self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
 
         elif self.page(page_id) == self.uiQemuWizardPage:
-            Qemu.instance().getQemuBinariesFromServer(self._server, qpartial(self._getQemuBinariesFromServerCallback), [self._appliance["qemu"]["arch"]])
+            Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [self._appliance["qemu"]["arch"]])
 
         elif self.page(page_id) == self.uiSummaryWizardPage:
             self.uiSummaryTreeWidget.clear()
@@ -171,11 +184,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if 'qemu' in self._appliance:
                 if self._appliance['qemu'].get('kvm', 'require') == 'require':
                     self._server_check = False  # If the server as the capacities for running the appliance
-                    Qemu.instance().getQemuCapabilitiesFromServer(self._server, qpartial(self._qemuServerCapabilitiesCallback))
+                    self.uiCheckServerLabel.setText("")
+                    Qemu.instance().getQemuCapabilitiesFromServer(self._compute_id, qpartial(self._qemuServerCapabilitiesCallback))
                     return
-            self.uiCheckServerLabel.setText("")
+            self.uiCheckServerLabel.setText("GNS3 server requirements is OK you can continue the installation")
             self._server_check = True
-            self.next()
 
     def _qemuServerCapabilitiesCallback(self, result, error=None, *args, **kwargs):
         """
@@ -196,21 +209,28 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
     def _uiServerWizardPage_isComplete(self):
         return self.uiRemoteRadioButton.isEnabled() or self.uiVMRadioButton.isEnabled() or self.uiLocalRadioButton.isEnabled()
 
-    def _refreshVersions(self):
+    def _imageUploadedCallback(self, result, error=False, **kwargs):
+        self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+
+    @qslot
+    def _refreshVersions(self, *args):
         """
         Refresh the list of files for different version of the appliance
         """
 
-        self.uiFilesWizardPage.setSubTitle("The following versions are available for " + self._appliance["product_name"] + ".  Check the status of files required to install.")
-        self.uiApplianceVersionTreeWidget.clear()
+        if self._refreshing:
+            return
+        self._refreshing = True
 
-        worker = WaitForLambdaWorker(lambda: self._resfreshDialogWorker())
+        self.uiFilesWizardPage.setSubTitle("The following versions are available for " + self._appliance["product_name"] + ".  Check the status of files required to install.")
+
+        self.uiApplianceVersionTreeWidget.clear()
+        worker = WaitForLambdaWorker(lambda: self._refreshDialogWorker())
         progress_dialog = ProgressDialog(worker, "Add appliance", "Scanning directories for files...", None, busy=True, parent=self)
         progress_dialog.show()
         if progress_dialog.exec_():
             for version in self._appliance["versions"]:
-                top = QtWidgets.QTreeWidgetItem(["{} {}".format(self._appliance["product_name"], version["name"])])
-
+                top = QtWidgets.QTreeWidgetItem(self.uiApplianceVersionTreeWidget, ["{} {}".format(self._appliance["product_name"], version["name"])])
                 size = 0
                 status = "Ready to install"
                 for image in version["images"].values():
@@ -227,7 +247,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                             image["version"],
                             image.get("md5sum", "")
                         ])
-
                     if image["status"] == "Missing":
                         image_widget.setForeground(3, QtGui.QBrush(QtGui.QColor("red")))
                     else:
@@ -255,14 +274,16 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 top.setData(2, QtCore.Qt.UserRole, self._appliance)
                 top.setData(0, QtCore.Qt.UserRole, version)
                 self.uiApplianceVersionTreeWidget.addTopLevelItem(top)
+                # self.uiApplianceVersionTreeWidget.setCurrentItem(top)
                 if expand:
                     top.setExpanded(True)
 
+        if len(self._appliance["versions"]) > 0:
             self.uiApplianceVersionTreeWidget.resizeColumnToContents(0)
             self.uiApplianceVersionTreeWidget.resizeColumnToContents(1)
-            self.uiApplianceVersionTreeWidget.setCurrentItem(self.uiApplianceVersionTreeWidget.topLevelItem(0))
+        self._refreshing = False
 
-    def _resfreshDialogWorker(self):
+    def _refreshDialogWorker(self):
         """
         Scan local directory in order to found the images on disk
         """
@@ -273,7 +294,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         for version in self._appliance["versions"]:
             for image in version["images"].values():
-                img = self._registry.search_image_file(image["filename"], image.get("md5sum"), image.get("filesize"))
+                img = self._registry.search_image_file(self._appliance.emulator(), image["filename"], image.get("md5sum"), image.get("filesize"))
                 if img:
                     image["status"] = "Found"
                     image["md5sum"] = img.md5sum
@@ -290,7 +311,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.uiImportPushButton.hide()
         self.uiExplainDownloadLabel.hide()
 
-        if current is None:
+        if current is None or sip.isdeleted(current):
             return
 
         image = current.data(1, QtCore.Qt.UserRole)
@@ -305,9 +326,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         Called when user want to download an appliance images.
         He should have selected the file before.
         """
+        if self._refreshing:
+            return False
+
         current = self.uiApplianceVersionTreeWidget.currentItem()
 
-        if current is None:
+        if current is None or sip.isdeleted(current):
             return
 
         data = current.data(1, QtCore.Qt.UserRole)
@@ -329,7 +353,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         new_version, ok = QtWidgets.QInputDialog.getText(self, "Creating a new version", "Creating a new version allows to import unknown files to use with this appliance.\nPlease share your experience on the GNS3 community if this version works.\n\nVersion name:", QtWidgets.QLineEdit.Normal)
         if ok:
             self._appliance.create_new_version(new_version)
-            self._refreshVersions()
+            self.images_changed_signal.emit()
 
     @qslot
     def _importPushButtonClickedSlot(self, *args):
@@ -337,6 +361,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         Called when user want to import an appliance images.
         He should have selected the file before.
         """
+        if self._refreshing:
+            return False
 
         current = self.uiApplianceVersionTreeWidget.currentItem()
         disk = current.data(1, QtCore.Qt.UserRole)
@@ -345,17 +371,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if len(path) == 0:
             return
 
-        image = Image(path)
+        image = Image(self._appliance.emulator(), path)
         if "md5sum" in disk and image.md5sum != disk["md5sum"]:
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}. For OVA you need to import the OVA/OVF not the file inside the archive.".format(image.md5sum, disk["md5sum"]))
+            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}.".format(image.md5sum, disk["md5sum"]))
             return
 
         config = Config()
-        worker = WaitForLambdaWorker(lambda: image.copy(os.path.join(config.images_dir, self._appliance.image_dir_name()), disk["filename"]), allowed_exceptions=[OSError, ValueError])
-        progress_dialog = ProgressDialog(worker, "Add appliance", "Importing the appliance...", None, busy=True, parent=self)
-        if not progress_dialog.exec_():
-            return
-        self._refreshVersions()
+        image.upload(self._compute_id, callback=self._imageUploadedCallback)
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
         """
@@ -407,7 +429,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, self._server), allowed_exceptions=[ConfigException, OSError])
+        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, self._compute_id), allowed_exceptions=[ConfigException, OSError])
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
         progress_dialog.show()
         if not progress_dialog.exec_():
@@ -419,6 +441,21 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if progress_dialog.exec_():
             QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
             return True
+
+    def _uploadImages(self, version):
+        """
+        Upload an image to the compute
+        """
+
+        appliance_configuration = self._appliance.search_images_for_version(version)
+        for image in appliance_configuration["images"]:
+            if image["location"] == "local":
+                image = Image(self._appliance.emulator(), image["path"])
+                image.upload(self._compute_id, self._applianceImageUploadedCallback)
+                self._image_uploading_count += 1
+
+    def _applianceImageUploadedCallback(self, result, error=False, **kwargs):
+        self._image_uploading_count -= 1
 
     def nextId(self):
         if self.currentPage() == self.uiServerWizardPage:
@@ -437,7 +474,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         """
 
         if self.currentPage() == self.uiFilesWizardPage:
+            if self._refreshing:
+                return False
             current = self.uiApplianceVersionTreeWidget.currentItem()
+            if current is None or sip.isdeleted(current):
+                return False
             version = current.data(0, QtCore.Qt.UserRole)
             appliance = current.data(2, QtCore.Qt.UserRole)
             if not self._appliance.is_version_installable(version["name"]):
@@ -447,8 +488,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                                                    QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
                 return False
+            self._uploadImages(version["name"])
 
         elif self.currentPage() == self.uiUsageWizardPage:
+            if self._image_uploading_count > 0:
+                QtWidgets.QMessageBox.critical(self, "Add appliance", "Please wait for image uploading")
+                return False
+
             current = self.uiApplianceVersionTreeWidget.currentItem()
             if current:
                 version = current.data(0, QtCore.Qt.UserRole)
@@ -461,9 +507,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 if len(ComputeManager.instance().remoteComputes()) == 0:
                     QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote server registered in your preferences")
                     return False
-                self._server = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex()).id()
+                self._compute_id = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex()).id()
             elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isChecked():
-                self._server = "vm"
+                self._compute_id = "vm"
             else:
                 if (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
                     if "qemu" in self._appliance:
@@ -471,7 +517,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                         if reply == QtWidgets.QMessageBox.No:
                             return False
 
-                self._server = "local"
+                self._compute_id = "local"
 
         elif self.currentPage() == self.uiQemuWizardPage:
             if self.uiQemuListComboBox.currentIndex() == -1:

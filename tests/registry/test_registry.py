@@ -38,24 +38,24 @@ def test_search_image_file(tmpdir):
         f.write("42b84f8e3fba5bf993e3ba352d62d146")
 
     registry = Registry(set([str(tmpdir / "QEMU")]))
-    image = registry.search_image_file("b", "36b84f8e3fba5bf993e3ba352d62d146", 5)
+    image = registry.search_image_file("qemu", "b", "36b84f8e3fba5bf993e3ba352d62d146", 5)
     assert image.path == str(tmpdir / "QEMU" / "b")
 
     # Search by name
-    image = registry.search_image_file("b", None, None)
+    image = registry.search_image_file("qemu", "b", None, None)
     assert image.path == str(tmpdir / "QEMU" / "b")
 
     # Test using md5sum cache file
-    image = registry.search_image_file("c", "42b84f8e3fba5bf993e3ba352d62d146", 5)
+    image = registry.search_image_file("qemu", "c", "42b84f8e3fba5bf993e3ba352d62d146", 5)
     assert image.path == str(tmpdir / "QEMU" / "c")
 
     # If size doesn't match ignore the file
     registry = Registry(set([str(tmpdir / "QEMU")]))
-    image = registry.search_image_file("b", "36b84f8e3fba5bf993e3ba352d62d146", 1000)
+    image = registry.search_image_file("qemu", "b", "36b84f8e3fba5bf993e3ba352d62d146", 1000)
     assert image is None
 
     # md5sum doesn't exists
-    assert registry.search_image_file("x", "00000000000000000000000000000000", 5) is None
+    assert registry.search_image_file("qemu", "x", "00000000000000000000000000000000", 5) is None
 
 
 def test_search_image_file_ova(tmpdir):
@@ -72,10 +72,9 @@ def test_search_image_file_ova(tmpdir):
     with open(str(tmpdir / "QEMU" / "b.ova.md5sum"), "w+") as f:
         f.write("36b84f8e3fba5bf993e3ba352d62d122")
 
-
     registry = Registry(set([str(tmpdir / "QEMU")]))
-    image = registry.search_image_file("a.ova/a.vmdk", "36b84f8e3fba5bf993e3ba352d62d146", 5)
+    image = registry.search_image_file("qemu", "a.ova/a.vmdk", "36b84f8e3fba5bf993e3ba352d62d146", 5)
     assert image.path == str(tmpdir / "QEMU" / "a.ova" / "a.vmdk")
 
-    image = registry.search_image_file("b.ova/b.vmdk", None, None)
+    image = registry.search_image_file("qemu", "b.ova/b.vmdk", None, None)
     assert image.path == str(tmpdir / "QEMU" / "b.ova" / "b.vmdk")

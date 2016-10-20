@@ -165,13 +165,7 @@ def test_is_version_installable(linux_microcore_img, microcore_appliance):
     assert not microcore_appliance.is_version_installable("4.0.2")
 
 
-def test_image_dir_name(microcore_appliance):
-
-    assert Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a").image_dir_name() == "QEMU"
-    assert Appliance(registry, "tests/registry/appliances/cisco-iou-l3.gns3a").image_dir_name() == "IOU"
-
-
-def test_create_new_version(microcore_appliance):
+def test_create_new_version():
 
     a = Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
     a.create_new_version("42.0")
@@ -188,3 +182,7 @@ def test_create_new_version(microcore_appliance):
         'name': '42.0'
     }
 
+
+def test_emulator():
+    assert Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a").emulator() == "qemu"
+    assert Appliance(registry, "tests/registry/appliances/cisco-iou-l3.gns3a").emulator() == "iou"

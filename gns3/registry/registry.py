@@ -22,16 +22,24 @@ import logging
 log = logging.getLogger(__name__)
 
 from .image import Image
+from ..controller import Controller
+from ..qt import QtCore
 
 
 class RegistryError(Exception):
     pass
 
 
-class Registry:
+class Registry(QtCore.QObject):
+    image_list_changed_signal = QtCore.pyqtSignal()
 
     def __init__(self, images_dirs):
+        """
+        :param images_dirs: Local image image dir
+        """
+        super().__init__()
         self._images_dirs = images_dirs
+        self._remote_images = []
 
     def appendImageDirectory(self, image_directory):
         """
@@ -41,15 +49,38 @@ class Registry:
         """
         self._images_dirs.append(image_directory)
 
-    def search_image_file(self, filename, md5sum, size):
+    def getRemoteImageList(self, emulator, compute_id):
+        self._emulator = emulator
+        Controller.instance().getCompute("/{}/images".format(emulator), compute_id, self._getRemoteListCallback, progressText="Listing remote images...")
+
+    def _getRemoteListCallback(self, result, error=False, **kwargs):
+        if error:
+            if "message" in result:
+                log.error("Error while getting the list of remote images: {}".format(result["message"]))
+            return
+        self._remote_images = []
+        for res in result:
+            image = Image(self._emulator, res["path"])
+            image.location = "remote"
+            image.md5sum = res.get("md5sum")
+            image.filesize = res.get("filesize")
+            self._remote_images.append(image)
+        self.image_list_changed_signal.emit()
+
+    def search_image_file(self, emulator, filename, md5sum, size):
         """
         Search an image based on its MD5 checksum
 
+        :param emulator: Emulator type
         :param filename: Image filename (used for ova in order to return the correct file in the archive)
         :param md5sum: Hash of the image
         :param size: File size
         :returns: Image object or None
         """
+
+        for remote_image in list(self._remote_images):
+            if remote_image.md5sum == md5sum:
+                return remote_image
 
         for directory in self._images_dirs:
             log.debug("Search images %s (%s) in %s", filename, md5sum, directory)
@@ -61,13 +92,13 @@ class Registry:
                             if os.path.isfile(path):
                                 if md5sum is None:
                                     if filename == os.path.basename(path):
-                                        return Image(path)
+                                        return Image(emulator, path)
                                 else:
                                     # We take all the file with almost the size of the image
                                     # Almost to avoid round issue with system.
                                     file_size = os.stat(path).st_size
                                     if size is None or (file_size - 10 < size and file_size + 10 > size):
-                                        image = Image(path)
+                                        image = Image(emulator, path)
                                         if image.md5sum == md5sum:
                                             log.debug("Found images %s (%s) in %s", filename, md5sum, image.path)
                                             return image
@@ -78,14 +109,14 @@ class Registry:
 
                                         path = os.path.join(path, os.path.basename(filename))
                                         log.debug("Found images  %s (%s) from ova in %s", filename, md5sum, path)
-                                        return Image(path)
+                                        return Image(emulator, path)
                                 else:
-                                    image = Image(path)
+                                    image = Image(emulator, path)
                                     if image.md5sum == md5sum:
                                         # File searched in OVA use the notation x.ova/a.vmdk
                                         path = os.path.join(image.path, os.path.basename(filename))
                                         log.debug("Found images  %s (%s) from ova in %s", filename, md5sum, path)
-                                        return Image(path)
+                                        return Image(emulator, path)
                         except OSError as e:
                             log.error("Can't scan {}: {}".format(path, str(e)))
 

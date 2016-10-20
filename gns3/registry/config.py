@@ -22,7 +22,6 @@ import sys
 import os
 import urllib
 
-from .image import Image
 from ..local_config import LocalConfig
 from ..local_server_config import LocalServerConfig
 from ..settings import LOCAL_SERVER_SETTINGS
@@ -300,7 +299,6 @@ class Config:
         if os.path.commonprefix([images_dir, path]) == images_dir:
             return path.replace(images_dir, '').strip('/\\')
 
-        Image(path).copy(images_dir, filename)
         return filename
 
     def save(self):
