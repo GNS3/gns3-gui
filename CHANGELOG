@@ -1,5 +1,50 @@
 # Change Log
 
+## 2.0.0 alpha 2 20/10/2016
+
+* Support pure remote server for importing appliance
+* Dissallow binding GNS3 server to an IPV6 (not supported by some emulators)
+* Drop vmware host type choice in client
+* Ask user to restart GNS3 after VMware installation
+* Improve duplicate prevention in topology summary
+* Add a duplicate button in the project library dialog
+* Fix error introduce in previous commits
+* Fix duplicates in recent project list
+* Fix a project override error
+* Fix Duplicated node in node summary when restoring a snapshot
+* Fix a crash in the VMware / VirtualBox wizard
+* If console host is 0.0.0.0 use controller address
+* Fix save issue when importing an appliance
+* Strip HTML in console view logs and log files
+* Fix TypeError: _expandAllSlot() takes 1 positional argument but 2 were given
+* Fix Cannot open created project by using Recents projects
+* Update edit project Ui.
+* Update crash report key
+* Fix a crash when exporting debug without project open
+* Fix a crash in rare condition when logging informations to the console
+* Fix a crash in compute summary view
+* Add a text about how to change the topology size in 2.0 in general preferences
+* Improve warning when connection issue to GNS3 VM
+* Fix crash in setup wizard
+* Fix the wizard for creating appliance template doesn't support remote main server
+* Appliance wizard support remote controller
+* Fix  Browse button is not working in the local server page in the setup wizard
+* Check if local server is running in the setup wizard
+* Hide setup wizard after first successful run
+* Import appliance and New project are display at the same time
+* Support remote controller in the setup wizard
+* Fix When importing a gns3a the correct qemu binary is not selected
+* Increase creation timeout for docker container
+* Make WaitForLambdaWorker more crash proof
+* Fix a crash when importing appliance
+* Fix error in import appliances
+* Try to fix the a segfault when importing appliance
+* Fix crash in upload images
+* Trust the server for link creation error (avoid sync issue)
+* Fix an Error in server preference page
+* Fix compatibility with remote server of 1.X
+* New appliance dialog should not be display if you cancel the setup wizard
+
 ## 2.0.0 alpha 1 29/09/2016
 * Save as you go
 * Smart packet capture
