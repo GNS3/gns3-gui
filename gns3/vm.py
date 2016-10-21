@@ -415,6 +415,7 @@ class VM(Node):
             self.server_error_signal.emit(self.id(), result["message"])
         else:
             PacketCapture.instance().stopCapture(self, context["port"])
+
     def dump(self):
         """
         Returns a representation of this device.
@@ -511,11 +512,16 @@ class VM(Node):
                 for port in self._ports:
                     if topology_port["port_number"] == port.portNumber():
                         # If the adapter is missing we consider that adapter_number == port_number
-                        adapter_number = topology_port.get("adapter_number", topology_port["port_number"])
-                        if port.adapterNumber() is None or adapter_number == port.adapterNumber() or topology_port.get("slot_number", None) == port.adapterNumber():
+                        if "adapter_number" in topology_port:
+                            adapter_number = topology_port["adapter_number"]
+                        elif "slot_number" in topology_port:
+                            adapter_number = topology_port["slot_number"]
+                        else:
+                            adapter_number = topology_port["port_number"]
+                        if port.adapterNumber() is None or adapter_number == port.adapterNumber():
 
                             if port in port_initialized:
-                                msg = "Topology corrupted port {} already exists for {}".format(port, self.name())
+                                msg = "Topology corrupted port {} already exists for {} ({}/{})".format(port, self.name(), topology_port["id"], port.id())
                                 print(msg)
                                 log.error(msg)
                             else:
