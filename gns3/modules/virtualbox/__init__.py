@@ -258,13 +258,6 @@ class VirtualBox(Module):
             else:
                 vm = selected_vms[0]
 
-        linked_base = self._virtualbox_vms[vm]["linked_base"]
-        if not linked_base:
-            for other_node in self._nodes:
-                if other_node.settings()["vmname"] == self._virtualbox_vms[vm]["vmname"] and \
-                        (self._virtualbox_vms[vm]["server"] == "local" and other_node.server().isLocal() or self._virtualbox_vms[vm]["server"] == other_node.server().host):
-                    raise ModuleError("Sorry a VirtualBox VM without the linked base setting enabled can only be used once in your topology")
-
         vm_settings = {}
         for setting_name, value in self._virtualbox_vms[vm].items():
             if setting_name != "name" and setting_name in node.settings() and value != "" and value is not None:
