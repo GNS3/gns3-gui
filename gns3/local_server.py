@@ -516,7 +516,7 @@ class LocalServer(QtCore.QObject):
                 self._local_server_process.send_signal(signal.SIGINT)
         # If the process is already dead we received a permission error
         # it's a race condition between the timeout and send signal
-        except PermissionError:
+        except (PermissionError, SystemError):
             pass
         try:
             # wait for the server to stop for maximum 2 seconds
