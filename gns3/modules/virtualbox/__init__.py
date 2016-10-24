@@ -272,7 +272,7 @@ class VirtualBox(Module):
         default_name_format = VBOX_VM_SETTINGS["default_name_format"]
         if self._virtualbox_vms[vm]["default_name_format"]:
             default_name_format = self._virtualbox_vms[vm]["default_name_format"]
-        if linked_base:
+        if self._virtualbox_vms[vm]["linked_base"]:
             name = default_name_format.replace('{name}', name)
 
         node.create(vmname,
@@ -280,7 +280,7 @@ class VirtualBox(Module):
                     port_name_format=port_name_format,
                     port_segment_size=port_segment_size,
                     first_port_name=first_port_name,
-                    linked_clone=linked_base,
+                    linked_clone=self._virtualbox_vms[vm]["linked_base"],
                     additional_settings=vm_settings,
                     default_name_format=default_name_format)
 
