@@ -143,8 +143,7 @@ class EthernetLinkItem(LinkItem):
 
             if source_port_label is None:
                 source_port_label = NoteItem(self._source_item)
-                source_port_name = self._source_port.name()
-                source_port_label.setPlainText(source_port_name)
+                source_port_label.setPlainText(self._source_port.shortName())
                 source_port_label.setPos(self.mapToItem(self._source_item, point1))
                 self._source_port.setLabel(source_port_label)
 
@@ -185,8 +184,7 @@ class EthernetLinkItem(LinkItem):
 
             if destination_port_label is None:
                 destination_port_label = NoteItem(self._destination_item)
-                destination_port_name = self._destination_port.name()
-                destination_port_label.setPlainText(destination_port_name)
+                destination_port_label.setPlainText(self._destination_port.shortName())
                 destination_port_label.setPos(self.mapToItem(self._destination_item, point2))
                 self._destination_port.setLabel(destination_port_label)
 

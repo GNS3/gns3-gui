@@ -132,8 +132,7 @@ class SerialLinkItem(LinkItem):
             source_port_label = self._source_port.label()
             if source_port_label is None:
                 source_port_label = NoteItem(self._source_item)
-                source_port_name = self._source_port.name()
-                source_port_label.setPlainText(source_port_name)
+                source_port_label.setPlainText(self._source_port.shortName())
                 source_port_label.setPos(self.mapToItem(self._source_item, self.source))
                 self._source_port.setLabel(source_port_label)
 
@@ -163,8 +162,7 @@ class SerialLinkItem(LinkItem):
 
             if destination_port_label is None:
                 destination_port_label = NoteItem(self._destination_item)
-                destination_port_name = self._destination_port.name()
-                destination_port_label.setPlainText(destination_port_name)
+                destination_port_label.setPlainText(self._destination_port.shortName())
                 destination_port_label.setPos(self.mapToItem(self._destination_item, self.destination))
                 self._destination_port.setLabel(destination_port_label)
 
