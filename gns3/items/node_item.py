@@ -433,14 +433,12 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param value: value of the change
         """
 
-        if change == QtWidgets.QGraphicsItem.ItemPositionHasChanged and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
+        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
             GRID_SIZE = 75
             mid_x = self.boundingRect().width() / 2
-            tmp_x = (GRID_SIZE * round((self.x() + mid_x) / GRID_SIZE)) - mid_x
+            value.setX((GRID_SIZE * round((value.x() + mid_x) / GRID_SIZE)) - mid_x)
             mid_y = self.boundingRect().height() / 2
-            tmp_y = (GRID_SIZE * round((self.y() + mid_y) / GRID_SIZE)) - mid_y
-            if tmp_x != self.x() and tmp_y != self.y():
-                self.setPos(tmp_x, tmp_y)
+            value.setY((GRID_SIZE * round((value.y() + mid_y) / GRID_SIZE)) - mid_y)
 
         # dynamically change the renderer when this node item is selected/unselected.
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
