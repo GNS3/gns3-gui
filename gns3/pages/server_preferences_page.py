@@ -94,7 +94,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Slot to restore default settings
         """
 
-        self._populateWidgets(SERVER_SETTINGS, SERVERS_SETTINGS["vm"])
+        self._populateWidgets(LOCAL_SERVER_SETTINGS)
 
     def _localServerBrowserSlot(self):
         """
