@@ -239,7 +239,9 @@ class Port:
         self._link = None
         self._destination_node = None
         self._destination_port = None
-        self._port_label = None
+        if self._port_label:
+            self._port_label.deleteLater()
+            self._port_label = None
 
     def isFree(self):
         """
