@@ -39,6 +39,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
     """
 
     show_layer = False
+    GRID_SIZE = 75
 
     def __init__(self, node):
         super().__init__()
@@ -56,9 +57,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # node label
         self._node_label = None
 
-        # Temporary symbol during loading
         self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
         self.setZValue(self._node.z())
+
+        # Temporary symbol during loading
         renderer = QImageSvgRenderer(":/icons/reload.svg")
         renderer.setObjectName("symbol_loading")
         self.setSharedRenderer(renderer)
@@ -96,10 +98,19 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         from ..main_window import MainWindow
         self._main_window = MainWindow.instance()
+        if self._main_window.uiSnapToGridAction.isChecked():
+            self._snapToGrid()
         self._settings = self._main_window.uiGraphicsView.settings()
 
         if node.initialized():
             self.createdSlot(node.id())
+
+    def _snapToGrid(self):
+        mid_x = self.boundingRect().width() / 2
+        x = (self.GRID_SIZE * round((self.x() + mid_x) / self.GRID_SIZE)) - mid_x
+        mid_y = self.boundingRect().height() / 2
+        y = (self.GRID_SIZE * round((self.y() + mid_y) / self.GRID_SIZE)) - mid_y
+        self.setPos(x, y)
 
     def _updateNode(self):
         """
@@ -434,11 +445,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if change == QtWidgets.QGraphicsItem.ItemPositionChange and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
-            GRID_SIZE = 75
             mid_x = self.boundingRect().width() / 2
-            value.setX((GRID_SIZE * round((value.x() + mid_x) / GRID_SIZE)) - mid_x)
+            value.setX((self.GRID_SIZE * round((value.x() + mid_x) / self.GRID_SIZE)) - mid_x)
             mid_y = self.boundingRect().height() / 2
-            value.setY((GRID_SIZE * round((value.y() + mid_y) / GRID_SIZE)) - mid_y)
+            value.setY((self.GRID_SIZE * round((value.y() + mid_y) / self.GRID_SIZE)) - mid_y)
 
         # dynamically change the renderer when this node item is selected/unselected.
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
