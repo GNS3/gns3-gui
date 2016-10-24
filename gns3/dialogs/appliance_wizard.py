@@ -139,7 +139,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if not ComputeManager.instance().vmCompute():
                 self.uiVMRadioButton.setEnabled(False)
 
-            if (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
+            if ComputeManager.instance().localPlatform() is None:
+                self.uiLocalRadioButton.setEnabled(False)
+            elif (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
                 if type == "qemu":
                     # Qemu has issues on OSX and Windows we disallow usage of the local server
                     if not LocalConfig.instance().experimental():
@@ -511,11 +513,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isChecked():
                 self._compute_id = "vm"
             else:
-                if (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
-                    if "qemu" in self._appliance:
-                        reply = QtWidgets.QMessageBox.question(self, "Appliance", "Qemu on Windows and MacOSX is not supported by the GNS3 team. Are you sur to continue?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-                        if reply == QtWidgets.QMessageBox.No:
-                            return False
+                if ComputeManager.instance().localPlatform():
+                    if (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
+                        if "qemu" in self._appliance:
+                            reply = QtWidgets.QMessageBox.question(self, "Appliance", "Qemu on Windows and MacOSX is not supported by the GNS3 team. Are you sur to continue?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+                            if reply == QtWidgets.QMessageBox.No:
+                                return False
 
                 self._compute_id = "local"
 
