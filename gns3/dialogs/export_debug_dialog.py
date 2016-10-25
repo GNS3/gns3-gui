@@ -25,6 +25,7 @@ from gns3.version import __version__
 from gns3.qt import QtWidgets, QtCore
 from gns3.ui.export_debug_dialog_ui import Ui_ExportDebugDialog
 from gns3.local_config import LocalConfig
+from gns3.controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
@@ -44,22 +45,37 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
         self.uiOkButton.clicked.connect(self._okButtonClickedSlot)
 
     def _okButtonClickedSlot(self):
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export debug file", None, "Zip file (*.zip)", "Zip file (*.zip)")
-
-        if len(path) == 0:
+        if Controller.instance().isRemote():
+            QtWidgets.QMessageBox.critical(self, "Debug", "Export debug information from a remote server is not supported")
             self.reject()
             return
 
-        log.info("Export debug information to %s", path)
+        self._path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export debug file", None, "Zip file (*.zip)", "Zip file (*.zip)")
+
+        if len(self._path) == 0:
+            self.reject()
+            return
+
+        Controller.instance().post("/debug", self._exportDebugCallback)
+
+    def _exportDebugCallback(self, result, error=False, **kwargs):
+        log.info("Export debug information to %s", self._path)
 
         try:
-            with ZipFile(path, 'w') as zip:
+            with ZipFile(self._path, 'w') as zip:
                 zip.writestr("debug.txt", self._getDebugData())
                 dir = LocalConfig.instance().configDirectory()
                 for filename in os.listdir(dir):
                     path = os.path.join(dir, filename)
                     if os.path.isfile(path):
                         zip.write(path, filename)
+
+                dir = os.path.join(LocalConfig.instance().configDirectory(), "debug")
+                if os.path.exists(dir):
+                    for filename in os.listdir(dir):
+                        path = os.path.join(dir, filename)
+                        if os.path.isfile(path):
+                            zip.write(path, filename)
 
                 if self._project:
                     dir = self._project.filesDir()
