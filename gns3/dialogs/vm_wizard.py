@@ -54,7 +54,7 @@ class VMWizard(QtWidgets.QWizard):
             self.uiLocalRadioButton.setText("Run device on the main server")
 
         # By default we use the local server
-        self._compute_id = ComputeManager.instance().computes()[0].id()
+        self._compute_id = "local"
         self.uiLocalRadioButton.setChecked(True)
         self._localToggledSlot(True)
 
