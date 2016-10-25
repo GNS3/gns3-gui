@@ -33,6 +33,7 @@ def images_dir(tmpdir):
     path.mkdir()
     return path
 
+
 @pytest.yield_fixture
 def image_manager(tmpdir, images_dir):
     ImageManager._instance = None
@@ -63,7 +64,7 @@ def test_askCopyUploadImage_remote(image_manager, remote_server):
 
 def test_uploadImageToRemoteServer(image_manager, remote_server, images_dir, controller):
     controller.post = MagicMock()
-    filename = image_manager._uploadImageToRemoteServer(str(images_dir / "QEMU" / "test"), remote_server, 'QEMU')
+    filename = image_manager._uploadImageToRemoteServer(str(images_dir / "QEMU" / "test"), remote_server.id(), 'QEMU')
     assert filename == 'test'
     args, kwargs = controller.post.call_args
     assert args[0] == '/computes/example.org/qemu/images/test'
@@ -89,4 +90,3 @@ def test_getRelativeImagePathOutsideStandardDirectory(image_manager, remote_serv
     qemu_img_abs.write("1", ensure=True)
 
     assert image_manager._getRelativeImagePath(str(qemu_img_abs), "QEMU") == "a.img"
-
