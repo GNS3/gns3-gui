@@ -55,6 +55,7 @@ class HTTPClient(QtCore.QObject):
     _progress_callback = None
 
     connection_connected_signal = QtCore.Signal()
+    connection_disconnected_signal = QtCore.Signal()
 
     def __init__(self, settings, network_manager=None):
 
@@ -535,6 +536,7 @@ class HTTPClient(QtCore.QObject):
 
             if error_code < 200:
                 if not ignore_errors:
+                    self.connection_disconnected_signal.emit()
                     self.close()
                     if callback is not None:
                         callback({"message": error_message}, error=True, server=server, context=context)

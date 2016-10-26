@@ -40,6 +40,7 @@ class ComputeManager(QtCore.QObject):
         self._computes = {}
         self._controller = Controller.instance()
         self._controller.connected_signal.connect(self._controllerConnectedSlot)
+        self._controller.disconnected_signal.connect(self._controllerDisconnectedSlot)
         self._controllerConnectedSlot()
 
         # If we receive fresh data from the notification feed no need to refresh via an API call
@@ -58,6 +59,11 @@ class ComputeManager(QtCore.QObject):
     def _controllerConnectedSlot(self):
         if self._controller.connected():
             self._controller.get("/computes", self._listComputesCallback)
+
+    def _controllerDisconnectedSlot(self):
+        for compute_id in list(self._computes):
+            del self._computes[compute_id]
+            self.deleted_signal.emit(compute_id)
 
     def _listComputesCallback(self, result, error=False, **kwargs):
         if error is True:
