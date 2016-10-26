@@ -71,7 +71,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vmware_vm["name"]])
         if vmware_vm["linked_base"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
-        try
+        try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["server"]).name()])
         except KeyError:
             pass
