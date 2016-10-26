@@ -80,10 +80,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
             address_string = address.toString()
-            # if address.protocol() == QtNetwork.QAbstractSocket.IPv6Protocol:
-            # we do not want the scope id when using an IPv6 address...
-            # address.setScopeId("")
-            self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
+            if address.protocol() != QtNetwork.QAbstractSocket.IPv6Protocol:
+                self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
 
         if sys.platform.startswith("darwin"):
             self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_fusion_banner.jpg"))
