@@ -193,8 +193,12 @@ class Controller(QtCore.QObject):
         if error:
             log.error("Error while downloading file: {}".format(url))
             return
-        with open(path, "wb+") as f:
-            f.write(raw_body)
+        try:
+            with open(path, "wb+") as f:
+                f.write(raw_body)
+        except OSError as e:
+            log.error("Can't write to {}: {}".format(path, str(e)))
+            return
         log.debug("File stored {} for {}".format(path, url))
         callback(path)
 
