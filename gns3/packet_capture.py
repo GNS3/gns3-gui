@@ -125,7 +125,11 @@ class PacketCapture:
                 return
 
         if link in self._tail_process and self._tail_process[link].poll() is None:
-            self._tail_process[link].kill()
+            try:
+                self._tail_process[link].kill()
+            except (PermissionError, OSError):
+                # Sometimes we have condition on windows where the process is in the process to quit
+                pass
             del self._tail_process[link]
         if link in self._capture_reader_process and self._capture_reader_process[link].poll() is None:
             self._capture_reader_process[link].kill()
