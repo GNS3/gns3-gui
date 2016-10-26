@@ -97,7 +97,7 @@ class Servers(QtCore.QObject):
         user = local_server_settings["user"]
         password = local_server_settings["password"]
         self._local_server = self.getNetworkClientInstance({"host": host, "port": port, "user": user, "password": password},
-                                                      self._network_manager)
+                                                           self._network_manager)
         self._local_server.setLocal(True)
         self.server_added_signal.emit("local")
         log.info("New local server connection {} registered".format(self._local_server.url()))
@@ -272,20 +272,23 @@ class Servers(QtCore.QObject):
         Saves the server settings to a persistent settings file.
         """
 
+        self._settings["remote_servers"] = []
         # Save the remote servers
         # And emit signal for each server removed
-        old_server_urls = [ s["url"] for s in self._settings["remote_servers"] ]
-        self._settings["remote_servers"] = []
-        for server in self._remote_servers.values():
-            settings = server.settings()
-            settings["url"] = server.url()
-            self._settings["remote_servers"].append(settings)
-            if settings["url"] in old_server_urls:
-                old_server_urls.remove(settings["url"])
+        try:
+            old_server_urls = [s["url"] for s in self._settings["remote_servers"]]
+            for server in self._remote_servers.values():
+                settings = server.settings()
+                settings["url"] = server.url()
+                self._settings["remote_servers"].append(settings)
+                if settings["url"] in old_server_urls:
+                    old_server_urls.remove(settings["url"])
 
-        for old_server_url in old_server_urls:
-            self.server_removed_signal.emit(old_server_url)
-        old_server_urls = []
+            for old_server_url in old_server_urls:
+                self.server_removed_signal.emit(old_server_url)
+        except KeyError:
+            # It seem some old version of settings don't have the url in settings
+            pass
 
         # save the settings
         LocalConfig.instance().saveSectionSettings("Servers", self._settings)
@@ -413,8 +416,8 @@ class Servers(QtCore.QObject):
         # We check if two gui are not launched at the same time
         # to avoid killing the server of the other GUI
         if not LocalConfig.isMainGui():
-           log.info("Not the main GUI, will not autostart the server")
-           return True
+            log.info("Not the main GUI, will not autostart the server")
+            return True
 
         if self.localServer().isLocalServerRunning():
             log.info("A local server already running on this host")
@@ -510,8 +513,8 @@ class Servers(QtCore.QObject):
         host = self._local_server.host()
         port = self._local_server.port()
         command = '"{executable}" --host={host} --port={port} --local --controller'.format(executable=path,
-                                                                              host=host,
-                                                                              port=port)
+                                                                                           host=host,
+                                                                                           port=port)
 
         if self._settings["local_server"]["allow_console_from_anywhere"]:
             # allow connections to console from remote addresses
@@ -617,7 +620,6 @@ class Servers(QtCore.QObject):
         """
         Initialize the GNS3 VM server.
         """
-
 
         gns3_vm_settings = self._settings["vm"]
 
