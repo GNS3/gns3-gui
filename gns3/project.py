@@ -186,17 +186,19 @@ class Project(QtCore.QObject):
 
         Controller.instance().post("/projects/{project_id}/nodes/start".format(project_id=self._id), None, body={})
 
-    def duplicate(self, name=None, path=None):
+    def duplicate(self, name=None, path=None, callback=None):
         """
         Duplicate a project
         """
-        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id), self._duplicateCallback, body={"name": name, "path": path})
+        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id), qpartial(self._duplicateCallback, callback), body={"name": name, "path": path})
 
-    def _duplicateCallback(self, result, error=False, **kwargs):
+    def _duplicateCallback(self, callback, result, error=False, **kwargs):
         if error:
             if "message" in result:
                 QtWidgets.QMessageBox.critical(None, "Duplicate project", "Error while duplicate: {}".format(result["message"]))
             return
+        if callback:
+            callback(result["project_id"])
 
     def stop_all_nodes(self):
         """Stop all nodes belonging to this project"""

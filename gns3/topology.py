@@ -258,7 +258,8 @@ It is your responsability to check if you have the right to distribute the image
         if dialog.exec_():
             project.duplicate(
                 name=dialog.getProjectSettings()["project_name"],
-                path=dialog.getProjectSettings().get("project_files_dir")  # None when using remote controller
+                path=dialog.getProjectSettings().get("project_files_dir"),  # None when using remote controller
+                callback=self._projectImportedSlot
             )
 
     def _projectImportedSlot(self, project_id):
