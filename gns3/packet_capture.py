@@ -170,18 +170,25 @@ class PacketCapture:
                 except ValueError as e:
                     log.error("Invalid packet capture command {}: {}".format(command, str(e)))
                     return
-
-            self._tail_process[link] = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE)
-            self._capture_reader_process[link] = subprocess.Popen(
-                command2,
-                stdin=self._tail_process[link].stdout,
-                stdout=subprocess.PIPE)
-            self._tail_process[link].stdout.close()
+            try:
+                self._tail_process[link] = subprocess.Popen(command1, startupinfo=info, stdout=subprocess.PIPE)
+                self._capture_reader_process[link] = subprocess.Popen(
+                    command2,
+                    stdin=self._tail_process[link].stdout,
+                    stdout=subprocess.PIPE)
+                self._tail_process[link].stdout.close()
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't start capture program {}".format(str(e)))
+                return
         else:
             # normal traffic capture
             if not sys.platform.startswith("win"):
                 command = shlex.split(command)
-            self._capture_reader_process[link] = subprocess.Popen(command)
+            try:
+                self._capture_reader_process[link] = subprocess.Popen(command)
+            except OSError as e:
+                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't start capture program {}".format(str(e)))
+                return
 
     @staticmethod
     def instance():
