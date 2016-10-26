@@ -131,6 +131,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
 
         tree = self.treeWidget()
         tree.takeTopLevelItem(tree.indexOfTopLevelItem(self))
+        tree.nodes_id.remove(self._node.id())
 
 
 class TopologySummaryView(QtWidgets.QTreeWidget):
@@ -144,6 +145,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
     def __init__(self, parent):
 
         super().__init__(parent)
+        self.nodes_id = set()
         self._topology = Topology.instance()
         self._topology.node_added_signal.connect(self._nodeAddedSlot)
         self._topology.project_changed_signal.connect(self._projectChangedSlot)
@@ -191,12 +193,9 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
 
         # We check if we don't already have this node because it seem
         # sometimes we can get twice the signal
-        root = self.invisibleRootItem()
-        for index in range(0, root.childCount()):
-            child = root.child(index)
-            if child.node().id() == node.id():
-                self.takeTopLevelItem(self.indexOfTopLevelItem(child))
-
+        if node.id() in self.nodes_id:
+            return
+        self.nodes_id.add(node.id())
         TopologyNodeItem(self, node)
 
     @qslot
