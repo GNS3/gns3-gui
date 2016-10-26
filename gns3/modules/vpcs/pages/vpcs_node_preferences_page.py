@@ -70,7 +70,10 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vpcs_node["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vpcs_node["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vpcs_node["server"]).name()])
+        try:
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vpcs_node["server"]).name()])
+        except KeyError:
+            pass
         if vpcs_node["base_script_file"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Base script file:", vpcs_node["base_script_file"]])
 

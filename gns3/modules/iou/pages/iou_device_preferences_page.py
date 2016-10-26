@@ -75,7 +75,11 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", iou_device["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", iou_device["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(iou_device["server"]).name()])
+        try:
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(iou_device["server"]).name()])
+        except KeyError:
+            # Compute doesn't exists
+            pass
         QtWidgets.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
         if iou_device["startup_config"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Startup-config:", iou_device["startup_config"]])
@@ -274,4 +278,3 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
     def _setItemIcon(self, item, icon):
         item.setIcon(0, icon)
         self.uiIOUDevicesTreeWidget.setMaximumWidth(self.uiIOUDevicesTreeWidget.sizeHintForColumn(0) + 10)
-

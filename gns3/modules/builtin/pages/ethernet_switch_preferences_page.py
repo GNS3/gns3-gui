@@ -70,7 +70,10 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ethernet_switch["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ethernet_switch["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_switch["server"]).name()])
+        try:
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_switch["server"]).name()])
+        except KeyError:
+            pass
 
         for port in ethernet_switch["ports_mapping"]:
             section_item = self._createSectionItem("Port{}".format(port["port_number"]))

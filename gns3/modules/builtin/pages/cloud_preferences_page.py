@@ -69,7 +69,10 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", cloud_node["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", cloud_node["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(cloud_node["server"]).name()])
+        try:
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(cloud_node["server"]).name()])
+        except KeyError:
+            pass
 
         self.uiCloudNodeInfoTreeWidget.expandAll()
         self.uiCloudNodeInfoTreeWidget.resizeColumnToContents(0)

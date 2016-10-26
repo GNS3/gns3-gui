@@ -343,7 +343,10 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ios_router["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ios_router["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ios_router["server"]).name()])
+        try:
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ios_router["server"]).name()])
+        except KeyError:
+            pass
         QtWidgets.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
         if ios_router["chassis"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])

@@ -71,7 +71,10 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vmware_vm["name"]])
         if vmware_vm["linked_base"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["server"]).name()])
+        try
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["server"]).name()])
+        except KeyError:
+            pass
         QtWidgets.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vmware_vm["enable_remote_console"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])
         QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vmware_vm["acpi_shutdown"])])

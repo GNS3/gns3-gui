@@ -70,7 +70,10 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ethernet_hub["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ethernet_hub["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_hub["server"]).name()])
+        try:
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_hub["server"]).name()])
+        except KeyError:
+            pass
         QtWidgets.QTreeWidgetItem(section_item, ["Number of ports:", str(len(ethernet_hub["ports_mapping"]))])
 
         self.uiEthernetHubInfoTreeWidget.expandAll()

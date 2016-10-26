@@ -73,7 +73,10 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         if vbox_vm["linked_base"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vbox_vm["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vbox_vm["server"]).name()])
+        try:
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vbox_vm["server"]).name()])
+        except KeyError:
+            pass
         QtWidgets.QTreeWidgetItem(section_item, ["Remote console enabled:", "{}".format(vbox_vm["enable_remote_console"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
         QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vbox_vm["acpi_shutdown"])])
@@ -195,5 +198,3 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
     def _setItemIcon(self, item, icon):
         item.setIcon(0, icon)
         self.uiVirtualBoxVMsTreeWidget.setMaximumWidth(self.uiVirtualBoxVMsTreeWidget.sizeHintForColumn(0) + 10)
-
-

@@ -72,7 +72,10 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", qemu_vm["name"]])
         if qemu_vm["linked_base"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", qemu_vm["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(qemu_vm["server"]).name()])
+        try:
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(qemu_vm["server"]).name()])
+        except KeyError:
+            pass
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", qemu_vm["console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["CPUs:", str(qemu_vm["cpus"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Memory:", "{} MB".format(qemu_vm["ram"])])

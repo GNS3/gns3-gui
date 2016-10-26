@@ -67,7 +67,10 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Image name:", docker_image["image"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(docker_image["server"]).name()])
+        try:
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(docker_image["server"]).name()])
+        except KeyError:
+            pass
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", str(docker_image["console_type"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_image["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(docker_image["adapters"])])
