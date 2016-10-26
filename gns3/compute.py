@@ -29,7 +29,7 @@ class Compute:
         self._compute_id = compute_id
         self._name = compute_id
         self._connected = False
-        self._protocol = None
+        self._protocol = "http"
         self._host = None
         self._port = 3080
         self._user = None
