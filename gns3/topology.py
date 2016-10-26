@@ -63,10 +63,14 @@ class Topology(QtCore.QObject):
         self._images = []
         self._project = None
         self._main_window = None
+
         # If set the project is loaded when we got connection to the controller
-        # usefull when we open a project from cli
+        # usefull when we open a project from cli or when server restart
         self._project_to_load_path = None
+        self._project_id_to_load = None
+
         Controller.instance().connected_signal.connect(self._controllerConnectedSlot)
+        Controller.instance().disconnected_signal.connect(self._controllerDisconnectedSlot)
 
     def _controllerConnectedSlot(self):
         """
@@ -78,8 +82,15 @@ class Topology(QtCore.QObject):
             path = self._project_to_load_path
             self.__project_to_load_path = None
             self.loadProject(path)
+        elif self._project_id_to_load:
+            self.createLoadProject({"project_id": self._project_id_to_load})
         else:
             self.setProject(None)
+
+    def _controllerDisconnectedSlot(self):
+        if self._project:
+            self._project_id_to_load = self._project.id()
+        self.setProject(None)
 
     def setMainWindow(self, main_window):
         self._main_window = main_window

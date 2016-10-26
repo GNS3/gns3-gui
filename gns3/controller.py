@@ -81,14 +81,21 @@ class Controller(QtCore.QObject):
         if self._http_client:
             self._http_client.connection_connected_signal.connect(self._httpClientConnectedSlot)
             self._http_client.connection_disconnected_signal.connect(self._httpClientDisconnectedSlot)
-            self._connected = False
-            self._connecting = True
-            self.get('/version', self._versionGetSlot)
+            self._connectingToServer()
+
+    def _connectingToServer(self):
+        """
+        Connection process as started
+        """
+        self._connected = False
+        self._connecting = True
+        self.get('/version', self._versionGetSlot)
 
     def _httpClientDisconnectedSlot(self):
         if self._connected:
             self._connected = False
             self.disconnected_signal.emit()
+            self._connectingToServer()
 
     def _versionGetSlot(self, result, error=False, **kwargs):
         """
