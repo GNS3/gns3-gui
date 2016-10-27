@@ -37,11 +37,13 @@ from ..local_config import LocalConfig
 
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
     images_changed_signal = QtCore.Signal()
+    versions_changed_signal = QtCore.Signal()
 
     def __init__(self, parent, path):
         super().__init__(parent)
         self.setupUi(self)
-        self.images_changed_signal.connect(self._refreshVersions, QtCore.Qt.QueuedConnection)
+        self.images_changed_signal.connect(self._refreshVersions)
+        self.versions_changed_signal.connect(self._versionRefreshedSlot)
 
         self._refreshing = False
 
@@ -226,59 +228,68 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         self.uiFilesWizardPage.setSubTitle("The following versions are available for " + self._appliance["product_name"] + ".  Check the status of files required to install.")
 
-        self.uiApplianceVersionTreeWidget.clear()
         worker = WaitForLambdaWorker(lambda: self._refreshDialogWorker())
         progress_dialog = ProgressDialog(worker, "Add appliance", "Scanning directories for files...", None, busy=True, parent=self)
         progress_dialog.show()
-        if progress_dialog.exec_():
-            for version in self._appliance["versions"]:
-                top = QtWidgets.QTreeWidgetItem(self.uiApplianceVersionTreeWidget, ["{} {}".format(self._appliance["product_name"], version["name"])])
-                size = 0
-                status = "Ready to install"
-                for image in version["images"].values():
-                    if image["status"] == "Missing":
-                        status = "Missing files"
 
-                    size += image.get("filesize", 0)
-                    image_widget = QtWidgets.QTreeWidgetItem(
-                        [
-                            "",
-                            image["filename"],
-                            human_filesize(image.get("filesize", 0)),
-                            image["status"],
-                            image["version"],
-                            image.get("md5sum", "")
-                        ])
-                    if image["status"] == "Missing":
-                        image_widget.setForeground(3, QtGui.QBrush(QtGui.QColor("red")))
-                    else:
-                        image_widget.setForeground(3, QtGui.QBrush(QtGui.QColor("green")))
+    @qslot
+    def _versionRefreshedSlot(self, *args):
+        """
+        Called when we finish to scan the disk for new versions
+        """
+        if self._refreshing or self.currentPage() != self.uiFilesWizardPage:
+            return
+        self._refreshing = True
+        self.uiApplianceVersionTreeWidget.clear()
 
-                    # Associated data stored are col 0: version, col 1: image
-                    image_widget.setData(0, QtCore.Qt.UserRole, version)
-                    image_widget.setData(1, QtCore.Qt.UserRole, image)
-                    image_widget.setData(2, QtCore.Qt.UserRole, self._appliance)
-                    top.addChild(image_widget)
+        for version in self._appliance["versions"]:
+            top = QtWidgets.QTreeWidgetItem(self.uiApplianceVersionTreeWidget, ["{} {}".format(self._appliance["product_name"], version["name"])])
+            size = 0
+            status = "Ready to install"
+            for image in version["images"].values():
+                if image["status"] == "Missing":
+                    status = "Missing files"
 
-                font = top.font(0)
-                font.setBold(True)
-                top.setFont(0, font)
-
-                expand = True
-                if status == "Missing files":
-                    top.setForeground(3, QtGui.QBrush(QtGui.QColor("red")))
+                size += image.get("filesize", 0)
+                image_widget = QtWidgets.QTreeWidgetItem(
+                    [
+                        "",
+                        image["filename"],
+                        human_filesize(image.get("filesize", 0)),
+                        image["status"],
+                        image["version"],
+                        image.get("md5sum", "")
+                    ])
+                if image["status"] == "Missing":
+                    image_widget.setForeground(3, QtGui.QBrush(QtGui.QColor("red")))
                 else:
-                    expand = False
-                    top.setForeground(3, QtGui.QBrush(QtGui.QColor("green")))
+                    image_widget.setForeground(3, QtGui.QBrush(QtGui.QColor("green")))
 
-                top.setData(2, QtCore.Qt.DisplayRole, human_filesize(size))
-                top.setData(3, QtCore.Qt.DisplayRole, status)
-                top.setData(2, QtCore.Qt.UserRole, self._appliance)
-                top.setData(0, QtCore.Qt.UserRole, version)
-                self.uiApplianceVersionTreeWidget.addTopLevelItem(top)
-                # self.uiApplianceVersionTreeWidget.setCurrentItem(top)
-                if expand:
-                    top.setExpanded(True)
+                # Associated data stored are col 0: version, col 1: image
+                image_widget.setData(0, QtCore.Qt.UserRole, version)
+                image_widget.setData(1, QtCore.Qt.UserRole, image)
+                image_widget.setData(2, QtCore.Qt.UserRole, self._appliance)
+                top.addChild(image_widget)
+
+            font = top.font(0)
+            font.setBold(True)
+            top.setFont(0, font)
+
+            expand = True
+            if status == "Missing files":
+                top.setForeground(3, QtGui.QBrush(QtGui.QColor("red")))
+            else:
+                expand = False
+                top.setForeground(3, QtGui.QBrush(QtGui.QColor("green")))
+
+            top.setData(2, QtCore.Qt.DisplayRole, human_filesize(size))
+            top.setData(3, QtCore.Qt.DisplayRole, status)
+            top.setData(2, QtCore.Qt.UserRole, self._appliance)
+            top.setData(0, QtCore.Qt.UserRole, version)
+            self.uiApplianceVersionTreeWidget.addTopLevelItem(top)
+            # self.uiApplianceVersionTreeWidget.setCurrentItem(top)
+            if expand:
+                top.setExpanded(True)
 
         if len(self._appliance["versions"]) > 0:
             self.uiApplianceVersionTreeWidget.resizeColumnToContents(0)
@@ -303,6 +314,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     image["filesize"] = img.filesize
                 else:
                     image["status"] = "Missing"
+        self._refreshing = False
+        self.versions_changed_signal.emit()
 
     @qslot
     def _applianceVersionCurrentItemChangedSlot(self, current, previous):
