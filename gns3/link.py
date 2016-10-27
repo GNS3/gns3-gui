@@ -21,6 +21,7 @@ Manages and stores everything needed for a connection between 2 devices.
 
 import os
 import re
+import sip
 import uuid
 import tempfile
 
@@ -160,7 +161,7 @@ class Link(QtCore.QObject):
                 raise NotImplementedError
 
     def _updateLabel(self, label, label_data):
-        if not label:
+        if not label or sip.isdeleted(label):
             return
         label.setPlainText(label_data["text"])
         label.setPos(label_data["x"], label_data["y"])
