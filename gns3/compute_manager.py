@@ -131,7 +131,10 @@ class ComputeManager(QtCore.QObject):
 
         With a remote controller it could be different of our local platform
         """
-        return self.localCompute().capabilities().get("platform", sys.platform)
+        c = self.localCompute()
+        if c is None:
+            return sys.platform
+        return c.capabilities().get("platform", sys.platform)
 
     def remoteComputes(self):
         """
