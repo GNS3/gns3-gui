@@ -452,7 +452,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         appliance_configuration = self._appliance.search_images_for_version(version)
         for image in appliance_configuration["images"]:
             if image["location"] == "local":
-                image = Image(self._appliance.emulator(), image["path"])
+                image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
                 image.upload(self._compute_id, self._applianceImageUploadedCallback)
                 self._image_uploading_count += 1
 

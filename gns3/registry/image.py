@@ -37,7 +37,7 @@ class Image:
     # Cache md5sum in order to improve performances
     _cache = {}
 
-    def __init__(self, emulator, path):
+    def __init__(self, emulator, path, filename=None):
         """
         :params: Emulator type
         :params: path of the image
@@ -46,6 +46,10 @@ class Image:
         self._location = "local"
         self._emulator = emulator
         self.path = path
+        if filename is None:
+            self._filename = os.path.basename(self.path)
+        else:
+            self._filename = filename
         self._md5sum = None
         self._version = None
         self._filesize = None
@@ -67,7 +71,7 @@ class Image:
         """
         :returns: Image filename
         """
-        return os.path.basename(self.path)
+        return self._filename
 
     @property
     def version(self):
