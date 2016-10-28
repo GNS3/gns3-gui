@@ -244,7 +244,7 @@ It is your responsability to check if you have the right to distribute the image
 
         import_worker = ImportProjectWorker(project_file,
                                             name=dialog.getProjectSettings()["project_name"],
-                                            path=dialog.getProjectSettings()["project_files_dir"])
+                                            path=dialog.getProjectSettings().get("project_files_dir"))
         import_worker.imported.connect(self._projectImportedSlot)
         progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self._main_window)
         progress_dialog.show()
