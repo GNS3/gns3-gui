@@ -128,6 +128,9 @@ def main():
     else:
         LocalConfig.instance()
 
+    if options.project:
+        options.project = os.path.abspath(options.project)
+
     if hasattr(sys, "frozen"):
         # We add to the path where the OS search executable our binary location starting by GNS3
         # packaged binary
@@ -147,7 +150,6 @@ def main():
         os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
 
         if options.project:
-            options.project = os.path.abspath(options.project)
             os.chdir(frozen_dir)
 
     def exceptionHook(exception, value, tb):
@@ -263,7 +265,6 @@ def main():
 
     signal.signal(signal.SIGINT, orig_sigint)
     signal.signal(signal.SIGTERM, orig_sigterm)
-
 
     delattr(MainWindow, "_instance")
 
