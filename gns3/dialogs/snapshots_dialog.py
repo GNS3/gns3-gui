@@ -64,7 +64,8 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
         """
 
         self.uiSnapshotsList.clear()
-        Controller.instance().get("/projects/{}/snapshots".format(self._project.id()), self._listSnapshotsCallback)
+        if self._project:
+            Controller.instance().get("/projects/{}/snapshots".format(self._project.id()), self._listSnapshotsCallback)
 
     def _listSnapshotsCallback(self, result, error=False, server=None, context={}, **kwargs):
         if error:
