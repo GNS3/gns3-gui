@@ -1,5 +1,42 @@
 # Change Log
 
+## 2.0.0 alpha 3 28/10/2016
+* Fix error when opening a project from the cli with a gns3 installed via setup.py
+* Fix a rare crash in snapshot dialog
+* Fix crash when importing project on a remote server
+* Fix crash in appliance wizard
+* Fix crash when local server is not available
+* Disallow  to overwrite a running project
+* Fix a rare crash when deleting a link
+* Fix appliance with wrong file name after import
+* Fix a crash at startup on Mac when coming from old GNS3 version
+* Fix key error in settings  if a compute no longer exists
+* All check for vmware linked base are already made server side
+* Fix Save as is not switching to the saved project
+* Auto reopen a project if connection is lost
+* Empty the list of computes nodes when connection is lost
+* Try to fix duplicate nodes after snapshot restore on some user computer
+* Allow only IPV4 in setup wizard
+* Catch error if user tmp directory is read only
+* Raise a proper error if packet capture program is invalid
+* Fix AttributeError: 'NoneType' object has no attribute 'upper'
+* Fix rare crash when killing wireshark
+* Export debug informations also from the controller
+* Fix a crash in vm wizard
+* Fix error when uploading an images from preferences
+* Fix snap to grid when initialy drop a node in the topology
+* Optimize snap-to-grid code
+* Fix a crash with linked clone
+* Move prevent using twice the same VM when linked clone is not enable
+* Fix If you show interface label and delete the link ghost interface label will appear
+* Display short interface label instead of long version
+* Fix error  AttributeError: 'NoneType' object has no attribute 'capabilities'
+* Fix PermissionError when killing local server
+* Handle empty color
+* Fix rare crash in save as
+* Fix crash in restore default server settings
+* Fix an error during import of some 0.8x projects
+
 ## 2.0.0 alpha 2 20/10/2016
 
 * Support pure remote server for importing appliance
