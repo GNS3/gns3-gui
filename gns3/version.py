@@ -17,7 +17,7 @@
 
 
 # __version__ is a human-readable version number.
-__version__ = "2.0.0dev3"
+__version__ = "2.0.0a3"
 
 """__version_info__ is a four-tuple for programmatic comparison. The first
 three numbers are the components of the version number. The fourth
