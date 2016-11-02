@@ -137,7 +137,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                Controller.instance().getSymbolIcon(ethernet_switches["symbol"], qpartial(self._setItemIcon, item))
+                Controller.instance().getSymbolIcon(ethernet_switch["symbol"], qpartial(self._setItemIcon, item))
                 if ethernet_switch["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=ethernet_switch["server"], name=ethernet_switch["name"])
                     if new_key in self._ethernet_switches:
