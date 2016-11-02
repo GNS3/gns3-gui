@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>579</width>
-    <height>350</height>
+    <height>374</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="currentText" stdset="0">
+        <property name="currentText">
          <string>HTTP</string>
         </property>
         <item>
@@ -148,7 +148,7 @@
          <bool>true</bool>
         </property>
         <property name="inputMethodHints">
-         <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
+         <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
         </property>
         <property name="echoMode">
          <enum>QLineEdit::Password</enum>
@@ -193,6 +193,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>uiServerNameLineEdit</tabstop>
+  <tabstop>uiServerProtocolComboBox</tabstop>
+  <tabstop>uiServerHostLineEdit</tabstop>
+  <tabstop>uiServerPortSpinBox</tabstop>
+  <tabstop>uiEnableAuthenticationCheckBox</tabstop>
+  <tabstop>uiServerUserLineEdit</tabstop>
+  <tabstop>uiServerPasswordLineEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

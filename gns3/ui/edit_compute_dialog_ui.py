@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/edit_compute_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/edit_compute_dialog.ui'
 #
-# Created: Sat Aug 20 11:22:53 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_EditComputeDialog(object):
+
     def setupUi(self, EditComputeDialog):
         EditComputeDialog.setObjectName("EditComputeDialog")
         EditComputeDialog.setWindowModality(QtCore.Qt.WindowModal)
-        EditComputeDialog.resize(579, 350)
+        EditComputeDialog.resize(579, 374)
         self.verticalLayout = QtWidgets.QVBoxLayout(EditComputeDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.groupBox = QtWidgets.QGroupBox(EditComputeDialog)
@@ -79,7 +80,7 @@ class Ui_EditComputeDialog(object):
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.uiServerPasswordLabel)
         self.uiServerPasswordLineEdit = QtWidgets.QLineEdit(self.uiEnableAuthenticationCheckBox)
         self.uiServerPasswordLineEdit.setEnabled(True)
-        self.uiServerPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText|QtCore.Qt.ImhNoAutoUppercase|QtCore.Qt.ImhNoPredictiveText)
+        self.uiServerPasswordLineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText | QtCore.Qt.ImhNoAutoUppercase | QtCore.Qt.ImhNoPredictiveText | QtCore.Qt.ImhSensitiveData)
         self.uiServerPasswordLineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.uiServerPasswordLineEdit.setObjectName("uiServerPasswordLineEdit")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.uiServerPasswordLineEdit)
@@ -92,7 +93,7 @@ class Ui_EditComputeDialog(object):
         self.verticalLayout.addItem(spacerItem)
         self.buttonBox = QtWidgets.QDialogButtonBox(EditComputeDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
@@ -100,13 +101,19 @@ class Ui_EditComputeDialog(object):
         self.buttonBox.accepted.connect(EditComputeDialog.accept)
         self.buttonBox.rejected.connect(EditComputeDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(EditComputeDialog)
+        EditComputeDialog.setTabOrder(self.uiServerNameLineEdit, self.uiServerProtocolComboBox)
+        EditComputeDialog.setTabOrder(self.uiServerProtocolComboBox, self.uiServerHostLineEdit)
+        EditComputeDialog.setTabOrder(self.uiServerHostLineEdit, self.uiServerPortSpinBox)
+        EditComputeDialog.setTabOrder(self.uiServerPortSpinBox, self.uiEnableAuthenticationCheckBox)
+        EditComputeDialog.setTabOrder(self.uiEnableAuthenticationCheckBox, self.uiServerUserLineEdit)
+        EditComputeDialog.setTabOrder(self.uiServerUserLineEdit, self.uiServerPasswordLineEdit)
 
     def retranslateUi(self, EditComputeDialog):
         _translate = QtCore.QCoreApplication.translate
         EditComputeDialog.setWindowTitle(_translate("EditComputeDialog", "Edit server settings"))
         self.groupBox.setTitle(_translate("EditComputeDialog", "Server settings"))
         self.uiServerProtocolLabel.setText(_translate("EditComputeDialog", "Protocol:"))
-        self.uiServerProtocolComboBox.setProperty("currentText", _translate("EditComputeDialog", "HTTP"))
+        self.uiServerProtocolComboBox.setCurrentText(_translate("EditComputeDialog", "HTTP"))
         self.uiServerProtocolComboBox.setItemText(0, _translate("EditComputeDialog", "HTTP"))
         self.uiServerProtocolComboBox.setItemText(1, _translate("EditComputeDialog", "HTTPS"))
         self.uiServerHostLabel.setText(_translate("EditComputeDialog", "Host:"))
@@ -117,4 +124,3 @@ class Ui_EditComputeDialog(object):
         self.uiServerUserLabel.setText(_translate("EditComputeDialog", "User:"))
         self.uiServerPasswordLabel.setText(_translate("EditComputeDialog", "Password:"))
         self.uiWarningLabel.setText(_translate("EditComputeDialog", "<html><head/><body><p><span style=\" font-weight:600;\">WARNING</span>: Changing a server with authentication enabled will reset the password.</p></body></html>"))
-
