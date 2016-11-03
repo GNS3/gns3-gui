@@ -25,6 +25,7 @@ from .topology import Topology
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .packet_capture import PacketCapture
+from .utils import natural_sort_key
 
 import logging
 log = logging.getLogger(__name__)
@@ -132,6 +133,10 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         tree = self.treeWidget()
         tree.takeTopLevelItem(tree.indexOfTopLevelItem(self))
         tree.nodes_id.remove(self._node.id())
+
+    def __lt__(self, otherItem):
+        column = self.treeWidget().sortColumn()
+        return natural_sort_key(self.text(column)) < natural_sort_key(otherItem.text(column))
 
 
 class TopologySummaryView(QtWidgets.QTreeWidget):
