@@ -148,9 +148,7 @@ class Node(BaseNode):
 
         if console_type != "telnet":
             console_type = self.consoleType()
-            if console_type == "serial":
-                return general_settings["serial_console_command"]
-            elif console_type == "vnc":
+            if console_type == "vnc":
                 return general_settings["vnc_console_command"]
         return general_settings["telnet_console_command"]
 
@@ -159,8 +157,6 @@ class Node(BaseNode):
         Get the console type (serial, telnet or VNC)
         """
         console_type = "telnet"
-        if hasattr(self, "serialConsole") and self.serialConsole():
-            return "serial"
         if "console_type" in self.settings():
             return self.settings()["console_type"]
         return console_type
@@ -568,10 +564,6 @@ class Node(BaseNode):
                 command = self.consoleCommand()
 
         console_type = "telnet"
-        if hasattr(self, "serialConsole") and self.serialConsole():
-            from .serial_console import serialConsole
-            serialConsole(self.name(), self.serialPipe(), command)
-            return
 
         if aux:
             console_port = self.auxConsole()

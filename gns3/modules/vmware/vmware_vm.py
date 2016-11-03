@@ -58,7 +58,6 @@ class VMwareVM(Node):
                               "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
                               "headless": VMWARE_VM_SETTINGS["headless"],
                               "acpi_shutdown": VMWARE_VM_SETTINGS["acpi_shutdown"],
-                              "enable_remote_console": VMWARE_VM_SETTINGS["enable_remote_console"],
                               "port_name_format": "Ethernet{0}",
                               "port_segment_size": 0,
                               "first_port_name": None}
@@ -166,31 +165,6 @@ class VMwareVM(Node):
             vmnet = result["vmnet"]
             log.debug("{} has allocated VMnet interface {}".format(self.name(), vmnet))
             self.allocate_vmnet_nio_signal.emit(self.id(), port_id, vmnet)
-
-    def serialConsole(self):
-        """
-        Returns either the serial console must be used or not.
-
-        :return: boolean
-        """
-
-        if self._settings["enable_remote_console"]:
-            return False
-        return True
-
-    def serialPipe(self):
-        """
-        Returns the VM serial pipe path for serial console connections.
-
-        :returns: path to the serial pipe
-        """
-
-        if sys.platform.startswith("win"):
-            pipe_name = r"\\.\pipe\gns3_vmware\{}".format(self._node_id)
-        else:
-            pipe_name = os.path.join(tempfile.gettempdir(), "gns3_vmware", "{}".format(self._node_id))
-            os.makedirs(os.path.dirname(pipe_name), exist_ok=True)
-        return pipe_name
 
     def console(self):
         """

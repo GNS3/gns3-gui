@@ -56,7 +56,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiExportConfigurationFilePushButton.clicked.connect(self._exportConfigurationFileSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiTelnetConsolePreconfiguredCommandPushButton.clicked.connect(self._telnetConsolePreconfiguredCommandSlot)
-        self.uiSerialConsolePreconfiguredCommandPushButton.clicked.connect(self._serialConsolePreconfiguredCommandSlot)
         self.uiVNCConsolePreconfiguredCommandPushButton.clicked.connect(self._vncConsolePreconfiguredCommandSlot)
         self.uiDefaultLabelFontPushButton.clicked.connect(self._setDefaultLabelFontSlot)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
@@ -153,16 +152,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type="telnet", current=cmd)
         if ok:
             self.uiTelnetConsoleCommandLineEdit.setText(cmd)
-
-    def _serialConsolePreconfiguredCommandSlot(self):
-        """
-        Slot to set a chosen pre-configured serial console command.
-        """
-
-        cmd = self.uiSerialConsoleCommandLineEdit.text()
-        (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type="serial", current=cmd)
-        if ok:
-            self.uiSerialConsoleCommandLineEdit.setText(cmd)
 
     def _vncConsolePreconfiguredCommandSlot(self):
         """
@@ -279,8 +268,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         index = self.uiStyleComboBox.findText(settings["style"])
         if index != -1:
             self.uiStyleComboBox.setCurrentIndex(index)
-        self.uiSerialConsoleCommandLineEdit.setText(settings["serial_console_command"])
-        self.uiSerialConsoleCommandLineEdit.setCursorPosition(0)
         self.uiCloseConsoleWindowsOnDeleteCheckBox.setChecked(settings["auto_close_console"])
         self.uiBringConsoleWindowToFrontCheckBox.setChecked(settings["bring_console_to_front"])
         self.uiDelayConsoleAllSpinBox.setValue(settings["delay_console_all"])
@@ -352,7 +339,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
             "link_manual_mode": self.uiLinkManualModeCheckBox.isChecked(),
             "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
-            "serial_console_command": self.uiSerialConsoleCommandLineEdit.text(),
             "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
             "auto_close_console": self.uiCloseConsoleWindowsOnDeleteCheckBox.isChecked(),
             "bring_console_to_front": self.uiBringConsoleWindowToFrontCheckBox.isChecked(),

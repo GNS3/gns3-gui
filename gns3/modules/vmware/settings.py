@@ -49,7 +49,6 @@ VMWARE_VM_SETTINGS = {
     "use_any_adapter": False,
     "headless": False,
     "acpi_shutdown": False,
-    "enable_remote_console": False,
     "linked_base": False,
     "server": "local"
 }

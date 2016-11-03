@@ -84,7 +84,7 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="1">
+       <item row="9" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -104,14 +104,17 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
+       <item row="6" column="0" colspan="2">
         <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
          <property name="text">
           <string>Enable ACPI shutdown</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="0" colspan="2">
+       <item row="3" column="1">
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
+       </item>
+       <item row="8" column="0" colspan="2">
         <widget class="QCheckBox" name="uiBaseVMCheckBox">
          <property name="enabled">
           <bool>true</bool>
@@ -128,17 +131,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="uiCategoryComboBox"/>
-       </item>
-       <item row="6" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiEnableConsoleCheckBox">
-         <property name="text">
-          <string>Enable remote console</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="2">
+       <item row="7" column="0" colspan="2">
         <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
          <property name="text">
           <string>Start VM in headless mode</string>
@@ -155,15 +148,15 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="uiDefaultNameFormatLabel">
          <property name="text">
           <string>Default name format:</string>
          </property>
         </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
        </item>
       </layout>
      </widget>

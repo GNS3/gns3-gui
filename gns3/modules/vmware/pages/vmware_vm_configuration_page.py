@@ -139,7 +139,6 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         self.uiUseAnyAdapterCheckBox.setChecked(settings["use_any_adapter"])
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
         self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
-        self.uiEnableConsoleCheckBox.setChecked(settings["enable_remote_console"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -163,8 +162,6 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
 
             if "linked_base" in settings:
                 settings["linked_base"] = self.uiBaseVMCheckBox.isChecked()
-
-            settings["enable_remote_console"] = self.uiEnableConsoleCheckBox.isChecked()
 
         if not node:
             # these are template settings

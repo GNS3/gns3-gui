@@ -144,39 +144,6 @@ else:
         if distro == "Debian" or distro == "Ubuntu" or distro == "LinuxMint":
             DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Gnome Terminal"]
 
-# Pre-configured serial console commands on various OSes
-if sys.platform.startswith("win"):
-    # Windows
-    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -serial %s -wt "%d [Local Console]" -gns3 5',
-                                             'SuperPutty': r'SuperPutty.exe -serial "%s -wt \"%d\""'}
-
-    # default Windows serial console command
-    if os.path.exists(os.getcwd() + os.sep + "SuperPutty.exe"):
-        DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["SuperPutty"]
-    else:
-        DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Putty (included with GNS3)"]
-
-elif sys.platform.startswith("darwin"):
-    # Mac OS X
-    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Terminal + nc': "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"stty raw; /usr/bin/nc -U \\\"%s\\\"; exit\"'",
-                                             'Terminal + socat': "/usr/bin/osascript -e 'tell application \"terminal\" to do script with command \"socat UNIX-CONNECT:\\\"%s\\\" stdio,raw,echo=0 ; exit\"'"}
-
-    # default Mac OS X serial console command
-    DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS['Terminal + nc']
-
-else:
-    PRECONFIGURED_SERIAL_CONSOLE_COMMANDS = {'Xterm + socat': 'xterm -T "%d" -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\'',
-                                             'Gnome Terminal + socat': 'gnome-terminal -t "%d" -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\'',
-                                             'Konsole + socat': 'konsole --new-tab -p tabtitle="%d" -e \'socat UNIX-CONNECT:"%s" stdio,raw,echo=0\''}
-
-    # default serial console command on other systems
-    DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Xterm + socat"]
-
-    if sys.platform.startswith("linux"):
-        distro = platform.linux_distribution()[0]
-        if distro == "Debian" or distro == "Ubuntu" or distro == "LinuxMint":
-            DEFAULT_SERIAL_CONSOLE_COMMAND = PRECONFIGURED_SERIAL_CONSOLE_COMMANDS["Gnome Terminal + socat"]
-
 # Pre-configured VNC console commands on various OSes
 if sys.platform.startswith("win"):
     # Windows
@@ -255,7 +222,6 @@ GENERAL_SETTINGS = {
     "last_check_for_update": 0,
     "link_manual_mode": True,
     "telnet_console_command": DEFAULT_TELNET_CONSOLE_COMMAND,
-    "serial_console_command": DEFAULT_SERIAL_CONSOLE_COMMAND,
     "vnc_console_command": DEFAULT_VNC_CONSOLE_COMMAND,
     "auto_close_console": True,
     "bring_console_to_front": True,

@@ -132,8 +132,7 @@ def virtualbox_vm(local_server, project):
                     "ram": 0,
                     "use_any_adapter": False,
                     "adapter_type": "Intel PRO/1000 MT Desktop (82540EM)",
-                    "headless": False,
-                    "enable_remote_console": False}
+                    "headless": False}
     vm.setInitialized(True)
     return vm
 

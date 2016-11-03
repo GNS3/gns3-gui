@@ -8,9 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_GeneralPreferencesPageWidget(object):
-
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
         GeneralPreferencesPageWidget.resize(633, 643)
@@ -204,29 +202,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiTelnetConsolePreconfiguredCommandPushButton.setObjectName("uiTelnetConsolePreconfiguredCommandPushButton")
         self.horizontalLayout_9.addWidget(self.uiTelnetConsolePreconfiguredCommandPushButton)
         self.verticalLayout_9.addLayout(self.horizontalLayout_9)
-        self.uiSerialConsoleCommandLabel = QtWidgets.QLabel(self.uiTelnetConsoleSettingsGroupBox)
-        self.uiSerialConsoleCommandLabel.setObjectName("uiSerialConsoleCommandLabel")
-        self.verticalLayout_9.addWidget(self.uiSerialConsoleCommandLabel)
-        self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
-        self.uiSerialConsoleCommandLineEdit = QtWidgets.QLineEdit(self.uiTelnetConsoleSettingsGroupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiSerialConsoleCommandLineEdit.sizePolicy().hasHeightForWidth())
-        self.uiSerialConsoleCommandLineEdit.setSizePolicy(sizePolicy)
-        self.uiSerialConsoleCommandLineEdit.setReadOnly(True)
-        self.uiSerialConsoleCommandLineEdit.setObjectName("uiSerialConsoleCommandLineEdit")
-        self.horizontalLayout_10.addWidget(self.uiSerialConsoleCommandLineEdit)
-        self.uiSerialConsolePreconfiguredCommandPushButton = QtWidgets.QPushButton(self.uiTelnetConsoleSettingsGroupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiSerialConsolePreconfiguredCommandPushButton.sizePolicy().hasHeightForWidth())
-        self.uiSerialConsolePreconfiguredCommandPushButton.setSizePolicy(sizePolicy)
-        self.uiSerialConsolePreconfiguredCommandPushButton.setObjectName("uiSerialConsolePreconfiguredCommandPushButton")
-        self.horizontalLayout_10.addWidget(self.uiSerialConsolePreconfiguredCommandPushButton)
-        self.verticalLayout_9.addLayout(self.horizontalLayout_10)
         self.verticalLayout_3.addWidget(self.uiTelnetConsoleSettingsGroupBox)
         self.uiConsoleMiscGroupBox = QtWidgets.QGroupBox(self.uiConsoleTab)
         self.uiConsoleMiscGroupBox.setObjectName("uiConsoleMiscGroupBox")
@@ -428,9 +403,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiTelnetConsoleCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Console application command for Telnet:"))
         self.uiTelnetConsoleCommandLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p><p>%h = device server </p><p>%p = device port</p><p>%d = device hostname</p></body></html>"))
         self.uiTelnetConsolePreconfiguredCommandPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Edit"))
-        self.uiSerialConsoleCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Console application command for Serial:"))
-        self.uiSerialConsoleCommandLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p><p>%d = device hostname</p><p>%s = device pipe file</p></body></html>"))
-        self.uiSerialConsolePreconfiguredCommandPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Edit"))
         self.uiConsoleMiscGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiCloseConsoleWindowsOnDeleteCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Close any connected console window when deleting a node"))
         self.uiBringConsoleWindowToFrontCheckBox.setToolTip(_translate("GeneralPreferencesPageWidget", "<html>This option will attempt to bring existing opened console window to front, instead of opening a new window.<br>If no existing opened console window exists, it will start a new  console window.</html>"))
@@ -464,3 +436,4 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Ask for settings profile at application startup  (work profile / home profile)"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiMiscTab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
+
