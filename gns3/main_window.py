@@ -414,13 +414,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # Portable GNS3 project
             Topology.instance().importProject(path)
         elif path.endswith(".net"):
-            QtWidgets.QMessageBox.critical(self, "Open project", "Importing legacy project is not supported in 2.0.\nYou need to open it with GNS3 1.x in order to convert it or manually run the gns3 converter."))
+            QtWidgets.QMessageBox.critical(self, "Open project", "Importing legacy project is not supported in 2.0.\nYou need to open it with GNS3 1.x in order to convert it or manually run the gns3 converter.")
             return
 
         elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
             # GNS3 appliance
             try:
-                self._appliance_wizard=ApplianceWizard(self, path)
+                self._appliance_wizard = ApplianceWizard(self, path)
             except ApplianceError as e:
                 QtWidgets.QMessageBox.critical(self, "Appliance", "Error while importing appliance {}: {}".format(path, str(e)))
                 return
@@ -466,8 +466,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for the entire topology.
         """
 
-        options=["Export configs to a directory", "Import configs from a directory"]
-        selection, ok=QtWidgets.QInputDialog.getItem(self, "Import/Export configs", "Please choose an option:", options, 0, False)
+        options = ["Export configs to a directory", "Import configs from a directory"]
+        selection, ok = QtWidgets.QInputDialog.getItem(self, "Import/Export configs", "Please choose an option:", options, 0, False)
         if ok:
             if selection == options[0]:
                 self._exportConfigs()
@@ -479,11 +479,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Exports all configs to a directory.
         """
 
-        path=QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
-            self._export_configs_to_dir=os.path.dirname(path)
+            self._export_configs_to_dir = os.path.dirname(path)
             for module in MODULES:
-                instance=module.instance()
+                instance = module.instance()
                 if hasattr(instance, "exportConfigs"):
                     instance.exportConfigs(path)
 
@@ -492,11 +492,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Imports all configs from a directory.
         """
 
-        path=QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", self._import_configs_from_dir, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", self._import_configs_from_dir, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
-            self._import_configs_from_dir=os.path.dirname(path)
+            self._import_configs_from_dir = os.path.dirname(path)
             for module in MODULES:
-                instance=module.instance()
+                instance = module.instance()
                 if hasattr(instance, "importConfigs"):
                     instance.importConfigs(path)
 
@@ -507,16 +507,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :returns: True if the image was successfully saved; otherwise returns False
         """
 
-        scene=self.uiGraphicsView.scene()
+        scene = self.uiGraphicsView.scene()
         scene.clearSelection()
-        source=scene.itemsBoundingRect().adjusted(-20.0, -20.0, 20.0, 20.0)
-        image=QtGui.QImage(source.size().toSize(), QtGui.QImage.Format_RGB32)
+        source = scene.itemsBoundingRect().adjusted(-20.0, -20.0, 20.0, 20.0)
+        image = QtGui.QImage(source.size().toSize(), QtGui.QImage.Format_RGB32)
         image.fill(QtCore.Qt.white)
-        painter=QtGui.QPainter(image)
+        painter = QtGui.QPainter(image)
         painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
         painter.setRenderHint(QtGui.QPainter.TextAntialiasing, True)
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
-        scene.render(painter, source = source)
+        scene.render(painter, source=source)
         painter.end()
         # TODO: quality option
         return image.save(path)
@@ -527,14 +527,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         # supported image file formats
-        file_formats="PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff)"
-        path, selected_filter=QtWidgets.QFileDialog.getSaveFileName(self, "Screenshot", self._screenshots_dir, file_formats)
+        file_formats = "PNG File (*.png);;JPG File (*.jpeg *.jpg);;BMP File (*.bmp);;XPM File (*.xpm *.xbm);;PPM File (*.ppm);;TIFF File (*.tiff)"
+        path, selected_filter = QtWidgets.QFileDialog.getSaveFileName(self, "Screenshot", self._screenshots_dir, file_formats)
         if not path:
             return
-        self._screenshots_dir=os.path.dirname(path)
+        self._screenshots_dir = os.path.dirname(path)
 
         # add the extension if missing
-        file_format="." + selected_filter[:4].lower().strip()
+        file_format = "." + selected_filter[:4].lower().strip()
         if not path.endswith(file_format):
             path += file_format
 
@@ -546,9 +546,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to open the snapshot dialog.
         """
 
-        project=Topology.instance().project()
+        project = Topology.instance().project()
 
-        dialog=SnapshotsDialog(self, project)
+        dialog = SnapshotsDialog(self, project)
         dialog.show()
         dialog.exec_()
 
@@ -557,7 +557,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to select all the items on the scene.
         """
 
-        scene=self.uiGraphicsView.scene()
+        scene = self.uiGraphicsView.scene()
         for item in scene.items():
             item.setSelected(True)
 
@@ -566,7 +566,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to none of the items on the scene.
         """
 
-        scene=self.uiGraphicsView.scene()
+        scene = self.uiGraphicsView.scene()
         for item in scene.items():
             item.setSelected(False)
 
@@ -587,7 +587,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to scale in the view.
         """
 
-        factor_in=pow(2.0, 120 / 240.0)
+        factor_in = pow(2.0, 120 / 240.0)
         self.uiGraphicsView.scaleView(factor_in)
 
     def _zoomOutActionSlot(self):
@@ -595,7 +595,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to scale out the view.
         """
 
-        factor_out=pow(2.0, -120 / 240.0)
+        factor_out = pow(2.0, -120 / 240.0)
         self.uiGraphicsView.scaleView(factor_out)
 
     def _zoomResetActionSlot(self):
@@ -610,8 +610,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to fit the topology in the view.
         """
 
-        view=self.uiGraphicsView
-        bounding_rect=view.scene().itemsBoundingRect().adjusted(-20.0, -20.0, 20.0, 20.0)
+        view = self.uiGraphicsView
+        bounding_rect = view.scene().itemsBoundingRect().adjusted(-20.0, -20.0, 20.0, 20.0)
         view.ensureVisible(bounding_rect)
         view.fitInView(bounding_rect, QtCore.Qt.KeepAspectRatio)
 
@@ -620,8 +620,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to show the layer positions on the scene.
         """
 
-        NodeItem.show_layer=self.uiShowLayersAction.isChecked()
-        ShapeItem.show_layer=self.uiShowLayersAction.isChecked()
+        NodeItem.show_layer = self.uiShowLayersAction.isChecked()
+        ShapeItem.show_layer = self.uiShowLayersAction.isChecked()
         for item in self.uiGraphicsView.items():
             item.update()
 
@@ -650,7 +650,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when starting all the nodes.
         """
 
-        project=Topology.instance().project()
+        project = Topology.instance().project()
         if project is not None:
             project.start_all_nodes()
 
@@ -659,7 +659,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when suspending all the nodes.
         """
 
-        project=Topology.instance().project()
+        project = Topology.instance().project()
         if project is not None:
             project.suspend_all_nodes()
 
@@ -668,7 +668,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when stopping all the nodes.
         """
 
-        project=Topology.instance().project()
+        project = Topology.instance().project()
         if project is not None:
             project.stop_all_nodes()
 
@@ -677,7 +677,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when reloading all the nodes.
         """
 
-        project=Topology.instance().project()
+        project = Topology.instance().project()
         if project is not None:
             project.reload_all_nodes()
 
@@ -715,14 +715,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when inserting an image on the scene.
         """
         # supported image file formats
-        file_formats="Image files (*.svg *.bmp *.jpeg *.jpg *.gif *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)"
+        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.gif *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)"
 
-        path, _=QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._pictures_dir, file_formats)
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._pictures_dir, file_formats)
         if not path:
             return
-        self._pictures_dir=os.path.dirname(path)
+        self._pictures_dir = os.path.dirname(path)
 
-        image=QtGui.QPixmap(path)
+        image = QtGui.QPixmap(path)
         self.uiGraphicsView.addImage(path)
 
     def _drawRectangleActionSlot(self):
@@ -746,14 +746,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://gns3.com/support/docs"))
 
-    def _checkForUpdateActionSlot(self, silent = False):
+    def _checkForUpdateActionSlot(self, silent=False):
         """
         Slot to check if a newer version is available.
 
         :param silent: do not display any message
         """
 
-        self._update_manager=UpdateManager()
+        self._update_manager = UpdateManager()
         self._update_manager.checkForUpdate(self, silent)
 
     def _setupWizardActionSlot(self):
@@ -761,8 +761,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to open the setup wizard.
         """
 
-        with Progress.instance().context(min_duration = 0):
-            setup_wizard=SetupWizard(self)
+        with Progress.instance().context(min_duration=0):
+            setup_wizard = SetupWizard(self)
             setup_wizard.show()
             if setup_wizard.exec_():
                 self._newApplianceActionSlot()
@@ -779,7 +779,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to display the GNS3 About dialog.
         """
 
-        dialog=AboutDialog(self)
+        dialog = AboutDialog(self)
         dialog.show()
         dialog.exec_()
 
@@ -788,7 +788,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to display a window for exporting debug information
         """
 
-        dialog=ExportDebugDialog(self, Topology.instance().project())
+        dialog = ExportDebugDialog(self, Topology.instance().project())
         dialog.show()
         dialog.exec_()
 
@@ -797,7 +797,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to display a window for exporting debug information
         """
 
-        dialog=DoctorDialog(self)
+        dialog = DoctorDialog(self)
         dialog.show()
         dialog.exec_()
 
@@ -886,12 +886,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to show the preferences dialog.
         """
 
-        with Progress.instance().context(min_duration = 0):
-            dialog=PreferencesDialog(self)
+        with Progress.instance().context(min_duration=0):
+            dialog = PreferencesDialog(self)
             dialog.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["preferences_dialog_geometry"].encode()))
             dialog.show()
             dialog.exec_()
-            self._settings["preferences_dialog_geometry"]=bytes(dialog.saveGeometry().toBase64()).decode()
+            self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
             self.setSettings(self._settings)
 
     def _editReadmeActionSlot(self):
@@ -907,7 +907,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param event: QKeyEvent
         """
 
-        key=event.key()
+        key = event.key()
         # if the user is adding a link and press Escape, then cancel the link addition.
         if self.uiAddLinkAction.isChecked() and key == QtCore.Qt.Key_Escape:
             self.uiAddLinkAction.setChecked(False)
@@ -922,30 +922,30 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param event: QCloseEvent
         """
 
-        progress=Progress.instance()
+        progress = Progress.instance()
         progress.setAllowCancelQuery(True)
         progress.setCancelButtonText("Force quit")
 
         log.debug("Close the Main Window")
-        self._analytics_client.sendScreenView("Main Window", session_start = False)
+        self._analytics_client.sendScreenView("Main Window", session_start=False)
 
-        project=Topology.instance().project()
+        project = Topology.instance().project()
         if not project:
-            self._finish_application_closing(close_windows = False)
+            self._finish_application_closing(close_windows=False)
             event.accept()
             self.uiConsoleTextEdit.closeIO()
         elif project.closed() or not project.autoClose():
             log.debug("Project is closed killing server and closing main windows")
-            self._finish_application_closing(close_windows = False)
+            self._finish_application_closing(close_windows=False)
             event.accept()
             self.uiConsoleTextEdit.closeIO()
         else:
             log.debug("Project is not closed asking for project closing")
             project.project_closed_signal.connect(self._finish_application_closing)
-            project.close(local_server_shutdown = True)
+            project.close(local_server_shutdown=True)
             event.ignore()
 
-    def _finish_application_closing(self, close_windows = True):
+    def _finish_application_closing(self, close_windows=True):
         """
         Handles the event when the main window is closed.
         And project closed.
@@ -955,14 +955,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         log.debug("_finish_application_closing")
 
-        self._settings["geometry"]=bytes(self.saveGeometry().toBase64()).decode()
-        self._settings["state"]=bytes(self.saveState().toBase64()).decode()
+        self._settings["geometry"] = bytes(self.saveGeometry().toBase64()).decode()
+        self._settings["state"] = bytes(self.saveState().toBase64()).decode()
         self.setSettings(self._settings)
 
-        server=LocalServer.instance()
-        server.stopLocalServer(wait = True)
+        server = LocalServer.instance()
+        server.stopLocalServer(wait=True)
 
-        time_spent="{:.0f}".format(time.time() - self._start_time)
+        time_spent = "{:.0f}".format(time.time() - self._start_time)
         log.debug("Time spend in the software is {}".format(time_spent))
 
         if close_windows:
@@ -975,8 +975,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :returns: False is a device is still running
         """
         # check if any node is running
-        topology=Topology.instance()
-        topology.project=Topology.instance().project()
+        topology = Topology.instance()
+        topology.project = Topology.instance().project()
         for node in topology.nodes():
             if not node.isAlwaysOn() and node.status() == Node.started:
                 return True
@@ -988,7 +988,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         if not LocalConfig.instance().isMainGui():
-            reply=QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
+            reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
                 self.close()
@@ -999,7 +999,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # restore debug level
         if self._settings["debug_level"]:
-            root=logging.getLogger()
+            root = logging.getLogger()
             root.addHandler(logging.StreamHandler(sys.stdout))
 
         # restore the style
@@ -1019,17 +1019,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             if self._open_file_at_startup:
                 self.loadPath(self._open_file_at_startup)
-                self._open_file_at_startup=None
+                self._open_file_at_startup = None
             else:
                 self._newProjectActionSlot()
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)
-            current_epoch=int(time.mktime(time.localtime()))
+            current_epoch = int(time.mktime(time.localtime()))
             if current_epoch - self._settings["last_check_for_update"] >= 604800:
                 # let's check for an update
-                self._checkForUpdateActionSlot(silent = True)
-                self._settings["last_check_for_update"]=current_epoch
+                self._checkForUpdateActionSlot(silent=True)
+                self._settings["last_check_for_update"] = current_epoch
                 self.setSettings(self._settings)
 
     def updateRecentProjectsSettings(self, project_id, project_name, project_path):
@@ -1042,9 +1042,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         # Projects are stored as a list of project_id:project_name
-        key="{}:{}:{}".format(project_id, project_name, project_path)
+        key = "{}:{}:{}".format(project_id, project_name, project_path)
 
-        recent_projects=[]
+        recent_projects = []
         for project in self._settings["recent_projects"]:
             recent_projects.append(project)
 
@@ -1065,7 +1065,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             recent_projects.pop()
 
         # write the recent file list
-        self._settings["recent_projects"]=recent_projects
+        self._settings["recent_projects"] = recent_projects
         self.setSettings(self._settings)
 
     def updateRecentProjectActions(self):
@@ -1073,16 +1073,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Updates recent project actions.
         """
 
-        index=0
-        size=len(self._settings["recent_projects"])
+        index = 0
+        size = len(self._settings["recent_projects"])
         for project in self._settings["recent_projects"]:
             # Projects are stored as a list of project_id:project_name
             try:
-                project_id, project_name, project_path=project.split(":", maxsplit = 2)
+                project_id, project_name, project_path = project.split(":", maxsplit=2)
             except ValueError:  # Compatible with 2.0.0a1
-                project_path=None
-                project_id, project_name=project.split(":", maxsplit = 1)
-            action=self._recent_project_actions[index]
+                project_path = None
+                project_id, project_name = project.split(":", maxsplit=1)
+            action = self._recent_project_actions[index]
             if project_path and os.path.exists(project_path):
                 action.setText(" {}. {} [{}]".format(index + 1, project_name, project_path))
                 action.setData((project_id, project_path, ))
@@ -1105,10 +1105,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param path: path to the new file
         """
 
-        recent_files=[]
+        recent_files = []
         for file_path in self._settings["recent_files"]:
             if file_path:
-                file_path=os.path.normpath(file_path)
+                file_path = os.path.normpath(file_path)
                 if file_path not in recent_files and os.path.exists(file_path):
                     recent_files.append(file_path)
 
@@ -1120,7 +1120,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             recent_files.pop()
 
         # write the recent file list
-        self._settings["recent_files"]=recent_files
+        self._settings["recent_files"] = recent_files
         self.setSettings(self._settings)
 
     def updateRecentFileActions(self):
@@ -1128,12 +1128,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Updates recent file actions.
         """
 
-        index=0
-        size=len(self._settings["recent_files"])
+        index = 0
+        size = len(self._settings["recent_files"])
         for file_path in self._settings["recent_files"]:
             try:
                 if file_path and os.path.exists(file_path):
-                    action=self._recent_file_actions[index]
+                    action = self._recent_file_actions[index]
                     action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
                     action.setData(file_path)
                     action.setVisible(True)
@@ -1179,22 +1179,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called to import a portable project
         """
-        directory=QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
         if len(directory) == 0:
-            directory=Topology.instance().projectsDirPath()
-        path, _=QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
+            directory = Topology.instance().projectsDirPath()
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
                                                         "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
                                                         "GNS3 Portable Project (*.gns3project *.gns3p)")
         if path:
             Topology.instance().importProject(path)
 
     def _editProjectActionSlot(self):
-        dialog=EditProjectDialog(self)
+        dialog = EditProjectDialog(self)
         dialog.show()
         dialog.exec_()
 
     def _deleteProjectActionSlot(self):
-        reply=QtWidgets.QMessageBox.warning(
+        reply = QtWidgets.QMessageBox.warning(
             self,
             "GNS3",
             "The project will be deleted from disk. All files will be removed including the project subdirectories. Continue?",
@@ -1209,7 +1209,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param style_name: Style name
         """
 
-        style=Style(self)
+        style = Style(self)
         if style_name.startswith("Charcoal"):
             style.setCharcoalStyle()
         elif style_name == "Classic":
@@ -1226,5 +1226,5 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         if not hasattr(MainWindow, "_instance"):
-            MainWindow._instance=MainWindow()
+            MainWindow._instance = MainWindow()
         return MainWindow._instance
