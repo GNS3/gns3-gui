@@ -75,7 +75,7 @@ class PacketCapture:
     def _updatedLinkSlot(self, link_id):
         link = self.topology().getLink(link_id)
 
-        if link.capturing():
+        if link and link.capturing():
             if self._autostart[link]:
                 self.startPacketCaptureReader(link)
             log.info("Has successfully started capturing packets on {} to {}".format(link.id(), link.capture_file_path()))
