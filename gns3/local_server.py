@@ -156,7 +156,7 @@ class LocalServer(QtCore.QObject):
                         proceed = QtWidgets.QMessageBox.question(
                             self.parent(),
                             "uBridge",
-                            "uBridge requires CAP_NET_RAW capability to interact with network interfaces. Set the capability to uBridge?",
+                            "uBridge requires CAP_NET_RAW capability to interact with network interfaces. Set the capability to uBridge? All users on the system will be able to read packet from the network interfaces.",
                             QtWidgets.QMessageBox.Yes,
                             QtWidgets.QMessageBox.No)
                         if proceed == QtWidgets.QMessageBox.Yes:
@@ -174,12 +174,12 @@ class LocalServer(QtCore.QObject):
                     proceed = QtWidgets.QMessageBox.question(
                         self.parent(),
                         "uBridge",
-                        "uBridge requires root permissions to interact with network interfaces. Set root permissions to uBridge?",
+                        "uBridge requires root permissions to interact with network interfaces. Set root permissions to uBridge?  All admin users on the system will be able to read packet from the network interfaces.",
                         QtWidgets.QMessageBox.Yes,
                         QtWidgets.QMessageBox.No)
                     if proceed == QtWidgets.QMessageBox.Yes:
-                        sudo(["chmod", "4755", path])
-                        sudo(["chown", "root", path])
+                        sudo(["chmod", "4750", path])
+                        sudo(["chown", "root:admin", path])
             except OSError as e:
                 QtWidgets.QMessageBox.critical(self.parent(), "uBridge", "Can't set root permissions to uBridge {}: {}".format(path, str(e)))
                 return False

@@ -148,8 +148,8 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
                 request_setuid = True
 
         if sys.platform.startswith("darwin") or request_setuid:
-             if os.stat(path).st_uid != 0 or not os.stat(path).st_mode & stat.S_ISUID:
-                return (2, "Ubridge should be setuid. Run sudo chown root {path} and sudo chmod 4755 {path}".format(path=path))
+            if os.stat(path).st_uid != 0 or not os.stat(path).st_mode & stat.S_ISUID:
+                return (2, "Ubridge should be setuid. Run sudo chown root:admin {path} and sudo chmod 4750 {path}".format(path=path))
         return (0, None)
 
     def checkDynamipsPermission(self):
@@ -220,5 +220,5 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     main = QtWidgets.QMainWindow()
     dialog = DoctorDialog(main, console=True)
-    #dialog.show()
+    # dialog.show()
     #exit_code = app.exec_()
