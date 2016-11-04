@@ -988,12 +988,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         nodes = {}
+        node_initialized = False
         for item in items:
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
-                node = item.node()
-                nodes[node.name()] = node
+            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
+                node_initialized = True
+                if item.node().status() == Node.started:
+                    node = item.node()
+                    nodes[node.name()] = node
 
-        if not nodes:
+        if not nodes and node_initialized:
             if len(items) > 1:
                 QtWidgets.QMessageBox.warning(self, "Console", "At least one node must be started before a console can be opened")
             else:
@@ -1049,12 +1052,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         nodes = {}
+        node_initialized = False
         for item in items:
-            if isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole") and item.node().initialized() and item.node().status() == Node.started:
-                node = item.node()
-                nodes[node.name()] = node
+            if isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole") and item.node().initialized():
+                node_initialized = True
+                if item.node().status() == Node.started:
+                    node = item.node()
+                    nodes[node.name()] = node
 
-        if not nodes:
+        if not nodes and node_initialized:
             if len(items) > 1:
                 QtWidgets.QMessageBox.warning(self, "Console", "At least one node must be started before a console can be opened")
             else:
