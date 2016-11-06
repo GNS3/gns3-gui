@@ -158,8 +158,7 @@ class Docker(Module):
         if not image:
             selected_images = []
             for image, info in self._docker_containers.items():
-                if info["server"] == node.server().host() or (
-                        node.server().isLocal() and info["server"] == "local"):
+                if info["server"] == node.compute().id():
                     selected_images.append(image)
 
             if not selected_images:

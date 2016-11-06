@@ -197,7 +197,7 @@ class Qemu(Module):
         if not vm:
             selected_vms = []
             for vm, info in self._qemu_vms.items():
-                if info["server"] == node.server().host() or (node.server().isLocal() and info["server"] == "local"):
+                if info["server"] == node.compute().id():
                     selected_vms.append(vm)
 
             if not selected_vms:
