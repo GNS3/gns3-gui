@@ -56,7 +56,10 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
             self.reject()
             return
 
-        Controller.instance().post("/debug", self._exportDebugCallback)
+        if Controller.instance().connected():
+            Controller.instance().post("/debug", self._exportDebugCallback)
+        else:
+            self._exportDebugCallback({}, error=True)
 
     def _exportDebugCallback(self, result, error=False, **kwargs):
         log.info("Export debug information to %s", self._path)
