@@ -192,6 +192,7 @@ class Link(QtCore.QObject):
     def _linkCreatedCallback(self, result, error=False, **kwargs):
         if error:
             QtWidgets.QMessageBox.warning(None, "Create link", "Error while creating link: {}".format(result["message"]))
+            self.deleteLink(skip_controller=True)
             return
 
         self._initialized = True
