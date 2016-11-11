@@ -90,7 +90,10 @@ class BaseNode(QtCore.QObject):
         self._links.add(link)
 
     def deleteLink(self, link):
-        self._links.remove(link)
+        try:
+            self._links.remove(link)
+        except KeyError:
+            pass
 
     @classmethod
     def reset(cls):
@@ -313,7 +316,6 @@ class BaseNode(QtCore.QObject):
         """
 
         self._project.get(path, callback, context=context, **kwargs)
-
 
     def controllerHttpDelete(self, path, callback, context={}, **kwargs):
         """
