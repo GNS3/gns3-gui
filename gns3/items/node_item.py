@@ -19,7 +19,7 @@
 Graphical representation of a node on the QGraphicsScene.
 """
 
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg
+from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from .note_item import NoteItem
 from ..symbol import Symbol
@@ -164,25 +164,29 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self._node.setSettingValue("x", int(self.x()))
         self._node.setSettingValue("y", int(self.y()))
 
-    def addLink(self, link):
+    @qslot
+    def addLink(self, link_item, *args):
         """
         Adds a link items to this node item.
 
         :param link: LinkItem instance
         """
 
-        self._links.append(link)
+        self._links.append(link_item)
+        link_item.link().delete_link_signal.connect(self._removeLink)
         self._node.updated_signal.emit()
 
-    def removeLink(self, link):
+    @qslot
+    def _removeLink(self, link_id, *args):
         """
         Removes a link items from this node item.
 
         :param link: LinkItem instance
         """
 
-        if link in self._links:
-            self._links.remove(link)
+        for link_item in self._links:
+            if link_item.link().id == link_id:
+                self._links.remove(link_item)
 
     def links(self):
         """
@@ -193,7 +197,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         return self._links
 
-    def createdSlot(self, base_node_id):
+    @qslot
+    def createdSlot(self, base_node_id, *args):
         """
         Slot to receive events from the attached Node instance
         when a the node has been created/initialized.
@@ -201,53 +206,46 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param base_node_id: base node identifier (integer)
         """
 
-        if self is None:
-            return
         self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
         self.setSymbol(self._node.symbol())
         self.update()
 
-    def startedSlot(self):
+    @qslot
+    def startedSlot(self, *args):
         """
         Slot to receive events from the attached Node instance
         when a the node has started.
         """
 
-        if self is None:
-            return
         for link in self._links:
             link.update()
 
-    def stoppedSlot(self):
+    @qslot
+    def stoppedSlot(self, *args):
         """
         Slot to receive events from the attached Node instance
         when a the node has stopped.
         """
 
-        if self is None:
-            return
         for link in self._links:
             link.update()
 
-    def suspendedSlot(self):
+    @qslot
+    def suspendedSlot(self, *args):
         """
         Slot to receive events from the attached Node instance
         when a the node has suspended.
         """
 
-        if self is None:
-            return
         for link in self._links:
             link.update()
 
-    def updatedSlot(self):
+    @qslot
+    def updatedSlot(self, *args):
         """
         Slot to receive events from the attached Node instance
         when a the node has been updated.
         """
-
-        if self is None:
-            return
 
         self.setSymbol(self._node.settings().get("symbol"))
         self.setPos(self._node.settings().get("x", 0), self._node.settings().get("y", 0))
@@ -260,18 +258,20 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         for link in self._links:
             link.setCustomToolTip()
 
-    def deletedSlot(self):
+    @qslot
+    def deletedSlot(self, *args):
         """
         Slot to receive events from the attached Node instance
         when the node has been deleted.
         """
 
-        if self is None or not self.scene():
+        if not self.scene():
             return
         if self in self.scene().items():
             self.scene().removeItem(self)
 
-    def serverErrorSlot(self, base_node_id, message):
+    @qslot
+    def serverErrorSlot(self, base_node_id, message, *args):
         """
         Slot to receive events from the attached Node instance
         when the node has received an error from the server.
@@ -280,10 +280,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param message: error message
         """
 
-        if self:
-            self._last_error = "{message}".format(message=message)
+        self._last_error = "{message}".format(message=message)
 
-    def errorSlot(self, base_node_id, message):
+    @qslot
+    def errorSlot(self, base_node_id, message, *args):
         """
         Slot to receive events from the attached Node instance
         when the node wants to report an error.
@@ -292,8 +292,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param message: error message
         """
 
-        if self:
-            self._last_error = "{message}".format(message=message)
+        self._last_error = "{message}".format(message=message)
 
     def setCustomToolTip(self):
         """

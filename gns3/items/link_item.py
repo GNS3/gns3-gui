@@ -20,8 +20,9 @@ Base class for link items (Ethernet, serial etc.).
 Link items are graphical representation of a link on the QGraphicsScene
 """
 
+import sip
 import math
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg
+from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
 
 from ..node import Node
 from ..packet_capture import PacketCapture
@@ -54,6 +55,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
     """
 
     _draw_port_labels = False
+    delete_link_item_signal = QtCore.pyqtSignal(str)
 
     def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False, multilink=0):
 
@@ -108,17 +110,16 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         self.adjust()
 
-    def _linkDeletedSlot(self, link_id):
+    @qslot
+    def _linkDeletedSlot(self, link_id, *args):
         # first delete the port labels if any
+
         if self._source_port.label():
             self._source_port.label().setParentItem(None)
             self.scene().removeItem(self._source_port.label())
         if self._destination_port.label():
             self._destination_port.label().setParentItem(None)
             self.scene().removeItem(self._destination_port.label())
-
-        self._source_item.removeLink(self)
-        self._destination_item.removeLink(self)
 
         if self in self.scene().items():
             self.scene().removeItem(self)
@@ -397,7 +398,8 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         self.adjust()
         self.update()
 
-    def _drawCaptureSymbol(self):
+    @qslot
+    def _drawCaptureSymbol(self, *args):
         """
         Draws a capture symbol in the middle of the link to indicate a capture is active.
         """
