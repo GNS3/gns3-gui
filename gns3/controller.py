@@ -45,6 +45,9 @@ class Controller(QtCore.QObject):
         # If it's the first error we display an alert box to the user
         self._first_error = True
 
+        # If we do multiple call in order to download the same symbol we queue them
+        self._static_asset_download_queue = {}
+
     def host(self):
         return self._http_client.host()
 
@@ -200,12 +203,16 @@ class Controller(QtCore.QObject):
         path = os.path.join(self._cache_directory.name, m.hexdigest() + extension)
         if os.path.exists(path):
             callback(path)
+        elif path in self._static_asset_download_queue:
+            self._static_asset_download_queue[path].append(callback)
         else:
-            self._http_client.createHTTPQuery("GET", url, qpartial(self._getStaticCallback, callback, url, path))
+            self._static_asset_download_queue[path] = [callback]
+            self._http_client.createHTTPQuery("GET", url, qpartial(self._getStaticCallback, url, path))
 
-    def _getStaticCallback(self, callback, url, path, result, error=False, raw_body=None, **kwargs):
+    def _getStaticCallback(self, url, path, result, error=False, raw_body=None, **kwargs):
         if error:
             log.error("Error while downloading file: {}".format(url))
+            self._static_asset_download_queue = []
             return
         try:
             with open(path, "wb+") as f:
@@ -214,7 +221,9 @@ class Controller(QtCore.QObject):
             log.error("Can't write to {}: {}".format(path, str(e)))
             return
         log.debug("File stored {} for {}".format(path, url))
-        callback(path)
+        for callback in self._static_asset_download_queue[path]:
+            callback(path)
+        del self._static_asset_download_queue[path]
 
     def getSymbolIcon(self, symbol_id, callback):
         """
