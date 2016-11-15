@@ -19,6 +19,8 @@
 Graphical representation of a node on the QGraphicsScene.
 """
 
+import sip
+
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from .note_item import NoteItem
@@ -172,9 +174,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param link: LinkItem instance
         """
 
-        self._links.append(link_item)
-        link_item.link().delete_link_signal.connect(self._removeLink)
-        self._node.updated_signal.emit()
+        if not sip.isdeleted(link_item):
+            self._links.append(link_item)
+            link_item.link().delete_link_signal.connect(self._removeLink)
+            self._node.updated_signal.emit()
 
     @qslot
     def _removeLink(self, link_id, *args):
