@@ -78,7 +78,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
     def _getSettingsCallback(self, result, error=False, **kwargs):
         if error:
             if "message" in result:
-                log.error("Error while get gettings: {}".format(result["message"]))
+                log.error("Error while getting settings : {}".format(result["message"]))
             return
         self._old_settings = copy.copy(result)
         self._settings = result
@@ -97,6 +97,10 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         Controller.instance().get("/gns3vm/engines", self._listEnginesCallback)
 
     def _listEnginesCallback(self, result, error=False, **kwargs):
+        if error:
+            if "message" in result:
+                log.error("Error while getting the list of GNS3 VM engines : {}".format(result["message"]))
+            return
         self.uiGNS3VMEngineComboBox.clear()
         self._engines = result
         for engine in self._engines:
