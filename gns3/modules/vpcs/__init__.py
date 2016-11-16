@@ -25,6 +25,8 @@ import shutil
 from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
+from gns3.utils.get_default_base_config import get_default_base_config
+from gns3.utils.get_resource import get_resource
 
 from ..module import Module
 from ..module_error import ModuleError
@@ -59,6 +61,9 @@ class VPCS(Module):
         """
         Loads the settings from the persistent settings file.
         """
+
+        # Copy the default base config in the final location
+        get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt")))
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, VPCS_SETTINGS)
         if not os.path.exists(self._settings["vpcs_path"]):
