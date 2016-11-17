@@ -153,6 +153,8 @@ class Topology(QtCore.QObject):
         """
         Create load a project based on settings, not on the .gns3
         """
+        self.setProject(None)
+
         from .project import Project
         project = Project()
 
@@ -183,6 +185,7 @@ class Topology(QtCore.QObject):
         if not Controller.instance().connected():
             self._project_to_load_path = path
             return
+
         from .project import Project
         self.setProject(Project())
         self._project.load(path)
