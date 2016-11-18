@@ -44,6 +44,7 @@ class Controller(QtCore.QObject):
         self._http_client = None
         # If it's the first error we display an alert box to the user
         self._first_error = True
+        self._error_dialog = None
 
         # If we do multiple call in order to download the same symbol we queue them
         self._static_asset_download_queue = {}
@@ -109,12 +110,20 @@ class Controller(QtCore.QObject):
                 self._connecting = False
                 self.connection_failed_signal.emit()
                 if "message" in result:
-                    QtWidgets.QMessageBox.critical(self.parent(), "Connection", result["message"])
+                    self._error_dialog = QtWidgets.QMessageBox(self.parent())
+                    self._error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+                    self._error_dialog.setWindowTitle("Connection to server")
+                    self._error_dialog.setText("Error when connecting to the GNS3 server:\n{}".format(result["message"]))
+                    self._error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+                    self._error_dialog.show()
             # Try to connect again in 1 seconds
             QtCore.QTimer.singleShot(1000, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
             self._first_error = False
         else:
             self._first_error = True
+            if self._error_dialog:
+                self._error_dialog.reject()
+                self._error_dialog = None
 
     def _httpClientConnectedSlot(self):
         if not self._connected:
