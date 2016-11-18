@@ -342,7 +342,7 @@ class LocalServer(QtCore.QObject):
         if sys.platform.startswith('win'):
             if not self._checkWindowsService("npf") and not self._checkWindowsService("npcap"):
                 QtWidgets.QMessageBox.critical(self.parent(), "Error", "The NPF or NPCAP service is not installed, please install Winpcap or Npcap and reboot.")
-                return
+                return False
 
         self._port = self._settings["port"]
 
@@ -350,13 +350,13 @@ class LocalServer(QtCore.QObject):
         local_server_path = self.localServerPath()
         if not local_server_path:
             log.warn("No local server is configured")
-            return
+            return False
         if not os.path.isfile(local_server_path):
             QtWidgets.QMessageBox.critical(self.parent(), "Local server", "Could not find local server {}".format(local_server_path))
-            return
+            return False
         elif not os.access(local_server_path, os.X_OK):
             QtWidgets.QMessageBox.critical(self.parent(), "Local server", "{} is not an executable".format(local_server_path))
-            return
+            return False
 
         try:
             # check if the local address still exists
