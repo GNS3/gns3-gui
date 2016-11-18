@@ -138,7 +138,7 @@ class Topology(QtCore.QObject):
         self.project_changed_signal.emit()
 
     def _projectUpdatedSlot(self):
-        if not self._project:
+        if not self._project or not self._project.filesDir() or not self._project.filename():
             return
         self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
         project_file = os.path.join(self._project.filesDir(), self._project.filename())
