@@ -303,5 +303,4 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
                 self._project_settings["project_id"] = current.data(0, QtCore.Qt.UserRole)
                 self._project_settings["project_name"] = current.data(1, QtCore.Qt.UserRole)
-                self._project_settings["project_path"] = current.data(2, QtCore.Qt.UserRole)
         super().done(result)
