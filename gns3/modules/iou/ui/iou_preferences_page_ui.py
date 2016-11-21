@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Mon Sep 19 11:16:52 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_IOUPreferencesPageWidget(object):
+
     def setupUi(self, IOUPreferencesPageWidget):
         IOUPreferencesPageWidget.setObjectName("IOUPreferencesPageWidget")
-        IOUPreferencesPageWidget.resize(413, 361)
+        IOUPreferencesPageWidget.resize(490, 532)
         self.vboxlayout = QtWidgets.QVBoxLayout(IOUPreferencesPageWidget)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiTabWidget = QtWidgets.QTabWidget(IOUPreferencesPageWidget)
@@ -58,18 +59,15 @@ class Ui_IOUPreferencesPageWidget(object):
         self.gridLayout_4 = QtWidgets.QGridLayout(self.uiAnyServerGroupBox)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.uiIOURCPathLabel = QtWidgets.QLabel(self.uiAnyServerGroupBox)
+        self.uiIOURCPathLabel.setLineWidth(1)
+        self.uiIOURCPathLabel.setWordWrap(True)
         self.uiIOURCPathLabel.setObjectName("uiIOURCPathLabel")
         self.gridLayout_4.addWidget(self.uiIOURCPathLabel, 0, 0, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.uiIOURCPathLineEdit = QtWidgets.QLineEdit(self.uiAnyServerGroupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiIOURCPathLineEdit.sizePolicy().hasHeightForWidth())
-        self.uiIOURCPathLineEdit.setSizePolicy(sizePolicy)
-        self.uiIOURCPathLineEdit.setObjectName("uiIOURCPathLineEdit")
-        self.horizontalLayout_5.addWidget(self.uiIOURCPathLineEdit)
+        self.IOULicenceTextEdit = QtWidgets.QPlainTextEdit(self.uiAnyServerGroupBox)
+        self.IOULicenceTextEdit.setObjectName("IOULicenceTextEdit")
+        self.horizontalLayout_5.addWidget(self.IOULicenceTextEdit)
         self.uiIOURCPathToolButton = QtWidgets.QToolButton(self.uiAnyServerGroupBox)
         self.uiIOURCPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiIOURCPathToolButton.setObjectName("uiIOURCPathToolButton")
@@ -101,9 +99,8 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiIouyapPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to iouyap:"))
         self.uiLicensecheckBox.setText(_translate("IOUPreferencesPageWidget", "Check for a valid IOU license key"))
         self.uiUseLocalServercheckBox.setText(_translate("IOUPreferencesPageWidget", "Use the local server (Linux only)"))
-        self.uiAnyServerGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "Any server"))
-        self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to IOURC (license, pushed to servers):"))
+        self.uiAnyServerGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "IOU Licence "))
+        self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "<html><head/><body><p>IOU require a licence from CISCO. Copy / Paste here the content of the iourc file or use the browse button to fill the licence.</p></body></html>"))
         self.uiIOURCPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("IOUPreferencesPageWidget", "Restore defaults"))
-

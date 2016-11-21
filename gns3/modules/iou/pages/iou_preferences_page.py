@@ -62,11 +62,17 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         if not path:
             return
 
-        if not os.access(path, os.R_OK):
-            QtWidgets.QMessageBox.critical(self, "IOURC file", "{} cannot be read".format(os.path.basename(path)))
+        try:
+            with open(path) as f:
+                content = f.read().strip()
+        except OSError as e:
+            QtWidgets.QMessageBox.critical(self, "IOURC file", "{} cannot be read.\n{}".format(os.path.basename(path), str(e)))
+            return
+        if not content.startswith("[license]"):
+            QtWidgets.QMessageBox.critical(self, "IOURC file", "This is not a valid IOURC file")
             return
 
-        self.uiIOURCPathLineEdit.setText(os.path.normpath(path))
+        self.IOULicenceTextEdit.setPlainText(content)
 
     def _iouyapPathBrowserSlot(self):
         """
@@ -131,7 +137,7 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         :param settings: IOU settings
         """
 
-        self.uiIOURCPathLineEdit.setText(settings["iourc_path"])
+        self.IOULicenceTextEdit.setPlainText(settings["iourc_content"])
         self.uiIouyapPathLineEdit.setText(settings["iouyap_path"])
         self.uiLicensecheckBox.setChecked(settings["license_check"])
         self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
@@ -153,13 +159,10 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         if iouyap_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkIouyapPath(iouyap_path):
             return
 
-        iourc_path = self.uiIOURCPathLineEdit.text().strip()
-        if iourc_path and self.uiUseLocalServercheckBox.isChecked() and iourc_path and not os.path.exists(iourc_path):
-            QtWidgets.QMessageBox.critical(self, "iourc", '"{}" does not exist'.format(iourc_path))
-            return
+        iourc_content = self.IOULicenceTextEdit.toPlainText().strip().replace("\r\n", "\n")
 
         new_settings = {"iouyap_path": iouyap_path,
-                        "iourc_path": iourc_path,
+                        "iourc_content": iourc_content,
                         "license_check": self.uiLicensecheckBox.isChecked(),
                         "use_local_server": self.uiUseLocalServercheckBox.isChecked()}
         IOU.instance().setSettings(new_settings)

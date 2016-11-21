@@ -35,36 +35,25 @@ def fake_bin(tmpdir):
     return path
 
 
-@pytest.fixture
-def fake_iourc(tmpdir):
-    path = str(tmpdir / "iourc")
-    with open(path, "wb+") as f:
-        f.write(b"[license]\r\ngns42 = dsfdsfdsfdsf;\r\n")
-    return path
-
-
 def test_iou_device_init(local_server, project):
 
     iou_device = IOUDevice(None, local_server, project)
 
 
-def test_iou_device_create(iou_device, project, fake_iourc):
+def test_iou_device_create(iou_device, project):
 
     with patch('gns3.project.Project.post') as mock:
-        iou_device._module._settings["iourc_path"] = fake_iourc
-
         iou_device.create("/tmp/iou.bin", name="PC 1")
         mock.assert_called_with("/nodes",
                                 iou_device.createNodeCallback,
                                 body={
-                                      'node_id': iou_device._node_id,
-                                      'name': 'PC 1',
-                                      'properties': {
-                                          'path': '/tmp/iou.bin',
-                                          'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
-                                      },
-                                      'node_type': 'iou',
-                                      'compute_id': 'local'
+                                    'node_id': iou_device._node_id,
+                                    'name': 'PC 1',
+                                    'properties': {
+                                        'path': '/tmp/iou.bin',
+                                    },
+                                    'node_type': 'iou',
+                                    'compute_id': 'local'
                                 },
                                 context={},
                                 timeout=120)
@@ -83,26 +72,23 @@ def test_iou_device_create(iou_device, project, fake_iourc):
         assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
-def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
+def test_iou_device_setup_with_uuid(iou_device, project):
     """
     If we have an ID that mean the VM already exits and we should not send startup_script
     """
 
     with patch('gns3.project.Project.post') as mock:
-        iou_device._module._settings["iourc_path"] = fake_iourc
-
         iou_device.create("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c")
         mock.assert_called_with("/nodes",
                                 iou_device.createNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
-                                          'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n'
                                       },
                                       'node_type': 'iou',
                                       'node_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'compute_id': 'local'
-                                },
+                                      },
                                 context={},
                                 timeout=120)
 
@@ -117,11 +103,10 @@ def test_iou_device_setup_with_uuid(iou_device, project, fake_iourc):
         }
         iou_device.createNodeCallback(params)
 
-
         assert iou_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
 
 
-def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_iourc):
+def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir):
     """
     If we have an ID that mean the VM already exits and we should not send startup_script
     """
@@ -131,21 +116,18 @@ def test_iou_device_setup_with_startup_config(iou_device, project, tmpdir, fake_
         f.write("hostname %h")
 
     with patch('gns3.project.Project.post') as mock:
-        iou_device._module._settings["iourc_path"] = fake_iourc
-
         iou_device.create("/tmp/iou.bin", name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={"startup_config": startup_config})
         mock.assert_called_with("/nodes",
                                 iou_device.createNodeCallback,
                                 body={'name': 'PC 1',
                                       'properties': {
                                           'path': '/tmp/iou.bin',
-                                          'iourc_content': '[license]\r\ngns42 = dsfdsfdsfdsf;\r\n',
                                           'startup_config_content': 'hostname %h'
                                       },
                                       'node_type': 'iou',
                                       'node_id': 'aec7a00c-e71c-45a6-8c04-29e40732883c',
                                       'compute_id': 'local'
-                                },
+                                      },
                                 context={},
                                 timeout=120)
 

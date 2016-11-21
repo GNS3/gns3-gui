@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>413</width>
-    <height>361</height>
+    <width>490</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,16 @@
        <string>General settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
@@ -90,27 +99,26 @@
        <item>
         <widget class="QGroupBox" name="uiAnyServerGroupBox">
          <property name="title">
-          <string>Any server</string>
+          <string>IOU Licence </string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
            <widget class="QLabel" name="uiIOURCPathLabel">
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
             <property name="text">
-             <string>Path to IOURC (license, pushed to servers):</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IOU require a licence from CISCO. Copy / Paste here the content of the iourc file or use the browse button to fill the licence.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QLineEdit" name="uiIOURCPathLineEdit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
+             <widget class="QPlainTextEdit" name="IOULicenceTextEdit"/>
             </item>
             <item>
              <widget class="QToolButton" name="uiIOURCPathToolButton">

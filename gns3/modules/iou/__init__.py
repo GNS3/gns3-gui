@@ -81,15 +81,6 @@ class IOU(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        # save some settings to the local server config file
-        server_settings = {
-            "iourc_path": self._settings["iourc_path"],
-            "iouyap_path": self._settings["iouyap_path"],
-            "license_check": self._settings["license_check"]
-        }
-        config = LocalServerConfig.instance()
-        config.saveSettings(self.__class__.__name__, server_settings)
-
     def _loadIOUDevices(self):
         """
         Load the IOU devices from the persistent settings file.

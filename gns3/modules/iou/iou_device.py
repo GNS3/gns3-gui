@@ -58,8 +58,7 @@ class IOUDevice(Node):
                                "ethernet_adapters": IOU_DEVICE_SETTINGS["ethernet_adapters"],
                                "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"],
                                "console": None,
-                               "console_host": None,
-                               "iourc_content": None}
+                               "console_host": None}
 
         self.settings().update(iou_device_settings)
 
@@ -87,7 +86,6 @@ class IOUDevice(Node):
                 params["private_config_content"] = base_config_content
             del additional_settings["private_config"]
 
-        params = self._addIourcContentToParams(params)
         params.update(additional_settings)
         self._create(name, node_id, params, default_name_format)
 
@@ -109,26 +107,9 @@ class IOUDevice(Node):
             return
 
         params = {}
-        params = self._addIourcContentToParams(params)
 
         log.debug("{} is starting".format(self.name()))
         self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, progressText="{} is starting".format(self.name()))
-
-    def _addIourcContentToParams(self, params):
-        """
-        If an IOURC file exist push it when starting the IOU device
-        """
-        # push the iourc file
-        module_settings = self._module.settings()
-        if module_settings["iourc_path"] and os.path.isfile(module_settings["iourc_path"]):
-            try:
-                with open(module_settings["iourc_path"], "rb") as f:
-                    params["iourc_content"] = f.read().decode("utf-8")
-            except OSError as e:
-                log.error("Can't open iourc file {}: {}".format(module_settings["iourc_path"], e))
-            except UnicodeDecodeError as e:
-                log.error("Invalid IOURC file {}: {}".format(module_settings["iourc_path"], e))
-        return params
 
     def update(self, new_settings):
         """

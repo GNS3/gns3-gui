@@ -24,7 +24,7 @@ from gns3.node import Node
 
 
 IOU_SETTINGS = {
-    "iourc_path": "",
+    "iourc_content": "",
     "iouyap_path": "",
     "license_check": True,
     "use_local_server": True,

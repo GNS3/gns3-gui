@@ -48,7 +48,6 @@ def empty_config(tmpdir, images_dir, symbols_dir, local_server_config):
         "IOU": {
             "devices": [
             ],
-            "iourc_path": "/Users/noplay/code/gns3/gns3-vagrant/images/iou/iourc.txt",
             "iouyap_path": "",
             "license_check": True,
             "use_local_server": False
