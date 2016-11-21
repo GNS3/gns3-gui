@@ -124,6 +124,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         # Class name, changed signal
         widget_to_watch = {
             QtWidgets.QLineEdit: "textChanged",
+            QtWidgets.QPlainTextEdit: "textChanged",
             # QtWidgets.QTreeWidget: "itemChanged",
             QtWidgets.QComboBox: "currentIndexChanged",
             QtWidgets.QSpinBox: "valueChanged",
