@@ -426,10 +426,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 return
             self._appliance_wizard.show()
             self._appliance_wizard.exec_()
-        elif path.endswith(".gns3project") or path.endswith(".gns3p"):
-            if Controller.instance().isRemote():
-                QtWidgets.QMessageBox.critical(self, "Project", "You can't remote open a .gns3 please use import / export in order to provide to the remote server the full project")
-                return
+        elif path.endswith(".gns3"):
             Topology.instance().loadProject(path)
         else:
             try:
