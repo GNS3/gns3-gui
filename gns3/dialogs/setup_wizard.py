@@ -243,7 +243,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             self.uiLocalServerStatusLabel.setText("Please wait connection to the GNS3 server")
         else:
             local_server_settings = LocalServer.instance().localServerSettings()
-            self.uiLocalServerStatusLabel.setText("Connection to local server failed.\n* Make sure GNS3 is authorized in your firewall.\n* Go back and try to change server port\n* Please check in a browser if you can connect to {protocol}://{host}:{port}.\n* If it's not working try to run {path} in a terminal to see if you have an error.".format(protocol=local_server_settings["protocol"], host=local_server_settings["host"], port=local_server_settings["port"], path=local_server_settings["path"]))
+            self.uiLocalServerStatusLabel.setText("Connection to local server failed.\n* Make sure GNS3 is allowed in your firewall.\n* Go back and try to change the server port\n* Please check with a browser if you can connect to {protocol}://{host}:{port}.\n* Try to run {path} in a terminal to see if you have an error if the above does not work.".format(protocol=local_server_settings["protocol"], host=local_server_settings["host"], port=local_server_settings["port"], path=local_server_settings["path"]))
 
     def _GNS3VMSettings(self):
         return self._gns3_vm_settings
