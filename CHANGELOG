@@ -1,5 +1,34 @@
 # Change Log
 
+## 2.0.0 alpha 4 24/11/2016
+* Mark preferences changes when you change a QPlainTextEdit
+* Force the VPCS config initial file
+* Replace the IOU licence path by an input text
+* Fix 403 when loading a remote project
+* Fix some possible server not starting on Windows
+* Hide the connection refused dialog when we success to reconnect
+* Avoid a rare crash when changing topology
+* When loading another project disconnect from current project
+* Do not crash if we can't list remote list of GNS3 VM engines
+* Init the VPCS base config
+* Fix invalid ressource path on OSX
+* Fix segfault when deleting a node
+* Do not download multiple time the same symbol
+* Kill tail process when capture stop
+* Fix Topology summary contain non existing links
+* Fix a rare crash when deleting a link
+* Fix export of debug informations when not connected to the controller
+* Fix AttributeError: 'DockerVM' object has no attribute 'server'
+* Fix error message if you double click on builtin switch
+* Fix a rare crash in packet capture
+* Restrict ubridge to admin users on OSX
+* Natural sort of Nodes in topology summary
+* Drop serial console type
+* Display an error if you try to open a 0.8.x file
+* Fix tab order when editing a compute
+* Fix a crash in ethernet switch settings
+* Dissallow unknown extensions
+
 ## 2.0.0 alpha 3 28/10/2016
 * Fix error when opening a project from the cli with a gns3 installed via setup.py
 * Fix a rare crash in snapshot dialog
