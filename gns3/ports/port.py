@@ -19,6 +19,8 @@
 Base class for port objects.
 """
 
+import sip
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -240,7 +242,8 @@ class Port:
         self._destination_node = None
         self._destination_port = None
         if self._port_label:
-            self._port_label.deleteLater()
+            if not sip.isdeleted(self._port_label):
+                self._port_label.deleteLater()
             self._port_label = None
 
     def isFree(self):
