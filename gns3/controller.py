@@ -221,7 +221,7 @@ class Controller(QtCore.QObject):
     def _getStaticCallback(self, url, path, result, error=False, raw_body=None, **kwargs):
         if error:
             log.error("Error while downloading file: {}".format(url))
-            self._static_asset_download_queue = []
+            self._static_asset_download_queue = {}
             return
         try:
             with open(path, "wb+") as f:
