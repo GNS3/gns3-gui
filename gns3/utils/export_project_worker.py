@@ -43,8 +43,9 @@ class ExportProjectWorker(QtCore.QObject):
 
         vm_server = None
         self._project.get("/export?include_images={}".format(self._include_images),
-                              self._exportReceived,
-                              downloadProgressCallback=self._downloadFileProgress)
+                          self._exportReceived,
+                          downloadProgressCallback=self._downloadFileProgress,
+                          timeout=None)
 
     def _exportReceived(self, content, error=False, server=None, context={}, **kwargs):
         if error:
