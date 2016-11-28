@@ -68,6 +68,9 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "IOURC file", "{} cannot be read.\n{}".format(os.path.basename(path), str(e)))
             return
+        except UnicodeDecodeError as e:
+            QtWidgets.QMessageBox.critical(self, "IOURC file", "{} is not a licence file.".format(os.path.basename(path)))
+            return
         if not content.startswith("[license]"):
             QtWidgets.QMessageBox.critical(self, "IOURC file", "This is not a valid IOURC file")
             return
