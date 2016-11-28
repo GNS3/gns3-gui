@@ -214,19 +214,14 @@ else:
 
 GENERAL_SETTINGS = {
     "style": DEFAULT_STYLE,
-    "auto_screenshot": True,
     "check_for_update": True,
     "experimental_features": False,
     "send_stats": True,
     "stats_visitor_id": str(uuid.uuid4()),  # An anonymous id for stats
     "last_check_for_update": 0,
-    "link_manual_mode": True,
     "telnet_console_command": DEFAULT_TELNET_CONSOLE_COMMAND,
     "vnc_console_command": DEFAULT_VNC_CONSOLE_COMMAND,
-    "auto_close_console": True,
-    "bring_console_to_front": True,
     "delay_console_all": 500,
-    "default_local_news": False,
     "hide_getting_started_dialog": False,
     "hide_setup_wizard": False,
     "hide_new_appliance_template_button": False,

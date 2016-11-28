@@ -437,30 +437,13 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
           <item row="0" column="0">
-           <widget class="QCheckBox" name="uiCloseConsoleWindowsOnDeleteCheckBox">
-            <property name="text">
-             <string>Close any connected console window when deleting a node</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="uiBringConsoleWindowToFrontCheckBox">
-            <property name="toolTip">
-             <string>&lt;html&gt;This option will attempt to bring existing opened console window to front, instead of opening a new window.&lt;br&gt;If no existing opened console window exists, it will start a new  console window.&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Bring console window to front (experimental feature)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
            <widget class="QLabel" name="uiSlowConsoleAllLabel">
             <property name="text">
              <string>Delay between each console launch when consoling to all devices:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="1" column="0">
            <widget class="QSpinBox" name="uiDelayConsoleAllSpinBox">
             <property name="suffix">
              <string> ms</string>
@@ -589,7 +572,7 @@
        <property name="bottomMargin">
         <number>10</number>
        </property>
-       <item row="10" column="0" colspan="2">
+       <item row="9" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QPushButton" name="uiDefaultLabelFontPushButton">
@@ -654,24 +637,14 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiLinkManualModeCheckBox">
-         <property name="text">
-          <string>Always use manual mode when adding links</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
+       <item row="7" column="0">
         <widget class="QLabel" name="uiLabelPreviewLabel">
          <property name="text">
           <string>Default label style:</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="0" colspan="2">
+       <item row="8" column="0" colspan="2">
         <widget class="QPlainTextEdit" name="uiDefaultLabelStylePlainTextEdit">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
@@ -731,7 +704,7 @@
          </property>
         </widget>
        </item>
-       <item row="11" column="0">
+       <item row="10" column="0">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -770,16 +743,6 @@
        <property name="bottomMargin">
         <number>10</number>
        </property>
-       <item>
-        <widget class="QCheckBox" name="uiAutoScreenshotCheckBox">
-         <property name="text">
-          <string>Automatically take a screenshot when saving a project</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QCheckBox" name="uiCheckForUpdateCheckBox">
          <property name="text">

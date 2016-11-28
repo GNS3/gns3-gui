@@ -84,9 +84,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         if item:
             self.uiImageDirectoriesListWidget.takeItem(self.uiImageDirectoriesListWidget.currentRow())
 
-        self.uiCloseConsoleWindowsOnDeleteCheckBox.hide()  # FIXME: not implemented
-        self.uiBringConsoleWindowToFrontCheckBox.hide()  # FIXME: not implemented
-
     def _projectsPathSlot(self):
         """
         Slot to select the projects directory path.
@@ -259,17 +256,13 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiConfigsPathLineEdit.setText(local_server["configs_path"])
         self.uiStatsCheckBox.setChecked(settings["send_stats"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
-        self.uiAutoScreenshotCheckBox.setChecked(settings["auto_screenshot"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
-        self.uiLinkManualModeCheckBox.setChecked(settings["link_manual_mode"])
         self.uiExperimentalFeaturesCheckBox.setChecked(settings["experimental_features"])
         self.uiTelnetConsoleCommandLineEdit.setText(settings["telnet_console_command"])
         self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
         index = self.uiStyleComboBox.findText(settings["style"])
         if index != -1:
             self.uiStyleComboBox.setCurrentIndex(index)
-        self.uiCloseConsoleWindowsOnDeleteCheckBox.setChecked(settings["auto_close_console"])
-        self.uiBringConsoleWindowToFrontCheckBox.setChecked(settings["bring_console_to_front"])
         self.uiDelayConsoleAllSpinBox.setValue(settings["delay_console_all"])
 
         self.uiVNCConsoleCommandLineEdit.setText(settings["vnc_console_command"])
@@ -333,15 +326,11 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
 
         new_general_settings = {
-            "auto_screenshot": self.uiAutoScreenshotCheckBox.isChecked(),
             "style": self.uiStyleComboBox.currentText(),
             "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
-            "link_manual_mode": self.uiLinkManualModeCheckBox.isChecked(),
             "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
             "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
-            "auto_close_console": self.uiCloseConsoleWindowsOnDeleteCheckBox.isChecked(),
-            "bring_console_to_front": self.uiBringConsoleWindowToFrontCheckBox.isChecked(),
             "delay_console_all": self.uiDelayConsoleAllSpinBox.value(),
             "send_stats": self.uiStatsCheckBox.isChecked(),
             "multi_profiles": self.uiMultiProfilesCheckBox.isChecked()
