@@ -121,8 +121,9 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
             self._destination_port.label().setParentItem(None)
             self.scene().removeItem(self._destination_port.label())
 
-        if self in self.scene().items():
-            self.scene().removeItem(self)
+        if self.scene():
+            if self in self.scene().items():
+                self.scene().removeItem(self)
 
     def delete(self):
         """
