@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import sip
 import json
 import copy
 import ipaddress
@@ -171,21 +171,21 @@ class HTTPClient(QtCore.QObject):
         Called when a query is over
         """
 
-        if HTTPClient._progress_callback:
+        if HTTPClient._progress_callback and not sip.isdeleted(HTTPClient):
             HTTPClient._progress_callback.remove_query_signal.emit(query_id)
 
     def _notify_progress_upload(self, query_id, sent, total):
         """
         Called when a query upload progress
         """
-        if HTTPClient._progress_callback:
+        if HTTPClient._progress_callback and not sip.isdeleted(HTTPClient):
             HTTPClient._progress_callback.progress_signal.emit(query_id, sent, total)
 
     def _notify_progress_download(self, query_id, sent, total):
         """
         Called when a query download progress
         """
-        if HTTPClient._progress_callback:
+        if HTTPClient._progress_callback and not sip.isdeleted(HTTPClient):
             HTTPClient._progress_callback.progress_signal.emit(query_id, sent, total)
 
     @classmethod
@@ -453,7 +453,7 @@ class HTTPClient(QtCore.QObject):
         if downloadProgressCallback is not None:
             response.readyRead.connect(qpartial(self._readyReadySlot, response, downloadProgressCallback, context, server))
 
-        if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog():
+        if HTTPClient._progress_callback and HTTPClient._progress_callback.progress_dialog() and not sip.isdeleted(HTTPClient._progress_callback.progress_dialog()):
             request_canceled = qpartial(self._requestCanceled, response, context)
             HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
 
