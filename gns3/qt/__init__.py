@@ -95,11 +95,15 @@ class LogQMessageBox(QtWidgets.QMessageBox):
     @staticmethod
     def critical(parent, title, message, *args):
         log.critical(re.sub(r"<[^<]+?>", "", message), stack_info=LogQMessageBox.stack_info())
+        if parent and sip.isdeleted(parent):
+            return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).critical(parent, title, message, *args)
 
     @staticmethod
     def warning(parent, title, message, *args):
         log.warning(re.sub(r"<[^<]+?>", "", message))
+        if parent and sip.isdeleted(parent):
+            return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).warning(parent, title, message, *args)
 
     @staticmethod
