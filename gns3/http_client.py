@@ -160,7 +160,7 @@ class HTTPClient(QtCore.QObject):
         """
         Called when a query start
         """
-        if HTTPClient._progress_callback:
+        if HTTPClient._progress_callback and not sip.isdeleted(HTTPClient._progress_callback):
             if progress_text:
                 HTTPClient._progress_callback.add_query_signal.emit(query_id, progress_text, response)
             else:
