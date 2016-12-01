@@ -27,7 +27,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def sudo(command, parent=None, shell=False):
+def sudo(*commands, parent=None, shell=False):
     """
     Run a command  as an administrator.
     """
@@ -38,9 +38,13 @@ def sudo(command, parent=None, shell=False):
 
     while True:
         if not sys.platform.startswith("win32"):
+            command_detail = []
+            for command in commands:
+                command_detail.append(' '.join(command))
+
             password, ok = QtWidgets.QInputDialog.getText(parent,
                                                           "Run as administrator",
-                                                          "Please enter your password to proceed.\nCommand: {}".format(' '.join(command)),
+                                                          "Please enter your password to proceed.\nCommand:\n{}".format('\n'.join(command_detail)),
                                                           QtWidgets.QLineEdit.Password, "")
             if not ok:
                 return False
@@ -55,18 +59,22 @@ def sudo(command, parent=None, shell=False):
                 return False
 
             # sudo shouldn't need the password again.
-            waited_command = ["sudo"]
-            waited_command.extend(command)
-            worker = WaitForCommandWorker(waited_command, shell=shell)
+            for command in commands:
+                waited_command = ["sudo"]
+                waited_command.extend(command)
+                worker = WaitForCommandWorker(waited_command, shell=shell)
 
-            for line in worker.output().decode("utf-8", errors="ignore").splitlines():
-                log.info(line)
-
+                for line in worker.output().decode("utf-8", errors="ignore").splitlines():
+                    log.info(line)
+                progress_dialog = ProgressDialog(worker, "Run as administrator", "Executing command...", "Cancel", busy=True, parent=parent)
+                progress_dialog.show()
+                if not progress_dialog.exec_():
+                    return False
         else:
-            worker = WaitForRunAsWorker(command)
-
-        progress_dialog = ProgressDialog(worker, "Run as administrator", "Executing command...", "Cancel", busy=True, parent=parent)
-        progress_dialog.show()
-        if not progress_dialog.exec_():
-            return False
+            for command in commands:
+                worker = WaitForRunAsWorker(command)
+                progress_dialog = ProgressDialog(worker, "Run as administrator", "Executing command...", "Cancel", busy=True, parent=parent)
+                progress_dialog.show()
+                if not progress_dialog.exec_():
+                    return False
         return True
