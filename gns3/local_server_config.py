@@ -110,6 +110,8 @@ class LocalServerConfig:
                 settings[name] = self._config[section].getfloat(name, default)
             else:
                 settings[name] = self._config[section].get(name, default)
+                if settings[name] == "None":
+                    settings[name] = None
 
         # sync with the config file
         self.saveSettings(section, settings)

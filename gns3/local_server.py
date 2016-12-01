@@ -92,8 +92,9 @@ class LocalServer(QtCore.QObject):
         self._port = self._settings.get("port", 3080)
 
         if not self._settings.get("auto_start", True):
-            self._http_client = HTTPClient(self._settings)
-            Controller.instance().setHttpClient(self._http_client)
+            if self._settings.get("host") is None:
+                self._http_client = HTTPClient(self._settings)
+                Controller.instance().setHttpClient(self._http_client)
         else:
             self._http_client = None
 
@@ -248,7 +249,10 @@ class LocalServer(QtCore.QObject):
             else:
                 self.stopLocalServer(wait=True)
 
-            self._http_client = HTTPClient(self._settings)
+            if self._settings.get("host") is None:
+                self._http_client = None
+            else:
+                self._http_client = HTTPClient(self._settings)
             Controller.instance().setHttpClient(self._http_client)
 
     def shouldLocalServerAutoStart(self):
@@ -259,7 +263,7 @@ class LocalServer(QtCore.QObject):
         :returns: boolean
         """
 
-        return self._settings["auto_start"]
+        return self._settings["auto_start"] and self._settings["host"] is not None
 
     def localServerPath(self):
         """

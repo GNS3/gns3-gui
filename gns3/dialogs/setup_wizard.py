@@ -25,8 +25,10 @@ from gns3.local_server import LocalServer
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker
 
+from ..settings import DEFAULT_LOCAL_SERVER_HOST
 from ..ui.setup_wizard_ui import Ui_SetupWizard
 from ..version import __version__
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -202,12 +204,18 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         elif self.page(page_id) == self.uiRemoteControllerWizardPage:
             local_server_settings = LocalServer.instance().localServerSettings()
-            self.uiRemoteMainServerHostLineEdit.setText(local_server_settings["host"])
+            if local_server_settings["host"] is None:
+                self.uiRemoteMainServerHostLineEdit.setText(DEFAULT_LOCAL_SERVER_HOST)
+                self.uiRemoteMainServerAuthCheckBox.setChecked(False)
+                self.uiRemoteMainServerUserLineEdit.setText("")
+                self.uiRemoteMainServerPasswordLineEdit.setText("")
+            else:
+                self.uiRemoteMainServerHostLineEdit.setText(local_server_settings["host"])
+                self.uiRemoteMainServerAuthCheckBox.setChecked(local_server_settings["auth"])
+                self.uiRemoteMainServerUserLineEdit.setText(local_server_settings["user"])
+                self.uiRemoteMainServerPasswordLineEdit.setText(local_server_settings["password"])
             self.uiRemoteMainServerPortSpinBox.setValue(local_server_settings["port"])
-            self.uiRemoteMainServerUserLineEdit.setText(local_server_settings["user"])
-            self.uiRemoteMainServerPasswordLineEdit.setText(local_server_settings["password"])
             self.uiRemoteMainServerProtocolComboBox.setCurrentText(local_server_settings["protocol"])
-            self.uiRemoteMainServerAuthCheckBox.setChecked(local_server_settings["auth"])
         elif self.page(page_id) == self.uiLocalServerStatusWizardPage:
             self._refreshLocalServerStatusSlot()
 
@@ -398,6 +406,10 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         if result:
             settings["hide_setup_wizard"] = True
         else:
+            local_server_settings = LocalServer.instance().localServerSettings()
+            if local_server_settings["host"] is None:
+                local_server_settings["host"] = DEFAULT_LOCAL_SERVER_HOST
+                LocalServer.instance().updateLocalServerSettings(local_server_settings)
             settings["hide_setup_wizard"] = self.uiShowCheckBox.isChecked()
 
         self.parentWidget().setSettings(settings)
