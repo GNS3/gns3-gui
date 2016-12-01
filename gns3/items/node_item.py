@@ -121,6 +121,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         if self._initialized:
             self._node.setGraphics(self)
 
+    @qslot
     def setSymbol(self, symbol):
         """
         :param symbol: Change the symbol path
