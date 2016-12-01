@@ -162,7 +162,10 @@ class Controller(QtCore.QObject):
         """
         if compute_id.startswith("http:") or compute_id.startswith("https:"):
             from .compute_manager import ComputeManager
-            return ComputeManager.instance().getCompute(compute_id).id()
+            try:
+                return ComputeManager.instance().getCompute(compute_id).id()
+            except KeyError:
+                return compute_id
         return compute_id
 
     def put(self, *args, **kwargs):
