@@ -313,6 +313,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 return False
 
             LocalServer.instance().updateLocalServerSettings(local_server_settings)
+            LocalServer.instance().localServerAutoStartIfRequire()
 
         elif self.currentPage() == self.uiRemoteControllerWizardPage:
             local_server_settings = LocalServer.instance().localServerSettings()

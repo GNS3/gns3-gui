@@ -767,7 +767,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         with Progress.instance().context(min_duration=0):
             setup_wizard = SetupWizard(self)
             setup_wizard.show()
-            if setup_wizard.exec_():
+            res = setup_wizard.exec_()
+            # start and connect to the local server if needed
+            LocalServer.instance().localServerAutoStartIfRequire()
+            if res:
                 self._newApplianceActionSlot()
 
     def _aboutQtActionSlot(self):
@@ -1010,9 +1013,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         Controller.instance().connected_signal.connect(self._controllerConnectedSlot)
 
-        # start and connect to the local server if needed
-        LocalServer.instance().localServerAutoStartIfRequire()
-
         self._analytics_client.sendScreenView("Main Window")
         self.uiGraphicsView.setEnabled(False)
 
@@ -1020,6 +1020,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not self._settings["hide_setup_wizard"]:
             self._setupWizardActionSlot()
         else:
+            # start and connect to the local server if needed
+            LocalServer.instance().localServerAutoStartIfRequire()
             if self._open_file_at_startup:
                 self.loadPath(self._open_file_at_startup)
                 self._open_file_at_startup = None
