@@ -495,6 +495,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if current is None or sip.isdeleted(current):
                 return False
             version = current.data(0, QtCore.Qt.UserRole)
+            if version is None:
+                return False
             appliance = current.data(2, QtCore.Qt.UserRole)
             if not self._appliance.is_version_installable(version["name"]):
                 QtWidgets.QMessageBox.warning(self, "Appliance", "Sorry, you cannot install {} with missing files".format(appliance["name"]))
