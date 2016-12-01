@@ -232,7 +232,8 @@ class Port:
                                                                port=self._destination_port.name())
         return ""
 
-    def setFree(self):
+    @qslot
+    def setFree(self, *args):
         """
         Frees this port.
         """
