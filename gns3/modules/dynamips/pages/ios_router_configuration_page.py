@@ -204,7 +204,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                     self._widget_slots[slot_number].addItems([""] + module_list)
 
             # set the combox box to the correct slot adapter if configured.
-            if settings["slot" + str(slot_number)]:
+            if settings.get("slot" + str(slot_number)):
                 index = self._widget_slots[slot_number].findText(settings["slot" + str(slot_number)])
                 if index != -1:
                     self._widget_slots[slot_number].setCurrentIndex(index)
@@ -222,7 +222,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 self._widget_wics[wic_number].addItems([""] + wic_list)
 
                 # set the combox box to the correct WIC if configured.
-                if settings["wic" + str(wic_number)]:
+                if settings.get("wic" + str(wic_number)):
                     index = self._widget_wics[wic_number].findText(settings["wic" + str(wic_number)])
                     if index != -1:
                         self._widget_wics[wic_number].setCurrentIndex(index)
