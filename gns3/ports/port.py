@@ -21,6 +21,8 @@ Base class for port objects.
 
 import sip
 
+from ..qt import qslot
+
 import logging
 log = logging.getLogger(__name__)
 

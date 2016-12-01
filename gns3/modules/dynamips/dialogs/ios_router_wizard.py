@@ -22,7 +22,7 @@ Wizard for IOS routers.
 import os
 import re
 
-from gns3.qt import QtCore, QtGui, QtWidgets
+from gns3.qt import QtCore, QtGui, QtWidgets, qslot
 from gns3.node import Node
 from gns3.topology import Topology
 from gns3.utils.run_in_terminal import RunInTerminal
@@ -262,7 +262,8 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
         QtWidgets.QMessageBox.critical(self, "Idle-PC finder", "Could not create IOS router: {}".format(message))
 
-    def _computeAutoIdlepcCallback(self, result, error=False, **kwargs):
+    @qslot
+    def _computeAutoIdlepcCallback(self, result, error=False, *args, **kwargs):
         """
         Callback for computeAutoIdlepc.
 
