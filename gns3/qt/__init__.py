@@ -54,6 +54,15 @@ QtCore.Property = QtCore.pyqtProperty
 from PyQt5.QtWidgets import QFileDialog as OldFileDialog
 
 
+def sip_is_deleted(obj):
+    """
+    :return: True if object no longer exists
+    """
+    if obj is None or (isinstance(obj, sip.simplewrapper) and sip.isdeleted(obj)):
+        return True
+    return False
+
+
 class QFileDialog(OldFileDialog):
 
     @staticmethod
@@ -95,14 +104,14 @@ class LogQMessageBox(QtWidgets.QMessageBox):
     @staticmethod
     def critical(parent, title, message, *args):
         log.critical(re.sub(r"<[^<]+?>", "", message), stack_info=LogQMessageBox.stack_info())
-        if parent and sip.isdeleted(parent):
+        if sip_is_deleted(parent):
             return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).critical(parent, title, message, *args)
 
     @staticmethod
     def warning(parent, title, message, *args):
         log.warning(re.sub(r"<[^<]+?>", "", message))
-        if parent and sip.isdeleted(parent):
+        if sip_is_deleted(parent):
             return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).warning(parent, title, message, *args)
 
@@ -207,7 +216,7 @@ def qpartial(func, *args, **kwargs):
         if isinstance(func.__self__, QtCore.QObject):
 
             def partial(*args, **kwargs):
-                if sip.isdeleted(func.__self__):
+                if sip_is_deleted(func.__self__):
                     return
                 return func(*args, **kwargs)
             return functools.partial(partial, *args, **kwargs)
@@ -222,7 +231,7 @@ def qslot(func):
     """
     def func_wrapper(*args, **kwargs):
         if len(args) > 0:
-            if args[0] is None or sip.isdeleted(args[0]):
+            if sip_is_deleted(args[0]):
                 return lambda: True
         return func(*args, **kwargs)
     return func_wrapper
