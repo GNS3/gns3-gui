@@ -895,7 +895,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and item.node().initialized():
+            if isinstance(item, NodeItem) and item.node().initialized() and hasattr(item.node(), "configPage"):
                 items.append(item)
 
         if items:
