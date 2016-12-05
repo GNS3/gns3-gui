@@ -43,7 +43,6 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         self.setupUi(self)
 
         # connect signals
-        self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVmrunPathToolButton.clicked.connect(self._vmrunPathBrowserSlot)
         self.uiConfigureVmnetPushButton.clicked.connect(self._configureVmnetSlot)
@@ -156,7 +155,6 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         self.uiVMnetStartRangeSpinBox.setValue(settings["vmnet_start_range"])
         self.uiVMnetEndRangeSpinBox.setValue(settings["vmnet_end_range"])
         self.uiBlockHostTrafficCheckBox.setChecked(settings["block_host_traffic"])
-        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def loadPreferences(self):
         """
@@ -172,12 +170,11 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         """
 
         vmrun_path = self.uiVmrunPathLineEdit.text().strip()
-        if vmrun_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkVmrunPath(vmrun_path):
+        if vmrun_path and not self._checkVmrunPath(vmrun_path):
             return
 
         new_settings = {"vmrun_path": vmrun_path,
                         "vmnet_start_range": self.uiVMnetStartRangeSpinBox.value(),
                         "vmnet_end_range": self.uiVMnetEndRangeSpinBox.value(),
-                        "block_host_traffic": self.uiBlockHostTrafficCheckBox.isChecked(),
-                        "use_local_server": self.uiUseLocalServercheckBox.isChecked()}
+                        "block_host_traffic": self.uiBlockHostTrafficCheckBox.isChecked()}
         VMware.instance().setSettings(new_settings)

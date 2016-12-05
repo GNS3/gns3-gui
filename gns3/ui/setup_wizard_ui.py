@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/setup_wizard.ui'
+# Form implementation generated from reading ui file '/Users/moores/dev/gns3-gui/gns3/ui/setup_wizard.ui'
 #
-# Created: Wed Nov 23 23:06:12 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.7
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -40,7 +39,6 @@ class Ui_SetupWizard(object):
         self.uiVMRadioButton.setObjectName("uiVMRadioButton")
         self.verticalLayout_4.addWidget(self.uiVMRadioButton)
         self.label = QtWidgets.QLabel(self.uiServerWizardPage)
-        self.label.setContentsMargins(0, 0, 0, 0)
         self.label.setIndent(17)
         self.label.setObjectName("label")
         self.verticalLayout_4.addWidget(self.label)
@@ -262,7 +260,7 @@ class Ui_SetupWizard(object):
         self.uiServerWizardPage.setTitle(_translate("SetupWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("SetupWizard", "Please choose a server type to run your GNS3 network simulations. The GNS3 VM is strongly recommended on Windows and Mac OS X."))
         self.uiVMRadioButton.setToolTip(_translate("SetupWizard", "Dynamips, IOU, VPCS and Qemu will use this virtual machine."))
-        self.uiVMRadioButton.setText(_translate("SetupWizard", "Run modern IOS (IOSv or IOU), ASA and appliance from non Cisco manufacturers. "))
+        self.uiVMRadioButton.setText(_translate("SetupWizard", "Run modern IOS (IOSv or IOU), ASA and appliances from non Cisco manufacturers. "))
         self.label.setText(_translate("SetupWizard", "This will require an additional VM (the GNS3 VM is available for free) ."))
         self.uiLocalRadioButton.setToolTip(_translate("SetupWizard", "Eveything that is supported by your system will run on your computer."))
         self.uiLocalRadioButton.setText(_translate("SetupWizard", "Run only legacy IOS on my computer"))

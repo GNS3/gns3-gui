@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/moores/dev/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.7
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_IOUPreferencesPageWidget(object):
-
     def setupUi(self, IOUPreferencesPageWidget):
         IOUPreferencesPageWidget.setObjectName("IOUPreferencesPageWidget")
         IOUPreferencesPageWidget.resize(490, 532)
@@ -27,6 +25,13 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiLocalServerGroupBox.setObjectName("uiLocalServerGroupBox")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.uiLocalServerGroupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
+        self.uiLicensecheckBox = QtWidgets.QCheckBox(self.uiLocalServerGroupBox)
+        self.uiLicensecheckBox.setChecked(True)
+        self.uiLicensecheckBox.setObjectName("uiLicensecheckBox")
+        self.gridLayout_3.addWidget(self.uiLicensecheckBox, 2, 0, 1, 1)
+        self.uiIouyapPathLabel = QtWidgets.QLabel(self.uiLocalServerGroupBox)
+        self.uiIouyapPathLabel.setObjectName("uiIouyapPathLabel")
+        self.gridLayout_3.addWidget(self.uiIouyapPathLabel, 3, 0, 1, 1)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.uiIouyapPathLineEdit = QtWidgets.QLineEdit(self.uiLocalServerGroupBox)
@@ -41,18 +46,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiIouyapPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiIouyapPathToolButton.setObjectName("uiIouyapPathToolButton")
         self.horizontalLayout_6.addWidget(self.uiIouyapPathToolButton)
-        self.gridLayout_3.addLayout(self.horizontalLayout_6, 5, 0, 1, 2)
-        self.uiIouyapPathLabel = QtWidgets.QLabel(self.uiLocalServerGroupBox)
-        self.uiIouyapPathLabel.setObjectName("uiIouyapPathLabel")
-        self.gridLayout_3.addWidget(self.uiIouyapPathLabel, 4, 0, 1, 1)
-        self.uiLicensecheckBox = QtWidgets.QCheckBox(self.uiLocalServerGroupBox)
-        self.uiLicensecheckBox.setChecked(True)
-        self.uiLicensecheckBox.setObjectName("uiLicensecheckBox")
-        self.gridLayout_3.addWidget(self.uiLicensecheckBox, 3, 0, 1, 1)
-        self.uiUseLocalServercheckBox = QtWidgets.QCheckBox(self.uiLocalServerGroupBox)
-        self.uiUseLocalServercheckBox.setChecked(True)
-        self.uiUseLocalServercheckBox.setObjectName("uiUseLocalServercheckBox")
-        self.gridLayout_3.addWidget(self.uiUseLocalServercheckBox, 0, 0, 1, 1)
+        self.gridLayout_3.addLayout(self.horizontalLayout_6, 4, 0, 1, 2)
         self.verticalLayout.addWidget(self.uiLocalServerGroupBox)
         self.uiAnyServerGroupBox = QtWidgets.QGroupBox(self.uiGeneralSettingsTabWidget)
         self.uiAnyServerGroupBox.setObjectName("uiAnyServerGroupBox")
@@ -95,12 +89,12 @@ class Ui_IOUPreferencesPageWidget(object):
         _translate = QtCore.QCoreApplication.translate
         IOUPreferencesPageWidget.setWindowTitle(_translate("IOUPreferencesPageWidget", "IOS on UNIX"))
         self.uiLocalServerGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "Local server"))
-        self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))
-        self.uiIouyapPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to iouyap:"))
         self.uiLicensecheckBox.setText(_translate("IOUPreferencesPageWidget", "Check for a valid IOU license key"))
-        self.uiUseLocalServercheckBox.setText(_translate("IOUPreferencesPageWidget", "Use the local server (Linux only)"))
-        self.uiAnyServerGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "IOU Licence "))
-        self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "<html><head/><body><p>IOU require a licence from CISCO. Copy / Paste here the content of the iourc file or use the browse button to fill the licence.</p></body></html>"))
+        self.uiIouyapPathLabel.setText(_translate("IOUPreferencesPageWidget", "Path to iouyap:"))
+        self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))
+        self.uiAnyServerGroupBox.setTitle(_translate("IOUPreferencesPageWidget", "IOU License "))
+        self.uiIOURCPathLabel.setText(_translate("IOUPreferencesPageWidget", "<html><head/><body><p>IOU requires a license from CISCO. Copy / Paste here the contents of the iourc file or use the browse button to select the license file.</p></body></html>"))
         self.uiIOURCPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "General settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("IOUPreferencesPageWidget", "Restore defaults"))
+

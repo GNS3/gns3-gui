@@ -246,7 +246,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Refresh the local server status page
         """
         if Controller.instance().connected():
-            self.uiLocalServerStatusLabel.setText("Connection to local server successfull")
+            self.uiLocalServerStatusLabel.setText("Connection to local server successful")
         elif Controller.instance().connecting():
             self.uiLocalServerStatusLabel.setText("Please wait connection to the GNS3 server")
         else:

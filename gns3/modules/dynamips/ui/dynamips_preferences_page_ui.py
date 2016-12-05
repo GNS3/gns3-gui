@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/moores/dev/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Mon Sep 19 11:16:52 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.7
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -22,10 +21,6 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiGeneralSettingsTabWidget)
         self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.uiUseLocalServercheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsTabWidget)
-        self.uiUseLocalServercheckBox.setChecked(True)
-        self.uiUseLocalServercheckBox.setObjectName("uiUseLocalServercheckBox")
-        self.verticalLayout_2.addWidget(self.uiUseLocalServercheckBox)
         self.uiDynamipsPathLabel = QtWidgets.QLabel(self.uiGeneralSettingsTabWidget)
         self.uiDynamipsPathLabel.setObjectName("uiDynamipsPathLabel")
         self.verticalLayout_2.addWidget(self.uiDynamipsPathLabel)
@@ -96,7 +91,6 @@ class Ui_DynamipsPreferencesPageWidget(object):
     def retranslateUi(self, DynamipsPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         DynamipsPreferencesPageWidget.setWindowTitle(_translate("DynamipsPreferencesPageWidget", "Dynamips"))
-        self.uiUseLocalServercheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Use the local server"))
         self.uiDynamipsPathLabel.setText(_translate("DynamipsPreferencesPageWidget", "Path to Dynamips:"))
         self.uiDynamipsPathToolButton.setText(_translate("DynamipsPreferencesPageWidget", "&Browse..."))
         self.uiAllocateAuxConsolePortsCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Allocate AUX console ports"))

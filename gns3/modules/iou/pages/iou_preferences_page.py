@@ -46,11 +46,10 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         self.uiIOURCPathToolButton.clicked.connect(self._iourcPathBrowserSlot)
         self.uiIouyapPathToolButton.clicked.connect(self._iouyapPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
-        self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
 
-        if not sys.platform.startswith("linux"):
-            self.uiUseLocalServercheckBox.setChecked(False)
-            self.uiUseLocalServercheckBox.setEnabled(False)
+        #if not sys.platform.startswith("linux"):
+        #    self.uiUseLocalServercheckBox.setChecked(False)
+        #    self.uiUseLocalServercheckBox.setEnabled(False)
 
     def _iourcPathBrowserSlot(self):
         """
@@ -143,7 +142,6 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         self.IOULicenceTextEdit.setPlainText(settings["iourc_content"])
         self.uiIouyapPathLineEdit.setText(settings["iouyap_path"])
         self.uiLicensecheckBox.setChecked(settings["license_check"])
-        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def loadPreferences(self):
         """
@@ -159,13 +157,12 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         """
 
         iouyap_path = self.uiIouyapPathLineEdit.text().strip()
-        if iouyap_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkIouyapPath(iouyap_path):
+        if iouyap_path and not self._checkIouyapPath(iouyap_path):
             return
 
         iourc_content = self.IOULicenceTextEdit.toPlainText().strip().replace("\r\n", "\n")
 
         new_settings = {"iouyap_path": iouyap_path,
                         "iourc_content": iourc_content,
-                        "license_check": self.uiLicensecheckBox.isChecked(),
-                        "use_local_server": self.uiUseLocalServercheckBox.isChecked()}
+                        "license_check": self.uiLicensecheckBox.isChecked()}
         IOU.instance().setSettings(new_settings)
