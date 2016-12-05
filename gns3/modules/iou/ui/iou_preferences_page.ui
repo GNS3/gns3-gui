@@ -42,7 +42,24 @@
           <string>Local server</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="5" column="0" colspan="2">
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="uiLicensecheckBox">
+            <property name="text">
+             <string>Check for a valid IOU license key</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="uiIouyapPathLabel">
+            <property name="text">
+             <string>Path to iouyap:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
              <widget class="QLineEdit" name="uiIouyapPathLineEdit">
@@ -66,40 +83,13 @@
             </item>
            </layout>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="uiIouyapPathLabel">
-            <property name="text">
-             <string>Path to iouyap:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="uiLicensecheckBox">
-            <property name="text">
-             <string>Check for a valid IOU license key</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="uiUseLocalServercheckBox">
-            <property name="text">
-             <string>Use the local server (Linux only)</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
        <item>
         <widget class="QGroupBox" name="uiAnyServerGroupBox">
          <property name="title">
-          <string>IOU Licence </string>
+          <string>IOU License </string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
@@ -108,7 +98,7 @@
              <number>1</number>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IOU require a licence from CISCO. Copy / Paste here the content of the iourc file or use the browse button to fill the licence.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IOU requires a license from CISCO. Copy / Paste here the contents of the iourc file or use the browse button to select the license file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>

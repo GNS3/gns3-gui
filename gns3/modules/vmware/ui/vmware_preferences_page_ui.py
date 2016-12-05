@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/moores/dev/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.7
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_VMwarePreferencesPageWidget(object):
-
     def setupUi(self, VMwarePreferencesPageWidget):
         VMwarePreferencesPageWidget.setObjectName("VMwarePreferencesPageWidget")
         VMwarePreferencesPageWidget.resize(494, 255)
@@ -38,16 +36,12 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiVmrunPathToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiVmrunPathToolButton.setObjectName("uiVmrunPathToolButton")
         self.horizontalLayout_5.addWidget(self.uiVmrunPathToolButton)
-        self.gridLayout_2.addLayout(self.horizontalLayout_5, 2, 0, 1, 1)
-        self.uiUseLocalServercheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsTabWidget)
-        self.uiUseLocalServercheckBox.setChecked(True)
-        self.uiUseLocalServercheckBox.setObjectName("uiUseLocalServercheckBox")
-        self.gridLayout_2.addWidget(self.uiUseLocalServercheckBox, 0, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.horizontalLayout_5, 1, 0, 1, 1)
         self.uiVmrunPathLabel = QtWidgets.QLabel(self.uiGeneralSettingsTabWidget)
         self.uiVmrunPathLabel.setObjectName("uiVmrunPathLabel")
-        self.gridLayout_2.addWidget(self.uiVmrunPathLabel, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.uiVmrunPathLabel, 0, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem, 3, 0, 1, 1)
+        self.gridLayout_2.addItem(spacerItem, 2, 0, 1, 1)
         self.uiTabWidget.addTab(self.uiGeneralSettingsTabWidget, "")
         self.uiNetworkTab = QtWidgets.QWidget()
         self.uiNetworkTab.setObjectName("uiNetworkTab")
@@ -115,7 +109,6 @@ class Ui_VMwarePreferencesPageWidget(object):
         _translate = QtCore.QCoreApplication.translate
         VMwarePreferencesPageWidget.setWindowTitle(_translate("VMwarePreferencesPageWidget", "VMware"))
         self.uiVmrunPathToolButton.setText(_translate("VMwarePreferencesPageWidget", "&Browse..."))
-        self.uiUseLocalServercheckBox.setText(_translate("VMwarePreferencesPageWidget", "Use the local server"))
         self.uiVmrunPathLabel.setText(_translate("VMwarePreferencesPageWidget", "Path to vmrun:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VMwarePreferencesPageWidget", "General settings"))
         self.uiManagedVMnetRangeGroupBox.setTitle(_translate("VMwarePreferencesPageWidget", "Managed VMnet interfaces (VMnet8 excluded)"))
@@ -128,3 +121,4 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiBlockHostTrafficCheckBox.setText(_translate("VMwarePreferencesPageWidget", "Block network traffic originating from the host OS"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiNetworkTab), _translate("VMwarePreferencesPageWidget", "Network"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
+

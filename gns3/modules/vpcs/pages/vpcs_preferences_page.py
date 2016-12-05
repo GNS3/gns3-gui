@@ -42,7 +42,6 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         self.setupUi(self)
 
         # connect signals
-        self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiVPCSPathToolButton.clicked.connect(self._vpcsPathBrowserSlot)
 
@@ -106,7 +105,6 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         :param settings: VPCS settings
         """
 
-        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiVPCSPathLineEdit.setText(settings["vpcs_path"])
 
     def loadPreferences(self):
@@ -123,8 +121,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
         """
 
         vpcs_path = self.uiVPCSPathLineEdit.text().strip()
-        if vpcs_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkVPCSPath(vpcs_path):
+        if vpcs_path and not self._checkVPCSPath(vpcs_path):
             return
-        new_settings = {"vpcs_path": vpcs_path,
-                        "use_local_server": self.uiUseLocalServercheckBox.isChecked()}
+        new_settings = {"vpcs_path": vpcs_path}
         VPCS.instance().setSettings(new_settings)

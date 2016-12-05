@@ -47,8 +47,6 @@ class BuiltinPreferencesPage(QtWidgets.QWidget, Ui_BuiltinPreferencesPageWidget)
         :param settings: Built-in settings
         """
 
-        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
-
     def loadPreferences(self):
         """Loads Built-in preferences."""
 
@@ -59,5 +57,4 @@ class BuiltinPreferencesPage(QtWidgets.QWidget, Ui_BuiltinPreferencesPageWidget)
         """Saves Built-in preferences."""
 
         new_settings = {}
-        new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         Builtin.instance().setSettings(new_settings)

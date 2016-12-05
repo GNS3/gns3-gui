@@ -40,9 +40,8 @@ class DockerPreferencesPage(QtWidgets.QWidget, Ui_DockerPreferencesPageWidget):
         # connect signals
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
 
-        if not sys.platform.startswith("linux"):
+        # if not sys.platform.startswith("linux"):
             # Docker is only supported on Linux
-            self.uiUseLocalServercheckBox.setEnabled(False)
 
     def _restoreDefaultsSlot(self):
         """Slot to populate the page widgets with the default settings."""
@@ -53,7 +52,6 @@ class DockerPreferencesPage(QtWidgets.QWidget, Ui_DockerPreferencesPageWidget):
 
         :param settings: Docker settings
         """
-        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
 
     def loadPreferences(self):
         """Loads Docker preferences."""
@@ -63,5 +61,4 @@ class DockerPreferencesPage(QtWidgets.QWidget, Ui_DockerPreferencesPageWidget):
     def savePreferences(self):
         """Saves Docker preferences."""
         new_settings = {}
-        new_settings["use_local_server"] = self.uiUseLocalServercheckBox.isChecked()
         Docker.instance().setSettings(new_settings)
