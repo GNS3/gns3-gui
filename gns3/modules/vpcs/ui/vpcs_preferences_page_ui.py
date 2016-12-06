@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/moores/dev/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VPCSPreferencesPageWidget(object):
+
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName("VPCSPreferencesPageWidget")
         VPCSPreferencesPageWidget.resize(469, 261)
@@ -62,6 +64,5 @@ class Ui_VPCSPreferencesPageWidget(object):
         VPCSPreferencesPageWidget.setWindowTitle(_translate("VPCSPreferencesPageWidget", "VPCS"))
         self.uiVPCSPathLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS executable:"))
         self.uiVPCSPathToolButton.setText(_translate("VPCSPreferencesPageWidget", "&Browse..."))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "General settings"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "Local settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults"))
-

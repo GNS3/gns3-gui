@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/moores/dev/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VMwarePreferencesPageWidget(object):
+
     def setupUi(self, VMwarePreferencesPageWidget):
         VMwarePreferencesPageWidget.setObjectName("VMwarePreferencesPageWidget")
         VMwarePreferencesPageWidget.resize(494, 255)
@@ -110,7 +112,7 @@ class Ui_VMwarePreferencesPageWidget(object):
         VMwarePreferencesPageWidget.setWindowTitle(_translate("VMwarePreferencesPageWidget", "VMware"))
         self.uiVmrunPathToolButton.setText(_translate("VMwarePreferencesPageWidget", "&Browse..."))
         self.uiVmrunPathLabel.setText(_translate("VMwarePreferencesPageWidget", "Path to vmrun:"))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VMwarePreferencesPageWidget", "General settings"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VMwarePreferencesPageWidget", "Local settings"))
         self.uiManagedVMnetRangeGroupBox.setTitle(_translate("VMwarePreferencesPageWidget", "Managed VMnet interfaces (VMnet8 excluded)"))
         self.uiVMnetStartRangeSpinBox.setPrefix(_translate("VMwarePreferencesPageWidget", "vmnet"))
         self.uiToLabel.setText(_translate("VMwarePreferencesPageWidget", "to"))
@@ -121,4 +123,3 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiBlockHostTrafficCheckBox.setText(_translate("VMwarePreferencesPageWidget", "Block network traffic originating from the host OS"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiNetworkTab), _translate("VMwarePreferencesPageWidget", "Network"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
-

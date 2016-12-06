@@ -24,7 +24,7 @@
      </property>
      <widget class="QWidget" name="uiGeneralSettingsTabWidget">
       <attribute name="title">
-       <string>General settings</string>
+       <string>Local settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
