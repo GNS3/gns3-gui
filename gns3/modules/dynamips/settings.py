@@ -24,7 +24,6 @@ from gns3.node import Node
 DYNAMIPS_SETTINGS = {
     "dynamips_path": "",
     "allocate_aux_console_ports": False,
-    "use_local_server": True,
     "ghost_ios_support": True,
     "sparse_memory_support": True,
     "mmap_support": True,

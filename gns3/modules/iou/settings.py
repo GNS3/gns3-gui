@@ -27,12 +27,7 @@ IOU_SETTINGS = {
     "iourc_content": "",
     "iouyap_path": "",
     "license_check": True,
-    "use_local_server": True,
 }
-
-# IOU is only available on Linux
-if not sys.platform.startswith("linux"):
-    IOU_SETTINGS["use_local_server"] = False
 
 IOU_DEVICE_SETTINGS = {
     "name": "",

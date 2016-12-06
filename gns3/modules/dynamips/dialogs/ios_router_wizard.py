@@ -67,7 +67,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
     def __init__(self, ios_routers, parent):
 
-        super().__init__(ios_routers, Dynamips.instance().settings()["use_local_server"], parent)
+        super().__init__(ios_routers, parent)
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.svg"))
 
         self.uiTestIOSImagePushButton.clicked.connect(self._testIOSImageSlot)

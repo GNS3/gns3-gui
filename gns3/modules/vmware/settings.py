@@ -33,7 +33,6 @@ VMWARE_SETTINGS = {
     "vmnet_start_range": 2,
     "vmnet_end_range": DEFAULT_VMNET_END_RANGE,
     "block_host_traffic": True,
-    "use_local_server": True
 }
 
 VMWARE_VM_SETTINGS = {

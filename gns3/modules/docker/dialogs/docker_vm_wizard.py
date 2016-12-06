@@ -36,7 +36,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
 
     def __init__(self, docker_containers, parent):
 
-        super().__init__(docker_containers, Docker.instance().settings()["use_local_server"], parent)
+        super().__init__(docker_containers, parent)
         self._docker_containers = docker_containers
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/docker.png"))
 

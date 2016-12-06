@@ -31,7 +31,7 @@ from ..ui.vpcs_node_wizard_ui import Ui_VPCSNodeWizard
 from .. import VPCS
 
 
-class VPCSNodeWizard(VMWizard,Ui_VPCSNodeWizard):
+class VPCSNodeWizard(VMWizard, Ui_VPCSNodeWizard):
 
     """
     Wizard to create a VPCS node template.
@@ -41,7 +41,7 @@ class VPCSNodeWizard(VMWizard,Ui_VPCSNodeWizard):
 
     def __init__(self, vpcs_nodes, parent):
 
-        super().__init__(vpcs_nodes, VPCS.instance().settings()["use_local_server"], parent)
+        super().__init__(vpcs_nodes, parent)
 
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/computer.svg"))
         self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)

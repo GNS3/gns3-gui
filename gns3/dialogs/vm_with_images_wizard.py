@@ -26,18 +26,17 @@ class VMWithImagesWizard(VMWizard):
     Base class for VM wizard with image management (Qemu, IOU...)
 
     :param devices: List of existing device for this type
-    :param use_local_server: Value the use_local_server settings for this module
     :param parent: parent widget
     """
 
-    def __init__(self, devices, use_local_server, parent):
+    def __init__(self, devices, parent):
         # The list of images combo box (Qemu support multiple images)
         self._images_combo_boxes = set()
 
         # The list of radio button for existing image or new images
         self._radio_existing_images_buttons = set()
 
-        super().__init__(devices, use_local_server, parent)
+        super().__init__(devices, parent)
 
     def refreshImageStepsButtons(self):
         """
