@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/moores/dev/gns3-gui/gns3/modules/docker/ui/docker_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created: Wed Dec  7 21:29:40 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -42,6 +43,6 @@ class Ui_DockerPreferencesPageWidget(object):
     def retranslateUi(self, DockerPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         DockerPreferencesPageWidget.setWindowTitle(_translate("DockerPreferencesPageWidget", "Docker"))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("DockerPreferencesPageWidget", "General settings"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("DockerPreferencesPageWidget", "Local settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("DockerPreferencesPageWidget", "Restore defaults"))
 

@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Wed Dec  7 21:29:40 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_VMwarePreferencesPageWidget(object):
-
     def setupUi(self, VMwarePreferencesPageWidget):
         VMwarePreferencesPageWidget.setObjectName("VMwarePreferencesPageWidget")
         VMwarePreferencesPageWidget.resize(494, 255)
@@ -48,7 +47,7 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiNetworkTab = QtWidgets.QWidget()
         self.uiNetworkTab.setObjectName("uiNetworkTab")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiNetworkTab)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiManagedVMnetRangeGroupBox = QtWidgets.QGroupBox(self.uiNetworkTab)
         self.uiManagedVMnetRangeGroupBox.setObjectName("uiManagedVMnetRangeGroupBox")
@@ -123,3 +122,4 @@ class Ui_VMwarePreferencesPageWidget(object):
         self.uiBlockHostTrafficCheckBox.setText(_translate("VMwarePreferencesPageWidget", "Block network traffic originating from the host OS"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiNetworkTab), _translate("VMwarePreferencesPageWidget", "Network"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VMwarePreferencesPageWidget", "Restore defaults"))
+

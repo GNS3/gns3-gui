@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/moores/dev/gns3-gui/gns3/modules/qemu/ui/qemu_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created: Wed Dec  7 21:25:31 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -46,6 +47,6 @@ class Ui_QemuPreferencesPageWidget(object):
         _translate = QtCore.QCoreApplication.translate
         QemuPreferencesPageWidget.setWindowTitle(_translate("QemuPreferencesPageWidget", "QEMU"))
         self.uiKVMAccelerationCheckBox.setText(_translate("QemuPreferencesPageWidget", "Enable KVM acceleration"))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("QemuPreferencesPageWidget", "General settings"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("QemuPreferencesPageWidget", "Local settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("QemuPreferencesPageWidget", "Restore defaults"))
 

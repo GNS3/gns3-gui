@@ -24,7 +24,7 @@
      </property>
      <widget class="QWidget" name="uiServerSettingsTabWidget">
       <attribute name="title">
-       <string>General settings</string>
+       <string>Local settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
