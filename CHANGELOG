@@ -1,5 +1,36 @@
 # Change Log
 
+## 2.0.0 beta 1 07/12/2016
+
+* Use osascript on OSX for asking admin permission
+* Change the method for creating the tmpdir for symbols cache
+* Fix a connection error at the end of the setup wizard
+* Change how some tabs are organized or named.
+* General settings => local settings
+* Drop more reference to use local server
+* Remove local server checkbox from preferences
+* Make sure to not start local server during setup wizard remote server
+* Fix Error when editing IOS image created using .gns3a file
+* Fix test suites around sip deleted
+* Do not auto start the local server in setup wizard
+* On OSX execute all sudo in a single operation
+* Catch key Compute  is missing during conversion error
+* Fix rare crash in gns3.dialogs.appliance_wizard in validateCurrentPage
+* Fix  AttributeError: 'Nat' object has no attribute 'configPage'
+* Catch one more RuntimeError: wrapped C/C++
+* Fix a rare crash in port
+* Fix a rare crash when set symbol
+* Fix a potential crash
+* Fix a potential crash at exit
+* Fix crashes
+* Remove unused settings from general preferences
+* Catch error when you try to import a IOU bin as a licence
+* Fix rare crash when exiting
+* Fix crash when freeing some ressources
+* Fix timeout when exporting large project
+* Avoid a rare crash when we free a port
+* Fix you can't download symbols after you got an error
+
 ## 2.0.0 alpha 4 24/11/2016
 * Mark preferences changes when you change a QPlainTextEdit
 * Force the VPCS config initial file
