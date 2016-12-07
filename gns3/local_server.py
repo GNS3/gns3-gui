@@ -90,6 +90,8 @@ class LocalServer(QtCore.QObject):
         self._settings = {}
         self.localServerSettings()
         self._port = self._settings.get("port", 3080)
+        # Remember if the server was started by us or not
+        self._server_started_by_me = False
 
         if not self._settings.get("auto_start", True):
             if self._settings.get("host") is None:
@@ -243,7 +245,16 @@ class LocalServer(QtCore.QObject):
         # Settings have changed we need to restart the server
         if old_settings != self._settings:
             if self._settings["auto_start"]:
-                self.stopLocalServer(wait=True)
+                # We restart the local server only if we really need. Auth can be hot change
+                settings_require_restart = ('host', 'port', 'path')
+                need_restart = False
+                for s in settings_require_restart:
+                    if old_settings.get(s) != self._settings.get(s):
+                        need_restart = True
+
+                if need_restart:
+                    self.stopLocalServer(wait=True)
+
                 self.localServerAutoStartIfRequire()
             # If the controller is remote:
             else:
@@ -298,6 +309,9 @@ class LocalServer(QtCore.QObject):
         if not self.shouldLocalServerAutoStart():
             return
 
+        if self.isLocalServerRunning() and self._server_started_by_me:
+            return True
+
         # We check if two gui are not launched at the same time
         # to avoid killing the server of the other GUI
         if not LocalConfig.isMainGui():
@@ -329,7 +343,7 @@ class LocalServer(QtCore.QObject):
             progress_dialog.show()
             if not progress_dialog.exec_():
                 return False
-
+        self._server_started_by_me = True
         self._http_client = HTTPClient(self._settings)
         Controller.instance().setHttpClient(self._http_client)
 
@@ -509,6 +523,7 @@ class LocalServer(QtCore.QObject):
                 progress_dialog.exec_()
                 if self._local_server_process.returncode is None:
                     self._killLocalServer()
+            self._server_started_by_me = False
 
     def _killLocalServer(self):
         # the local server couldn't be stopped with the normal procedure
@@ -523,7 +538,7 @@ class LocalServer(QtCore.QObject):
             pass
         try:
             # wait for the server to stop for maximum 2 seconds
-            self._local_server_process.wait(timeout=2)
+            self._local_server_process.wait(timeout=10)
         except subprocess.TimeoutExpired:
             proceed = QtWidgets.QMessageBox.question(self.parent(),
                                                      "Local server",
