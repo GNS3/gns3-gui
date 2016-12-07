@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vpcs/ui/vpcs_preferences_page.ui'
 #
-# Created: Mon Sep 19 11:16:52 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VPCSPreferencesPageWidget(object):
+
     def setupUi(self, VPCSPreferencesPageWidget):
         VPCSPreferencesPageWidget.setObjectName("VPCSPreferencesPageWidget")
         VPCSPreferencesPageWidget.resize(469, 261)
@@ -23,10 +24,6 @@ class Ui_VPCSPreferencesPageWidget(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.uiGeneralSettingsTabWidget)
         self.verticalLayout.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.uiUseLocalServercheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsTabWidget)
-        self.uiUseLocalServercheckBox.setChecked(True)
-        self.uiUseLocalServercheckBox.setObjectName("uiUseLocalServercheckBox")
-        self.verticalLayout.addWidget(self.uiUseLocalServercheckBox)
         self.uiVPCSPathLabel = QtWidgets.QLabel(self.uiGeneralSettingsTabWidget)
         self.uiVPCSPathLabel.setObjectName("uiVPCSPathLabel")
         self.verticalLayout.addWidget(self.uiVPCSPathLabel)
@@ -65,9 +62,7 @@ class Ui_VPCSPreferencesPageWidget(object):
     def retranslateUi(self, VPCSPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         VPCSPreferencesPageWidget.setWindowTitle(_translate("VPCSPreferencesPageWidget", "VPCS"))
-        self.uiUseLocalServercheckBox.setText(_translate("VPCSPreferencesPageWidget", "Use the local server"))
         self.uiVPCSPathLabel.setText(_translate("VPCSPreferencesPageWidget", "Path to VPCS executable:"))
         self.uiVPCSPathToolButton.setText(_translate("VPCSPreferencesPageWidget", "&Browse..."))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "General settings"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("VPCSPreferencesPageWidget", "Local settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("VPCSPreferencesPageWidget", "Restore defaults"))
-

@@ -1420,11 +1420,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if "server" in node_data:
             return ComputeManager.instance().getCompute(node_data["server"])
 
-        if "builtin" in node_data:
-            allow_local_server = True
-        else:
-            allow_local_server = module_instance.settings()["use_local_server"]
-        server = server_select(mainwindow, node_data.get("node_type"), allow_local_server=allow_local_server)
+        server = server_select(mainwindow, node_data.get("node_type"))
         if server is None:
             raise ModuleError("Please select a server")
         return server

@@ -22,7 +22,6 @@ Default Built-in settings.
 from gns3.node import Node
 
 BUILTIN_SETTINGS = {
-    "use_local_server": True,
 }
 
 

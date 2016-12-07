@@ -246,7 +246,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Refresh the local server status page
         """
         if Controller.instance().connected():
-            self.uiLocalServerStatusLabel.setText("Connection to local server successfull")
+            self.uiLocalServerStatusLabel.setText("Connection to local server successful")
         elif Controller.instance().connecting():
             self.uiLocalServerStatusLabel.setText("Please wait connection to the GNS3 server")
         else:
@@ -340,18 +340,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 vm_settings = self._GNS3VMSettings()
                 vm_settings["enable"] = False
                 self._setGNS3VMSettings(vm_settings)
-
-                # update the modules so they use the local server
-                from gns3.modules import Dynamips
-                Dynamips.instance().setSettings({"use_local_server": True})
-                if sys.platform.startswith("linux"):
-                    # IOU only works on Linux
-                    from gns3.modules import IOU
-                    IOU.instance().setSettings({"use_local_server": True})
-                from gns3.modules import Qemu
-                Qemu.instance().setSettings({"use_local_server": True})
-                from gns3.modules import VPCS
-                VPCS.instance().setSettings({"use_local_server": True})
 
         elif self.currentPage() == self.uiLocalServerStatusWizardPage:
             if not Controller.instance().connected():

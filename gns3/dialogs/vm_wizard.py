@@ -27,18 +27,16 @@ class VMWizard(QtWidgets.QWizard):
     Base class for VM wizard.
 
     :param devices: List of existing device for this type
-    :param use_local_server: Value the use_local_server settings for this module
     :param parent: parent widget
     """
 
-    def __init__(self, devices, use_local_server, parent):
+    def __init__(self, devices, parent):
         super().__init__(parent)
         self.setupUi(self)
 
         self.setModal(True)
 
         self._devices = devices
-        self._use_local_server = use_local_server
 
         self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         if sys.platform.startswith("darwin"):
@@ -112,7 +110,7 @@ class VMWizard(QtWidgets.QWizard):
                     self.uiRemoteRadioButton.setEnabled(True)
                     self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
 
-            if self._use_local_server and self.uiLocalRadioButton.isEnabled() and self.uiLocalRadioButton.isVisible():
+            if self.uiLocalRadioButton.isEnabled() and self.uiLocalRadioButton.isVisible():
                 self.uiLocalRadioButton.setChecked(True)
             elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isEnabled():
                 self.uiVMRadioButton.setChecked(True)

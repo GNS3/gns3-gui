@@ -37,7 +37,7 @@ class CloudWizard(VMWizard, Ui_CloudNodeWizard):
 
     def __init__(self, cloud_nodes, parent):
 
-        super().__init__(cloud_nodes, Builtin.instance().settings()["use_local_server"], parent)
+        super().__init__(cloud_nodes, parent)
 
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/cloud.svg"))
         self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)

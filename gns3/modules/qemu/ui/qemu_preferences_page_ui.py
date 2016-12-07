@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_preferences_page.ui'
 #
-# Created: Mon Sep 19 11:16:52 2016
+# Created: Wed Dec  7 21:25:31 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,10 +23,6 @@ class Ui_QemuPreferencesPageWidget(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiServerSettingsTabWidget)
         self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.uiUseLocalServercheckBox = QtWidgets.QCheckBox(self.uiServerSettingsTabWidget)
-        self.uiUseLocalServercheckBox.setChecked(True)
-        self.uiUseLocalServercheckBox.setObjectName("uiUseLocalServercheckBox")
-        self.verticalLayout_2.addWidget(self.uiUseLocalServercheckBox)
         self.uiKVMAccelerationCheckBox = QtWidgets.QCheckBox(self.uiServerSettingsTabWidget)
         self.uiKVMAccelerationCheckBox.setObjectName("uiKVMAccelerationCheckBox")
         self.verticalLayout_2.addWidget(self.uiKVMAccelerationCheckBox)
@@ -50,8 +46,7 @@ class Ui_QemuPreferencesPageWidget(object):
     def retranslateUi(self, QemuPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         QemuPreferencesPageWidget.setWindowTitle(_translate("QemuPreferencesPageWidget", "QEMU"))
-        self.uiUseLocalServercheckBox.setText(_translate("QemuPreferencesPageWidget", "Use the local server"))
         self.uiKVMAccelerationCheckBox.setText(_translate("QemuPreferencesPageWidget", "Enable KVM acceleration"))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("QemuPreferencesPageWidget", "General settings"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("QemuPreferencesPageWidget", "Local settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("QemuPreferencesPageWidget", "Restore defaults"))
 

@@ -38,7 +38,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
 
     def __init__(self, vmware_vms, parent):
 
-        super().__init__(vmware_vms, VMware.instance().settings()["use_local_server"], parent)
+        super().__init__(vmware_vms, parent)
         self._vmware_vms = vmware_vms
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/vmware_guest.svg"))
 

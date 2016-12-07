@@ -60,7 +60,7 @@
        <string>Dynamips, IOU, VPCS and Qemu will use this virtual machine.</string>
       </property>
       <property name="text">
-       <string>Run modern IOS (IOSv or IOU), ASA and appliance from non Cisco manufacturers. </string>
+       <string>Run modern IOS (IOSv or IOU), ASA and appliances from non Cisco manufacturers. </string>
       </property>
       <property name="checked">
        <bool>true</bool>

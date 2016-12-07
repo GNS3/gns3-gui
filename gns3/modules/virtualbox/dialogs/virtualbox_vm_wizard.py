@@ -38,7 +38,7 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
 
     def __init__(self, virtualbox_vms, parent):
 
-        super().__init__(virtualbox_vms, VirtualBox.instance().settings()["use_local_server"], parent)
+        super().__init__(virtualbox_vms, parent)
         self._virtualbox_vms = virtualbox_vms
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/virtualbox.png"))
 

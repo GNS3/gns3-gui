@@ -59,7 +59,6 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
         :param settings: QEMU settings
         """
 
-        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiKVMAccelerationCheckBox.setChecked(settings["enable_kvm"])
 
     def loadPreferences(self):
@@ -75,6 +74,5 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
         Saves QEMU preferences.
         """
 
-        new_settings = {"use_local_server": self.uiUseLocalServercheckBox.isChecked(),
-                        "enable_kvm": self.uiKVMAccelerationCheckBox.isChecked()}
+        new_settings = {"enable_kvm": self.uiKVMAccelerationCheckBox.isChecked()}
         Qemu.instance().setSettings(new_settings)

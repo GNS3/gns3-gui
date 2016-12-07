@@ -44,7 +44,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
 
     def __init__(self, iou_devices, parent):
 
-        super().__init__(iou_devices, IOU.instance().settings()["use_local_server"], parent)
+        super().__init__(iou_devices, parent)
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.svg"))
 
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)

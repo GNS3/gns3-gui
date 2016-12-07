@@ -43,7 +43,6 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
         self.uiDynamipsPathToolButton.clicked.connect(self._dynamipsPathBrowserSlot)
         self.uiGhostIOSSupportCheckBox.stateChanged.connect(self._ghostIOSSupportSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
-        self.uiUseLocalServercheckBox.stateChanged.connect(self._useLocalServerSlot)
 
     def _dynamipsPathBrowserSlot(self):
         """
@@ -127,7 +126,6 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
 
         self.uiDynamipsPathLineEdit.setText(settings["dynamips_path"])
         self.uiAllocateAuxConsolePortsCheckBox.setChecked(settings["allocate_aux_console_ports"])
-        self.uiUseLocalServercheckBox.setChecked(settings["use_local_server"])
         self.uiGhostIOSSupportCheckBox.setChecked(settings["ghost_ios_support"])
         self.uiMmapSupportCheckBox.setChecked(settings["mmap_support"])
         self.uiSparseMemorySupportCheckBox.setChecked(settings["sparse_memory_support"])
@@ -146,12 +144,11 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
         """
 
         dynamips_path = self.uiDynamipsPathLineEdit.text().strip()
-        if dynamips_path and self.uiUseLocalServercheckBox.isChecked() and not self._checkDynamipsPath(dynamips_path):
+        if dynamips_path and not self._checkDynamipsPath(dynamips_path):
             return
 
         new_settings = {"dynamips_path": dynamips_path,
                         "allocate_aux_console_ports": self.uiAllocateAuxConsolePortsCheckBox.isChecked(),
-                        "use_local_server": self.uiUseLocalServercheckBox.isChecked(),
                         "ghost_ios_support": self.uiGhostIOSSupportCheckBox.isChecked(),
                         "mmap_support": self.uiMmapSupportCheckBox.isChecked(),
                         "sparse_memory_support": self.uiSparseMemorySupportCheckBox.isChecked()}

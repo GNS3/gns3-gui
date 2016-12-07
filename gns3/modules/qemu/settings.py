@@ -22,7 +22,6 @@ Default QEMU settings.
 from gns3.node import Node
 
 QEMU_SETTINGS = {
-    "use_local_server": True,
     "enable_kvm": True,
 }
 

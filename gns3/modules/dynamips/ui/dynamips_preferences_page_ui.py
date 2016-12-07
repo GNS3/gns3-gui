@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created: Mon Sep 19 11:16:52 2016
+# Created: Wed Dec  7 22:03:06 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -22,10 +22,6 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiGeneralSettingsTabWidget)
         self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.uiUseLocalServercheckBox = QtWidgets.QCheckBox(self.uiGeneralSettingsTabWidget)
-        self.uiUseLocalServercheckBox.setChecked(True)
-        self.uiUseLocalServercheckBox.setObjectName("uiUseLocalServercheckBox")
-        self.verticalLayout_2.addWidget(self.uiUseLocalServercheckBox)
         self.uiDynamipsPathLabel = QtWidgets.QLabel(self.uiGeneralSettingsTabWidget)
         self.uiDynamipsPathLabel.setObjectName("uiDynamipsPathLabel")
         self.verticalLayout_2.addWidget(self.uiDynamipsPathLabel)
@@ -58,6 +54,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiMemoryUsageOptimisationGroupBox = QtWidgets.QGroupBox(self.uiAdvancedSettingsTabWidget)
         self.uiMemoryUsageOptimisationGroupBox.setObjectName("uiMemoryUsageOptimisationGroupBox")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.uiMemoryUsageOptimisationGroupBox)
+        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiGhostIOSSupportCheckBox = QtWidgets.QCheckBox(self.uiMemoryUsageOptimisationGroupBox)
         self.uiGhostIOSSupportCheckBox.setChecked(True)
@@ -96,11 +93,10 @@ class Ui_DynamipsPreferencesPageWidget(object):
     def retranslateUi(self, DynamipsPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         DynamipsPreferencesPageWidget.setWindowTitle(_translate("DynamipsPreferencesPageWidget", "Dynamips"))
-        self.uiUseLocalServercheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Use the local server"))
         self.uiDynamipsPathLabel.setText(_translate("DynamipsPreferencesPageWidget", "Path to Dynamips:"))
         self.uiDynamipsPathToolButton.setText(_translate("DynamipsPreferencesPageWidget", "&Browse..."))
         self.uiAllocateAuxConsolePortsCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Allocate AUX console ports"))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "General settings"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "Local settings"))
         self.uiMemoryUsageOptimisationGroupBox.setTitle(_translate("DynamipsPreferencesPageWidget", "Memory usage optimisation"))
         self.uiGhostIOSSupportCheckBox.setToolTip(_translate("DynamipsPreferencesPageWidget", "The ghost IOS feature is a solution that helps to decrease memory usage by sharing an IOS image between different router instances."))
         self.uiGhostIOSSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable ghost IOS support"))
@@ -108,6 +104,6 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiMmapSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable mmap support"))
         self.uiSparseMemorySupportCheckBox.setToolTip(_translate("DynamipsPreferencesPageWidget", "The sparse memory feature reduces the amount of virtual memory used by router instances."))
         self.uiSparseMemorySupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable sparse memory support"))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "Advanced settings"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "Advanced local settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("DynamipsPreferencesPageWidget", "Restore defaults"))
 

@@ -23,7 +23,6 @@ from gns3.node import Node
 
 VPCS_SETTINGS = {
     "vpcs_path": "",
-    "use_local_server": True,
 }
 
 VPCS_NODES_SETTINGS = {
