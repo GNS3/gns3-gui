@@ -40,7 +40,7 @@ class Controller(QtCore.QObject):
         super().__init__()
         self._connected = False
         self._connecting = False
-        self._cache_directory = tempfile.TemporaryDirectory()
+        self._cache_directory = tempfile.mkdtemp()
         self._http_client = None
         # If it's the first error we display an alert box to the user
         self._first_error = True
@@ -212,7 +212,7 @@ class Controller(QtCore.QObject):
             extension = ".svg"
         else:
             extension = ".png"
-        path = os.path.join(self._cache_directory.name, m.hexdigest() + extension)
+        path = os.path.join(self._cache_directory, m.hexdigest() + extension)
         if os.path.exists(path):
             callback(path)
         elif path in self._static_asset_download_queue:
