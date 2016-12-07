@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/dynamips_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Wed Dec  7 22:03:06 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_DynamipsPreferencesPageWidget(object):
-
     def setupUi(self, DynamipsPreferencesPageWidget):
         DynamipsPreferencesPageWidget.setObjectName("DynamipsPreferencesPageWidget")
         DynamipsPreferencesPageWidget.resize(435, 242)
@@ -55,6 +54,7 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiMemoryUsageOptimisationGroupBox = QtWidgets.QGroupBox(self.uiAdvancedSettingsTabWidget)
         self.uiMemoryUsageOptimisationGroupBox.setObjectName("uiMemoryUsageOptimisationGroupBox")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.uiMemoryUsageOptimisationGroupBox)
+        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiGhostIOSSupportCheckBox = QtWidgets.QCheckBox(self.uiMemoryUsageOptimisationGroupBox)
         self.uiGhostIOSSupportCheckBox.setChecked(True)
@@ -104,5 +104,6 @@ class Ui_DynamipsPreferencesPageWidget(object):
         self.uiMmapSupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable mmap support"))
         self.uiSparseMemorySupportCheckBox.setToolTip(_translate("DynamipsPreferencesPageWidget", "The sparse memory feature reduces the amount of virtual memory used by router instances."))
         self.uiSparseMemorySupportCheckBox.setText(_translate("DynamipsPreferencesPageWidget", "Enable sparse memory support"))
-        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "Advanced settings"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiAdvancedSettingsTabWidget), _translate("DynamipsPreferencesPageWidget", "Advanced local settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("DynamipsPreferencesPageWidget", "Restore defaults"))
+

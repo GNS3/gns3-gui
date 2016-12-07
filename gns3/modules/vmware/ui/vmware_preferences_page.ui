@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>494</width>
-    <height>255</height>
+    <width>683</width>
+    <height>397</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,6 +30,26 @@
        <property name="margin">
         <number>10</number>
        </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiVmrunPathLabel">
+         <property name="text">
+          <string>Path to vmrun:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <spacer name="spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>5</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
@@ -54,31 +74,11 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiVmrunPathLabel">
-         <property name="text">
-          <string>Path to vmrun:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <spacer name="spacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>5</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="uiNetworkTab">
       <attribute name="title">
-       <string>Network</string>
+       <string>Advanced local settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>

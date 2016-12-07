@@ -89,22 +89,13 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="uiIOURCPathLabel_2">
-         <property name="lineWidth">
-          <number>1</number>
-         </property>
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A license is required to run IOU. Copy &amp;amp; paste the content of your iourc file here or use the browse button to select a file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QPlainTextEdit" name="IOULicenceTextEdit"/>
+          <widget class="QPlainTextEdit" name="IOULicenceTextEdit">
+           <property name="toolTip">
+            <string>A license is required to run IOU. Copy &amp; paste the content of your iourc file here or use the browse button to select a file. The license will be pushed to remote servers.</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="uiIOURCPathToolButton">

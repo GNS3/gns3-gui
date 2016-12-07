@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_preferences_page.ui'
 #
-# Created: Wed Dec  7 21:34:55 2016
+# Created: Wed Dec  7 21:53:01 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -51,11 +51,6 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiLicenseTabWidget.setObjectName("uiLicenseTabWidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiLicenseTabWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.uiIOURCPathLabel_2 = QtWidgets.QLabel(self.uiLicenseTabWidget)
-        self.uiIOURCPathLabel_2.setLineWidth(1)
-        self.uiIOURCPathLabel_2.setWordWrap(True)
-        self.uiIOURCPathLabel_2.setObjectName("uiIOURCPathLabel_2")
-        self.verticalLayout_2.addWidget(self.uiIOURCPathLabel_2)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.IOULicenceTextEdit = QtWidgets.QPlainTextEdit(self.uiLicenseTabWidget)
@@ -90,7 +85,7 @@ class Ui_IOUPreferencesPageWidget(object):
         self.uiIouyapPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))
         self.uiLicensecheckBox.setText(_translate("IOUPreferencesPageWidget", "Check for a valid IOU license key"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiGeneralSettingsTabWidget), _translate("IOUPreferencesPageWidget", "Local settings"))
-        self.uiIOURCPathLabel_2.setText(_translate("IOUPreferencesPageWidget", "<html><head/><body><p>A license is required to run IOU. Copy &amp; paste the content of your iourc file here or use the browse button to select a file.</p></body></html>"))
+        self.IOULicenceTextEdit.setToolTip(_translate("IOUPreferencesPageWidget", "A license is required to run IOU. Copy & paste the content of your iourc file here or use the browse button to select a file. The license will be pushed to remote servers."))
         self.uiIOURCPathToolButton.setText(_translate("IOUPreferencesPageWidget", "&Browse..."))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiLicenseTabWidget), _translate("IOUPreferencesPageWidget", "License"))
         self.uiRestoreDefaultsPushButton.setText(_translate("IOUPreferencesPageWidget", "Restore defaults"))
