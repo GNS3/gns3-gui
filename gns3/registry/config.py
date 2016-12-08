@@ -211,6 +211,7 @@ class Config:
         new_config["adapter_type"] = appliance_config["qemu"]["adapter_type"]
         new_config["adapters"] = appliance_config["qemu"]["adapters"]
         new_config["cpu_throttling"] = appliance_config["qemu"].get("cpu_throttling", 0)
+        new_config["cpus"] = appliance_config["qemu"].get("cpus", 1)
         new_config["ram"] = appliance_config["qemu"]["ram"]
         new_config["console_type"] = appliance_config["qemu"]["console_type"]
         new_config["legacy_networking"] = False
