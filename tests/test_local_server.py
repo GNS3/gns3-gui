@@ -20,6 +20,7 @@ import json
 import pytest
 import logging
 import subprocess
+import unittest
 from unittest.mock import MagicMock, patch
 
 from gns3.local_server import LocalServer
@@ -80,7 +81,7 @@ def test_startLocalServer(tmpdir, local_server, local_server_path):
         process_mock.communicate.side_effect = subprocess.TimeoutExpired("test", 1)
 
         LocalServer.instance().startLocalServer()
-        mock.assert_called_with([local_server_path,
+        mock.assert_called_with([unittest.mock.ANY,
                                  '--local',
                                  '--debug',
                                  '--log=' + str(tmpdir / "gns3_server.log"),

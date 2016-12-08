@@ -139,7 +139,7 @@ def test_add_appliance_docker(empty_config, iou_l3):
     empty_config.add_appliance(config, "local")
     assert empty_config._config["Docker"]["containers"][0] == {
         "name": "Open vSwitch",
-        "image": "gns3/openvswitch",
+        "image": "gns3/openvswitch:latest",
         "category": 1,
         "symbol": ":/symbols/multilayer_switch.svg",
         "server": "local",
@@ -216,6 +216,7 @@ def test_add_appliance_guest(empty_config, linux_microcore_img):
         "adapters": 1,
         "category": 2,
         "cpu_throttling": 0,
+        "cpus": 1,
         "console_type": "telnet",
         "symbol": ":/symbols/qemu_guest.svg",
         "hda_disk_image": "linux-microcore-3.4.1.img",
@@ -223,6 +224,7 @@ def test_add_appliance_guest(empty_config, linux_microcore_img):
         "hdc_disk_image": "",
         "hdd_disk_image": "",
         "cdrom_image": "",
+        "bios_image": "",
         "initrd": "",
         "kernel_command_line": "",
         "kernel_image": "",
@@ -368,8 +370,10 @@ def test_add_appliance_router_two_disk(empty_config, images_dir):
     assert empty_config._config["Qemu"]["vms"][0] == {
         "adapter_type": "e1000",
         "adapters": 8,
+        "bios_image": "",
         "category": 0,
         "cpu_throttling": 0,
+        "cpus": 1,
         "symbol": ":/symbols/router.svg",
         "hda_disk_image": "a",
         "hdb_disk_image": "b",
