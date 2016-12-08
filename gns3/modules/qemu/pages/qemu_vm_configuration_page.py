@@ -60,6 +60,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiHdcDiskImageToolButton.clicked.connect(self._hdcDiskImageBrowserSlot)
         self.uiHddDiskImageToolButton.clicked.connect(self._hddDiskImageBrowserSlot)
         self.uiCdromImageToolButton.clicked.connect(self._cdromImageBrowserSlot)
+        self.uiBiosImageToolButton.clicked.connect(self._biosImageBrowserSlot)
 
         self.uiHdaDiskImageCreateToolButton.clicked.connect(self._hdaDiskImageCreateSlot)
         self.uiHdbDiskImageCreateToolButton.clicked.connect(self._hdbDiskImageCreateSlot)
@@ -194,6 +195,16 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if path:
             self.uiHddDiskImageLineEdit.clear()
             self.uiHddDiskImageLineEdit.setText(path)
+
+    def _biosImageBrowserSlot(self):
+        """
+        Slot to open a file browser and select a QEMU bios image.
+        """
+
+        path = self.getDiskImage(self, self._compute_id)
+        if path:
+            self.uiBiosImageLineEdit.clear()
+            self.uiBiosImageLineEdit.setText(path)
 
     def _cdromImageBrowserSlot(self):
         """
@@ -335,6 +346,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiHdcDiskInterfaceComboBox.setCurrentIndex(self.uiHdcDiskInterfaceComboBox.findText(settings["hdc_disk_interface"]))
             self.uiHddDiskInterfaceComboBox.setCurrentIndex(self.uiHddDiskInterfaceComboBox.findText(settings["hdd_disk_interface"]))
             self.uiCdromImageLineEdit.setText(settings["cdrom_image"])
+            self.uiBiosImageLineEdit.setText(settings["bios_image"])
             self.uiInitrdLineEdit.setText(settings["initrd"])
             self.uiKernelImageLineEdit.setText(settings["kernel_image"])
         else:
@@ -342,6 +354,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiNameLineEdit.hide()
             self.uiHddTab.hide()
             self.uiCdromTab.hide()
+            self.uiBiosImageGroupBox.hide()
             self.uiInitrdLabel.hide()
             self.uiInitrdLineEdit.hide()
             self.uiInitrdToolButton.hide()
@@ -456,6 +469,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             settings["hdc_disk_interface"] = self.uiHdcDiskInterfaceComboBox.currentText()
             settings["hdd_disk_interface"] = self.uiHddDiskInterfaceComboBox.currentText()
             settings["cdrom_image"] = self.uiCdromImageLineEdit.text().strip()
+            settings["bios_image"] = self.uiBiosImageLineEdit.text().strip()
             settings["initrd"] = self.uiInitrdLineEdit.text().strip()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text().strip()
 

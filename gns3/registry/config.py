@@ -231,6 +231,7 @@ class Config:
         new_config.setdefault("hdc_disk_image", "")
         new_config.setdefault("hdd_disk_image", "")
         new_config.setdefault("cdrom_image", "")
+        new_config.setdefault("bios_image", "")
         new_config.setdefault("initrd", "")
         new_config.setdefault("kernel_image", "")
 

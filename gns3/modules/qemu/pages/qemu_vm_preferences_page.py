@@ -101,6 +101,8 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
                 QtWidgets.QTreeWidgetItem(section_item, ["Disk interface (hdd):", qemu_vm["hdd_disk_interface"]])
             if qemu_vm["cdrom_image"]:
                 QtWidgets.QTreeWidgetItem(section_item, ["CD/DVD image:", qemu_vm["cdrom_image"]])
+            if qemu_vm["bios_image"]:
+                QtWidgets.QTreeWidgetItem(section_item, ["Bios image:", qemu_vm["bios_image"]])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")

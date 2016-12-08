@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>574</width>
-    <height>523</height>
+    <width>594</width>
+    <height>645</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -640,6 +640,32 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="uiBiosImageGroupBox">
+         <property name="title">
+          <string>Bios</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="uiBiosLabel">
+            <property name="text">
+             <string>Bios image:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="uiBiosImageLineEdit"/>
+          </item>
+          <item>
+           <widget class="QToolButton" name="uiBiosImageToolButton">
+            <property name="text">
+             <string>Browse...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="uiOptimizationGroupBox">
          <property name="title">
           <string>Optimizations</string>
@@ -779,7 +805,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>90</height>
+           <height>40</height>
           </size>
          </property>
         </spacer>

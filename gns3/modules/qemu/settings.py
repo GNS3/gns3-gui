@@ -44,6 +44,7 @@ QEMU_VM_SETTINGS = {
     "hdc_disk_interface": "ide",
     "hdd_disk_interface": "ide",
     "cdrom_image": "",
+    "bios_image": "",
     "boot_priority": "c",
     "console_type": "telnet",
     "ram": 256,

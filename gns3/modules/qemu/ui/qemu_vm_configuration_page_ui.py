@@ -8,10 +8,12 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_QemuVMConfigPageWidget(object):
+
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
-        QemuVMConfigPageWidget.resize(574, 523)
+        QemuVMConfigPageWidget.resize(594, 645)
         self.verticalLayout = QtWidgets.QVBoxLayout(QemuVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiQemutabWidget = QtWidgets.QTabWidget(QemuVMConfigPageWidget)
@@ -337,6 +339,20 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiKernelCommandLineEdit.setObjectName("uiKernelCommandLineEdit")
         self.gridLayout_2.addWidget(self.uiKernelCommandLineEdit, 2, 1, 1, 2)
         self.verticalLayout_2.addWidget(self.uiLinuxBootGroupBox)
+        self.uiBiosImageGroupBox = QtWidgets.QGroupBox(self.uiAdvancedSettingsTab)
+        self.uiBiosImageGroupBox.setObjectName("uiBiosImageGroupBox")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.uiBiosImageGroupBox)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.uiBiosLabel = QtWidgets.QLabel(self.uiBiosImageGroupBox)
+        self.uiBiosLabel.setObjectName("uiBiosLabel")
+        self.horizontalLayout.addWidget(self.uiBiosLabel)
+        self.uiBiosImageLineEdit = QtWidgets.QLineEdit(self.uiBiosImageGroupBox)
+        self.uiBiosImageLineEdit.setObjectName("uiBiosImageLineEdit")
+        self.horizontalLayout.addWidget(self.uiBiosImageLineEdit)
+        self.uiBiosImageToolButton = QtWidgets.QToolButton(self.uiBiosImageGroupBox)
+        self.uiBiosImageToolButton.setObjectName("uiBiosImageToolButton")
+        self.horizontalLayout.addWidget(self.uiBiosImageToolButton)
+        self.verticalLayout_2.addWidget(self.uiBiosImageGroupBox)
         self.uiOptimizationGroupBox = QtWidgets.QGroupBox(self.uiAdvancedSettingsTab)
         self.uiOptimizationGroupBox.setObjectName("uiOptimizationGroupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.uiOptimizationGroupBox)
@@ -394,7 +410,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiACPIShutdownCheckBox.raise_()
         self.uiBaseVMCheckBox.raise_()
         self.verticalLayout_2.addWidget(self.groupBox)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 90, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem4)
         self.uiQemutabWidget.addTab(self.uiAdvancedSettingsTab, "")
         self.verticalLayout.addWidget(self.uiQemutabWidget)
@@ -461,6 +477,9 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiKernelImageLabel.setText(_translate("QemuVMConfigPageWidget", "Kernel image:"))
         self.uiInitrdToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
         self.uiKernelImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
+        self.uiBiosImageGroupBox.setTitle(_translate("QemuVMConfigPageWidget", "Bios"))
+        self.uiBiosLabel.setText(_translate("QemuVMConfigPageWidget", "Bios image:"))
+        self.uiBiosImageToolButton.setText(_translate("QemuVMConfigPageWidget", "Browse..."))
         self.uiOptimizationGroupBox.setTitle(_translate("QemuVMConfigPageWidget", "Optimizations"))
         self.uiActivateCPUThrottlingCheckBox.setText(_translate("QemuVMConfigPageWidget", "Activate CPU throttling"))
         self.uiCPUThrottlingLabel.setText(_translate("QemuVMConfigPageWidget", "Percentage of CPU allowed:"))
@@ -477,4 +496,3 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiBaseVMCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use as a linked base VM"))
         self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown (experimental)"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiAdvancedSettingsTab), _translate("QemuVMConfigPageWidget", "Advanced settings"))
-

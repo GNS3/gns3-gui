@@ -106,7 +106,8 @@
             },
             "image": {
                 "type": "string",
-                "title": "Docker image in the Docker Hub"
+                "title": "Docker image in the Docker Hub",
+                "pattern": ".+:.+"
             },
             "start_command": {
                 "type": "string",
@@ -398,6 +399,10 @@
               "image": {
                 "type": "string",
                 "title": "OS image"
+              },
+              "bios_image": {
+                "type": "string",
+                "title": "Bios image"
               },
               "hda_disk_image": {
                 "type": "string",
