@@ -51,6 +51,7 @@ def sudo(*commands, parent=None, shell=False):
                 command = [shlex.quote(c) for c in command]
                 cmd.append(' '.join(command))
             command = ["osascript", "-e", "do shell script \"{}\" with administrator privileges".format(' && '.join(cmd))]
+            log.info("Execute as admin: {}".format(' '.join(command)))
             worker = WaitForCommandWorker(command, shell=shell)
 
             for line in worker.output().decode("utf-8", errors="ignore").splitlines():
