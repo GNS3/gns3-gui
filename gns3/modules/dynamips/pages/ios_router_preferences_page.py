@@ -26,7 +26,7 @@ import math
 import zipfile
 import logging
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtGui, QtWidgets, qpartial, qslot
 from gns3.controller import Controller
 
 from gns3.main_window import MainWindow
@@ -88,7 +88,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         else:
             self.uiIOSRouterInfoTreeWidget.clear()
 
-    def _iosRouterNewSlot(self):
+    @qslot
+    def _iosRouterNewSlot(self, *args):
         """
         Creates a new IOS router.
         """

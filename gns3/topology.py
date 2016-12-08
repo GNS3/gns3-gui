@@ -174,6 +174,7 @@ class Topology(QtCore.QObject):
             self.setProject(project)
             project.create()
             self._main_window.uiStatusBar.showMessage("Project created", 2000)
+        return project
 
     def loadProject(self, path):
         """
