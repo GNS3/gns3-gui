@@ -180,12 +180,14 @@ class ComputeManager(QtCore.QObject):
                         log.debug("Update compute %s", compute_id)
                         self._controller.put("/computes/" + compute_id, None, body=c.__json__())
                         self._computes[compute_id] = c
+                        self.updated_signal.emit(compute_id)
         # Create the new nodes
         for compute in computes:
             if compute.id() not in self._computes:
                 log.debug("Create compute %s", compute.id())
                 self._controller.post("/computes", None, body=compute.__json__())
                 self._computes[compute.id()] = compute
+                self.created_signal.emit(compute.id())
 
     @staticmethod
     def reset():
