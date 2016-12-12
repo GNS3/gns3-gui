@@ -76,6 +76,7 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
             else:
                 self._status = "stopped"
                 self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
+        self._parent.sortItems(0, QtCore.Qt.AscendingOrder)
 
 
 class ComputeSummaryView(QtWidgets.QTreeWidget):
