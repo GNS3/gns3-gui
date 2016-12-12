@@ -273,7 +273,6 @@ It is your responsability to check if you have the right to distribute the image
     def deleteProject(self):
         if self._project:
             self._project.destroy()
-        self.setProject(None)
 
     def addNode(self, node):
         """

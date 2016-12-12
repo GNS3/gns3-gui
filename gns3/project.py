@@ -431,6 +431,7 @@ class Project(QtCore.QObject):
 
         self._closed = True
         self.project_closed_signal.emit()
+        Topology.instance().setProject(None)
 
     def stopListenNotifications(self):
         if self._notification_stream:
