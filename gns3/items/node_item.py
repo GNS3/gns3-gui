@@ -114,7 +114,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         y = (self.GRID_SIZE * round((self.y() + mid_y) / self.GRID_SIZE)) - mid_y
         self.setPos(x, y)
 
-    def _updateNode(self):
+    def updateNode(self):
         """
         Sync change to the node
         """
@@ -147,11 +147,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         renderer.setObjectName(path)
         self.setSharedRenderer(renderer)
         if self._node.settings().get("symbol") != self._symbol:
-            self._updateNode()
+            self.updateNode()
         if not self._initialized:
             self._showLabel()
             self._initialized = True
-            self._updateNode()
+            self.updateNode()
 
     def node(self):
         """
@@ -325,7 +325,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Called when user unselect the label
         """
-        self._updateNode()
+        self.updateNode()
 
     def _centerLabel(self):
         """
@@ -368,7 +368,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self._node_label.setRotation(label_data["rotation"])
         if label_data["x"] is None:
             self._centerLabel()
-            self._updateNode()
+            self.updateNode()
         else:
             self._node_label.setPos(label_data["x"], label_data["y"])
 
@@ -459,7 +459,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 self.graphicsEffect().setEnabled(True)
             else:
                 self.graphicsEffect().setEnabled(False)
-                self._updateNode()
+                self.updateNode()
 
         # adjust link item positions when this node is moving or has changed.
         if change == QtWidgets.QGraphicsItem.ItemPositionChange or change == QtWidgets.QGraphicsItem.ItemPositionHasChanged:
@@ -519,7 +519,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 self._node_label.setFlag(self.ItemIsMovable, True)
         for link in self._links:
             link.adjust()
-        self._node.setSettingValue("z", int(value))
 
     def hoverEnterEvent(self, event):
         """
@@ -548,4 +547,4 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         It the item is select but mouse is not on it the event
         is send also
         """
-        self._updateNode()
+        self.updateNode()
