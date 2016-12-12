@@ -146,7 +146,7 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
         settings["ports_mapping"] = []
-        for port_number in range(1, nb_ports + 1):
+        for port_number in range(0, nb_ports):
             settings["ports_mapping"].append({"port_number": int(port_number),
-                                      "name": "Ethernet{}".format(port_number)})
+                                              "name": "Ethernet{}".format(port_number)})
         return settings

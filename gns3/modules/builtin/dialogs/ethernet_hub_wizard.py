@@ -50,7 +50,7 @@ class EthernetHubWizard(VMWizard, Ui_EthernetHubWizard):
         """
 
         ports = []
-        for port_number in range(1, self.uiPortsSpinBox.value() + 1):
+        for port_number in range(0, self.uiPortsSpinBox.value()):
             ports.append({"port_number": int(port_number),
                           "name": "Ethernet{}".format(port_number)})
 
