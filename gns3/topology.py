@@ -475,6 +475,10 @@ It is your responsability to check if you have the right to distribute the image
 
         :param node_data: node data to create a new node
         """
+
+        if not self._project:
+            return  # The project has been deleted during the creation request
+
         node_module = None
         for module in MODULES:
             instance = module.instance()
