@@ -120,6 +120,7 @@ def main():
     parser.add_argument("project", help="load a GNS3 project (.gns3)", metavar="path", nargs="?")
     parser.add_argument("--version", help="show the version", action="version", version=__version__)
     parser.add_argument("--debug", help="print out debug messages", action="store_true", default=False)
+    parser.add_argument("-q", "--quiet", action="store_true", help="do not show logs on stdout")
     parser.add_argument("--config", help="Configuration file")
     parser.add_argument("--profile", help="Settings profile (blank will use default settings files)")
     options = parser.parse_args()
@@ -179,10 +180,6 @@ def main():
 
     # catch exceptions to write them in a file
     sys.excepthook = exceptionHook
-
-    current_year = datetime.date.today().year
-    print("GNS3 GUI version {}".format(__version__))
-    print("Copyright (c) 2007-{} GNS3 Technologies Inc.".format(current_year))
 
     # we only support Python 3 version >= 3.4
     if sys.version_info < (3, 4):
@@ -247,8 +244,14 @@ def main():
     # on debug enable logging to stdout
     if options.debug:
         root_logger = init_logger(logging.DEBUG, logfile)
+    elif options.quiet:
+        root_logger = init_logger(logging.ERROR, logfile)
     else:
         root_logger = init_logger(logging.INFO, logfile)
+
+    current_year = datetime.date.today().year
+    log.info("GNS3 GUI version {}".format(__version__))
+    log.info("Copyright (c) 2007-{} GNS3 Technologies Inc.".format(current_year))
 
     # update the exception file path to have it in the same directory as the settings file.
     exception_file_path = os.path.join(LocalConfig.instance().configDirectory(), exception_file_path)
