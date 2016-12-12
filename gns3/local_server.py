@@ -81,17 +81,17 @@ class LocalServer(QtCore.QObject):
     """
 
     def __init__(self, parent=None):
+        # Remember if the server was started by us or not
+        self._server_started_by_me = False
+        self._local_server_path = ""
+        self._local_server_process = None
 
         super().__init__()
         self._parent = parent
-        self._local_server_path = ""
-        self._local_server_process = None
         self._config_directory = LocalConfig.instance().configDirectory()
         self._settings = {}
         self.localServerSettings()
         self._port = self._settings.get("port", 3080)
-        # Remember if the server was started by us or not
-        self._server_started_by_me = False
 
         if not self._settings.get("auto_start", True):
             if self._settings.get("host") is None:
