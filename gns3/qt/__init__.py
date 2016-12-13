@@ -54,6 +54,10 @@ QtCore.Property = QtCore.pyqtProperty
 from PyQt5.QtWidgets import QFileDialog as OldFileDialog
 
 
+# Do not use system proxy because it could be a parental control, virus or "Security software"...
+QtNetwork.QNetworkProxyFactory.setUseSystemConfiguration(False)
+
+
 def sip_is_deleted(obj):
     """
     :return: True if object no longer exists
