@@ -436,11 +436,21 @@ class Project(QtCore.QObject):
     def stopListenNotifications(self):
         if self._notification_stream:
             log.debug("Stop listening for notifications from project %s", self._id)
-            self._notification_stream.abort()
+            stream = self._notification_stream
+            self._notification_stream = None
+            stream.abort()
 
     def _startListenNotifications(self):
         path = "/projects/{project_id}/notifications".format(project_id=self._id)
-        self._notification_stream = Controller.instance().createHTTPQuery("GET", path, None, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True)
+        self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True)
+
+    def _endListenNotificationCallback(self, result, error=False, **kwargs):
+        """
+        If notification stream disconnect we reconnect to it
+        """
+        if self._notification_stream:
+            self._notification_stream = None
+            self._startListenNotifications()
 
     def _event_received(self, result, server=None, **kwargs):
 

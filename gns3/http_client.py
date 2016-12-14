@@ -537,8 +537,8 @@ class HTTPClient(QtCore.QObject):
                 if not ignore_errors:
                     self.connection_disconnected_signal.emit()
                     self.close()
-                    if callback is not None:
-                        callback({"message": error_message}, error=True, server=server, context=context)
+                if callback is not None:
+                    callback({"message": error_message}, error=True, server=server, context=context)
                 return
             else:
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
