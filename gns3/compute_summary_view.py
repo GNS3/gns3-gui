@@ -107,17 +107,26 @@ class ComputeSummaryView(QtWidgets.QTreeWidget):
         """
 
         compute = ComputeManager.instance().getCompute(compute_id)
+        if ComputeManager.instance().computeIsTheRemoteGNS3VM(compute):
+            return
         self._computes[compute_id] = ComputeItem(self, compute)
 
     def _computeUpdatedSlot(self, compute_id):
         """
-        Called when a compute is removed to the list of computes
+        Called when a compute is updated
 
         :params url: URL of the compute
         """
 
         if compute_id in self._computes:
-            self._computes[compute_id]._refreshStatusSlot()
+            compute = ComputeManager.instance().getCompute(compute_id)
+            # We hide the remote GNS3 VM
+            if ComputeManager.instance().computeIsTheRemoteGNS3VM(compute):
+                self._computeRemovedSlot(compute_id)
+            else:
+                self._computes[compute_id]._refreshStatusSlot()
+        else:
+            self._computeAddedSlot(compute_id)
 
     def _computeRemovedSlot(self, compute_id):
         """

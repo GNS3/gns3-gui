@@ -101,11 +101,25 @@ class ComputeManager(QtCore.QObject):
         else:
             self.updated_signal.emit(compute_id)
 
+    def computeIsTheRemoteGNS3VM(self, compute):
+        """
+        :returns: Boolean True if the remote server is the remote GNS3 VM
+        """
+        if compute.id() != "local" and compute.id() != "vm":
+            if self.vmCompute() and "GNS3 VM ({})".format(compute.name()) == self.vmCompute().name():
+                return True
+        return False
+
     def computes(self):
         """
         :returns: List of computes nodes
         """
-        return list(self._computes.values())
+        computes = []
+        for compute in self._computes.values():
+            # We filter the remote GNS3 VM compute from the computes list
+            if not self.computeIsTheRemoteGNS3VM(compute):
+                computes.append(compute)
+        return computes
 
     def vmCompute(self):
         """
