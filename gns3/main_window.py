@@ -1094,14 +1094,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 action.setText(" {}. {}".format(index + 1, project_name))
                 action.setData((project_id, ))
-            action.setVisible(True)
             index += 1
 
-        for index in range(size + 1, self._max_recent_files):
-            self._recent_project_actions[index].setVisible(False)
+        if Controller.instance().isRemote():
+            for index in range(0, size):
+                self._recent_project_actions[index].setVisible(True)
+            for index in range(size + 1, self._max_recent_files):
+                self._recent_project_actions[index].setVisible(False)
 
-        if size:
-            self._recent_project_actions_separator.setVisible(True)
+            if size:
+                self._recent_project_actions_separator.setVisible(True)
+        else:
+            for action in self._recent_project_actions:
+                action.setVisible(False)
+            self._recent_project_actions_separator.setVisible(False)
 
     def updateRecentFileSettings(self, path):
         """
