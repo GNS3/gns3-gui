@@ -143,7 +143,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._recent_project_actions_separator = self.uiFileMenu.addSeparator()
         self._recent_project_actions_separator.setVisible(False)
         self.uiFileMenu.addActions(self._recent_project_actions)
-        self.updateRecentProjectActions()
 
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
@@ -1010,6 +1009,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._setStyle(self._settings.get("style"))
 
         Controller.instance().connected_signal.connect(self._controllerConnectedSlot)
+        Controller.instance().project_list_updated_signal.connect(self.updateRecentProjectActions)
 
         self._analytics_client.sendScreenView("Main Window")
         self.uiGraphicsView.setEnabled(False)
@@ -1085,6 +1085,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             except ValueError:  # Compatible with 2.0.0a1
                 project_path = None
                 project_id, project_name = project.split(":", maxsplit=1)
+
+            if project_id not in [p["project_id"] for p in Controller.instance().projects()]:
+                continue
+
             action = self._recent_project_actions[index]
             if project_path and os.path.exists(project_path):
                 action.setText(" {}. {} [{}]".format(index + 1, project_name, project_path))

@@ -69,7 +69,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         self.uiDeleteProjectButton.clicked.connect(self._deleteProjectSlot)
         self.uiDuplicateProjectPushButton.clicked.connect(self._duplicateProjectSlot)
         self.uiRefreshProjectsPushButton.clicked.connect(Controller.instance().refreshProjectList)
-        Controller.instance().project_list_updated.connect(self._updateProjectListSlot)
+        Controller.instance().project_list_updated_signal.connect(self._updateProjectListSlot)
         self._updateProjectListSlot()
 
     def _settingsClickedSlot(self):
@@ -241,7 +241,6 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 QtWidgets.QMessageBox.critical(self,
                                                "New Project",
                                                "Error while overwrite project: {}".format(result["message"]))
-        self._projects = []
         Controller.instance().refreshProjectList()
         self.done(True)
 
@@ -263,7 +262,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             QtWidgets.QMessageBox.critical(self, "New project", "Project name is empty")
             return False
 
-        for existing_project in self._projects:
+        for existing_project in Controller.instance().projects():
             if self._project_settings["project_name"] == existing_project["name"] \
                or ("project_files_dir" in self._project_settings and self._project_settings["project_files_dir"] == existing_project["path"]):
 
