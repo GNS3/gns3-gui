@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtCore, QtGui, QtWidgets, qslot
 from ..ui.project_dialog_ui import Ui_ProjectDialog
 from ..controller import Controller
 from ..topology import Topology
@@ -43,7 +43,6 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         self.setupUi(self)
 
         self._main_window = parent
-        self._projects = []
         self._project_settings = {}
         self.uiNameLineEdit.setText(default_project_name)
         self.uiLocationLineEdit.setText(os.path.join(Topology.instance().projectsDirPath(), default_project_name))
@@ -65,16 +64,13 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             self.uiLocationLineEdit.setVisible(False)
             self.uiLocationBrowserToolButton.setVisible(False)
             self.uiOpenProjectPushButton.setVisible(False)
-        Controller.instance().connected_signal.connect(self._refreshProjects)
 
         self.uiProjectsTreeWidget.itemDoubleClicked.connect(self._projectsTreeWidgetDoubleClickedSlot)
         self.uiDeleteProjectButton.clicked.connect(self._deleteProjectSlot)
         self.uiDuplicateProjectPushButton.clicked.connect(self._duplicateProjectSlot)
-        self.uiRefreshProjectsPushButton.clicked.connect(self._refreshProjects)
-        self._refreshProjects()
-
-    def _refreshProjects(self):
-        Controller.instance().get("/projects", self._projectListCallback)
+        self.uiRefreshProjectsPushButton.clicked.connect(Controller.instance().refreshProjectList)
+        Controller.instance().project_list_updated.connect(self._updateProjectListSlot)
+        self._updateProjectListSlot()
 
     def _settingsClickedSlot(self):
         """
@@ -111,7 +107,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         if error:
             log.error("Error while deleting project: {}".format(result["message"]))
             return
-        Controller.instance().get("/projects", self._projectListCallback)
+        Controller.instance().refreshProjectList()
 
     def _duplicateProjectSlot(self):
         if len(self.uiProjectsTreeWidget.selectedItems()) == 0:
@@ -127,7 +123,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             project_name = project.data(1, QtCore.Qt.UserRole)
 
             new_project_name = project_name + "-1"
-            existing_project_name = [p["name"] for p in self._projects]
+            existing_project_name = [p["name"] for p in Controller.instance().projects()]
             i = 1
             while new_project_name in existing_project_name:
                 new_project_name = "{}-{}".format(project_name, i)
@@ -146,33 +142,32 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         if error:
             log.error("Error while duplicate project: {}".format(result["message"]))
             return
-        Controller.instance().get("/projects", self._projectListCallback)
+        Controller.instance().refreshProjectList()
 
-    def _projectListCallback(self, result, error=False, **kwargs):
+    @qslot
+    def _updateProjectListSlot(self, *args):
         self.uiProjectsTreeWidget.clear()
         self.uiDeleteProjectButton.setEnabled(False)
-        if not error:
-            self._projects = result
-            self.uiProjectsTreeWidget.setUpdatesEnabled(False)
-            items = []
-            for project in result:
-                path = os.path.join(project["path"], project["filename"])
-                item = QtWidgets.QTreeWidgetItem([project["name"], project["status"], path])
-                item.setData(0, QtCore.Qt.UserRole, project["project_id"])
-                item.setData(1, QtCore.Qt.UserRole, project["name"])
-                item.setData(2, QtCore.Qt.UserRole, path)
-                items.append(item)
-            self.uiProjectsTreeWidget.addTopLevelItems(items)
+        self.uiProjectsTreeWidget.setUpdatesEnabled(False)
+        items = []
+        for project in Controller.instance().projects():
+            path = os.path.join(project["path"], project["filename"])
+            item = QtWidgets.QTreeWidgetItem([project["name"], project["status"], path])
+            item.setData(0, QtCore.Qt.UserRole, project["project_id"])
+            item.setData(1, QtCore.Qt.UserRole, project["name"])
+            item.setData(2, QtCore.Qt.UserRole, path)
+            items.append(item)
+        self.uiProjectsTreeWidget.addTopLevelItems(items)
 
-            if len(result):
-                self.uiDeleteProjectButton.setEnabled(True)
+        if len(Controller.instance().projects()):
+            self.uiDeleteProjectButton.setEnabled(True)
 
-            self.uiProjectsTreeWidget.header().setResizeContentsPrecision(100)  # How many row is checked for the resize for performance reason
-            self.uiProjectsTreeWidget.resizeColumnToContents(0)
-            self.uiProjectsTreeWidget.resizeColumnToContents(1)
-            self.uiProjectsTreeWidget.resizeColumnToContents(2)
-            self.uiProjectsTreeWidget.sortItems(0, QtCore.Qt.AscendingOrder)
-            self.uiProjectsTreeWidget.setUpdatesEnabled(True)
+        self.uiProjectsTreeWidget.header().setResizeContentsPrecision(100)  # How many row is checked for the resize for performance reason
+        self.uiProjectsTreeWidget.resizeColumnToContents(0)
+        self.uiProjectsTreeWidget.resizeColumnToContents(1)
+        self.uiProjectsTreeWidget.resizeColumnToContents(2)
+        self.uiProjectsTreeWidget.sortItems(0, QtCore.Qt.AscendingOrder)
+        self.uiProjectsTreeWidget.setUpdatesEnabled(True)
 
     def keyPressEvent(self, e):
         """
@@ -247,7 +242,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                                                "New Project",
                                                "Error while overwrite project: {}".format(result["message"]))
         self._projects = []
-        self._refreshProjects()
+        Controller.instance().refreshProjectList()
         self.done(True)
 
     def _newProject(self):

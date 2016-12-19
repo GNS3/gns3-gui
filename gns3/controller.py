@@ -19,7 +19,7 @@ import os
 import hashlib
 import tempfile
 
-from .qt import QtCore, QtGui, QtWidgets, qpartial
+from .qt import QtCore, QtGui, QtWidgets, qpartial, qslot
 from .symbol import Symbol
 from .local_server_config import LocalServerConfig
 from .settings import LOCAL_SERVER_SETTINGS
@@ -35,6 +35,7 @@ class Controller(QtCore.QObject):
     connected_signal = QtCore.Signal()
     disconnected_signal = QtCore.Signal()
     connection_failed_signal = QtCore.Signal()
+    project_list_updated = QtCore.Signal()
 
     def __init__(self, parent=None):
         super().__init__()
@@ -45,9 +46,11 @@ class Controller(QtCore.QObject):
         # If it's the first error we display an alert box to the user
         self._first_error = True
         self._error_dialog = None
+        self._projects = []
 
         # If we do multiple call in order to download the same symbol we queue them
         self._static_asset_download_queue = {}
+        self.connected_signal.connect(self.refreshProjectList)
 
     def host(self):
         return self._http_client.host()
@@ -250,3 +253,15 @@ class Controller(QtCore.QObject):
         icon = QtGui.QIcon()
         icon.addFile(path)
         callback(icon)
+
+    @qslot
+    def refreshProjectList(self, *args):
+        self.get("/projects", self._projectListCallback)
+
+    def _projectListCallback(self, result, error=False, **kwargs):
+        if not error:
+            self._projects = result
+        self.project_list_updated.emit()
+
+    def projects(self):
+        return self._projects
