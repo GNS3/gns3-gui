@@ -227,6 +227,8 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
     @qslot
     def _projectCreatedSlot(self, *args):
+        if Topology.instance().project() is None:
+            return
         try:
             Topology.instance().project().project_updated_signal.disconnect(self._projectCreatedSlot)
             self._project_created = True
