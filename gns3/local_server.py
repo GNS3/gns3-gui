@@ -307,6 +307,8 @@ class LocalServer(QtCore.QObject):
         """
 
         if not self.shouldLocalServerAutoStart():
+            self._http_client = HTTPClient(self._settings)
+            Controller.instance().setHttpClient(self._http_client)
             return
 
         if self.isLocalServerRunning() and self._server_started_by_me:
