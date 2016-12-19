@@ -24,7 +24,7 @@ from .qt import QtWidgets
 from .local_config import LocalConfig
 from .settings import PACKET_CAPTURE_SETTINGS
 from .dialogs.capture_dialog import CaptureDialog
-
+from .topology import Topology
 
 import logging
 log = logging.getLogger(__name__)
@@ -39,6 +39,17 @@ class PacketCapture:
         self._capture_reader_process = {}
         # Auto start the capture program for th link
         self._autostart = {}
+
+        Topology.instance().project_changed_signal.connect(self.killAllCapture)
+
+    def killAllCapture(self):
+        """
+        Kill all running captures (for example when change project)
+        """
+        for process in list(self._tail_process.values()):
+            process.kill()
+        self._tail_process = {}
+        self._capture_reader_process = {}
 
     def topology(self):
         from .topology import Topology
