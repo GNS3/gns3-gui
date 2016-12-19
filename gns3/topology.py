@@ -146,8 +146,9 @@ class Topology(QtCore.QObject):
         if os.path.exists(project_file):
             self._main_window.updateRecentFileSettings(project_file)
             self._main_window.updateRecentFileActions()
-        self._main_window.updateRecentProjectsSettings(self._project.id(), self._project.name(), self._project.path())
-        self._main_window.updateRecentProjectActions()
+        #FIXME
+        #self._main_window.updateRecentProjectsSettings(self._project.id(), self._project.name(), self._project.path())
+        #self._main_window.updateRecentProjectActions()
 
     def createLoadProject(self, project_settings):
         """

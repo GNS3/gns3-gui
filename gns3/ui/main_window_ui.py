@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Mon Dec 19 23:21:52 2016
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -46,7 +47,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtWidgets.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 22))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 25))
         self.uiMenuBar.setObjectName("uiMenuBar")
         self.uiEditMenu = QtWidgets.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName("uiEditMenu")
@@ -66,8 +67,6 @@ class Ui_MainWindow(object):
         self.uiDeviceMenu.setObjectName("uiDeviceMenu")
         self.uiToolsMenu = QtWidgets.QMenu(self.uiMenuBar)
         self.uiToolsMenu.setObjectName("uiToolsMenu")
-        self.uiProjectMenu = QtWidgets.QMenu(self.uiMenuBar)
-        self.uiProjectMenu.setObjectName("uiProjectMenu")
         MainWindow.setMenuBar(self.uiMenuBar)
         self.uiStatusBar = QtWidgets.QStatusBar(MainWindow)
         self.uiStatusBar.setObjectName("uiStatusBar")
@@ -88,8 +87,8 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidgetContents = QtWidgets.QWidget()
         self.uiNodesDockWidgetContents.setObjectName("uiNodesDockWidgetContents")
         self.vboxlayout = QtWidgets.QVBoxLayout(self.uiNodesDockWidgetContents)
-        self.vboxlayout.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout.setSpacing(0)
+        self.vboxlayout.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiNodesView = NodesView(self.uiNodesDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -130,8 +129,8 @@ class Ui_MainWindow(object):
         self.uiConsoleDockWidgetContents = QtWidgets.QWidget()
         self.uiConsoleDockWidgetContents.setObjectName("uiConsoleDockWidgetContents")
         self.vboxlayout1 = QtWidgets.QVBoxLayout(self.uiConsoleDockWidgetContents)
-        self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout1.setSpacing(0)
+        self.vboxlayout1.setContentsMargins(0, 0, 0, 0)
         self.vboxlayout1.setObjectName("vboxlayout1")
         self.uiConsoleTextEdit = ConsoleView(self.uiConsoleDockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -427,10 +426,13 @@ class Ui_MainWindow(object):
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
+        self.uiEditMenu.addAction(self.uiSnapshotAction)
         self.uiEditMenu.addAction(self.uiPreferencesAction)
         self.uiFileMenu.addAction(self.uiNewProjectAction)
         self.uiFileMenu.addAction(self.uiOpenProjectAction)
         self.uiFileMenu.addAction(self.uiSaveProjectAsAction)
+        self.uiFileMenu.addAction(self.uiEditProjectAction)
+        self.uiFileMenu.addAction(self.uiDeleteProjectAction)
         self.uiFileMenu.addSeparator()
         self.uiFileMenu.addAction(self.uiExportProjectAction)
         self.uiFileMenu.addAction(self.uiImportProjectAction)
@@ -471,16 +473,12 @@ class Ui_MainWindow(object):
         self.uiAnnotateMenu.addAction(self.uiDrawRectangleAction)
         self.uiAnnotateMenu.addAction(self.uiDrawEllipseAction)
         self.uiAnnotateMenu.addAction(self.uiEditReadmeAction)
-        self.uiProjectMenu.addAction(self.uiSnapshotAction)
-        self.uiProjectMenu.addAction(self.uiScreenshotAction)
-        self.uiProjectMenu.addAction(self.uiImportExportConfigsAction)
-        self.uiProjectMenu.addAction(self.uiEditProjectAction)
-        self.uiProjectMenu.addAction(self.uiDeleteProjectAction)
+        self.uiToolsMenu.addAction(self.uiScreenshotAction)
+        self.uiToolsMenu.addAction(self.uiImportExportConfigsAction)
         self.uiMenuBar.addAction(self.uiFileMenu.menuAction())
         self.uiMenuBar.addAction(self.uiEditMenu.menuAction())
         self.uiMenuBar.addAction(self.uiViewMenu.menuAction())
         self.uiMenuBar.addAction(self.uiControlMenu.menuAction())
-        self.uiMenuBar.addAction(self.uiProjectMenu.menuAction())
         self.uiMenuBar.addAction(self.uiDeviceMenu.menuAction())
         self.uiMenuBar.addAction(self.uiAnnotateMenu.menuAction())
         self.uiMenuBar.addAction(self.uiToolsMenu.menuAction())
@@ -531,9 +529,8 @@ class Ui_MainWindow(object):
         self.uiDocksMenu.setTitle(_translate("MainWindow", "Docks"))
         self.uiControlMenu.setTitle(_translate("MainWindow", "Control"))
         self.uiAnnotateMenu.setTitle(_translate("MainWindow", "Annotate"))
-        self.uiDeviceMenu.setTitle(_translate("MainWindow", "Device"))
+        self.uiDeviceMenu.setTitle(_translate("MainWindow", "Node"))
         self.uiToolsMenu.setTitle(_translate("MainWindow", "&Tools"))
-        self.uiProjectMenu.setTitle(_translate("MainWindow", "Project"))
         self.uiGeneralToolBar.setWindowTitle(_translate("MainWindow", "General"))
         self.uiNodesDockWidget.setWindowTitle(_translate("MainWindow", "Node Types"))
         self.uiNodesView.setToolTip(_translate("MainWindow", "Drag a node to the workspace (Press SHIFT while dragging to add multiple identical nodes)."))
@@ -561,14 +558,14 @@ class Ui_MainWindow(object):
         self.uiScreenshotAction.setText(_translate("MainWindow", "Take a screenshot"))
         self.uiScreenshotAction.setToolTip(_translate("MainWindow", "Take a screenshot"))
         self.uiScreenshotAction.setStatusTip(_translate("MainWindow", "Take a screenshot"))
-        self.uiStartAllAction.setText(_translate("MainWindow", "Start/Resume all devices"))
-        self.uiStartAllAction.setToolTip(_translate("MainWindow", "Start/Resume all devices"))
+        self.uiStartAllAction.setText(_translate("MainWindow", "Start/Resume all nodes"))
+        self.uiStartAllAction.setToolTip(_translate("MainWindow", "Start/Resume all nodes"))
         self.uiStartAllAction.setStatusTip(_translate("MainWindow", "Start/Resume all devices"))
-        self.uiStopAllAction.setText(_translate("MainWindow", "Stop all devices"))
-        self.uiStopAllAction.setToolTip(_translate("MainWindow", "Stop all devices"))
+        self.uiStopAllAction.setText(_translate("MainWindow", "Stop all nodes"))
+        self.uiStopAllAction.setToolTip(_translate("MainWindow", "Stop all nodes"))
         self.uiStopAllAction.setStatusTip(_translate("MainWindow", "Stop all devices"))
-        self.uiConsoleAllAction.setText(_translate("MainWindow", "Console connect to all devices"))
-        self.uiConsoleAllAction.setToolTip(_translate("MainWindow", "Console connect to all devices"))
+        self.uiConsoleAllAction.setText(_translate("MainWindow", "Console connect to all nodes"))
+        self.uiConsoleAllAction.setToolTip(_translate("MainWindow", "Console connect to all nodes"))
         self.uiConsoleAllAction.setStatusTip(_translate("MainWindow", "Console to all devices"))
         self.uiAboutQtAction.setText(_translate("MainWindow", "About &Qt"))
         self.uiAboutQtAction.setStatusTip(_translate("MainWindow", "About Qt"))
@@ -592,8 +589,8 @@ class Ui_MainWindow(object):
         self.uiPreferencesAction.setText(_translate("MainWindow", "&Preferences..."))
         self.uiPreferencesAction.setStatusTip(_translate("MainWindow", "Preferences"))
         self.uiPreferencesAction.setShortcut(_translate("MainWindow", "Ctrl+Shift+P"))
-        self.uiSuspendAllAction.setText(_translate("MainWindow", "Suspend all devices"))
-        self.uiSuspendAllAction.setToolTip(_translate("MainWindow", "Suspend all devices"))
+        self.uiSuspendAllAction.setText(_translate("MainWindow", "Suspend all nodes"))
+        self.uiSuspendAllAction.setToolTip(_translate("MainWindow", "Suspend all nodes"))
         self.uiSuspendAllAction.setStatusTip(_translate("MainWindow", "Suspend all devices"))
         self.uiAddNoteAction.setText(_translate("MainWindow", "Add note"))
         self.uiAddNoteAction.setToolTip(_translate("MainWindow", "Add a note"))
@@ -603,8 +600,8 @@ class Ui_MainWindow(object):
         self.uiNewProjectAction.setToolTip(_translate("MainWindow", "New blank project"))
         self.uiNewProjectAction.setStatusTip(_translate("MainWindow", "New blank project"))
         self.uiNewProjectAction.setShortcut(_translate("MainWindow", "Ctrl+N"))
-        self.uiImportExportConfigsAction.setText(_translate("MainWindow", "&Import/Export device configs"))
-        self.uiImportExportConfigsAction.setToolTip(_translate("MainWindow", "Import/Export device configs"))
+        self.uiImportExportConfigsAction.setText(_translate("MainWindow", "&Import/Export node configs"))
+        self.uiImportExportConfigsAction.setToolTip(_translate("MainWindow", "Import/Export node configs"))
         self.uiImportExportConfigsAction.setStatusTip(_translate("MainWindow", "Import/Export device configs"))
         self.uiInsertImageAction.setText(_translate("MainWindow", "Insert picture"))
         self.uiInsertImageAction.setToolTip(_translate("MainWindow", "Insert a picture"))
@@ -628,8 +625,8 @@ class Ui_MainWindow(object):
         self.uiSaveProjectAsAction.setText(_translate("MainWindow", "&Save project as..."))
         self.uiSaveProjectAsAction.setToolTip(_translate("MainWindow", "Save project as..."))
         self.uiSaveProjectAsAction.setStatusTip(_translate("MainWindow", "Save project as..."))
-        self.uiReloadAllAction.setText(_translate("MainWindow", "Reload all devices"))
-        self.uiReloadAllAction.setToolTip(_translate("MainWindow", "Reload all devices"))
+        self.uiReloadAllAction.setText(_translate("MainWindow", "Reload all nodes"))
+        self.uiReloadAllAction.setToolTip(_translate("MainWindow", "Reload all nodes"))
         self.uiReloadAllAction.setStatusTip(_translate("MainWindow", "Reload all devices"))
         self.uiAuxConsoleAllAction.setText(_translate("MainWindow", "Console connect via AUX to all devices"))
         self.uiAuxConsoleAllAction.setToolTip(_translate("MainWindow", "Console connect via AUX to all devices"))
@@ -678,8 +675,8 @@ class Ui_MainWindow(object):
         self.uiEditProjectAction.setText(_translate("MainWindow", "Edit project"))
 
 from ..compute_summary_view import ComputeSummaryView
-from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView
+from ..console_view import ConsoleView
 from ..nodes_view import NodesView
 from ..topology_summary_view import TopologySummaryView
 from . import resources_rc

@@ -38,16 +38,7 @@ background-none;
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -71,7 +62,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -81,6 +72,7 @@ background-none;
     <addaction name="uiSelectAllAction"/>
     <addaction name="uiSelectNoneAction"/>
     <addaction name="separator"/>
+    <addaction name="uiSnapshotAction"/>
     <addaction name="uiPreferencesAction"/>
    </widget>
    <widget class="QMenu" name="uiFileMenu">
@@ -90,6 +82,8 @@ background-none;
     <addaction name="uiNewProjectAction"/>
     <addaction name="uiOpenProjectAction"/>
     <addaction name="uiSaveProjectAsAction"/>
+    <addaction name="uiEditProjectAction"/>
+    <addaction name="uiDeleteProjectAction"/>
     <addaction name="separator"/>
     <addaction name="uiExportProjectAction"/>
     <addaction name="uiImportProjectAction"/>
@@ -158,29 +152,20 @@ background-none;
    </widget>
    <widget class="QMenu" name="uiDeviceMenu">
     <property name="title">
-     <string>Device</string>
+     <string>Node</string>
     </property>
    </widget>
    <widget class="QMenu" name="uiToolsMenu">
     <property name="title">
      <string>&amp;Tools</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="uiProjectMenu">
-    <property name="title">
-     <string>Project</string>
-    </property>
-    <addaction name="uiSnapshotAction"/>
     <addaction name="uiScreenshotAction"/>
     <addaction name="uiImportExportConfigsAction"/>
-    <addaction name="uiEditProjectAction"/>
-    <addaction name="uiDeleteProjectAction"/>
    </widget>
    <addaction name="uiFileMenu"/>
    <addaction name="uiEditMenu"/>
    <addaction name="uiViewMenu"/>
    <addaction name="uiControlMenu"/>
-   <addaction name="uiProjectMenu"/>
    <addaction name="uiDeviceMenu"/>
    <addaction name="uiAnnotateMenu"/>
    <addaction name="uiToolsMenu"/>
@@ -239,16 +224,7 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
@@ -385,16 +361,7 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
@@ -458,16 +425,7 @@ background-none;
      </sizepolicy>
     </property>
     <layout class="QGridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -506,16 +464,7 @@ background-none;
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -621,10 +570,10 @@ background-none;
      <activeoff>:/icons/start-hover.svg</activeoff>:/icons/start.svg</iconset>
    </property>
    <property name="text">
-    <string>Start/Resume all devices</string>
+    <string>Start/Resume all nodes</string>
    </property>
    <property name="toolTip">
-    <string>Start/Resume all devices</string>
+    <string>Start/Resume all nodes</string>
    </property>
    <property name="statusTip">
     <string>Start/Resume all devices</string>
@@ -640,10 +589,10 @@ background-none;
      <activeoff>:/icons/stop-hover.svg</activeoff>:/icons/stop.svg</iconset>
    </property>
    <property name="text">
-    <string>Stop all devices</string>
+    <string>Stop all nodes</string>
    </property>
    <property name="toolTip">
-    <string>Stop all devices</string>
+    <string>Stop all nodes</string>
    </property>
    <property name="statusTip">
     <string>Stop all devices</string>
@@ -658,10 +607,10 @@ background-none;
      <normaloff>:/icons/console.svg</normaloff>:/icons/console.svg</iconset>
    </property>
    <property name="text">
-    <string>Console connect to all devices</string>
+    <string>Console connect to all nodes</string>
    </property>
    <property name="toolTip">
-    <string>Console connect to all devices</string>
+    <string>Console connect to all nodes</string>
    </property>
    <property name="statusTip">
     <string>Console to all devices</string>
@@ -774,10 +723,10 @@ background-none;
      <activeoff>:/icons/pause-hover.svg</activeoff>:/icons/pause.svg</iconset>
    </property>
    <property name="text">
-    <string>Suspend all devices</string>
+    <string>Suspend all nodes</string>
    </property>
    <property name="toolTip">
-    <string>Suspend all devices</string>
+    <string>Suspend all nodes</string>
    </property>
    <property name="statusTip">
     <string>Suspend all devices</string>
@@ -828,10 +777,10 @@ background-none;
      <normaloff>:/icons/import_export_configs.svg</normaloff>:/icons/import_export_configs.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Import/Export device configs</string>
+    <string>&amp;Import/Export node configs</string>
    </property>
    <property name="toolTip">
-    <string>Import/Export device configs</string>
+    <string>Import/Export node configs</string>
    </property>
    <property name="statusTip">
     <string>Import/Export device configs</string>
@@ -969,10 +918,10 @@ background-none;
      <normaloff>:/icons/reload.svg</normaloff>:/icons/reload.svg</iconset>
    </property>
    <property name="text">
-    <string>Reload all devices</string>
+    <string>Reload all nodes</string>
    </property>
    <property name="toolTip">
-    <string>Reload all devices</string>
+    <string>Reload all nodes</string>
    </property>
    <property name="statusTip">
     <string>Reload all devices</string>

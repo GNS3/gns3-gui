@@ -134,18 +134,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._recent_file_actions_separator.setVisible(False)
         self.updateRecentFileActions()
 
-        # add recent file actions to the File menu
-        for i in range(0, self._max_recent_files):
-            action = QtWidgets.QAction(self.uiProjectMenu)
-            action.setVisible(False)
-            action.triggered.connect(self.openRecentProjectSlot)
-            self._recent_project_actions.append(action)
-        self._recent_project_actions_separator = self.uiProjectMenu.addSeparator()
-        self._recent_project_actions_separator.setVisible(False)
-
-        self.uiProjectMenu.addActions(self._recent_project_actions)
-
-        self.updateRecentProjectActions()
+        # FIXME: decide what to do with that
+        # # add recent file actions to the File menu
+        # for i in range(0, self._max_recent_files):
+        #     action = QtWidgets.QAction(self.uiProjectMenu)
+        #     action.setVisible(False)
+        #     action.triggered.connect(self.openRecentProjectSlot)
+        #     self._recent_project_actions.append(action)
+        # self._recent_project_actions_separator = self.uiProjectMenu.addSeparator()
+        # self._recent_project_actions_separator.setVisible(False)
+        # self.uiProjectMenu.addActions(self._recent_project_actions)
+        # self.updateRecentProjectActions()
 
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
