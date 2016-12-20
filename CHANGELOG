@@ -1,5 +1,31 @@
 # Change Log
 
+## 2.0.0 beta 2 20/12/2016
+
+* AUX console button text change in MainWindow.
+* Fix GNS3 Client not connecting to remote controller
+* Delete from project list deleted projects
+* Keep a shared list of projects internally
+* Fix recent files in new project dialog
+* Move recent projects to the file menu
+* Fix Tail process for wireshark trace not killed when we change project
+* Move project menu items. Ref #1713.
+* Display recent files for local controller, recent project for remote controller
+* Do not display the remote server if the server is use as a GNS3 VM
+* If the notification stream is stopped by something we auto reconnect
+* Ignore system proxy to avoid trouble with "Security Suites"
+* Avoid close and delete a project at the same time
+* Alpha sort of servers summaries
+* Fix new remote server doesn't show up in compute summary
+* Fix interface number for Switch & Hub templates
+* Fix sync of node alignements with the server
+* Fix rare condition when you close a project and add a node
+* Options -q for quiet startup
+* Fix an error when apply permission on OSX
+* Support Qemu cpus in GNS3A
+* Support for BIOS images
+* Fix IdlePC can't be found during setup wizard
+
 ## 2.0.0 beta 1 07/12/2016
 
 * Use osascript on OSX for asking admin permission
