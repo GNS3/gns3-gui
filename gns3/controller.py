@@ -259,7 +259,6 @@ class Controller(QtCore.QObject):
         self.get("/projects", self._projectListCallback)
 
     def _projectListCallback(self, result, error=False, **kwargs):
-        print(result)
         if not error:
             self._projects = result
         self.project_list_updated_signal.emit()
