@@ -936,10 +936,10 @@ background-none;
      <normaloff>:/icons/aux-console.svg</normaloff>:/icons/aux-console.svg</iconset>
    </property>
    <property name="text">
-    <string>Console connect via AUX to all devices</string>
+    <string>Console connect via AUX to all nodes</string>
    </property>
    <property name="toolTip">
-    <string>Console connect via AUX to all devices</string>
+    <string>Console connect via AUX to all nodes</string>
    </property>
    <property name="statusTip">
     <string>Console AUX to all devices</string>

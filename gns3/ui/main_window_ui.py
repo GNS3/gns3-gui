@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created: Mon Dec 19 23:21:52 2016
+# Created: Tue Dec 20 16:27:17 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -375,10 +375,10 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon28 = QtGui.QIcon()
-        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiAddLinkAction.setIcon(icon28)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiFitInViewAction = QtWidgets.QAction(MainWindow)
@@ -628,8 +628,8 @@ class Ui_MainWindow(object):
         self.uiReloadAllAction.setText(_translate("MainWindow", "Reload all nodes"))
         self.uiReloadAllAction.setToolTip(_translate("MainWindow", "Reload all nodes"))
         self.uiReloadAllAction.setStatusTip(_translate("MainWindow", "Reload all devices"))
-        self.uiAuxConsoleAllAction.setText(_translate("MainWindow", "Console connect via AUX to all devices"))
-        self.uiAuxConsoleAllAction.setToolTip(_translate("MainWindow", "Console connect via AUX to all devices"))
+        self.uiAuxConsoleAllAction.setText(_translate("MainWindow", "Console connect via AUX to all nodes"))
+        self.uiAuxConsoleAllAction.setToolTip(_translate("MainWindow", "Console connect via AUX to all nodes"))
         self.uiAuxConsoleAllAction.setStatusTip(_translate("MainWindow", "Console AUX to all devices"))
         self.uiResetPortLabelsAction.setText(_translate("MainWindow", "Reset interface labels"))
         self.uiResetPortLabelsAction.setToolTip(_translate("MainWindow", "Reset interface labels"))
@@ -675,8 +675,8 @@ class Ui_MainWindow(object):
         self.uiEditProjectAction.setText(_translate("MainWindow", "Edit project"))
 
 from ..compute_summary_view import ComputeSummaryView
-from ..graphics_view import GraphicsView
 from ..console_view import ConsoleView
 from ..nodes_view import NodesView
 from ..topology_summary_view import TopologySummaryView
+from ..graphics_view import GraphicsView
 from . import resources_rc
