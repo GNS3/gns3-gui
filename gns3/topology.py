@@ -195,6 +195,8 @@ class Topology(QtCore.QObject):
         return True
 
     def editReadme(self):
+        if self.project() is None:
+            return
         dialog = FileEditorDialog(self.project(), "/README.txt", parent=self._main_window, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
         dialog.show()
         dialog.exec_()
