@@ -1,4 +1,4 @@
 -rrequirements.txt
 
-PyQt5==5.7
+PyQt5==5.7.1
 pypiwin32==219
