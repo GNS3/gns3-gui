@@ -105,12 +105,8 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
         index = self.uiGNS3VMEngineComboBox.findData(self._settings["engine"])
         self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
-        if index and not self._initialized:
-            Controller.instance().get("/gns3vm/engines/{}/vms".format(engine["engine_id"]), qpartial(self._listVMsCallback, ignore_error=ignore_error))
 
     def _refreshVMSlot(self, ignore_error=False):
-        if not self._initialized:
-            return
         engine_id = self.uiGNS3VMEngineComboBox.currentData()
         if engine_id:
             Controller.instance().get("/gns3vm/engines/{}/vms".format(engine_id), qpartial(self._listVMsCallback, ignore_error=ignore_error))
