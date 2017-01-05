@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_configuration_page.ui'
 #
-# Created: Tue May 31 21:37:32 2016
+# Created: Thu Jan  5 14:49:45 2017
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,6 +20,7 @@ class Ui_dockerVMConfigPageWidget(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.gridLayout = QtWidgets.QGridLayout(self.tab)
+        self.gridLayout.setContentsMargins(10, 10, 10, 10)
         self.gridLayout.setObjectName("gridLayout")
         self.uiNameLineEdit = QtWidgets.QLineEdit(self.tab)
         self.uiNameLineEdit.setObjectName("uiNameLineEdit")

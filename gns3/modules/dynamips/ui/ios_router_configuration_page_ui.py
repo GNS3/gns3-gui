@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created: Tue May 31 21:42:36 2016
+# Created: Thu Jan  5 14:49:45 2017
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,6 +20,7 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiGeneralPageWidget = QtWidgets.QWidget()
         self.uiGeneralPageWidget.setObjectName("uiGeneralPageWidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.uiGeneralPageWidget)
+        self.gridLayout_2.setContentsMargins(10, 10, 10, 10)
         self.gridLayout_2.setObjectName("gridLayout_2")
         spacerItem = QtWidgets.QSpacerItem(263, 151, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem, 15, 1, 1, 1)
@@ -135,6 +136,7 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiMemoriesPageWidget = QtWidgets.QWidget()
         self.uiMemoriesPageWidget.setObjectName("uiMemoriesPageWidget")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.uiMemoriesPageWidget)
+        self.gridLayout_5.setContentsMargins(10, 10, 10, 10)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.uiRamLabel = QtWidgets.QLabel(self.uiMemoriesPageWidget)
         self.uiRamLabel.setObjectName("uiRamLabel")
@@ -216,6 +218,7 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiSlotsPageWidget = QtWidgets.QWidget()
         self.uiSlotsPageWidget.setObjectName("uiSlotsPageWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.uiSlotsPageWidget)
+        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiAdaptersGroupBox = QtWidgets.QGroupBox(self.uiSlotsPageWidget)
         self.uiAdaptersGroupBox.setObjectName("uiAdaptersGroupBox")
@@ -343,6 +346,7 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiAdvancedPageWidget = QtWidgets.QWidget()
         self.uiAdvancedPageWidget.setObjectName("uiAdvancedPageWidget")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.uiAdvancedPageWidget)
+        self.verticalLayout_4.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.uiSystemGroupBox = QtWidgets.QGroupBox(self.uiAdvancedPageWidget)
         self.uiSystemGroupBox.setObjectName("uiSystemGroupBox")
@@ -426,6 +430,7 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiEnvironmentPageWidget = QtWidgets.QWidget()
         self.uiEnvironmentPageWidget.setObjectName("uiEnvironmentPageWidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiEnvironmentPageWidget)
+        self.verticalLayout_3.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiPowerSuppliesGroupBox = QtWidgets.QGroupBox(self.uiEnvironmentPageWidget)
         self.uiPowerSuppliesGroupBox.setObjectName("uiPowerSuppliesGroupBox")

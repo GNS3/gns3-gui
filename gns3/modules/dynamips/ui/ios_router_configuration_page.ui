@@ -24,6 +24,9 @@
        <string>General</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item row="15" column="1">
         <spacer>
          <property name="orientation">
@@ -238,6 +241,9 @@
        <string>Memories and disks</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="uiRamLabel">
          <property name="text">
@@ -413,6 +419,9 @@
        <string>Slots</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiAdaptersGroupBox">
          <property name="title">
@@ -611,6 +620,9 @@
        <string>Advanced</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiSystemGroupBox">
          <property name="title">
@@ -787,6 +799,9 @@
        <string>Environment</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiPowerSuppliesGroupBox">
          <property name="title">

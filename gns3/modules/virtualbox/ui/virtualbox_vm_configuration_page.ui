@@ -24,6 +24,9 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item row="4" column="1">
         <widget class="QComboBox" name="uiVMListComboBox">
          <property name="sizePolicy">
@@ -165,6 +168,9 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item row="3" column="1">
         <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
          <property name="maximum">

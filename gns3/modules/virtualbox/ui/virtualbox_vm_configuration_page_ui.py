@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Thu Jan  5 14:43:49 2017
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -19,7 +20,7 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.gridLayout = QtWidgets.QGridLayout(self.tab)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setContentsMargins(10, 10, 10, 10)
         self.gridLayout.setObjectName("gridLayout")
         self.uiVMListComboBox = QtWidgets.QComboBox(self.tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -92,7 +93,7 @@ class Ui_virtualBoxVMConfigPageWidget(object):
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.tab_2)
-        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_2.setContentsMargins(10, 10, 10, 10)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiPortSegmentSizeSpinBox = QtWidgets.QSpinBox(self.tab_2)
         self.uiPortSegmentSizeSpinBox.setMaximum(128)

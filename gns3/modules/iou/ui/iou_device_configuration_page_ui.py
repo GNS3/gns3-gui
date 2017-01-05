@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created: Tue May 31 21:46:30 2016
+# Created: Thu Jan  5 14:49:45 2017
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,6 +20,7 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tab)
+        self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiGeneralgroupBox = QtWidgets.QGroupBox(self.tab)
         self.uiGeneralgroupBox.setStyleSheet("")
@@ -150,6 +151,7 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.tab_2)
+        self.gridLayout_5.setContentsMargins(10, 10, 10, 10)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.groupBox = QtWidgets.QGroupBox(self.tab_2)
         self.groupBox.setObjectName("groupBox")

@@ -24,6 +24,9 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item row="4" column="0">
         <widget class="QLabel" name="uiRamLabel">
          <property name="text">
@@ -186,6 +189,9 @@
        <string>HDD</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiHdaGroupBox">
          <property name="title">
@@ -406,6 +412,9 @@
        <string>CD/DVD</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiCdromGroupBox">
          <property name="title">
@@ -459,6 +468,9 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item row="6" column="1">
         <widget class="QComboBox" name="uiAdapterTypesComboBox">
          <property name="sizePolicy">
@@ -580,6 +592,9 @@
        <string>Advanced settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="margin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="uiLinuxBootGroupBox">
          <property name="title">
