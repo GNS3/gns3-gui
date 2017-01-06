@@ -29,8 +29,10 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
 
     :param path_or_data: Svg element of path to a SVG
     """
+
     def __init__(self, path_or_data=None):
         super().__init__()
+        self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}"></svg>"""
         self.load(path_or_data)
 
     def load(self, path_or_data):
@@ -51,8 +53,8 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
             self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}">
 <image width="{width}" height="{height}" xlink:href="data:image/png;base64,{data}"/>
 </svg>""".format(data=bytes(data.toBase64()).decode(),
-                width=image.rect().width(),
-                height=image.rect().height())
+                 width=image.rect().width(),
+                 height=image.rect().height())
             return super().load(self._svg.encode())
 
     def svg(self):
@@ -60,4 +62,3 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
         :returns: SVG source code
         """
         return self._svg
-
