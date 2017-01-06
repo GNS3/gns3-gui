@@ -362,6 +362,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
             source_port = source_item.connectToPort()
             if not source_port:
                 return
+
+            if source_port.link() is not None:
+                QtWidgets.QMessageBox.warning(self, "Create link", "Can't create the link the port is not free")
+                return
+
             if source_port.linkType() == "Serial":
                 self._newlink = SerialLinkItem(source_item, source_port, self.mapToScene(event.pos()), None, adding_flag=True)
             else:
@@ -373,6 +378,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
             destination_item = item
             destination_port = destination_item.connectToPort()
             if not destination_port:
+                return
+
+            if destination_port.link() is not None:
+                QtWidgets.QMessageBox.warning(self, "Create link", "Can't create the link the destination port is not free")
                 return
 
             if self._newlink in self.scene().items():

@@ -51,6 +51,7 @@ class Port:
         self._destination_port = None
         self._data_link_types = {}
         self._link_id = None
+        self._link = None
 
     def name(self):
         """
@@ -187,6 +188,9 @@ class Port:
         """
 
         self._destination_port = port
+
+    def link(self):
+        return self._link
 
     def setLink(self, link):
         """
