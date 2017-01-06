@@ -51,13 +51,12 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
     :param destination_port: destination Port instance
     :param link: Link instance (contains back-end stuff for this link)
     :param adding_flag: indicates if this link is being added (no destination yet)
-    :param multilink: used to draw multiple link between the same source and destination
     """
 
     _draw_port_labels = False
     delete_link_item_signal = QtCore.pyqtSignal(str)
 
-    def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False, multilink=0):
+    def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False):
 
         super().__init__()
         self.setAcceptHoverEvents(True)
@@ -77,10 +76,6 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         # default pen size
         self._pen_width = 2.0
-
-        # indicates the link position when there are multiple links
-        # between the same source and destination
-        self._multilink = multilink
 
         # source & destination items and ports
         self._source_item = source_item
@@ -378,14 +373,53 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         # compute the length of the line
         self.length = math.sqrt(self.dx * self.dx + self.dy * self.dy)
 
+        multilink = self._computeMultiLink()
+
         # multi-link management
-        if not self._adding_flag and self._multilink and self.length:
+        if not self._adding_flag and multilink and self.length:
             angle = math.radians(90)
             self.dxrot = math.cos(angle) * self.dx - math.sin(angle) * self.dy
             self.dyrot = math.sin(angle) * self.dx + math.cos(angle) * self.dy
-            offset = QtCore.QPointF((self.dxrot * (self._multilink * 5)) / self.length, (self.dyrot * (self._multilink * 5)) / self.length)
+            offset = QtCore.QPointF((self.dxrot * (multilink * 5)) / self.length, (self.dyrot * (multilink * 5)) / self.length)
             self.source = QtCore.QPointF(self.source + offset)
             self.destination = QtCore.QPointF(self.destination + offset)
+
+    def _computeMultiLink(self):
+        # Multi-link management
+        #
+        # multi is the offset of the link
+        # +------+       multi = -1    Link 2  +-------+
+        # |      +-----------------------------+       |
+        # |  R1  |                             |   R2  |
+        # |      |        multi = 0    Link 1  |       |
+        # |      +-----------------------------+       |
+        # |      |        multi = 1    Link 3  |       |
+        # +------+-----------------------------+-------+
+
+        if self._source_item == self._destination_item:
+            multi = 0
+        elif not hasattr(self._destination_item, "node"):  # Could be temporary a qpointf during link creation
+            multi = 0
+        else:
+            multi = 0
+            link_items = self._source_item.links()
+            for link_item in link_items:
+                if link_item == self:
+                    break
+                if link_item.destinationItem().node().id() == self._destination_item.node().id():
+                    multi += 1
+                if link_item.sourceItem().node().id() == self._destination_item.node().id():
+                    multi += 1
+
+        # MAX 7 links on the scene between 2 nodes
+        if multi > 7:
+            multi = 0
+        # Pair item represent the bottom links
+        elif multi % 2 == 0:
+            multi = multi // 2
+        else:
+            multi = -multi // 2
+        return multi
 
     def setMousePoint(self, scene_point):
         """

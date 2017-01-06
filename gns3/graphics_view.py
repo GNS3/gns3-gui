@@ -300,41 +300,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self.deleteLinkSlot(link_id)
             return
 
-        # Multi-link management
-        #
-        # multi is the offset of the link
-        # +------+       multi = -1    Link 2  +-------+
-        # |      +-----------------------------+       |
-        # |  R1  |                             |   R2  |
-        # |      |        multi = 0    Link 1  |       |
-        # |      +-----------------------------+       |
-        # |      |        multi = 1    Link 3  |       |
-        # +------+-----------------------------+-------+
-
-        if source_item == destination_item:
-            multi = 0
-        else:
-            multi = 0
-            link_items = source_item.links()
-            for link_item in link_items:
-                if link_item.destinationItem().node().id() == destination_item.node().id():
-                    multi += 1
-                if link_item.sourceItem().node().id() == destination_item.node().id():
-                    multi += 1
-
-        # MAX 7 links on the scene between 2 nodes
-        if multi > 7:
-            multi = 0
-        # Pair item represent the bottom links
-        elif multi % 2 == 0:
-            multi = multi // 2
-        else:
-            multi = -multi // 2
-
         if link.sourcePort().linkType() == "Serial":
-            link_item = SerialLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
+            link_item = SerialLinkItem(source_item, source_port, destination_item, destination_port, link)
         else:
-            link_item = EthernetLinkItem(source_item, source_port, destination_item, destination_port, link, multilink=multi)
+            link_item = EthernetLinkItem(source_item, source_port, destination_item, destination_port, link)
         self.scene().addItem(link_item)
 
     def deleteLinkSlot(self, link_id):

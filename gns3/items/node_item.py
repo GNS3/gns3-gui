@@ -189,8 +189,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         for link_item in self._links:
-            if link_item.link().id == link_id:
+            if link_item.link().id() == link_id:
                 self._links.remove(link_item)
+                return
 
     def links(self):
         """

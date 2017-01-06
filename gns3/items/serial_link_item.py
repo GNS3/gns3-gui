@@ -37,12 +37,11 @@ class SerialLinkItem(LinkItem):
     :param destination_port: destination Port instance
     :param link: Link instance (contains back-end stuff for this link)
     :param adding_flag: indicates if this link is being added (no destination yet)
-    :param multilink: used to draw multiple link between the same source and destination
     """
 
-    def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False, multilink=0):
+    def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False):
 
-        super().__init__(source_item, source_port, destination_item, destination_port, link, adding_flag, multilink)
+        super().__init__(source_item, source_port, destination_item, destination_port, link, adding_flag)
 
     def adjust(self):
         """
