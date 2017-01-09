@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/ethernet_switch_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/builtin/ui/ethernet_switch_configuration_page.ui'
 #
-# Created: Fri Jun 10 20:45:43 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ethernetSwitchConfigPageWidget(object):
+
     def setupUi(self, ethernetSwitchConfigPageWidget):
         ethernetSwitchConfigPageWidget.setObjectName("ethernetSwitchConfigPageWidget")
         ethernetSwitchConfigPageWidget.resize(545, 435)
@@ -69,9 +70,9 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiPortSpinBox.sizePolicy().hasHeightForWidth())
         self.uiPortSpinBox.setSizePolicy(sizePolicy)
-        self.uiPortSpinBox.setMinimum(1)
+        self.uiPortSpinBox.setMinimum(0)
         self.uiPortSpinBox.setMaximum(65535)
-        self.uiPortSpinBox.setProperty("value", 1)
+        self.uiPortSpinBox.setProperty("value", 0)
         self.uiPortSpinBox.setObjectName("uiPortSpinBox")
         self.gridlayout.addWidget(self.uiPortSpinBox, 0, 1, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.uiEthernetSwitchSettingsGroupBox)
@@ -174,4 +175,3 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         self.uiPortsTreeWidget.headerItem().setText(3, _translate("ethernetSwitchConfigPageWidget", "EtherType"))
         self.uiAddPushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Add"))
         self.uiDeletePushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Delete"))
-
