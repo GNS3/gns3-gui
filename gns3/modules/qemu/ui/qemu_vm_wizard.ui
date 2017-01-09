@@ -165,6 +165,50 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiConsoleTypeWizardPage">
+   <property name="title">
+    <string>Console type</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose the console type. Telnet will connect to the serial console of the machine. VNC will connect to graphical output of the machine.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QComboBox" name="uiQemuConsoleTypeComboBox">
+      <item>
+       <property name="text">
+        <string>telnet</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>vnc</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Note: You don't need to install anything on the VM itself.</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="uiDiskWizardPage">
    <property name="title">
     <string>Disk image</string>

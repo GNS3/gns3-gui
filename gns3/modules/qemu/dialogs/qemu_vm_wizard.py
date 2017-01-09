@@ -146,6 +146,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         :return: settings dict
         """
 
+        console_type = self.uiQemuConsoleTypeComboBox.itemText(self.uiQemuConsoleTypeComboBox.currentIndex())
         qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
         settings = {
             "name": self.uiNameLineEdit.text(),
@@ -154,6 +155,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             "server": self._compute_id,
             "category": Node.end_devices,
             "hda_disk_image": self.uiHdaDiskImageLineEdit.text(),
+            "console_type": console_type
         }
 
         if self.uiLegacyASACheckBox.isChecked():

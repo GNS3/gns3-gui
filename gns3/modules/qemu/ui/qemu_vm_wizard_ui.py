@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created: Tue Sep 20 17:45:47 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_QemuVMWizard(object):
+
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName("QemuVMWizard")
         QemuVMWizard.resize(623, 417)
@@ -90,6 +91,21 @@ class Ui_QemuVMWizard(object):
         self.uiRamSpinBox.setObjectName("uiRamSpinBox")
         self.gridLayout_2.addWidget(self.uiRamSpinBox, 1, 1, 1, 1)
         QemuVMWizard.addPage(self.uiBinaryMemoryWizardPage)
+        self.uiConsoleTypeWizardPage = QtWidgets.QWizardPage()
+        self.uiConsoleTypeWizardPage.setObjectName("uiConsoleTypeWizardPage")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.uiConsoleTypeWizardPage)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.uiQemuConsoleTypeComboBox = QtWidgets.QComboBox(self.uiConsoleTypeWizardPage)
+        self.uiQemuConsoleTypeComboBox.setObjectName("uiQemuConsoleTypeComboBox")
+        self.uiQemuConsoleTypeComboBox.addItem("")
+        self.uiQemuConsoleTypeComboBox.addItem("")
+        self.verticalLayout.addWidget(self.uiQemuConsoleTypeComboBox)
+        self.label = QtWidgets.QLabel(self.uiConsoleTypeWizardPage)
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
+        QemuVMWizard.addPage(self.uiConsoleTypeWizardPage)
         self.uiDiskWizardPage = QtWidgets.QWizardPage()
         self.uiDiskWizardPage.setObjectName("uiDiskWizardPage")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.uiDiskWizardPage)
@@ -104,8 +120,8 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_2.setChecked(False)
         self.uiNewImageRadioButton_2.setObjectName("uiNewImageRadioButton_2")
         self.horizontalLayout_3.addWidget(self.uiNewImageRadioButton_2)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem1)
         self.gridLayout_3.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
@@ -146,8 +162,8 @@ class Ui_QemuVMWizard(object):
         self.uiNewImageRadioButton_4.setChecked(False)
         self.uiNewImageRadioButton_4.setObjectName("uiNewImageRadioButton_4")
         self.horizontalLayout_7.addWidget(self.uiNewImageRadioButton_4)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_7.addItem(spacerItem1)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_7.addItem(spacerItem2)
         self.gridLayout_4.addLayout(self.horizontalLayout_7, 0, 0, 1, 1)
         self.formLayout_2 = QtWidgets.QFormLayout()
         self.formLayout_2.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
@@ -214,6 +230,11 @@ class Ui_QemuVMWizard(object):
         self.uiQemuListLabel.setText(_translate("QemuVMWizard", "Qemu binary:"))
         self.uiRamLabel.setText(_translate("QemuVMWizard", "RAM:"))
         self.uiRamSpinBox.setSuffix(_translate("QemuVMWizard", " MB"))
+        self.uiConsoleTypeWizardPage.setTitle(_translate("QemuVMWizard", "Console type"))
+        self.uiConsoleTypeWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose the console type. Telnet will connect to the serial console of the machine. VNC will connect to graphical output of the machine."))
+        self.uiQemuConsoleTypeComboBox.setItemText(0, _translate("QemuVMWizard", "telnet"))
+        self.uiQemuConsoleTypeComboBox.setItemText(1, _translate("QemuVMWizard", "vnc"))
+        self.label.setText(_translate("QemuVMWizard", "Note: You don\'t need to install anything on the VM itself."))
         self.uiDiskWizardPage.setTitle(_translate("QemuVMWizard", "Disk image"))
         self.uiDiskWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a base disk image for your virtual machine."))
         self.uiHdaDiskExistingImageRadioButton.setText(_translate("QemuVMWizard", "Existing image"))
@@ -229,4 +250,3 @@ class Ui_QemuVMWizard(object):
         self.uiKernelImageLabel.setText(_translate("QemuVMWizard", "Kernel image (vmlinuz):"))
         self.uiKernelImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
         self.uiInitrdLabel.setText(_translate("QemuVMWizard", "Initial RAM disk (initrd):"))
-
