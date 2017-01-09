@@ -259,6 +259,9 @@ It is your responsability to check if you have the right to distribute the image
 
     def saveProjectAs(self):
         project = self._project
+        if not project:
+            return
+
         from .dialogs.project_dialog import ProjectDialog
         dialog = ProjectDialog(self._main_window, default_project_name=project.name(), show_open_options=False)
         dialog.show()
