@@ -71,6 +71,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         self.uiRefreshProjectsPushButton.clicked.connect(Controller.instance().refreshProjectList)
         Controller.instance().project_list_updated_signal.connect(self._updateProjectListSlot)
         self._updateProjectListSlot()
+        Controller.instance().refreshProjectList()
 
     def _settingsClickedSlot(self):
         """
@@ -101,13 +102,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 projects_to_delete.add(project_id)
 
         for project_id in projects_to_delete:
-            Controller.instance().delete("/projects/{}".format(project_id), self._deleteProjectCallback)
-
-    def _deleteProjectCallback(self, result, error=False, **kwargs):
-        if error:
-            log.error("Error while deleting project: {}".format(result["message"]))
-            return
-        Controller.instance().refreshProjectList()
+            Controller.instance().deleteProject(project_id)
 
     def _duplicateProjectSlot(self):
         if len(self.uiProjectsTreeWidget.selectedItems()) == 0:
@@ -279,7 +274,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                                                       QtWidgets.QMessageBox.No)
 
                 if reply == QtWidgets.QMessageBox.Yes:
-                    Controller.instance().delete("/projects/{}".format(existing_project["project_id"]), self._overwriteProjectCallback)
+                    Controller.instance().deleteProject(existing_project["project_id"], self._overwriteProjectCallback)
 
                 # In all cases we cancel the new project and if project success to delete
                 # we will call done again

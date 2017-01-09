@@ -254,6 +254,20 @@ class Controller(QtCore.QObject):
         icon.addFile(path)
         callback(icon)
 
+    def deleteProject(self, project_id, callback=None):
+        Controller.instance().delete("/projects/{}".format(project_id), qpartial(self._deleteProjectCallback, callback=callback, project_id=project_id))
+
+    def _deleteProjectCallback(self, result, error=False, project_id=None, callback=None, **kwargs):
+        if error:
+            log.error("Error while deleting project: {}".format(result["message"]))
+        else:
+            self.refreshProjectList()
+
+        self._projects = [p for p in self._projects if p["project_id"] != project_id]
+
+        if callback:
+            callback(result, error=error, **kwargs)
+
     @qslot
     def refreshProjectList(self, *args):
         self.get("/projects", self._projectListCallback)
