@@ -81,6 +81,9 @@ class Registry(QtCore.QObject):
         for remote_image in list(self._remote_images):
             if remote_image.md5sum == md5sum:
                 return remote_image
+            elif md5sum is None:  # We create a new version
+                if filename == remote_image.filename:
+                    return remote_image
 
         for directory in self._images_dirs:
             log.debug("Search images %s (%s) in %s", filename, md5sum, directory)

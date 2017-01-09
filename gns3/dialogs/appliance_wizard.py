@@ -386,7 +386,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if len(path) == 0:
             return
 
-        image = Image(self._appliance.emulator(), path)
+        image = Image(self._appliance.emulator(), path, filename=disk["filename"])
         if "md5sum" in disk and image.md5sum != disk["md5sum"]:
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}.".format(image.md5sum, disk["md5sum"]))
             return
