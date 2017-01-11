@@ -67,7 +67,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiHdcDiskImageCreateToolButton.clicked.connect(self._hdcDiskImageCreateSlot)
         self.uiHddDiskImageCreateToolButton.clicked.connect(self._hddDiskImageCreateSlot)
 
-        disk_interfaces = ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"]
+        disk_interfaces = ["ide", "sata", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"]
         self.uiHdaDiskInterfaceComboBox.addItems(disk_interfaces)
         self.uiHdbDiskInterfaceComboBox.addItems(disk_interfaces)
         self.uiHdcDiskInterfaceComboBox.addItems(disk_interfaces)
