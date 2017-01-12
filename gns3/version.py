@@ -16,13 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-__version__ = "1.5.3rc1"
+__version__ = "1.5.3"
 
-__version_info__ = (1, 5, 3, -99)three numbers are the components of the version number. The fourth
-is zero for an official release, positive for a development branch,
+__version_info__ = (1, 5, 3, 0)is zero for an official release, positive for a development branch,
 or negative for a release candidate or beta (after the base version
 number has been incremented)
 """
 
-__version__ = "1.5.3dev2"
-__version_info__ = (1, 5, 3, -99)
+__version__ = "1.5.3"
+__version_info__ = (1, 5, 3, 0)

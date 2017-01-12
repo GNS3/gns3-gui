@@ -1,5 +1,27 @@
 # Change Log
 
+## 1.5.3 12/01/2017
+
+* Upgrade Qt 5.7
+
+## 1.5.3 rc1 20/12/2016
+
+* Fix Error when editing IOS image created using .gns3a file
+* Fix error when opening a project from the cli with a gns3 installed via setup.py
+* Fix a crash at startup on Mac when coming from old GNS3 version
+* Fix an error during import of some 0.8x projects
+* Ask for restart after installing vmrun
+* Improve warning when connection issue to GNS3 VM
+* Changes wording in VM wizards.
+* Changed sentence.
+* Display an error if settings come from a more recent version of GNS3
+* Fix Error when no GNS3 VM is configured and you click on new Docker or IOU
+* Disallow / in docker container name
+* Update iTerm3 console settings
+* Fix rename ethernet switch doesn't release the name
+* Support for VNC display number in command line replacement
+* Fix a crash when a directory with image is not accessible at gns3a import
+
 ## 1.5.3 rc1 20/12/2016
 
 * Fix Error when editing IOS image created using .gns3a file
