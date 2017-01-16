@@ -213,6 +213,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
         self.uiShowGridAction.triggered.connect(self._showGridActionSlot)
 
+        # tool menu connections
+        self.uiWebInterfaceAction.triggered.connect(self._openWebInterfaceActionSlot)
+
         # control menu connections
         self.uiStartAllAction.triggered.connect(self._startAllActionSlot)
         self.uiSuspendAllAction.triggered.connect(self._suspendAllActionSlot)
@@ -287,6 +290,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings.update(new_settings)
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
+
+    def _openWebInterfaceActionSlot(self):
+        if Controller.instance().connected():
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl(Controller.instance().httpClient().fullUrl()))
 
     def _showGridActionSlot(self):
         """
