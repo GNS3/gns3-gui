@@ -602,7 +602,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                     if node:
                         self._checkForLinkConnectedToAdapter(slot_number, settings, node)
                 settings["slot" + str(slot_number)] = module
-            elif settings["slot" + str(slot_number)]:
+            elif "slot" + str(slot_number) in settings and settings["slot" + str(slot_number)]:
                 if node:
                     self._checkForLinkConnectedToAdapter(slot_number, settings, node)
                 settings["slot" + str(slot_number)] = ""
@@ -619,7 +619,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                     if node:
                         self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = wic_name
-            elif settings["wic" + str(wic_number)]:
+            elif "wic" + str(wic_number) in settings and settings["wic" + str(wic_number)]:
                 if node:
                     self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = ""
