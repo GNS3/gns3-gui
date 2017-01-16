@@ -148,7 +148,7 @@ class QemuVM(Node):
            id=self.id(),
            node_id=self._node_id,
            state=state,
-           host=self.compute().id(),
+           host=self.compute().name(),
            console=self._settings["console"],
            console_type=self._settings["console_type"])
 

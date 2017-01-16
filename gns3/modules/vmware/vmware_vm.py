@@ -127,7 +127,7 @@ class VMwareVM(Node):
            id=self.id(),
            node_id=self._node_id,
            state=state,
-           host=self.compute().id(),
+           host=self.compute().name(),
            console=self._settings["console"])
 
         port_info = ""

@@ -98,7 +98,7 @@ class EthernetHub(Node):
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self.compute().id())
+           host=self.compute().name())
 
         port_info = ""
         for port in self._ports:

@@ -139,7 +139,7 @@ class VirtualBoxVM(Node):
            state=state,
            vmname=self._settings["vmname"],
            ram=self._settings["ram"],
-           host=self.compute().id(),
+           host=self.compute().name(),
            console=self._settings["console"])
 
         port_info = ""

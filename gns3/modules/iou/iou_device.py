@@ -167,7 +167,7 @@ class IOUDevice(Node):
            node_id=self._node_id,
            state=state,
            memories_info=memories_info,
-           host=self.compute().id(),
+           host=self.compute().name(),
            console=self._settings["console"],
            image_name=os.path.basename(self._settings["path"]),
            nb_ethernet=self._settings["ethernet_adapters"],
