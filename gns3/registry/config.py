@@ -181,7 +181,7 @@ class Config:
             new_config[key] = value
 
         for image in appliance_config["images"]:
-            new_config[image["type"]] = self._relative_image_path("IOS", image["filename"], image["path"])
+            new_config[image["type"]] = self._relative_image_path("IOS", image["path"])
             new_config["idlepc"] = image["idlepc"]
 
         log.debug("Add appliance Dynamips: %s", str(new_config))
@@ -199,7 +199,7 @@ class Config:
         new_config["ram"] = appliance_config["iou"]["ram"]
 
         for image in appliance_config["images"]:
-            new_config[image["type"]] = self._relative_image_path("IOU", image["filename"], image["path"])
+            new_config[image["type"]] = self._relative_image_path("IOU", image["path"])
         new_config["path"] = new_config["image"]
 
         log.debug("Add appliance IOU: %s", str(new_config))
@@ -225,7 +225,7 @@ class Config:
         new_config["options"] = options.strip()
 
         for image in appliance_config["images"]:
-            new_config[image["type"]] = self._relative_image_path("QEMU", image["filename"], image["path"])
+            new_config[image["type"]] = self._relative_image_path("QEMU", image["path"])
 
         new_config.setdefault("hda_disk_image", "")
         new_config.setdefault("hdb_disk_image", "")
@@ -287,7 +287,7 @@ class Config:
         except OSError:
             return None
 
-    def _relative_image_path(self, image_dir_type, filename, path):
+    def _relative_image_path(self, image_dir_type, path):
         """
         :param image_dir_type: Type of image directory
         :param filename: Filename at the end of the processus
@@ -301,7 +301,7 @@ class Config:
         if os.path.commonprefix([images_dir, path]) == images_dir:
             return path.replace(images_dir, '').strip('/\\')
 
-        return filename
+        return os.path.basename(path)
 
     def save(self):
         """

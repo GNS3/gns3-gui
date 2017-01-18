@@ -476,27 +476,12 @@ def test_relative_image_path(empty_config, images_dir, tmpdir):
 
     # Image in image directory no need to copy it
     open(os.path.join(images_dir, "QEMU", "a"), "w+").close()
-    assert empty_config._relative_image_path("QEMU", "a", os.path.join(images_dir, "QEMU", "a")) == "a"
+    assert empty_config._relative_image_path("QEMU", os.path.join(images_dir, "QEMU", "a")) == "a"
 
     # Image in image directory no need to copy it but with a different file name
     open(os.path.join(images_dir, "QEMU", "a"), "w+").close()
-    assert empty_config._relative_image_path("QEMU", "h", os.path.join(images_dir, "QEMU", "a")) == "a"
+    assert empty_config._relative_image_path("QEMU", os.path.join(images_dir, "QEMU", "a")) == "a"
 
     # Image outside image directory we need to copy it
     open(str(tmpdir / "b"), "w+").close()
-    assert empty_config._relative_image_path("QEMU", "b", str(tmpdir / "b")) == "b"
-
-    # OVA in images directory no need to copy
-    os.makedirs(os.path.join(images_dir, "QEMU", "c.ova"))
-    open(os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk"), "w+").close()
-    assert empty_config._relative_image_path("QEMU", "c.ova/c.vmdk", os.path.join(images_dir, "QEMU", "c.ova", "c.vmdk")) == os.path.join("c.ova", "c.vmdk")
-
-    # OVA outside images directory need to copy
-    os.makedirs(os.path.join(str(tmpdir), "QEMU", "d.ova"))
-    open(os.path.join(str(tmpdir), "QEMU", "d.ova", "d.vmdk"), "w+").close()
-    assert empty_config._relative_image_path("QEMU", "d.ova/d.vmdk", os.path.join(str(tmpdir), "QEMU", "d.ova", "d.vmdk")) == "d.ova/d.vmdk"
-
-    # OVA in images directory no need to copy but with a different file name
-    os.makedirs(os.path.join(images_dir, "QEMU", "e.ova"))
-    open(os.path.join(images_dir, "QEMU", "e.ova", "c.vmdk"), "w+").close()
-    assert empty_config._relative_image_path("QEMU", "x.ova/c.vmdk", os.path.join(images_dir, "QEMU", "e.ova", "c.vmdk")) == os.path.join("e.ova", "c.vmdk")
+    assert empty_config._relative_image_path("QEMU", str(tmpdir / "b")) == "b"
