@@ -1,5 +1,31 @@
 # Change Log
 
+## 2.0.0 beta 3 19/01/2017
+
+* Fix error if you already have an image with a different name on remote server
+* Drop gns3 converter from requirements
+* Show correct server name in tooltip
+* Menu item to open controller webpage
+* Fixes potential exception when adding network module to an IOS router. Fixes #1774.
+* Do not export a file config file if empty
+* Allow to set console type in qemu wizard
+* Fix overwrite of projects
+* Fix creation of new appliance version when filename is different
+* Fix you can't configure port 0 on ethernet switch
+* Fix a race condition when saving as a project and closing it
+* Reorder multi link when you delete one
+* Ensure we can't connect to occupy port
+* Fix AttributeError: 'QImageSvgRenderer' object has no attribute '_svg'
+* Fix Unsaved preferences in GNS3 VM warning
+* Force margins in configuration tabs.
+* Sata disk interface support for Qemu VMs.
+* Remove "sata" disk interface. Does not exist in Qemu. Ref #1749
+* Add SATA and none disk interfaces on Qemu VM configuration page. Fixes #1749.
+* Update pyqt5 from 5.7 to 5.7.1
+* Fix TypeError: argument of type 'NoneType' is not iterable
+* Fix an error when you edit readme and no projet is opened
+* Upgrade Qt 5.7
+
 ## 1.5.3 12/01/2017
 
 * Upgrade Qt 5.7
