@@ -51,6 +51,7 @@ from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
 from .dialogs.new_appliance_dialog import NewApplianceDialog
+from .dialogs.notif_dialog import NotifDialog, NotifDialogHandler
 from .registry.appliance import ApplianceError
 
 log = logging.getLogger(__name__)
@@ -74,6 +75,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         super().__init__(parent)
         self.setupUi(self)
+
+        # Setup logger
+        logging.getLogger().addHandler(NotifDialogHandler(NotifDialog(self)))
 
         self._open_file_at_startup = open_file
 
