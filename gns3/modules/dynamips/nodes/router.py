@@ -139,7 +139,7 @@ class Router(Node):
         :param result: server response
         """
 
-        self._dynamips_id = result["dynamips_id"]
+        self._dynamips_id = result.get("dynamips_id")
 
     def update(self, new_settings):
         """
