@@ -102,9 +102,11 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.uiGNS3VMEngineComboBox.clear()
         self._engines = result
         for engine in self._engines:
-            self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
-        index = self.uiGNS3VMEngineComboBox.findData(self._settings["engine"])
-        self.uiGNS3VMEngineComboBox.setCurrentIndex(index)
+            if self._settings["engine"] == engine["engine_id"]:
+                self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
+        for engine in self._engines:
+            if self._settings["engine"] != engine["engine_id"]:
+                self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
 
     def _refreshVMSlot(self, ignore_error=False):
         engine_id = self.uiGNS3VMEngineComboBox.currentData()
