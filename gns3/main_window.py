@@ -390,7 +390,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         action = self.sender()
-        if action:
+        if action and action.data():
             if len(action.data()) == 2:
                 project_id, project_path = action.data()
                 Topology.instance().createLoadProject({
