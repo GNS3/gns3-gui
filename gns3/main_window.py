@@ -443,6 +443,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called when a project finish to load
         """
+        project = Topology.instance().project()
+        if project is not None and self._project_dialog:
+            self._project_dialog.reject()
+            self._project_dialog = None
         self._refreshVisibleWidgets()
 
     def _refreshVisibleWidgets(self):
@@ -656,7 +660,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called when starting all the nodes.
         """
-
         project = Topology.instance().project()
         if project is not None:
             project.start_all_nodes()
@@ -1030,7 +1033,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if self._open_file_at_startup:
                 self.loadPath(self._open_file_at_startup)
                 self._open_file_at_startup = None
-            else:
+            elif Topology.instance().project() is None:
                 self._newProjectActionSlot()
 
         if self._settings["check_for_update"]:
