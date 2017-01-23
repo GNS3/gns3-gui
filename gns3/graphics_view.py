@@ -630,7 +630,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 QtWidgets.QMessageBox.critical(self, "Project files", "Please drop only one file")
                 return
             path = event.mimeData().urls()[0].toLocalFile()
-            if os.path.isfile(path) and self._main_window.checkForUnsavedChanges():
+            if os.path.isfile(path):
                 self._main_window.loadPath(path)
             event.acceptProposedAction()
         else:
