@@ -15,11 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import platform
 import sys
+import sip
 import struct
 import inspect
 import datetime
+import platform
 
 from .qt import QtCore, Qt
 from .topology import Topology
@@ -39,6 +40,9 @@ class ConsoleLogHandler(logging.StreamHandler):
     """
 
     def emit(self, record):
+        if sip.isdeleted(self._console_view):
+            return
+
         message = self.format(record)
         level_no = record.levelno
         if level_no >= logging.ERROR:
