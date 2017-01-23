@@ -188,6 +188,9 @@ class DrawingItem:
                 self.updateDrawing()
         return QtWidgets.QGraphicsItem.itemChange(self, change, value)
 
+    def updateNode(self):
+        self.updateDrawing()
+
     def drawLayerInfo(self, painter):
         """
         Draws the layer position.
