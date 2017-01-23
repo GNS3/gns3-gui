@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
+import sip
 import time
 from contextlib import contextmanager
 
 from .utils import human_filesize
 from .qt import QtCore, QtWidgets, QtNetwork
 
+import logging
 log = logging.getLogger(__name__)
 
 
@@ -111,7 +112,7 @@ class Progress(QtCore.QObject):
         self.show()
 
     def show(self):
-        if self._progress_dialog is None or self._progress_dialog.wasCanceled():
+        if self._progress_dialog is None or sip.isdeleted(self._progress_dialog) or self._progress_dialog.wasCanceled():
             progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self.parent())
             progress_dialog.canceled.connect(self._cancelSlot)
             progress_dialog.rejected.connect(self._rejectSlot)
@@ -223,4 +224,3 @@ class Progress(QtCore.QObject):
         if not hasattr(Progress, "_instance") or Progress._instance is None:
             Progress._instance = Progress(parent)
         return Progress._instance
-
