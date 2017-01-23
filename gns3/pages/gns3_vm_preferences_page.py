@@ -101,6 +101,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             return
         self.uiGNS3VMEngineComboBox.clear()
         self._engines = result
+        # We insert first the current engine to avoid triggering unexpected signals
         for engine in self._engines:
             if self._settings["engine"] == engine["engine_id"]:
                 self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])

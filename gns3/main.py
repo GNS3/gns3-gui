@@ -253,6 +253,8 @@ def main():
     log.info("GNS3 GUI version {}".format(__version__))
     log.info("Copyright (c) 2007-{} GNS3 Technologies Inc.".format(current_year))
 
+    log.info("Application started with {}".format("".join(sys.argv)))
+
     # update the exception file path to have it in the same directory as the settings file.
     exception_file_path = os.path.join(LocalConfig.instance().configDirectory(), exception_file_path)
 
