@@ -16,14 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# __version__ is a human-readable version number.
-__version__ = "2.0.0dev8"
-
-"""__version_info__ is a four-tuple for programmatic comparison. The first
+"""
+__version__ is a human-readable version number.
+__version_info__ is a four-tuple for programmatic comparison. The first
 three numbers are the components of the version number. The fourth
 is zero for an official release, positive for a development branch,
 or negative for a release candidate or beta (after the base version
 number has been incremented)
 """
 
-__version_info__ = (2, 0, 0, -99)
+__version__ = "2.1.0dev1"
+__version_info__ = (2, 1, 0, -99)
