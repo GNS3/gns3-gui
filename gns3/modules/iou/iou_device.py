@@ -61,19 +61,6 @@ class IOUDevice(Node):
 
         self.settings().update(iou_device_settings)
 
-    def create(self, iou_path, name=None, node_id=None, additional_settings={}, default_name_format="IOU{0}"):
-        """
-        Creates this IOU device.
-
-        :param iou_path: path to an IOU image
-        :param name: optional name
-        :param console: optional TCP console port
-        """
-
-        params = {"path": iou_path}
-        params.update(additional_settings)
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result):
         """
         Callback for create.

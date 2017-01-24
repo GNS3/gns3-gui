@@ -16,8 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys
-import traceback
 from .qt import QtCore, qpartial, QtWidgets, QtNetwork
 
 from gns3.controller import Controller
@@ -25,7 +23,7 @@ from gns3.compute_manager import ComputeManager
 from gns3.topology import Topology
 from gns3.local_config import LocalConfig
 from gns3.settings import GRAPHICS_VIEW_SETTINGS
-
+from gns3.appliance_manager import ApplianceManager
 
 import logging
 log = logging.getLogger(__name__)
@@ -516,5 +514,6 @@ class Project(QtCore.QObject):
             cm.computeDataReceivedCallback(result["event"])
         elif result["action"] == "settings.updated":
             LocalConfig.instance().refreshConfigFromController()
+            ApplianceManager.instance().refresh()
         elif result["action"] == "ping":
             pass
