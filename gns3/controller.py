@@ -198,12 +198,13 @@ class Controller(QtCore.QObject):
             Controller._instance = Controller()
         return Controller._instance
 
-    def getStatic(self, url, callback):
+    def getStatic(self, url, callback, fallback=None):
         """
         Get a URL from the /static on controller and cache it on disk
 
         :param url: URL without the protocol and host part
         :param callback: Callback to call when file is ready
+        :param fallback: Fallback url in case of error
         """
 
         if not self._http_client:
@@ -219,14 +220,20 @@ class Controller(QtCore.QObject):
         if os.path.exists(path):
             callback(path)
         elif path in self._static_asset_download_queue:
-            self._static_asset_download_queue[path].append(callback)
+            self._static_asset_download_queue[path].append((callback, fallback, ))
         else:
-            self._static_asset_download_queue[path] = [callback]
+            self._static_asset_download_queue[path] = [(callback, fallback, )]
             self._http_client.createHTTPQuery("GET", url, qpartial(self._getStaticCallback, url, path))
 
     def _getStaticCallback(self, url, path, result, error=False, raw_body=None, **kwargs):
         if error:
-            log.error("Error while downloading file: {}".format(url))
+            fallback_used = False
+            for callback, fallback in self._static_asset_download_queue[path]:
+                print(fallback)
+                self.getStatic(fallback, callback)
+                fallback_used = True
+            if fallback_used:
+                log.error("Error while downloading file: {}".format(url))
             del self._static_asset_download_queue[path]
             return
         try:
@@ -236,18 +243,24 @@ class Controller(QtCore.QObject):
             log.error("Can't write to {}: {}".format(path, str(e)))
             return
         log.debug("File stored {} for {}".format(path, url))
-        for callback in self._static_asset_download_queue[path]:
+        for callback, fallback in self._static_asset_download_queue[path]:
             callback(path)
         del self._static_asset_download_queue[path]
 
-    def getSymbolIcon(self, symbol_id, callback):
+    def getSymbolIcon(self, symbol_id, callback, fallback=None):
         """
         Get a QIcon for a symbol from the controller
 
-        :param url: URL without the protocol and host part
+        :param symbol_id: Symbol id
         :param callback: Callback to call when file is ready
+        :param fallback: Fallback symbol if not found
         """
-        self.getStatic(Symbol(symbol_id).url(), qpartial(self._getIconCallback, callback))
+        if symbol_id is None:
+            self.getStatic(Symbol(fallback).url(), qpartial(self._getIconCallback, callback))
+        else:
+            if fallback:
+                fallback = Symbol(fallback).url()
+            self.getStatic(Symbol(symbol_id).url(), qpartial(self._getIconCallback, callback), fallback=fallback)
 
     def _getIconCallback(self, callback, path):
         icon = QtGui.QIcon()

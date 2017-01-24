@@ -835,8 +835,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             self.uiNodesDockWidget.setWindowTitle(title)
             self.uiNodesDockWidget.setVisible(True)
-            self.uiNodesView.clear()
-            self.uiNodesView.populateNodesView(category)
+            self.uiNodesDockWidget.populateNodesView(category)
 
     def _localConfigChangedSlot(self):
         """

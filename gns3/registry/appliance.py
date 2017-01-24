@@ -35,15 +35,21 @@ class Appliance(collections.Mapping):
     def __init__(self, registry, path):
         """
         :params registry: Instance of the registry where images are located
-        :params path: Path of the appliance file on disk
+        :params path: Path of the appliance file on disk or file content
         """
         self._registry = registry
 
-        try:
-            with open(path, encoding="utf-8") as f:
-                self._appliance = json.load(f)
-        except (OSError, ValueError) as e:
-            raise ApplianceError("Could not read appliance {}: {}".format(os.path.abspath(path), str(e)))
+        if os.path.isabs(path):
+            try:
+                with open(path, encoding="utf-8") as f:
+                    self._appliance = json.load(f)
+            except (OSError, ValueError) as e:
+                raise ApplianceError("Could not read appliance {}: {}".format(os.path.abspath(path), str(e)))
+        else:
+            try:
+                self._appliance = json.loads(path)
+            except ValueError as e:
+                raise ApplianceError("Could not read appliance {}: {}".format(os.path.abspath(path), str(e)))
         self._check_config()
         self._resolve_version()
 

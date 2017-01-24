@@ -210,7 +210,7 @@ background-none;
    <addaction name="uiNewProjectAction"/>
    <addaction name="uiOpenProjectAction"/>
   </widget>
-  <widget class="QDockWidget" name="uiNodesDockWidget">
+  <widget class="NodesDockWidget" name="uiNodesDockWidget">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -246,6 +246,48 @@ background-none;
      <property name="bottomMargin">
       <number>0</number>
      </property>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>3</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QComboBox" name="uiNodesFilterComboBox">
+         <item>
+          <property name="text">
+           <string>Installed &amp; Available appliances</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Installed appliances</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Available appliances</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="uiNodesFilterLineEdit">
+         <property name="placeholderText">
+          <string>Filter</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item>
       <widget class="NodesView" name="uiNodesView">
        <property name="sizePolicy">
@@ -1235,6 +1277,12 @@ background-none;
    <class>GraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>..graphics_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NodesDockWidget</class>
+   <extends>QDockWidget</extends>
+   <header>..nodes_dock_widget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>NodesView</class>
