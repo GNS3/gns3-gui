@@ -546,6 +546,8 @@ It is your responsability to check if you have the right to distribute the image
                     type = "rect"
                 elif tag == "text":
                     type = "text"
+                elif tag == "line":
+                    type = "line"
                 else:
                     type = "image"
         except IndexError:

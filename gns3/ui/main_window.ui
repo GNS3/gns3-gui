@@ -425,6 +425,7 @@ background-none;
    <addaction name="uiInsertImageAction"/>
    <addaction name="uiDrawRectangleAction"/>
    <addaction name="uiDrawEllipseAction"/>
+   <addaction name="uiDrawLineAction"/>
    <addaction name="uiZoomInAction"/>
    <addaction name="uiZoomOutAction"/>
    <addaction name="uiScreenshotAction"/>
@@ -1227,6 +1228,18 @@ background-none;
   <action name="uiWebInterfaceAction">
    <property name="text">
     <string>Web interface</string>
+   </property>
+  </action>
+  <action name="uiDrawLineAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/vertically.svg</normaloff>:/icons/vertically.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Line</string>
    </property>
   </action>
  </widget>

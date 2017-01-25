@@ -232,6 +232,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiInsertImageAction.triggered.connect(self._insertImageActionSlot)
         self.uiDrawRectangleAction.triggered.connect(self._drawRectangleActionSlot)
         self.uiDrawEllipseAction.triggered.connect(self._drawEllipseActionSlot)
+        self.uiDrawLineAction.triggered.connect(self._drawLineActionSlot)
         self.uiEditReadmeAction.triggered.connect(self._editReadmeActionSlot)
 
         # help menu connections
@@ -748,6 +749,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         self.uiGraphicsView.addEllipse(self.uiDrawEllipseAction.isChecked())
+
+    def _drawLineActionSlot(self):
+        """
+        Slot called when adding a line on the scene.
+        """
+
+        self.uiGraphicsView.addLine(self.uiDrawLineAction.isChecked())
 
     def _onlineHelpActionSlot(self):
         """

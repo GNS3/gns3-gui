@@ -52,12 +52,18 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         # use the first item in the list as the model
         first_item = items[0]
         pen = first_item.pen()
-        brush = first_item.brush()
-        self._color = brush.color()
-        self.uiColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._color.red(),
-                                                                                              self._color.green(),
-                                                                                              self._color.blue(),
-                                                                                              self._color.alpha()))
+        if hasattr(first_item, "brush"):  # Line don't have brush
+            brush = first_item.brush()
+            self._color = brush.color()
+            self.uiColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._color.red(),
+                                                                                                  self._color.green(),
+                                                                                                  self._color.blue(),
+                                                                                                  self._color.alpha()))
+        else:
+            self.uiColorLabel.hide()
+            self.uiColorPushButton.hide()
+            self._color = None
+
         self._border_color = pen.color()
         self.uiBorderColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._border_color.red(),
                                                                                                     self._border_color.green(),
@@ -102,11 +108,15 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
         border_style = QtCore.Qt.PenStyle(self.uiBorderStyleComboBox.itemData(self.uiBorderStyleComboBox.currentIndex()))
         pen = QtGui.QPen(self._border_color, self.uiBorderWidthSpinBox.value(), border_style, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-        brush = QtGui.QBrush(self._color)
+        if self._color:
+            brush = QtGui.QBrush(self._color)
+        else:
+            brush = None
 
         for item in self._items:
             item.setPen(pen)
-            item.setBrush(brush)
+            if brush:
+                item.setBrush(brush)
             item.setRotation(self.uiRotationSpinBox.value())
 
     def done(self, result):

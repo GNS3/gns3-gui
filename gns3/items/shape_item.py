@@ -30,17 +30,6 @@ log = logging.getLogger(__name__)
 
 class ShapeItem(DrawingItem):
 
-    # Map QT stroke to SVG style
-    QT_DASH_TO_SVG = {
-        QtCore.Qt.SolidLine: "",
-        QtCore.Qt.NoPen: None,
-        QtCore.Qt.DashLine: "25, 25",
-        QtCore.Qt.DotLine:  "5, 25",
-        QtCore.Qt.DashDotLine:  "5, 25, 25",
-        QtCore.Qt.DashDotDotLine: "25, 25, 5, 25, 5"
-    }
-
-
     """
     Base class to draw shapes on the scene.
     """
@@ -181,27 +170,6 @@ class ShapeItem(DrawingItem):
         if self.zValue() >= 0:
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
 
-    def _styleSvg(self, element):
-        """
-        Add style from the shape item to the SVG element that we will
-        export
-        """
-        style = ""
-        pen = self.pen()
-        element.set("fill", "#{}".format(hex(self.brush().color().rgba())[4:]))
-        element.set("fill-opacity", str(self.brush().color().alphaF()))
-
-        dasharray = self.QT_DASH_TO_SVG[pen.style()]
-        if dasharray is None: # No border to the element
-            return element
-        elif dasharray == "":
-            pass # Solid line
-        else:
-            element.set("stroke-dasharray", dasharray)
-        element.set("stroke-width", str(pen.width()))
-        element.set("stroke", "#" + hex(pen.color().rgba())[4:])
-        return element
-
     def fromSvg(self, svg):
         """
         Import element informations from an SVG
@@ -215,10 +183,7 @@ class ShapeItem(DrawingItem):
         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
 
         if len(svg):
-            if svg[0].get("stroke-width"):
-                pen.setWidth(int(svg[0].get("stroke-width")))
-            if svg[0].get("stroke"):
-                pen.setColor(colorFromSvg(svg[0].get("stroke")))
+            pen = self._penFromSVGElement(svg[0])
             if svg[0].get("fill"):
                 new_color = colorFromSvg(svg[0].get("fill"))
                 color = brush.color()
@@ -230,17 +195,6 @@ class ShapeItem(DrawingItem):
                 color = brush.color()
                 color.setAlphaF(float(svg[0].get("fill-opacity")))
                 brush.setColor(color)
-
-            # Map SVG stroke style (border of the element to the Qt version)
-            if not svg[0].get("stroke"):
-                pen.setStyle(QtCore.Qt.NoPen)
-            else:
-                pen.setStyle(QtCore.Qt.SolidLine)
-                stroke = svg[0].get("stroke-dasharray")
-                if stroke:
-                    for (qt_stroke, svg_stroke) in self.QT_DASH_TO_SVG.items():
-                         if svg_stroke == stroke:
-                            pen.setStyle(qt_stroke)
 
         self.setPen(pen)
         self.setBrush(brush)
