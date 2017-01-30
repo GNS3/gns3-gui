@@ -418,7 +418,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._userNodeLinking(event, item)
         elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
             pos = self.mapToScene(event.pos())
-            note = self.createDrawingItem("text", pos.x(), pos.y(), 0)
+            note = self.createDrawingItem("text", pos.x(), pos.y(), 1)
             pos_x = note.pos().x()
             pos_y = note.pos().y() - (note.boundingRect().height() / 2)
             note.setPos(pos_x, pos_y)
