@@ -225,7 +225,7 @@ class IOUDevice(Node):
             except OSError as e:
                 self.error_signal.emit(self.id(), "could not export startup-config to {}: {}".format(startup_config_path, e))
 
-        if "private_config_content" in result and len(result["private_config_content"]) > 0:
+        if "private_config_content" in result and result["private_config_content"] is not None and len(result["private_config_content"]) > 0:
             private_config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_private-config.cfg"
             try:
                 with open(private_config_path, "wb") as f:

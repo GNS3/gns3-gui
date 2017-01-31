@@ -539,8 +539,8 @@ class LocalServer(QtCore.QObject):
         except (PermissionError, SystemError):
             pass
         try:
-            # wait for the server to stop for maximum 2 seconds
-            self._local_server_process.wait(timeout=10)
+            # wait for the server to stop for maximum x seconds
+            self._local_server_process.wait(timeout=60)
         except subprocess.TimeoutExpired:
             proceed = QtWidgets.QMessageBox.question(self.parent(),
                                                      "Local server",

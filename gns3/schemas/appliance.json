@@ -130,7 +130,6 @@
                 "type": "string"
             }
         },
-        "additionalProperties": false,
         "required": [
             "adapters",
             "image"
@@ -162,7 +161,6 @@
                 "title": "Config loaded at startup"
             }
         },
-        "additionalProperties": false,
         "required": [
             "ethernet_adapters",
             "serial_adapters",
@@ -211,7 +209,6 @@
             "midplane": { "enum": ["std", "vxr"] },
             "npe": { "enum": ["npe-100", "npe-150", "npe-175", "npe-200", "npe-225", "npe-300", "npe-400", "npe-g2"] }
         },
-        "additionalProperties": false,
         "required": [
             "platform",
             "ram",
@@ -261,19 +258,19 @@
           "title": "Number of Virtual CPU"
         },
         "hda_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio"],
+            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
             "title": "Disk interface for the installed hda_disk_image"
         },
         "hdb_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio"],
+            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
             "title": "Disk interface for the installed hdb_disk_image"
         },
         "hdc_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio"],
+            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
             "title": "Disk interface for the installed hdc_disk_image"
         },
         "hdd_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio"],
+            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
             "title": "Disk interface for the installed hdd_disk_image"
         },
         "arch": {
@@ -317,7 +314,6 @@
                      "null"]
         }
       },
-      "additionalProperties": false,
       "required": [
           "adapter_type",
           "adapters",
@@ -367,7 +363,6 @@
             "title": "Optional, compression type of direct download url image."
           }
         },
-        "additionalProperties": false,
         "required": [
             "filename",
             "version",
@@ -428,18 +423,15 @@
                 "type": "string",
                 "title": "cdrom image"
               }
-            },
-            "additionalProperties": false
+            }
           }
         },
         "required": [
             "name"
-        ],
-        "additionalProperties": false
+        ]
       }
     }
   },
-  "additionalProperties": false,
   "required": [
     "name",
     "category",

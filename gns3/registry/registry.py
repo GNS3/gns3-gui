@@ -105,21 +105,6 @@ class Registry(QtCore.QObject):
                                         if image.md5sum == md5sum:
                                             log.debug("Found images %s (%s) in %s", filename, md5sum, image.path)
                                             return image
-                            elif path.endswith(".ova"):
-                                if md5sum is None:
-                                    # File searched in OVA use the notation x.ova/a.vmdk
-                                    if os.path.dirname(filename) == os.path.basename(path):
-
-                                        path = os.path.join(path, os.path.basename(filename))
-                                        log.debug("Found images  %s (%s) from ova in %s", filename, md5sum, path)
-                                        return Image(emulator, path)
-                                else:
-                                    image = Image(emulator, path)
-                                    if image.md5sum == md5sum:
-                                        # File searched in OVA use the notation x.ova/a.vmdk
-                                        path = os.path.join(image.path, os.path.basename(filename))
-                                        log.debug("Found images  %s (%s) from ova in %s", filename, md5sum, path)
-                                        return Image(emulator, path)
                         except OSError as e:
                             log.error("Can't scan {}: {}".format(path, str(e)))
 

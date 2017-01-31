@@ -24,7 +24,7 @@ import os
 import sip
 import pickle
 
-from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial
+from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial, qslot
 from .items.node_item import NodeItem
 from .dialogs.node_properties_dialog import NodePropertiesDialog
 from .link import Link
@@ -418,7 +418,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._userNodeLinking(event, item)
         elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
             pos = self.mapToScene(event.pos())
-            note = self.createDrawingItem("text", pos.x(), pos.y(), 0)
+            note = self.createDrawingItem("text", pos.x(), pos.y(), 1)
             pos_x = note.pos().x()
             pos_y = note.pos().y() - (note.boundingRect().height() / 2)
             note.setPos(pos_x, pos_y)
@@ -1457,7 +1457,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         return node_item
 
-    def _displayNodeErrorSlot(self, node_id, message):
+    @qslot
+    def _displayNodeErrorSlot(self, node_id, message, *args):
         """
         Show error send by a node to the user
         """
@@ -1466,7 +1467,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if node:
             if node.name():
                 name = node.name()
-        QtWidgets.QMessageBox.critical(self._main_window, name, message.strip())
+        if self._main_window and not sip.isdeleted(self._main_window):
+            QtWidgets.QMessageBox.critical(self._main_window, name, message.strip())
 
     def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, drawing_id=None):
 
