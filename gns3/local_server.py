@@ -323,7 +323,7 @@ class LocalServer(QtCore.QObject):
             return True
 
         if self.isLocalServerRunning():
-            log.info("A local server already running on this host")
+            log.debug("A local server already running on this host")
             # Try to kill the server. The server can be still running after
             # if the server was started by hand
             self._killAlreadyRunningServer()
