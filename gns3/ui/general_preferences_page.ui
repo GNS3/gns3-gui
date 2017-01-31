@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
+    <width>634</width>
     <height>643</height>
    </rect>
   </property>
@@ -770,6 +770,13 @@
          </property>
          <property name="checked">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="uiOverlayNotificationsCheckBox">
+         <property name="text">
+          <string>Display error, warning and info in a overlay popup</string>
          </property>
         </widget>
        </item>

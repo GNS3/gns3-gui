@@ -79,6 +79,9 @@ class NotifDialog(QtWidgets.QWidget):
 
     @qslot
     def addNotif(self, level, message):
+        if not self.parent().settings()["overlay_notifications"]:
+            return
+
         # This unicode char prevent the wordwrap at /
         message = message.replace("/", "\u2060/\u2060")
         if len(self._notifs) == MAX_ELEMENTS:
