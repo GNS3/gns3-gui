@@ -102,11 +102,6 @@ class VirtualBoxVM(Node):
         :param new_settings: settings (dict)
         """
 
-        if "name" in new_settings and new_settings["name"] != self.name():
-            if self._linked_clone:
-                # forces the update of the VM name in VirtualBox.
-                new_settings["vmname"] = new_settings["name"]
-
         params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
