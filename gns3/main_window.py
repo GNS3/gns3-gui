@@ -41,11 +41,9 @@ from .dialogs.doctor_dialog import DoctorDialog
 from .dialogs.edit_project_dialog import EditProjectDialog
 from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
-from .utils.progress_dialog import ProgressDialog
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .items.shape_item import ShapeItem
-from .items.image_item import ImageItem
 from .topology import Topology
 from .http_client import HTTPClient
 from .progress import Progress
@@ -732,7 +730,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
         self._pictures_dir = os.path.dirname(path)
 
-        image = QtGui.QPixmap(path)
+        QtGui.QPixmap(path)
         self.uiGraphicsView.addImage(path)
 
     def _drawRectangleActionSlot(self):
