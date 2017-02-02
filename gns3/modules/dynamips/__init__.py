@@ -317,28 +317,6 @@ class Dynamips(Module):
 
         self._nodes.clear()
 
-    def exportConfigs(self, directory):
-        """
-        Exports all configs for all nodes to a directory.
-
-        :param directory: destination directory path
-        """
-
-        for node in self._nodes:
-            if isinstance(node, Router) and node.initialized():
-                node.exportConfigToDirectory(directory)
-
-    def importConfigs(self, directory):
-        """
-        Imports configs to all nodes from a directory.
-
-        :param directory: source directory path
-        """
-
-        for node in self._nodes:
-            if isinstance(node, Router) and node.initialized():
-                node.importConfigFromDirectory(directory)
-
     def findAlternativeIOSImage(self, image, node):
         """
         Tries to find an alternative IOS image.

@@ -21,13 +21,13 @@ Configuration page for IOU devices.
 
 import os
 
-from gns3.qt import QtGui, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.local_server import LocalServer
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node
+from gns3.controller import Controller
 from gns3.utils.get_resource import get_resource
-from gns3.utils.get_default_base_config import get_default_base_config
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
 
 
@@ -49,6 +49,9 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         self.uiDefaultValuesCheckBox.stateChanged.connect(self._useDefaultValuesSlot)
         self._current_iou_image = ""
         self._compute_id = None
+        if Controller.instance().isRemote():
+            self.uiStartupConfigToolButton.hide()
+            self.uiPrivateConfigToolButton.hide()
 
         # location of the base config templates
         self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
@@ -85,12 +88,12 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
 
         if "l2" in path:
             # set the default L2 base startup-config
-            default_base_config = get_default_base_config(self._base_iou_l2_config_template)
+            default_base_config = self._base_iou_l2_config_template
             if default_base_config:
                 self.uiStartupConfigLineEdit.setText(default_base_config)
         else:
             # set the default L3 base startup-config
-            default_base_config = get_default_base_config(self._base_iou_l3_config_template)
+            default_base_config = self._base_iou_l3_config_template
             if default_base_config:
                 self.uiStartupConfigLineEdit.setText(default_base_config)
 

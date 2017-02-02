@@ -19,8 +19,12 @@
 Base class for node classes.
 """
 
+import os
+import pathlib
+
 from .qt import QtCore
 from .ports.port import Port
+from .utils.normalize_filename import normalize_filename
 
 
 import logging
@@ -327,3 +331,73 @@ class BaseNode(QtCore.QObject):
         """
 
         self._project.delete(path, callback, context=context, **kwargs)
+
+    def exportConfigToDirectory(self, directory):
+        """
+        Exports the initial-config to a directory.
+
+        :param directory: destination directory path
+        """
+
+        if not hasattr(self, "configFiles"):
+            return
+        for file in self.configFiles():
+            self.controllerHttpGet("/nodes/{node_id}/files/{file}".format(node_id=self._node_id, file=file),
+                                   self._exportConfigToDirectoryCallback,
+                                   context={"directory": directory, "file": file},
+                                   raw=True)
+
+    def _exportConfigToDirectoryCallback(self, result, error=False, raw_body=None, context={}, **kwargs):
+        """
+        Callback for exportConfigToDirectory.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            # The file could be missing if you have not private config for
+            # exemple
+            return
+        export_directory = context["directory"]
+
+        filename = normalize_filename(self.name()) + "_{}".format(context["file"].replace("/", "_"))  # We can have / in the case of Docker
+        config_path = os.path.join(export_directory, filename)
+        try:
+            with open(config_path, "wb") as f:
+                log.info("saving {} config to {}".format(self.name(), config_path))
+                f.write(raw_body)
+        except OSError as e:
+            self.error_signal.emit(self.id(), "could not export config to {}: {}".format(config_path, e))
+
+    def importConfigFromDirectory(self, directory):
+        """
+        Imports an initial-config from a directory.
+
+        :param directory: source directory path
+        """
+
+        if not hasattr(self, "configFiles"):
+            return
+
+        try:
+            contents = os.listdir(directory)
+        except OSError as e:
+            self.warning_signal.emit(self.id(), "Can't list file in {}: {}".format(directory, str(e)))
+            return
+
+        for file in self.configFiles():
+            filename = normalize_filename(self.name()) + "_{}".format(file.replace("/", "_"))  # We can have / in the case of Docker
+            if filename in contents:
+                self.controllerHttpPost("/nodes/{node_id}/files/{file}".format(
+                    node_id=self._node_id,
+                    file=file), self._importConfigCallback,
+                    pathlib.Path(os.path.join(directory, filename)))
+            else:
+                self.warning_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(filename))
+
+    def _importConfigCallback(self, result, error=False, **kwargs):
+        if error:
+            if "message" in result:
+                log.error("Error while import config: {}".format(result["message"]))
+            return
