@@ -23,7 +23,6 @@ import sys
 import os
 import shlex
 import subprocess
-from .main_window import MainWindow
 
 import logging
 log = logging.getLogger(__name__)
@@ -36,6 +35,10 @@ def vncConsole(host, port, command):
     :param host: host or IP address
     :param port: port number
     """
+
+    if len(command.strip(' ')) == 0:
+        log.warning('VNC client is not configured')
+        return
 
     # replace the place-holders by the actual values
     command = command.replace("%h", host)
