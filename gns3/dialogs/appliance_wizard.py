@@ -16,14 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys
 import sip
 
 from ..qt import QtWidgets, QtCore, QtGui, qpartial, qslot
 from ..ui.appliance_wizard_ui import Ui_ApplianceWizard
-from ..image_manager import ImageManager
 from ..modules import Qemu
-from ..registry.appliance import Appliance
+from ..registry.appliance import Appliance, ApplianceError
 from ..registry.registry import Registry
 from ..registry.config import Config, ConfigException
 from ..registry.image import Image
@@ -390,8 +388,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if "md5sum" in disk and image.md5sum != disk["md5sum"]:
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}.".format(image.md5sum, disk["md5sum"]))
             return
-
-        config = Config()
         image.upload(self._compute_id, callback=self._imageUploadedCallback)
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
@@ -434,7 +430,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if version is None:
             appliance_configuration = self._appliance.copy()
         else:
-            appliance_configuration = self._appliance.search_images_for_version(version)
+            try:
+                appliance_configuration = self._appliance.search_images_for_version(version)
+            except ApplianceError as e:
+                QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
+                return False
 
         while len(appliance_configuration["name"]) == 0 or not config.is_name_available(appliance_configuration["name"]):
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "The name \"{}\" is already used by another appliance".format(appliance_configuration["name"]))
