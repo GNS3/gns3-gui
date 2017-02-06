@@ -533,7 +533,7 @@ class HTTPClient(QtCore.QObject):
             if not ignore_errors:
                 log.debug("Response error: %s (error: %d)", error_message, error_code)
 
-            if error_code < 200:
+            if error_code < 200 or error_code == 403:
                 if not ignore_errors:
                     self.connection_disconnected_signal.emit()
                     self.close()
