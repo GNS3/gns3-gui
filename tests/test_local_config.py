@@ -82,7 +82,7 @@ def test_readConfig(config_file, local_config):
     section = local_config.loadSectionSettings("VirtualBox", {
         "use_local_server": False
     })
-    assert section["use_local_server"] == True
+    assert section["use_local_server"]
     assert "invalid_key" in section
 
 
@@ -95,7 +95,7 @@ def test_readConfigReload(config_file, tmpdir, local_config):
         "use_local_server": False
     })
 
-    assert section["use_local_server"] == True
+    assert section["use_local_server"]
 
     with open(str(tmpdir / "test.cfg"), "w+") as f:
         f.write(json.dumps({
@@ -106,7 +106,7 @@ def test_readConfigReload(config_file, tmpdir, local_config):
             "version": "1.4.0.dev1"}))
 
     local_config._readConfig(config_file)
-    assert local_config._settings["VirtualBox"]["use_local_server"] == False
+    assert local_config._settings["VirtualBox"]["use_local_server"] is False
 
 
 @pytest.mark.skipif(sys.platform.startswith('darwin') is False, reason='Only on MacOS')
@@ -132,9 +132,8 @@ def test_migrateOldConfigOSX(tmpdir):
 
 
 def test_migrate13Config(tmpdir):
-    local_config = LocalConfig()
-
     config_file = str(tmpdir / "gns3_gui.conf")
+    local_config = LocalConfig(config_file=config_file)
 
     server_config = {
         "allow_console_from_anywhere": True,
@@ -174,7 +173,7 @@ def test_migrate13Config(tmpdir):
     assert local_config._settings["RemoteServers"] == [server_config]
     assert local_config._settings["Servers"]["local_server"] == server_config
     assert local_config._settings["Servers"]["remote_servers"] == [server_config]
-    assert local_config._settings["MainWindow"]["hide_getting_started_dialog"] == True
+    assert local_config._settings["MainWindow"]["hide_getting_started_dialog"]
 
     # When the file is migrated to 1.4 we should not try to modify it
     with open(config_file, "w+") as f:
@@ -191,9 +190,8 @@ def test_migrate13Config(tmpdir):
 
 
 def test_migrate13ConfigOldOsxServerPath(tmpdir):
-    local_config = LocalConfig()
-
     config_file = str(tmpdir / "gns3_gui.conf")
+    local_config = LocalConfig(config_file=config_file)
 
     server_config = {
         "allow_console_from_anywhere": True,
@@ -245,7 +243,7 @@ def test_isMainGui_pid_file_exist_but_different(tmpdir):
     mock_process.name.return_value = "gns3.exe"
     if not sys.platform.startswith("win"):
         mock_process.uids.return_value = (os.getuid(), os.getuid(), os.getuid())
-    with patch("psutil.Process", return_value=mock_process) as mock:
+    with patch("psutil.Process", return_value=mock_process):
         with patch("gns3.local_config.LocalConfig.configDirectory") as mock_config_directory:
             mock_config_directory.return_value = str(tmpdir)
             assert LocalConfig().isMainGui() is False
@@ -277,31 +275,12 @@ def test_migrateRemoveInternetVM(tmpdir):
     """
     In 2.0 the internet VM is replaced by the nat node
     """
-    local_config = LocalConfig()
-
     config_file = str(tmpdir / "gns3_gui.conf")
-
-    server_config = {
-        "allow_console_from_anywhere": True,
-        "auth": False,
-        "auto_start": True,
-        "console_end_port_range": 5000,
-        "console_start_port_range": 2001,
-        "host": "127.0.0.1",
-        "images_path": "/home/gns3/GNS3/images",
-        "password": "",
-        "path": "/bin/gns3server",
-        "port": 8001,
-        "projects_path": "/home/gns3/GNS3/projects",
-        "report_errors": False,
-        "udp_end_port_range": 20000,
-        "udp_start_port_range": 10000,
-        "user": ""
-    }
+    local_config = LocalConfig(config_file=config_file)
 
     with open(config_file, "w+") as f:
         f.write(json.dumps({
-        "Qemu": {
+            "Qemu": {
                 "use_local_server": True,
                 "enable_kvm": True,
                 "vms": [

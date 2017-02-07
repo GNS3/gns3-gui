@@ -150,13 +150,13 @@ def test_search_images_for_version_no_md5(linux_microcore_img, microcore_applian
 def test_search_images_for_version_unknow_version(microcore_appliance):
 
     with pytest.raises(ApplianceError):
-        detected = microcore_appliance.search_images_for_version("42")
+        microcore_appliance.search_images_for_version("42")
 
 
 def test_search_images_for_version_missing_file(microcore_appliance):
 
     with pytest.raises(ApplianceError):
-        detected = microcore_appliance.search_images_for_version("4.0.2")
+        microcore_appliance.search_images_for_version("4.0.2")
 
 
 def test_is_version_installable(linux_microcore_img, microcore_appliance):
