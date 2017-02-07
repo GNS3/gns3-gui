@@ -441,6 +441,8 @@ class Project(QtCore.QObject):
             stream.abort()
 
     def _startListenNotifications(self):
+        if not Controller.instance().connected():
+            return
         path = "/projects/{project_id}/notifications".format(project_id=self._id)
         self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True)
 

@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/export_debug_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/export_debug_dialog.ui'
 #
-# Created: Sat Nov 14 18:32:47 2015
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ExportDebugDialog(object):
+
     def setupUi(self, ExportDebugDialog):
         ExportDebugDialog.setObjectName("ExportDebugDialog")
         ExportDebugDialog.setWindowModality(QtCore.Qt.WindowModal)
@@ -21,7 +22,7 @@ class Ui_ExportDebugDialog(object):
         self.label = QtWidgets.QLabel(ExportDebugDialog)
         self.label.setTextFormat(QtCore.Qt.RichText)
         self.label.setScaledContents(False)
-        self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
@@ -49,6 +50,7 @@ class Ui_ExportDebugDialog(object):
         self.uiOkButton.setObjectName("uiOkButton")
         self.horizontalLayout.addWidget(self.uiOkButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
+        self.label.raise_()
 
         self.retranslateUi(ExportDebugDialog)
         self.uiCancelButton.clicked.connect(ExportDebugDialog.reject)
@@ -57,7 +59,7 @@ class Ui_ExportDebugDialog(object):
     def retranslateUi(self, ExportDebugDialog):
         _translate = QtCore.QCoreApplication.translate
         ExportDebugDialog.setWindowTitle(_translate("ExportDebugDialog", "Export debug information"))
-        self.label.setText(_translate("ExportDebugDialog", "<html><head/><body><p>This will export a debug information file. You must first<span style=\" font-weight:600;\"> save a project before</span> you are allowed to export the debug data.</p><p><span style=\" font-weight:600;\">Be aware</span> this file can contain <span style=\" font-weight:600;\">private information</span> about your project, your GNS3 settings or your computer (list of running processes, opened ports etc.). You can unzip the file in order to edit its content.</p><p><br/>Thanks a lot for helping GNS3.</p></body></html>"))
+        self.label.setText(_translate("ExportDebugDialog", "<html><head/><body><p>This will export a debug information file.</p><p><span style=\" font-weight:600;\">Be aware</span> this file can contain <span style=\" font-weight:600;\">private information</span> about your project, your GNS3 settings or your computer (list of running processes, opened ports etc.). You can unzip the file in order to edit its content.</p><p><br/>Thanks a lot for helping GNS3.</p></body></html>"))
         self.uiCancelButton.setText(_translate("ExportDebugDialog", "Cancel"))
 
 from . import resources_rc

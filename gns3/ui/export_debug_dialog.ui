@@ -26,7 +26,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will export a debug information file. You must first&lt;span style=&quot; font-weight:600;&quot;&gt; save a project before&lt;/span&gt; you are allowed to export the debug data.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Be aware&lt;/span&gt; this file can contain &lt;span style=&quot; font-weight:600;&quot;&gt;private information&lt;/span&gt; about your project, your GNS3 settings or your computer (list of running processes, opened ports etc.). You can unzip the file in order to edit its content.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Thanks a lot for helping GNS3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This will export a debug information file.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Be aware&lt;/span&gt; this file can contain &lt;span style=&quot; font-weight:600;&quot;&gt;private information&lt;/span&gt; about your project, your GNS3 settings or your computer (list of running processes, opened ports etc.). You can unzip the file in order to edit its content.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Thanks a lot for helping GNS3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>

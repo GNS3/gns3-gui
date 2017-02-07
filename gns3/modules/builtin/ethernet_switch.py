@@ -126,7 +126,7 @@ class EthernetSwitch(Node):
                                                                                                                                     port_ethertype_info=port_ethertype_info,
                                                                                                                                     port_vlan_info=port_vlan_info)
                         port_info += "    {port_description}\n".format(port_description=port.description())
-                    break
+                        break
 
         return info + port_info
 

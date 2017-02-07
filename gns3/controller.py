@@ -118,8 +118,8 @@ class Controller(QtCore.QObject):
                     self._error_dialog.setText("Error when connecting to the GNS3 server:\n{}".format(result["message"]))
                     self._error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
                     self._error_dialog.show()
-            # Try to connect again in 1 seconds
-            QtCore.QTimer.singleShot(1000, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
+            # Try to connect again in x seconds
+            QtCore.QTimer.singleShot(5000, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
             self._first_error = False
         else:
             self._first_error = True

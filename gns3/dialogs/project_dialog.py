@@ -264,7 +264,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 if existing_project["status"] == "opened":
                     QtWidgets.QMessageBox.critical(self,
                                                    "New project",
-                                                   "Project {} is running you can not overwrite it".format(self._project_settings["project_name"]))
+                                                   "Project {} is open you can not overwrite it".format(self._project_settings["project_name"]))
                     return False
 
                 reply = QtWidgets.QMessageBox.warning(self,
