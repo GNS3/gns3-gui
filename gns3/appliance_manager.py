@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-
 from .controller import Controller
 
 
@@ -27,7 +25,7 @@ log = logging.getLogger(__name__)
 class ApplianceManager:
 
     def __init__(self):
-        self._appliances = []
+        self._appliance_templates = []
         self._controller = Controller.instance()
         self._controller.connected_signal.connect(self._controllerConnectedSlot)
         self._controller.disconnected_signal.connect(self._controllerDisconnectedSlot)
@@ -35,19 +33,19 @@ class ApplianceManager:
 
     def _controllerConnectedSlot(self):
         if self._controller.connected():
-            self._controller.get("/appliances", self._listAppliancesCallback)
+            self._controller.get("/appliances/templates", self._listApplianceTemplateCallback)
 
     def _controllerDisconnectedSlot(self):
-        self._appliances = []
+        self._appliance_templates = []
 
-    def appliances(self):
-        return self._appliances
+    def appliance_templates(self):
+        return self._appliance_templates
 
-    def _listAppliancesCallback(self, result, error=False, **kwargs):
+    def _listApplianceTemplateCallback(self, result, error=False, **kwargs):
         if error is True:
             log.error("Error while getting appliance list: {}".format(result["message"]))
             return
-        self._appliances = result
+        self._appliance_templates = result
 
     @staticmethod
     def instance():

@@ -16,14 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Nodes view that list all the available nodes to be dragged and dropped on the QGraphics scene.
+Nodes view that list all the available nodes to be dragged and dropped
+on the QGraphics scene.
 """
 
 import tempfile
 import pickle
 import json
 import sip
-import os
 
 from .qt import QtCore, QtGui, QtWidgets, qpartial
 from .modules import MODULES
@@ -107,7 +107,7 @@ class NodesView(QtWidgets.QTreeWidget):
                     Controller.instance().getSymbolIcon(node["symbol"], qpartial(self._setItemIcon, item))
 
         if self._show_available_appliances:
-            for appliance in ApplianceManager.instance().appliances():
+            for appliance in ApplianceManager.instance().appliance_templates():
                 if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
                     continue
                 if search != "" and search not in appliance["name"].lower():
