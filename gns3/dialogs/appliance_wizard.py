@@ -385,8 +385,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return
 
         image = Image(self._appliance.emulator(), path, filename=disk["filename"])
-        if "md5sum" in disk and image.md5sum != disk["md5sum"]:
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}.".format(image.md5sum, disk["md5sum"]))
+        try:
+            if "md5sum" in disk and image.md5sum != disk["md5sum"]:
+                QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}.".format(image.md5sum, disk["md5sum"]))
+                return
+        except OSError as e:
+            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Can't access to the image file {}: {}.".format(path, str(e)))
             return
         image.upload(self._compute_id, callback=self._imageUploadedCallback)
 
