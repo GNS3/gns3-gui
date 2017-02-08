@@ -91,6 +91,8 @@ class NodesView(QtWidgets.QTreeWidget):
         self._current_category = category
         self._current_search = search
 
+        display_appliances = set()
+
         if self._show_installed_appliances:
             for module in MODULES:
                 for node in module.instance().nodes():
@@ -99,6 +101,7 @@ class NodesView(QtWidgets.QTreeWidget):
                     if search != "" and search not in node["name"].lower():
                         continue
 
+                    display_appliances.add(node["name"])
                     item = QtWidgets.QTreeWidgetItem(self)
                     item.setText(0, node["name"])
                     item.setData(0, QtCore.Qt.UserRole, node)
@@ -111,6 +114,8 @@ class NodesView(QtWidgets.QTreeWidget):
                 if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
                     continue
                 if search != "" and search not in appliance["name"].lower():
+                    continue
+                if appliance["name"] in display_appliances:
                     continue
 
                 item = QtWidgets.QTreeWidgetItem(self)
