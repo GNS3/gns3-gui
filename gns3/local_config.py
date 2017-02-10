@@ -97,7 +97,7 @@ class LocalConfig(QtCore.QObject):
         # overwrite system wide settings with user specific ones
         self._settings.update(user_settings)
         self._migrateOldConfig()
-        self._writeConfig()
+        self.writeConfig()
         Controller.instance().connected_signal.connect(self.refreshConfigFromController)
 
     def profile(self):
@@ -257,7 +257,7 @@ class LocalConfig(QtCore.QObject):
 
         return dict()
 
-    def _writeConfig(self):
+    def writeConfig(self):
         """
         Write the configuration file.
         """
@@ -338,7 +338,7 @@ class LocalConfig(QtCore.QObject):
 
         if self._settings != settings:
             self._settings.update(settings)
-            self._writeConfig()
+            self.writeConfig()
             self.config_changed_signal.emit()
 
     def loadSectionSettings(self, section, default_settings):
@@ -374,7 +374,7 @@ class LocalConfig(QtCore.QObject):
 
         if changed:
             log.info("Section %s has missing default values. Adding keys %s Saving configuration", section, ','.join(set(default_settings.keys()) - set(settings.keys())))
-            self._writeConfig()
+            self.writeConfig()
 
         return copy.deepcopy(settings)
 
@@ -392,7 +392,7 @@ class LocalConfig(QtCore.QObject):
         if self._settings[section] != settings:
             self._settings[section].update(copy.deepcopy(settings))
             log.info("Section %s has changed. Saving configuration", section)
-            self._writeConfig()
+            self.writeConfig()
         else:
             log.debug("Section %s has not changed. Skip saving configuration", section)
 

@@ -27,6 +27,7 @@ from .modules import MODULES
 from .node import Node
 from .controller import Controller
 from .dialogs.configuration_dialog import ConfigurationDialog
+from .local_config import LocalConfig
 
 
 class NodesView(QtWidgets.QTreeWidget):
@@ -127,7 +128,6 @@ class NodesView(QtWidgets.QTreeWidget):
     def _showContextualMenu(self):
         item = self.currentItem()
         node = item.data(0, QtCore.Qt.UserRole)
-        node_module = None
         for module in MODULES:
             node_class = module.getNodeClass(node["class"])
             if node_class:
@@ -158,6 +158,7 @@ class NodesView(QtWidgets.QTreeWidget):
         dialog.show()
         if dialog.exec_():
             module.instance().setVMs(module.instance().VMs())
+            LocalConfig.instance().writeConfig()
             self.refresh()
 
     def _deleteSlot(self, vm_key, vm, module, source):
@@ -168,4 +169,5 @@ class NodesView(QtWidgets.QTreeWidget):
             vms = module.instance().VMs()
             vms.pop(vm_key)
             module.instance().setVMs(vms)
+            LocalConfig.instance().writeConfig()
             self.refresh()

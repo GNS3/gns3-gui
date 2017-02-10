@@ -20,6 +20,7 @@ VPCS module implementation.
 """
 
 import os
+import copy
 import shutil
 
 from gns3.qt import QtWidgets
@@ -83,11 +84,12 @@ class VPCS(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        if self._settings["vpcs_path"]:
+        server_settings = copy.copy(self._settings)
+        if server_settings["vpcs_path"]:
             # save some settings to the server config file
-            server_settings = {"vpcs_path": os.path.normpath(self._settings["vpcs_path"])}
-            config = LocalServerConfig.instance()
-            config.saveSettings(self.__class__.__name__, server_settings)
+            server_settings["vpcs_path"] = os.path.normpath(server_settings["vpcs_path"])
+        config = LocalServerConfig.instance()
+        config.saveSettings(self.__class__.__name__, server_settings)
 
     def _loadVPCSNodes(self):
         """
