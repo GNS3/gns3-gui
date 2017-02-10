@@ -64,7 +64,7 @@ class HTTPClient(QtCore.QObject):
         self._host = settings["host"]
         if self._host is None or self._host == "0.0.0.0":
             self._host = "127.0.0.1"
-        elif ":" in self._host and str(ipaddress.IPv6Address(self._host)) == "::":
+        elif ":" in self._host and ipaddress.IPv6Address(self._host) and str(ipaddress.IPv6Address(self._host)) == "::":
             self._host = "::1"
         self._port = int(settings["port"])
         self._user = settings.get("user", None)
