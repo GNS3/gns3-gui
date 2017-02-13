@@ -448,6 +448,7 @@ class HTTPClient(QtCore.QObject):
         context["query_id"] = str(uuid.uuid4())
 
         response.finished.connect(qpartial(self._processResponse, response, server, callback, context, body, ignoreErrors))
+        response.error.connect(qpartial(self._processError, response, server, callback, context, body, ignoreErrors))
 
         if downloadProgressCallback is not None:
             response.readyRead.connect(qpartial(self._readyReadySlot, response, downloadProgressCallback, context, server))
@@ -515,19 +516,8 @@ class HTTPClient(QtCore.QObject):
         if "query_id" in context:
             self._notify_progress_end_query(context["query_id"])
 
-    def _processResponse(self, response, server, callback, context, request_body, ignore_errors):
-
-        if request_body is not None:
-            request_body.close()
-
-        status = None
-        body = None
-
-        if "query_id" in context:
-            self._notify_progress_end_query(context["query_id"])
-
-        if response.error() != QtNetwork.QNetworkReply.NoError:
-            error_code = response.error()
+    def _processError(self, response, server, callback, context, request_body, ignore_errors, error_code):
+        if error_code != QtNetwork.QNetworkReply.NoError:
             error_message = response.errorString()
 
             if not ignore_errors:
@@ -567,7 +557,15 @@ class HTTPClient(QtCore.QObject):
                     log.error(json.loads(body)["message"])
                 except (ValueError, KeyError):
                     log.error(error_message)
-        else:
+
+    def _processResponse(self, response, server, callback, context, request_body, ignore_errors):
+        if request_body is not None:
+            request_body.close()
+
+        if "query_id" in context:
+            self._notify_progress_end_query(context["query_id"])
+
+        if response.error() == QtNetwork.QNetworkReply.NoError:
             status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
             try:
@@ -587,16 +585,15 @@ class HTTPClient(QtCore.QObject):
                     callback(params, error=True, server=server, context=context)
                 else:
                     callback(params, server=server, context=context, raw_body=raw_body)
-        # response.deleteLater()
-        if status == 400:
-            try:
-                params = json.loads(body)
-                e = HttpBadRequest(body)
-                e.fingerprint = params["path"]
-            # If something goes wrong for a any reason just raise the bad request
-            except Exception:
-                e = HttpBadRequest(body)
-            raise e
+            if status == 400:
+                try:
+                    params = json.loads(body)
+                    e = HttpBadRequest(body)
+                    e.fingerprint = params["path"]
+                # If something goes wrong for a any reason just raise the bad request
+                except Exception:
+                    e = HttpBadRequest(body)
+                raise e
 
     def getSynchronous(self, endpoint, timeout=2):
         """
