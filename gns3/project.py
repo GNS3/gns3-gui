@@ -353,9 +353,9 @@ class Project(QtCore.QObject):
             path = self.path()
         if path:
             body = {"path": path}
-            Controller.instance().post("/projects/load", self._projectOpenCallback, body=body)
+            Controller.instance().post("/projects/load", self._projectOpenCallback, body=body, timeout=None)
         else:
-            self.post("/open", self._projectOpenCallback)
+            self.post("/open", self._projectOpenCallback, timeout=None)
 
     def _projectOpenCallback(self, result, error=False, **kwargs):
         if error:
