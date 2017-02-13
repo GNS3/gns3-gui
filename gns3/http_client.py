@@ -521,7 +521,7 @@ class HTTPClient(QtCore.QObject):
             error_message = response.errorString()
 
             if not ignore_errors:
-                log.debug("Response error: %s (error: %d)", error_message, error_code)
+                log.debug("Response error: %s for %s (error: %d)", error_message, response.url().toString(), error_code)
 
             if error_code < 200 or error_code == 403:
                 if not ignore_errors:
