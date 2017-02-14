@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sip
 import json
 import copy
 import ipaddress
@@ -79,7 +80,6 @@ class HTTPClient(QtCore.QObject):
             self._network_manager = network_manager
         else:
             self._network_manager = QtNetwork.QNetworkAccessManager()
-
         # A buffer used by progress download
         self._buffer = {}
 
@@ -208,6 +208,7 @@ class HTTPClient(QtCore.QObject):
         Closes the connection with the server.
         """
         self._connected = False
+        self._progress_callback.reset()
 
     def _request(self, url):
         """
@@ -411,10 +412,6 @@ class HTTPClient(QtCore.QObject):
         :returns: QNetworkReply
         """
 
-        # TODO: remove it when all call are migrated
-        if "compute/" in path:
-            log.warning("Legacy compute direct call %s", path)
-
         try:
             ip = self._host.rsplit('%', 1)[0]
             ipaddress.IPv6Address(ip)  # remove any scope ID
@@ -505,12 +502,13 @@ class HTTPClient(QtCore.QObject):
         Beware it's call for all request you need to check the status of the response
         """
         # We check if we received HTTP headers
-        if not len(response.rawHeaderList()) > 0:
-            response.abort()
+        if not sip.isdeleted(response) and response.isRunning() and not len(response.rawHeaderList()) > 0:
+            if not response.error() != QtNetwork.QNetworkReply.NoError:
+                response.abort()
 
     def _requestCanceled(self, response, context):
 
-        if response.isRunning():
+        if response.isRunning() and not response.error() != QtNetwork.QNetworkReply.NoError:
             log.warn("Aborting request for {}".format(response.url()))
             response.abort()
         if "query_id" in context:
@@ -522,6 +520,9 @@ class HTTPClient(QtCore.QObject):
 
             if not ignore_errors:
                 log.debug("Response error: %s for %s (error: %d)", error_message, response.url().toString(), error_code)
+
+            if "query_id" in context:
+                self._notify_progress_end_query(context["query_id"])
 
             if error_code < 200 or error_code == 403:
                 if not ignore_errors:

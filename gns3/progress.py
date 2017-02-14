@@ -77,6 +77,10 @@ class Progress(QtCore.QObject):
         if query_id in self._queries:
             del self._queries[query_id]
 
+    def reset(self):
+        self._queries = {}
+        self.hide()
+
     def progress_dialog(self):
         return self._progress_dialog
 

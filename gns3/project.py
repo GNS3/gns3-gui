@@ -438,7 +438,7 @@ class Project(QtCore.QObject):
             log.debug("Stop listening for notifications from project %s", self._id)
             stream = self._notification_stream
             self._notification_stream = None
-            stream.abort()
+            stream.close()
 
     def _startListenNotifications(self):
         if not Controller.instance().connected():
