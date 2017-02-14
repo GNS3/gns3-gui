@@ -30,6 +30,7 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
     """
     Text item for the QGraphicsView.
     """
+
     def __init__(self, svg=None, **kws):
 
         super().__init__(**kws)
@@ -118,6 +119,10 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
             text.set("font-style", "italic")
         if self.font().bold():
             text.set("font-weight", "bold")
+        if self.font().strikeOut():
+            text.set("text-decoration", "line-through")
+        elif self.font().underline():
+            text.set("text-decoration", "underline")
         text.set("fill", "#" + hex(self.defaultTextColor().rgba())[4:])
         text.set("fill-opacity", str(self.defaultTextColor().alphaF()))
         text.text = self.toPlainText()
@@ -151,6 +156,10 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
             font.setItalic(True)
         if text.get("font-weight") == "bold":
             font.setBold(True)
+        if text.get("text-decoration") == "underline":
+            font.setUnderline(True)
+        if text.get("text-decoration") == "line-through":
+            font.setStrikeOut(True)
 
         self.setFont(font)
         self.setPlainText(text.text)
