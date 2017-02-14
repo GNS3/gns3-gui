@@ -32,7 +32,7 @@ import functools
 import inspect
 
 import logging
-log = logging.getLogger(__name__)
+log = logging.getLogger("qt/__init__.py")
 
 from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
 sys.modules[__name__ + '.QtCore'] = QtCore

@@ -18,7 +18,7 @@
 import os
 import sys
 import traceback
-from .qt import QtCore, qpartial, QtWidgets
+from .qt import QtCore, qpartial, QtWidgets, QtNetwork
 
 from gns3.controller import Controller
 from gns3.compute_manager import ComputeManager
@@ -64,6 +64,8 @@ class Project(QtCore.QObject):
         self._name = "untitled"
         self._filename = None
 
+        # Due to bug in Qt on some version we need a dedicated network manager
+        self._notification_network_manager = QtNetwork.QNetworkAccessManager()
         self._notification_stream = None
 
         super().__init__()
@@ -438,13 +440,17 @@ class Project(QtCore.QObject):
             log.debug("Stop listening for notifications from project %s", self._id)
             stream = self._notification_stream
             self._notification_stream = None
-            stream.close()
+            stream.abort()
 
     def _startListenNotifications(self):
         if not Controller.instance().connected():
             return
         path = "/projects/{project_id}/notifications".format(project_id=self._id)
-        self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback, downloadProgressCallback=self._event_received, showProgress=False, ignoreErrors=True)
+        self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
+                                                                          downloadProgressCallback=self._event_received,
+                                                                          networkManager=self._notification_network_manager,
+                                                                          showProgress=False,
+                                                                          ignoreErrors=True)
 
     def _endListenNotificationCallback(self, result, error=False, **kwargs):
         """

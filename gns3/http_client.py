@@ -229,7 +229,17 @@ class HTTPClient(QtCore.QObject):
         :param query: The Server to connect
         """
 
-    def createHTTPQuery(self, method, path, callback, body={}, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, timeout=120, server=None, prefix="/v2", params={}, **kwargs):
+    def createHTTPQuery(self, method, path, callback, body={}, context={},
+                        downloadProgressCallback=None,
+                        showProgress=True,
+                        ignoreErrors=False,
+                        progressText=None,
+                        timeout=120,
+                        server=None,
+                        prefix="/v2",
+                        params={},
+                        networkManager=None,
+                        **kwargs):
         """
         Call the remote server, if not connected, check connection before
 
@@ -245,6 +255,7 @@ class HTTPClient(QtCore.QObject):
         :param server: The server where the query will run
         :param timeout: Delay in seconds before raising a timeout
         :param prefix: Prefix to the path
+        :param networkManager: QNetworkAccessManager None use the default
         :param params: Query arguments parameters
         :returns: QNetworkReply
         """
@@ -253,7 +264,16 @@ class HTTPClient(QtCore.QObject):
         if self._shutdown:
             return
 
-        request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context, downloadProgressCallback=downloadProgressCallback, showProgress=showProgress, ignoreErrors=ignoreErrors, progressText=progressText, server=server, timeout=timeout, prefix=prefix, params=params)
+        request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context,
+                           downloadProgressCallback=downloadProgressCallback,
+                           showProgress=showProgress,
+                           ignoreErrors=ignoreErrors,
+                           progressText=progressText,
+                           networkManager=networkManager,
+                           server=server,
+                           timeout=timeout,
+                           prefix=prefix,
+                           params=params)
 
         if self._connected:
             return request()
@@ -393,7 +413,7 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
-    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", params={}, **kwargs):
+    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", params={}, networkManager=None, **kwargs):
         """
         Call the remote server
 
@@ -404,6 +424,7 @@ class HTTPClient(QtCore.QObject):
         :param context: Pass a context to the response callback
         :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
         :param showProgress: Display progress to the user
+        :param networkManager: The network manager to use. If None use default
         :param progressText: Text display to user in progress dialog. None for auto generated
         :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
         :param server: The server where the query is executed
@@ -439,7 +460,10 @@ class HTTPClient(QtCore.QObject):
         # By default QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
         body = self._addBodyToRequest(body, request)
 
-        response = self._network_manager.sendCustomRequest(request, method.encode(), body)
+        if not networkManager:
+            networkManager = self._network_manager
+
+        response = networkManager.sendCustomRequest(request, method.encode(), body)
 
         context = copy.copy(context)
         context["query_id"] = str(uuid.uuid4())
