@@ -392,7 +392,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             else:
                 item.setSelected(True)
         elif is_not_link and event.button() == QtCore.Qt.RightButton and not self._adding_link:
-            if item:
+            if item and not sip.isdeleted(item):
                 # Prevent right clicking on a selected item from de-selecting all other items
                 if not item.isSelected():
                     if not event.modifiers() & QtCore.Qt.ControlModifier:
