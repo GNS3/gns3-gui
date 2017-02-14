@@ -193,7 +193,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         text = "Server notification: {}".format(message)
         if details:
             text += "\n" + details
-        self.write_message_signal.emit("info", text)
+        self.write_message_signal.emit(text, "info")
 
     def writeError(self, base_node_id, message):
         """
@@ -210,7 +210,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
 
         text = "Error:{name} {message}".format(name=name,
                                                message=message)
-        self.write_message_signal.emit("error", text)
+        self.write_message_signal.emit(text, "error")
 
     def writeWarning(self, base_node_id, message):
         """
@@ -227,7 +227,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
 
         text = "Warning:{name} {message}".format(name=name,
                                                  message=message)
-        self.write_message_signal.emit("warning", text)
+        self.write_message_signal.emit(text, "warning")
 
     def writeServerError(self, base_node_id, message):
         """
@@ -248,7 +248,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         text = "Server error {server}:{name} {message}".format(server=server,
                                                                name=name,
                                                                message=message)
-        self.write_message_signal.emit("error", text.strip())
+        self.write_message_signal.emit(text.strip(), "error")
 
     def _run(self):
         """
