@@ -139,8 +139,6 @@ def test_post_not_connected_connection_failed(http_client, http_request, network
     http_client._connected = False
     callback = unittest.mock.MagicMock()
 
-    response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
-
     http_client.createHTTPQuery("POST", "/test", callback)
 
     args, kwargs = network_manager.sendCustomRequest.call_args
@@ -149,6 +147,7 @@ def test_post_not_connected_connection_failed(http_client, http_request, network
 
     # Trigger the completion of /version
     response.finished.emit()
+    response.error.emit(QtNetwork.QNetworkReply.ConnectionRefusedError)
 
     assert callback.called
 
@@ -163,8 +162,6 @@ def test_post_not_connected_connection_failed_retry(http_client, http_request, n
     http_client._retryConnection = unittest.mock.MagicMock()
     callback = unittest.mock.MagicMock()
 
-    response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
-
     http_client.createHTTPQuery("POST", "/test", callback)
 
     args, kwargs = network_manager.sendCustomRequest.call_args
@@ -173,6 +170,7 @@ def test_post_not_connected_connection_failed_retry(http_client, http_request, n
 
     # Trigger the completion of /version
     response.finished.emit()
+    response.error.emit(QtNetwork.QNetworkReply.ConnectionRefusedError)
 
     assert http_client._retryConnection.called
     assert not callback.called
