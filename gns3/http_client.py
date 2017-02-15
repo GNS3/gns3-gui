@@ -339,7 +339,7 @@ class HTTPClient(QtCore.QObject):
             self._query_waiting_connections = []
             return
 
-        if params["version"] != __version__:
+        if params["version"].split("-")[0] != __version__.split("-")[0]:
             msg = "Client version {} differs with server version {}".format(__version__, params["version"])
             log.error(msg)
             # Stable release
