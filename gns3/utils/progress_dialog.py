@@ -94,14 +94,16 @@ class ProgressDialog(QtWidgets.QProgressDialog):
     def _start(self):
         #  connect the thread signals and start the thread
 
-        self._thread.start()
-        log.debug("{} thread started".format(self._worker.objectName()))
+        if self._thread:
+            self._thread.start()
+            log.debug("{} thread started".format(self._worker.objectName()))
 
     @qslot
     def _canceledSlot(self):
 
-        self._worker.cancel()
-        log.debug("{} thread canceled".format(self._worker.objectName()))
+        if self._thread:
+            self._worker.cancel()
+            log.debug("{} thread canceled".format(self._worker.objectName()))
         self._cleanup()
 
     @qslot
@@ -155,6 +157,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         :param message: message
         """
 
+        if not self._thread:
+            return
         if stop:
             log.critical("{} thread stopping with an error: {}".format(self._worker.objectName(), message))
             QtWidgets.QMessageBox.critical(self.parentWidget(), "Error", "{}".format(message))
