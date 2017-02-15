@@ -280,6 +280,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         link = self._topology.getLink(link_id)
+        if not link:
+            return
         source_item = None
         destination_item = None
         source_port = link.sourcePort()
