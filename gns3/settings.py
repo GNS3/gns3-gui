@@ -170,7 +170,8 @@ elif sys.platform.startswith("darwin"):
 else:
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'TightVNC': 'vncviewer %h:%p',
-        'Vinagre': 'vinagre %h::%p'
+        'Vinagre': 'vinagre %h::%p',
+        'gvncviewer': 'gvncviewer %h:%P'
     }
 
     # default VNC console command on other systems

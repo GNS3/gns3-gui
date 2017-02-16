@@ -19,7 +19,7 @@
 Text editor to edit Note items.
 """
 
-from ..qt import QtCore, QtWidgets
+from ..qt import QtCore, QtWidgets, qslot
 from ..ui.text_editor_dialog_ui import Ui_TextEditorDialog
 
 
@@ -70,16 +70,19 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
                                                                                  color.blue(),
                                                                                  color.alpha()))
 
-    def _setFontSlot(self):
+    @qslot
+    def _setFontSlot(self, *args):
         """
         Slot to select the font.
         """
 
-        selected_font, ok = QtWidgets.QFontDialog.getFont(self.uiPlainTextEdit.font(), self)
+        selected_font, ok = QtWidgets.QFontDialog.getFont(self.uiPlainTextEdit.font(), self,
+                                                          options=QtWidgets.QFontDialog.DontUseNativeDialog)
         if ok:
             self.uiPlainTextEdit.setFont(selected_font)
 
-    def _setColorSlot(self):
+    @qslot
+    def _setColorSlot(self, *args):
         """
         Slot to select the color.
         """
@@ -88,7 +91,8 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         if color.isValid():
             self._setColor(color)
 
-    def _applyPreferencesSlot(self):
+    @qslot
+    def _applyPreferencesSlot(self, *args):
         """
         Applies the new text settings.
         """
