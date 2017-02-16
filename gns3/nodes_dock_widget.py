@@ -16,15 +16,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .qt import QtWidgets
+from .settings import NODES_VIEW_SETTINGS
+from .local_config import LocalConfig
 
 
 class NodesDockWidget(QtWidgets.QDockWidget):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._settings = LocalConfig.instance().loadSectionSettings("NodesView", NODES_VIEW_SETTINGS)
 
     def _filterTextChangedSlot(self, text):
         self.window().uiNodesView.setCurrentSearch(text)
         self.window().uiNodesView.refresh()
 
     def _filterIndexChangedSlot(self, index):
+        self._settings["nodes_view_filter"] = index
+        LocalConfig.instance().saveSectionSettings("NodesView", self._settings)
+
         if index == 0:
             self.window().uiNodesView.setShowInstalledAppliances(True)
             self.window().uiNodesView.setShowAvailableAppliances(True)
@@ -37,6 +46,9 @@ class NodesDockWidget(QtWidgets.QDockWidget):
         self.window().uiNodesView.refresh()
 
     def populateNodesView(self, category):
+        if self.window().uiNodesFilterComboBox.currentIndex() != self._settings["nodes_view_filter"]:
+            self.window().uiNodesFilterComboBox.setCurrentIndex(self._settings["nodes_view_filter"])
+            self._filterIndexChangedSlot(self._settings["nodes_view_filter"])
         self.window().uiNodesFilterComboBox.activated.connect(self._filterIndexChangedSlot)
         self.window().uiNodesFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
         self.window().uiNodesView.clear()

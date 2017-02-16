@@ -33,6 +33,7 @@ from .appliance_manager import ApplianceManager
 from .dialogs.configuration_dialog import ConfigurationDialog
 from .local_config import LocalConfig
 
+
 CATEGORY_TO_ID = {
     "firewall": 3,
     "guest": 2,

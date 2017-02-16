@@ -231,7 +231,11 @@ GENERAL_SETTINGS = {
     "state": "",
     "preferences_dialog_geometry": "",
     "debug_level": 0,
-    "multi_profiles": False
+    "multi_profiles": False,
+}
+
+NODES_VIEW_SETTINGS = {
+    "nodes_view_filter": 0
 }
 
 GRAPHICS_VIEW_SETTINGS = {
