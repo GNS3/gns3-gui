@@ -487,7 +487,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if factor < 0.10 or factor > 10:
             return
         self.scale(scale_factor, scale_factor)
-        self._main_window.uiStatusBar.showMessage("{} %".format(round(self.transform().m11() * 100)), 2000)
+        self._main_window.uiStatusBar.showMessage("Zoom: {}%".format(round(self.transform().m11() * 100)), 2000)
 
     def keyPressEvent(self, event):
         """
