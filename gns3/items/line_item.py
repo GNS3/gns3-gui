@@ -40,8 +40,8 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
 
         if svg is None:
             if dst is not None:
-                self.setLine(self.pos().x(),
-                             self.pos().y(),
+                self.setLine(0,
+                             0,
                              dst.x(),
                              dst.y())
                 pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)

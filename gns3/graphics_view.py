@@ -1497,7 +1497,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         elif type == "rect":
             item = RectangleItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "line":
-            item = LineItem(pos=QtCore.QPoint(x, y), dst=QtCore.QPoint(x + 200, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = LineItem(pos=QtCore.QPoint(x, y), dst=QtCore.QPoint(200, 0), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
             item = ImageItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "text":
