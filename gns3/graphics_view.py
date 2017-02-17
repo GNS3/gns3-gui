@@ -58,6 +58,7 @@ from .items.text_item import TextItem
 from .items.shape_item import ShapeItem
 from .items.drawing_item import DrawingItem
 from .items.rectangle_item import RectangleItem
+from .items.line_item import LineItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
 
@@ -85,6 +86,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._adding_note = False
         self._adding_rectangle = False
         self._adding_ellipse = False
+        self._adding_line = False
         self._newlink = None
         self._dragging = False
         self._last_mouse_position = None
@@ -234,6 +236,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self.setCursor(QtCore.Qt.PointingHandCursor)
         else:
             self._adding_ellipse = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+
+    def addLine(self, state):
+        """
+        Adds a line.
+
+        :param state: boolean
+        """
+
+        if state:
+            self._adding_line = True
+            self.setCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            self._adding_line = False
             self.setCursor(QtCore.Qt.ArrowCursor)
 
     def addImage(self, image_path):
@@ -440,6 +456,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._main_window.uiDrawEllipseAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_ellipse = False
+        elif event.button() == QtCore.Qt.LeftButton and self._adding_line:
+            pos = self.mapToScene(event.pos())
+            self.createDrawingItem("line", pos.x(), pos.y(), 0)
+            self._main_window.uiDrawLineAction.setChecked(False)
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            self._adding_line = False
         else:
             super().mousePressEvent(event)
 
@@ -779,7 +801,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             text_edit_action.triggered.connect(self.textEditActionSlot)
             menu.addAction(text_edit_action)
 
-        if True in list(map(lambda item: isinstance(item, ShapeItem), items)):
+        if True in list(map(lambda item: isinstance(item, ShapeItem) or isinstance(item, LineItem), items)):
             style_action = QtWidgets.QAction("Style", menu)
             style_action.setIcon(QtGui.QIcon(':/icons/drawing.svg'))
             style_action.triggered.connect(self.styleActionSlot)
@@ -1270,7 +1292,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, ShapeItem):
+            if isinstance(item, ShapeItem) or isinstance(item, LineItem):
                 items.append(item)
         if items:
             style_dialog = StyleEditorDialog(self._main_window, items)
@@ -1479,6 +1501,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             item = EllipseItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "rect":
             item = RectangleItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+        elif type == "line":
+            item = LineItem(pos=QtCore.QPoint(x, y), dst=QtCore.QPoint(200, 0), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
             item = ImageItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "text":
