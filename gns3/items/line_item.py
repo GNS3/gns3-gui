@@ -109,6 +109,9 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
         self.setPen(pen)
         self.update()
 
+    def _isHorizontalLine(self):
+        return abs(self.line().x1() - self.line().x2()) > abs(self.line().y1() - self.line().y2())
+
     def hoverMoveEvent(self, event):
         """
         Handles all hover move events.
@@ -118,12 +121,22 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
 
         # objects on the background layer don't need cursors
         if self.zValue() >= 0:
-            if event.pos().x() > (self.line().x2() - self._border):
-                self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
-            elif event.pos().x() < self._border:
-                self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
+
+            if self._isHorizontalLine():
+                if event.pos().x() > (self.line().x2() - self._border):
+                    self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
+                elif event.pos().x() < self._border:
+                    self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
+                else:
+                    self._graphics_view.setCursor(QtCore.Qt.SizeAllCursor)
+            # Vertical line
             else:
-                self._graphics_view.setCursor(QtCore.Qt.SizeAllCursor)
+                if event.pos().y() > (self.line().y2() - self._border):
+                    self._graphics_view.setCursor(QtCore.Qt.SizeVerCursor)
+                elif event.pos().y() < self._border:
+                    self._graphics_view.setCursor(QtCore.Qt.SizeVerCursor)
+                else:
+                    self._graphics_view.setCursor(QtCore.Qt.SizeAllCursor)
 
     def mouseMoveEvent(self, event):
         """
@@ -135,7 +148,7 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
         self.update()
         if self._edge:
             scenePos = event.scenePos()
-            if self._edge == "left":
+            if self._edge == "left" or self._edge == "bottom":
                 diff_x = self.x() - scenePos.x()
                 diff_y = self.y() - scenePos.y()
                 self.setPos(scenePos.x(), scenePos.y())
@@ -144,7 +157,7 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
                     0,
                     self.line().x2() + diff_x,
                     self.line().y2() + diff_y)
-            elif self._edge == "right":
+            elif self._edge == "right" or self._edge == "top":
                 pos = self.mapFromScene(scenePos)
                 self.setLine(
                     0,
@@ -162,12 +175,20 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
         """
 
         self.update()
-        if event.pos().x() > (self.line().x2() - self._border):
-            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
-            self._edge = "right"
-        elif event.pos().x() < (self.line().x1() + self._border):
-            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
-            self._edge = "left"
+        if self._isHorizontalLine():
+            if event.pos().x() > (self.line().x2() - self._border):
+                self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+                self._edge = "right"
+            elif event.pos().x() < (self.line().x1() + self._border):
+                self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+                self._edge = "left"
+        else:
+            if event.pos().y() > (self.line().y2() - self._border):
+                self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+                self._edge = "top"
+            elif event.pos().y() < (self.line().y1() + self._border):
+                self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+                self._edge = "bottom"
         super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
