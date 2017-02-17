@@ -173,7 +173,7 @@ background-none;
    <addaction name="uiToolsMenu"/>
    <addaction name="uiHelpMenu"/>
   </widget>
-  <widget class="QStatusBar" name="uiStatusBar"/>
+  <widget class="StatusBar" name="uiStatusBar"/>
   <widget class="QToolBar" name="uiGeneralToolBar">
    <property name="windowTitle">
     <string>General</string>
@@ -1204,6 +1204,11 @@ background-none;
    <class>GraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>..graphics_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>..status_bar.h</header>
   </customwidget>
   <customwidget>
    <class>NodesView</class>
