@@ -255,6 +255,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
         self.uiConfigsPathLineEdit.setText(local_server["configs_path"])
         self.uiStatsCheckBox.setChecked(settings["send_stats"])
+        self.uiOverlayNotificationsCheckBox.setChecked(settings["overlay_notifications"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiExperimentalFeaturesCheckBox.setChecked(settings["experimental_features"])
@@ -329,6 +330,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             "style": self.uiStyleComboBox.currentText(),
             "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
+            "overlay_notifications": self.uiOverlayNotificationsCheckBox.isChecked(),
             "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
             "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
             "delay_console_all": self.uiDelayConsoleAllSpinBox.value(),
