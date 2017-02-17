@@ -38,16 +38,7 @@ background-none;
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -71,7 +62,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -157,6 +148,7 @@ background-none;
     <addaction name="uiInsertImageAction"/>
     <addaction name="uiDrawRectangleAction"/>
     <addaction name="uiDrawEllipseAction"/>
+    <addaction name="uiDrawLineAction"/>
     <addaction name="uiEditReadmeAction"/>
    </widget>
    <widget class="QMenu" name="uiDeviceMenu">
@@ -234,16 +226,7 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
@@ -380,16 +363,7 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
@@ -454,16 +428,7 @@ background-none;
      </sizepolicy>
     </property>
     <layout class="QGridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -502,16 +467,7 @@ background-none;
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -1239,7 +1195,7 @@ background-none;
      <normaloff>:/icons/vertically.svg</normaloff>:/icons/vertically.svg</iconset>
    </property>
    <property name="text">
-    <string>Line</string>
+    <string>Drawn line</string>
    </property>
   </action>
  </widget>
