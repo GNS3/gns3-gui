@@ -28,6 +28,7 @@
         <file alias="icons/default.svg">icons/cancel.svg</file>
         <file>icons/configuration.svg</file>
         <file>icons/cancel.svg</file>
+        <file>icons/warning.svg</file>
         <file>icons/cancel-connection.svg</file>
         <file>icons/connection-new.svg</file>
         <file>icons/connection-new-hover.svg</file>
