@@ -199,6 +199,8 @@ class Config:
         new_config["ram"] = appliance_config["iou"]["ram"]
 
         for image in appliance_config["images"]:
+            if "path" not in image:
+                raise ConfigException("Disk image is missing")
             new_config[image["type"]] = self._relative_image_path("IOU", image["path"])
         new_config["path"] = new_config["image"]
 
