@@ -183,6 +183,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         super().initializePage(page_id)
         if self.page(page_id) == self.uiServerWizardPage:
+            Controller.instance().setDisplayError(False)
             Controller.instance().get("/gns3vm", self._getSettingsCallback)
         elif self.page(page_id) == self.uiVMWizardPage:
             if self._GNS3VMSettings()["engine"] == "vmware":
@@ -247,6 +248,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
         if Controller.instance().connected():
             self.uiLocalServerStatusLabel.setText("Connection to local server successful")
+            Controller.instance().get("/gns3vm", self._getSettingsCallback)
         elif Controller.instance().connecting():
             self.uiLocalServerStatusLabel.setText("Please wait connection to the GNS3 server")
         else:
@@ -278,6 +280,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Validates the settings.
         """
 
+        Controller.instance().setDisplayError(True)
         if self.currentPage() == self.uiVMWizardPage:
             vmname = self.uiVMListComboBox.currentText()
             if vmname:
@@ -390,6 +393,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         :param result: ignored
         """
 
+        Controller.instance().setDisplayError(True)
         settings = self.parentWidget().settings()
         if result:
             settings["hide_setup_wizard"] = True
