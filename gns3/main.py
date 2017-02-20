@@ -221,10 +221,11 @@ def main():
             except win32console.error as e:
                 print("warning: could not allocate console: {}".format(e))
 
-    global app
-    app = Application(sys.argv)
-
     local_config = LocalConfig.instance()
+
+    global app
+    app = Application(sys.argv, hdpi=local_config.hdpi())
+
     if local_config.multiProfiles():
         profile_select = ProfileSelectDialog()
         profile_select.show()

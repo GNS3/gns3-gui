@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
-    <height>643</height>
+    <width>654</width>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -777,6 +777,13 @@
         <widget class="QCheckBox" name="uiExperimentalFeaturesCheckBox">
          <property name="text">
           <string>Enable experimental features (dangerous, restart required)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="uiHdpiCheckBox">
+         <property name="text">
+          <string>Enable HDPI mode (Warning on Linux this could crash the application at startup, restart required)</string>
          </property>
         </widget>
        </item>

@@ -29,14 +29,20 @@ log = logging.getLogger(__name__)
 class Application(QtWidgets.QApplication):
     file_open_signal = QtCore.pyqtSignal(str)
 
-    def __init__(self, argv):
+    def __init__(self, argv, hdpi=True):
 
         self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
         # both Qt and PyQt must be version >= 5.6 in order to enable high DPI scaling
         if parse_version(QtCore.QT_VERSION_STR) >= parse_version("5.6") and parse_version(QtCore.PYQT_VERSION_STR) >= parse_version("5.6"):
             # only available starting Qt version 5.6
-            self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
-            self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
+            if hdpi:
+                if sys.platform.startswith("linux"):
+                    log.warning("HDPI mode is enabled. HDPI support by Linux is not stable depending of your computer the application can crash. If it's the case edit ~/.config/GNS3/gns3_gui.conf and set HDPI to false")
+                self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+                self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
+            else:
+                print("DISABLE")
+                self.setAttribute(QtCore.Qt.AA_DisableHighDpiScaling)
 
         super().__init__(argv)
 
@@ -49,6 +55,10 @@ class Application(QtWidgets.QApplication):
         # File path if we have received the path to
         # a file on system via an OSX event
         self.open_file_at_startup = None
+
+    def enableHdpi(self):
+
+        log.info
 
     def event(self, event):
         # When you double click file you receive an event

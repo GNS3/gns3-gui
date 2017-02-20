@@ -258,6 +258,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiExperimentalFeaturesCheckBox.setChecked(settings["experimental_features"])
+        self.uiHdpiCheckBox.setChecked(settings["hdpi"])
         self.uiTelnetConsoleCommandLineEdit.setText(settings["telnet_console_command"])
         self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
         index = self.uiStyleComboBox.findText(settings["style"])
@@ -328,6 +329,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         new_general_settings = {
             "style": self.uiStyleComboBox.currentText(),
             "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
+            "hdpi": self.uiHdpiCheckBox.isChecked(),
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
             "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
             "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
