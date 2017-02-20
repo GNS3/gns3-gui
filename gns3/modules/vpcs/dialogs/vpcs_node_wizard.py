@@ -19,16 +19,12 @@
 Wizard for VPCS nodes.
 """
 
-import os
 
 from gns3.qt import QtGui, QtWidgets
 from gns3.node import Node
-from gns3.utils.get_resource import get_resource
-from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.vpcs_node_wizard_ui import Ui_VPCSNodeWizard
-from .. import VPCS
 
 
 class VPCSNodeWizard(VMWizard, Ui_VPCSNodeWizard):
@@ -54,7 +50,7 @@ class VPCSNodeWizard(VMWizard, Ui_VPCSNodeWizard):
         """
 
         settings = {"name": self.uiNameLineEdit.text(),
-                    "base_script_file": get_default_base_config(get_resource(os.path.join("configs", "vpcs_base_config.txt"))),
+                    "base_script_file": "vpcs_base_config.txt",
                     "symbol": ":/symbols/vpcs_guest.svg",
                     "category": Node.end_devices,
                     "server": self._compute_id}

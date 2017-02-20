@@ -91,20 +91,6 @@ def test_vpcs_device_reload(vpcs_device):
         assert args[0] == "/nodes/{node_id}/reload".format(node_id=vpcs_device.node_id())
 
 
-def test_readBaseConfig(vpcs_device, tmpdir):
-    assert vpcs_device._readBaseConfig("") is None
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        f.write("42")
-    assert vpcs_device._readBaseConfig(str(tmpdir / "test.cfg")) == "42"
-
-
-def test_readBaseConfigRelative(vpcs_device, tmpdir):
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        f.write("42")
-    with patch('gns3.local_server.LocalServer.localServerSettings', return_value={'configs_path': str(tmpdir)}):
-        assert vpcs_device._readBaseConfig(str("test.cfg")) == "42"
-
-
 def test_updatePorts(vpcs_device):
     vpcs_device._updatePorts([
         {

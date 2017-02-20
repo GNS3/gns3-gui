@@ -24,9 +24,7 @@ import re
 
 from gns3.node import Node
 from gns3.utils.normalize_filename import normalize_filename
-from gns3.image_manager import ImageManager
 
-from ..settings import PLATFORMS_DEFAULT_RAM
 from ..adapters import ADAPTER_MATRIX
 from ..wics import WIC_MATRIX
 
@@ -115,20 +113,6 @@ class Router(Node):
         if dynamips_id:
             params["dynamips_id"] = dynamips_id
 
-        # push the startup-config
-        if not node_id and "startup_config" in additional_settings:
-            base_config_content = self._readBaseConfig(additional_settings["startup_config"])
-            if base_config_content is not None:
-                params["startup_config_content"] = base_config_content
-            del additional_settings["startup_config"]
-
-        # push the private-config
-        if not node_id and "private_config" in additional_settings:
-            base_config_content = self._readBaseConfig(additional_settings["private_config"])
-            if base_config_content is not None:
-                params["private_config_content"] = base_config_content
-            del additional_settings["private_config"]
-
         params.update(additional_settings)
         self._create(name, node_id, params, default_name_format)
 
@@ -149,18 +133,6 @@ class Router(Node):
         """
 
         params = {}
-        if "startup_config" in new_settings:
-            base_config_content = self._readBaseConfig(new_settings["startup_config"])
-            if base_config_content is not None:
-                params["startup_config_content"] = base_config_content
-            del new_settings["startup_config"]
-
-        if "private_config" in new_settings:
-            if new_settings["private_config"] and os.path.isfile(new_settings["private_config"]):
-                base_config_content = self._readBaseConfig(new_settings["private_config"])
-                if base_config_content is not None:
-                    params["private_config_content"] = base_config_content
-            del new_settings["private_config"]
 
         for name, value in new_settings.items():
             if name in self._settings:
@@ -185,7 +157,7 @@ class Router(Node):
                 if self._settings[name] != value:
                     log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                     self._settings[name] = value
-            elif name not in ("project_id", "port_name_format", "port_segment_size", "first_port_name", "node_directory", "status", "node_id", "width", "height", "compute_id", "node_type", "startup_config_content", "private_config_content", "dynamips_id", "command_line"):
+            elif name not in ("project_id", "port_name_format", "port_segment_size", "first_port_name", "node_directory", "status", "node_id", "width", "height", "compute_id", "node_type", "dynamips_id", "command_line"):
                 # All key should be known, but we raise error only in debug
                 if logging.getLogger().isEnabledFor(logging.DEBUG):
                     raise ValueError(name)
@@ -371,50 +343,6 @@ class Router(Node):
         slot_info = self._slot_info()
         return info + slot_info
 
-    def exportConfigToDirectory(self, directory):
-        """
-        Exports the startup-config and private-config to a directory.
-
-        :param directory: destination directory path
-        """
-
-        self.controllerHttpGet("/nodes/{node_id}".format(node_id=self._node_id),
-                               self._exportConfigToDirectoryCallback,
-                               context={"directory": directory})
-
-    def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for exportConfigToDirectory.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            result = result["properties"]
-            directory = context["directory"]
-            if "startup_config_content" in result:
-                config_path = os.path.join(directory, normalize_filename(self.name())) + "_startup-config.cfg"
-                try:
-                    with open(config_path, "wb") as f:
-                        log.info("saving {} startup-config to {}".format(self.name(), config_path))
-                        if result["startup_config_content"]:
-                            f.write(result["startup_config_content"].encode("utf-8"))
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "Could not export startup-config to {}: {}".format(config_path, e))
-            if "private_config_content" in result:
-                config_path = os.path.join(directory, normalize_filename(self.name())) + "_private-config.cfg"
-                try:
-                    with open(config_path, "wb") as f:
-                        log.info("saving {} private-config to {}".format(self.name(), config_path))
-                        if result["private_config_content"]:
-                            f.write(result["private_config_content"].encode("utf-8"))
-                except OSError as e:
-                    self.error_signal.emit(self.id(), "Could not export private-config to {}: {}".format(config_path, e))
-
     def configFiles(self):
         """
         Name of the configuration files
@@ -423,55 +351,6 @@ class Router(Node):
             "configs/i{}_startup-config.cfg".format(self._dynamips_id),
             "configs/i{}_private-config.cfg".format(self._dynamips_id)
         ]
-
-    def importConfig(self, path):
-        """
-        Imports a startup-config.
-
-        :param path: path to the startup-config
-        """
-
-        new_settings = {"startup_config": path}
-        self.update(new_settings)
-
-    def importPrivateConfig(self, path):
-        """
-        Imports a private-config.
-
-        :param path: path to the private-config
-        """
-
-        new_settings = {"private_config": path}
-        self.update(new_settings)
-
-    def importConfigFromDirectory(self, directory):
-        """
-        Imports a startup-config and a private-config from a directory.
-
-        :param directory: source directory path
-        """
-
-        try:
-            contents = os.listdir(directory)
-        except OSError as e:
-            self.warning_signal.emit(self.id(), "Configuration could not be loaded from directory {}: {}".format(directory, e))
-            return
-        startup_config = normalize_filename(self.name()) + "_startup-config.cfg"
-        private_config = normalize_filename(self.name()) + "_private-config.cfg"
-        new_settings = {}
-        if startup_config in contents:
-            new_settings["startup_config"] = os.path.join(directory, startup_config)
-        else:
-            self.warning_signal.emit(self.id(), "no startup-config file could be found, expected file name: {}".format(startup_config))
-
-        if private_config in contents:
-            new_settings["private_config"] = os.path.join(directory, private_config)
-        else:
-            # private-config is optional
-            log.debug("{}: no private-config file could be found, expected file name: {}".format(self.name(), private_config))
-
-        if new_settings:
-            self.update(new_settings)
 
     def console(self):
         """

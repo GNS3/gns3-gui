@@ -525,37 +525,6 @@ class Node(BaseNode):
         else:
             log.info("{} has reloaded".format(self.name()))
 
-    def _readBaseConfig(self, config_path):
-        """
-        Returns a base config content.
-
-        :param config_path: path to the configuration file.
-
-        :returns: config content
-        """
-
-        if config_path is None or len(config_path.strip()) == 0:
-            return None
-
-        if not os.path.isabs(config_path):
-            config_path = os.path.join(LocalServer.instance().localServerSettings()["configs_path"], config_path)
-
-        if not os.path.isfile(config_path):
-            return None
-
-        try:
-            with open(config_path, "rb") as f:
-                log.info("Opening configuration file: {}".format(config_path))
-                config = f.read().decode("utf-8")
-                config = config.replace('\r', "")
-                return config
-        except OSError as e:
-            self.error_signal.emit(self.id(), "Could not read configuration file {}: {}".format(config_path, e))
-            return None
-        except UnicodeDecodeError as e:
-            self.error_signal.emit(self.id(), "Invalid configuration file {}: {}".format(config_path, e))
-            return None
-
     def openConsole(self, command=None, aux=False):
         if command is None:
             if aux:
