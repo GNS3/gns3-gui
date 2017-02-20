@@ -117,25 +117,6 @@ class VPCS(Module):
         self._settings["nodes"] = list(self._vpcs_nodes.values())
         self._saveSettings()
 
-    def vpcsNodes(self):
-        """
-        Returns VPCS node settings.
-
-        :returns: VPCS node settings (dictionary)
-        """
-
-        return self._vpcs_nodes
-
-    def setVPCSNodes(self, new_vpcs_nodes):
-        """
-        Sets VPCS node settings.
-
-        :param new_vpcs_nodes: VPCS node settings (dictionary)
-        """
-
-        self._vpcs_nodes = new_vpcs_nodes.copy()
-        self._saveVPCSNodes()
-
     def addNode(self, node):
         """
         Adds a node to this module.
@@ -280,7 +261,7 @@ class VPCS(Module):
         """
 
         self._vpcs_nodes = new_vpcs_nodes.copy()
-        self._saveSettings()
+        self._saveVPCSNodes()
 
     @staticmethod
     def classes():
