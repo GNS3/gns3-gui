@@ -37,11 +37,11 @@ class Application(QtWidgets.QApplication):
             # only available starting Qt version 5.6
             if hdpi:
                 if sys.platform.startswith("linux"):
-                    log.warning("HDPI mode is enabled. HDPI support by Linux is not stable depending of your computer the application can crash. If it's the case edit ~/.config/GNS3/gns3_gui.conf and set HDPI to false")
+                    log.warning("HDPI mode is enabled. HDPI support on Linux is not fully stable and GNS3 may crash depending of your version of Linux. To disabled HDPI mode please edit ~/.config/GNS3/gns3_gui.conf and set 'hdpi' to 'false'")
                 self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
                 self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
             else:
-                print("DISABLE")
+                log.info("HDPI mode is disabled")
                 self.setAttribute(QtCore.Qt.AA_DisableHighDpiScaling)
 
         super().__init__(argv)
@@ -55,10 +55,6 @@ class Application(QtWidgets.QApplication):
         # File path if we have received the path to
         # a file on system via an OSX event
         self.open_file_at_startup = None
-
-    def enableHdpi(self):
-
-        log.info
 
     def event(self, event):
         # When you double click file you receive an event

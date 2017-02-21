@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.8
+# Created: Tue Feb 21 12:32:11 2017
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_GeneralPreferencesPageWidget(object):
-
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(654, 644)
+        GeneralPreferencesPageWidget.resize(715, 644)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
@@ -419,7 +418,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send anonymous crash reports"))
         self.uiStatsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send anonymous usage statistics"))
         self.uiExperimentalFeaturesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable experimental features (dangerous, restart required)"))
-        self.uiHdpiCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable HDPI mode (Warning on Linux this could crash the application at startup, restart required)"))
-        self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Ask for settings profile at application startup  (work profile / home profile)"))
+        self.uiHdpiCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable HDPI mode (this may crash the application on Linux, restart required)"))
+        self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Request for profile settings at application startup  (work profile / home profile)"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiMiscTab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
+
