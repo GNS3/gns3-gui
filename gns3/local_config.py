@@ -404,6 +404,14 @@ class LocalConfig(QtCore.QObject):
         from gns3.settings import GENERAL_SETTINGS
         return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["experimental_features"]
 
+    def hdpi(self):
+        """
+        :returns: Boolean. True if hdpi is allowed
+        """
+
+        from gns3.settings import GENERAL_SETTINGS
+        return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["hdpi"]
+
     def multiProfiles(self):
         """
         :returns: Boolean. True if multi_profiles is enabled
