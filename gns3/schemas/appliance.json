@@ -55,12 +55,16 @@
       "title": "An optional product url on vendor website"
     },
     "registry_version": {
-      "enum": [1, 2, 3],
+      "enum": [1, 2, 3, 4],
       "title": "Version of the registry compatible with this appliance"
     },
     "status": {
       "enum": ["stable", "experimental", "broken"],
       "title": "Document if the appliance is working or not"
+    },
+    "availability": {
+      "enum": ["free", "with-registration", "free-to-try", "service-contract"],
+      "title": "About image availability: can be downloaded directly; download requires a free registration; paid but a trial version (time or feature limited) is available; not available publicly"
     },
     "maintainer": {
       "type": "string",
@@ -323,6 +327,7 @@
           "kvm"
       ]
     },
+
     "images": {
       "type": "array",
       "title": "Images for this appliance",
@@ -371,6 +376,7 @@
         ]
       }
     },
+
     "versions": {
       "type": "array",
       "title": "Versions of the appliance",
@@ -441,6 +447,7 @@
     "product_name",
     "registry_version",
     "status",
+    "availability",
     "maintainer",
     "maintainer_email"
   ]
