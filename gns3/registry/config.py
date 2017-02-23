@@ -182,7 +182,7 @@ class Config:
 
         for image in appliance_config["images"]:
             new_config[image["type"]] = self._relative_image_path("IOS", image["path"])
-            new_config["idlepc"] = image["idlepc"]
+            new_config["idlepc"] = image.get("idlepc", "")
 
         log.debug("Add appliance Dynamips: %s", str(new_config))
         self._config["Dynamips"].setdefault("routers", [])
