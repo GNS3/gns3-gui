@@ -37,6 +37,7 @@ class VMWizard(QtWidgets.QWizard):
         self.setModal(True)
 
         self._devices = devices
+        self._local_server_disable = False
 
         self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         if sys.platform.startswith("darwin"):
@@ -111,7 +112,7 @@ class VMWizard(QtWidgets.QWizard):
                     self.uiRemoteRadioButton.setEnabled(True)
                     self.uiRemoteServersComboBox.addItem(compute.name(), compute.id())
 
-            if self.uiLocalRadioButton.isEnabled() and self.uiLocalRadioButton.isVisible():
+            if self.uiLocalRadioButton.isEnabled() and not self._local_server_disable:
                 self.uiLocalRadioButton.setChecked(True)
             elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isEnabled():
                 self.uiVMRadioButton.setChecked(True)
@@ -125,6 +126,7 @@ class VMWizard(QtWidgets.QWizard):
         """
         Turn off the local server
         """
+        self._local_server_disable = True
         self.uiLocalRadioButton.hide()
         self.uiLocalRadioButton.setEnabled(False)
         self.setStartId(0)
