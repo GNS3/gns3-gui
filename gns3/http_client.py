@@ -282,7 +282,7 @@ class HTTPClient(QtCore.QObject):
             # If we are not connected and we enqueue the first query we open the conection
             if len(self._query_waiting_connections) == 1:
                 log.info("Connection to {}".format(self.url()))
-                self._executeHTTPQuery("GET", "/version", self._callbackConnect, {}, server=server, timeout=5)
+                self._executeHTTPQuery("GET", "/version", self._callbackConnect, {}, server=server, timeout=5, showProgress=False)
 
     def _connectionError(self, callback, msg="", server=None):
         """
