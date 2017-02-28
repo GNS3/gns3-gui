@@ -127,9 +127,6 @@ class NodesView(QtWidgets.QTreeWidget):
                 item.setSizeHint(0, QtCore.QSize(32, 32))
                 Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
 
-        if not self.topLevelItemCount() and category == Node.routers:
-            QtWidgets.QMessageBox.warning(self, 'Routers', 'No routers have been configured.<br>You must provide your own router images in order to use GNS3.<br><br><a href="https://gns3.com/support/docs">Show documentation</a>')
-
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def _setItemIcon(self, item, icon):
@@ -188,6 +185,8 @@ class NodesView(QtWidgets.QTreeWidget):
     def _showContextualMenu(self):
         item = self.currentItem()
         node = item.data(0, QtCore.Qt.UserRole)
+        if "class" not in node:
+            return
         for module in MODULES:
             node_class = module.getNodeClass(node["class"])
             if node_class:

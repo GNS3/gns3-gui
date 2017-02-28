@@ -8,28 +8,30 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_MainWindow(object):
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
         MainWindow.resize(984, 715)
         MainWindow.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
         MainWindow.setStyleSheet("#toolBar_Devices QToolButton {\n"
-"width: 50px;\n"
-"height: 55px;\n"
-"border:solid 1px black opacity 0.4;\n"
-"background-none;\n"
-"}\n"
-"\n"
-"#toolBar_General QToolButton {\n"
-"width: 36px;\n"
-"height: 36px;\n"
-"border:solid 1px black opacity 0.4;\n"
-"background-none;\n"
-"}\n"
-"\n"
-"")
-        MainWindow.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks|QtWidgets.QMainWindow.AnimatedDocks)
+                                 "width: 50px;\n"
+                                 "height: 55px;\n"
+                                 "border:solid 1px black opacity 0.4;\n"
+                                 "background-none;\n"
+                                 "}\n"
+                                 "\n"
+                                 "#toolBar_General QToolButton {\n"
+                                 "width: 36px;\n"
+                                 "height: 36px;\n"
+                                 "border:solid 1px black opacity 0.4;\n"
+                                 "background-none;\n"
+                                 "}\n"
+                                 "\n"
+                                 "")
+        MainWindow.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks | QtWidgets.QMainWindow.AnimatedDocks)
         self.uiCentralWidget = QtWidgets.QWidget(MainWindow)
         self.uiCentralWidget.setObjectName("uiCentralWidget")
         self.gridlayout = QtWidgets.QGridLayout(self.uiCentralWidget)
@@ -81,7 +83,7 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidget.setEnabled(True)
         self.uiNodesDockWidget.setVisible(True)
         self.uiNodesDockWidget.setFloating(False)
-        self.uiNodesDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
+        self.uiNodesDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
         self.uiNodesDockWidget.setObjectName("uiNodesDockWidget")
         self.uiNodesDockWidgetContents = QtWidgets.QWidget()
         self.uiNodesDockWidgetContents.setObjectName("uiNodesDockWidgetContents")

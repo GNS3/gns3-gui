@@ -234,8 +234,11 @@ GENERAL_SETTINGS = {
     "preferences_dialog_geometry": "",
     "debug_level": 0,
     "multi_profiles": False,
-    "nodes_view_filter": 0,
     "hdpi": not sys.platform.startswith("linux")
+}
+
+NODES_VIEW_SETTINGS = {
+    "nodes_view_filter": 0,
 }
 
 GRAPHICS_VIEW_SETTINGS = {
