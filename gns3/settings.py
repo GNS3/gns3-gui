@@ -147,7 +147,10 @@ else:
 # Pre-configured VNC console commands on various OSes
 if sys.platform.startswith("win"):
     # Windows
-    PRECONFIGURED_VNC_CONSOLE_COMMANDS = {'TightVNC (included with GNS3)': 'tvnviewer.exe %h:%p'}
+    PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
+        'TightVNC (included with GNS3)': 'tvnviewer.exe %h:%p',
+        'UltraVNC', 'C:\\Program Files\\uvnc bvba\\UltraVNC\\vncviewer.exe %h:%p'
+    }
 
     # default Windows VNC console command
     DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['TightVNC (included with GNS3)']
