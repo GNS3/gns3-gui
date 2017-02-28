@@ -24,7 +24,7 @@ if "dev" in __version__:
         import os
         import subprocess
         if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".git")):
-            r = subprocess.run(["git", "rev-parse", "--short", "HEAD"], stdout=subprocess.PIPE).stdout.decode().strip("\n")
+            r = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip("\n")
             __version__ += "-" + r
     except Exception as e:
         print(e)

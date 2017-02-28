@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.7.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ class Ui_GeneralPreferencesPageWidget(object):
 
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(634, 643)
+        GeneralPreferencesPageWidget.resize(715, 644)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
@@ -343,6 +343,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiExperimentalFeaturesCheckBox = QtWidgets.QCheckBox(self.uiMiscTab)
         self.uiExperimentalFeaturesCheckBox.setObjectName("uiExperimentalFeaturesCheckBox")
         self.verticalLayout_2.addWidget(self.uiExperimentalFeaturesCheckBox)
+        self.uiHdpiCheckBox = QtWidgets.QCheckBox(self.uiMiscTab)
+        self.uiHdpiCheckBox.setObjectName("uiHdpiCheckBox")
+        self.verticalLayout_2.addWidget(self.uiHdpiCheckBox)
         self.uiMultiProfilesCheckBox = QtWidgets.QCheckBox(self.uiMiscTab)
         self.uiMultiProfilesCheckBox.setObjectName("uiMultiProfilesCheckBox")
         self.verticalLayout_2.addWidget(self.uiMultiProfilesCheckBox)
@@ -420,6 +423,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiStatsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send anonymous usage statistics"))
         self.uiOverlayNotificationsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Display error, warning and info in a overlay popup"))
         self.uiExperimentalFeaturesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable experimental features (dangerous, restart required)"))
-        self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Ask for settings profile at application startup  (work profile / home profile)"))
+        self.uiHdpiCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable HDPI mode (this may crash the application on Linux, restart required)"))
+        self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Request for profile settings at application startup  (work profile / home profile)"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiMiscTab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))

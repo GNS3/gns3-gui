@@ -288,6 +288,13 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             new_local_server_settings["user"] = self.uiRemoteMainServerUserLineEdit.text()
             new_local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
             new_local_server_settings["auth"] = self.uiRemoteMainServerAuthCheckBox.isChecked()
+
+            # Some users get confused by remote server and  main server and same
+            # configure the same server twice
+            for compute in self._remote_computes.values():
+                if new_local_server_settings["host"] == compute.host() and new_local_server_settings["port"] == compute.port():
+                    QtWidgets.QMessageBox.critical(self, "Local server", "You can't use a server as main server and as a remote server.")
+                    return
             LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
 
         ComputeManager.instance().updateList(self._remote_computes.values())

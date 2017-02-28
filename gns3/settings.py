@@ -233,7 +233,8 @@ GENERAL_SETTINGS = {
     "state": "",
     "preferences_dialog_geometry": "",
     "debug_level": 0,
-    "multi_profiles": False
+    "multi_profiles": False,
+    "hdpi": not sys.platform.startswith("linux")
 }
 
 GRAPHICS_VIEW_SETTINGS = {

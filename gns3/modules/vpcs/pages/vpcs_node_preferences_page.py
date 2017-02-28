@@ -163,7 +163,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         """
 
         vpcs_module = VPCS.instance()
-        self._vpcs_nodes = copy.deepcopy(vpcs_module.vpcsNodes())
+        self._vpcs_nodes = copy.deepcopy(vpcs_module.VMs())
         self._items.clear()
 
         for key, node in self._vpcs_nodes.items():
@@ -187,4 +187,4 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         Saves the VPCS node preferences.
         """
 
-        VPCS.instance().setVPCSNodes(self._vpcs_nodes)
+        VPCS.instance().setVMs(self._vpcs_nodes)

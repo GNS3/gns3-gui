@@ -44,10 +44,9 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
 
         # connect signals
         self.uiIOURCPathToolButton.clicked.connect(self._iourcPathBrowserSlot)
-        self.uiIouyapPathToolButton.clicked.connect(self._iouyapPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
 
-        #if not sys.platform.startswith("linux"):
+        # if not sys.platform.startswith("linux"):
         #    self.uiUseLocalServercheckBox.setChecked(False)
         #    self.uiUseLocalServercheckBox.setEnabled(False)
 
@@ -76,41 +75,6 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
 
         self.IOULicenceTextEdit.setPlainText(content)
 
-    def _iouyapPathBrowserSlot(self):
-        """
-        Slot to open a file browser and select iouyap.
-        """
-
-        filter = ""
-        if sys.platform.startswith("win"):
-            filter = "Executable (*.exe);;All files (*.*)"
-
-        iouyap_path = shutil.which("iouyap")
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select iouyap", iouyap_path, filter)
-        if not path:
-            return
-
-        if self._checkIouyapPath(path):
-            self.uiIouyapPathLineEdit.setText(os.path.normpath(path))
-
-    def _checkIouyapPath(self, path):
-        """
-        Checks that the iouyap path is valid.
-
-        :param path: iouyap path
-        :returns: boolean
-        """
-
-        if not os.path.exists(path):
-            QtWidgets.QMessageBox.critical(self, "iouyap", '"{}" does not exist'.format(path))
-            return False
-
-        if not os.access(path, os.X_OK):
-            QtWidgets.QMessageBox.critical(self, "iouyap", "{} is not an executable".format(os.path.basename(path)))
-            return False
-
-        return True
-
     def _restoreDefaultsSlot(self):
         """
         Slot to populate the page widgets with the default settings.
@@ -124,12 +88,8 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         """
 
         if state:
-            self.uiIouyapPathLineEdit.setEnabled(True)
-            self.uiIouyapPathToolButton.setEnabled(True)
             self.uiLicensecheckBox.setEnabled(True)
         else:
-            self.uiIouyapPathLineEdit.setEnabled(False)
-            self.uiIouyapPathToolButton.setEnabled(False)
             self.uiLicensecheckBox.setEnabled(False)
 
     def _populateWidgets(self, settings):
@@ -140,7 +100,6 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         """
 
         self.IOULicenceTextEdit.setPlainText(settings["iourc_content"])
-        self.uiIouyapPathLineEdit.setText(settings["iouyap_path"])
         self.uiLicensecheckBox.setChecked(settings["license_check"])
 
     def loadPreferences(self):
@@ -156,13 +115,9 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         Saves IOU preferences.
         """
 
-        iouyap_path = self.uiIouyapPathLineEdit.text().strip()
-        if iouyap_path and not self._checkIouyapPath(iouyap_path):
-            return
-
         iourc_content = self.IOULicenceTextEdit.toPlainText().strip().replace("\r\n", "\n")
 
-        new_settings = {"iouyap_path": iouyap_path,
-                        "iourc_content": iourc_content,
-                        "license_check": self.uiLicensecheckBox.isChecked()}
+        new_settings = {
+            "iourc_content": iourc_content,
+            "license_check": self.uiLicensecheckBox.isChecked()}
         IOU.instance().setSettings(new_settings)

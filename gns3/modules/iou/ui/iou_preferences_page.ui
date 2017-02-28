@@ -15,116 +15,48 @@
   </property>
   <layout class="QVBoxLayout">
    <item>
-    <widget class="QTabWidget" name="uiTabWidget">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="uiGeneralSettingsTabWidget">
-      <attribute name="title">
-       <string>Local settings</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="margin">
-        <number>10</number>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QPlainTextEdit" name="IOULicenceTextEdit">
+       <property name="toolTip">
+        <string>A license is required to run IOU. Copy &amp; paste the content of your iourc file here or use the browse button to select a file. The license will be pushed to remote servers.</string>
        </property>
-       <item>
-        <widget class="QLabel" name="uiIouyapPathLabel">
-         <property name="text">
-          <string>Path to iouyap:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <item>
-          <widget class="QLineEdit" name="uiIouyapPathLineEdit">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="uiIouyapPathToolButton">
-           <property name="text">
-            <string>&amp;Browse...</string>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextOnly</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="uiLicensecheckBox">
-         <property name="text">
-          <string>Check for a valid IOU license key</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>5</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="uiLicenseTabWidget">
-      <attribute name="title">
-       <string>License</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QPlainTextEdit" name="IOULicenceTextEdit">
-           <property name="toolTip">
-            <string>A license is required to run IOU. Copy &amp; paste the content of your iourc file here or use the browse button to select a file. The license will be pushed to remote servers.</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="uiIOURCPathToolButton">
-           <property name="text">
-            <string>&amp;Browse...</string>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextOnly</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>185</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="uiIOURCPathToolButton">
+       <property name="text">
+        <string>&amp;Browse...</string>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextOnly</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="uiLicensecheckBox">
+     <property name="text">
+      <string>Check for a valid IOU license key</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">

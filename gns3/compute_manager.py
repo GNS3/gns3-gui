@@ -48,17 +48,22 @@ class ComputeManager(QtCore.QObject):
 
         self._timer = QtCore.QTimer()
         self._timer.setInterval(1000)
+        self._refreshingComputes = False
         self._timer.timeout.connect(self._refreshComputesSlot)
         self._timer.start()
 
     def _refreshComputesSlot(self):
+        if self._refreshingComputes:
+            return
         if self._controller.connected() and datetime.datetime.now().timestamp() - self._last_computes_refresh > 5:
             self._last_computes_refresh = datetime.datetime.now().timestamp()
-            self._controller.get("/computes", self._listComputesCallback, showProgress=True)
+            self._refreshingComputes = True
+            self._controller.get("/computes", self._listComputesCallback, showProgress=False, timeout=15)
 
     def _controllerConnectedSlot(self):
         if self._controller.connected():
-            self._controller.get("/computes", self._listComputesCallback)
+            self._refreshingComputes = True
+            self._controller.get("/computes", self._listComputesCallback, showProgress=False, timeout=15)
 
     def _controllerDisconnectedSlot(self):
         for compute_id in list(self._computes):
@@ -66,6 +71,7 @@ class ComputeManager(QtCore.QObject):
             self.deleted_signal.emit(compute_id)
 
     def _listComputesCallback(self, result, error=False, **kwargs):
+        self._refreshingComputes = False
         if error is True:
             log.error("Error while getting compute list: {}".format(result["message"]))
             return
