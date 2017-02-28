@@ -241,7 +241,7 @@ class LocalConfig(QtCore.QObject):
         Read the configuration file.
         """
 
-        log.info("Load config from %s", config_path)
+        log.debug("Load config from %s", config_path)
         try:
             with open(config_path, "r", encoding="utf-8") as f:
                 self._last_config_changed = os.stat(config_path).st_mtime
@@ -268,7 +268,7 @@ class LocalConfig(QtCore.QObject):
             with open(temporary, "w", encoding="utf-8") as f:
                 json.dump(self._settings, f, sort_keys=True, indent=4)
             shutil.move(temporary, self._config_file)
-            log.info("Configuration save to %s", self._config_file)
+            log.debug("Configuration save to %s", self._config_file)
             self._last_config_changed = os.stat(self._config_file).st_mtime
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
@@ -373,9 +373,8 @@ class LocalConfig(QtCore.QObject):
         self._settings[section] = settings
 
         if changed:
-            log.info("Section %s has missing default values. Adding keys %s Saving configuration", section, ','.join(set(default_settings.keys()) - set(settings.keys())))
+            log.debug("Section %s has missing default values. Adding keys %s Saving configuration", section, ','.join(set(default_settings.keys()) - set(settings.keys())))
             self.writeConfig()
-
         return copy.deepcopy(settings)
 
     def saveSectionSettings(self, section, settings):
@@ -391,7 +390,7 @@ class LocalConfig(QtCore.QObject):
 
         if self._settings[section] != settings:
             self._settings[section].update(copy.deepcopy(settings))
-            log.info("Section %s has changed. Saving configuration", section)
+            log.debug("Section %s has changed. Saving configuration", section)
             self.writeConfig()
         else:
             log.debug("Section %s has not changed. Skip saving configuration", section)
@@ -403,6 +402,14 @@ class LocalConfig(QtCore.QObject):
 
         from gns3.settings import GENERAL_SETTINGS
         return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["experimental_features"]
+
+    def hdpi(self):
+        """
+        :returns: Boolean. True if hdpi is allowed
+        """
+
+        from gns3.settings import GENERAL_SETTINGS
+        return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["hdpi"]
 
     def multiProfiles(self):
         """

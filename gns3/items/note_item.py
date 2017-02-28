@@ -208,6 +208,10 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
                     font.setItalic(True)
                 elif key == "font-weight" and val == "bold":
                     font.setBold(True)
+                elif key == "text-decoration" and val == "underline":
+                    font.setUnderline(True)
+                elif key == "text-decoration" and val == "line-through":
+                    font.setStrikeOut(True)
                 elif key == "fill":
                     new_color = colorFromSvg(val)
                     color = self.defaultTextColor()
@@ -255,6 +259,11 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
 
         if self.font().bold():
             style += "font-weight: bold;"
+
+        if self.font().strikeOut():
+            style += "text-decoration: line-through;"
+        elif self.font().underline():
+            style += "text-decoration: underline;"
 
         style += "fill: {};".format("#" + hex(self.defaultTextColor().rgba())[4:])
         style += "fill-opacity: {};".format(self.defaultTextColor().alphaF())

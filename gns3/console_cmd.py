@@ -21,7 +21,6 @@ Handles commands typed in the GNS3 console.
 
 import sys
 import cmd
-import logging
 import struct
 import sip
 import json
@@ -29,6 +28,9 @@ import json
 from .node import Node
 from .qt import QtCore
 from .version import __version__
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class ConsoleCmd(cmd.Cmd):
@@ -177,6 +179,24 @@ class ConsoleCmd(cmd.Cmd):
                             print("Cannot console to {}".format(device))
                         break
 
+    def do_log(self, args):
+        """
+        Log a message
+
+        log level message
+        """
+
+        args = args.split()
+        if len(args) == 0:
+            return
+        level = args.pop(0)
+        if level == "info":
+            log.info(" ".join(args))
+        elif level == "warning":
+            log.warning(" ".join(args))
+        else:
+            log.error(" ".join(args))
+
     def _start_console(self, node):
         """
         Starts a console application for a specific node.
@@ -249,44 +269,6 @@ class ConsoleCmd(cmd.Cmd):
                     print("{}: no such device".format(node_name))
                     continue
 
-    def _show_run(self, params):
-        """
-        Handles the 'show run' command.
-
-        :param params: list of parameters
-        """
-
-        if self._topology.project is None:
-            print("Sorry, the project hasn't been saved yet")
-            return
-
-        topology = self._topology.dump()
-        if len(params) == 1:
-            # print out whole topology
-            print(json.dumps(topology, sort_keys=True, indent=4))
-        elif len(params) >= 2:
-            # this is a 'show run <device_name>'
-            params.pop(0)
-            for param in params:
-                node_name = param
-                base_node_id = None
-
-                # get the node ID
-                for node in self._topology.nodes():
-                    if node.name() == node_name:
-                        base_node_id = node.id()
-                        break
-
-                if base_node_id is None:
-                    print("{}: no such device".format(node_name))
-                    continue
-
-                if "nodes" in topology["topology"]:
-                    for node in topology["topology"]["nodes"]:
-                        if node["id"] == base_node_id:
-                            print(json.dumps(node, sort_keys=True, indent=4))
-                            break
-
     def do_show(self, args):
         """
         Show detail information about every device in current lab:
@@ -294,15 +276,6 @@ class ConsoleCmd(cmd.Cmd):
 
         Show detail information about a device:
         show device <device_name>
-
-        Show the whole topology:
-        show run
-
-        Show topology info of a device:
-        show run <device_name>
-
-        Show the GNS3 VM status
-        show gns3vm
         """
 
         if '?' in args or args.strip() == "":
@@ -312,10 +285,6 @@ class ConsoleCmd(cmd.Cmd):
         params = args.split()
         if params[0] == "device":
             self._show_device(params)
-        elif params[0] == "run":
-            self._show_run(params)
-        elif params[0] == "gns3vm":
-            self._show_gnsvm(params)
         else:
             print(self.do_show.__doc__)
 

@@ -48,7 +48,6 @@ def empty_config(tmpdir, images_dir, symbols_dir, local_server_config):
         "IOU": {
             "devices": [
             ],
-            "iouyap_path": "",
             "license_check": True,
             "use_local_server": False
         },

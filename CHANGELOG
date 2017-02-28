@@ -1,5 +1,50 @@
 # Change Log
 
+## 2.0.0 beta 4 19/01/2017
+
+* Update pyqt5 from 5.7.1 to 5.8
+* Drop from console view the show command not supported by 2.0
+* Try to avoid segfault in some PyQT version
+* Support for strike and underline
+* Do not use native font selector on mac it could crash
+* Use a dedicated QNetwork manager for notification
+* Fix a display error in console error message
+* Use signal for writting on console to avoid some potential segfault
+* Fix a rare warning
+* Add more debug when we have an http error
+* Disable timeout on project open
+* Support for gvncviewer
+* Fix a rare crash in the file editor dialog
+* Fix a race condition when we display the error
+* Fix an issue with invalid hostname detected as an IPV6
+* When you update a a node from the node view send settings to controller
+* Fix error when permission on the loaded image is broken
+* Fix crash with invalid image file in appliance wizard
+* Fix error when loading an handmade appliance file
+* Fix no error if your VNC client is not configured
+* Avoid high cpu usage when connection is lost
+* Support {name} in cloud template
+* Fix text of the export dialog
+* Fix error message when a project is already open
+* Fix missing info in tooltip of ethernet switch
+* The server manage the vmname when we update the linked virtual box VM
+* Fix z value for text
+* Avoid a segfault when display an error
+* Add sata options in the appliance schema
+* Fix a rare crash when exporting IOU configurations
+* Allow additionnal properties in registry files
+* Fix a potential crash when a symbol is not found
+* Strip unused code for OVA support in the registry
+* Increase the timeout for killing local server
+* Fix error when changing the layer of a drawing item
+* Fix double click for open file on OSX
+* Add debug to see the arguments use to start the application
+* Put the selected engine in the first position of the listbox
+* Fix rare crash with dynamips
+* Fix rare crash in the progress dialog
+* Fix a rare crash in console view
+* Fix crash when you drag a file inside GNS3
+
 ## 2.0.0 beta 3 19/01/2017
 
 * Fix error if you already have an image with a different name on remote server

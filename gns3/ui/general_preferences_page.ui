@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
-    <height>643</height>
+    <width>715</width>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,16 +30,7 @@
        <string>General</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -226,16 +217,7 @@
        <string>Binary images</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -369,16 +351,7 @@
        <string>Console applications</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -479,16 +452,7 @@
        <string>VNC</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -560,16 +524,7 @@
        <string>Topology view</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_8">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item row="9" column="0" colspan="2">
@@ -731,16 +686,7 @@
        <string>Miscellaneous</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -774,6 +720,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="uiOverlayNotificationsCheckBox">
+         <property name="text">
+          <string>Display error, warning and info in a overlay popup</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="uiExperimentalFeaturesCheckBox">
          <property name="text">
           <string>Enable experimental features (dangerous, restart required)</string>
@@ -781,9 +734,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="uiHdpiCheckBox">
+         <property name="text">
+          <string>Enable HDPI mode (this may crash the application on Linux, restart required)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="uiMultiProfilesCheckBox">
          <property name="text">
-          <string>Ask for settings profile at application startup  (work profile / home profile)</string>
+          <string>Request for profile settings at application startup  (work profile / home profile)</string>
          </property>
         </widget>
        </item>

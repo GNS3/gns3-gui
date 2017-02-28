@@ -28,6 +28,7 @@
         <file alias="icons/default.svg">icons/cancel.svg</file>
         <file>icons/configuration.svg</file>
         <file>icons/cancel.svg</file>
+        <file>icons/warning.svg</file>
         <file>icons/cancel-connection.svg</file>
         <file>icons/connection-new.svg</file>
         <file>icons/connection-new-hover.svg</file>
@@ -142,6 +143,8 @@
         <file>classic_icons/pc-hover.svg</file>
         <file>classic_icons/rectangle.svg</file>
         <file>classic_icons/rectangle-hover.svg</file>
+        <file>classic_icons/line.svg</file>
+        <file>classic_icons/line-hover.svg</file>
         <file>classic_icons/reload.svg</file>
         <file>classic_icons/reload-hover.svg</file>
         <file>classic_icons/router.svg</file>
@@ -206,6 +209,8 @@
         <file>charcoal_icons/pc-hover.svg</file>
         <file>charcoal_icons/rectangle.svg</file>
         <file>charcoal_icons/rectangle-hover.svg</file>
+        <file>charcoal_icons/line.svg</file>
+        <file>charcoal_icons/line-hover.svg</file>
         <file>charcoal_icons/reload.svg</file>
         <file>charcoal_icons/reload-hover.svg</file>
         <file>charcoal_icons/router.svg</file>

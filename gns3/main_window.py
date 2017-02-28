@@ -51,6 +51,8 @@ from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
 from .dialogs.new_appliance_dialog import NewApplianceDialog
+from .dialogs.notif_dialog import NotifDialog, NotifDialogHandler
+from .status_bar import StatusBarHandler
 from .registry.appliance import ApplianceError
 
 log = logging.getLogger(__name__)
@@ -74,6 +76,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         super().__init__(parent)
         self.setupUi(self)
+
+        # Setup logger
+        logging.getLogger().addHandler(NotifDialogHandler(NotifDialog(self)))
+        logging.getLogger().addHandler(StatusBarHandler(self.uiStatusBar))
 
         self._open_file_at_startup = open_file
 
@@ -230,6 +236,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiInsertImageAction.triggered.connect(self._insertImageActionSlot)
         self.uiDrawRectangleAction.triggered.connect(self._drawRectangleActionSlot)
         self.uiDrawEllipseAction.triggered.connect(self._drawEllipseActionSlot)
+        self.uiDrawLineAction.triggered.connect(self._drawLineActionSlot)
         self.uiEditReadmeAction.triggered.connect(self._editReadmeActionSlot)
 
         # help menu connections
@@ -746,6 +753,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         self.uiGraphicsView.addEllipse(self.uiDrawEllipseAction.isChecked())
+
+    def _drawLineActionSlot(self):
+        """
+        Slot called when adding a line on the scene.
+        """
+
+        self.uiGraphicsView.addLine(self.uiDrawLineAction.isChecked())
 
     def _onlineHelpActionSlot(self):
         """

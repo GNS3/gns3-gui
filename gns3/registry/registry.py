@@ -105,7 +105,7 @@ class Registry(QtCore.QObject):
                                         if image.md5sum == md5sum:
                                             log.debug("Found images %s (%s) in %s", filename, md5sum, image.path)
                                             return image
-                        except OSError as e:
+                        except (OSError, PermissionError) as e:
                             log.error("Can't scan {}: {}".format(path, str(e)))
 
         return None

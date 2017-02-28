@@ -25,7 +25,6 @@ import sys
 from gns3.qt import QtGui, QtWidgets
 from gns3.node import Node
 from gns3.utils.get_resource import get_resource
-from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
 from gns3.compute_manager import ComputeManager
 
@@ -63,8 +62,8 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
         self.uiIOUImageLineEdit.textChanged.connect(self._imageLineEditTextChangedSlot)
 
         # location of the base config templates
-        self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
-        self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_startup-config.txt"))
+        self._base_iou_l2_config_template = "iou_l2_base_startup-config.txt"
+        self._base_iou_l3_config_template = "iou_l3_base_startup-config.txt"
 
         from ..pages.iou_device_preferences_page import IOUDevicePreferencesPage
         self.addImageSelector(self.uiExistingImageRadioButton, self.uiIOUImageListComboBox, self.uiIOUImageLineEdit, self.uiIOUImageToolButton, IOUDevicePreferencesPage.getIOUImage)
@@ -113,7 +112,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
         startup_config = ""
         if self.uiTypeComboBox.currentText() == "L2 image":
             # set the default L2 base startup-config
-            default_base_config = get_default_base_config(self._base_iou_l2_config_template)
+            default_base_config = self._base_iou_l2_config_template
             if default_base_config:
                 startup_config = default_base_config
             symbol = ":/symbols/multilayer_switch.svg"
@@ -122,7 +121,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
             serial_adapters = 0
         else:
             # set the default L3 base startup-config
-            default_base_config = get_default_base_config(self._base_iou_l3_config_template)
+            default_base_config = self._base_iou_l3_config_template
             if default_base_config:
                 startup_config = default_base_config
             symbol = ":/symbols/router.svg"

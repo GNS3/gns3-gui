@@ -44,6 +44,7 @@ def test_fromSvg(project, controller):
     font.setFamily("Verdana")
     font.setBold(True)
     font.setItalic(True)
+    font.setStrikeOut(True)
     text.setFont(font)
     text.setDefaultTextColor(QtCore.Qt.red)
     text.setPlainText("Hello")
@@ -56,5 +57,4 @@ def test_fromSvg(project, controller):
     assert text2.font().family() == "Verdana"
     assert text2.font().italic()
     assert text2.font().bold()
-
-
+    assert text2.font().strikeOut()

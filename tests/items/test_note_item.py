@@ -29,6 +29,8 @@ def test_dump():
     font.setFamily("Verdana")
     font.setBold(True)
     font.setItalic(True)
+    font.setUnderline(True)
+    font.setStrikeOut(True)
     note.setFont(font)
     note.setDefaultTextColor(QtCore.Qt.red)
 
@@ -37,7 +39,7 @@ def test_dump():
         "x": 0,
         "y": 0,
         "rotation": 0,
-        "style": "font-family: Verdana;font-size: 55;font-style: italic;font-weight: bold;fill: #ff0000;fill-opacity: 1.0;"
+        "style": "font-family: Verdana;font-size: 55;font-style: italic;font-weight: bold;text-decoration: line-through;fill: #ff0000;fill-opacity: 1.0;"
     }
 
 
@@ -49,6 +51,8 @@ def test_setStyle():
     font.setFamily("Verdana")
     font.setBold(True)
     font.setItalic(True)
+    font.setUnderline(True)
+    font.setStrikeOut(False)
     note.setFont(font)
     note.setDefaultTextColor(QtCore.Qt.red)
 
@@ -59,5 +63,6 @@ def test_setStyle():
     assert note2.font().family() == "Verdana"
     assert note2.font().italic()
     assert note2.font().bold()
+    assert note2.font().strikeOut() is False
+    assert note2.font().underline()
     assert note2.defaultTextColor() == QtCore.Qt.red
-

@@ -24,7 +24,6 @@ import os
 import shutil
 
 from gns3.qt import QtWidgets
-from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 
 from ..module import Module
@@ -63,14 +62,6 @@ class IOU(Module):
         """
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, IOU_SETTINGS)
-
-        if sys.platform.startswith("linux") and not os.path.exists(self._settings["iouyap_path"]):
-            iouyap_path = shutil.which("iouyap")
-            if iouyap_path:
-                self._settings["iouyap_path"] = os.path.abspath(iouyap_path)
-            else:
-                self._settings["iouyap_path"] = ""
-
         self._loadIOUDevices()
 
     def _saveSettings(self):
@@ -252,28 +243,6 @@ class IOU(Module):
         """
 
         self._nodes.clear()
-
-    def exportConfigs(self, directory):
-        """
-        Exports all configs for all nodes to a directory.
-
-        :param directory: destination directory path
-        """
-
-        for node in self._nodes:
-            if node.initialized():
-                node.exportConfigToDirectory(directory)
-
-    def importConfigs(self, directory):
-        """
-        Imports configs to all nodes from a directory.
-
-        :param directory: source directory path
-        """
-
-        for node in self._nodes:
-            if node.initialized():
-                node.importConfigFromDirectory(directory)
 
     def findAlternativeIOUImage(self, image):
         """

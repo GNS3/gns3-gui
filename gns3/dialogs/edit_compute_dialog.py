@@ -89,6 +89,9 @@ class EditComputeDialog(QtWidgets.QDialog, Ui_EditComputeDialog):
         if not re.match(r"^[a-zA-Z0-9\.{}-]+$".format("\u0370-\u1CDF\u2C00-\u30FF\u4E00-\u9FBF"), host):
             QtWidgets.QMessageBox.critical(self, "Remote compute", "Invalid remote server hostname {}".format(host))
             return
+        if name == "gns3vm":
+            QtWidgets.QMessageBox.critical(self, "Remote compute", "{} is a reserved name".format(name))
+            return
         if len(name) == 0:
             QtWidgets.QMessageBox.critical(self, "Remote compute", "Invalid remote server name {}".format(name))
             return

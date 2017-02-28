@@ -16,14 +16,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-__version__ is a human-readable version number.
-__version_info__ is a four-tuple for programmatic comparison. The first
-three numbers are the components of the version number. The fourth
-is zero for an official release, positive for a development branch,
-or negative for a release candidate or beta (after the base version
-number has been incremented)
-"""
-
 __version__ = "2.1.0dev1"
+
+# If it's a git checkout try to add the commit
+if "dev" in __version__:
+    try:
+        import os
+        import subprocess
+        if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".git")):
+            r = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip("\n")
+            __version__ += "-" + r
+    except Exception as e:
+        print(e)
+
 __version_info__ = (2, 1, 0, -99)

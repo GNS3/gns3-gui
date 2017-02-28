@@ -170,7 +170,8 @@ elif sys.platform.startswith("darwin"):
 else:
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'TightVNC': 'vncviewer %h:%p',
-        'Vinagre': 'vinagre %h::%p'
+        'Vinagre': 'vinagre %h::%p',
+        'gvncviewer': 'gvncviewer %h:%P'
     }
 
     # default VNC console command on other systems
@@ -215,6 +216,7 @@ else:
 GENERAL_SETTINGS = {
     "style": DEFAULT_STYLE,
     "check_for_update": True,
+    "overlay_notifications": True,
     "experimental_features": False,
     "send_stats": True,
     "stats_visitor_id": str(uuid.uuid4()),  # An anonymous id for stats
@@ -232,10 +234,8 @@ GENERAL_SETTINGS = {
     "preferences_dialog_geometry": "",
     "debug_level": 0,
     "multi_profiles": False,
-}
-
-NODES_VIEW_SETTINGS = {
-    "nodes_view_filter": 0
+    "nodes_view_filter": 0,
+    "hdpi": not sys.platform.startswith("linux")
 }
 
 GRAPHICS_VIEW_SETTINGS = {

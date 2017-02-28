@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created: Thu Jan  5 14:49:45 2017
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_QemuVMConfigPageWidget(object):
+
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
         QemuVMConfigPageWidget.resize(594, 645)
@@ -286,7 +287,7 @@ class Ui_QemuVMConfigPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiAdaptersSpinBox.sizePolicy().hasHeightForWidth())
         self.uiAdaptersSpinBox.setSizePolicy(sizePolicy)
         self.uiAdaptersSpinBox.setMinimum(0)
-        self.uiAdaptersSpinBox.setMaximum(32)
+        self.uiAdaptersSpinBox.setMaximum(275)
         self.uiAdaptersSpinBox.setObjectName("uiAdaptersSpinBox")
         self.gridLayout_5.addWidget(self.uiAdaptersSpinBox, 0, 1, 1, 1)
         self.uiPortNameFormatLineEdit = QtWidgets.QLineEdit(self.uiNetworkTab)
@@ -404,6 +405,10 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.groupBox)
         self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
         self.gridLayout_3.addWidget(self.uiACPIShutdownCheckBox, 2, 0, 1, 2)
+        self.uiQemuOptionsLineEdit.raise_()
+        self.uiQemuOptionsLabel.raise_()
+        self.uiACPIShutdownCheckBox.raise_()
+        self.uiBaseVMCheckBox.raise_()
         self.verticalLayout_2.addWidget(self.groupBox)
         spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem4)
@@ -491,4 +496,3 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiBaseVMCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use as a linked base VM"))
         self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown (experimental)"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiAdvancedSettingsTab), _translate("QemuVMConfigPageWidget", "Advanced settings"))
-

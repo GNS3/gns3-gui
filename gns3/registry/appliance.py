@@ -59,7 +59,7 @@ class Appliance(collections.Mapping):
         """
         if "registry_version" not in self._appliance:
             raise ApplianceError("Invalid appliance configuration please report the issue on https://github.com/GNS3/gns3-registry")
-        if self._appliance["registry_version"] > 3:
+        if self._appliance["registry_version"] > 4:
             raise ApplianceError("Please update GNS3 in order to install this appliance")
 
         with open(get_resource(os.path.join("schemas", "appliance.json"))) as f:

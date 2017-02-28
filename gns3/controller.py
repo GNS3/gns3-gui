@@ -46,6 +46,7 @@ class Controller(QtCore.QObject):
         # If it's the first error we display an alert box to the user
         self._first_error = True
         self._error_dialog = None
+        self._display_error = True
         self._projects = []
 
         # If we do multiple call in order to download the same symbol we queue them
@@ -89,6 +90,13 @@ class Controller(QtCore.QObject):
             self._http_client.connection_disconnected_signal.connect(self._httpClientDisconnectedSlot)
             self._connectingToServer()
 
+    def setDisplayError(self, val):
+        """
+        Allow error to be visible or not
+        """
+        self._display_error = val
+        self._first_error = True
+
     def _connectingToServer(self):
         """
         Connection process as started
@@ -111,7 +119,7 @@ class Controller(QtCore.QObject):
             if self._first_error:
                 self._connecting = False
                 self.connection_failed_signal.emit()
-                if "message" in result:
+                if "message" in result and self._display_error:
                     self._error_dialog = QtWidgets.QMessageBox(self.parent())
                     self._error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
                     self._error_dialog.setWindowTitle("Connection to server")
@@ -226,14 +234,17 @@ class Controller(QtCore.QObject):
             self._http_client.createHTTPQuery("GET", url, qpartial(self._getStaticCallback, url, path))
 
     def _getStaticCallback(self, url, path, result, error=False, raw_body=None, **kwargs):
+        if path not in self._static_asset_download_queue:
+            return
+
         if error:
             fallback_used = False
             for callback, fallback in self._static_asset_download_queue[path]:
-                print(fallback)
                 self.getStatic(fallback, callback)
                 fallback_used = True
             if fallback_used:
                 log.error("Error while downloading file: {}".format(url))
+            log.error("Error while downloading file: {}".format(url))
             del self._static_asset_download_queue[path]
             return
         try:

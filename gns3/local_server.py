@@ -100,6 +100,12 @@ class LocalServer(QtCore.QObject):
         else:
             self._http_client = None
 
+        self._stopping = False
+        self._timer = QtCore.QTimer()
+        self._timer.setInterval(5000)
+        self._timer.timeout.connect(self._checkLocalServerRunningSlot)
+        self._timer.start()
+
     def _pid_path(self):
         """
         :returns: Path of the PID file
@@ -323,7 +329,7 @@ class LocalServer(QtCore.QObject):
             return True
 
         if self.isLocalServerRunning():
-            log.info("A local server already running on this host")
+            log.debug("A local server already running on this host")
             # Try to kill the server. The server can be still running after
             # if the server was started by hand
             self._killAlreadyRunningServer()
@@ -430,6 +436,7 @@ class LocalServer(QtCore.QObject):
         Starts the local server process.
         """
 
+        self._stopping = False
         path = self.localServerPath()
         command = '"{executable}" --local'.format(executable=path)
 
@@ -461,17 +468,27 @@ class LocalServer(QtCore.QObject):
         try:
             if sys.platform.startswith("win"):
                 # use the string on Windows
-                self._local_server_process = subprocess.Popen(command, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+                self._local_server_process = subprocess.Popen(command, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP, stderr=subprocess.PIPE)
             else:
                 # use arguments on other platforms
                 args = shlex.split(command)
-                self._local_server_process = subprocess.Popen(args)
+                self._local_server_process = subprocess.Popen(args, stderr=subprocess.PIPE)
         except (OSError, subprocess.SubprocessError) as e:
             log.warning('Could not start local server "{}": {}'.format(command, e))
             return False
 
         log.info("Local server process has started (PID={})".format(self._local_server_process.pid))
         return True
+
+    def _checkLocalServerRunningSlot(self):
+        if self._local_server_process and not self._stopping:
+            if not self.localServerProcessIsRunning():
+                log.error("Local server process has stopped")
+                try:
+                    log.error(self._local_server_process.stderr.read().decode())
+                except OSError:
+                    pass
+                self._local_server_process = None
 
     def localServerProcessIsRunning(self):
         """
@@ -514,6 +531,7 @@ class LocalServer(QtCore.QObject):
         """
 
         if self.localServerProcessIsRunning():
+            self._stopping = True
             log.info("Stopping local server (PID={})".format(self._local_server_process.pid))
             # local server is running, let's stop it
             if self._http_client:
