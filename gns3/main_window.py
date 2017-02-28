@@ -77,8 +77,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
 
+        self._notif_dialog = NotifDialog(self)
         # Setup logger
-        logging.getLogger().addHandler(NotifDialogHandler(NotifDialog(self)))
+        logging.getLogger().addHandler(NotifDialogHandler(self._notif_dialog))
         logging.getLogger().addHandler(StatusBarHandler(self.uiStatusBar))
 
         self._open_file_at_startup = open_file
@@ -924,6 +925,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to edit the README file
         """
         Topology.instance().editReadme()
+
+    def resizeEvent(self, event):
+        self._notif_dialog.resize()
+        super().resizeEvent(event)
 
     def keyPressEvent(self, event):
         """

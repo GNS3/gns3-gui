@@ -101,6 +101,8 @@ class NotifDialog(QtWidgets.QWidget):
         if notifs != self._notifs:
             self._notifs = notifs
             self.update()
+        elif len(notifs) > 0:
+            self.resize()
 
     def update(self):
         if len(self._notifs) == 0:
@@ -136,10 +138,13 @@ class NotifDialog(QtWidgets.QWidget):
                 w = self._layout.itemAt(i).widget()
                 w.hide()
 
-            x = self.parent().width() - self.width() - 10
-            y = 10
-            self.setGeometry(x, y, self.sizeHint().width(), self.sizeHint().height())
+            self.resize()
             self.show()
+
+    def resize(self):
+        x = self.parent().width() - self.width() - 10
+        y = 10
+        self.setGeometry(x, y, self.sizeHint().width(), self.sizeHint().height())
 
     @qslot
     def mousePressEvent(self, event):
