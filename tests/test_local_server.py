@@ -86,7 +86,7 @@ def test_startLocalServer(tmpdir, local_server, local_server_path):
                                  '--debug',
                                  '--log=' + str(tmpdir / "gns3_server.log"),
                                  '--pid=' + str(tmpdir / "gns3_server.pid")
-                                 ])
+                                 ], stderr=unittest.mock.ANY)
 
 
 def test_killAlreadyRunningServer(local_server):
