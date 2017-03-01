@@ -149,7 +149,7 @@ if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'TightVNC (included with GNS3)': 'tvnviewer.exe %h:%p',
-        'UltraVNC', 'C:\\Program Files\\uvnc bvba\\UltraVNC\\vncviewer.exe %h:%p'
+        'UltraVNC': 'C:\\Program Files\\uvnc bvba\\UltraVNC\\vncviewer.exe %h:%p'
     }
 
     # default Windows VNC console command
