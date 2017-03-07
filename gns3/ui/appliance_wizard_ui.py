@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/appliance_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/appliance_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.7.1
+# Created: Tue Mar  7 08:40:14 2017
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_ApplianceWizard(object):
-
     def setupUi(self, ApplianceWizard):
         ApplianceWizard.setObjectName("ApplianceWizard")
-        ApplianceWizard.resize(704, 504)
+        ApplianceWizard.resize(684, 458)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -46,7 +45,7 @@ class Ui_ApplianceWizard(object):
         self.gridLayout_4.addWidget(self.uiInfoTreeWidget, 1, 0, 1, 1)
         self.uiDescriptionLabel = QtWidgets.QLabel(self.uiInfoWizardPage)
         self.uiDescriptionLabel.setScaledContents(False)
-        self.uiDescriptionLabel.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        self.uiDescriptionLabel.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.uiDescriptionLabel.setWordWrap(True)
         self.uiDescriptionLabel.setObjectName("uiDescriptionLabel")
         self.gridLayout_4.addWidget(self.uiDescriptionLabel, 0, 0, 1, 1)
@@ -147,7 +146,7 @@ class Ui_ApplianceWizard(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.label_3 = QtWidgets.QLabel(self.uiFilesWizardPage)
         self.label_3.setTextFormat(QtCore.Qt.RichText)
-        self.label_3.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
+        self.label_3.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
         self.label_3.setWordWrap(True)
         self.label_3.setObjectName("label_3")
         self.verticalLayout.addWidget(self.label_3)
@@ -316,9 +315,9 @@ class Ui_ApplianceWizard(object):
         self.uiUsageWizardPage.setTitle(_translate("ApplianceWizard", "Usage"))
         self.uiUsageWizardPage.setSubTitle(_translate("ApplianceWizard", "Please read the following instructions in order to use your new appliance."))
         self.uiUsageTextEdit.setHtml(_translate("ApplianceWizard", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                                "p, li { white-space: pre-wrap; }\n"
-                                                "</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-                                                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">The default username/password is admin/admin. A default configuration is present.</span></p></body></html>"))
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The default username/password is admin/admin. A default configuration is present.</p></body></html>"))
 
 from . import resources_rc
