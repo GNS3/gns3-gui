@@ -34,7 +34,7 @@ def microcore_appliance(registry):
     """
     An instance of microcore Appliance object
     """
-    return Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
+    return Appliance(registry, os.path.abspath("tests/registry/appliances/microcore-linux.gns3a"))
 
 
 def test_check_config(tmpdir, registry):
@@ -70,7 +70,7 @@ def test_check_config(tmpdir, registry):
     with pytest.raises(ApplianceError):
         Appliance(registry, test_path)
 
-    Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
+    Appliance(registry, os.path.abspath("tests/registry/appliances/microcore-linux.gns3a"))
 
 
 def test_resolve_version(tmpdir):
@@ -80,7 +80,7 @@ def test_resolve_version(tmpdir):
 
     hda = config["images"][0]
 
-    new_config = Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
+    new_config = Appliance(registry, os.path.abspath("tests/registry/appliances/microcore-linux.gns3a"))
     assert new_config["versions"][0]["images"] == {"hda_disk_image": hda}
 
 
@@ -89,7 +89,7 @@ def test_resolve_docker(tmpdir):
     with open("tests/registry/appliances/openvswitch.gns3a", encoding="utf-8") as f:
         config = json.load(f)
 
-    new_config = Appliance(registry, "tests/registry/appliances/openvswitch.gns3a")
+    new_config = Appliance(registry, os.path.abspath("tests/registry/appliances/openvswitch.gns3a"))
 
 
 def test_resolve_version_dynamips(tmpdir):
@@ -100,7 +100,7 @@ def test_resolve_version_dynamips(tmpdir):
     hda = config["images"][0]
     hda["idlepc"] = "0x60aa1da0"
 
-    new_config = Appliance(registry, "tests/registry/appliances/cisco-3745.gns3a")
+    new_config = Appliance(registry, os.path.abspath("tests/registry/appliances/cisco-3745.gns3a"))
     assert new_config["versions"][0]["images"] == {"image": hda}
 
 
@@ -118,7 +118,7 @@ def test_resolve_version_ova(tmpdir):
     hda = config["images"][0]
     hda["filename"] = os.path.join("junos-vsrx-12.1X47-D10.4-domestic.ova", "junos-vsrx-12.1X47-D10.4-domestic-disk1.vmdk")
 
-    new_config = Appliance(registry, "tests/registry/appliances/juniper-vsrx.gns3a")
+    new_config = Appliance(registry, os.path.abspath("tests/registry/appliances/juniper-vsrx.gns3a"))
 
     assert new_config["versions"][0]["images"] == {
         "hda_disk_image": hda
@@ -167,7 +167,7 @@ def test_is_version_installable(linux_microcore_img, microcore_appliance):
 
 def test_create_new_version():
 
-    a = Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
+    a = Appliance(registry, os.path.abspath("tests/registry/appliances/microcore-linux.gns3a"))
     a.create_new_version("42.0")
     v = a['versions'][-1:][0]
     assert v == {
@@ -184,5 +184,5 @@ def test_create_new_version():
 
 
 def test_emulator():
-    assert Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a").emulator() == "qemu"
-    assert Appliance(registry, "tests/registry/appliances/cisco-iou-l3.gns3a").emulator() == "iou"
+    assert Appliance(registry, os.path.abspath("tests/registry/appliances/microcore-linux.gns3a")).emulator() == "qemu"
+    assert Appliance(registry, os.path.abspath("tests/registry/appliances/cisco-iou-l3.gns3a")).emulator() == "iou"

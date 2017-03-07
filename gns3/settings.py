@@ -237,6 +237,10 @@ GENERAL_SETTINGS = {
     "hdpi": not sys.platform.startswith("linux")
 }
 
+NODES_VIEW_SETTINGS = {
+    "nodes_view_filter": 0,
+}
+
 GRAPHICS_VIEW_SETTINGS = {
     "scene_width": 2000,
     "scene_height": 1000,
