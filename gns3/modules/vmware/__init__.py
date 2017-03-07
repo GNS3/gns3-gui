@@ -283,8 +283,6 @@ class VMware(Module):
         :param project: Project instance
         """
 
-        log.info("instantiating node {}".format(node_class))
-
         # create an instance of the node class
         return node_class(self, server, project)
 
@@ -295,8 +293,6 @@ class VMware(Module):
         :param node: Node instance
         :param node_name: Node name
         """
-
-        log.info("creating node {} with id {}".format(node, node.id()))
 
         vm = None
         if node_name:

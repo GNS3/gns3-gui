@@ -245,7 +245,6 @@ class Dynamips(Module):
         :param project: Project instance
         """
 
-        log.info("instantiating node {}".format(node_class))
         # create an instance of the node class
         return node_class(self, server, project)
 
@@ -256,8 +255,6 @@ class Dynamips(Module):
         :param node: Node instance
         :param node_name: Node name
         """
-
-        log.info("creating node {}".format(node))
 
         if isinstance(node, Router):
             ios_router = None

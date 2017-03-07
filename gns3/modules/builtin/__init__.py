@@ -224,7 +224,6 @@ class Builtin(Module):
         :param project: Project instance
         """
 
-        log.info("instantiating node {}".format(node_class))
         # create an instance of the node class
         return node_class(self, server, project)
 
@@ -236,7 +235,6 @@ class Builtin(Module):
         :param node_name: Node name
         """
 
-        log.info("creating node {}".format(node))
         if isinstance(node, Cloud):
             for key, info in self._cloud_nodes.items():
                 if node_name == info["name"]:
