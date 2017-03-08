@@ -486,7 +486,7 @@ class LocalServer(QtCore.QObject):
                 log.error("Local server process has stopped")
                 try:
                     log.error(self._local_server_process.stderr.read().decode())
-                except OSError:
+                except (OSError, UnicodeDecodeError):
                     pass
                 self._local_server_process = None
 
