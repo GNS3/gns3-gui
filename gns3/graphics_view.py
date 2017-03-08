@@ -1427,7 +1427,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         mainwindow = MainWindow.instance()
 
         if "server" in node_data:
-            return ComputeManager.instance().getCompute(node_data["server"])
+            try:
+                return ComputeManager.instance().getCompute(node_data["server"])
+            except KeyError:
+                raise ModuleError("Compute {} doesn't exists".format(node_data["server"]))
 
         server = server_select(mainwindow, node_data.get("node_type"))
         if server is None:

@@ -378,6 +378,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return False
 
         current = self.uiApplianceVersionTreeWidget.currentItem()
+        if not current:
+            return
         disk = current.data(1, QtCore.Qt.UserRole)
 
         path, _ = QtWidgets.QFileDialog.getOpenFileName()

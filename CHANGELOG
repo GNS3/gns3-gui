@@ -1,5 +1,30 @@
 # Change Log
 
+## 2.0.0 RC 1 06/03/2017
+
+* UltraVNC support
+* Display less noisy dialog when we can't connect to the remote server
+* Prevent the usage of gns3vm as a remote server name
+* Fix the VMware wizard for not using a remote server by default
+* Prevent the GNS3 VM to appear in remote compute in the VM wizard
+* Remove iouyap settings
+* Fix missing permission error management
+* Avoid a crash when create a new dynamips version in the appliance wizard
+* Disallow user to add the same server as a remote server and as local server
+* Fix 'module' object has no attribute 'run'
+* Monitor and display local server stderr
+* Fix some import errors
+* Remove placeholder string from appliance wizard
+* Avoiding calling multiple time /computes at the same time. And reduce timeout
+* Support for appliance v4
+* Some tweaks for enabling/disabling HDPI mode.
+* Do not display error at first step of the setup wizard
+* Disable HDPI by default on Linux and allow to configure it
+* Fix an issue when you edit a VPCS node from the node view
+* Catch a race condition in managing error static assets download
+* Handle error if you try to import an appliance without having the images
+* Improve crash proof code of the progress dialog
+
 ## 2.0.0 beta 4 19/01/2017
 
 * Update pyqt5 from 5.7.1 to 5.8
