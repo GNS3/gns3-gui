@@ -598,7 +598,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if node:
                     settings["slot" + str(slot_number)] = node.settings().get("slot" + str(slot_number))
 
-                if settings["slot" + str(slot_number)] and settings["slot" + str(slot_number)] != module:
+                if settings["slot" + str(slot_number)] and settings.get("slot" + str(slot_number)) != module:
                     if node:
                         self._checkForLinkConnectedToAdapter(slot_number, settings, node)
                 settings["slot" + str(slot_number)] = module
