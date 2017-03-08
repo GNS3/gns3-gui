@@ -144,8 +144,9 @@ class Progress(QtCore.QObject):
             self._display_start_time = (time.time() * 1000) + self._delay
             self.update()
         else:
-            start_timer = False
             progress_dialog = self._progress_dialog
+            if sip.isdeleted(progress_dialog):
+                return
 
             if len(self._queries) > 0:
                 text = list(self._queries.values())[0]["explanation"]
