@@ -19,9 +19,7 @@
 Graphical representation of an image on the QGraphicsScene.
 """
 
-import xml.etree.ElementTree as ET
-
-from ..qt import QtWidgets, QtCore, QtSvg
+from ..qt import QtSvg
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from .drawing_item import DrawingItem
 
@@ -32,8 +30,7 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
     Class to insert an image on the scene.
     """
 
-
-    def __init__(self, image_path=None, pos=None,  svg=None, **kws):
+    def __init__(self, image_path=None, pos=None, svg=None, **kws):
 
         self._image_path = image_path
         # Because we call the Qt C++ code we need to handle the case of pos is None otherwise we will get a conversion error
@@ -41,7 +38,6 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
             super().__init__(pos=pos, **kws)
         else:
             super().__init__(**kws)
-
 
         if self._image_path:
             renderer = QImageSvgRenderer(image_path)
@@ -77,4 +73,3 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
         Return an SVG version of the shape
         """
         return self.renderer().svg()
-
