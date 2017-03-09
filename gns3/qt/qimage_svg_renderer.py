@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import base64
 import os
 
 from . import QtCore
@@ -36,26 +35,29 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
         self.load(path_or_data)
 
     def load(self, path_or_data):
-        if not os.path.exists(path_or_data) and not path_or_data.startswith(":"):
-            self._svg = path_or_data
-            path_or_data = path_or_data.encode("utf-8")
-            return super().load(path_or_data)
-        else:
-            res = super().load(path_or_data)
-            # If we can't render a SVG we load and base64 the image to create a SVG
-            if self.isValid():
-                return res
+        try:
+            if not os.path.exists(path_or_data) and not path_or_data.startswith(":"):
+                self._svg = path_or_data
+                path_or_data = path_or_data.encode("utf-8")
+                return super().load(path_or_data)
+        except ValueError:
+            pass  # On windows we can get an error because the path is too long (it's the svg data)
 
-            image = QtGui.QImage(path_or_data)
-            data = QtCore.QByteArray()
-            buf = QtCore.QBuffer(data)
-            image.save(buf, 'PNG')
-            self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}">
+        res = super().load(path_or_data)
+        # If we can't render a SVG we load and base64 the image to create a SVG
+        if self.isValid():
+            return res
+
+        image = QtGui.QImage(path_or_data)
+        data = QtCore.QByteArray()
+        buf = QtCore.QBuffer(data)
+        image.save(buf, 'PNG')
+        self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}">
 <image width="{width}" height="{height}" xlink:href="data:image/png;base64,{data}"/>
 </svg>""".format(data=bytes(data.toBase64()).decode(),
                  width=image.rect().width(),
                  height=image.rect().height())
-            return super().load(self._svg.encode())
+        return super().load(self._svg.encode())
 
     def svg(self):
         """
