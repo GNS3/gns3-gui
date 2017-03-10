@@ -1,5 +1,19 @@
 # Change Log
 
+## 2.0.0rc2 10/03/2017
+
+* Deploy on pypi when we tag
+* Fix rare crash in GNS3 VM preference page
+* Fix an error on Windows when loading SVG files
+* Prevent a potential crash
+* Workaround a rare crash when sending analytics
+* Catch error when you try to create a node a not existing server
+* Fix an error when your local server crash and computer return non unicode
+* Fix KeyError: 'slot1'
+* Fix a rare crash in import appliance
+* Rollback to PyQT 5.8 because 5.8.1 seem to have trouble at install
+* Update pyqt5 from 5.8 to 5.8.1
+
 ## 2.0.0 RC 1 06/03/2017
 
 * UltraVNC support
