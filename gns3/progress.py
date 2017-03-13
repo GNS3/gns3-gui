@@ -82,8 +82,9 @@ class Progress(QtCore.QObject):
             del self._queries[query_id]
 
     def reset(self):
-        self._queries = {}
-        self.hide_signal.emit()
+        if not sip.isdeleted(self):
+            self._queries = {}
+            self.hide_signal.emit()
 
     def progress_dialog(self):
         return self._progress_dialog
