@@ -46,6 +46,7 @@ class Progress(QtCore.QObject):
 
         super().__init__(parent)
         self._progress_dialog = None
+        self._show_lock = False
 
         # Timer called for refreshing the progress dialog status
         self._rtimer = QtCore.QTimer()
@@ -108,7 +109,9 @@ class Progress(QtCore.QObject):
                 query["response"].abort()
 
     def _rejectSlot(self):
-        self._progress_dialog = None
+        if self._progress_dialog is not None and not sip.isdeleted(self._progress_dialog) or self._progress_dialog.wasCanceled():
+            self._progress_dialog.deleteLater()
+            self._progress_dialog = None
         self._cancelSlot()
 
     def update(self):
@@ -122,6 +125,9 @@ class Progress(QtCore.QObject):
 
     @qslot
     def _showSlot(self):
+        if self._show_lock:
+            return
+        self._show_lock = True
         if self._progress_dialog is None or sip.isdeleted(self._progress_dialog) or self._progress_dialog.wasCanceled():
             progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self.parent())
             progress_dialog.canceled.connect(self._cancelSlot)
@@ -147,6 +153,7 @@ class Progress(QtCore.QObject):
         else:
             progress_dialog = self._progress_dialog
             if sip.isdeleted(progress_dialog):
+                self._show_lock = False
                 return
 
             if len(self._queries) > 0:
@@ -183,6 +190,7 @@ class Progress(QtCore.QObject):
 
             if text:
                 progress_dialog.setLabelText(text)
+        self._show_lock = False
 
     @qslot
     def _hideSlot(self):
