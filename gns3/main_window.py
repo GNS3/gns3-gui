@@ -1212,11 +1212,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             Topology.instance().importProject(path)
 
     def _editProjectActionSlot(self):
+        if Topology.instance().project() is None:
+            return
         dialog = EditProjectDialog(self)
         dialog.show()
         dialog.exec_()
 
     def _deleteProjectActionSlot(self):
+        if Topology.instance().project() is None:
+            return
         reply = QtWidgets.QMessageBox.warning(
             self,
             "GNS3",
