@@ -27,7 +27,6 @@ import sys
 import sip
 import os
 import re
-import types
 import functools
 import inspect
 
@@ -239,3 +238,11 @@ def qslot(func):
                 return lambda: True
         return func(*args, **kwargs)
     return func_wrapper
+
+
+# Log qt error to Python log
+def myQtMsgHandler(msg_type, msg_log_context, msg_string):
+    log.error(msg_string)
+
+
+QtCore.qInstallMessageHandler(myQtMsgHandler)
