@@ -48,7 +48,7 @@ import signal
 import psutil
 
 try:
-    from gns3.qt import QtCore, QtGui, QtWidgets
+    from gns3.qt import QtCore, QtWidgets
 except ImportError:
     raise SystemExit("Can't import Qt modules: Qt and/or PyQt is probably not installed correctly...")
 from gns3.main_window import MainWindow
@@ -59,7 +59,6 @@ from gns3.local_config import LocalConfig
 from gns3.application import Application
 from gns3.utils import parse_version
 from gns3.dialogs.profile_select import ProfileSelectDialog
-
 
 import logging
 log = logging.getLogger(__name__)
@@ -237,18 +236,17 @@ def main():
         local_config.setConfigFilePath(options.config)
     elif options.profile:
         local_config.setProfile(options.profile)
-    profile = options.profile
 
     # save client logging info to a file
     logfile = os.path.join(LocalConfig.instance().configDirectory(), "gns3_gui.log")
 
     # on debug enable logging to stdout
     if options.debug:
-        root_logger = init_logger(logging.DEBUG, logfile)
+        init_logger(logging.DEBUG, logfile)
     elif options.quiet:
-        root_logger = init_logger(logging.ERROR, logfile)
+        init_logger(logging.ERROR, logfile)
     else:
-        root_logger = init_logger(logging.INFO, logfile)
+        init_logger(logging.INFO, logfile)
 
     current_year = datetime.date.today().year
     log.info("GNS3 GUI version {}".format(__version__))

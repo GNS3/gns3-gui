@@ -16,8 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys
-import traceback
 from .qt import QtCore, qpartial, QtWidgets, QtNetwork
 
 from gns3.controller import Controller
