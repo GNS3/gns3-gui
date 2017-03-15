@@ -43,6 +43,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
     def __init__(self, worker, title, label_text, cancel_button_text, busy=False, parent=None, delay=0):
 
+        assert QtCore.QThread.currentThread() == QtWidgets.QApplication.instance().thread()
+
         minimum = 0
         maximum = 100
 
