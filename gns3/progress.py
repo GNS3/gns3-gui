@@ -197,7 +197,7 @@ class Progress(QtCore.QObject):
         """
         Hide and cancel the progress dialog
         """
-        if self._progress_dialog is not None:
+        if self._progress_dialog is not None and not self._show_lock:
             progress_dialog = self._progress_dialog
             self._progress_dialog = None
             progress_dialog.cancel()
