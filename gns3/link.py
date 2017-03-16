@@ -113,6 +113,7 @@ class Link(QtCore.QObject):
                     None,
                     showProgress=False,
                     downloadProgressCallback=self._downloadPcapProgress,
+                    ignoreErrors=False,  # If something is wrong avoid disconnect us from server
                     timeout=None)
         else:
             self._capture_file_path = result["capture_file_path"]
