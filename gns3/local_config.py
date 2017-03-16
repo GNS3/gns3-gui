@@ -39,6 +39,8 @@ class LocalConfig(QtCore.QObject):
     """
 
     config_changed_signal = QtCore.Signal()
+    # When this signal is emit the config is saved on controller
+    save_on_controller_signal = QtCore.Signal()
 
     def __init__(self, config_file=None):
         """
@@ -55,6 +57,7 @@ class LocalConfig(QtCore.QObject):
         self._resetLoadConfig()
         self._monitoring_changes = False
         Controller.instance().connected_signal.connect(self.refreshConfigFromController)
+        self.save_on_controller_signal.connect(self._saveOnController)
 
     def _monitorChanges(self):
         """
@@ -151,7 +154,7 @@ class LocalConfig(QtCore.QObject):
             return
         if result == {} and self._settings != {}:
             self._settings_retrieved_from_controller = True
-            self._saveOnController()
+            self.save_on_controller_signal.emit()
             return
 
         if self._settings != result:
@@ -296,9 +299,10 @@ class LocalConfig(QtCore.QObject):
             self._last_config_changed = os.stat(self._config_file).st_mtime
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
-        self._saveOnController()
+        self.save_on_controller_signal.emit()
 
-    def _saveOnController(self):
+    @qslot
+    def _saveOnController(self, *args):
         """
         Save some settings on controller for the transition from
         GUI to a central controller. Will be removed later
