@@ -603,12 +603,3 @@ class Node(BaseNode):
         """
 
         return self._settings["name"]
-
-    def settings(self):
-        """
-        Returns all the node settings.
-
-        :returns: settings dictionary
-        """
-
-        return self._settings
