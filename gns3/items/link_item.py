@@ -20,11 +20,9 @@ Base class for link items (Ethernet, serial etc.).
 Link items are graphical representation of a link on the QGraphicsScene
 """
 
-import sip
 import math
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
 
-from ..node import Node
 from ..packet_capture import PacketCapture
 
 
@@ -346,6 +344,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         self.setHovered(False)
 
+    @qslot
     def adjust(self):
         """
         Computes the source point and destination point.
