@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/server_preferences_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/server_preferences_page.ui'
 #
-# Created: Mon Sep 19 11:12:35 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.8
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ServerPreferencesPageWidget(object):
+
     def setupUi(self, ServerPreferencesPageWidget):
         ServerPreferencesPageWidget.setObjectName("ServerPreferencesPageWidget")
-        ServerPreferencesPageWidget.resize(659, 830)
+        ServerPreferencesPageWidget.resize(659, 834)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -201,6 +202,11 @@ class Ui_ServerPreferencesPageWidget(object):
         self.verticalLayout_3.addWidget(self.uiRemoteMainServerGroupBox)
         spacerItem2 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem2)
+        self.uiGeneralSettingsGroupBox.raise_()
+        self.uiConsolePortRangeGroupBox.raise_()
+        self.uiUDPPortRangeGroupBox.raise_()
+        self.uiLocalServerAutoStartCheckBox.raise_()
+        self.uiRemoteMainServerGroupBox.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiLocalTabWidget, "")
         self.uiRemoteTabWidget = QtWidgets.QWidget()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
@@ -241,7 +247,12 @@ class Ui_ServerPreferencesPageWidget(object):
         self.horizontalLayout_3.addItem(spacerItem3)
         self.gridLayout_5.addLayout(self.horizontalLayout_3, 1, 0, 1, 2)
         spacerItem4 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem4, 2, 0, 1, 1)
+        self.gridLayout_5.addItem(spacerItem4, 3, 0, 1, 1)
+        self.label_7 = QtWidgets.QLabel(self.uiRemoteTabWidget)
+        self.label_7.setObjectName("label_7")
+        self.gridLayout_5.addWidget(self.label_7, 2, 0, 1, 1)
+        self.uiRemoteServersTreeWidget.raise_()
+        self.label_7.raise_()
         self.uiServerPreferenceTabWidget.addTab(self.uiRemoteTabWidget, "")
         self.verticalLayout_2.addWidget(self.uiServerPreferenceTabWidget)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -307,6 +318,6 @@ class Ui_ServerPreferencesPageWidget(object):
         self.uiAddRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Add"))
         self.uiUpdateRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "Edit"))
         self.uiDeleteRemoteServerPushButton.setText(_translate("ServerPreferencesPageWidget", "&Delete"))
+        self.label_7.setText(_translate("ServerPreferencesPageWidget", "Note: Changes are not visible in other part of the settings or application until you apply them."))
         self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ServerPreferencesPageWidget", "Remote servers"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ServerPreferencesPageWidget", "Restore defaults"))
-
