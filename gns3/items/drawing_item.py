@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg
+from ..qt import QtCore, QtWidgets, qslot
 
 import uuid
 import logging
@@ -79,6 +79,7 @@ class DrawingItem:
         if self._id:
             self._project.put("/drawings/" + self._id, self.updateDrawingCallback, body=self.__json__())
 
+    @qslot
     def updateDrawingCallback(self, result, error=False, **kwargs):
         """
         Callback for update.
