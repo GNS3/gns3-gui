@@ -157,7 +157,8 @@ class LocalConfig(QtCore.QObject):
             self.save_on_controller_signal.emit()
             return
 
-        if self._settings != result:
+        # The server return an uuid to keep track of settings version
+        if self._settings.get("modification_uuid") != result.get("modification_uuid"):
             self._settings.update(result)
             # Update already loaded section
             for section in self._settings.keys():
