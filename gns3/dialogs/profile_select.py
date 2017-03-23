@@ -60,7 +60,8 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
         try:
             if os.path.exists(profiles_path):
                 for profil in sorted(os.listdir(os.path.join(path, "profiles"))):
-                    self.uiProfileSelectComboBox.addItem(profil)
+                    if not profil.startswith("."):
+                        self.uiProfileSelectComboBox.addItem(profil)
         except OSError:
             pass
 
@@ -78,8 +79,8 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
             self.uiProfileSelectComboBox.setCurrentText(profile)
             self.accept()
 
+
 if __name__ == '__main__':
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     dialog = ProfileSelectDialog()
     dialog.show()
