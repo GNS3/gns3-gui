@@ -46,7 +46,6 @@ class BaseNode(QtCore.QObject):
     loaded_signal = QtCore.Signal()
     deleted_signal = QtCore.Signal()
     error_signal = QtCore.Signal(int, str)
-    warning_signal = QtCore.Signal(int, str)
     server_error_signal = QtCore.Signal(int, str)
 
     _instance_count = 1

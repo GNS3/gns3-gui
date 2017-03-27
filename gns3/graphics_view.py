@@ -1454,10 +1454,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.scene().addItem(node_item)
         self._topology.addNode(node)
 
-        node.error_signal.connect(self._main_window.uiConsoleTextEdit.writeError)
         node.error_signal.connect(self._displayNodeErrorSlot)
-        node.warning_signal.connect(self._main_window.uiConsoleTextEdit.writeWarning)
-        node.server_error_signal.connect(self._main_window.uiConsoleTextEdit.writeServerError)
         node.server_error_signal.connect(self._displayNodeErrorSlot)
 
         return node_item

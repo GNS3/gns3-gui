@@ -268,8 +268,6 @@ class IOUDevice(Node):
         new_settings = {}
         if startup_config in contents:
             new_settings["startup_config"] = os.path.join(directory, startup_config)
-        else:
-            self.warning_signal.emit(self.id(), "no startup-config file could be found, expected file name: {}".format(startup_config))
 
         if private_config in contents:
             new_settings["private_config"] = os.path.join(directory, private_config)

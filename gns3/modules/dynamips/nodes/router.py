@@ -454,7 +454,6 @@ class Router(Node):
         try:
             contents = os.listdir(directory)
         except OSError as e:
-            self.warning_signal.emit(self.id(), "Configuration could not be loaded from directory {}: {}".format(directory, e))
             return
         startup_config = normalize_filename(self.name()) + "_startup-config.cfg"
         private_config = normalize_filename(self.name()) + "_private-config.cfg"
