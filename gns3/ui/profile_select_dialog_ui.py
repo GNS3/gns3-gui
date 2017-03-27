@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/profile_select_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.8
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -14,8 +14,8 @@ class Ui_ProfileSelectDialog(object):
     def setupUi(self, ProfileSelectDialog):
         ProfileSelectDialog.setObjectName("ProfileSelectDialog")
         ProfileSelectDialog.setWindowModality(QtCore.Qt.WindowModal)
-        ProfileSelectDialog.resize(500, 231)
-        ProfileSelectDialog.setMaximumSize(QtCore.QSize(500, 500))
+        ProfileSelectDialog.resize(600, 249)
+        ProfileSelectDialog.setMaximumSize(QtCore.QSize(600, 500))
         ProfileSelectDialog.setModal(False)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(ProfileSelectDialog)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -48,6 +48,9 @@ class Ui_ProfileSelectDialog(object):
         self.uiNewPushButton = QtWidgets.QPushButton(ProfileSelectDialog)
         self.uiNewPushButton.setObjectName("uiNewPushButton")
         self.horizontalLayout_2.addWidget(self.uiNewPushButton)
+        self.uiDeletePushButton = QtWidgets.QPushButton(ProfileSelectDialog)
+        self.uiDeletePushButton.setObjectName("uiDeletePushButton")
+        self.horizontalLayout_2.addWidget(self.uiDeletePushButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.uiShowAtStartupCheckBox = QtWidgets.QCheckBox(ProfileSelectDialog)
         self.uiShowAtStartupCheckBox.setObjectName("uiShowAtStartupCheckBox")
@@ -82,6 +85,7 @@ class Ui_ProfileSelectDialog(object):
         ProfileSelectDialog.setWindowTitle(_translate("ProfileSelectDialog", "Profile selection"))
         self.uiProfileLabel.setText(_translate("ProfileSelectDialog", "Profile:"))
         self.uiNewPushButton.setText(_translate("ProfileSelectDialog", "New"))
+        self.uiDeletePushButton.setText(_translate("ProfileSelectDialog", "Delete"))
         self.uiShowAtStartupCheckBox.setText(_translate("ProfileSelectDialog", "Show at next startup"))
 
 from . import resources_rc

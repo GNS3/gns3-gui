@@ -9,13 +9,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>231</height>
+    <width>600</width>
+    <height>249</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>500</width>
+    <width>600</width>
     <height>500</height>
    </size>
   </property>
@@ -89,6 +89,13 @@
           <widget class="QPushButton" name="uiNewPushButton">
            <property name="text">
             <string>New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiDeletePushButton">
+           <property name="text">
+            <string>Delete</string>
            </property>
           </widget>
          </item>
