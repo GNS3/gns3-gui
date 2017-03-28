@@ -145,7 +145,7 @@ class LocalConfig(QtCore.QObject):
         if controller.connected():
             self._refreshingSettings = True
             controller.get("/settings", self._getSettingsCallback, showProgress=False)
-            self._monitorChanges()
+        self._monitorChanges()
 
     def _getSettingsCallback(self, result, error=False, **kwargs):
         self._refreshingSettings = False
@@ -165,7 +165,7 @@ class LocalConfig(QtCore.QObject):
                 if isinstance(self._settings[section], dict):
                     self.loadSectionSettings(section, self._settings[section])
             self.config_changed_signal.emit()
-            self._settings_retrieved_from_controller = True
+        self._settings_retrieved_from_controller = True
 
     def configDirectory(self):
         """
