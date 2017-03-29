@@ -184,13 +184,13 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Controller.instance().post("/projects/{project_id}/nodes/start".format(project_id=self._id), None, body={})
+        Controller.instance().post("/projects/{project_id}/nodes/start".format(project_id=self._id), None, body={}, timeout=None)
 
     def duplicate(self, name=None, path=None, callback=None):
         """
         Duplicate a project
         """
-        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id), qpartial(self._duplicateCallback, callback), body={"name": name, "path": path})
+        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id), qpartial(self._duplicateCallback, callback), body={"name": name, "path": path}, timeout=None)
 
     def _duplicateCallback(self, callback, result, error=False, **kwargs):
         if error:
@@ -207,7 +207,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Controller.instance().post("/projects/{project_id}/nodes/stop".format(project_id=self._id), None, body={})
+        Controller.instance().post("/projects/{project_id}/nodes/stop".format(project_id=self._id), None, body={}, timeout=None)
 
     def suspend_all_nodes(self):
         """Suspend all nodes belonging to this project"""
@@ -216,7 +216,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Controller.instance().post("/projects/{project_id}/nodes/suspend".format(project_id=self._id), None, body={})
+        Controller.instance().post("/projects/{project_id}/nodes/suspend".format(project_id=self._id), None, body={}, timeout=None)
 
     def reload_all_nodes(self):
         """Reload all nodes belonging to this project"""
@@ -225,7 +225,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Controller.instance().post("/projects/{project_id}/nodes/reload".format(project_id=self._id), None, body={})
+        Controller.instance().post("/projects/{project_id}/nodes/reload".format(project_id=self._id), None, body={}, timeout=None)
 
     def get(self, path, callback, **kwargs):
         """
@@ -447,6 +447,7 @@ class Project(QtCore.QObject):
         self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
                                                                           downloadProgressCallback=self._event_received,
                                                                           networkManager=self._notification_network_manager,
+                                                                          timeout=None,
                                                                           showProgress=False,
                                                                           ignoreErrors=True)
 

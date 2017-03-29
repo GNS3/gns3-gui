@@ -433,7 +433,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, progressText="{} is starting".format(self.name()))
+        self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, timeout=None, progressText="{} is starting".format(self.name()))
 
     def _startCallback(self, result, error=False, **kwargs):
         """
@@ -459,7 +459,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self.controllerHttpPost("/nodes/{node_id}/stop".format(node_id=self._node_id), self._stopCallback, progressText="{} is stopping".format(self.name()))
+        self.controllerHttpPost("/nodes/{node_id}/stop".format(node_id=self._node_id), self._stopCallback, progressText="{} is stopping".format(self.name()), timeout=None)
 
     def _stopCallback(self, result, error=False, **kwargs):
         """
@@ -488,7 +488,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is being suspended".format(self.name()))
-        self.controllerHttpPost("/nodes/{node_id}/suspend".format(node_id=self._node_id), self._suspendCallback)
+        self.controllerHttpPost("/nodes/{node_id}/suspend".format(node_id=self._node_id), self._suspendCallback, timeout=None)
 
     def _suspendCallback(self, result, error=False, **kwargs):
         """
@@ -510,7 +510,7 @@ class Node(BaseNode):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self.controllerHttpPost("/nodes/{node_id}/reload".format(node_id=self._node_id), self._reloadCallback)
+        self.controllerHttpPost("/nodes/{node_id}/reload".format(node_id=self._node_id), self._reloadCallback, timeout=None)
 
     def _reloadCallback(self, result, error=False, **kwargs):
         """

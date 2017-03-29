@@ -548,6 +548,7 @@ class HTTPClient(QtCore.QObject):
         # We check if we received HTTP headers
         if not sip.isdeleted(response) and response.isRunning() and not len(response.rawHeaderList()) > 0:
             if not response.error() != QtNetwork.QNetworkReply.NoError:
+                log.warn("Timeout request {}".format(response.url().toString()))
                 response.abort()
 
     def disconnect(self):
@@ -560,7 +561,7 @@ class HTTPClient(QtCore.QObject):
     def _requestCanceled(self, response, context):
 
         if response.isRunning() and not response.error() != QtNetwork.QNetworkReply.NoError:
-            log.warn("Aborting request for {}".format(response.url()))
+            log.warn("Aborting request for {}".format(response.url().toString()))
             response.abort()
         if "query_id" in context:
             self._notify_progress_end_query(context["query_id"])
@@ -576,7 +577,9 @@ class HTTPClient(QtCore.QObject):
                 self._notify_progress_end_query(context["query_id"])
 
             if error_code < 200 or error_code == 403:
-                if not ignore_errors:
+                if error_code == QtNetwork.QNetworkReply.OperationCanceledError:  # It's legit to cancel do not disconnect
+                    error_message = "Operation timeout"  # It's more clear than cancel, because cancel is trigger by us when we timeout
+                elif not ignore_errors:
                     self.disconnect()
                 if callback is not None:
                     callback({"message": error_message}, error=True, server=server, context=context)
