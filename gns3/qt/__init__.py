@@ -27,8 +27,8 @@ import sys
 import sip
 import os
 import re
-import functools
 import inspect
+import functools
 
 import logging
 log = logging.getLogger("qt/__init__.py")
@@ -106,17 +106,27 @@ class LogQMessageBox(QtWidgets.QMessageBox):
     """
     @staticmethod
     def critical(parent, title, message, *args):
-        log.critical(re.sub(r"<[^<]+?>", "", message), stack_info=LogQMessageBox.stack_info())
+        LogQMessageBox._get_logger().critical(re.sub(r"<[^<]+?>", "", message), stack_info=LogQMessageBox.stack_info())
         if sip_is_deleted(parent):
             return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).critical(parent, title, message, *args)
 
     @staticmethod
     def warning(parent, title, message, *args):
-        log.warning(re.sub(r"<[^<]+?>", "", message))
+        LogQMessageBox._get_logger().warning(re.sub(r"<[^<]+?>", "", message))
         if sip_is_deleted(parent):
             return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).warning(parent, title, message, *args)
+
+    @staticmethod
+    def _get_logger():
+        """
+        Return a logger in the context of the caller
+        in order to have the correct informations in the log
+        """
+        caller = inspect.stack()[2]
+        location = "{}:{}".format(os.path.basename(caller.filename), caller.lineno)
+        return logging.getLogger(location)
 
     @staticmethod
     def stack_info():
