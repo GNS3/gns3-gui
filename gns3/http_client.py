@@ -83,6 +83,7 @@ class HTTPClient(QtCore.QObject):
         # In order to detect computer hibernation we detect the date of the last
         # query and disconnect if time is too long between two query
         self._last_query_timestamp = None
+        self._max_time_difference_between_queries = None
 
         if network_manager:
             self._network_manager = network_manager
@@ -93,6 +94,9 @@ class HTTPClient(QtCore.QObject):
 
         # List of query waiting for the connection
         self._query_waiting_connections = []
+
+    def setMaxTimeDifferenceBetweenQueries(self, value):
+        self._max_time_difference_between_queries = value
 
     def host(self):
         """
@@ -276,13 +280,14 @@ class HTTPClient(QtCore.QObject):
 
         # We try to detect computer hibernation
         # if time between two query is too long we trigger a disconnect
-        now = datetime.datetime.now().timestamp()
-        if self._last_query_timestamp is not None and now > self._last_query_timestamp + 120:
-            log.warning("Synchronisation lost with the server.")
-            self.disconnect()
-            self._last_query_timestamp = None
-            return
-        self._last_query_timestamp = now
+        if self._max_time_difference_between_queries:
+            now = datetime.datetime.now().timestamp()
+            if self._last_query_timestamp is not None and now > self._last_query_timestamp + self._max_time_difference_between_queries:
+                log.warning("Synchronisation lost with the server.")
+                self.disconnect()
+                self._last_query_timestamp = None
+                return
+            self._last_query_timestamp = now
 
         request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context,
                            downloadProgressCallback=downloadProgressCallback,

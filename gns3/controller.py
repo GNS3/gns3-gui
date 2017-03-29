@@ -86,6 +86,8 @@ class Controller(QtCore.QObject):
         """
         self._http_client = http_client
         if self._http_client:
+            if self.isRemote():
+                self._http_client.setMaxTimeDifferenceBetweenQueries(120)
             self._http_client.connection_connected_signal.connect(self._httpClientConnectedSlot)
             self._http_client.connection_disconnected_signal.connect(self._httpClientDisconnectedSlot)
             self._connectingToServer()
