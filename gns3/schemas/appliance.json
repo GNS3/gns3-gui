@@ -110,8 +110,7 @@
             },
             "image": {
                 "type": "string",
-                "title": "Docker image in the Docker Hub",
-                "pattern": ".+:.+"
+                "title": "Docker image in the Docker Hub"
             },
             "start_command": {
                 "type": "string",
@@ -139,7 +138,6 @@
             "image"
         ]
     },
-
     "iou": {
         "type": "object",
         "title": "IOU specific options",
@@ -173,7 +171,6 @@
             "startup_config"
         ]
     },
-
     "dynamips": {
         "type": "object",
         "title": "Dynamips specific options",
@@ -327,7 +324,6 @@
           "kvm"
       ]
     },
-
     "images": {
       "type": "array",
       "title": "Images for this appliance",
@@ -376,7 +372,6 @@
         ]
       }
     },
-
     "versions": {
       "type": "array",
       "title": "Versions of the appliance",

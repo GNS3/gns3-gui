@@ -365,7 +365,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         new_version, ok = QtWidgets.QInputDialog.getText(self, "Creating a new version", "Creating a new version allows to import unknown files to use with this appliance.\nPlease share your experience on the GNS3 community if this version works.\n\nVersion name:", QtWidgets.QLineEdit.Normal)
         if ok:
-            self._appliance.create_new_version(new_version)
+            try:
+                self._appliance.create_new_version(new_version)
+            except ApplianceError as e:
+                QtWidgets.QMessageBox.critical(self.parent(), "Create new version", str(e))
+                return
             self.images_changed_signal.emit()
 
     @qslot

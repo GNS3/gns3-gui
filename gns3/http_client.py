@@ -18,12 +18,13 @@
 import sip
 import json
 import copy
-import ipaddress
 import http
 import uuid
 import pathlib
-import urllib.request
 import base64
+import datetime
+import ipaddress
+import urllib.request
 
 from .version import __version__, __version_info__
 from .qt import QtCore, QtNetwork, qpartial, sip_is_deleted
@@ -63,10 +64,13 @@ class HTTPClient(QtCore.QObject):
 
         self._protocol = settings.get("protocol", "http")
         self._host = settings["host"]
-        if self._host is None or self._host == "0.0.0.0":
-            self._host = "127.0.0.1"
-        elif ":" in self._host and ipaddress.IPv6Address(self._host) and str(ipaddress.IPv6Address(self._host)) == "::":
-            self._host = "::1"
+        try:
+            if self._host is None or self._host == "0.0.0.0":
+                self._host = "127.0.0.1"
+            elif ":" in self._host and ipaddress.IPv6Address(self._host) and str(ipaddress.IPv6Address(self._host)) == "::":
+                self._host = "::1"
+        except ipaddress.AddressValueError:
+            log.error("Invalid host name %s", self._host)
         self._port = int(settings["port"])
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
@@ -75,6 +79,11 @@ class HTTPClient(QtCore.QObject):
         self._connected = False
         self._shutdown = False  # Shutdown in progress
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
+
+        # In order to detect computer hibernation we detect the date of the last
+        # query and disconnect if time is too long between two query
+        self._last_query_timestamp = None
+        self._max_time_difference_between_queries = None
 
         if network_manager:
             self._network_manager = network_manager
@@ -85,6 +94,9 @@ class HTTPClient(QtCore.QObject):
 
         # List of query waiting for the connection
         self._query_waiting_connections = []
+
+    def setMaxTimeDifferenceBetweenQueries(self, value):
+        self._max_time_difference_between_queries = value
 
     def host(self):
         """
@@ -185,7 +197,9 @@ class HTTPClient(QtCore.QObject):
         Called when a query download progress
         """
         if not sip_is_deleted(HTTPClient._progress_callback):
-            HTTPClient._progress_callback.progress_signal.emit(query_id, sent, total)
+            # abs() for maxium because sometimes the system send negative
+            # values
+            HTTPClient._progress_callback.progress_signal.emit(query_id, sent, abs(total))
 
     @classmethod
     def setProgressCallback(cls, progress_callback):
@@ -263,6 +277,17 @@ class HTTPClient(QtCore.QObject):
         # Shutdown in progress do not execute the query
         if self._shutdown:
             return
+
+        # We try to detect computer hibernation
+        # if time between two query is too long we trigger a disconnect
+        if self._max_time_difference_between_queries:
+            now = datetime.datetime.now().timestamp()
+            if self._last_query_timestamp is not None and now > self._last_query_timestamp + self._max_time_difference_between_queries:
+                log.warning("Synchronisation lost with the server.")
+                self.disconnect()
+                self._last_query_timestamp = None
+                return
+            self._last_query_timestamp = now
 
         request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context,
                            downloadProgressCallback=downloadProgressCallback,
@@ -528,12 +553,20 @@ class HTTPClient(QtCore.QObject):
         # We check if we received HTTP headers
         if not sip.isdeleted(response) and response.isRunning() and not len(response.rawHeaderList()) > 0:
             if not response.error() != QtNetwork.QNetworkReply.NoError:
+                log.warn("Timeout request {}".format(response.url().toString()))
                 response.abort()
+
+    def disconnect(self):
+        """
+        Disconnect from the remote server
+        """
+        self.connection_disconnected_signal.emit()
+        self.close()
 
     def _requestCanceled(self, response, context):
 
         if response.isRunning() and not response.error() != QtNetwork.QNetworkReply.NoError:
-            log.warn("Aborting request for {}".format(response.url()))
+            log.warn("Aborting request for {}".format(response.url().toString()))
             response.abort()
         if "query_id" in context:
             self._notify_progress_end_query(context["query_id"])
@@ -549,9 +582,10 @@ class HTTPClient(QtCore.QObject):
                 self._notify_progress_end_query(context["query_id"])
 
             if error_code < 200 or error_code == 403:
-                if not ignore_errors:
-                    self.connection_disconnected_signal.emit()
-                    self.close()
+                if error_code == QtNetwork.QNetworkReply.OperationCanceledError:  # It's legit to cancel do not disconnect
+                    error_message = "Operation timeout"  # It's more clear than cancel, because cancel is trigger by us when we timeout
+                elif not ignore_errors:
+                    self.disconnect()
                 if callback is not None:
                     callback({"message": error_message}, error=True, server=server, context=context)
                 return

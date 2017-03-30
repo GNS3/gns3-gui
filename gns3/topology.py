@@ -36,7 +36,6 @@ from .dialogs.file_editor_dialog import FileEditorDialog
 
 from .modules import MODULES
 from .modules.module_error import ModuleError
-from .items.node_item import NodeItem
 from .compute_manager import ComputeManager
 from .controller import Controller
 

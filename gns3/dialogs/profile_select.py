@@ -17,6 +17,7 @@
 
 import os
 import sys
+import shutil
 
 from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
@@ -41,6 +42,7 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
         self.setupUi(self)
 
         self.uiNewPushButton.clicked.connect(self._newPushButtonSlot)
+        self.uiDeletePushButton.clicked.connect(self._deletePushButtonSlot)
 
         # Center on screen
         screen = QtWidgets.QApplication.desktop().screenGeometry()
@@ -52,15 +54,20 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
         else:
             home = os.path.expanduser("~")
             path = os.path.join(home, ".config", "GNS3")
-        profiles_path = os.path.join(path, "profiles")
+        self.profiles_path = os.path.join(path, "profiles")
 
         self.uiShowAtStartupCheckBox.setChecked(LocalConfig.instance().multiProfiles())
+        self._refresh()
+
+    def _refresh(self):
+        self.uiProfileSelectComboBox.clear()
         self.uiProfileSelectComboBox.addItem("default")
 
         try:
-            if os.path.exists(profiles_path):
-                for profil in sorted(os.listdir(os.path.join(path, "profiles"))):
-                    self.uiProfileSelectComboBox.addItem(profil)
+            if os.path.exists(self.profiles_path):
+                for profil in sorted(os.listdir(self.profiles_path)):
+                    if not profil.startswith("."):
+                        self.uiProfileSelectComboBox.addItem(profil)
         except OSError:
             pass
 
@@ -78,8 +85,19 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
             self.uiProfileSelectComboBox.setCurrentText(profile)
             self.accept()
 
+    def _deletePushButtonSlot(self):
+        profile = self.uiProfileSelectComboBox.currentText()
+        if profile == "default":
+            QtWidgets.QMessageBox.critical(self.parentWidget(), "Delete profile", "You can't delete the default profile")
+        else:
+            try:
+                shutil.rmtree(os.path.join(self.profiles_path, profile))
+                self._refresh()
+            except (OSError, PermissionError) as e:
+                QtWidgets.QMessageBox.critical(self.parentWidget(), "Delete profile", str(e))
+
+
 if __name__ == '__main__':
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     dialog = ProfileSelectDialog()
     dialog.show()

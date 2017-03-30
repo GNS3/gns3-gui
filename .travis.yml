@@ -1,19 +1,16 @@
 sudo: required
-
 services:
-  - docker
-
+- docker
 notifications:
   email: false
-  #email:
-  #  - julien@gns3.net
-  #irc:
-  #  channels:
-  #    - "chat.freenode.net#gns3"
-  #  on_success: change
-  #  on_failure: always
-
 script:
 - docker build -t gns3-gui-test .
-- docker run gns3-gui-test 
-
+- docker run gns3-gui-test
+deploy:
+  provider: pypi
+  user: noplay
+  password:
+    secure: FofcqlJjgqf2jaDaXpLHeigVoexbrOz3WwnDuiJpwJxeFUlPY8s2cQs/Bm+dzxzZaOaGiVE0A83v/Xa10yD5tflThHt4sqYJK3iQCinA7wgeAlDimB4xrWUNplfNJZ/Eod5Ssa++E02W+3i29PxpXY//mjCY7qDxaoxul1gnFJY=
+  on:
+    tags: true
+    repo: GNS3/gns3-gui

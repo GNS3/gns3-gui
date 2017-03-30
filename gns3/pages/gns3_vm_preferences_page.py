@@ -20,13 +20,12 @@ Configuration page for GNS3 VM
 """
 
 import copy
+from gns3.qt import QtWidgets, QtCore, qpartial, qslot
+from gns3.controller import Controller
+from ..ui.gns3_vm_preferences_page_ui import Ui_GNS3VMPreferencesPageWidget
 
 import logging
 log = logging.getLogger(__name__)
-
-from gns3.qt import QtWidgets, QtCore, qpartial
-from gns3.controller import Controller
-from ..ui.gns3_vm_preferences_page_ui import Ui_GNS3VMPreferencesPageWidget
 
 
 class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
@@ -109,6 +108,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             if self._settings["engine"] != engine["engine_id"]:
                 self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
 
+    @qslot
     def _refreshVMSlot(self, ignore_error=False):
         engine_id = self.uiGNS3VMEngineComboBox.currentData()
         if engine_id:

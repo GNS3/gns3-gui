@@ -18,7 +18,6 @@
 import os
 import copy
 import pathlib
-import glob
 
 from gns3.qt import QtWidgets
 from gns3.local_server_config import LocalServerConfig
@@ -46,7 +45,7 @@ class ImageManager:
         :returns path: Final path
         """
 
-        if server and server != "local":
+        if (server and server != "local") or Controller.instance().isRemote():
             return self._uploadImageToRemoteServer(path, server, node_type)
         else:
             destination_directory = self.getDirectoryForType(node_type)

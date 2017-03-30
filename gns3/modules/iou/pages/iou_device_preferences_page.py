@@ -22,7 +22,7 @@ Configuration page for IOU device preferences.
 import copy
 import os
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
@@ -80,7 +80,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         except KeyError:
             # Compute doesn't exists
             pass
-        QtWidgets.QTreeWidgetItem(section_item, ["Image:", iou_device["image"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Image:", iou_device["path"]])
         if iou_device["startup_config"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Startup-config:", iou_device["startup_config"]])
 
@@ -169,7 +169,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
                     del self._iou_devices[key]
                     item.setText(0, iou_device["name"])
                     item.setData(0, QtCore.Qt.UserRole, new_key)
-                self._refreshInfo(iou_device)
+                self._refreshInfo(dialog.settings)
 
     def _iouDeviceDeleteSlot(self):
         """

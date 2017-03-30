@@ -192,7 +192,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         """
 
         success = True
-        for preferences_page in self._modified_pages:
+        for preferences_page in list(self._modified_pages):
             ok = preferences_page.savePreferences()
             # if page.savePreferences() returns None, assume success
             if ok is not None and not ok:

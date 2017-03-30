@@ -193,7 +193,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             widget.setEnabled(False)
 
         # load the available adapters to the correct slot for the corresponding platform and chassis
-        for slot_number, slot_adapters in ADAPTER_MATRIX[platform][chassis].items():
+        for slot_number, slot_adapters in ADAPTER_MATRIX[platform].get(chassis, {}).items():
             self._widget_slots[slot_number].setEnabled(True)
 
             if isinstance(slot_adapters, str):

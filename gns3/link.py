@@ -78,6 +78,7 @@ class Link(QtCore.QObject):
         self._link_id = link_id
         self._capturing = False
         self._capture_file_path = None
+        self._capture_file = None
         self._initialized = False
 
         # Boolean if True we are creatin the first instance of this node
@@ -105,7 +106,10 @@ class Link(QtCore.QObject):
         # If the controller is remote the capture path should be rewrite to something local
         if Controller.instance().isRemote():
             if self._capture_file_path is None and result.get("capture_file_path", None) is not None:
-                (handle, self._capture_file_path) = tempfile.mkstemp()
+                self._capture_file = QtCore.QTemporaryFile()
+                self._capture_file.open(QtCore.QFile.WriteOnly)
+                self._capture_file.setAutoRemove(True)
+                self._capture_file_path = self._capture_file.fileName()
                 Controller.instance().get(
                     "/projects/{project_id}/links/{link_id}/pcap".format(
                         project_id=self.project().id(),
@@ -113,6 +117,7 @@ class Link(QtCore.QObject):
                     None,
                     showProgress=False,
                     downloadProgressCallback=self._downloadPcapProgress,
+                    ignoreErrors=True,  # If something is wrong avoid disconnect us from server
                     timeout=None)
         else:
             self._capture_file_path = result["capture_file_path"]
@@ -313,15 +318,13 @@ class Link(QtCore.QObject):
         """
         if not self._capture_file_path:
             return
-        try:
-            with open(self._capture_file_path, 'ab') as f:
-                f.write(content)
-        except OSError as e:
-            log.error("Can't write file {}: {}".format(self._capture_file_path, e), True)
-            return
+        self._capture_file.write(content)
 
     def stopCapture(self):
         if Controller.instance().isRemote():
+            if self._capture_file:
+                self._capture_file.close()
+                self._capture_file = None
             if self._capture_file_path:
                 try:
                     os.remove(self._capture_file_path)

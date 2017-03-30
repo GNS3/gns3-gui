@@ -275,7 +275,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
             if new_local_server_settings != local_server_settings:
                 # first check if we have nodes on the local server
-                local_nodes = []
                 topology = Topology.instance()
                 if len(topology.nodes()):
                     QtWidgets.QMessageBox.critical(self, "Local server", "Please close your project or delete all the nodes running on the local server before changing the local server settings")

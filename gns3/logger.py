@@ -85,13 +85,28 @@ class ColouredStreamHandler(logging.StreamHandler):
 def init_logger(level, logfile, quiet=False):
     if sys.platform.startswith("win"):
         stream_handler = logging.StreamHandler(sys.stdout)
-        stream_handler.formatter = ColouredFormatter("{asctime} {levelname} {filename}:{lineno} {message}", "%Y-%m-%d %H:%M:%S", "{")
+        stream_handler.formatter = ColouredFormatter("{asctime} {levelname} {name}:{lineno} {message}", "%Y-%m-%d %H:%M:%S", "{")
     else:
         stream_handler = ColouredStreamHandler(sys.stdout)
-        stream_handler.formatter = ColouredFormatter("{asctime} {levelname} {filename}:{lineno}#RESET# {message}", "%Y-%m-%d %H:%M:%S", "{")
+        stream_handler.formatter = ColouredFormatter("{asctime} {levelname} {name}:{lineno}#RESET# {message}", "%Y-%m-%d %H:%M:%S", "{")
     logging.basicConfig(level=level, handlers=[stream_handler])
     log = logging.getLogger()
     log.addHandler(stream_handler)
+
+    log_factory = logging.getLogRecordFactory()
+
+    def factory(name, level, fn, lno, msg, args, exc_info, func=None, sinfo=None, **kwargs):
+        """
+        Reformat the log message to get something more clean
+        """
+        # When qt message box is display the correct line number is a part of
+        # the name
+        if ":" in name:
+            name, lno = name.split(":")
+            lno = int(lno)
+        name = name.replace("gns3.", "")
+        return log_factory(name, level, fn, lno, msg, args, exc_info, func=func, sinfo=sinfo, **kwargs)
+    logging.setLogRecordFactory(factory)
 
     try:
         try:

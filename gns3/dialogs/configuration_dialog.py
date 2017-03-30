@@ -49,6 +49,10 @@ class ConfigurationDialog(QtWidgets.QDialog, Ui_configurationDialog):
         self._settings = settings
         self._configuration_page = configuration_page
 
+    @property
+    def settings(self):
+        return self._settings
+
     def on_uiButtonBox_clicked(self, button):
         """
         Slot called when a button of the uiButtonBox is clicked.
