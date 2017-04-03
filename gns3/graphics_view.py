@@ -404,7 +404,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                         item.setFlag(item.ItemIsSelectable, True)
                     item.setSelected(True)
                     self._showDeviceContextualMenu(QtGui.QCursor.pos())
-                    if item.zValue() < 0:
+                    if not sip.isdeleted(item) and item.zValue() < 0:
                         item.setFlag(item.ItemIsSelectable, False)
 
                 else:
