@@ -105,6 +105,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             parent = self.uiTreeWidget
             for cls in preference_pages:
                 preferences_page = cls()
+                preferences_page.setParent(self)
                 preferences_page.loadPreferences()
                 name = preferences_page.windowTitle()
                 item = QtWidgets.QTreeWidgetItem(parent)
