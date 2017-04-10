@@ -44,6 +44,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         super().__init__(parent)
 
         self.setupUi(self)
+        self._modified_pages = set()
 
         # We adapt the max size to the screen resolution
         # We need to manually do that otherwise on small screen the windows
