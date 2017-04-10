@@ -92,10 +92,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._open_project_path = None
         self._loadSettings()
         self._connections()
-        self._max_recent_files = 5
+        self._maxrecent_files = 5
         self._project_dialog = None
-        self._recent_file_actions = []
-        self._recent_project_actions = []
+        self.recent_file_actions = []
+        self.recent_project_actions = []
         self._start_time = time.time()
         local_config = LocalConfig.instance()
         local_config.config_changed_signal.connect(self._localConfigChangedSlot)
@@ -124,25 +124,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._pictures_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
 
         # add recent file actions to the File menu
-        for i in range(0, self._max_recent_files):
+        for i in range(0, self._maxrecent_files):
             action = QtWidgets.QAction(self.uiFileMenu)
             action.setVisible(False)
             action.triggered.connect(self.openRecentFileSlot)
-            self._recent_file_actions.append(action)
-        self.uiFileMenu.insertActions(self.uiQuitAction, self._recent_file_actions)
-        self._recent_file_actions_separator = self.uiFileMenu.insertSeparator(self.uiQuitAction)
-        self._recent_file_actions_separator.setVisible(False)
+            self.recent_file_actions.append(action)
+        self.uiFileMenu.insertActions(self.uiQuitAction, self.recent_file_actions)
+        self.recent_file_actions_separator = self.uiFileMenu.insertSeparator(self.uiQuitAction)
+        self.recent_file_actions_separator.setVisible(False)
         self.updateRecentFileActions()
 
         # add recent projects to the File menu
-        for i in range(0, self._max_recent_files):
+        for i in range(0, self._maxrecent_files):
             action = QtWidgets.QAction(self.uiFileMenu)
             action.setVisible(False)
             action.triggered.connect(self.openRecentProjectSlot)
-            self._recent_project_actions.append(action)
-        self._recent_project_actions_separator = self.uiFileMenu.addSeparator()
-        self._recent_project_actions_separator.setVisible(False)
-        self.uiFileMenu.addActions(self._recent_project_actions)
+            self.recent_project_actions.append(action)
+        self.recent_project_actions_separator = self.uiFileMenu.addSeparator()
+        self.recent_project_actions_separator.setVisible(False)
+        self.uiFileMenu.addActions(self.recent_project_actions)
 
         # set the window icon
         self.setWindowIcon(QtGui.QIcon(":/images/gns3.ico"))
@@ -1074,7 +1074,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 pass
 
         recent_projects.insert(0, key)
-        if len(recent_projects) > self._max_recent_files:
+        if len(recent_projects) > self._maxrecent_files:
             recent_projects.pop()
 
         # write the recent file list
@@ -1097,9 +1097,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 project_id, project_name = project.split(":", maxsplit=1)
 
             if project_id not in [p["project_id"] for p in Controller.instance().projects()]:
+                size -= 1
                 continue
 
-            action = self._recent_project_actions[index]
+            action = self.recent_project_actions[index]
             if project_path and os.path.exists(project_path):
                 action.setText(" {}. {} [{}]".format(index + 1, project_name, project_path))
                 action.setData((project_id, project_path, ))
@@ -1110,16 +1111,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if Controller.instance().isRemote():
             for index in range(0, size):
-                self._recent_project_actions[index].setVisible(True)
-            for index in range(size + 1, self._max_recent_files):
-                self._recent_project_actions[index].setVisible(False)
+                self.recent_project_actions[index].setVisible(True)
+            for index in range(size + 1, self._maxrecent_files):
+                self.recent_project_actions[index].setVisible(False)
 
             if size:
-                self._recent_project_actions_separator.setVisible(True)
+                self.recent_project_actions_separator.setVisible(True)
         else:
-            for action in self._recent_project_actions:
+            for action in self.recent_project_actions:
                 action.setVisible(False)
-            self._recent_project_actions_separator.setVisible(False)
+            self.recent_project_actions_separator.setVisible(False)
 
     def updateRecentFileSettings(self, path):
         """
@@ -1139,7 +1140,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if path in recent_files:
             recent_files.remove(path)
         recent_files.insert(0, path)
-        if len(recent_files) > self._max_recent_files:
+        if len(recent_files) > self._maxrecent_files:
             recent_files.pop()
 
         # write the recent file list
@@ -1156,7 +1157,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for file_path in self._settings["recent_files"]:
             try:
                 if file_path and os.path.exists(file_path):
-                    action = self._recent_file_actions[index]
+                    action = self.recent_file_actions[index]
                     action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
                     action.setData(file_path)
                     action.setVisible(True)
@@ -1167,15 +1168,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 pass
 
         if not Controller.instance().isRemote():
-            for index in range(size + 1, self._max_recent_files):
-                self._recent_file_actions[index].setVisible(False)
+            for index in range(size + 1, self._maxrecent_files):
+                self.recent_file_actions[index].setVisible(False)
 
             if size:
-                self._recent_file_actions_separator.setVisible(True)
+                self.recent_file_actions_separator.setVisible(True)
         else:
-            for index in range(0, self._max_recent_files):
-                self._recent_file_actions[index].setVisible(False)
-            self._recent_file_actions_separator.setVisible(False)
+            for index in range(0, self._maxrecent_files):
+                self.recent_file_actions[index].setVisible(False)
+            self.recent_file_actions_separator.setVisible(False)
 
     def _controllerConnectedSlot(self):
         self.updateRecentFileActions()
