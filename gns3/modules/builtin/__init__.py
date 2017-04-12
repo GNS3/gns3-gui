@@ -33,7 +33,6 @@ from .atm_switch import ATMSwitch
 from .settings import (
     BUILTIN_SETTINGS,
     CLOUD_SETTINGS,
-    NAT_SETTINGS,
     ETHERNET_HUB_SETTINGS,
     ETHERNET_SWITCH_SETTINGS
 )
@@ -227,40 +226,6 @@ class Builtin(Module):
         # create an instance of the node class
         return node_class(self, server, project)
 
-    def createNode(self, node, node_name):
-        """
-        Creates a node.
-
-        :param node: Node instance
-        :param node_name: Node name
-        """
-
-        if isinstance(node, Cloud):
-            for key, info in self._cloud_nodes.items():
-                if node_name == info["name"]:
-                    default_name_format = info["default_name_format"].replace('{name}', node_name)
-                    node.create(ports=info["ports_mapping"], default_name_format=default_name_format)
-                    return
-        elif isinstance(node, Nat):
-            for key, info in self._nat_nodes.items():
-                if node_name == info["name"]:
-                    default_name_format = info["default_name_format"].replace('{name}', node_name)
-                    node.create(default_name_format=default_name_format)
-                    return
-        elif isinstance(node, EthernetHub):
-            for key, info in self._ethernet_hubs.items():
-                if node_name == info["name"]:
-                    default_name_format = info["default_name_format"].replace('{name}', node_name)
-                    node.create(ports=info["ports_mapping"], default_name_format=default_name_format)
-                    return
-        elif isinstance(node, EthernetSwitch):
-            for key, info in self._ethernet_switches.items():
-                if node_name == info["name"]:
-                    default_name_format = info["default_name_format"].replace('{name}', node_name)
-                    node.create(ports=info["ports_mapping"], default_name_format=default_name_format)
-                    return
-        node.create()
-
     @staticmethod
     def findAlternativeInterface(node, missing_interface):
 
@@ -328,17 +293,6 @@ class Builtin(Module):
         """
 
         nodes = []
-        for node_class in Builtin.classes():
-            nodes.append(
-                {"class": node_class.__name__,
-                 "name": node_class.symbolName(),
-                 "categories": node_class.categories(),
-                 "symbol": node_class.defaultSymbol(),
-                 "builtin": True,
-                 "node_type": node_class.URL_PREFIX
-                 }
-            )
-
         # add custom cloud node templates
         for cloud_node in self._cloud_nodes.values():
             nodes.append(
@@ -369,9 +323,8 @@ class Builtin(Module):
                  "server": switch["server"],
                  "symbol": switch["symbol"],
                  "categories": [switch["category"]]
-                 }
+                }
             )
-
         return nodes
 
     @staticmethod

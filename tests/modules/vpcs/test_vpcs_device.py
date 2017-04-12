@@ -29,68 +29,6 @@ def test_vpcs_device_init(local_server, project):
     vpcs_device = VPCSNode(None, local_server, project)
 
 
-def test_vpcs_device_create(vpcs_device, project, local_server):
-
-    with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
-        vpcs_device.create(name="PC 1", additional_settings={})
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/nodes"
-        assert kwargs["body"] == {
-            "node_id": vpcs_device._node_id,
-            "name": "PC 1",
-            "compute_id": local_server.id(),
-            "node_type": "vpcs",
-            "properties": {
-            }
-        }
-
-        # Callback
-        params = {
-            "console": 2000,
-            "name": "PC1",
-            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
-            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "properties": {
-            }
-        }
-        vpcs_device.createNodeCallback(params)
-
-        assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
-
-
-def test_vpcs_device_setup_with_uuid(vpcs_device, project, local_server):
-    """
-    If we have an ID that mean the VM already exits and we should not send startup_script
-    """
-
-    with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
-        vpcs_device.create(name="PC 1", node_id="aec7a00c-e71c-45a6-8c04-29e40732883c", additional_settings={})
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/nodes"
-        assert kwargs["body"] == {
-            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
-            "name": "PC 1",
-            "compute_id": local_server.id(),
-            "node_type": "vpcs",
-            "properties": {}
-        }
-
-        # Callback
-        params = {
-            "console": 2000,
-            "name": "PC1",
-            "project_id": "f91bd115-3b5c-402e-b411-e5919723cf4b",
-            "node_id": "aec7a00c-e71c-45a6-8c04-29e40732883c",
-            "properties": {
-            }
-        }
-        vpcs_device.createNodeCallback(params)
-
-        assert vpcs_device.node_id() == "aec7a00c-e71c-45a6-8c04-29e40732883c"
-
-
 def test_update(vpcs_device):
 
     new_settings = {

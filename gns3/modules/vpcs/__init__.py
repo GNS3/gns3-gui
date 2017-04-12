@@ -160,51 +160,12 @@ class VPCS(Module):
         # create an instance of the node class
         return node_class(self, server, project)
 
-    def createNode(self, node, node_name):
-        """
-        Creates a node.
-
-        :param node: Node instance
-        :param node_name: Node name
-        """
-
-        log.info("creating node {}".format(node))
-
-        vm_settings = {
-            "base_script_file": "vpcs_base_config.txt"
-        }
-        if node_name:
-            for node_key, info in self._vpcs_nodes.items():
-                if node_name == info["name"]:
-
-                    for setting_name, value in self._vpcs_nodes[node_key].items():
-
-                        if setting_name in node.settings() and setting_name != "name" and value != "" and value is not None:
-                            vm_settings[setting_name] = value
-
-                    node.create(default_name_format=info["default_name_format"], additional_settings=vm_settings)
-                    return
-
-        node.create(additional_settings=vm_settings)
-
     def reset(self):
         """
         Resets the module.
         """
 
         self._nodes.clear()
-
-    @staticmethod
-    def getNodeClass(name):
-        """
-        Returns the object with the corresponding name.
-
-        :param name: object name
-        """
-
-        if name in globals():
-            return globals()[name]
-        return None
 
     @staticmethod
     def getNodeType(name, platform=None):
@@ -262,16 +223,6 @@ class VPCS(Module):
                 "builtin": True
             }
         )
-
-        for node in self._vpcs_nodes.values():
-            nodes.append(
-                {"class": VPCSNode.__name__,
-                 "name": node["name"],
-                 "server": node["server"],
-                 "symbol": node["symbol"],
-                 "categories": [node["category"]]
-                 }
-            )
         return nodes
 
     @staticmethod

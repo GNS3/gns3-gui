@@ -24,17 +24,16 @@ import os
 import sip
 import pickle
 
-from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial, qslot
+from .qt import QtCore, QtGui, QtNetwork, QtWidgets, qpartial, qslot
 from .items.node_item import NodeItem
 from .dialogs.node_properties_dialog import NodePropertiesDialog
 from .link import Link
 from .node import Node
 from .modules import MODULES
-from .modules.builtin.cloud import Cloud
 from .modules.module_error import ModuleError
 from .settings import GRAPHICS_VIEW_SETTINGS
 from .topology import Topology
-from .ports.port import Port
+from .appliance_manager import ApplianceManager
 from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
@@ -44,7 +43,6 @@ from .dialogs.file_editor_dialog import FileEditorDialog
 from .local_config import LocalConfig
 from .progress import Progress
 from .utils.server_select import server_select
-from .utils.normalize_filename import normalize_filename
 from .compute_manager import ComputeManager
 
 # link items
@@ -613,7 +611,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         # check if what is dragged is handled by this view
-        if event.mimeData().hasFormat("application/x-gns3-node") or event.mimeData().hasFormat("text/uri-list"):
+        if event.mimeData().hasFormat("text/uri-list") \
+                or event.mimeData().hasFormat("application/x-gns3-appliance"):
             event.acceptProposedAction()
             event.accept()
         else:
@@ -627,10 +626,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         # check if what has been dropped is handled by this view
-        if event.mimeData().hasFormat("application/x-gns3-node"):
-            data = event.mimeData().data("application/x-gns3-node")
-            # load the pickled node data
-            node_data = pickle.loads(data)
+        if event.mimeData().hasFormat("application/x-gns3-appliance"):
+            appliance_id = event.mimeData().data("application/x-gns3-appliance").data().decode()
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
@@ -641,12 +638,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     for node_number in range(integer):
                         x = event.pos().x() - (150 / 2) + (node_number % max_nodes_per_line) * offset
                         y = event.pos().y() - (70 / 2) + (node_number // max_nodes_per_line) * offset
-                        node_item = self.createNode(node_data, QtCore.QPoint(x, y))
-                        if node_item is None:
-                            # stop if there is any error
-                            break
+                        self.createNodeFromApplianceId(appliance_id, QtCore.QPoint(x, y))
             else:
-                self.createNode(node_data, event.pos())
+                self.createNodeFromApplianceId(appliance_id, event.pos())
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             # This should not arrive but we received bug report with it...
             if len(event.mimeData().urls()) == 0:
@@ -1437,38 +1431,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
             raise ModuleError("Please select a server")
         return server
 
-    def createNode(self, node_data, pos):
+    def createNodeFromApplianceId(self, appliance_id, pos):
         """
-        Creates a new node on the scene.
-
-        :param node_data: node data to create a new node
-        :param pos: position of the drop event
-
-        :returns: NodeItem instance
+        Ask the server to create a node using this appliance
         """
-        try:
-            node_module = None
-            for module in MODULES:
-                instance = module.instance()
-                node_class = module.getNodeClass(node_data["class"])
-                if node_class in instance.classes():
-                    node_module = instance
-                    break
-
-            if not node_module:
-                raise ModuleError("Could not find any module for {}".format(node_class))
-
-            node = node_module.instantiateNode(node_class, self.allocateCompute(node_data, instance), self._topology.project())
-        # If no server is available a ValueError is raised
-        except (ModuleError, ValueError) as e:
-            QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
-            return
-
         pos = self.mapToScene(pos)
-        node_item = self.createNodeItem(node, node_data["symbol"], pos.x(), pos.y())
-        node.setGraphics(node_item)
-        node_module.createNode(node, node_data["name"])
-        return node_item
+        ApplianceManager().instance().createNodeFromApplianceId(self._topology.project(), appliance_id, pos.x(), pos.y())
 
     def createNodeItem(self, node, symbol, x, y):
         node.setSymbol(symbol)

@@ -177,62 +177,6 @@ class IOU(Module):
         # create an instance of the node class
         return node_class(self, server, project)
 
-    def createNode(self, node, node_name):
-        """
-        Creates a node.
-
-        :param node: Node instance
-        :param node_name: Node name
-        """
-
-        iouimage = None
-        if node_name:
-            for iou_key, info in self._iou_devices.items():
-                if node_name == info["name"]:
-                    iouimage = iou_key
-
-        if not iouimage:
-            selected_images = []
-            for image, info in self._iou_devices.items():
-                if info["server"] == node.compute().id():
-                    selected_images.append(image)
-
-            if not selected_images:
-                raise ModuleError("No IOU image found for this device")
-            elif len(selected_images) > 1:
-
-                from gns3.main_window import MainWindow
-                mainwindow = MainWindow.instance()
-
-                (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "IOU image", "Please choose an image", selected_images, 0, False)
-                if ok:
-                    iouimage = selection
-                else:
-                    raise ModuleError("Please select an IOU image")
-
-            else:
-                iouimage = selected_images[0]
-
-        vm_settings = {}
-        for setting_name, value in self._iou_devices[iouimage].items():
-            if setting_name in node.settings() and setting_name != "name" and value != "" and value is not None:
-                vm_settings[setting_name] = value
-
-        default_name_format = IOU_DEVICE_SETTINGS["default_name_format"]
-        if self._iou_devices[iouimage]["default_name_format"]:
-            default_name_format = self._iou_devices[iouimage]["default_name_format"]
-
-        if vm_settings["use_default_iou_values"]:
-            del vm_settings["ram"]
-            del vm_settings["nvram"]
-
-        if "console" in vm_settings:
-            # Older GNS3 versions may have a console setting in the VM template
-            del vm_settings["console"]
-
-        iou_path = vm_settings.pop("path")
-        node.create(iou_path, additional_settings=vm_settings, default_name_format=default_name_format)
-
     def reset(self):
         """
         Resets the servers.

@@ -69,9 +69,6 @@ class Node(BaseNode):
             with open(context["path"], "wb+") as f:
                 f.write(raw_body)
 
-    def creator(self):
-        return self._creator
-
     def settings(self):
         return self._settings
 
@@ -220,66 +217,6 @@ class Node(BaseNode):
 
         return body
 
-    def _create(self, name=None, node_id=None, params=None, default_name_format="Node{0}", timeout=120):
-        """
-        Create the node on the controller
-        """
-
-        self._creator = True
-        if params is None:
-            params = {}
-
-        if "symbol" in self._settings:
-            params["symbol"] = self._settings["symbol"]
-            params["x"] = self._settings["x"]
-            params["y"] = self._settings["y"]
-            if "label" in self._settings:
-                params["label"] = self._settings["label"]
-
-        if not name:
-            # use the default name format if no name is provided
-            name = default_name_format
-
-        params["name"] = name
-        if node_id is not None:
-            self._node_id = node_id
-
-        body = self._prepareBody(params)
-        self.controllerHttpPost("/nodes", self.createNodeCallback, body=body, timeout=timeout)
-
-    def createNodeCallback(self, result, error=False, **kwargs):
-        """
-        Callback for create.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        :returns: Boolean success or not
-        """
-        if error:
-            self.server_error_signal.emit(self.id(), "Error while setting up node: {}".format(result["message"]))
-            self.deleted_signal.emit()
-            self._module.removeNode(self)
-            return False
-
-        result = self._parseResponse(result)
-        self._created = True
-        self._createCallback(result)
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("Node instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
-
-    def _createCallback(self, result):
-        """
-        Create callback compatible with the compute api.
-        """
-
-        pass
-
     def _update(self, params, timeout=60):
         """
         Update the node on the controller
@@ -379,6 +316,38 @@ class Node(BaseNode):
             new_port.setDataLinkTypes(port["data_link_types"])
             new_port.setStatus(self.status())
             self._ports.append(new_port)
+
+    def createNodeCallback(self, result, error=False, **kwargs):
+        """
+        Callback for create.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        :returns: Boolean success or not
+        """
+        if error:
+            self.server_error_signal.emit(self.id(), "Error while setting up node: {}".format(result["message"]))
+            self.deleted_signal.emit()
+            self._module.removeNode(self)
+            return False
+
+        result = self._parseResponse(result)
+        self._created = True
+        self._createCallback(result)
+
+        if self._loading:
+            self.loaded_signal.emit()
+        else:
+            self.setInitialized(True)
+            log.info("Node instance {} has been created".format(self.name()))
+            self.created_signal.emit(self.id())
+            self._module.addNode(self)
+
+    def _createCallback(self, result):
+        """
+        Create callback compatible with the compute api.
+        """
+        pass
 
     def _updateCallback(self, result):
         """

@@ -26,27 +26,6 @@ def test_docker_vm_init(local_server, project):
     vm = DockerVM(Docker(), local_server, project)
 
 
-def test_docker_vm_create(project, local_server):
-
-    docker_vm = DockerVM(Docker(), local_server, project)
-    with patch('gns3.project.Project.post') as mock:
-        docker_vm.create("ubuntu", base_name="ubuntu")
-        mock.assert_called_with("/nodes",
-                                docker_vm.createNodeCallback,
-                                body={
-                                    "node_id": docker_vm._node_id,
-                                    "compute_id": "local",
-                                    "node_type": "docker",
-                                    "properties": {
-                                        "adapters": 1,
-                                        "image": "ubuntu",
-                                    },
-                                    "name": "ubuntu-{0}"
-                                },
-                                context={},
-                                timeout=None)
-
-
 def test_createCallback(project, local_server):
     docker_vm = DockerVM(Docker(), local_server, project)
 
