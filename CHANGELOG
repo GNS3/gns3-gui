@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.5.4 13/04/2017
+
+* Limit ubridge permission to the admin group on OSX
+* Upgrade to Qt 5.7.1 on Windows
+
 ## 1.5.3 12/01/2017
 
 * Upgrade Qt 5.7
