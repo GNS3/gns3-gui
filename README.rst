@@ -40,3 +40,8 @@ Or start the app with --debug flag.
 Due to the fact PyQT intercept you can use a web debugger for inspecting stuff:
 https://github.com/Kozea/wdb
 
+Security issues
+----------------
+Please contact us using contact informations available here:
+http://docs.gns3.com/1ON9JBXSeR7Nt2-Qum2o3ZX0GU86BZwlmNSUgvmqNWGY/index.html
+
