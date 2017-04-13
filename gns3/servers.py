@@ -185,8 +185,8 @@ class Servers(QtCore.QObject):
                         QtWidgets.QMessageBox.Yes,
                         QtWidgets.QMessageBox.No)
                     if proceed == QtWidgets.QMessageBox.Yes:
-                        sudo(["chmod", "4755", path])
-                        sudo(["chown", "root", path])
+                        sudo(["chmod", "4750", path])
+                        sudo(["chown", "root:admin", path])
             except OSError as e:
                 QtWidgets.QMessageBox.critical(main_window, "uBridge", "Can't set root permissions to uBridge {}: {}".format(path, str(e)))
                 return False
