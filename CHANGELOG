@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.5.4 13/04/2017
+
+* Limit ubridge permission to the admin group on OSX
+* Upgrade to Qt 5.7.1 on Windows
+
 ## 2.0.0rc3 31/03/2017
 
 * Improve timeout handling
