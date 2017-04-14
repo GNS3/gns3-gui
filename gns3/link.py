@@ -23,7 +23,6 @@ import os
 import re
 import sip
 import uuid
-import tempfile
 
 from .qt import QtCore, QtWidgets
 from .controller import Controller
@@ -319,6 +318,7 @@ class Link(QtCore.QObject):
         if not self._capture_file_path:
             return
         self._capture_file.write(content)
+        self._capture_file.flush()
 
     def stopCapture(self):
         if Controller.instance().isRemote():
