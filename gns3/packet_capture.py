@@ -154,7 +154,10 @@ class PacketCapture:
                 pass
             del self._tail_process[link]
         if link in self._capture_reader_process and self._capture_reader_process[link].poll() is None:
-            self._capture_reader_process[link].kill()
+            try:
+                self._capture_reader_process[link].kill()
+            except (PermissionError, OSError):
+                pass
             del self._capture_reader_process[link]
 
         # PCAP capture file path
