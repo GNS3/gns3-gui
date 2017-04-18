@@ -58,7 +58,8 @@ class DrawingItem:
         return self._id
 
     def create(self):
-        self._project.post("/drawings", self._createDrawingCallback, body=self.__json__())
+        if self._project:
+            self._project.post("/drawings", self._createDrawingCallback, body=self.__json__())
 
     def _createDrawingCallback(self, result, error=False, **kwargs):
         """
