@@ -24,17 +24,15 @@ import os
 import sip
 import pickle
 
-from .qt import QtCore, QtGui, QtSvg, QtNetwork, QtWidgets, qpartial, qslot
+from .qt import QtCore, QtGui, QtNetwork, QtWidgets, qpartial, qslot
 from .items.node_item import NodeItem
 from .dialogs.node_properties_dialog import NodePropertiesDialog
 from .link import Link
 from .node import Node
 from .modules import MODULES
-from .modules.builtin.cloud import Cloud
 from .modules.module_error import ModuleError
 from .settings import GRAPHICS_VIEW_SETTINGS
 from .topology import Topology
-from .ports.port import Port
 from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
@@ -44,7 +42,6 @@ from .dialogs.file_editor_dialog import FileEditorDialog
 from .local_config import LocalConfig
 from .progress import Progress
 from .utils.server_select import server_select
-from .utils.normalize_filename import normalize_filename
 from .compute_manager import ComputeManager
 
 # link items
@@ -1444,7 +1441,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         pos = self.mapToScene(pos)
         node_item = self.createNodeItem(node, node_data["symbol"], pos.x(), pos.y())
         node.setGraphics(node_item)
-        node_module.createNode(node, node_data["name"])
+        try:
+            node_module.createNode(node, node_data["name"])
+        except ModuleError as e:
+            QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
+            return
         return node_item
 
     def createNodeItem(self, node, symbol, x, y):
