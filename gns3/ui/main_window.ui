@@ -224,7 +224,7 @@ background-none;
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Node Types</string>
+    <string>All devices</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
