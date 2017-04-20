@@ -44,6 +44,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         super().__init__(parent)
 
         self.setupUi(self)
+        self._modified_pages = set()
 
         # We adapt the max size to the screen resolution
         # We need to manually do that otherwise on small screen the windows
@@ -105,6 +106,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             parent = self.uiTreeWidget
             for cls in preference_pages:
                 preferences_page = cls()
+                preferences_page.setParent(self)
                 preferences_page.loadPreferences()
                 name = preferences_page.windowTitle()
                 item = QtWidgets.QTreeWidgetItem(parent)

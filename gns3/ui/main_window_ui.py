@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.7.1
+# Created by: PyQt5 UI code generator 5.8
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -558,7 +558,7 @@ class Ui_MainWindow(object):
         self.uiDeviceMenu.setTitle(_translate("MainWindow", "Node"))
         self.uiToolsMenu.setTitle(_translate("MainWindow", "&Tools"))
         self.uiGeneralToolBar.setWindowTitle(_translate("MainWindow", "General"))
-        self.uiNodesDockWidget.setWindowTitle(_translate("MainWindow", "Node Types"))
+        self.uiNodesDockWidget.setWindowTitle(_translate("MainWindow", "All devices"))
         self.uiNodesFilterComboBox.setItemText(0, _translate("MainWindow", "Installed & Available appliances"))
         self.uiNodesFilterComboBox.setItemText(1, _translate("MainWindow", "Installed appliances"))
         self.uiNodesFilterComboBox.setItemText(2, _translate("MainWindow", "Available appliances"))

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtCore, QtWidgets, qslot
+from ..qt import QtCore, QtWidgets, qslot, QtGui
 from .utils import colorFromSvg
 
 import uuid
@@ -68,7 +68,8 @@ class DrawingItem:
         return self._id
 
     def create(self):
-        self._project.post("/drawings", self._createDrawingCallback, body=self.__json__())
+        if self._project:
+            self._project.post("/drawings", self._createDrawingCallback, body=self.__json__())
 
     def _createDrawingCallback(self, result, error=False, **kwargs):
         """

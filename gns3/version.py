@@ -17,7 +17,6 @@
 
 
 __version__ = "2.1.0dev1"
-
 # If it's a git checkout try to add the commit
 if "dev" in __version__:
     try:

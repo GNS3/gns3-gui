@@ -124,8 +124,15 @@ class LogQMessageBox(QtWidgets.QMessageBox):
         Return a logger in the context of the caller
         in order to have the correct informations in the log
         """
-        caller = inspect.stack()[2]
-        location = "{}:{}".format(os.path.basename(caller.filename), caller.lineno)
+        if sys.version_info < (3, 5):
+            return logging.getLogger('qt')
+        try:
+            caller = inspect.stack()[2]
+            location = "{}:{}".format(os.path.basename(caller.filename), caller.lineno)
+        except:
+            # If anything go wrong during the format return the standard logger
+            # for unknonw reason sometimes we don't have the caller info
+            return logging.getLogger('qt')
         return logging.getLogger(location)
 
     @staticmethod

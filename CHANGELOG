@@ -1,5 +1,45 @@
 # Change Log
 
+## 1.5.4 13/04/2017
+
+* Limit ubridge permission to the admin group on OSX
+* Upgrade to Qt 5.7.1 on Windows
+
+## 2.0.0rc3 31/03/2017
+
+* Improve timeout handling
+* Improve logging when we display a qt message box
+* Try to detect computer hibernation
+* Fix crash when we send some errors to the user console
+* Use QtFile for managing file capture
+* Allow to delete a profile from the profile select dialog
+* Filter hidden folder in the profil directory
+* Prevent user putting port in the remote host name
+* Fix RuntimeError: wrapped C/C++ object of type EllipseItem has been deleted
+* Fix a rare error in LinkItem
+* Fix Image field in nodes list is stale after changing an image
+* Fix RuntimeError: Set changed size during iteration
+* Better detection of remote server changes
+* Add a notice about the fact you need to apply server settings
+* Check python version only for setup.py install
+* Catch appliance error when creating an appliance new version
+* If a node can't be deleted do not remove it
+* If something is wrong during packet capture do not disconnect us from the server
+* Fix saving dynamips
+* Try to fix the hang dialog on some computers
+* Fix a rare crash in progress dialog
+* If we pass --profile skip the profile select dialog
+* Raise an error if the progress dialog is not created from the main thread
+* Log qt log to python log
+* Fix image are not uploaded to remote main server
+* Fix race condition when editing a project
+* Poll settings each 5 seconds
+* Avoid progress dialog not disapear
+* Remove wrong mention about the fact super putty is include
+* Avoid a crash when an ios router don't have a chassis
+* Fix a potentatial crash in the progress dialog
+* Support official docker images in appliances
+
 ## 2.0.0rc2 10/03/2017
 
 * Deploy on pypi when we tag

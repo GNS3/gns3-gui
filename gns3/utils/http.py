@@ -60,7 +60,6 @@ def getSynchronous(host, port, endpoint, timeout=2, user=None, password=None):
     except urllib.error.HTTPError as e:
         log.debug("Error during get on {}:{}: {}".format(host, port, e))
         return e.code, None
-    except (OSError, http.client.BadStatusLine, ValueError) as e:
+    except (OSError, http.client.BadStatusLine, ValueError, SystemError) as e:
         log.debug("Error during get on {}:{}: {}".format(host, port, e))
     return 0, None
-
