@@ -33,6 +33,7 @@ log = logging.getLogger(__name__)
 
 console_mutex = QtCore.QMutex()
 
+
 class ConsoleThread(QtCore.QThread):
 
     consoleError = QtCore.pyqtSignal(str)
@@ -71,6 +72,7 @@ class ConsoleThread(QtCore.QThread):
         command = command.replace("%p", str(port))
         command = command.replace("%d", self._name)
         command = command.replace("%i", self._node.project().id())
+        command = command.replace("%n", self._node.id())
         command = command.replace("%c", Controller.instance().httpClient().fullUrl())
 
         # If the console use an apple script we lock to avoid multiple console
@@ -114,5 +116,3 @@ def nodeTelnetConsole(node, port, command=None):
 
 def _consoleErrorSlot(message):
     QtWidgets.QMessageBox.critical(MainWindow.instance(), "Error", message)
-
-
