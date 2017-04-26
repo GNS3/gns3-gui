@@ -228,8 +228,10 @@ def main():
     if local_config.multiProfiles() and not options.profile:
         profile_select = ProfileSelectDialog()
         profile_select.show()
-        profile_select.exec_()
-        options.profile = profile_select.profile()
+        if profile_select.exec_():
+            options.profile = profile_select.profile()
+        else:
+            sys.exit(0)
 
     # Init the config
     if options.config:
