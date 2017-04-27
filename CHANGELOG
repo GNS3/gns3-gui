@@ -1,5 +1,21 @@
 # Change Log
 
+## 2.0.0rc4 20/04/2017
+
+* Catch all error during the generation of log messages.
+* Catch a rare node creation error
+* Fix missing menu text at application startup
+* Fix a race condition in the drawing item
+* Catch system error when connecting to local server
+* Catch a rare error when killing the capture
+* Improve pcap streaming speed
+* Upgrade to 5.7.1
+* Recent projects list bug
+* Fix a race condition in the preferences dialog
+* Try to fix some windows Z issues
+* Catch a garbage collection issue in the right click on a link
+* Fix a compatibility issue with Python 3.4
+
 ## 1.5.4 13/04/2017
 
 * Limit ubridge permission to the admin group on OSX

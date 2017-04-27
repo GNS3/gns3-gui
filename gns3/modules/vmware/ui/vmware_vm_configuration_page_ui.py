@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
 #
-# Created: Thu Jan  5 14:52:19 2017
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.8
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_VMwareVMConfigPageWidget(object):
+
     def setupUi(self, VMwareVMConfigPageWidget):
         VMwareVMConfigPageWidget.setObjectName("VMwareVMConfigPageWidget")
         VMwareVMConfigPageWidget.resize(546, 470)
@@ -141,7 +142,7 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiPortSegmentSizeLabel.setText(_translate("VMwareVMConfigPageWidget", "Segment size:"))
         self.uiAdaptersLabel.setText(_translate("VMwareVMConfigPageWidget", "Adapters:"))
         self.label.setText(_translate("VMwareVMConfigPageWidget", "Type:"))
-        self.uiUseAnyAdapterCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Allow GNS3 to use any configured VMware adapter"))
+        self.uiUseAnyAdapterCheckBox.setToolTip(_translate("VMwareVMConfigPageWidget", "<html><head/><body><p>This option will allow GNS3 to replace all adapters of the VM. This allow you to use any interface of the VM in GNS3.</p></body></html>"))
+        self.uiUseAnyAdapterCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Allow GNS3 to override non custom VMware adapter"))
         self.uiFirstPortNameLabel.setText(_translate("VMwareVMConfigPageWidget", "First port name:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("VMwareVMConfigPageWidget", "Network"))
-

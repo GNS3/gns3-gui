@@ -245,7 +245,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             self._project_settings.pop("project_path", None)
             self._project_settings.pop("project_files_dir", None)
         else:
-            project_location = self.uiLocationLineEdit.text()
+            project_location = self.uiLocationLineEdit.text().strip()
             if not project_location:
                 QtWidgets.QMessageBox.critical(self, "New project", "Project location is empty")
                 return False
