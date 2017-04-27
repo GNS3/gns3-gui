@@ -186,7 +186,6 @@ class ATMSwitch(Node):
         if "mappings" in properties:
             mappings = properties["mappings"]
 
-        log.info("ATM switch {} is loading".format(name))
         self.create(name, node_id, mappings)
 
     def configPage(self):

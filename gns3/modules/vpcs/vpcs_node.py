@@ -19,9 +19,7 @@
 VPCS node implementation.
 """
 
-import os
 from gns3.node import Node
-from gns3.utils.normalize_filename import normalize_filename
 
 import logging
 log = logging.getLogger(__name__)
@@ -40,8 +38,6 @@ class VPCSNode(Node):
 
     def __init__(self, module, server, project):
         super().__init__(module, server, project)
-
-        log.info("VPCS instance is being created")
 
         vpcs_settings = {"console_host": None,
                          "startup_script": None,

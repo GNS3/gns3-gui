@@ -47,7 +47,6 @@ class VMwareVM(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-        log.info("VMware VM instance is being created")
         self._linked_clone = False
 
         vmware_vm_settings = {"vmx_path": "",

@@ -324,7 +324,7 @@ class LocalConfig(QtCore.QObject):
 
         try:
             if self._last_config_changed and self._last_config_changed < os.stat(self._config_file).st_mtime:
-                log.info("Client config has changed, reloading it...")
+                log.debug("Client config has changed, reloading it...")
                 self._readConfig(self._config_file)
                 self.config_changed_signal.emit()
         except OSError as e:

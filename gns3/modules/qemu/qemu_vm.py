@@ -41,7 +41,6 @@ class QemuVM(Node):
     def __init__(self, module, server, project):
         super().__init__(module, server, project)
 
-        log.info("QEMU VM instance is being created")
         self._linked_clone = True
 
         qemu_vm_settings = {"usage": "",

@@ -38,7 +38,6 @@ class DockerVM(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-        log.info("Docker VM is being created")
 
         docker_vm_settings = {"image": "",
                               "adapters": DOCKER_CONTAINER_SETTINGS["adapters"],

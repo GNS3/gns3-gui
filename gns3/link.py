@@ -59,10 +59,10 @@ class Link(QtCore.QObject):
 
         super().__init__()
 
-        log.info("adding link from {} {} to {} {}".format(source_node.name(),
-                                                          source_port.name(),
-                                                          destination_node.name(),
-                                                          destination_port.name()))
+        log.debug("adding link from {} {} to {} {}".format(source_node.name(),
+                                                           source_port.name(),
+                                                           destination_node.name(),
+                                                           destination_port.name()))
 
         # create an unique ID
         self._id = Link._instance_count
@@ -264,10 +264,10 @@ class Link(QtCore.QObject):
         Deletes this link.
         """
 
-        log.info("deleting link from {} {} to {} {}".format(self._source_node.name(),
-                                                            self._source_port.name(),
-                                                            self._destination_node.name(),
-                                                            self._destination_port.name()))
+        log.debug("deleting link from {} {} to {} {}".format(self._source_node.name(),
+                                                             self._source_port.name(),
+                                                             self._destination_node.name(),
+                                                             self._destination_port.name()))
 
         if skip_controller:
             self._linkDeletedCallback({})

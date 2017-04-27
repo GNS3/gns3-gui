@@ -45,7 +45,6 @@ class VirtualBoxVM(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-        log.info("VirtualBox VM instance is being created")
         self._linked_clone = False
 
         virtualbox_vm_settings = {"vmname": "",

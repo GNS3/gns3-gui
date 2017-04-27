@@ -62,7 +62,7 @@ class ExportDebugDialog(QtWidgets.QDialog, Ui_ExportDebugDialog):
             self._exportDebugCallback({}, error=True)
 
     def _exportDebugCallback(self, result, error=False, **kwargs):
-        log.info("Export debug information to %s", self._path)
+        log.debug("Export debug information to %s", self._path)
 
         try:
             with ZipFile(self._path, 'w') as zip:

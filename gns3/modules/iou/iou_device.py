@@ -44,8 +44,6 @@ class IOUDevice(Node):
     def __init__(self, module, server, project):
         super().__init__(module, server, project)
 
-        log.info("IOU instance is being created")
-
         iou_device_settings = {"path": "",
                                "md5sum": "",
                                "startup_config": "",

@@ -427,7 +427,7 @@ class Project(QtCore.QObject):
             log.error("Error while closing project {}: {}".format(self._id, result["message"]))
         else:
             self.stopListenNotifications()
-            log.info("Project {} closed".format(self._id))
+            log.debug("Project {} closed".format(self._id))
 
         self._closed = True
         self.project_closed_signal.emit()

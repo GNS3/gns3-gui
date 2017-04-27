@@ -48,7 +48,6 @@ class Router(Node):
     def __init__(self, module, server, project, platform="c7200"):
 
         super().__init__(module, server, project)
-        log.info("Router {} is being created".format(platform))
         self._dynamips_id = None
 
         router_settings = {"platform": platform,
@@ -155,7 +154,7 @@ class Router(Node):
         for name, value in result.items():
             if name in self._settings:
                 if self._settings[name] != value:
-                    log.info("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
+                    log.debug("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                     self._settings[name] = value
             elif name not in ("project_id", "port_name_format", "port_segment_size", "first_port_name", "node_directory", "status", "node_id", "width", "height", "compute_id", "node_type", "dynamips_id", "command_line"):
                 # All key should be known, but we raise error only in debug

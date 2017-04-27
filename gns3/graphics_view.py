@@ -1213,7 +1213,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             QtWidgets.QMessageBox.critical(self, "Idle-PC", "Error: {}".format(result["message"]))
         else:
             router = context["router"]
-            log.info("{} has received Idle-PC proposals".format(router.name()))
+            log.debug("{} has received Idle-PC proposals".format(router.name()))
             idlepcs = result
             if idlepcs and idlepcs[0] != "0x0":
                 dialog = IdlePCDialog(router, idlepcs, parent=self)
@@ -1247,7 +1247,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             router = context["router"]
             idlepc = result["idlepc"]
-            log.info("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
+            log.debug("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
             router.setIdlepc(idlepc)
             # apply Idle-PC to all routers with the same IOS image
             ios_image = os.path.basename(router.settings()["image"])
