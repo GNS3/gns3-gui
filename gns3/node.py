@@ -339,7 +339,6 @@ class Node(BaseNode):
             self.loaded_signal.emit()
         else:
             self.setInitialized(True)
-            log.info("Node instance {} has been created".format(self.name()))
             self.created_signal.emit(self.id())
             self._module.addNode(self)
 
@@ -363,7 +362,6 @@ class Node(BaseNode):
         :param skip_controller: True to not delete on the controller (often it's when it's already deleted on the server)
         """
 
-        log.info("{} is being deleted".format(self.name()))
         if not skip_controller:
             self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback)
         else:
@@ -382,7 +380,6 @@ class Node(BaseNode):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
             return
-        log.info("{} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
@@ -492,8 +489,6 @@ class Node(BaseNode):
         if error:
             log.error("error while reloading {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has reloaded".format(self.name()))
 
     def openConsole(self, command=None, aux=False):
         if command is None:
