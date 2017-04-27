@@ -24,7 +24,16 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item row="3" column="1">
@@ -128,7 +137,16 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item row="2" column="2">
@@ -214,8 +232,11 @@
        </item>
        <item row="6" column="0" colspan="3">
         <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option will allow GNS3 to replace all adapters of the VM. This allow you to use any interface of the VM in GNS3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
-          <string>Allow GNS3 to use any configured VMware adapter</string>
+          <string>Allow GNS3 to override non custom VMware adapter</string>
          </property>
         </widget>
        </item>
