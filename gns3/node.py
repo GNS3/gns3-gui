@@ -236,7 +236,6 @@ class Node(BaseNode):
         """
 
         if error:
-            log.error("error while updating {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
             return False
 
