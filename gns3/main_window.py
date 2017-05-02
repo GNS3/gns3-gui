@@ -431,7 +431,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._appliance_wizard.show()
             self._appliance_wizard.exec_()
         elif path.endswith(".gns3"):
-            Topology.instance().loadProject(path)
+            if Controller.instance().isRemote():
+                QtWidgets.QMessageBox.critical(self, "Open project", "You can't open a .gns3 on a remote server, please use portable project")
+                return
+            else:
+                Topology.instance().loadProject(path)
         else:
             try:
                 extension = path.split('.')[1]
