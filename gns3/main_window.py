@@ -942,21 +942,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         log.debug("Close the Main Window")
         self._analytics_client.sendScreenView("Main Window", session_start=False)
 
-        project = Topology.instance().project()
-        if not project:
-            self._finish_application_closing(close_windows=False)
-            event.accept()
-            self.uiConsoleTextEdit.closeIO()
-        elif project.closed() or not project.autoClose():
-            log.debug("Project is closed killing server and closing main windows")
-            self._finish_application_closing(close_windows=False)
-            event.accept()
-            self.uiConsoleTextEdit.closeIO()
-        else:
-            log.debug("Project is not closed asking for project closing")
-            project.project_closed_signal.connect(self._finish_application_closing)
-            project.close(local_server_shutdown=True)
-            event.ignore()
+        self._finish_application_closing(close_windows=False)
+        event.accept()
+        self.uiConsoleTextEdit.closeIO()
 
     def _finish_application_closing(self, close_windows=True):
         """
