@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.0.0 02/05/2017
+
+* Clarify that we don't override vmware custom adapters
+* Strip space from path at project creation
+
 ## 2.0.0rc4 20/04/2017
 
 * Catch all error during the generation of log messages.
