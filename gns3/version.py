@@ -17,7 +17,7 @@
 
 
 # __version__ is a human-readable version number.
-__version__ = "2.0.0"
+__version__ = "2.0.1dev1"
 
 # If it's a git checkout try to add the commit
 if "dev" in __version__:
