@@ -92,7 +92,6 @@ class LocalServer(QtCore.QObject):
         self._settings = {}
         self.localServerSettings()
         self._port = self._settings.get("port", 3080)
-
         if not self._settings.get("auto_start", True):
             if self._settings.get("host") is None:
                 self._http_client = HTTPClient(self._settings)
@@ -511,7 +510,7 @@ class LocalServer(QtCore.QObject):
         :returns: boolean
         """
 
-        status, json_data = getSynchronous(self._settings["host"], self._port, "version",
+        status, json_data = getSynchronous(self._settings["protocol"], self._settings["host"], self._port, "version",
                                            timeout=2, user=self._settings["user"], password=self._settings["password"])
 
         if json_data is None or status != 200:
