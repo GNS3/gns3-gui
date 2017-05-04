@@ -83,7 +83,8 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
     def _projectsTreeWidgetDoubleClickedSlot(self, item, column):
         self.done(True)
 
-    def _deleteProjectSlot(self):
+    @qslot
+    def _deleteProjectSlot(self, *args):
         if len(self.uiProjectsTreeWidget.selectedItems()) == 0:
             QtWidgets.QMessageBox.critical(self, "Delete project", "No project selected")
             return
