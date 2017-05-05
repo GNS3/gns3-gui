@@ -1431,7 +1431,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
             if not node_module:
                 raise ModuleError("Could not find any module for {}".format(node_class))
-
+            if self._topology.project() is None:
+                return
             node = node_module.instantiateNode(node_class, self.allocateCompute(node_data, instance), self._topology.project())
         # If no server is available a ValueError is raised
         except (ModuleError, ValueError) as e:
