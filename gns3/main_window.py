@@ -443,7 +443,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             except IndexError:
                 QtWidgets.QMessageBox.critical(self, "File open", "Missing file extension for {}".format(path))
 
-    def _projectChangedSlot(self):
+    @qslot
+    def _projectChangedSlot(self, *args):
         """
         Called when a project finish to load
         """
