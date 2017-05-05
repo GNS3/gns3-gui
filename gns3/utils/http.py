@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 import ssl
 import http
 import json
@@ -43,11 +44,14 @@ def getSynchronous(protocol, host, port, endpoint, timeout=2, user=None, passwor
         else:
             log.debug("Synchronous get {} (no authentication)".format(url))
 
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
+        if sys.version_info >= (3, 5):
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            response = urllib.request.urlopen(url, timeout=timeout, context=ctx)
+        else:
+            response = urllib.request.urlopen(url, timeout=timeout)
 
-        response = urllib.request.urlopen(url, timeout=timeout, context=ctx)
         content_type = response.getheader("CONTENT-TYPE")
         if response.status == 200:
             if content_type == "application/json":
