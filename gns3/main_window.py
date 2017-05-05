@@ -418,7 +418,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # Portable GNS3 project
             Topology.instance().importProject(path)
         elif path.endswith(".net"):
-            QtWidgets.QMessageBox.critical(self, "Open project", "Importing legacy project is not supported in 2.0.\nYou need to open it with GNS3 1.x in order to convert it or manually run the gns3 converter.")
+            QtWidgets.QMessageBox.critical(self, "Open project", "Importing legacy project is not supported in 2.0.\nYou must open it using GNS3 1.x in order to convert it or manually run the gns3 converter.")
             return
 
         elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
@@ -431,7 +431,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._appliance_wizard.show()
             self._appliance_wizard.exec_()
         elif path.endswith(".gns3"):
-            Topology.instance().loadProject(path)
+            if Controller.instance().isRemote():
+                QtWidgets.QMessageBox.critical(self, "Open project", "Cannot open a .gns3 file on a remote server, please use a portable project (.gns3p) instead")
+                return
+            else:
+                Topology.instance().loadProject(path)
         else:
             try:
                 extension = path.split('.')[1]
