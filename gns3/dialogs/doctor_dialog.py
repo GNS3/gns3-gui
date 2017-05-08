@@ -138,14 +138,18 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
 
         request_setuid = False
         if sys.platform.startswith("linux"):
-            if "security.capability" in os.listxattr(path):
-                caps = os.getxattr(path, "security.capability")
-                # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
-                if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
-                    return(2, "Ubridge require CAP_NET_RAW. Run sudo setcap cap_net_admin,cap_net_raw=ep {path}".format(path=path))
-            else:
-                # capabilities not supported
-                request_setuid = True
+            try:
+                if "security.capability" in os.listxattr(path):
+                    caps = os.getxattr(path, "security.capability")
+                    # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
+                    if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
+                        return (2, "Ubridge require CAP_NET_RAW. Run sudo setcap cap_net_admin,cap_net_raw=ep {path}".format(path=path))
+                else:
+                    # capabilities not supported
+                    request_setuid = True
+            except AttributeError:
+                # Due to a Python bug, os.listxattr could be missing: https://github.com/GNS3/gns3-gui/issues/2010
+                return (1, "Could not determine if CAP_NET_RAW capability is set for uBridge (Python bug)".format(path=path))
 
         if sys.platform.startswith("darwin") or request_setuid:
             if os.stat(path).st_uid != 0 or not os.stat(path).st_mode & stat.S_ISUID:
@@ -164,11 +168,15 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         if not os.path.exists(path):
             return (2, "Dynamips path {path} doesn't exists".format(path=path))
 
-        if sys.platform.startswith("linux") and "security.capability" in os.listxattr(path):
-            caps = os.getxattr(path, "security.capability")
-            # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
-            if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
-                return (2, "Dynamips require CAP_NET_RAW. Run sudo setcap cap_net_raw,cap_net_admin+eip {path}".format(path=path))
+        try:
+            if sys.platform.startswith("linux") and "security.capability" in os.listxattr(path):
+                caps = os.getxattr(path, "security.capability")
+                # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
+                if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
+                    return (2, "Dynamips require CAP_NET_RAW. Run sudo setcap cap_net_raw,cap_net_admin+eip {path}".format(path=path))
+        except AttributeError:
+            # Due to a Python bug, os.listxattr could be missing: https://github.com/GNS3/gns3-gui/issues/2010
+            return (1, "Could not determine if CAP_NET_RAW capability is set for Dynamips (Python bug)".format(path=path))
         return (0, None)
 
     def checkGNS3InstalledTwice(self):
