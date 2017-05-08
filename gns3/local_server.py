@@ -172,6 +172,10 @@ class LocalServer(QtCore.QObject):
                 else:
                     # capabilities not supported
                     request_setuid = True
+            except AttributeError:
+                # Due to a Python bug, os.listxattr could be missing: https://github.com/GNS3/gns3-gui/issues/2010
+                log.warning("Could not determine if CAP_NET_RAW capability is set for uBridge (Python bug)")
+                return True
             except OSError as e:
                 QtWidgets.QMessageBox.critical(self.parent(), "uBridge", "Can't set CAP_NET_RAW capability to uBridge {}: {}".format(path, str(e)))
                 return False
