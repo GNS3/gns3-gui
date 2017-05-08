@@ -143,7 +143,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
                     caps = os.getxattr(path, "security.capability")
                     # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
                     if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
-                        return (2, "Ubridge require CAP_NET_RAW. Run sudo setcap cap_net_admin,cap_net_raw=ep {path}".format(path=path))
+                        return (2, "Ubridge requires CAP_NET_RAW. Run sudo setcap cap_net_admin,cap_net_raw=ep {path}".format(path=path))
                 else:
                     # capabilities not supported
                     request_setuid = True
@@ -173,7 +173,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
                 caps = os.getxattr(path, "security.capability")
                 # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
                 if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
-                    return (2, "Dynamips require CAP_NET_RAW. Run sudo setcap cap_net_raw,cap_net_admin+eip {path}".format(path=path))
+                    return (2, "Dynamips requires CAP_NET_RAW. Run sudo setcap cap_net_raw,cap_net_admin+eip {path}".format(path=path))
         except AttributeError:
             # Due to a Python bug, os.listxattr could be missing: https://github.com/GNS3/gns3-gui/issues/2010
             return (1, "Could not determine if CAP_NET_RAW capability is set for Dynamips (Python bug)".format(path=path))
