@@ -19,16 +19,8 @@
 Dialog to manage the snapshots.
 """
 
-import shutil
-import re
-import time
-import os
-
 from ..qt import QtCore, QtWidgets
-from ..utils.progress_dialog import ProgressDialog
-from ..utils.process_files_worker import ProcessFilesWorker
 from ..ui.snapshots_dialog_ui import Ui_SnapshotsDialog
-from ..node import Node
 from ..controller import Controller
 
 from datetime import datetime
@@ -92,7 +84,7 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
         """
 
         snapshot_name, ok = QtWidgets.QInputDialog.getText(self, "Snapshot", "Snapshot name:", QtWidgets.QLineEdit.Normal, "Unnamed")
-        if ok and snapshot_name:
+        if ok and snapshot_name and self._project:
             Controller.instance().post("/projects/{}/snapshots".format(self._project.id()), self._createSnapshotsCallback, {"name": snapshot_name})
 
     def _createSnapshotsCallback(self, result, error=False, server=None, context={}, **kwargs):
