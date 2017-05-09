@@ -181,7 +181,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self, "Import configuration file", "Could not load configuration file {}: {}".format(os.path.basename(path), e))
             return
-        except ValueError as e:
+        except (ValueError, TypeError) as e:
             QtWidgets.QMessageBox.critical(self, "Import configuration file", "Invalid file: {}".format(e))
             return
 
