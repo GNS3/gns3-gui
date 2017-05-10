@@ -274,6 +274,9 @@ class HTTPClient(QtCore.QObject):
         :returns: QNetworkReply
         """
 
+        if "dev" in __version__:
+            assert QtCore.QThread.currentThread() == self.thread(), "HTTP request not started from the main thread"
+
         # Shutdown in progress do not execute the query
         if self._shutdown:
             return
