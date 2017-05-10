@@ -37,11 +37,12 @@ class ProgressDialog(QtWidgets.QProgressDialog):
     :param cancel_button_text: text for the cancel button
     :param busy: if True, the progress bar in "sliding mode"
     :param delay: Countdown in seconds before starting the worker
+    :param create_thread: Start the worker in a dedicated thread
     to show unknown progress.
     :param parent: parent widget
     """
 
-    def __init__(self, worker, title, label_text, cancel_button_text, busy=False, parent=None, delay=0):
+    def __init__(self, worker, title, label_text, cancel_button_text, busy=False, parent=None, delay=0, create_thread=True):
 
         assert QtCore.QThread.currentThread() == QtWidgets.QApplication.instance().thread()
 
@@ -59,14 +60,18 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self.canceled.connect(self._canceledSlot)
         self.destroyed.connect(self._cleanup)
 
-        self._thread = QtCore.QThread()
         self._worker = worker
         self._worker.setObjectName(worker.__class__.__name__)
-        self._worker.moveToThread(self._thread)
+        if create_thread:
+            self._thread = QtCore.QThread()
+            self._worker.moveToThread(self._thread)
+        else:
+            self._thread = None
         self._worker.finished.connect(self.accept)
         self._worker.updated.connect(self._updateProgressSlot)
         self._worker.error.connect(self._error)
-        self._thread.started.connect(self._worker.run)
+        if self._thread:
+            self._thread.started.connect(self._worker.run)
 
         self._countdownTimer = None
         if delay == 0:
@@ -99,6 +104,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         if self._thread:
             self._thread.start()
             log.debug("{} thread started".format(self._worker.objectName()))
+        elif self._worker:
+            self._worker.run()
 
     @qslot
     def _canceledSlot(self):
@@ -138,6 +145,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
                     thread.wait()
                 log.debug("{} thread destroyed".format(self._worker.objectName()))
                 thread.deleteLater()
+            self._worker = None
 
     @qslot
     def _updateProgressSlot(self, value):
