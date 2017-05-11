@@ -24,9 +24,7 @@ import re
 
 from gns3.node import Node
 from gns3.utils.normalize_filename import normalize_filename
-from gns3.image_manager import ImageManager
 
-from ..settings import PLATFORMS_DEFAULT_RAM
 from ..adapters import ADAPTER_MATRIX
 from ..wics import WIC_MATRIX
 
