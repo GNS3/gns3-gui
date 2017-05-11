@@ -167,8 +167,6 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         :param message: message
         """
 
-        if not self._thread:
-            return
         if stop:
             log.critical("{} thread stopping with an error: {}".format(self._worker.objectName(), message))
             QtWidgets.QMessageBox.critical(self.parentWidget(), "Error", "{}".format(message))
