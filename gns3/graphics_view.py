@@ -924,12 +924,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     break
 
                 if os.path.exists(node_dir):
-                    log.debug("Open %s in file manage")
+                    log.debug("Open %s in file manager")
                     if QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(node_dir)) is False:
                         QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(node_dir))
                         break
                 else:
-                    QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}".format(node_dir, node.compute().name()))
+                    reply = QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}\n\nCopy path to clipboard?".format(node_dir, node.compute().name()), QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                    if reply == QtWidgets.QMessageBox.Yes:
+                        QtWidgets.QApplication.clipboard().setText(node_dir)
                     break
 
     def consoleToNode(self, node, aux=False):
