@@ -20,15 +20,12 @@ Contains this entire topology: nodes and links.
 """
 
 import os
-import json
 import xml.etree.ElementTree as ET
 
 
 from .local_server import LocalServer
-from .node import Node
 from .qt import QtCore, QtWidgets
 
-from .utils.process_files_worker import ProcessFilesWorker
 from .utils.progress_dialog import ProgressDialog
 from .utils.export_project_worker import ExportProjectWorker
 from .utils.import_project_worker import ImportProjectWorker
@@ -237,7 +234,7 @@ It is your responsability to check if you have the right to distribute the image
         self.editReadme()
 
         export_worker = ExportProjectWorker(self._project, path, include_images)
-        progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self._main_window)
+        progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self._main_window, create_thread=False)
         progress_dialog.show()
         progress_dialog.exec_()
 
@@ -252,7 +249,7 @@ It is your responsability to check if you have the right to distribute the image
                                             name=dialog.getProjectSettings()["project_name"],
                                             path=dialog.getProjectSettings().get("project_files_dir"))
         import_worker.imported.connect(self._projectImportedSlot)
-        progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self._main_window)
+        progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self._main_window, create_thread=False)
         progress_dialog.show()
         progress_dialog.exec_()
 

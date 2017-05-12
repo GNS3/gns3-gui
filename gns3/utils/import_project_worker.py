@@ -16,10 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pathlib
-import zipfile
 import uuid
-import os
-import sys
 
 
 from ..controller import Controller
@@ -69,4 +66,3 @@ class ImportProjectWorker(QtCore.QObject):
 
     def cancel(self):
         pass
-
