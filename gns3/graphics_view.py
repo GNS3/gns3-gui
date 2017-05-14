@@ -550,7 +550,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not self._adding_link:
             if isinstance(item, NodeItem) and item.node().initialized():
                 item.setSelected(True)
-                if item.node().status() == Node.stopped:
+                if item.node().status() == Node.stopped or item.node().isAlwaysOn():
                     self.configureSlot()
                     return
                 else:

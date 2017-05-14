@@ -137,9 +137,17 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
         if page != self.uiEmptyPageWidget:
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).setEnabled(True)
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).setEnabled(True)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).setEnabled(True)
         else:
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).setEnabled(False)
             self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).setEnabled(False)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).setEnabled(False)
+
+        # hide the contextual help button if there is no help text
+        if page.whatsThis():
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).show()
+        else:
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).hide()
 
     def on_uiButtonBox_clicked(self, button):
         """
@@ -153,6 +161,8 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
                 self.applySettings()
             elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset):
                 self.resetSettings()
+            elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help):
+                self.showHelp()
             elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel):
                 QtWidgets.QDialog.reject(self)
             else:
@@ -215,6 +225,14 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
                 child = item.child(index)
                 child.setSettings(child.node().settings().copy())
 
+    def showHelp(self):
+        """
+        Show contextual help for the current page.
+        """
+
+        page = self.uiConfigStackedWidget.currentWidget()
+        if page != self.uiEmptyPageWidget and page.whatsThis():
+            QtWidgets.QMessageBox.information(self, "{} help".format(page.windowTitle()), page.whatsThis().strip())
 
 class ConfigurationPageItem(QtWidgets.QTreeWidgetItem):
 

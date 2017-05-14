@@ -19,7 +19,7 @@
 Configuration page for Docker images.
 """
 
-from gns3.qt import QtWidgets, QtGui
+from gns3.qt import QtWidgets
 
 from ..ui.docker_vm_configuration_page_ui import Ui_dockerVMConfigPageWidget
 from ....dialogs.file_editor_dialog import FileEditorDialog
@@ -27,9 +27,10 @@ from ....dialogs.node_properties_dialog import ConfigurationError
 from ....dialogs.symbol_selection_dialog import SymbolSelectionDialog
 
 
-class DockerVMConfigurationPage(
-        QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
-    """QWidget configuration page for Docker images."""
+class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
+    """
+    QWidget configuration page for Docker images
+    """
 
     def __init__(self):
 

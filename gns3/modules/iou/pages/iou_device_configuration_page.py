@@ -21,7 +21,7 @@ Configuration page for IOU devices.
 
 import os
 
-from gns3.qt import QtGui, QtWidgets
+from gns3.qt import QtWidgets
 from gns3.local_server import LocalServer
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog

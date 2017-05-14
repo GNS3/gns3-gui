@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created: Fri Jun 10 16:26:54 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -33,21 +32,34 @@ class Ui_cloudConfigPageWidget(object):
         self.gridLayout_3.addWidget(self.uiEthernetComboBox, 0, 0, 1, 1)
         self.uiAddEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
         self.uiAddEthernetPushButton.setObjectName("uiAddEthernetPushButton")
-        self.gridLayout_3.addWidget(self.uiAddEthernetPushButton, 0, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.uiAddEthernetPushButton, 0, 2, 1, 1)
         self.uiAddAllEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
         self.uiAddAllEthernetPushButton.setObjectName("uiAddAllEthernetPushButton")
-        self.gridLayout_3.addWidget(self.uiAddAllEthernetPushButton, 0, 2, 1, 1)
+        self.gridLayout_3.addWidget(self.uiAddAllEthernetPushButton, 0, 3, 1, 1)
         self.uiDeleteEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
         self.uiDeleteEthernetPushButton.setEnabled(False)
         self.uiDeleteEthernetPushButton.setObjectName("uiDeleteEthernetPushButton")
-        self.gridLayout_3.addWidget(self.uiDeleteEthernetPushButton, 0, 3, 1, 1)
+        self.gridLayout_3.addWidget(self.uiDeleteEthernetPushButton, 0, 4, 1, 1)
         self.uiEthernetListWidget = QtWidgets.QListWidget(self.EthernetTab)
         self.uiEthernetListWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.uiEthernetListWidget.setObjectName("uiEthernetListWidget")
-        self.gridLayout_3.addWidget(self.uiEthernetListWidget, 1, 0, 1, 4)
+        self.gridLayout_3.addWidget(self.uiEthernetListWidget, 1, 0, 1, 5)
+        self.uiEthernetWarningPushButton = QtWidgets.QPushButton(self.EthernetTab)
+        self.uiEthernetWarningPushButton.setText("")
+        icon = QtGui.QIcon.fromTheme("dialog-warning")
+        self.uiEthernetWarningPushButton.setIcon(icon)
+        self.uiEthernetWarningPushButton.setObjectName("uiEthernetWarningPushButton")
+        self.gridLayout_3.addWidget(self.uiEthernetWarningPushButton, 0, 1, 1, 1)
         self.uiShowSpecialInterfacesCheckBox = QtWidgets.QCheckBox(self.EthernetTab)
         self.uiShowSpecialInterfacesCheckBox.setObjectName("uiShowSpecialInterfacesCheckBox")
-        self.gridLayout_3.addWidget(self.uiShowSpecialInterfacesCheckBox, 2, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.uiShowSpecialInterfacesCheckBox, 2, 0, 1, 2)
+        self.uiEthernetListWidget.raise_()
+        self.uiEthernetComboBox.raise_()
+        self.uiAddEthernetPushButton.raise_()
+        self.uiDeleteEthernetPushButton.raise_()
+        self.uiAddAllEthernetPushButton.raise_()
+        self.uiShowSpecialInterfacesCheckBox.raise_()
+        self.uiEthernetWarningPushButton.raise_()
         self.uiTabWidget.addTab(self.EthernetTab, "")
         self.TAPTab = QtWidgets.QWidget()
         self.TAPTab.setObjectName("TAPTab")
@@ -225,6 +237,7 @@ class Ui_cloudConfigPageWidget(object):
     def retranslateUi(self, cloudConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
         cloudConfigPageWidget.setWindowTitle(_translate("cloudConfigPageWidget", "Cloud configuration"))
+        cloudConfigPageWidget.setWhatsThis(_translate("cloudConfigPageWidget", "<html><head/><body><p>A cloud node allows you to connect your project to the &quot;real world&quot; (a network or host) using either an Ethernet interface, a TAP interface (Linux only) or even an UDP tunnel. <span style=\" font-weight:600;\">Please be aware that Wifi interfaces may not work properly.</span></p></body></html>"))
         self.uiAddEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))
         self.uiAddAllEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add all"))
         self.uiDeleteEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Delete"))

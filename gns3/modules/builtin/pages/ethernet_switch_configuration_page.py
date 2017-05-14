@@ -19,7 +19,7 @@
 Configuration page for Ethernet switches.
 """
 
-from gns3.qt import QtGui, QtCore, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node
 

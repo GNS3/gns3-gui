@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/node_properties_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/node_properties_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_NodePropertiesDialog(object):
-
     def setupUi(self, NodePropertiesDialog):
         NodePropertiesDialog.setObjectName("NodePropertiesDialog")
         NodePropertiesDialog.resize(689, 454)
@@ -70,7 +68,7 @@ class Ui_NodePropertiesDialog(object):
         self.gridlayout.addWidget(self.splitter, 0, 0, 1, 1)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(NodePropertiesDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Reset)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Help|QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Reset)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.gridlayout.addWidget(self.uiButtonBox, 1, 0, 1, 1)
 
@@ -84,6 +82,6 @@ class Ui_NodePropertiesDialog(object):
         self.uiNodesTreeWidget.headerItem().setText(0, _translate("NodePropertiesDialog", "Nodes"))
         self.uiTitleLabel.setText(_translate("NodePropertiesDialog", "Node Configuration"))
         self.textLabel.setText(_translate("NodePropertiesDialog", "Please select a node in the list \n"
-                                          "to display the configuration page."))
+"to display the configuration page."))
 
 from . import resources_rc
