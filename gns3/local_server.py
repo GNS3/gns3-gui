@@ -92,7 +92,6 @@ class LocalServer(QtCore.QObject):
         self._settings = {}
         self.localServerSettings()
         self._port = self._settings.get("port", 3080)
-
         if not self._settings.get("auto_start", True):
             if self._settings.get("host") is None:
                 self._http_client = HTTPClient(self._settings)
@@ -173,6 +172,10 @@ class LocalServer(QtCore.QObject):
                 else:
                     # capabilities not supported
                     request_setuid = True
+            except AttributeError:
+                # Due to a Python bug, os.listxattr could be missing: https://github.com/GNS3/gns3-gui/issues/2010
+                log.warning("Could not determine if CAP_NET_RAW capability is set for uBridge (Python bug)")
+                return True
             except OSError as e:
                 QtWidgets.QMessageBox.critical(self.parent(), "uBridge", "Can't set CAP_NET_RAW capability to uBridge {}: {}".format(path, str(e)))
                 return False
@@ -511,7 +514,7 @@ class LocalServer(QtCore.QObject):
         :returns: boolean
         """
 
-        status, json_data = getSynchronous(self._settings["host"], self._port, "version",
+        status, json_data = getSynchronous(self._settings["protocol"], self._settings["host"], self._port, "version",
                                            timeout=2, user=self._settings["user"], password=self._settings["password"])
 
         if json_data is None or status != 200:

@@ -108,7 +108,8 @@ class Progress(QtCore.QObject):
             for query in self._queries.copy().values():
                 query["response"].abort()
 
-    def _rejectSlot(self):
+    @qslot
+    def _rejectSlot(self, *args):
         if self._progress_dialog is not None and not sip.isdeleted(self._progress_dialog) or self._progress_dialog.wasCanceled():
             self._progress_dialog.deleteLater()
             self._progress_dialog = None
@@ -124,7 +125,7 @@ class Progress(QtCore.QObject):
         self.show_signal.emit()
 
     @qslot
-    def _showSlot(self):
+    def _showSlot(self, *args):
         if self._show_lock:
             return
         self._show_lock = True

@@ -93,6 +93,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.uiHeadlessCheckBox.setChecked(self._settings["headless"])
         Controller.instance().get("/gns3vm/engines", self._listEnginesCallback)
 
+    @qslot
     def _listEnginesCallback(self, result, error=False, ignore_error=False, **kwargs):
         if error:
             if "message" in result:

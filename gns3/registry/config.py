@@ -18,7 +18,6 @@
 
 
 import json
-import sys
 import os
 import urllib
 
@@ -227,7 +226,8 @@ class Config:
         new_config["options"] = options.strip()
 
         for image in appliance_config["images"]:
-            new_config[image["type"]] = self._relative_image_path("QEMU", image["path"])
+            if image.get("path"):
+                new_config[image["type"]] = self._relative_image_path("QEMU", image["path"])
 
         new_config.setdefault("hda_disk_image", "")
         new_config.setdefault("hdb_disk_image", "")

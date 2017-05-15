@@ -26,6 +26,10 @@ from .drawing_item import DrawingItem
 from .utils import colorFromSvg
 
 
+import logging
+log = logging.getLogger(__name__)
+
+
 class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
     """
     Text item for the QGraphicsView.
@@ -45,7 +49,10 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         self.setFont(qt_font)
 
         if svg:
-            svg = self.fromSvg(svg)
+            try:
+                svg = self.fromSvg(svg)
+            except ET.ParseError as e:
+                log.warning(str(e))
 
         if self._id is None:
             self.create()

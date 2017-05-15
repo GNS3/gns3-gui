@@ -426,7 +426,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # Portable GNS3 project
             Topology.instance().importProject(path)
         elif path.endswith(".net"):
-            QtWidgets.QMessageBox.critical(self, "Open project", "Importing legacy project is not supported in 2.0.\nYou need to open it with GNS3 1.x in order to convert it or manually run the gns3 converter.")
+            QtWidgets.QMessageBox.critical(self, "Open project", "Importing legacy project is not supported in 2.0.\nYou must open it using GNS3 1.x in order to convert it or manually run the gns3 converter.")
             return
 
         elif path.endswith(".gns3appliance") or path.endswith(".gns3a"):
@@ -439,7 +439,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._appliance_wizard.show()
             self._appliance_wizard.exec_()
         elif path.endswith(".gns3"):
-            Topology.instance().loadProject(path)
+            if Controller.instance().isRemote():
+                QtWidgets.QMessageBox.critical(self, "Open project", "Cannot open a .gns3 file on a remote server, please use a portable project (.gns3p) instead")
+                return
+            else:
+                Topology.instance().loadProject(path)
         else:
             try:
                 extension = path.split('.')[1]
@@ -447,7 +451,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             except IndexError:
                 QtWidgets.QMessageBox.critical(self, "File open", "Missing file extension for {}".format(path))
 
-    def _projectChangedSlot(self):
+    @qslot
+    def _projectChangedSlot(self, *args):
         """
         Called when a project finish to load
         """
@@ -960,21 +965,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         log.debug("Close the Main Window")
         self._analytics_client.sendScreenView("Main Window", session_start=False)
 
-        project = Topology.instance().project()
-        if not project:
-            self._finish_application_closing(close_windows=False)
-            event.accept()
-            self.uiConsoleTextEdit.closeIO()
-        elif project.closed() or not project.autoClose():
-            log.debug("Project is closed killing server and closing main windows")
-            self._finish_application_closing(close_windows=False)
-            event.accept()
-            self.uiConsoleTextEdit.closeIO()
-        else:
-            log.debug("Project is not closed asking for project closing")
-            project.project_closed_signal.connect(self._finish_application_closing)
-            project.close(local_server_shutdown=True)
-            event.ignore()
+        self._finish_application_closing(close_windows=False)
+        event.accept()
+        self.uiConsoleTextEdit.closeIO()
 
     def _finish_application_closing(self, close_windows=True):
         """

@@ -47,7 +47,10 @@ class PacketCapture:
         Kill all running captures (for example when change project)
         """
         for process in list(self._tail_process.values()):
-            process.kill()
+            try:
+                process.kill()
+            except OSError:
+                pass
         self._tail_process = {}
         self._capture_reader_process = {}
 
@@ -209,6 +212,9 @@ class PacketCapture:
             # normal traffic capture
             if not sys.platform.startswith("win"):
                 command = shlex.split(command)
+            if len(command) == 0:
+                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "No packet capture program configured")
+                return
             try:
                 self._capture_reader_process[link] = subprocess.Popen(command)
             except OSError as e:

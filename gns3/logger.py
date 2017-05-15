@@ -105,7 +105,11 @@ def init_logger(level, logfile, quiet=False):
             name, lno = name.split(":")
             lno = int(lno)
         name = name.replace("gns3.", "")
-        return log_factory(name, level, fn, lno, msg, args, exc_info, func=func, sinfo=sinfo, **kwargs)
+        try:
+            return log_factory(name, level, fn, lno, msg, args, exc_info, func=func, sinfo=sinfo, **kwargs)
+        except Exception as e:  # To avoid recursion we just print the message if something is wrong when logging
+            print(msg)
+            return
     logging.setLogRecordFactory(factory)
 
     try:

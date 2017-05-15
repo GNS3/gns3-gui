@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
+import ssl
 import http
 import json
 import urllib.request
@@ -23,12 +25,12 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def getSynchronous(host, port, endpoint, timeout=2, user=None, password=None):
+def getSynchronous(protocol, host, port, endpoint, timeout=2, user=None, password=None):
     """
     :returns: Tuple (Status code, json of anwser). Status 0 is a non HTTP error
     """
     try:
-        url = "http://{host}:{port}/v2/{endpoint}".format(host=host, port=port, endpoint=endpoint)
+        url = "{protocol}://{host}:{port}/v2/{endpoint}".format(protocol=protocol, host=host, port=port, endpoint=endpoint)
 
         if user is not None and len(user) > 0:
             log.debug("Synchronous get {} with user '{}'".format(url, user))
@@ -42,7 +44,14 @@ def getSynchronous(host, port, endpoint, timeout=2, user=None, password=None):
         else:
             log.debug("Synchronous get {} (no authentication)".format(url))
 
-        response = urllib.request.urlopen(url, timeout=timeout)
+        if sys.version_info >= (3, 5):
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            response = urllib.request.urlopen(url, timeout=timeout, context=ctx)
+        else:
+            response = urllib.request.urlopen(url, timeout=timeout)
+
         content_type = response.getheader("CONTENT-TYPE")
         if response.status == 200:
             if content_type == "application/json":

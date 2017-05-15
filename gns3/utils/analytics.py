@@ -43,7 +43,16 @@ class AnalyticsClient(QtCore.QObject):
         self._manager = QtNetwork.QNetworkAccessManager(self)
 
         def finished(network_reply):
-            error = network_reply.error()
+            try:
+                error = network_reply.error()
+            except TypeError:
+                # For unknow reason sometimes error is transform to a signal
+                # we receive few crash report about that, but we are not able
+                # to reproduce. We suspect the problem happen when the
+                # application is closing.
+                #
+                # https://github.com/GNS3/gns3-gui/issues/2011
+                return
             if error != QtNetwork.QNetworkReply.NoError:
                 log.debug("Error when pushing to Google Analytics %s", network_reply.errorString())
 

@@ -274,9 +274,7 @@ class Node(BaseNode):
 
         if "properties" in result:
             for name, value in result["properties"].items():
-                if name.startswith("slot") or name.startswith("wic"):
-                    pass
-                elif name in self._settings and self._settings[name] != value:
+                if name in self._settings and self._settings[name] != value:
                     log.debug("{} setting up and updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
                     self._settings[name] = value
 

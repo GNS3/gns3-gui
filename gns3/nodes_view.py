@@ -208,6 +208,8 @@ class NodesView(QtWidgets.QTreeWidget):
             for vm_key, vm in module.instance().VMs().items():
                 if vm["name"] == node["name"]:
                     break
+            if vm is None:
+                return
             menu = QtWidgets.QMenu()
             configuration = QtWidgets.QAction("Configure Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/configuration.svg"))

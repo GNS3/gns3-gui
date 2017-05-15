@@ -15,12 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import zipfile
-import shutil
-
 from ..qt import QtCore
-from ..local_server import LocalServer
 
 
 class ExportProjectWorker(QtCore.QObject):
@@ -41,7 +36,6 @@ class ExportProjectWorker(QtCore.QObject):
 
     def run(self):
 
-        vm_server = None
         self._project.get("/export?include_images={}".format(self._include_images),
                           self._exportReceived,
                           downloadProgressCallback=self._downloadFileProgress,
