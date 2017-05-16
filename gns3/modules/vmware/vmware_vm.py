@@ -19,12 +19,9 @@
 VMware VM implementation.
 """
 
-import os
-import sys
-import tempfile
-
 from gns3.qt import QtCore
 from gns3.node import Node
+from gns3.utils.bring_to_front import bring_window_to_front_from_process_name
 from .settings import VMWARE_VM_SETTINGS
 
 import logging
@@ -173,6 +170,14 @@ class VMwareVM(Node):
         """
 
         return self._settings["console"]
+
+    def bringToFront(self):
+        """
+        Bring the VM window to front.
+        """
+
+        if self.status() == Node.started:
+            bring_window_to_front_from_process_name("vmware")
 
     def configPage(self):
         """

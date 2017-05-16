@@ -22,7 +22,7 @@ Graphical view on the scene where items are drawn.
 import logging
 import os
 import sip
-import pickle
+import sys
 
 from .qt import QtCore, QtGui, QtNetwork, QtWidgets, qpartial, qslot
 from .items.node_item import NodeItem
@@ -808,6 +808,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             show_in_file_manager_action.triggered.connect(self.getCommandLineSlot)
             menu.addAction(show_in_file_manager_action)
 
+        if sys.platform.startswith("win") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
+            # Action: bring console or window to front (Windows only)
+            bring_to_front_action = QtWidgets.QAction("Bring to front", menu)
+            bring_to_front_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
+            bring_to_front_action.triggered.connect(self.bringToFromSlot)
+            menu.addAction(bring_to_front_action)
+
         if True in list(map(lambda item: isinstance(item, NoteItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
             # action only for port labels
             reset_label_position_action = QtWidgets.QAction("Reset position", menu)
@@ -1190,6 +1197,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 dialog.setTextValue(router.commandLine())
                 dialog.show()
                 dialog.exec_()
+
+    def bringToFrontSlot(self):
+        """
+        Slot to receive events from the bring to front action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"):
+                item.node().bringToFront()
 
     def idlepcActionSlot(self):
         """

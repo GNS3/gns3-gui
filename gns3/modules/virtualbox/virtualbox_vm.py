@@ -19,11 +19,8 @@
 VirtualBox VM implementation.
 """
 
-import sys
-import os
-import tempfile
-
 from gns3.node import Node
+from gns3.utils.bring_to_front import bring_window_to_front_from_title
 from .settings import VBOX_VM_SETTINGS
 
 import logging
@@ -153,6 +150,14 @@ class VirtualBoxVM(Node):
         :returns: port (integer)
         """
         return self._settings["console"]
+
+    def bringToFront(self):
+        """
+        Bring the VM window to front.
+        """
+
+        if self.status() == Node.started:
+            bring_window_to_front_from_title("{} [".format(self._settings["vmname"]))
 
     def configPage(self):
         """
