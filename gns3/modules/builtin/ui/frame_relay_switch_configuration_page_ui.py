@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/dynamips/ui/frame_relay_switch_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/frame_relay_switch_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.4.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_frameRelaySwitchConfigPageWidget(object):
-
     def setupUi(self, frameRelaySwitchConfigPageWidget):
         frameRelaySwitchConfigPageWidget.setObjectName("frameRelaySwitchConfigPageWidget")
-        frameRelaySwitchConfigPageWidget.resize(499, 405)
+        frameRelaySwitchConfigPageWidget.resize(499, 414)
         self.gridLayout_2 = QtWidgets.QGridLayout(frameRelaySwitchConfigPageWidget)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiGeneralGroupBox = QtWidgets.QGroupBox(frameRelaySwitchConfigPageWidget)
@@ -136,6 +134,7 @@ class Ui_frameRelaySwitchConfigPageWidget(object):
     def retranslateUi(self, frameRelaySwitchConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
         frameRelaySwitchConfigPageWidget.setWindowTitle(_translate("frameRelaySwitchConfigPageWidget", "Frame Relay Switch"))
+        frameRelaySwitchConfigPageWidget.setWhatsThis(_translate("frameRelaySwitchConfigPageWidget", "<html><head/><body><p>This is a simple Frame Relay switch. Only serial links can be connected to it. <span style=\" font-weight:600;\">Note that only the Frame-Relay LMI AINSI type is supported.</span></p></body></html>"))
         self.uiGeneralGroupBox.setTitle(_translate("frameRelaySwitchConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("frameRelaySwitchConfigPageWidget", "Name:"))
         self.uiFrameRelayMappingGroupBox.setTitle(_translate("frameRelaySwitchConfigPageWidget", "Mapping"))
@@ -149,3 +148,4 @@ class Ui_frameRelaySwitchConfigPageWidget(object):
         self.uiDestinationDLCILabel.setText(_translate("frameRelaySwitchConfigPageWidget", "DLCI:"))
         self.uiAddPushButton.setText(_translate("frameRelaySwitchConfigPageWidget", "&Add"))
         self.uiDeletePushButton.setText(_translate("frameRelaySwitchConfigPageWidget", "&Delete"))
+

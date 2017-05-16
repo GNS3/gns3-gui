@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>499</width>
-    <height>405</height>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Frame Relay Switch</string>
+  </property>
+  <property name="whatsThis">
+   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a simple Frame Relay switch. Only serial links can be connected to it. &lt;span style=&quot; font-weight:600;&quot;&gt;Note that only the Frame-Relay LMI AINSI type is supported.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0" colspan="2">

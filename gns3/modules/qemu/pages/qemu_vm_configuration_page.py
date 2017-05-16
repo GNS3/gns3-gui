@@ -26,7 +26,7 @@ from collections import OrderedDict
 from gns3.modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node
-from gns3.qt import QtGui, QtCore, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.modules.module_error import ModuleError
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.image_manager import ImageManager

@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>758</width>
-    <height>299</height>
+    <width>821</width>
+    <height>363</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Cloud configuration</string>
+  </property>
+  <property name="whatsThis">
+   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A cloud node allows you to connect your project to the &amp;quot;real world&amp;quot; (a network or host) using either an Ethernet interface, a TAP interface (Linux only) or even an UDP tunnel. &lt;span style=&quot; font-weight:600;&quot;&gt;Please be aware that Wifi interfaces may not work properly.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -40,21 +43,21 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="0" column="2">
         <widget class="QPushButton" name="uiAddEthernetPushButton">
          <property name="text">
           <string>&amp;Add</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="0" column="3">
         <widget class="QPushButton" name="uiAddAllEthernetPushButton">
          <property name="text">
           <string>&amp;Add all</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
+       <item row="0" column="4">
         <widget class="QPushButton" name="uiDeleteEthernetPushButton">
          <property name="enabled">
           <bool>false</bool>
@@ -64,7 +67,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="4">
+       <item row="1" column="0" colspan="5">
         <widget class="QListWidget" name="uiEthernetListWidget">
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
@@ -74,7 +77,17 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="0" column="1">
+        <widget class="QPushButton" name="uiEthernetWarningPushButton">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset theme="dialog-warning"/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
         <widget class="QCheckBox" name="uiShowSpecialInterfacesCheckBox">
          <property name="text">
           <string>&amp;Show special Ethernet interfaces</string>
@@ -88,6 +101,7 @@
       <zorder>uiDeleteEthernetPushButton</zorder>
       <zorder>uiAddAllEthernetPushButton</zorder>
       <zorder>uiShowSpecialInterfacesCheckBox</zorder>
+      <zorder>uiEthernetWarningPushButton</zorder>
      </widget>
      <widget class="QWidget" name="TAPTab">
       <attribute name="title">

@@ -19,13 +19,12 @@
 Configuration page for clouds.
 """
 
-from gns3.qt import QtGui, QtCore, QtWidgets
+from gns3.qt import QtCore, QtWidgets
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.controller import Controller
 from gns3.node import Node
 
 from ..ui.cloud_configuration_page_ui import Ui_cloudConfigPageWidget
-from ..cloud import Cloud
 
 
 class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
@@ -48,6 +47,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         # connect Ethernet slots
         self.uiEthernetListWidget.itemSelectionChanged.connect(self._EthernetChangedSlot)
+        self.uiEthernetWarningPushButton.clicked.connect(self._EthernetWarningSlot)
         self.uiAddEthernetPushButton.clicked.connect(self._EthernetAddSlot)
         self.uiAddAllEthernetPushButton.clicked.connect(self._EthernetAddAllSlot)
         self.uiDeleteEthernetPushButton.clicked.connect(self._EthernetDeleteSlot)
@@ -78,6 +78,13 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             self.uiDeleteEthernetPushButton.setEnabled(True)
         else:
             self.uiDeleteEthernetPushButton.setEnabled(False)
+
+    def _EthernetWarningSlot(self):
+        """
+        Shows a warning about Wifi Ethernet interfaces.
+        """
+
+        QtWidgets.QMessageBox.warning(self, "Ethernet interfaces", "Wifi interfaces may not work properly. It is recommended to use wired Ethernet or Loopback interfaces only.")
 
     def _EthernetAddSlot(self, interface=None):
         """
