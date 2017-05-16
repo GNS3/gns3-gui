@@ -95,7 +95,7 @@
         "type": "integer",
         "title": "Optional port segment size. A port segment is a block of port. For example Ethernet0/0 Ethernet0/1 is the module 0 with a port segment size of 2"
     },
-    "linked_base": {
+    "linked_clone": {
         "type": "boolean",
         "title": "False if you don't want to use a single image for all nodes"
     },

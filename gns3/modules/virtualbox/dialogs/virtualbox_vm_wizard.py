@@ -100,7 +100,7 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
             "vmname": vmname,
             "server": self._compute_id,
             "ram": vminfo["ram"],
-            "linked_base": self.uiBaseVMCheckBox.isChecked()
+            "linked_clone": self.uiBaseVMCheckBox.isChecked()
         }
 
         return settings

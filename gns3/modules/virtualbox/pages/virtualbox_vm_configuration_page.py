@@ -86,8 +86,8 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
                 self.uiNameLabel.hide()
                 self.uiNameLineEdit.hide()
 
-            if "linked_base" in settings:
-                self.uiBaseVMCheckBox.setChecked(settings["linked_base"])
+            if "linked_clone" in settings:
+                self.uiBaseVMCheckBox.setChecked(settings["linked_clone"])
             else:
                 self.uiBaseVMCheckBox.hide()
 
@@ -163,8 +163,8 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
                 else:
                     settings["name"] = name
 
-            if "linked_base" in settings:
-                settings["linked_base"] = self.uiBaseVMCheckBox.isChecked()
+            if "linked_clone" in settings:
+                settings["linked_clone"] = self.uiBaseVMCheckBox.isChecked()
 
         if not node:
             # these are template settings

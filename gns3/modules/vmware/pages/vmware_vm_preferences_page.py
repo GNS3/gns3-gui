@@ -69,7 +69,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vmware_vm["name"]])
-        if vmware_vm["linked_base"]:
+        if vmware_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["server"]).name()])
@@ -77,7 +77,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])
         QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vmware_vm["acpi_shutdown"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vmware_vm["linked_base"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vmware_vm["linked_clone"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")

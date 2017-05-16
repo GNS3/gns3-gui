@@ -317,7 +317,7 @@ def test_migrateRemoveInternetVM(tmpdir):
                         "adapters": 1,
                         "cdrom_image": "",
                         "hdb_disk_image": "",
-                        "linked_base": True,
+                        "linked_clone": True,
                         "hdd_disk_interface": "ide",
                         "hdc_disk_image": "",
                         "platform": ""

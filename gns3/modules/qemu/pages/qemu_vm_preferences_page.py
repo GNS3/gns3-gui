@@ -70,7 +70,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", qemu_vm["name"]])
-        if qemu_vm["linked_base"]:
+        if qemu_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", qemu_vm["default_name_format"]])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(qemu_vm["server"]).name()])
@@ -79,7 +79,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", qemu_vm["console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["CPUs:", str(qemu_vm["cpus"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Memory:", "{} MB".format(qemu_vm["ram"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(qemu_vm["linked_base"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(qemu_vm["linked_clone"])])
 
         if qemu_vm["qemu_path"]:
             QtWidgets.QTreeWidgetItem(section_item, ["QEMU binary:", os.path.basename(qemu_vm["qemu_path"])])
