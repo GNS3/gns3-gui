@@ -1,5 +1,38 @@
 # Change Log
 
+## 2.0.1 16/05/2017
+
+* Improve inline help. Fixes #1999. Add a warning about wifi interfaces in the cloud. Fixes #1902.
+* Copy remote directory path into clipboard in "Show in FileManager". Fixes #1966.
+* Fix display of error in progress dialog when we don't have thread
+* Fix lost slot and port in dynamips settings
+* Do not run import / export of project in seperate thread
+* Assert when running an HTTP query outside the main thread
+* Proper error when you try to load the pid file as config file
+* Log malformed svg text item
+* Fix a race condition when right click and delete a node at the same time
+* Fix a race condition when snapshoting a closed project
+* Update doctor_dialog.py
+* Catch remaining missing function listxattr on some Linux host.
+* Fix a race condition when creating node and closing project
+* Fix error if you put a path in a .gns3a file for qemu
+* Fix AttributeError: 'NoneType' object has no attribute '_refreshVisibleWidgets'
+* Do not crash if the logging code raise an exception
+* Fix some crash in dynamips device preference page
+* Fix warning when loading IOU images on Windows
+* Do not crash if you don't have configure a packet capture program on Windows
+* Ignore error when we can't kill the packet capture
+* Fix AttributeError: 'NoneType' object has no attribute 'wasCanceled'
+* Fix RuntimeError: wrapped C/C++ object of type QComboBox has been deleted
+* Fix RuntimeError: wrapped C/C++ object of type QTreeWidgetItem has been deleted
+* Fix detection of https when use for the local server
+* Silent the _COMPIZ_TOOLKIT_ACTION warning
+* Cacth TypeError: native Qt signal is not callable
+* Fix AttributeError: 'C7200' object has no attribute 'warning_signal'
+* Catch missing function listxattr on some linux host
+* Disallow opening a .gns3 on a remote server
+* Fix project closing when we have multiple client connected
+
 ## 2.0.0 02/05/2017
 
 * Clarify that we don't override vmware custom adapters
