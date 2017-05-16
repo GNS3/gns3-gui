@@ -242,7 +242,8 @@ class Controller(QtCore.QObject):
         if error:
             fallback_used = False
             for callback, fallback in self._static_asset_download_queue[path]:
-                self.getStatic(fallback, callback)
+                if fallback:
+                    self.getStatic(fallback, callback)
                 fallback_used = True
             if fallback_used:
                 log.error("Error while downloading file: {}".format(url))
