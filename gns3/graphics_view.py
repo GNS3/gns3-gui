@@ -812,7 +812,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             # Action: bring console or window to front (Windows only)
             bring_to_front_action = QtWidgets.QAction("Bring to front", menu)
             bring_to_front_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
-            bring_to_front_action.triggered.connect(self.bringToFromSlot)
+            bring_to_front_action.triggered.connect(self.bringToFrontSlot)
             menu.addAction(bring_to_front_action)
 
         if True in list(map(lambda item: isinstance(item, NoteItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
