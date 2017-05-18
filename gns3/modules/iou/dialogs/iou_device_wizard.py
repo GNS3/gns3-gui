@@ -132,7 +132,6 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
         settings = {
             "name": self.uiNameLineEdit.text(),
             "path": path,
-            "image": os.path.basename(path),
             "startup_config": startup_config,
             "ethernet_adapters": ethernet_adapters,
             "serial_adapters": serial_adapters,
