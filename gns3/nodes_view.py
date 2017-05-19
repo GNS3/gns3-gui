@@ -111,6 +111,7 @@ class NodesView(QtWidgets.QTreeWidget):
                 if appliance["name"] in display_appliances:
                     continue
 
+                display_appliances.add(appliance["name"])
                 item = QtWidgets.QTreeWidgetItem(self)
                 item.setText(0, appliance["name"])
                 item.setData(0, QtCore.Qt.UserRole, appliance["appliance_id"])
