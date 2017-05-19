@@ -142,7 +142,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
     def symbol(self):
         return self._symbol
 
-    def _symbolLoadedCallback(self, path):
+    @qslot
+    def _symbolLoadedCallback(self, path, *args):
         renderer = QImageSvgRenderer(path)
         renderer.setObjectName(path)
         self.setSharedRenderer(renderer)
