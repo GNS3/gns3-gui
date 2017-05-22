@@ -20,7 +20,7 @@ Base class for shape items (Rectangle, ellipse etc.).
 """
 
 import xml.etree.ElementTree as ET
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg
+from ..qt import QtCore, QtGui, QtWidgets
 from .drawing_item import DrawingItem
 from .utils import colorFromSvg
 
@@ -35,11 +35,10 @@ class ShapeItem(DrawingItem):
         QtCore.Qt.SolidLine: "",
         QtCore.Qt.NoPen: None,
         QtCore.Qt.DashLine: "25, 25",
-        QtCore.Qt.DotLine:  "5, 25",
-        QtCore.Qt.DashDotLine:  "5, 25, 25",
+        QtCore.Qt.DotLine: "5, 25",
+        QtCore.Qt.DashDotLine: "5, 25, 25",
         QtCore.Qt.DashDotDotLine: "25, 25, 5, 25, 5"
     }
-
 
     """
     Base class to draw shapes on the scene.
@@ -192,10 +191,10 @@ class ShapeItem(DrawingItem):
         element.set("fill-opacity", str(self.brush().color().alphaF()))
 
         dasharray = self.QT_DASH_TO_SVG[pen.style()]
-        if dasharray is None: # No border to the element
+        if dasharray is None:  # No border to the element
             return element
         elif dasharray == "":
-            pass # Solid line
+            pass  # Solid line
         else:
             element.set("stroke-dasharray", dasharray)
         element.set("stroke-width", str(pen.width()))
@@ -239,7 +238,7 @@ class ShapeItem(DrawingItem):
                 stroke = svg[0].get("stroke-dasharray")
                 if stroke:
                     for (qt_stroke, svg_stroke) in self.QT_DASH_TO_SVG.items():
-                         if svg_stroke == stroke:
+                        if svg_stroke == stroke:
                             pen.setStyle(qt_stroke)
 
         self.setPen(pen)

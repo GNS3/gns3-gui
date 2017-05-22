@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import xml.etree.ElementTree as ET
 
 from . import QtCore
 from . import QtSvg
@@ -43,10 +44,18 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
         except ValueError:
             pass  # On windows we can get an error because the path is too long (it's the svg data)
 
-        res = super().load(path_or_data)
-        # If we can't render a SVG we load and base64 the image to create a SVG
-        if self.isValid():
-            return res
+        try:
+            # We load the SVG with ElementTree before
+            # because Qt when failing loading send noise to logs
+            # and their is no way to prevent that
+            if not path_or_data.startswith(":"):
+                ET.parse(path_or_data)
+            res = super().load(path_or_data)
+            # If we can't render a SVG we load and base64 the image to create a SVG
+            if self.isValid():
+                return res
+        except ET.ParseError:
+            pass
 
         image = QtGui.QImage(path_or_data)
         data = QtCore.QByteArray()
