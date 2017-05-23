@@ -210,7 +210,7 @@ class LocalConfig(QtCore.QObject):
         if "version" in self._settings:
             if parse_version(self._settings["version"])[:2] > parse_version(__version__)[:2]:
                 QtWidgets.QApplication(sys.argv)  # We need to create an application because settings are loaded before Qt init
-                QtWidgets.QMessageBox.critical(None, "Version error", "Your settings are for version {} of GNS3. You cannot use a previous version of GNS3 without risking losing data.".format(self._settings["version"]))
+                QtWidgets.QMessageBox.critical(None, "Version error", "Your settings are for version {} of GNS3. You cannot use a previous version of GNS3 without risking losing data. If you want to reset delete the settings in {}".format(self._settings["version"], self.configDirectory()))
                 # Exit immediately not clean but we want to avoid any side effect that could corrupt the file
                 sys.exit(1)
 
