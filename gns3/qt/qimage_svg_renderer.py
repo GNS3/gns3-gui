@@ -22,16 +22,21 @@ from . import QtCore
 from . import QtSvg
 from . import QtGui
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class QImageSvgRenderer(QtSvg.QSvgRenderer):
     """
     Renderer pixmap and svg to SVG item
 
     :param path_or_data: Svg element of path to a SVG
+    :param fallback: Image to display if the image is not working
     """
 
-    def __init__(self, path_or_data=None):
+    def __init__(self, path_or_data=None, fallback=None):
         super().__init__()
+        self._fallback = fallback
         self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}"></svg>"""
         self.load(path_or_data)
 
@@ -61,12 +66,21 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
         data = QtCore.QByteArray()
         buf = QtCore.QBuffer(data)
         image.save(buf, 'PNG')
-        self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}">
-<image width="{width}" height="{height}" xlink:href="data:image/png;base64,{data}"/>
-</svg>""".format(data=bytes(data.toBase64()).decode(),
-                 width=image.rect().width(),
-                 height=image.rect().height())
-        return super().load(self._svg.encode())
+        if image.rect().width() > 0:
+            self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}">
+    <image width="{width}" height="{height}" xlink:href="data:image/png;base64,{data}"/>
+    </svg>""".format(data=bytes(data.toBase64()).decode(),
+                     width=image.rect().width(),
+                     height=image.rect().height())
+            res = super().load(self._svg.encode())
+        elif self._fallback:
+            log.error("Invalid or corrupted image file")
+            res = super().load(self._fallback)
+        else:
+            self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                           </svg>"""
+            res = super().load(self._svg.encode())
+        return res
 
     def svg(self):
         """

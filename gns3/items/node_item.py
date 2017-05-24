@@ -144,7 +144,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
     @qslot
     def _symbolLoadedCallback(self, path, *args):
-        renderer = QImageSvgRenderer(path)
+        renderer = QImageSvgRenderer(path, fallback=":/icons/cancel.svg")
         renderer.setObjectName(path)
         self.setSharedRenderer(renderer)
         if self._node.settings().get("symbol") != self._symbol:
