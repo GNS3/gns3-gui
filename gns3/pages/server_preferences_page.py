@@ -190,7 +190,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteMainServerPortSpinBox.setValue(servers_settings["port"])
         self.uiRemoteMainServerUserLineEdit.setText(servers_settings["user"])
         self.uiRemoteMainServerPasswordLineEdit.setText(servers_settings["password"])
-        self.uiRemoteMainServerProtocolComboBox.setCurrentText(servers_settings["protocol"])
         self.uiRemoteMainServerAuthCheckBox.setChecked(servers_settings["auth"])
 
         self.uiLocalServerAutoStartCheckBox.setChecked(servers_settings["auto_start"])
@@ -283,7 +282,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         else:
             new_local_server_settings["host"] = self.uiRemoteMainServerHostLineEdit.text()
             new_local_server_settings["port"] = self.uiRemoteMainServerPortSpinBox.value()
-            new_local_server_settings["protocol"] = self.uiRemoteMainServerProtocolComboBox.currentText()
+            new_local_server_settings["protocol"] = "http"
             new_local_server_settings["user"] = self.uiRemoteMainServerUserLineEdit.text()
             new_local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
             new_local_server_settings["auth"] = self.uiRemoteMainServerAuthCheckBox.isChecked()

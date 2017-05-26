@@ -216,7 +216,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 self.uiRemoteMainServerUserLineEdit.setText(local_server_settings["user"])
                 self.uiRemoteMainServerPasswordLineEdit.setText(local_server_settings["password"])
             self.uiRemoteMainServerPortSpinBox.setValue(local_server_settings["port"])
-            self.uiRemoteMainServerProtocolComboBox.setCurrentText(local_server_settings["protocol"])
         elif self.page(page_id) == self.uiLocalServerStatusWizardPage:
             self._refreshLocalServerStatusSlot()
 
@@ -331,7 +330,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             local_server_settings["auto_start"] = False
             local_server_settings["host"] = self.uiRemoteMainServerHostLineEdit.text()
             local_server_settings["port"] = self.uiRemoteMainServerPortSpinBox.value()
-            local_server_settings["protocol"] = self.uiRemoteMainServerProtocolComboBox.currentText()
+            local_server_settings["protocol"] = "http"
             local_server_settings["user"] = self.uiRemoteMainServerUserLineEdit.text()
             local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
             local_server_settings["auth"] = self.uiRemoteMainServerAuthCheckBox.isChecked()
