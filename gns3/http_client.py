@@ -607,7 +607,7 @@ class HTTPClient(QtCore.QObject):
                 if not body or content_type != "application/json":
                     callback({"message": error_message}, error=True, server=server, context=context)
                 else:
-                    log.debug(body)
+                    # log.debug(body)
                     try:
                         callback(json.loads(body), error=True, server=server, context=context)
                     except ValueError:
@@ -637,7 +637,7 @@ class HTTPClient(QtCore.QObject):
             except UnicodeDecodeError:
                 body = None
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
-            log.debug(body)
+            # log.debug(body)
             if body and len(body.strip(" \n\t")) > 0 and content_type == "application/json":
                 params = json.loads(body)
             else:

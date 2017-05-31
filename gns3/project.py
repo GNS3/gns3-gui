@@ -461,7 +461,9 @@ class Project(QtCore.QObject):
 
     def _event_received(self, result, server=None, **kwargs):
 
-        log.debug("Event received: %s", result)
+        # Log only relevant events
+        if result["action"] not in ("ping", "compute.updated"):
+            log.debug("Event received: %s", result)
         if result["action"] == "node.created":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is None:
