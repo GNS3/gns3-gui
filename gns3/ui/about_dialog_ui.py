@@ -72,7 +72,7 @@ class Ui_AboutDialog(object):
         self.gridLayout_2.addWidget(self.buttonBox, 1, 0, 1, 1)
 
         self.retranslateUi(AboutDialog)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.buttonBox.accepted.connect(AboutDialog.accept)
         self.buttonBox.rejected.connect(AboutDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(AboutDialog)
