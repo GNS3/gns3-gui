@@ -1,5 +1,17 @@
 # Change Log
 
+## 2.0.2 30/05/2017
+
+* Show a default symbol in case of corrupted file
+* When another gui is already running exit instead of proper close to avoid any issue
+* Fix duplicate on remote server use wrong location
+* Display the location of settings when we disallow opening due to old release
+* Improve search for dynamips in development on OSX
+* Fix error display when loading a .png custom symbol
+* Fix a crash in the progress dialog
+* Fix a race condition when exporting a closed project
+* Fix RuntimeError: wrapped C/C++ object of type NodeItem has been deleted
+
 ## 2.0.1 16/05/2017
 
 * Improve inline help. Fixes #1999. Add a warning about wifi interfaces in the cloud. Fixes #1902.

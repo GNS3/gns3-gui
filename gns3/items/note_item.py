@@ -201,7 +201,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
                 val = val.strip()
 
                 if key == "font-size":
-                    font.setPointSize(int(val))
+                    font.setPointSizeF(float(val))
                 elif key == "font-family":
                     font.setFamily(val)
                 elif key == "font-style" and val == "italic":
@@ -252,7 +252,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
         style = ""
 
         style += "font-family: {};".format(self.font().family())
-        style += "font-size: {};".format(self.font().pointSize())
+        style += "font-size: {};".format(self.font().pointSizeF())
 
         if self.font().italic():
             style += "font-style: italic;"

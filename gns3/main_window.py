@@ -1015,7 +1015,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
-                self.close()
+                sys.exit(1)
                 return
 
         if not sys.platform.startswith("win") and os.geteuid() == 0:

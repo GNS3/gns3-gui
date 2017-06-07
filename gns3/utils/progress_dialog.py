@@ -117,7 +117,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
     @qslot
     def accept(self):
-        log.debug("{} thread finished".format(self._worker.objectName()))
+        if self._worker:
+            log.debug("{} thread finished".format(self._worker.objectName()))
         self._cleanup()
         super().accept()
 

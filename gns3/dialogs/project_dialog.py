@@ -132,7 +132,15 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                                                          new_project_name)
             name = name.strip()
             if reply and len(name) > 0:
-                Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id), self._duplicateCallback, body={"name": name})
+                if Controller.instance().isRemote():
+                    Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
+                                               self._duplicateCallback,
+                                               body={"name": name})
+                else:
+                    project_location = os.path.join(Topology.instance().projectsDirPath(), name)
+                    Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
+                                               self._duplicateCallback,
+                                               body={"name": name, "path": project_location})
 
     def _duplicateCallback(self, result, error=False, **kwargs):
         if error:
