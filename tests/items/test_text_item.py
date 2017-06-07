@@ -31,7 +31,7 @@ def test_toSvg(project, controller):
 
     text = svg[0]
     assert text.get("font-family") == "TypeWriter"
-    assert text.get("font-size") == "10"
+    assert text.get("font-size") == "10.0"
     assert text.get("fill") == "#000000"
     assert text.get("fill-opacity") == "1.0"
     assert text.text == "Hello"
@@ -40,7 +40,7 @@ def test_toSvg(project, controller):
 def test_fromSvg(project, controller):
     text = TextItem(project=project)
     font = QtGui.QFont()
-    font.setPointSize(55)
+    font.setPointSizeF(55.8)
     font.setFamily("Verdana")
     font.setBold(True)
     font.setItalic(True)
@@ -53,7 +53,7 @@ def test_fromSvg(project, controller):
     text2.fromSvg(text.toSvg())
     assert text2.toPlainText() == "Hello"
     assert hex(text2.defaultTextColor().rgba()) == "0xffff0000"
-    assert text2.font().pointSize() == 55
+    assert text2.font().pointSizeF() == 55.8
     assert text2.font().family() == "Verdana"
     assert text2.font().italic()
     assert text2.font().bold()

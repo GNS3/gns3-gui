@@ -25,7 +25,7 @@ def test_dump():
     note = NoteItem()
     note.setPlainText("Test")
     font = QtGui.QFont()
-    font.setPointSize(55)
+    font.setPointSizeF(55.8)
     font.setFamily("Verdana")
     font.setBold(True)
     font.setItalic(True)
@@ -39,7 +39,7 @@ def test_dump():
         "x": 0,
         "y": 0,
         "rotation": 0,
-        "style": "font-family: Verdana;font-size: 55;font-style: italic;font-weight: bold;text-decoration: line-through;fill: #ff0000;fill-opacity: 1.0;"
+        "style": "font-family: Verdana;font-size: 55.8;font-style: italic;font-weight: bold;text-decoration: line-through;fill: #ff0000;fill-opacity: 1.0;"
     }
 
 
@@ -47,7 +47,7 @@ def test_setStyle():
     note = NoteItem()
     note.setPlainText("Test")
     font = QtGui.QFont()
-    font.setPointSize(55)
+    font.setPointSizeF(55.8)
     font.setFamily("Verdana")
     font.setBold(True)
     font.setItalic(True)
@@ -59,7 +59,7 @@ def test_setStyle():
     style = note.dump()["style"]
     note2 = NoteItem()
     note2.setStyle(style)
-    assert note2.font().pointSize() == 55
+    assert note2.font().pointSizeF() == 55.8
     assert note2.font().family() == "Verdana"
     assert note2.font().italic()
     assert note2.font().bold()
