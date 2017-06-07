@@ -121,7 +121,7 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
 
         text = ET.SubElement(svg, "text")
         text.set("font-family", self.font().family())
-        text.set("font-size", str(self.font().pointSize()))
+        text.set("font-size", str(self.font().pointSizeF()))
         if self.font().italic():
             text.set("font-style", "italic")
         if self.font().bold():
@@ -157,7 +157,7 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
             color.setAlphaF(float(opacity))
             self.setDefaultTextColor(color)
 
-        font.setPointSize(int(text.get("font-size", self.font().pointSize())))
+        font.setPointSizeF(float(text.get("font-size", self.font().pointSizeF())))
         font.setFamily(text.get("font-family", self.font().family()))
         if text.get("font-style") == "italic":
             font.setItalic(True)

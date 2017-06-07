@@ -20,7 +20,7 @@ Base class for shape items (Rectangle, ellipse etc.).
 """
 
 import xml.etree.ElementTree as ET
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg
+from ..qt import QtCore, QtGui, QtWidgets
 from .drawing_item import DrawingItem
 from .utils import colorFromSvg
 

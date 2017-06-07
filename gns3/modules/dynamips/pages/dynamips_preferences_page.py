@@ -54,6 +54,8 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
             file_filter = "Executable (*.exe);;All files (*.*)"
 
         dynamips_path = shutil.which("dynamips")
+        if sys.platform.startswith("darwin") and dynamips_path is None:
+            dynamips_path = "/Applications/GNS3.app/Contents/Resources/dynamips"
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select Dynamips", dynamips_path, file_filter)
         if not path:
             return
