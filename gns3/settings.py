@@ -266,7 +266,7 @@ LOCAL_SERVER_SETTINGS = {
     "report_errors": True,
     "auto_start": True,
     "allow_console_from_anywhere": False,
-    "auth": True,
+    "auth": False,
     "user": "",
     "password": "",
     "protocol": "http",
