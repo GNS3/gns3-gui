@@ -29,3 +29,13 @@ def test_render_svg():
 def test_render_png():
     renderer = QImageSvgRenderer('resources/images/gns3_icon_256x256.png')
     assert renderer.isValid()
+
+
+def test_render_text_svg():
+    renderer = QImageSvgRenderer('<svg></svg>')
+    assert renderer.isValid()
+
+
+def test_render_text_broken_svg():
+    renderer = QImageSvgRenderer('<svg></svg')
+    assert renderer.isValid() is False
