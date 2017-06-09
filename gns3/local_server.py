@@ -517,7 +517,11 @@ class LocalServer(QtCore.QObject):
         status, json_data = getSynchronous(self._settings["protocol"], self._settings["host"], self._port, "version",
                                            timeout=2, user=self._settings["user"], password=self._settings["password"])
 
-        if json_data is None or status != 200:
+        if status == 401:  # Auth issue that need to be solved later
+            return True
+        elif json_data is None:
+            return False
+        elif status != 200:
             return False
         else:
             version = json_data.get("version", None)
