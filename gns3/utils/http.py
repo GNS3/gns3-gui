@@ -19,6 +19,7 @@ import sys
 import ssl
 import http
 import json
+import base64
 import urllib.request
 
 import logging
@@ -31,16 +32,12 @@ def getSynchronous(protocol, host, port, endpoint, timeout=2, user=None, passwor
     """
     try:
         url = "{protocol}://{host}:{port}/v2/{endpoint}".format(protocol=protocol, host=host, port=port, endpoint=endpoint)
+        request = urllib.request.Request(url)
 
         if user is not None and len(user) > 0:
             log.debug("Synchronous get {} with user '{}'".format(url, user))
-            auth_handler = urllib.request.HTTPBasicAuthHandler()
-            auth_handler.add_password(realm="GNS3 server",
-                                      uri=url,
-                                      user=user,
-                                      passwd=password)
-            opener = urllib.request.build_opener(auth_handler)
-            urllib.request.install_opener(opener)
+            base64string = base64.encodebytes('{}:{}'.format(user, password).encode()).replace(b'\n', b'')
+            request.add_header("Authorization", "Basic {}".format(base64string.decode()))
         else:
             log.debug("Synchronous get {} (no authentication)".format(url))
 
@@ -48,9 +45,9 @@ def getSynchronous(protocol, host, port, endpoint, timeout=2, user=None, passwor
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
-            response = urllib.request.urlopen(url, timeout=timeout, context=ctx)
+            response = urllib.request.urlopen(request, timeout=timeout, context=ctx)
         else:
-            response = urllib.request.urlopen(url, timeout=timeout)
+            response = urllib.request.urlopen(request, timeout=timeout)
 
         content_type = response.getheader("CONTENT-TYPE")
         if response.status == 200:
