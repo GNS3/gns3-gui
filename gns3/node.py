@@ -66,8 +66,12 @@ class Node(BaseNode):
 
     def _exportFileCallback(self, result, error=False, raw_body=None, context={}, **kwargs):
         if not error:
-            with open(context["path"], "wb+") as f:
-                f.write(raw_body)
+            try:
+                with open(context["path"], "wb+") as f:
+                    f.write(raw_body)
+            except OSError as e:
+                log.erro("Can't write %s: %s", context["path"], str(e))
+
 
     def creator(self):
         return self._creator
