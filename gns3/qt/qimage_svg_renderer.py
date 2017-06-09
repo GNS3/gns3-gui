@@ -53,7 +53,7 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
             # We load the SVG with ElementTree before
             # because Qt when failing loading send noise to logs
             # and their is no way to prevent that
-            if not path_or_data.startswith(":"):
+            if not path_or_data.startswith(":") and os.path.exists(path_or_data):
                 ET.parse(path_or_data)
             res = super().load(path_or_data)
             # If we can't render a SVG we load and base64 the image to create a SVG

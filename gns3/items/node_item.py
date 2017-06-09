@@ -374,8 +374,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if self._node_label.toPlainText() != label_data["text"]:
             self._node_label.setPlainText(label_data["text"])
-        self._node_label.setStyle(label_data["style"])
-        self._node_label.setRotation(label_data["rotation"])
+        self._node_label.setStyle(label_data.get("style", ""))
+        self._node_label.setRotation(label_data.get("rotation", 0))
         if label_data["x"] is None:
             self._centerLabel()
             self.updateNode()

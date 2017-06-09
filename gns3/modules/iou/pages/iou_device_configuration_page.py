@@ -86,16 +86,17 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         self.uiIOUImageLineEdit.clear()
         self.uiIOUImageLineEdit.setText(path)
 
-        if "l2" in path:
-            # set the default L2 base startup-config
-            default_base_config = self._base_iou_l2_config_template
-            if default_base_config:
-                self.uiStartupConfigLineEdit.setText(default_base_config)
-        else:
-            # set the default L3 base startup-config
-            default_base_config = self._base_iou_l3_config_template
-            if default_base_config:
-                self.uiStartupConfigLineEdit.setText(default_base_config)
+        if len(self.uiStartupConfigLineEdit.text().strip()) == 0:
+            if "l2" in path:
+                # set the default L2 base startup-config
+                default_base_config = self._base_iou_l2_config_template
+                if default_base_config:
+                    self.uiStartupConfigLineEdit.setText(default_base_config)
+            else:
+                # set the default L3 base startup-config
+                default_base_config = self._base_iou_l3_config_template
+                if default_base_config:
+                    self.uiStartupConfigLineEdit.setText(default_base_config)
 
     def _startupConfigBrowserSlot(self):
         """
