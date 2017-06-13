@@ -1,5 +1,17 @@
 # Change Log
 
+## 2.0.3 13/06/2017
+
+* Display error when we can't export files
+* Fix auth header not sent is some conditions
+* If we have auth issue at server startup continue to get better error
+* Do not override IOU configuration file when you change the image
+* Fix some PNG loading issues on Windows
+* Handle label with missing elements
+* Support floating value for font size
+* Handle partial json in a response
+* Add Dominik as a new team member
+
 ## 2.0.2 30/05/2017
 
 * Show a default symbol in case of corrupted file
