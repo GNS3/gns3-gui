@@ -101,6 +101,11 @@
            <string>vnc</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>spice</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item row="8" column="0">
