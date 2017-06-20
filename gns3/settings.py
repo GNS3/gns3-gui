@@ -184,7 +184,7 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer': 'remote-viewer spice://%h:%p',
+        'Remote Viewer': '"c:\\Program Files\\VirtViewer v5.0-256\\bin\\remote-viewer.exe" spice://%h:%p',
     }
 
     # default Windows SPICE console command
