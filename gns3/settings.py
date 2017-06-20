@@ -184,16 +184,16 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer': '"c:\\Program Files\\VirtViewer v5.0-256\\bin\\remote-viewer.exe" spice://%h:%p',
+        'Remote Viewer (included with GNS3)': '"c:\\Program Files\\VirtViewer v5.0-256\\bin\\remote-viewer.exe" spice://%h:%p',
     }
 
     # default Windows SPICE console command
-    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer']
+    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer (included with GNS3)']
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer': 'remote-viewer spice://%h:%p',
+        'Remote Viewer': '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer spice://%h:%p',
     }
 
     # default Mac OS X SPICE console command
