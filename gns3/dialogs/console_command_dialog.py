@@ -23,6 +23,7 @@ from gns3.local_config import LocalConfig
 from gns3.ui.console_command_dialog_ui import Ui_uiConsoleCommandDialog
 from gns3.settings import PRECONFIGURED_TELNET_CONSOLE_COMMANDS, \
         PRECONFIGURED_VNC_CONSOLE_COMMANDS,                      \
+        PRECONFIGURED_SPICE_CONSOLE_COMMANDS,                    \
         CUSTOM_CONSOLE_COMMANDS_SETTINGS
 
 
@@ -38,7 +39,7 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
 
     def __init__(self, parent, console_type="telnet", current=None):
         """
-        :params console_type: telnet, serial or vnc
+        :params console_type: telnet, serial, vnc or spice
         :params current: Current console command
         """
         super().__init__(parent)
@@ -61,6 +62,9 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
             self._consoles.update(self._settings[self._console_type])
         elif self._console_type == "vnc":
             self._consoles = copy.copy(PRECONFIGURED_VNC_CONSOLE_COMMANDS)
+            self._consoles.update(self._settings[self._console_type])
+        elif self._console_type == "spice":
+            self._consoles = copy.copy(PRECONFIGURED_SPICE_CONSOLE_COMMANDS)
             self._consoles.update(self._settings[self._console_type])
 
         self.uiCommandComboBox.clear()

@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
+# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.8.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_QemuVMWizard(object):
-
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName("QemuVMWizard")
         QemuVMWizard.resize(623, 417)
@@ -97,6 +95,7 @@ class Ui_QemuVMWizard(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiQemuConsoleTypeComboBox = QtWidgets.QComboBox(self.uiConsoleTypeWizardPage)
         self.uiQemuConsoleTypeComboBox.setObjectName("uiQemuConsoleTypeComboBox")
+        self.uiQemuConsoleTypeComboBox.addItem("")
         self.uiQemuConsoleTypeComboBox.addItem("")
         self.uiQemuConsoleTypeComboBox.addItem("")
         self.verticalLayout.addWidget(self.uiQemuConsoleTypeComboBox)
@@ -234,6 +233,7 @@ class Ui_QemuVMWizard(object):
         self.uiConsoleTypeWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose the console type. Telnet will connect to the serial console of the machine. VNC will connect to graphical output of the machine."))
         self.uiQemuConsoleTypeComboBox.setItemText(0, _translate("QemuVMWizard", "telnet"))
         self.uiQemuConsoleTypeComboBox.setItemText(1, _translate("QemuVMWizard", "vnc"))
+        self.uiQemuConsoleTypeComboBox.setItemText(2, _translate("QemuVMWizard", "spice"))
         self.label.setText(_translate("QemuVMWizard", "Note: You don\'t need to install anything on the VM itself."))
         self.uiDiskWizardPage.setTitle(_translate("QemuVMWizard", "Disk image"))
         self.uiDiskWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a base disk image for your virtual machine."))
@@ -250,3 +250,4 @@ class Ui_QemuVMWizard(object):
         self.uiKernelImageLabel.setText(_translate("QemuVMWizard", "Kernel image (vmlinuz):"))
         self.uiKernelImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
         self.uiInitrdLabel.setText(_translate("QemuVMWizard", "Initial RAM disk (initrd):"))
+

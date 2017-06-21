@@ -2,15 +2,13 @@
 
 # Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.8
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_QemuVMConfigPageWidget(object):
-
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
         QemuVMConfigPageWidget.resize(594, 645)
@@ -53,6 +51,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.gridLayout_4.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
         self.uiConsoleTypeComboBox = QtWidgets.QComboBox(self.uiGeneralSettingsTab)
         self.uiConsoleTypeComboBox.setObjectName("uiConsoleTypeComboBox")
+        self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
         self.gridLayout_4.addWidget(self.uiConsoleTypeComboBox, 8, 1, 1, 1)
@@ -429,6 +428,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiSymbolLabel.setText(_translate("QemuVMConfigPageWidget", "Symbol:"))
         self.uiConsoleTypeComboBox.setItemText(0, _translate("QemuVMConfigPageWidget", "telnet"))
         self.uiConsoleTypeComboBox.setItemText(1, _translate("QemuVMConfigPageWidget", "vnc"))
+        self.uiConsoleTypeComboBox.setItemText(2, _translate("QemuVMConfigPageWidget", "spice"))
         self.uiConsoleTypeLabel.setText(_translate("QemuVMConfigPageWidget", "Console type:"))
         self.uiBootPriorityLabel.setText(_translate("QemuVMConfigPageWidget", "Boot priority:"))
         self.uiQemuListLabel.setText(_translate("QemuVMConfigPageWidget", "Qemu binary:"))
@@ -496,3 +496,4 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiBaseVMCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use as a linked base VM"))
         self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown (experimental)"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiAdvancedSettingsTab), _translate("QemuVMConfigPageWidget", "Advanced settings"))
+
