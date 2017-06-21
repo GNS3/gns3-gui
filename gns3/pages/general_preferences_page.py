@@ -57,7 +57,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiTelnetConsolePreconfiguredCommandPushButton.clicked.connect(self._telnetConsolePreconfiguredCommandSlot)
         self.uiVNCConsolePreconfiguredCommandPushButton.clicked.connect(self._vncConsolePreconfiguredCommandSlot)
-        self.uiSPICEConsolePreconfiguredCommandPushButton.clicked.connect(self._spiceConsolePreconfiguredCommandSlot)
         self.uiDefaultLabelFontPushButton.clicked.connect(self._setDefaultLabelFontSlot)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
         self.uiBrowseConfigurationPushButton.clicked.connect(self._browseConfigurationDirectorySlot)
@@ -160,16 +159,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type="vnc", current=cmd)
         if ok:
             self.uiVNCConsoleCommandLineEdit.setText(cmd)
-
-    def _spiceConsolePreconfiguredCommandSlot(self):
-        """
-        Slot to set a chosen pre-configured SPICE console command.
-        """
-
-        cmd = self.uiSPICEConsoleCommandLineEdit.text()
-        (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type="spice", current=cmd)
-        if ok:
-            self.uiSPICEConsoleCommandLineEdit.setText(cmd)
 
     def _importConfigurationFileSlot(self):
         """
@@ -280,9 +269,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiVNCConsoleCommandLineEdit.setText(settings["vnc_console_command"])
         self.uiVNCConsoleCommandLineEdit.setCursorPosition(0)
 
-        self.uiSPICEConsoleCommandLineEdit.setText(settings["spice_console_command"])
-        self.uiSPICEConsoleCommandLineEdit.setCursorPosition(0)
-
         self.uiMultiProfilesCheckBox.setChecked(settings["multi_profiles"])
 
         self.uiImageDirectoriesListWidget.clear()
@@ -347,7 +333,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
             "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
             "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
-            "spice_console_command": self.uiSPICEConsoleCommandLineEdit.text(),
             "delay_console_all": self.uiDelayConsoleAllSpinBox.value(),
             "send_stats": self.uiStatsCheckBox.isChecked(),
             "multi_profiles": self.uiMultiProfilesCheckBox.isChecked()

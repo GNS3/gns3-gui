@@ -24,16 +24,7 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item row="4" column="0">
@@ -99,11 +90,6 @@
          <item>
           <property name="text">
            <string>vnc</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>spice</string>
           </property>
          </item>
         </widget>
@@ -203,16 +189,7 @@
        <string>HDD</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -435,16 +412,7 @@
        <string>CD/DVD</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -500,16 +468,7 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item row="6" column="1">
@@ -633,16 +592,7 @@
        <string>Advanced settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>

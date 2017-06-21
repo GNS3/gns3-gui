@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created: Thu Jan  5 14:49:45 2017
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -51,7 +52,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.gridLayout_4.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
         self.uiConsoleTypeComboBox = QtWidgets.QComboBox(self.uiGeneralSettingsTab)
         self.uiConsoleTypeComboBox.setObjectName("uiConsoleTypeComboBox")
-        self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
         self.gridLayout_4.addWidget(self.uiConsoleTypeComboBox, 8, 1, 1, 1)
@@ -404,10 +404,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.groupBox)
         self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
         self.gridLayout_3.addWidget(self.uiACPIShutdownCheckBox, 2, 0, 1, 2)
-        self.uiQemuOptionsLineEdit.raise_()
-        self.uiQemuOptionsLabel.raise_()
-        self.uiACPIShutdownCheckBox.raise_()
-        self.uiBaseVMCheckBox.raise_()
         self.verticalLayout_2.addWidget(self.groupBox)
         spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem4)
@@ -428,7 +424,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiSymbolLabel.setText(_translate("QemuVMConfigPageWidget", "Symbol:"))
         self.uiConsoleTypeComboBox.setItemText(0, _translate("QemuVMConfigPageWidget", "telnet"))
         self.uiConsoleTypeComboBox.setItemText(1, _translate("QemuVMConfigPageWidget", "vnc"))
-        self.uiConsoleTypeComboBox.setItemText(2, _translate("QemuVMConfigPageWidget", "spice"))
         self.uiConsoleTypeLabel.setText(_translate("QemuVMConfigPageWidget", "Console type:"))
         self.uiBootPriorityLabel.setText(_translate("QemuVMConfigPageWidget", "Boot priority:"))
         self.uiQemuListLabel.setText(_translate("QemuVMConfigPageWidget", "Qemu binary:"))
