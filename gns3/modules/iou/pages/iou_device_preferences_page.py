@@ -256,9 +256,9 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             QtWidgets.QMessageBox.critical(parent, "IOU image", "Cannot read ELF magic number: {}".format(e))
             return
 
-        # file must start with the ELF magic number, be 32-bit, little endian and have an ELF version of 1
-        # normal IOS image are big endian!
-        if elf_header_start != b'\x7fELF\x01\x01\x01':
+        # file must start with the ELF magic number, be 32-bit or 64-bit, little endian and have an ELF version of 1
+        # (normal IOS image are big endian!)
+        if elf_header_start != b'\x7fELF\x01\x01\x01' and elf_header_start != b'\x7fELF\x02\x01\x01':
             QtWidgets.QMessageBox.critical(parent, "IOU image", "Sorry, this is not a valid IOU image!")
             return
 
