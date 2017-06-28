@@ -41,6 +41,10 @@ def spiceConsole(host, port, command):
         log.warning('SPICE client is not configured')
         return
 
+    # ipv6 support
+    if ":" in host:
+        host = "[{}]".format(host)
+
     # replace the place-holders by the actual values
     command = command.replace("%h", host)
     command = command.replace("%p", str(port))

@@ -45,3 +45,11 @@ def test_spice_console_on_linux_with_popen_issues():
 
         with pytest.raises(OSError):
             spiceConsole('localhost', '2525', 'command %h %p')
+
+
+def test_spice_console_with_ipv6_support():
+    with patch('subprocess.Popen') as popen, \
+            patch('sys.platform', new="linux"):
+
+        spiceConsole('::1', '2525', 'command %h %p')
+        popen.assert_called_once_with(shlex.split('command [::1] 2525'), env=os.environ)

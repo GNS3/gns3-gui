@@ -60,3 +60,6 @@ keys
 updates
 .cache
 __pycache__
+
+#Virtualenv
+env
