@@ -23,24 +23,14 @@ on the QGraphics scene.
 import tempfile
 import json
 import sip
-import os
 
 from .qt import QtCore, QtGui, QtWidgets, qpartial
 from .modules import MODULES
-from .node import Node
 from .controller import Controller
 from .appliance_manager import ApplianceManager
 from .dialogs.configuration_dialog import ConfigurationDialog
 from .local_config import LocalConfig
 
-
-CATEGORY_TO_ID = {
-    "firewall": 3,
-    "guest": 2,
-    "switch": 1,
-    "multilayer_switch": 1,
-    "router": 0
-}
 
 CATEGORY_TO_ID = {
     "firewall": 3,
