@@ -18,7 +18,7 @@
 import pytest
 import unittest.mock
 
-from gns3.qt import QtCore, QtNetwork, FakeQtSignal
+from gns3.qt import QtCore, QtNetwork, FakeQtSignal, QtWebSockets
 from gns3.http_client import HTTPClient
 from gns3.version import __version__, __version_info__
 
@@ -332,3 +332,11 @@ def test_callbackConnect_non_gns3_server(http_client):
     http_client._callbackConnect(params)
     assert http_client._connected is False
     mock.assert_called_with({"message": "The remote server http://127.0.0.1:3080 is not a GNS3 server"}, error=True, server=None)
+
+
+def test_connectWebSocket(http_client):
+    with unittest.mock.patch('gns3.qt.QtWebSockets.QWebSocket.open') as open_mock:
+        http_client.connectWebSocket('/test')
+    assert open_mock.called
+    request = open_mock.call_args[0][0]
+    assert request.url().toString() == "ws://127.0.0.1:3080/v2/test"

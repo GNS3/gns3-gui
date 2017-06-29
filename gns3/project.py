@@ -16,7 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from .qt import QtCore, qpartial, QtWidgets, QtNetwork
+import json
+from .qt import QtCore, qpartial, QtWidgets, QtNetwork, qslot
 
 from gns3.controller import Controller
 from gns3.compute_manager import ComputeManager
@@ -24,6 +25,7 @@ from gns3.topology import Topology
 from gns3.local_config import LocalConfig
 from gns3.settings import GRAPHICS_VIEW_SETTINGS
 from gns3.appliance_manager import ApplianceManager
+from gns3.utils import parse_version
 
 import logging
 log = logging.getLogger(__name__)
@@ -443,13 +445,22 @@ class Project(QtCore.QObject):
     def _startListenNotifications(self):
         if not Controller.instance().connected():
             return
-        path = "/projects/{project_id}/notifications".format(project_id=self._id)
-        self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
-                                                                          downloadProgressCallback=self._event_received,
-                                                                          networkManager=self._notification_network_manager,
-                                                                          timeout=None,
-                                                                          showProgress=False,
-                                                                          ignoreErrors=True)
+
+        # Qt websocket before Qt 5.6 doesn't support auth
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0"):
+            path = "/projects/{project_id}/notifications".format(project_id=self._id)
+            self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
+                                                                              downloadProgressCallback=self._event_received,
+                                                                              networkManager=self._notification_network_manager,
+                                                                              timeout=None,
+                                                                              showProgress=False,
+                                                                              ignoreErrors=True)
+
+        else:
+            path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
+            self._notification_stream = Controller.instance().connectWebSocket(path)
+            self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
+            self._notification_stream.error.connect(self._websocket_error)
 
     def _endListenNotificationCallback(self, result, error=False, **kwargs):
         """
@@ -459,8 +470,18 @@ class Project(QtCore.QObject):
             self._notification_stream = None
             self._startListenNotifications()
 
-    def _event_received(self, result, server=None, **kwargs):
+    @qslot
+    def _websocket_error(self, error):
+        if self._notification_stream:
+            log.error(self._notification_stream.errorString())
+            self._notification_stream = None
+            self._startListenNotifications()
 
+    @qslot
+    def _websocket_event_received(self, event):
+        self._event_received(json.loads(event))
+
+    def _event_received(self, result):
         # Log only relevant events
         if result["action"] not in ("ping", "compute.updated"):
             log.debug("Event received: %s", result)

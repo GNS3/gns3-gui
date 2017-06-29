@@ -27,7 +27,7 @@ import ipaddress
 import urllib.request
 
 from .version import __version__, __version_info__
-from .qt import QtCore, QtNetwork, qpartial, sip_is_deleted
+from .qt import QtCore, QtNetwork, qpartial, sip_is_deleted, QtWebSockets
 from .utils import parse_version
 
 import logging
@@ -441,6 +441,31 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
+    def connectWebSocket(self, path, prefix="/v2"):
+        """
+        Path of the websocket endpoint
+        """
+        host = self._getHostForQuery()
+        socket = QtWebSockets.QWebSocket()
+        request = socket.request()
+        request.setUrl(QtCore.QUrl("ws://{host}:{port}{prefix}{path}".format(host=host, port=self._port, path=path, prefix=prefix)))
+        self._addAuth(request)
+        socket.open(request)
+        return socket
+
+    def _getHostForQuery(self):
+        """
+        Get hostname that could be use by Qt
+        """
+        try:
+            ip = self._host.rsplit('%', 1)[0]
+            ipaddress.IPv6Address(ip)  # remove any scope ID
+            # this is an IPv6 address, we must surround it with brackets to be used with QUrl.
+            host = "[{}]".format(ip)
+        except ipaddress.AddressValueError:
+            host = self._host
+        return host
+
     def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", params={}, networkManager=None, **kwargs):
         """
         Call the remote server
@@ -461,14 +486,7 @@ class HTTPClient(QtCore.QObject):
         :returns: QNetworkReply
         """
 
-        try:
-            ip = self._host.rsplit('%', 1)[0]
-            ipaddress.IPv6Address(ip)  # remove any scope ID
-            # this is an IPv6 address, we must surround it with brackets to be used with QUrl.
-            host = "[{}]".format(ip)
-        except ipaddress.AddressValueError:
-            host = self._host
-
+        host = self._getHostForQuery()
         if params == {}:
             query_string = ""
         else:

@@ -197,6 +197,9 @@ class Controller(QtCore.QObject):
     def getSynchronous(self, endpoint, timeout=2):
         return self._http_client.getSynchronous(endpoint, timeout)
 
+    def connectWebSocket(self, path, *args):
+        return self._http_client.connectWebSocket(path)
+
     @staticmethod
     def instance():
         """
