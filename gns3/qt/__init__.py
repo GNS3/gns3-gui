@@ -38,7 +38,6 @@ sys.modules[__name__ + '.QtCore'] = QtCore
 sys.modules[__name__ + '.QtGui'] = QtGui
 sys.modules[__name__ + '.QtNetwork'] = QtNetwork
 sys.modules[__name__ + '.QtWidgets'] = QtWidgets
-sys.modules[__name__ + '.QtWebSockets'] = QtWebSockets
 sys.modules[__name__ + '.Qt'] = Qt
 
 try:
@@ -46,6 +45,12 @@ try:
     sys.modules[__name__ + '.QtSvg'] = QtSvg
 except ImportError:
     raise SystemExit("Please install the PyQt5.QtSvg module")
+
+try:
+    from PyQt5 import QtWebSockets
+    sys.modules[__name__ + '.QtWebSockets'] = QtWebSockets
+except ImportError:
+    raise SystemExit("Please install the PyQt5.QtWebSockets module")
 
 QtCore.Signal = QtCore.pyqtSignal
 QtCore.Slot = QtCore.pyqtSlot
