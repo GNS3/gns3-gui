@@ -545,6 +545,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # TODO: quality option
         return image.save(path)
 
+    def showLayers(self, show_layers):
+        """
+        Shows layers in GUI
+        :param show_layers: boolean
+        :return: None
+        """
+        NodeItem.show_layer = show_layers
+        ShapeItem.show_layer = show_layers
+        for item in self.uiGraphicsView.items():
+            item.update()
+
     def _updateZoomSettings(self, zoom=None):
         """
         Updates zoom settings
@@ -658,11 +669,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called to show the layer positions on the scene.
         """
+        self.showLayers(self.uiShowLayersAction.isChecked())
 
-        NodeItem.show_layer = self.uiShowLayersAction.isChecked()
-        ShapeItem.show_layer = self.uiShowLayersAction.isChecked()
-        for item in self.uiGraphicsView.items():
-            item.update()
+        # save settings
+        project = Topology.instance().project()
+        if project is not None:
+            project.setShowLayers(self.uiShowLayersAction.isChecked())
+            project.update()
+
 
     def _resetPortLabelsActionSlot(self):
         """

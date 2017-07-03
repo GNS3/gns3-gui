@@ -1467,6 +1467,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         node.setSymbol(symbol)
         node.setPos(x, y)
         node_item = NodeItem(node)
+
         self.scene().addItem(node_item)
         self._topology.addNode(node)
 
