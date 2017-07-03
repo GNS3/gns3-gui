@@ -279,6 +279,7 @@ GRAPHICS_VIEW_SETTINGS = {
     "draw_link_status_points": True,
     "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
     "default_label_color": "#000000",
+    "zoom": None
 }
 
 LOCAL_SERVER_SETTINGS = {

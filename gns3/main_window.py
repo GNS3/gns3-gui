@@ -545,6 +545,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # TODO: quality option
         return image.save(path)
 
+    def _updateZoomSettings(self, zoom=None):
+        """
+        Updates zoom settings
+        :param zoom integer optional, when not provided then calculated from current view
+        :return: None
+        """
+        graphics_settings = self.uiGraphicsView.settings()
+        if zoom is None:
+            zoom = round(self.uiGraphicsView.transform().m11() * 100)
+        graphics_settings['zoom'] = zoom
+        self.uiGraphicsView.setSettings(graphics_settings)
+
     def _screenshotActionSlot(self):
         """
         Slot called to take a screenshot of the scene.
@@ -613,6 +625,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         factor_in = pow(2.0, 120 / 240.0)
         self.uiGraphicsView.scaleView(factor_in)
+        self._updateZoomSettings()
 
     def _zoomOutActionSlot(self):
         """
@@ -621,6 +634,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         factor_out = pow(2.0, -120 / 240.0)
         self.uiGraphicsView.scaleView(factor_out)
+        self._updateZoomSettings()
 
     def _zoomResetActionSlot(self):
         """
@@ -628,6 +642,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         self.uiGraphicsView.resetTransform()
+        self._updateZoomSettings()
 
     def _fitInViewActionSlot(self):
         """

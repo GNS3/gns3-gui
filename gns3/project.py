@@ -58,6 +58,7 @@ class Project(QtCore.QObject):
         graphic_settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, GRAPHICS_VIEW_SETTINGS)
         self._scene_width = graphic_settings["scene_width"]
         self._scene_height = graphic_settings["scene_height"]
+        self._zoom = graphic_settings.get("zoom", None)
 
         self._name = "untitled"
         self._filename = None
@@ -113,6 +114,19 @@ class Project(QtCore.QObject):
 
     def autoStart(self):
         return self._auto_start
+
+    def setZoom(self, zoom):
+        """
+        Sets zoom factor of the view
+        """
+        self._zoom = zoom
+
+    def zoom(self):
+        """
+        Returns zoom factor of project
+        :return: float or None when not defined
+        """
+        return self._zoom
 
     def setName(self, name):
         """
@@ -312,7 +326,8 @@ class Project(QtCore.QObject):
             "auto_close": self._auto_close,
             "auto_start": self._auto_start,
             "scene_width": self._scene_width,
-            "scene_height": self._scene_height
+            "scene_height": self._scene_height,
+            "zoom": self._zoom
         }
         self.put("", self._projectUpdatedCallback, body=body)
 
@@ -347,6 +362,7 @@ class Project(QtCore.QObject):
         self._auto_close = result.get("auto_close", False)
         self._scene_width = result.get("scene_width", 2000)
         self._scene_height = result.get("scene_height", 1000)
+        self._zoom = result.get("zoom", None)
 
     def load(self, path=None):
         if not path:
