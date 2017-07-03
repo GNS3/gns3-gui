@@ -79,6 +79,7 @@ class Link(QtCore.QObject):
         self._capture_file_path = None
         self._capture_file = None
         self._initialized = False
+        self._filters = {}
 
         # Boolean if True we are creatin the first instance of this node
         # if false the node already exist in the topology
@@ -124,6 +125,8 @@ class Link(QtCore.QObject):
         if "nodes" in result:
             self._nodes = result["nodes"]
             self._updateLabels()
+        if "filters" in result:
+            self._filters = result["filters"]
         self.updated_link_signal.emit(self._id)
 
     def creator(self):
@@ -148,6 +151,12 @@ class Link(QtCore.QObject):
             return
         body = self._prepareParams()
         Controller.instance().put("/projects/{project_id}/links/{link_id}".format(project_id=self._source_node.project().id(), link_id=self._link_id), self.updateLinkCallback, body=body)
+
+    def listAvailableFilters(self, callback):
+        """
+        Get the list of available filters
+        """
+        Controller.instance().get("/projects/{project_id}/links/{link_id}/available_filters".format(project_id=self._source_node.project().id(), link_id=self._link_id), callback)
 
     def updateLinkCallback(self, result, error=False, *args, **kwargs):
         if error:
@@ -185,7 +194,8 @@ class Link(QtCore.QObject):
                     "adapter_number": self._destination_port.adapterNumber(),
                     "port_number": self._destination_port.portNumber()
                 }
-            ]
+            ],
+            "filters": self._filters
         }
         if self._source_port.label():
             body["nodes"][0]["label"] = self._source_port.label().dump()
@@ -409,3 +419,15 @@ class Link(QtCore.QObject):
         if self._destination_node == node:
             return self._destination_port
         return self._source_port
+
+    def filters(self):
+        """
+        :returns: List the filters actually active on the node
+        """
+        return self._filters
+
+    def setFilters(self, filters):
+        """
+        :params filters: List of filters
+        """
+        self._filters = filters

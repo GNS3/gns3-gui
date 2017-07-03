@@ -24,9 +24,10 @@ import math
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
 
 from ..packet_capture import PacketCapture
+from ..dialogs.filter_dialog import FilterDialog
 
 
-class SvgCaptureItem(QtSvg.QGraphicsSvgItem):
+class SvgIconItem(QtSvg.QGraphicsSvgItem):
 
     def __init__(self, symbol, parent):
 
@@ -86,11 +87,13 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         # QGraphicsSvgItem to indicate a capture
         self._capturing_item = None
+        # QGraphicsSvgItem to indicate a filtering in progress
+        self._filter_item = None
 
         if not self._adding_flag:
             # there is a destination
             self._link = link
-            self._link.updated_link_signal.connect(self._drawCaptureSymbol)
+            self._link.updated_link_signal.connect(self._drawSymbol)
             self._link.delete_link_signal.connect(self._linkDeletedSlot)
             self.setFlag(self.ItemIsFocusable)
             source_item.addLink(self)
@@ -117,6 +120,12 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         if self.scene():
             if self in self.scene().items():
                 self.scene().removeItem(self)
+
+    @qslot
+    def _filterActionSlot(self, *args):
+        dialog = FilterDialog(self._main_window, self._link)
+        dialog.show()
+        dialog.exec_()
 
     def delete(self):
         """
@@ -227,6 +236,12 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                 analyze_action.setIcon(QtGui.QIcon(':/icons/rtv.png'))
                 analyze_action.triggered.connect(self._analyzeCaptureActionSlot)
                 menu.addAction(analyze_action)
+
+        # Edit filters
+        filter_action = QtWidgets.QAction("Filter", menu)
+        filter_action.setIcon(QtGui.QIcon(':/icons/edit.svg'))
+        filter_action.triggered.connect(self._filterActionSlot)
+        menu.addAction(filter_action)
 
         # delete
         delete_action = QtWidgets.QAction("Delete", menu)
@@ -433,19 +448,31 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         self.update()
 
     @qslot
-    def _drawCaptureSymbol(self, *args):
+    def _drawSymbol(self, *args):
         """
         Draws a capture symbol in the middle of the link to indicate a capture is active.
+        And filter item if filter are enable
         """
 
         if not self._adding_flag:
             if self._link.capturing() and self.length >= 150:
                 link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
                 if self._capturing_item is None:
-                    self._capturing_item = SvgCaptureItem(':/icons/inspect.svg', self)
+                    self._capturing_item = SvgIconItem(':/icons/inspect.svg', self)
                     self._capturing_item.setScale(0.6)
                 self._capturing_item.setPos(link_center)
                 if not self._capturing_item.isVisible():
                     self._capturing_item.show()
             elif self._capturing_item:
                 self._capturing_item.hide()
+
+            if self.length >= 150 and len(self._link.filters()) > 0:
+                link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
+                if self._filter_item is None:
+                    self._filter_item = SvgIconItem(':/icons/edit.svg', self)
+                    self._filter_item.setScale(0.6)
+                if not self._filter_item.isVisible():
+                    self._filter_item.show()
+                self._filter_item.setPos(link_center)
+            elif self._filter_item:
+                self._filter_item.hide()
