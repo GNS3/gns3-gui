@@ -581,7 +581,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param show_grid: boolean
         :return: None
         """
-        self.uiShowGridAction.setChecked(show_grid)
         self.uiGraphicsView.viewport().update()
 
     def snapToGrid(self, snap_to_grid):
@@ -590,8 +589,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param snap_to_grid: boolean
         :return: None
         """
-        self.uiSnapToGridAction.setChecked(snap_to_grid)
         self.uiGraphicsView.viewport().update()
+
+    def showInterfaceLabels(self, show_interface_labels):
+        """
+        Show interface labels in GUI
+        :param show_interface_labels: boolean
+        :return: None
+        """
+        LinkItem.showPortLabels(show_interface_labels)
+        for item in self.uiGraphicsView.scene().items():
+            if isinstance(item, LinkItem):
+                item.adjust()
 
     def _updateZoomSettings(self, zoom=None):
         """
@@ -730,10 +739,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to show the port names on the scene.
         """
 
-        LinkItem.showPortLabels(self.uiShowPortNamesAction.isChecked())
-        for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, LinkItem):
-                item.adjust()
+        self.showInterfaceLabels(self.uiShowPortNamesAction.isChecked())
+
+        # save settings
+        project = Topology.instance().project()
+        if project is not None:
+            project.setShowInterfaceLabels(self.uiShowPortNamesAction.isChecked())
+            project.update()
+
 
     def _startAllActionSlot(self):
         """

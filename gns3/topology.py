@@ -149,14 +149,18 @@ class Topology(QtCore.QObject):
 
     def _projectLoadedSlot(self):
         # when project is loaded we can make updates in GUI
-        self._main_window.uiShowLayersAction.setChecked(self._project.showLayers())
-        self._main_window.showLayers(self._project.showLayers())
+        if self._project is not None:
+            self._main_window.uiShowLayersAction.setChecked(self._project.showLayers())
+            self._main_window.showLayers(self._project.showLayers())
 
-        self._main_window.uiShowGridAction.setChecked(self._project.showGrid())
-        self._main_window.showGrid(self._project.showGrid())
+            self._main_window.uiShowGridAction.setChecked(self._project.showGrid())
+            self._main_window.showGrid(self._project.showGrid())
 
-        self._main_window.uiSnapToGridAction.setChecked(self._project.snapToGrid())
-        self._main_window.snapToGrid(self._project.snapToGrid())
+            self._main_window.uiSnapToGridAction.setChecked(self._project.snapToGrid())
+            self._main_window.snapToGrid(self._project.snapToGrid())
+
+            self._main_window.uiShowPortNamesAction.setChecked(self._project.showInterfaceLabels())
+            self._main_window.showInterfaceLabels(self._project.showInterfaceLabels())
 
 
     def createLoadProject(self, project_settings):
