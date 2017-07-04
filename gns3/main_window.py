@@ -321,7 +321,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiNodesDockWidget.setWindowTitle("")
 
         if create_new_project:
-            Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
+            try:
+                project_settings = self._project_dialog.getProjectSettings()
+            except AttributeError as e:  # when dialog is not available
+                log.warning("Dialog is not available: {}".format(e))
+            else:
+                Topology.instance().createLoadProject(project_settings)
 
         self._project_dialog = None
 
