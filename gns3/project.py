@@ -481,7 +481,7 @@ class Project(QtCore.QObject):
     def _websocket_event_received(self, event):
         self._event_received(json.loads(event))
 
-    def _event_received(self, result):
+    def _event_received(self, result, *args, **kwargs):
         # Log only relevant events
         if result["action"] not in ("ping", "compute.updated"):
             log.debug("Event received: %s", result)
