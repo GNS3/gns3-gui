@@ -219,6 +219,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiResetPortLabelsAction.triggered.connect(self._resetPortLabelsActionSlot)
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
         self.uiShowGridAction.triggered.connect(self._showGridActionSlot)
+        self.uiSnapToGridAction.triggered.connect(self._snapToGridActionSlot)
 
         # tool menu connections
         self.uiWebInterfaceAction.triggered.connect(self._openWebInterfaceActionSlot)
@@ -313,6 +314,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         project = Topology.instance().project()
         if project is not None:
             project.setShowGrid(self.uiShowGridAction.isChecked())
+            project.update()
+
+    def _snapToGridActionSlot(self):
+        """
+        Called when user click on the snap to grid menu item
+        :return: None
+        """
+        self.snapToGrid(self.uiSnapToGridAction.isChecked())
+
+        # save settings
+        project = Topology.instance().project()
+        if project is not None:
+            project.setSnapToGrid(self.uiSnapToGridAction.isChecked())
             project.update()
 
     def analyticsClient(self):
@@ -568,6 +582,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :return: None
         """
         self.uiShowGridAction.setChecked(show_grid)
+        self.uiGraphicsView.viewport().update()
+
+    def snapToGrid(self, snap_to_grid):
+        """
+        Snap to grid in GUI
+        :param snap_to_grid: boolean
+        :return: None
+        """
+        self.uiSnapToGridAction.setChecked(snap_to_grid)
         self.uiGraphicsView.viewport().update()
 
     def _updateZoomSettings(self, zoom=None):

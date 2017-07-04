@@ -155,6 +155,10 @@ class Topology(QtCore.QObject):
         self._main_window.uiShowGridAction.setChecked(self._project.showGrid())
         self._main_window.showGrid(self._project.showGrid())
 
+        self._main_window.uiSnapToGridAction.setChecked(self._project.snapToGrid())
+        self._main_window.snapToGrid(self._project.snapToGrid())
+
+
     def createLoadProject(self, project_settings):
         """
         Create load a project based on settings, not on the .gns3
