@@ -111,16 +111,19 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
         self._export_config_dir = ""
 
-        # set zoom level
-        zoom = self._settings.get('zoom', None)
-        if zoom is not None:
-            factor = zoom / 100.
-            self.scale(factor, factor)
-
         self._local_addresses = ['0.0.0.0', '127.0.0.1', 'localhost', '::1', '0:0:0:0:0:0:0:1', '::', QtNetwork.QHostInfo.localHostName()]
 
     def setSceneSize(self, width, height):
         self.scene().setSceneRect(-(width / 2), -(height / 2), width, height)
+
+    def setZoom(self, zoom):
+        """
+        Sets zoom of the Graphics View
+        :param zoom:
+        :return:
+        """
+        factor = zoom / 100.
+        self.scale(factor, factor)
 
     def setEnabled(self, enabled):
 
@@ -503,6 +506,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if delta is not None and delta.x() == 0:
                 # CTRL is pressed then use the mouse wheel to zoom in or out.
                 self.scaleView(pow(2.0, delta.y() / 240.0))
+                self._topology.project().setZoom(round(self.transform().m11() * 100))
+                self._topology.project().update()
         else:
             super().wheelEvent(event)
 

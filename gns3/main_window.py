@@ -608,11 +608,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param zoom integer optional, when not provided then calculated from current view
         :return: None
         """
-        graphics_settings = self.uiGraphicsView.settings()
+
         if zoom is None:
             zoom = round(self.uiGraphicsView.transform().m11() * 100)
-        graphics_settings['zoom'] = zoom
-        self.uiGraphicsView.setSettings(graphics_settings)
+
+        # save settings
+        project = Topology.instance().project()
+        if project is not None:
+            project.setZoom(zoom)
+            project.update()
 
     def _screenshotActionSlot(self):
         """

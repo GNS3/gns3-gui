@@ -162,6 +162,8 @@ class Topology(QtCore.QObject):
             self._main_window.uiShowPortNamesAction.setChecked(self._project.showInterfaceLabels())
             self._main_window.showInterfaceLabels(self._project.showInterfaceLabels())
 
+            self._main_window.uiGraphicsView.setZoom(self._project.zoom())
+
 
     def createLoadProject(self, project_settings):
         """
