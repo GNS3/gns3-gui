@@ -428,7 +428,7 @@ class Project(QtCore.QObject):
         self._zoom = result.get("zoom", None)
         self._show_layers = result.get("show_layers", False)
         self._snap_to_grid = result.get("snap_to_grid", False)
-        self._show_grid = result.get("show_grip", False)
+        self._show_grid = result.get("show_grid", False)
         self._show_interface_labels = result.get("show_interface_labels", False)
 
     def load(self, path=None):

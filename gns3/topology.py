@@ -152,6 +152,9 @@ class Topology(QtCore.QObject):
         self._main_window.uiShowLayersAction.setChecked(self._project.showLayers())
         self._main_window.showLayers(self._project.showLayers())
 
+        self._main_window.uiShowGridAction.setChecked(self._project.showGrid())
+        self._main_window.showGrid(self._project.showGrid())
+
     def createLoadProject(self, project_settings):
         """
         Create load a project based on settings, not on the .gns3

@@ -307,8 +307,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called when we ask to display the grid
         """
+        self.showGrid(self.uiShowGridAction.isChecked())
 
-        self.uiGraphicsView.viewport().update()
+        # save settings
+        project = Topology.instance().project()
+        if project is not None:
+            project.setShowGrid(self.uiShowGridAction.isChecked())
+            project.update()
 
     def analyticsClient(self):
         """
@@ -555,6 +560,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         ShapeItem.show_layer = show_layers
         for item in self.uiGraphicsView.items():
             item.update()
+
+    def showGrid(self, show_grid):
+        """
+        Shows grid in GUI
+        :param show_grid: boolean
+        :return: None
+        """
+        self.uiShowGridAction.setChecked(show_grid)
+        self.uiGraphicsView.viewport().update()
 
     def _updateZoomSettings(self, zoom=None):
         """
