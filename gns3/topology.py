@@ -126,7 +126,6 @@ class Topology(QtCore.QObject):
         if project:
             self._project.project_updated_signal.connect(self._projectUpdatedSlot)
             self._project.project_creation_error_signal.connect(self._projectCreationErrorSlot)
-            self._project.project_loaded_signal.connect(self._projectLoadedSlot)
             self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
             self._main_window.uiGraphicsView.setSceneSize(project.sceneWidth(), project.sceneHeight())
         else:
@@ -146,24 +145,6 @@ class Topology(QtCore.QObject):
 
         self._main_window.updateRecentProjectsSettings(self._project.id(), self._project.name(), self._project.path())
         self._main_window.updateRecentProjectActions()
-
-    def _projectLoadedSlot(self):
-        # when project is loaded we can make updates in GUI
-        if self._project is not None:
-            self._main_window.uiShowLayersAction.setChecked(self._project.showLayers())
-            self._main_window.showLayers(self._project.showLayers())
-
-            self._main_window.uiShowGridAction.setChecked(self._project.showGrid())
-            self._main_window.showGrid(self._project.showGrid())
-
-            self._main_window.uiSnapToGridAction.setChecked(self._project.snapToGrid())
-            self._main_window.snapToGrid(self._project.snapToGrid())
-
-            self._main_window.uiShowPortNamesAction.setChecked(self._project.showInterfaceLabels())
-            self._main_window.showInterfaceLabels(self._project.showInterfaceLabels())
-
-            self._main_window.uiGraphicsView.setZoom(self._project.zoom())
-
 
     def createLoadProject(self, project_settings):
         """
