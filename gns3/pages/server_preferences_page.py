@@ -63,10 +63,11 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
-            if address.protocol in [QtNetwork.QAbstractSocket.IPv4Protocol, QtNetwork.QAbstractSocket.IPv6Protocol]:
+            if address.protocol() in [QtNetwork.QAbstractSocket.IPv4Protocol, QtNetwork.QAbstractSocket.IPv6Protocol]:
                 address_string = address.toString()
                 self.uiLocalServerHostComboBox.addItem(address_string, address_string)
-        self.uiLocalServerHostComboBox.addItem("0.0.0.0", "0.0.0.0")
+        self.uiLocalServerHostComboBox.addItem("::", "::") # all IPv6 addresses
+        self.uiLocalServerHostComboBox.addItem("0.0.0.0", "0.0.0.0")  # all IPv4 addresses
 
         # default is 127.0.0.1
         index = self.uiLocalServerHostComboBox.findText("127.0.0.1")
