@@ -33,7 +33,7 @@ import functools
 import logging
 log = logging.getLogger("qt/__init__.py")
 
-from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, QtWebSockets, Qt
+from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
 sys.modules[__name__ + '.QtCore'] = QtCore
 sys.modules[__name__ + '.QtGui'] = QtGui
 sys.modules[__name__ + '.QtNetwork'] = QtNetwork
