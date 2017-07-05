@@ -219,7 +219,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiResetPortLabelsAction.triggered.connect(self._resetPortLabelsActionSlot)
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
         self.uiShowGridAction.triggered.connect(self._showGridActionSlot)
-        self.uiSnapToGridAction.triggered.connect(self._snapToGridActionSlot)
 
         # tool menu connections
         self.uiWebInterfaceAction.triggered.connect(self._openWebInterfaceActionSlot)
@@ -308,26 +307,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called when we ask to display the grid
         """
-        self.showGrid(self.uiShowGridAction.isChecked())
 
-        # save settings
-        project = Topology.instance().project()
-        if project is not None:
-            project.setShowGrid(self.uiShowGridAction.isChecked())
-            project.update()
-
-    def _snapToGridActionSlot(self):
-        """
-        Called when user click on the snap to grid menu item
-        :return: None
-        """
-        self.snapToGrid(self.uiSnapToGridAction.isChecked())
-
-        # save settings
-        project = Topology.instance().project()
-        if project is not None:
-            project.setSnapToGrid(self.uiSnapToGridAction.isChecked())
-            project.update()
+        self.uiGraphicsView.viewport().update()
 
     def analyticsClient(self):
         """
@@ -564,60 +545,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # TODO: quality option
         return image.save(path)
 
-    def showLayers(self, show_layers):
-        """
-        Shows layers in GUI
-        :param show_layers: boolean
-        :return: None
-        """
-        NodeItem.show_layer = show_layers
-        ShapeItem.show_layer = show_layers
-        for item in self.uiGraphicsView.items():
-            item.update()
-
-    def showGrid(self, show_grid):
-        """
-        Shows grid in GUI
-        :param show_grid: boolean
-        :return: None
-        """
-        self.uiGraphicsView.viewport().update()
-
-    def snapToGrid(self, snap_to_grid):
-        """
-        Snap to grid in GUI
-        :param snap_to_grid: boolean
-        :return: None
-        """
-        self.uiGraphicsView.viewport().update()
-
-    def showInterfaceLabels(self, show_interface_labels):
-        """
-        Show interface labels in GUI
-        :param show_interface_labels: boolean
-        :return: None
-        """
-        LinkItem.showPortLabels(show_interface_labels)
-        for item in self.uiGraphicsView.scene().items():
-            if isinstance(item, LinkItem):
-                item.adjust()
-
-    def _updateZoomSettings(self, zoom=None):
-        """
-        Updates zoom settings
-        :param zoom integer optional, when not provided then calculated from current view
-        :return: None
-        """
-
-        if zoom is None:
-            zoom = round(self.uiGraphicsView.transform().m11() * 100)
-
-        # save settings
-        project = Topology.instance().project()
-        if project is not None:
-            project.setZoom(zoom)
-            project.update()
-
     def _screenshotActionSlot(self):
         """
         Slot called to take a screenshot of the scene.
@@ -686,7 +613,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         factor_in = pow(2.0, 120 / 240.0)
         self.uiGraphicsView.scaleView(factor_in)
-        self._updateZoomSettings()
 
     def _zoomOutActionSlot(self):
         """
@@ -695,7 +621,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         factor_out = pow(2.0, -120 / 240.0)
         self.uiGraphicsView.scaleView(factor_out)
-        self._updateZoomSettings()
 
     def _zoomResetActionSlot(self):
         """
@@ -703,7 +628,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         self.uiGraphicsView.resetTransform()
-        self._updateZoomSettings()
 
     def _fitInViewActionSlot(self):
         """
@@ -719,14 +643,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called to show the layer positions on the scene.
         """
-        self.showLayers(self.uiShowLayersAction.isChecked())
 
-        # save settings
-        project = Topology.instance().project()
-        if project is not None:
-            project.setShowLayers(self.uiShowLayersAction.isChecked())
-            project.update()
-
+        NodeItem.show_layer = self.uiShowLayersAction.isChecked()
+        ShapeItem.show_layer = self.uiShowLayersAction.isChecked()
+        for item in self.uiGraphicsView.items():
+            item.update()
 
     def _resetPortLabelsActionSlot(self):
         """
@@ -743,14 +664,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to show the port names on the scene.
         """
 
-        self.showInterfaceLabels(self.uiShowPortNamesAction.isChecked())
-
-        # save settings
-        project = Topology.instance().project()
-        if project is not None:
-            project.setShowInterfaceLabels(self.uiShowPortNamesAction.isChecked())
-            project.update()
-
+        LinkItem.showPortLabels(self.uiShowPortNamesAction.isChecked())
+        for item in self.uiGraphicsView.scene().items():
+            if isinstance(item, LinkItem):
+                item.adjust()
 
     def _startAllActionSlot(self):
         """

@@ -116,15 +116,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def setSceneSize(self, width, height):
         self.scene().setSceneRect(-(width / 2), -(height / 2), width, height)
 
-    def setZoom(self, zoom):
-        """
-        Sets zoom of the Graphics View
-        :param zoom:
-        :return:
-        """
-        factor = zoom / 100.
-        self.scale(factor, factor)
-
     def setEnabled(self, enabled):
 
         if enabled is False:
@@ -506,8 +497,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if delta is not None and delta.x() == 0:
                 # CTRL is pressed then use the mouse wheel to zoom in or out.
                 self.scaleView(pow(2.0, delta.y() / 240.0))
-                self._topology.project().setZoom(round(self.transform().m11() * 100))
-                self._topology.project().update()
         else:
             super().wheelEvent(event)
 
@@ -1477,7 +1466,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
         node.setSymbol(symbol)
         node.setPos(x, y)
         node_item = NodeItem(node)
-
         self.scene().addItem(node_item)
         self._topology.addNode(node)
 
