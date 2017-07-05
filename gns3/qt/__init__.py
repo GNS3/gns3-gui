@@ -46,6 +46,12 @@ try:
 except ImportError:
     raise SystemExit("Please install the PyQt5.QtSvg module")
 
+try:
+    from PyQt5 import QtWebSockets
+    sys.modules[__name__ + '.QtWebSockets'] = QtWebSockets
+except ImportError:
+    raise SystemExit("Please install the PyQt5.QtWebSockets module")
+
 QtCore.Signal = QtCore.pyqtSignal
 QtCore.Slot = QtCore.pyqtSlot
 QtCore.Property = QtCore.pyqtProperty
