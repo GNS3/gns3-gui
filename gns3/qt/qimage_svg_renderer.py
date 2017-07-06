@@ -61,7 +61,7 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
             # If we can't render a SVG we load and base64 the image to create a SVG
             if self.isValid():
                 return res
-        except ET.ParseErrorm:
+        except ET.ParseError:
             pass
 
         image = QtGui.QImage(path_or_data)
