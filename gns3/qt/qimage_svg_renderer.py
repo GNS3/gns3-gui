@@ -42,24 +42,26 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
 
     def load(self, path_or_data):
         try:
-            if not os.path.exists(path_or_data) and not path_or_data.startswith(":"):
-                self._svg = path_or_data
-                path_or_data = path_or_data.encode("utf-8")
-                return super().load(path_or_data)
-        except ValueError:
-            pass  # On windows we can get an error because the path is too long (it's the svg data)
+            path_exists = os.path.exists(path_or_data)
+        except ValueError:  # On windows we can get an error because the path is too long (it's the svg data)
+            path_exists = False
+
+        if not path_exists and not path_or_data.startswith(":"):
+            self._svg = path_or_data
+            path_or_data = path_or_data.encode("utf-8")
+            return super().load(path_or_data)
 
         try:
             # We load the SVG with ElementTree before
             # because Qt when failing loading send noise to logs
             # and their is no way to prevent that
-            if not path_or_data.startswith(":") and os.path.exists(path_or_data):
+            if not path_or_data.startswith(":") and path_exists:
                 ET.parse(path_or_data)
             res = super().load(path_or_data)
             # If we can't render a SVG we load and base64 the image to create a SVG
             if self.isValid():
                 return res
-        except ET.ParseError:
+        except ET.ParseErrorm:
             pass
 
         image = QtGui.QImage(path_or_data)
