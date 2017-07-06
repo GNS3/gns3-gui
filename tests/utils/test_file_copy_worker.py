@@ -27,7 +27,6 @@ def test_file_copy_worker_with_preserve_permissions():
     source_fp, source = tempfile.mkstemp()
     destination_fp, destination = tempfile.mkstemp()
 
-    assert not os.access(source, os.X_OK)
     st = os.stat(source)
     os.chmod(source, st.st_mode | stat.S_IEXEC)
     assert os.access(source, os.X_OK)
