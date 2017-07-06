@@ -35,10 +35,11 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
         self._initialized = False
         self._filter_items = {}
         self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).clicked.connect(self._helpSlot)
 
     def _listAvailableFiltersCallback(self, result, error=False, *args, **kwargs):
         if error:
-            QtWidgets.QMessageBox.warning(None, "Link", "Error while list informations about the link: {}".format(result["message"]))
+            QtWidgets.QMessageBox.warning(None, "Link", "Error while listing information about the link: {}".format(result["message"]))
             return
         self._filters = result
         self._initialized = True
@@ -46,7 +47,6 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
 
     @qslot
     def _updateUiSlot(self, *args):
-        # self.uiFiltersTextEdit.setPlainText(json.dumps(self._link.filters()))
 
         # Empty the main layout
         while True:
@@ -56,21 +56,15 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
             elif item.widget():
                 item.widget().deleteLater()
 
-        if len(self._filters):
-            self.uiNotSupportedLabel.hide()
-        else:
-            self.uiNotSupportedLabel.show()
+        if len(self._filters) == 0:
+            QtWidgets.QMessageBox.critical(None, "Link", "No filter available for this link. Try with a different node type.")
+            self.reject()
 
         for filter in self._filters:
             groupBox = QtWidgets.QGroupBox(self)
             groupBox.setTitle(filter["name"])
-
+            groupBox.setToolTip(filter["description"])
             vlayout = QtWidgets.QVBoxLayout(groupBox)
-            description = QtWidgets.QLabel(groupBox)
-            description.setText(filter["description"])
-            description.setWordWrap(True)
-            vlayout.addWidget(description)
-
             gridLayout = QtWidgets.QGridLayout()
             line = 0
             filter["spinBoxes"] = []
@@ -97,18 +91,16 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                 nb_spin += 1
 
                 gridLayout.addWidget(spinBox, line, 1, 1, 1)
-
                 unit = QtWidgets.QLabel()
                 unit.setText(param["unit"])
                 gridLayout.addWidget(unit, line, 2, 1, 1)
-
                 line += 1
 
             vlayout.addLayout(gridLayout)
             self.uiVerticalLayout.addWidget(groupBox)
+            self.adjustSize()
 
-    @qslot
-    def _applyPreferencesSlot(self, *args):
+    def _applyPreferencesSlot(self):
         new_filters = {}
         for filter in self._filters:
             new_filters[filter["type"]] = []
@@ -116,6 +108,13 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                 new_filters[filter["type"]].append(spinBox.value())
         self._link.setFilters(new_filters)
         self._link.update()
+
+    def _helpSlot(self):
+        help_text = "Filters are applied to packets in both direction.\n\n"
+
+        for filter in self._filters:
+            help_text += "{}: {}\n\n".format(filter["name"], filter["description"])
+        QtWidgets.QMessageBox.information(self, "Help for filters", help_text)
 
     def done(self, result):
         """

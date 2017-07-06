@@ -1,29 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/filter_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/filter_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.8
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_FilterDialog(object):
-
     def setupUi(self, FilterDialog):
         FilterDialog.setObjectName("FilterDialog")
         FilterDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        FilterDialog.resize(525, 568)
+        FilterDialog.resize(857, 588)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(FilterDialog)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.uiNotSupportedLabel = QtWidgets.QLabel(FilterDialog)
-        self.uiNotSupportedLabel.setObjectName("uiNotSupportedLabel")
-        self.verticalLayout_3.addWidget(self.uiNotSupportedLabel)
-        self.label_4 = QtWidgets.QLabel(FilterDialog)
-        self.label_4.setWordWrap(True)
-        self.label_4.setObjectName("label_4")
-        self.verticalLayout_3.addWidget(self.label_4)
         self.uiVerticalLayout = QtWidgets.QVBoxLayout()
         self.uiVerticalLayout.setObjectName("uiVerticalLayout")
         self.groupBox = QtWidgets.QGroupBox(FilterDialog)
@@ -60,7 +51,7 @@ class Ui_FilterDialog(object):
         self.verticalLayout_3.addItem(spacerItem)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(FilterDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Help|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.verticalLayout_3.addWidget(self.uiButtonBox)
 
@@ -72,9 +63,7 @@ class Ui_FilterDialog(object):
     def retranslateUi(self, FilterDialog):
         _translate = QtCore.QCoreApplication.translate
         FilterDialog.setWindowTitle(_translate("FilterDialog", "Filters"))
-        self.uiNotSupportedLabel.setText(_translate("FilterDialog", "No filter available for this link. Try with different node type."))
-        self.label_4.setText(_translate("FilterDialog", "Warning: Filter are apply for both link direction. This mean if you every two packet you will never get the ping reply."))
-        self.groupBox.setTitle(_translate("FilterDialog", "Latency"))
+        self.groupBox.setTitle(_translate("FilterDialog", "Delay"))
         self.label_3.setText(_translate("FilterDialog", "Description"))
         self.label.setText(_translate("FilterDialog", "Delay:"))
         self.label_2.setText(_translate("FilterDialog", "ms"))

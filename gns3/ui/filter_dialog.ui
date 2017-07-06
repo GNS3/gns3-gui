@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>568</height>
+    <width>857</width>
+    <height>588</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,28 +18,11 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="QLabel" name="uiNotSupportedLabel">
-     <property name="text">
-      <string>No filter available for this link. Try with different node type.</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Warning: Filter are apply for both link direction. This mean if you every two packet you will never get the ping reply.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
     <layout class="QVBoxLayout" name="uiVerticalLayout">
      <item>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
-        <string>Latency</string>
+        <string>Delay</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -113,7 +96,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
