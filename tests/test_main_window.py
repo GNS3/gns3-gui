@@ -19,10 +19,12 @@ from unittest.mock import patch
 from gns3.main_window import MainWindow
 
 
-def test_new_project_when_dialog_is_not_available():
+def test_new_project_when_dialog_is_already_available():
     main_window = MainWindow()
     with patch('gns3.main_window.ProjectDialog') as project_dialog_mock, \
         patch('gns3.topology.Topology.createLoadProject') as load_project_mock:
+
+        main_window._project_dialog = project_dialog_mock()
 
         project_dialog_mock().exec_.return_value = 1
         project_dialog_mock().getProjectSettings.side_effect = AttributeError("Mocked")
