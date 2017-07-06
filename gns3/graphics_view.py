@@ -122,8 +122,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param zoom:
         :return:
         """
-        factor = zoom / 100.
-        self.scale(factor, factor)
+        if zoom:
+            factor = zoom / 100.
+            self.scale(factor, factor)
 
     def setEnabled(self, enabled):
 
