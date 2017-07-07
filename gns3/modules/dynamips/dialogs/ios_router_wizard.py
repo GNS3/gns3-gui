@@ -21,16 +21,13 @@ Wizard for IOS routers.
 
 import os
 import re
-import uuid
 
 
 from gns3.qt import QtCore, QtGui, QtWidgets, qslot
 from gns3.node import Node
-from gns3.topology import Topology
 from gns3.utils.run_in_terminal import RunInTerminal
-from gns3.utils.get_resource import get_resource
 from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
-from gns3.compute_manager import ComputeManager
+from gns3.controller import Controller
 
 from ..ui.ios_router_wizard_ui import Ui_IOSRouterWizard
 from ..settings import PLATFORMS_DEFAULT_RAM, PLATFORMS_DEFAULT_NVRAM, CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
@@ -214,36 +211,20 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
             self._idle_valid = False
         self.uiIdlepcLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % color)
 
-    def _idlePCFinderSlot(self):
+    def _idlePCFinderSlot(self, ):
         """
         Slot for the idle-PC finder.
         """
-        if Topology.instance().project() is None:
-            project = Topology.instance().createLoadProject({"project_name": str(uuid.uuid4())})
-            project.project_updated_signal.connect(self._projectCreatedSlot)
-        else:
-            self._projectCreatedSlot()
-
-    @qslot
-    def _projectCreatedSlot(self, *args):
-        if Topology.instance().project() is None:
-            return
-        try:
-            Topology.instance().project().project_updated_signal.disconnect(self._projectCreatedSlot)
-            self._project_created = True
-        except TypeError:
-            pass  # If the slot is not connected (project already created)
-
-        module = Dynamips.instance()
+        image = self.uiIOSImageLineEdit.text()
         platform = self.uiPlatformComboBox.currentText()
-        ios_image = self.uiIOSImageLineEdit.text()
-        ram = self.uiRamSpinBox.value()
-        router_class = PLATFORM_TO_CLASS[platform]
-
-        self._router = router_class(module, ComputeManager.instance().getCompute(self._compute_id), Topology.instance().project())
-        self._router.create(ios_image, ram, name="AUTOIDLEPC")
-        self._router.created_signal.connect(self.createdSlot)
-        self._router.server_error_signal.connect(self.serverErrorSlot)
+        Controller.instance().postCompute("/autoidlepc",
+                                          self._compute_id,
+                                          self._computeAutoIdlepcCallback,
+                                          timeout=None,
+                                          body={
+                                              "image": image,
+                                              "platform": platform
+                                          })
         self.uiIdlePCFinderPushButton.setEnabled(False)
 
     def _etherSwitchSlot(self, state):
@@ -259,15 +240,6 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         else:
             self.uiNameLineEdit.setText(self.uiPlatformComboBox.currentText())
             # self.uiNameLineEdit.setEnabled(True)
-
-    def createdSlot(self, base_node_id):
-        """
-        The node for the auto Idle-PC has been created.
-
-        :param base_node_id: not used
-        """
-
-        self._router.computeAutoIdlepc(self._computeAutoIdlepcCallback)
 
     def serverErrorSlot(self, base_node_id, message):
         """
@@ -288,13 +260,6 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         :param error: indicates an error (boolean)
         """
 
-        if self._project_created:
-            Topology.instance().deleteProject()
-            self._project_created = False
-            self._router = None
-        elif self._router:
-            self._router.delete()
-            self._router = None
         if error:
             QtWidgets.QMessageBox.critical(self, "Idle-PC finder", "Error: {}".format(result["message"]))
         else:
