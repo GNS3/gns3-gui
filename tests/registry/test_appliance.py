@@ -19,6 +19,7 @@
 import pytest
 import json
 import os
+import tempfile
 
 from gns3.registry.appliance import Appliance, ApplianceError
 from gns3.registry.registry import Registry
@@ -166,8 +167,11 @@ def test_is_version_installable(linux_microcore_img, microcore_appliance):
 
 
 def test_create_new_version():
+    appliance_path = os.path.join(
+        os.path.dirname(__file__), "appliances", "microcore-linux.gns3a")
 
-    a = Appliance(registry, "tests/registry/appliances/microcore-linux.gns3a")
+    a = Appliance(registry, appliance_path)
+
     a.create_new_version("42.0")
     v = a['versions'][-1:][0]
     assert v == {
@@ -181,6 +185,21 @@ def test_create_new_version():
         },
         'name': '42.0'
     }
+
+    # tests what happens without versions in file
+    wrong_appliance_fp, wrong_appliance_file = tempfile.mkstemp()
+
+    with open(appliance_path) as f:
+        appliance = json.loads(f.read())
+        del appliance['versions']
+        os.write(wrong_appliance_fp, json.dumps(appliance).encode())
+        os.close(wrong_appliance_fp)
+
+    a = Appliance(registry, wrong_appliance_file)
+    with pytest.raises(ApplianceError):
+        a.create_new_version("42.0")
+
+    os.remove(wrong_appliance_file)
 
 
 def test_emulator():

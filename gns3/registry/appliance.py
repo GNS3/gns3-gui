@@ -113,7 +113,7 @@ class Appliance(collections.Mapping):
         """
         Duplicate a version in order to create a new version
         """
-        if len(self._appliance["versions"]) == 0:
+        if 'versions' not in self._appliance.keys() or len(self._appliance["versions"]) == 0:
             raise ApplianceError("Your appliance file doesn't contain any versions")
 
         ref = self._appliance["versions"][0]
