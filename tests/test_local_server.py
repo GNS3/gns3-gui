@@ -53,6 +53,7 @@ def test_loadSettings_EmptySettings(tmpdir, local_server):
         f.write("")
     LocalServerConfig.instance().setConfigFile(str(tmpdir / "test.cfg"))
 
+    assert local_server.localServerSettings()["auth"]
     assert local_server.localServerSettings()["port"] == 3080
     assert len(local_server.localServerSettings()["password"]) == 64
     assert local_server.localServerSettings()["user"] == "admin"
