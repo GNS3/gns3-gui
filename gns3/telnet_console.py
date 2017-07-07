@@ -33,6 +33,7 @@ log = logging.getLogger(__name__)
 
 console_mutex = QtCore.QMutex()
 
+
 class ConsoleThread(QtCore.QThread):
 
     consoleError = QtCore.pyqtSignal(str)
@@ -71,6 +72,7 @@ class ConsoleThread(QtCore.QThread):
         command = command.replace("%p", str(port))
         command = command.replace("%d", self._name)
         command = command.replace("%i", self._node.project().id())
+        command = command.replace("%n", str(self._node.id()))
         command = command.replace("%c", Controller.instance().httpClient().fullUrl())
 
         # If the console use an apple script we lock to avoid multiple console
@@ -84,7 +86,7 @@ class ConsoleThread(QtCore.QThread):
             pass
             # log.warning('could not start Telnet console "{}": {}'.format(self._command, e))
         finally:
-            log.info('Telnet console {}:{} closed'.format(host, port))
+            log.debug('Telnet console {}:{} closed'.format(host, port))
             if sys.platform.startswith("darwin") and "osascript" in command:
                 console_mutex.unlock()
 
@@ -106,7 +108,7 @@ def nodeTelnetConsole(node, port, command=None):
         if not command:
             return
 
-    log.info('Starting telnet console in thread "{}"'.format(command))
+    log.debug('Starting telnet console in thread "{}"'.format(command))
     console_thread = ConsoleThread(MainWindow.instance(), command, node, port)
     console_thread.consoleError.connect(_consoleErrorSlot)
     console_thread.start()
@@ -114,5 +116,3 @@ def nodeTelnetConsole(node, port, command=None):
 
 def _consoleErrorSlot(message):
     QtWidgets.QMessageBox.critical(MainWindow.instance(), "Error", message)
-
-

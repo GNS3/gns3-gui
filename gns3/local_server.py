@@ -332,7 +332,7 @@ class LocalServer(QtCore.QObject):
             return True
 
         if self.isLocalServerRunning():
-            log.info("A local server already running on this host")
+            log.debug("A local server already running on this host")
             # Try to kill the server. The server can be still running after
             # if the server was started by hand
             self._killAlreadyRunningServer()
@@ -467,7 +467,7 @@ class LocalServer(QtCore.QObject):
                     log.warn("could not delete server log file {}: {}".format(logpath, e))
             command += ' --log="{}" --pid="{}"'.format(logpath, self._pid_path())
 
-        log.info("Starting local server process with {}".format(command))
+        log.debug("Starting local server process with {}".format(command))
         try:
             if sys.platform.startswith("win"):
                 # use the string on Windows
@@ -480,7 +480,7 @@ class LocalServer(QtCore.QObject):
             log.warning('Could not start local server "{}": {}'.format(command, e))
             return False
 
-        log.info("Local server process has started (PID={})".format(self._local_server_process.pid))
+        log.debug("Local server process has started (PID={})".format(self._local_server_process.pid))
         return True
 
     def _checkLocalServerRunningSlot(self):
@@ -539,7 +539,7 @@ class LocalServer(QtCore.QObject):
 
         if self.localServerProcessIsRunning():
             self._stopping = True
-            log.info("Stopping local server (PID={})".format(self._local_server_process.pid))
+            log.debug("Stopping local server (PID={})".format(self._local_server_process.pid))
             # local server is running, let's stop it
             if self._http_client:
                 self._http_client.shutdown()

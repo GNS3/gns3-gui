@@ -283,74 +283,8 @@ class VMware(Module):
         :param project: Project instance
         """
 
-        log.info("instantiating node {}".format(node_class))
-
         # create an instance of the node class
         return node_class(self, server, project)
-
-    def createNode(self, node, node_name):
-        """
-        Creates a node.
-
-        :param node: Node instance
-        :param node_name: Node name
-        """
-
-        log.info("creating node {} with id {}".format(node, node.id()))
-
-        vm = None
-        if node_name:
-            for vm_key, info in self._vmware_vms.items():
-                if node_name == info["name"]:
-                    vm = vm_key
-
-        if not vm:
-            selected_vms = []
-            for vm, info in self._vmware_vms.items():
-                if info["server"] == node.compute().id():
-                    selected_vms.append(vm)
-
-            if not selected_vms:
-                raise ModuleError("No VMware VM on server {}".format(node.server().url()))
-            elif len(selected_vms) > 1:
-
-                from gns3.main_window import MainWindow
-                mainwindow = MainWindow.instance()
-
-                (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "VMware VM", "Please choose a VM", selected_vms, 0, False)
-                if ok:
-                    vm = selection
-                else:
-                    raise ModuleError("Please select a VMware VM")
-            else:
-                vm = selected_vms[0]
-
-        linked_base = self._vmware_vms[vm]["linked_base"]
-        vm_settings = {}
-        for setting_name, value in self._vmware_vms[vm].items():
-            if setting_name in node.settings():
-                vm_settings[setting_name] = value
-
-        vmx_path = vm_settings.pop("vmx_path")
-        name = vm_settings.pop("name")
-        port_name_format = self._vmware_vms[vm]["port_name_format"]
-        port_segment_size = self._vmware_vms[vm]["port_segment_size"]
-        first_port_name = self._vmware_vms[vm]["first_port_name"]
-
-        default_name_format = VMWARE_VM_SETTINGS["default_name_format"]
-        if self._vmware_vms[vm]["default_name_format"]:
-            default_name_format = self._vmware_vms[vm]["default_name_format"]
-        if linked_base:
-            name = default_name_format.replace('{name}', name)
-
-        node.create(vmx_path,
-                    name=name,
-                    port_name_format=port_name_format,
-                    port_segment_size=port_segment_size,
-                    first_port_name=first_port_name,
-                    linked_clone=linked_base,
-                    additional_settings=vm_settings,
-                    default_name_format=default_name_format)
 
     def reset(self):
         """

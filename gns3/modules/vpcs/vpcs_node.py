@@ -19,9 +19,7 @@
 VPCS node implementation.
 """
 
-import os
 from gns3.node import Node
-from gns3.utils.normalize_filename import normalize_filename
 
 import logging
 log = logging.getLogger(__name__)
@@ -41,42 +39,11 @@ class VPCSNode(Node):
     def __init__(self, module, server, project):
         super().__init__(module, server, project)
 
-        log.info("VPCS instance is being created")
-
         vpcs_settings = {"console_host": None,
                          "startup_script": None,
-                         "startup_script_path": None,
-                         "base_script_file": None,
                          "console": None}
 
         self.settings().update(vpcs_settings)
-
-    def create(self, name=None, node_id=None, additional_settings={}, default_name_format="PC{0}"):
-        """
-        Creates this VPCS node.
-
-        :param name: optional name
-        :param node_id: Node identifier
-        :param additional_settings: additional settings for this node
-        """
-
-        params = {}
-        if "base_script_file" in additional_settings:
-            if os.path.isfile(additional_settings["base_script_file"]):
-                base_config_content = self._readBaseConfig(additional_settings["base_script_file"])
-                if base_config_content is not None:
-                    additional_settings["startup_script"] = base_config_content
-            del additional_settings["base_script_file"]
-
-        if "startup_script_path" in additional_settings:
-            del additional_settings["startup_script_path"]
-
-        # If we have an vm id that mean the VM already exits and we should not send startup_script
-        if "startup_script" in additional_settings and node_id is not None:
-            del additional_settings["startup_script"]
-
-        params.update(additional_settings)
-        self._create(name, node_id, params, default_name_format)
 
     def update(self, new_settings):
         """
@@ -84,19 +51,6 @@ class VPCSNode(Node):
 
         :param new_settings: settings dictionary
         """
-
-        if "script_file" in new_settings:
-            if os.path.isfile(new_settings["script_file"]):
-                base_config_content = self._readBaseConfig(new_settings["script_file"])
-                if base_config_content is not None:
-                    new_settings["startup_script"] = base_config_content
-            del new_settings["script_file"]
-
-        if "base_script_file" in new_settings:
-            del new_settings["base_script_file"]
-
-        if "startup_script_path" in new_settings:
-            del new_settings["startup_script_path"]
 
         params = {}
         for name, value in new_settings.items():
@@ -139,73 +93,11 @@ class VPCSNode(Node):
 
         return info + port_info
 
-    def exportConfigToDirectory(self, directory):
-        """
-        Exports the script-file to a directory.
-
-        :param directory: destination directory path
-        """
-
-        self.controllerHttpGet("/nodes/{node_id}".format(node_id=self._node_id),
-                               self._exportConfigToDirectoryCallback,
-                               context={"directory": directory})
-
-    def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for exportConfigToDirectory.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while exporting {} configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-        elif "startup_script" in result["properties"]:
-            export_directory = context["directory"]
-            config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_startup.vpc"
-            try:
-                with open(config_path, "wb") as f:
-                    log.info("saving {} script file to {}".format(self.name(), config_path))
-                    if result["properties"]["startup_script"]:
-                        f.write(result["properties"]["startup_script"].encode("utf-8"))
-            except OSError as e:
-                self.error_signal.emit(self.id(), "could not export the script file to {}: {}".format(config_path, e))
-
     def configFiles(self):
         """
         Name of the configuration files
         """
         return ["startup.vpc"]
-
-    def importConfig(self, path):
-        """
-        Imports a script-file.
-
-        :param path: path to the script file
-        """
-
-        new_settings = {"script_file": path}
-        self.update(new_settings)
-
-    def importConfigFromDirectory(self, directory):
-        """
-        Imports an initial-config from a directory.
-
-        :param directory: source directory path
-        """
-
-        try:
-            contents = os.listdir(directory)
-        except OSError as e:
-            return
-        script_file = normalize_filename(self.name()) + "_startup.vpc"
-        new_settings = {}
-        if script_file in contents:
-            new_settings["script_file"] = os.path.join(directory, script_file)
-        else:
-            return
-        self.update(new_settings)
 
     def console(self):
         """

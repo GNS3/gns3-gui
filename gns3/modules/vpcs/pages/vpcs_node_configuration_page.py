@@ -23,6 +23,7 @@ import os
 from gns3.qt import QtWidgets
 from gns3.local_server import LocalServer
 from gns3.node import Node
+from gns3.controller import Controller
 
 from ..ui.vpcs_node_configuration_page_ui import Ui_VPCSNodeConfigPageWidget
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
@@ -42,6 +43,8 @@ class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiScriptFileToolButton.clicked.connect(self._scriptFileBrowserSlot)
         self._default_configs_dir = LocalServer.instance().localServerSettings()["configs_path"]
+        if Controller.instance().isRemote():
+            self.uiScriptFileToolButton.hide()
 
         # add the categories
         for name, category in Node.defaultCategories().items():

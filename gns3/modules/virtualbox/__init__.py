@@ -216,73 +216,8 @@ class VirtualBox(Module):
         :param project: Project instance
         """
 
-        log.info("instantiating node {}".format(node_class))
         # create an instance of the node class
         return node_class(self, server, project)
-
-    def createNode(self, node, node_name):
-        """
-        Creates a node.
-
-        :param node: Node instance
-        :param node_name: Node name
-        """
-
-        log.info("creating node {} with id {}".format(node, node.id()))
-
-        vm = None
-        if node_name:
-            for vm_key, info in self._virtualbox_vms.items():
-                if node_name == info["name"]:
-                    vm = vm_key
-
-        if not vm:
-            selected_vms = []
-            for vm, info in self._virtualbox_vms.items():
-                if info["server"] == node.compute().id():
-                    selected_vms.append(vm)
-
-            if not selected_vms:
-                raise ModuleError("No VirtualBox VM on server {}".format(node.server().url()))
-            elif len(selected_vms) > 1:
-
-                from gns3.main_window import MainWindow
-                mainwindow = MainWindow.instance()
-
-                (selection, ok) = QtWidgets.QInputDialog.getItem(mainwindow, "VirtualBox VM", "Please choose a VM", selected_vms, 0, False)
-                if ok:
-                    vm = selection
-                else:
-                    raise ModuleError("Please select a VirtualBox VM")
-
-            else:
-                vm = selected_vms[0]
-
-        vm_settings = {}
-        for setting_name, value in self._virtualbox_vms[vm].items():
-            if setting_name != "name" and setting_name in node.settings() and value != "" and value is not None:
-                vm_settings[setting_name] = value
-
-        name = self._virtualbox_vms[vm]["name"]
-        vmname = self._virtualbox_vms[vm]["vmname"]
-        port_name_format = self._virtualbox_vms[vm]["port_name_format"]
-        port_segment_size = self._virtualbox_vms[vm]["port_segment_size"]
-        first_port_name = self._virtualbox_vms[vm]["first_port_name"]
-
-        default_name_format = VBOX_VM_SETTINGS["default_name_format"]
-        if self._virtualbox_vms[vm]["default_name_format"]:
-            default_name_format = self._virtualbox_vms[vm]["default_name_format"]
-        if self._virtualbox_vms[vm]["linked_base"]:
-            name = default_name_format.replace('{name}', name)
-
-        node.create(vmname,
-                    name=name,
-                    port_name_format=port_name_format,
-                    port_segment_size=port_segment_size,
-                    first_port_name=first_port_name,
-                    linked_clone=self._virtualbox_vms[vm]["linked_base"],
-                    additional_settings=vm_settings,
-                    default_name_format=default_name_format)
 
     def reset(self):
         """

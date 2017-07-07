@@ -180,6 +180,33 @@ else:
     # default VNC console command on other systems
     DEFAULT_VNC_CONSOLE_COMMAND = PRECONFIGURED_VNC_CONSOLE_COMMANDS['TightVNC']
 
+# Pre-configured SPICE console commands on various OSes
+if sys.platform.startswith("win"):
+    # Windows
+    PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
+        'Remote Viewer (included with GNS3)': '"c:\\Program Files\\VirtViewer v5.0-256\\bin\\remote-viewer.exe" spice://%h:%p',
+    }
+
+    # default Windows SPICE console command
+    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer (included with GNS3)']
+
+elif sys.platform.startswith("darwin"):
+    # Mac OS X
+    PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
+        'Remote Viewer': '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer spice://%h:%p',
+    }
+
+    # default Mac OS X SPICE console command
+    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer']
+
+else:
+    PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
+        'Remote Viewer': 'remote-viewer spice://%h:%p',
+    }
+
+    # default SPICE console command on other systems
+    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer']
+
 # Pre-configured packet capture reader commands on various OSes
 WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
@@ -219,12 +246,14 @@ else:
 GENERAL_SETTINGS = {
     "style": DEFAULT_STYLE,
     "check_for_update": True,
+    "overlay_notifications": True,
     "experimental_features": False,
     "send_stats": True,
     "stats_visitor_id": str(uuid.uuid4()),  # An anonymous id for stats
     "last_check_for_update": 0,
     "telnet_console_command": DEFAULT_TELNET_CONSOLE_COMMAND,
     "vnc_console_command": DEFAULT_VNC_CONSOLE_COMMAND,
+    "spice_console_command": DEFAULT_SPICE_CONSOLE_COMMAND,
     "delay_console_all": 500,
     "hide_getting_started_dialog": False,
     "hide_setup_wizard": False,
@@ -239,6 +268,10 @@ GENERAL_SETTINGS = {
     "hdpi": not sys.platform.startswith("linux")
 }
 
+NODES_VIEW_SETTINGS = {
+    "nodes_view_filter": 0,
+}
+
 GRAPHICS_VIEW_SETTINGS = {
     "scene_width": 2000,
     "scene_height": 1000,
@@ -246,6 +279,11 @@ GRAPHICS_VIEW_SETTINGS = {
     "draw_link_status_points": True,
     "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
     "default_label_color": "#000000",
+    "zoom": None,
+    "show_layers": False,
+    "snap_to_grid": False,
+    "show_grid": False,
+    "show_interface_labels": False
 }
 
 LOCAL_SERVER_SETTINGS = {
@@ -281,5 +319,6 @@ PACKET_CAPTURE_SETTINGS = {
 CUSTOM_CONSOLE_COMMANDS_SETTINGS = {
     "telnet": {},
     "vnc": {},
-    "serial": {}
+    "serial": {},
+    "spice": {}
 }

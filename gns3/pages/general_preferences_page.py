@@ -57,6 +57,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
         self.uiTelnetConsolePreconfiguredCommandPushButton.clicked.connect(self._telnetConsolePreconfiguredCommandSlot)
         self.uiVNCConsolePreconfiguredCommandPushButton.clicked.connect(self._vncConsolePreconfiguredCommandSlot)
+        self.uiSPICEConsolePreconfiguredCommandPushButton.clicked.connect(self._spiceConsolePreconfiguredCommandSlot)
         self.uiDefaultLabelFontPushButton.clicked.connect(self._setDefaultLabelFontSlot)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
         self.uiBrowseConfigurationPushButton.clicked.connect(self._browseConfigurationDirectorySlot)
@@ -160,6 +161,16 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         if ok:
             self.uiVNCConsoleCommandLineEdit.setText(cmd)
 
+    def _spiceConsolePreconfiguredCommandSlot(self):
+        """
+        Slot to set a chosen pre-configured SPICE console command.
+        """
+
+        cmd = self.uiSPICEConsoleCommandLineEdit.text()
+        (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type="spice", current=cmd)
+        if ok:
+            self.uiSPICEConsoleCommandLineEdit.setText(cmd)
+
     def _importConfigurationFileSlot(self):
         """
         Slot to import a configuration file.
@@ -255,6 +266,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
         self.uiConfigsPathLineEdit.setText(local_server["configs_path"])
         self.uiStatsCheckBox.setChecked(settings["send_stats"])
+        self.uiOverlayNotificationsCheckBox.setChecked(settings["overlay_notifications"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiExperimentalFeaturesCheckBox.setChecked(settings["experimental_features"])
@@ -268,6 +280,9 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         self.uiVNCConsoleCommandLineEdit.setText(settings["vnc_console_command"])
         self.uiVNCConsoleCommandLineEdit.setCursorPosition(0)
+
+        self.uiSPICEConsoleCommandLineEdit.setText(settings["spice_console_command"])
+        self.uiSPICEConsoleCommandLineEdit.setCursorPosition(0)
 
         self.uiMultiProfilesCheckBox.setChecked(settings["multi_profiles"])
 
@@ -331,8 +346,10 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
             "hdpi": self.uiHdpiCheckBox.isChecked(),
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
+            "overlay_notifications": self.uiOverlayNotificationsCheckBox.isChecked(),
             "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),
             "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
+            "spice_console_command": self.uiSPICEConsoleCommandLineEdit.text(),
             "delay_console_all": self.uiDelayConsoleAllSpinBox.value(),
             "send_stats": self.uiStatsCheckBox.isChecked(),
             "multi_profiles": self.uiMultiProfilesCheckBox.isChecked()

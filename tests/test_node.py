@@ -26,23 +26,6 @@ from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
 
 
-def test_create(vpcs_device, local_server):
-    with patch('gns3.base_node.BaseNode.controllerHttpPost') as mock:
-        vpcs_device._create(name="PC 1", params={"startup_script": "echo TEST"})
-        assert mock.called
-        args, kwargs = mock.call_args
-        assert args[0] == "/nodes"
-        assert kwargs["body"] == {
-            "name": "PC 1",
-            "node_id": vpcs_device._node_id,
-            "compute_id": local_server.id(),
-            "node_type": "vpcs",
-            "properties": {
-                "startup_script": "echo TEST"
-            }
-        }
-
-
 def test_setupVMCallback(vpcs_device):
     node_id = str(uuid.uuid4())
     vpcs_device._createCallback = MagicMock()
@@ -89,20 +72,6 @@ def test_vpcs_device_reload(vpcs_device):
         assert mock.called
         args, kwargs = mock.call_args
         assert args[0] == "/nodes/{node_id}/reload".format(node_id=vpcs_device.node_id())
-
-
-def test_readBaseConfig(vpcs_device, tmpdir):
-    assert vpcs_device._readBaseConfig("") is None
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        f.write("42")
-    assert vpcs_device._readBaseConfig(str(tmpdir / "test.cfg")) == "42"
-
-
-def test_readBaseConfigRelative(vpcs_device, tmpdir):
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        f.write("42")
-    with patch('gns3.local_server.LocalServer.localServerSettings', return_value={'configs_path': str(tmpdir)}):
-        assert vpcs_device._readBaseConfig(str("test.cfg")) == "42"
 
 
 def test_updatePorts(vpcs_device):

@@ -72,10 +72,6 @@ class Node(BaseNode):
             except OSError as e:
                 log.erro("Can't write %s: %s", context["path"], str(e))
 
-
-    def creator(self):
-        return self._creator
-
     def settings(self):
         return self._settings
 
@@ -154,6 +150,8 @@ class Node(BaseNode):
             console_type = self.consoleType()
             if console_type == "vnc":
                 return general_settings["vnc_console_command"]
+            if console_type == "spice":
+                return general_settings["spice_console_command"]
         return general_settings["telnet_console_command"]
 
     def consoleType(self):
@@ -224,66 +222,6 @@ class Node(BaseNode):
 
         return body
 
-    def _create(self, name=None, node_id=None, params=None, default_name_format="Node{0}", timeout=120):
-        """
-        Create the node on the controller
-        """
-
-        self._creator = True
-        if params is None:
-            params = {}
-
-        if "symbol" in self._settings:
-            params["symbol"] = self._settings["symbol"]
-            params["x"] = self._settings["x"]
-            params["y"] = self._settings["y"]
-            if "label" in self._settings:
-                params["label"] = self._settings["label"]
-
-        if not name:
-            # use the default name format if no name is provided
-            name = default_name_format
-
-        params["name"] = name
-        if node_id is not None:
-            self._node_id = node_id
-
-        body = self._prepareBody(params)
-        self.controllerHttpPost("/nodes", self.createNodeCallback, body=body, timeout=timeout)
-
-    def createNodeCallback(self, result, error=False, **kwargs):
-        """
-        Callback for create.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        :returns: Boolean success or not
-        """
-        if error:
-            self.server_error_signal.emit(self.id(), "Error while setting up node: {}".format(result["message"]))
-            self.deleted_signal.emit()
-            self._module.removeNode(self)
-            return False
-
-        result = self._parseResponse(result)
-        self._created = True
-        self._createCallback(result)
-
-        if self._loading:
-            self.loaded_signal.emit()
-        else:
-            self.setInitialized(True)
-            log.info("Node instance {} has been created".format(self.name()))
-            self.created_signal.emit(self.id())
-            self._module.addNode(self)
-
-    def _createCallback(self, result):
-        """
-        Create callback compatible with the compute api.
-        """
-
-        pass
-
     def _update(self, params, timeout=60):
         """
         Update the node on the controller
@@ -303,7 +241,6 @@ class Node(BaseNode):
         """
 
         if error:
-            log.error("error while updating {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
             return False
 
@@ -382,6 +319,37 @@ class Node(BaseNode):
             new_port.setStatus(self.status())
             self._ports.append(new_port)
 
+    def createNodeCallback(self, result, error=False, **kwargs):
+        """
+        Callback for create.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        :returns: Boolean success or not
+        """
+        if error:
+            self.server_error_signal.emit(self.id(), "Error while setting up node: {}".format(result["message"]))
+            self.deleted_signal.emit()
+            self._module.removeNode(self)
+            return False
+
+        result = self._parseResponse(result)
+        self._created = True
+        self._createCallback(result)
+
+        if self._loading:
+            self.loaded_signal.emit()
+        else:
+            self.setInitialized(True)
+            self.created_signal.emit(self.id())
+            self._module.addNode(self)
+
+    def _createCallback(self, result):
+        """
+        Create callback compatible with the compute api.
+        """
+        pass
+
     def _updateCallback(self, result):
         """
         Update callback compatible with the compute api.
@@ -396,7 +364,6 @@ class Node(BaseNode):
         :param skip_controller: True to not delete on the controller (often it's when it's already deleted on the server)
         """
 
-        log.info("{} is being deleted".format(self.name()))
         if not skip_controller:
             self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback)
         else:
@@ -415,7 +382,6 @@ class Node(BaseNode):
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
             return
-        log.info("{} has been deleted".format(self.name()))
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
@@ -525,39 +491,6 @@ class Node(BaseNode):
         if error:
             log.error("error while reloading {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-        else:
-            log.info("{} has reloaded".format(self.name()))
-
-    def _readBaseConfig(self, config_path):
-        """
-        Returns a base config content.
-
-        :param config_path: path to the configuration file.
-
-        :returns: config content
-        """
-
-        if config_path is None or len(config_path.strip()) == 0:
-            return None
-
-        if not os.path.isabs(config_path):
-            config_path = os.path.join(LocalServer.instance().localServerSettings()["configs_path"], config_path)
-
-        if not os.path.isfile(config_path):
-            return None
-
-        try:
-            with open(config_path, "rb") as f:
-                log.info("Opening configuration file: {}".format(config_path))
-                config = f.read().decode("utf-8")
-                config = config.replace('\r', "")
-                return config
-        except OSError as e:
-            self.error_signal.emit(self.id(), "Could not read configuration file {}: {}".format(config_path, e))
-            return None
-        except UnicodeDecodeError as e:
-            self.error_signal.emit(self.id(), "Invalid configuration file {}: {}".format(config_path, e))
-            return None
 
     def openConsole(self, command=None, aux=False):
         if command is None:
@@ -585,6 +518,9 @@ class Node(BaseNode):
         elif console_type == "vnc":
             from .vnc_console import vncConsole
             vncConsole(self.consoleHost(), console_port, command)
+        elif console_type == "spice":
+            from .spice_console import spiceConsole
+            spiceConsole(self.consoleHost(), console_port, command)
         elif console_type == "http" or console_type == "https":
             QtGui.QDesktopServices.openUrl(QtCore.QUrl("{console_type}://{host}:{port}{path}".format(console_type=console_type, host=self.consoleHost(), port=console_port, path=self.consoleHttpPath())))
 

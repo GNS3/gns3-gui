@@ -332,8 +332,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             # set the device name
             self.uiNameLineEdit.setText(settings["name"])
 
-            if "linked_base" in settings:
-                self.uiBaseVMCheckBox.setChecked(settings["linked_base"])
+            if "linked_clone" in settings:
+                self.uiBaseVMCheckBox.setChecked(settings["linked_clone"])
             else:
                 self.uiBaseVMCheckBox.hide()
 
@@ -457,8 +457,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             else:
                 settings["name"] = name
 
-            if "linked_base" in settings:
-                settings["linked_base"] = self.uiBaseVMCheckBox.isChecked()
+            if "linked_clone" in settings:
+                settings["linked_clone"] = self.uiBaseVMCheckBox.isChecked()
 
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text().strip()
             settings["hdb_disk_image"] = self.uiHdbDiskImageLineEdit.text().strip()

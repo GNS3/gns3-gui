@@ -137,59 +137,8 @@ class Docker(Module):
         :param node_class: Node object
         :param server: HTTPClient instance
         """
-        log.info("instantiating node {}".format(node_class))
         # create an instance of the node class
         return node_class(self, server, project)
-
-    def createNode(self, node, node_name):
-        """
-        Creates a node.
-
-        :param node: Node instance
-        :param node_name: Node name
-        """
-        log.info("creating node {} with id {}".format(node, node.id()))
-
-        image = None
-        if node_name:
-            for image_key, info in self._docker_containers.items():
-                if node_name == info["name"]:
-                    image = image_key
-        if not image:
-            selected_images = []
-            for image, info in self._docker_containers.items():
-                if info["server"] == node.compute().id():
-                    selected_images.append(image)
-
-            if not selected_images:
-                raise ModuleError("No Docker VM on server {}".format(
-                    node.server().url()))
-            elif len(selected_images) > 1:
-                from gns3.main_window import MainWindow
-                mainwindow = MainWindow.instance()
-
-                (selection, ok) = QtWidgets.QInputDialog.getItem(
-                    mainwindow, "Docker Image", "Please choose an image",
-                    selected_images, 0, False)
-                if ok:
-                    image = selection
-                else:
-                    raise ModuleError("Please select a Docker Image")
-            else:
-                image = selected_images[0]
-
-        image_settings = {}
-        for setting_name, value in self._docker_containers[image].items():
-            if setting_name in node.settings() and value != "" and value is not None:
-                if setting_name not in ['name', 'image']:
-                    image_settings[setting_name] = value
-
-        default_name_format = DOCKER_CONTAINER_SETTINGS["default_name_format"]
-        if self._docker_containers[image]["default_name_format"]:
-            default_name_format = self._docker_containers[image]["default_name_format"]
-
-        image = self._docker_containers[image]["image"]
-        node.create(image, base_name=node_name, additional_settings=image_settings, default_name_format=default_name_format)
 
     def reset(self):
         """Resets the servers."""

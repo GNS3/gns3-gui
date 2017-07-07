@@ -21,7 +21,6 @@ Handles commands typed in the GNS3 console.
 
 import sys
 import cmd
-import logging
 import struct
 import sip
 import json
@@ -29,6 +28,9 @@ import json
 from .node import Node
 from .qt import QtCore
 from .version import __version__
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class ConsoleCmd(cmd.Cmd):
@@ -176,6 +178,24 @@ class ConsoleCmd(cmd.Cmd):
                         else:
                             print("Cannot console to {}".format(device))
                         break
+
+    def do_log(self, args):
+        """
+        Log a message
+
+        log level message
+        """
+
+        args = args.split()
+        if len(args) == 0:
+            return
+        level = args.pop(0)
+        if level == "info":
+            log.info(" ".join(args))
+        elif level == "warning":
+            log.warning(" ".join(args))
+        else:
+            log.error(" ".join(args))
 
     def _start_console(self, node):
         """

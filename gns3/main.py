@@ -184,8 +184,8 @@ def main():
     if sys.version_info < (3, 4):
         raise SystemExit("Python 3.4 or higher is required")
 
-    if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.0.0"):
-        raise SystemExit("Requirement is PyQt5 version 5.0.0 or higher, got version {}".format(QtCore.QT_VERSION_STR))
+    if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.5.0"):
+        raise SystemExit("Requirement is PyQt5 version 5.5.0 or higher, got version {}".format(QtCore.QT_VERSION_STR))
 
     if parse_version(psutil.__version__) < parse_version("2.2.1"):
         raise SystemExit("Requirement is psutil version 2.2.1 or higher, got version {}".format(psutil.__version__))
@@ -228,8 +228,10 @@ def main():
     if local_config.multiProfiles() and not options.profile:
         profile_select = ProfileSelectDialog()
         profile_select.show()
-        profile_select.exec_()
-        options.profile = profile_select.profile()
+        if profile_select.exec_():
+            options.profile = profile_select.profile()
+        else:
+            sys.exit(0)
 
     # Init the config
     if options.config:

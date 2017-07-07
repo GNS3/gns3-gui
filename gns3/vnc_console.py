@@ -46,7 +46,7 @@ def vncConsole(host, port, command):
     command = command.replace("%P", str(port - 5900))
 
     try:
-        log.info('starting VNC program "{}"'.format(command))
+        log.debug('starting VNC program "{}"'.format(command))
         if sys.platform.startswith("win"):
             # use the string on Windows
             subprocess.Popen(command)

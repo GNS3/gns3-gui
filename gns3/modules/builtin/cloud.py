@@ -46,20 +46,6 @@ class Cloud(Node):
 
         return self._interfaces
 
-    def create(self, name=None, node_id=None, ports=None, default_name_format="Cloud{0}"):
-        """
-        Creates this cloud.
-
-        :param name: optional name for this cloud
-        :param node_id: Node identifier on the server
-        :param ports: ports to be automatically added when creating this cloud
-        """
-
-        params = {}
-        if ports:
-            params["ports_mapping"] = ports
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result, error=False, **kwargs):
         """
         Callback for create.

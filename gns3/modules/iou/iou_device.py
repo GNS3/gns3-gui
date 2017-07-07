@@ -23,7 +23,6 @@ import os
 import re
 from gns3.node import Node
 from gns3.utils.normalize_filename import normalize_filename
-from gns3.image_manager import ImageManager
 from .settings import IOU_DEVICE_SETTINGS
 
 import logging
@@ -45,8 +44,6 @@ class IOUDevice(Node):
     def __init__(self, module, server, project):
         super().__init__(module, server, project)
 
-        log.info("IOU instance is being created")
-
         iou_device_settings = {"path": "",
                                "md5sum": "",
                                "startup_config": "",
@@ -61,33 +58,6 @@ class IOUDevice(Node):
                                "console_host": None}
 
         self.settings().update(iou_device_settings)
-
-    def create(self, iou_path, name=None, node_id=None, additional_settings={}, default_name_format="IOU{0}"):
-        """
-        Creates this IOU device.
-
-        :param iou_path: path to an IOU image
-        :param name: optional name
-        :param console: optional TCP console port
-        """
-
-        params = {"path": iou_path}
-        # push the startup-config
-        if "startup_config" in additional_settings:
-            base_config_content = self._readBaseConfig(additional_settings["startup_config"])
-            if base_config_content is not None:
-                params["startup_config_content"] = base_config_content
-            del additional_settings["startup_config"]
-
-        # push the startup-config
-        if "private_config" in additional_settings:
-            base_config_content = self._readBaseConfig(additional_settings["private_config"])
-            if base_config_content is not None:
-                params["private_config_content"] = base_config_content
-            del additional_settings["private_config"]
-
-        params.update(additional_settings)
-        self._create(name, node_id, params, default_name_format)
 
     def _createCallback(self, result):
         """
@@ -106,8 +76,6 @@ class IOUDevice(Node):
             log.debug("{} is already running".format(self.name()))
             return
 
-        params = {}
-
         log.debug("{} is starting".format(self.name()))
         self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, progressText="{} is starting".format(self.name()))
 
@@ -119,18 +87,6 @@ class IOUDevice(Node):
         """
 
         params = {}
-        if "startup_config" in new_settings:
-            base_config_content = self._readBaseConfig(new_settings["startup_config"])
-            if base_config_content is not None:
-                params["startup_config_content"] = base_config_content
-            del new_settings["startup_config"]
-
-        if "private_config" in new_settings:
-            base_config_content = self._readBaseConfig(new_settings["private_config"])
-            if base_config_content is not None:
-                params["private_config_content"] = base_config_content
-            del new_settings["private_config"]
-
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
@@ -188,95 +144,6 @@ class IOUDevice(Node):
         Name of the configuration files
         """
         return ["startup-config.cfg", "private-config.cfg"]
-
-    def exportConfigToDirectory(self, directory):
-        """
-        Exports the initial-config to a directory.
-
-        :param directory: destination directory path
-        """
-
-        self.controllerHttpGet("/nodes/{node_id}".format(node_id=self._node_id),
-                               self._exportConfigToDirectoryCallback,
-                               context={"directory": directory})
-
-    def _exportConfigToDirectoryCallback(self, result, error=False, context={}, **kwargs):
-        """
-        Callback for exportConfigToDirectory.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            log.error("error while exporting {} IOU configs: {}".format(self.name(), result["message"]))
-            self.server_error_signal.emit(self.id(), result["message"])
-            return
-        export_directory = context["directory"]
-
-        result = result["properties"]
-        if "startup_config_content" in result:
-            startup_config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_startup-config.cfg"
-            try:
-                with open(startup_config_path, "wb") as f:
-                    log.info("saving {} startup-config to {}".format(self.name(), startup_config_path))
-                    if result["startup_config_content"]:
-                        f.write(result["startup_config_content"].encode("utf-8"))
-            except OSError as e:
-                self.error_signal.emit(self.id(), "could not export startup-config to {}: {}".format(startup_config_path, e))
-
-        if "private_config_content" in result and result["private_config_content"] is not None and len(result["private_config_content"]) > 0:
-            private_config_path = os.path.join(export_directory, normalize_filename(self.name())) + "_private-config.cfg"
-            try:
-                with open(private_config_path, "wb") as f:
-                    log.info("saving {} private-config to {}".format(self.name(), private_config_path))
-                    if result["private_config_content"]:
-                        f.write(result["private_config_content"].encode("utf-8"))
-            except OSError as e:
-                self.error_signal.emit(self.id(), "could not export private-config to {}: {}".format(startup_config_path, e))
-
-    def importConfig(self, path):
-        """
-        Imports a startup-config.
-
-        :param path: path to the startup-config
-        """
-
-        new_settings = {"startup_config": path}
-        self.update(new_settings)
-
-    def importPrivateConfig(self, path):
-        """
-        Imports a private-config.
-
-        :param path: path to the private-config
-        """
-
-        new_settings = {"private_config": path}
-        self.update(new_settings)
-
-    def importConfigFromDirectory(self, directory):
-        """
-        Imports IOU configs from a directory.
-
-        :param directory: source directory path
-        """
-
-        contents = os.listdir(directory)
-        startup_config = normalize_filename(self.name()) + "_startup-config.cfg"
-        private_config = normalize_filename(self.name()) + "_private-config.cfg"
-        new_settings = {}
-        if startup_config in contents:
-            new_settings["startup_config"] = os.path.join(directory, startup_config)
-
-        if private_config in contents:
-            new_settings["private_config"] = os.path.join(directory, private_config)
-        else:
-            # private-config is optional
-            log.debug("{}: no private-config file could be found, expected file name: {}".format(self.name(), private_config))
-
-        if new_settings:
-            self.update(new_settings)
 
     def console(self):
         """

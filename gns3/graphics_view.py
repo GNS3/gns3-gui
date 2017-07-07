@@ -22,7 +22,7 @@ Graphical view on the scene where items are drawn.
 import logging
 import os
 import sip
-import pickle
+import sys
 
 from .qt import QtCore, QtGui, QtNetwork, QtWidgets, qpartial, qslot
 from .items.node_item import NodeItem
@@ -33,6 +33,7 @@ from .modules import MODULES
 from .modules.module_error import ModuleError
 from .settings import GRAPHICS_VIEW_SETTINGS
 from .topology import Topology
+from .appliance_manager import ApplianceManager
 from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
@@ -55,6 +56,7 @@ from .items.text_item import TextItem
 from .items.shape_item import ShapeItem
 from .items.drawing_item import DrawingItem
 from .items.rectangle_item import RectangleItem
+from .items.line_item import LineItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
 
@@ -82,6 +84,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._adding_note = False
         self._adding_rectangle = False
         self._adding_ellipse = False
+        self._adding_line = False
         self._newlink = None
         self._dragging = False
         self._last_mouse_position = None
@@ -112,6 +115,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
     def setSceneSize(self, width, height):
         self.scene().setSceneRect(-(width / 2), -(height / 2), width, height)
+
+    def setZoom(self, zoom):
+        """
+        Sets zoom of the Graphics View
+        :param zoom:
+        :return:
+        """
+        if zoom:
+            factor = zoom / 100.
+            self.scale(factor, factor)
 
     def setEnabled(self, enabled):
 
@@ -231,6 +244,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self.setCursor(QtCore.Qt.PointingHandCursor)
         else:
             self._adding_ellipse = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+
+    def addLine(self, state):
+        """
+        Adds a line.
+
+        :param state: boolean
+        """
+
+        if state:
+            self._adding_line = True
+            self.setCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            self._adding_line = False
             self.setCursor(QtCore.Qt.ArrowCursor)
 
     def addImage(self, image_path):
@@ -437,6 +464,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._main_window.uiDrawEllipseAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_ellipse = False
+        elif event.button() == QtCore.Qt.LeftButton and self._adding_line:
+            pos = self.mapToScene(event.pos())
+            self.createDrawingItem("line", pos.x(), pos.y(), 0)
+            self._main_window.uiDrawLineAction.setChecked(False)
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            self._adding_line = False
         else:
             super().mousePressEvent(event)
 
@@ -474,6 +507,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if delta is not None and delta.x() == 0:
                 # CTRL is pressed then use the mouse wheel to zoom in or out.
                 self.scaleView(pow(2.0, delta.y() / 240.0))
+                self._topology.project().setZoom(round(self.transform().m11() * 100))
+                self._topology.project().update()
         else:
             super().wheelEvent(event)
 
@@ -486,6 +521,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if factor < 0.10 or factor > 10:
             return
         self.scale(scale_factor, scale_factor)
+        self._main_window.uiStatusBar.showMessage("Zoom: {}%".format(round(self.transform().m11() * 100)), 2000)
 
     def keyPressEvent(self, event):
         """
@@ -587,7 +623,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         # check if what is dragged is handled by this view
-        if event.mimeData().hasFormat("application/x-gns3-node") or event.mimeData().hasFormat("text/uri-list"):
+        if event.mimeData().hasFormat("text/uri-list") \
+                or event.mimeData().hasFormat("application/x-gns3-appliance"):
             event.acceptProposedAction()
             event.accept()
         else:
@@ -601,10 +638,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         # check if what has been dropped is handled by this view
-        if event.mimeData().hasFormat("application/x-gns3-node"):
-            data = event.mimeData().data("application/x-gns3-node")
-            # load the pickled node data
-            node_data = pickle.loads(data)
+        if event.mimeData().hasFormat("application/x-gns3-appliance"):
+            appliance_id = event.mimeData().data("application/x-gns3-appliance").data().decode()
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
@@ -615,12 +650,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     for node_number in range(integer):
                         x = event.pos().x() - (150 / 2) + (node_number % max_nodes_per_line) * offset
                         y = event.pos().y() - (70 / 2) + (node_number // max_nodes_per_line) * offset
-                        node_item = self.createNode(node_data, QtCore.QPoint(x, y))
-                        if node_item is None:
-                            # stop if there is any error
-                            break
+                        self.createNodeFromApplianceId(appliance_id, QtCore.QPoint(x, y))
             else:
-                self.createNode(node_data, event.pos())
+                self.createNodeFromApplianceId(appliance_id, event.pos())
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             # This should not arrive but we received bug report with it...
             if len(event.mimeData().urls()) == 0:
@@ -775,7 +807,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             text_edit_action.triggered.connect(self.textEditActionSlot)
             menu.addAction(text_edit_action)
 
-        if True in list(map(lambda item: isinstance(item, ShapeItem), items)):
+        if True in list(map(lambda item: isinstance(item, ShapeItem) or isinstance(item, LineItem), items)):
             style_action = QtWidgets.QAction("Style", menu)
             style_action.setIcon(QtGui.QIcon(':/icons/drawing.svg'))
             style_action.triggered.connect(self.styleActionSlot)
@@ -787,6 +819,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             show_in_file_manager_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
             show_in_file_manager_action.triggered.connect(self.getCommandLineSlot)
             menu.addAction(show_in_file_manager_action)
+
+        if sys.platform.startswith("win") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
+            # Action: bring console or window to front (Windows only)
+            bring_to_front_action = QtWidgets.QAction("Bring to front", menu)
+            bring_to_front_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
+            bring_to_front_action.triggered.connect(self.bringToFrontSlot)
+            menu.addAction(bring_to_front_action)
 
         if True in list(map(lambda item: isinstance(item, NoteItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
             # action only for port labels
@@ -952,6 +991,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
             # returns True to ignore this node.
             return True
 
+        # TightVNC has lack support of IPv6 host at this moment
+        if "vncviewer" in node.consoleCommand() and ":" in node.consoleHost():
+            QtWidgets.QMessageBox.warning(
+                self, "TightVNC", "TightVNC (vncviewer) may not start because of lack of IPv6 support.")
+
         try:
             node.openConsole(aux=aux)
         except (OSError, ValueError) as e:
@@ -1006,7 +1050,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         console_type = "telnet"
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
-                if item.node().consoleType() not in ("telnet", "serial", "vnc"):
+                if item.node().consoleType() not in ("telnet", "serial", "vnc", "spice"):
                     continue
                 current_cmd = item.node().consoleCommand()
                 console_type = item.node().consoleType()
@@ -1016,7 +1060,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             for item in self.scene().selectedItems():
                 if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
                     node = item.node()
-                    if node.consoleType() not in ("telnet", "serial", "vnc"):
+                    if node.consoleType() not in ("telnet", "serial", "vnc", "spice"):
                         continue
                     try:
                         node.openConsole(command=cmd)
@@ -1171,6 +1215,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 dialog.show()
                 dialog.exec_()
 
+    def bringToFrontSlot(self):
+        """
+        Slot to receive events from the bring to front action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"):
+                item.node().bringToFront()
+
     def idlepcActionSlot(self):
         """
         Slot to receive events from the idlepc action in the
@@ -1195,7 +1249,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             QtWidgets.QMessageBox.critical(self, "Idle-PC", "Error: {}".format(result["message"]))
         else:
             router = context["router"]
-            log.info("{} has received Idle-PC proposals".format(router.name()))
+            log.debug("{} has received Idle-PC proposals".format(router.name()))
             idlepcs = result
             if idlepcs and idlepcs[0] != "0x0":
                 dialog = IdlePCDialog(router, idlepcs, parent=self)
@@ -1229,7 +1283,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             router = context["router"]
             idlepc = result["idlepc"]
-            log.info("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
+            log.debug("{} has received the auto idle-pc value: {}".format(router.name(), idlepc))
             router.setIdlepc(idlepc)
             # apply Idle-PC to all routers with the same IOS image
             ios_image = os.path.basename(router.settings()["image"])
@@ -1268,7 +1322,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, ShapeItem):
+            if isinstance(item, ShapeItem) or isinstance(item, LineItem):
                 items.append(item)
         if items:
             style_dialog = StyleEditorDialog(self._main_window, items)
@@ -1413,48 +1467,18 @@ class GraphicsView(QtWidgets.QGraphicsView):
             raise ModuleError("Please select a server")
         return server
 
-    def createNode(self, node_data, pos):
+    def createNodeFromApplianceId(self, appliance_id, pos):
         """
-        Creates a new node on the scene.
-
-        :param node_data: node data to create a new node
-        :param pos: position of the drop event
-
-        :returns: NodeItem instance
+        Ask the server to create a node using this appliance
         """
-        try:
-            node_module = None
-            for module in MODULES:
-                instance = module.instance()
-                node_class = module.getNodeClass(node_data["class"])
-                if node_class in instance.classes():
-                    node_module = instance
-                    break
-
-            if not node_module:
-                raise ModuleError("Could not find any module for {}".format(node_class))
-            if self._topology.project() is None:
-                return
-            node = node_module.instantiateNode(node_class, self.allocateCompute(node_data, instance), self._topology.project())
-        # If no server is available a ValueError is raised
-        except (ModuleError, ValueError) as e:
-            QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
-            return
-
         pos = self.mapToScene(pos)
-        node_item = self.createNodeItem(node, node_data["symbol"], pos.x(), pos.y())
-        node.setGraphics(node_item)
-        try:
-            node_module.createNode(node, node_data["name"])
-        except ModuleError as e:
-            QtWidgets.QMessageBox.critical(self, "Node creation", "{}".format(e))
-            return
-        return node_item
+        ApplianceManager().instance().createNodeFromApplianceId(self._topology.project(), appliance_id, pos.x(), pos.y())
 
     def createNodeItem(self, node, symbol, x, y):
         node.setSymbol(symbol)
         node.setPos(x, y)
         node_item = NodeItem(node)
+
         self.scene().addItem(node_item)
         self._topology.addNode(node)
 
@@ -1482,6 +1506,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             item = EllipseItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "rect":
             item = RectangleItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+        elif type == "line":
+            item = LineItem(pos=QtCore.QPoint(x, y), dst=QtCore.QPoint(200, 0), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
             item = ImageItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "text":

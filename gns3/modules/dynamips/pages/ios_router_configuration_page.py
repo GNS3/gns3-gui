@@ -26,6 +26,7 @@ from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.local_server import LocalServer
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.controller import Controller
 from gns3.node import Node
 from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
 from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
@@ -70,6 +71,10 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         # add the categories
         for name, category in Node.defaultCategories().items():
             self.uiCategoryComboBox.addItem(name, category)
+
+        if Controller.instance().isRemote():
+            self.uiStartupConfigToolButton.hide()
+            self.uiPrivateConfigToolButton.hide()
 
     def _idlePCValidateSlot(self):
         """

@@ -19,12 +19,9 @@
 VMware VM implementation.
 """
 
-import os
-import sys
-import tempfile
-
 from gns3.qt import QtCore
 from gns3.node import Node
+from gns3.utils.bring_to_front import bring_window_to_front_from_process_name
 from .settings import VMWARE_VM_SETTINGS
 
 import logging
@@ -47,7 +44,6 @@ class VMwareVM(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
-        log.info("VMware VM instance is being created")
         self._linked_clone = False
 
         vmware_vm_settings = {"vmx_path": "",
@@ -63,27 +59,6 @@ class VMwareVM(Node):
                               "first_port_name": None}
 
         self.settings().update(vmware_vm_settings)
-
-    def create(self, vmx_path, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
-               first_port_name="", linked_clone=False, additional_settings={}, default_name_format=None):
-        """
-        Creates this VMware VM.
-
-        :param vmx_path: path to the vmx file
-        :param name: optional name
-        :param node_id: Node identifier
-        :param linked_clone: either the VM is a linked clone
-        :param additional_settings: additional settings for this VM
-        """
-
-        self._linked_clone = linked_clone
-        params = {"vmx_path": vmx_path,
-                  "linked_clone": linked_clone,
-                  "port_name_format": port_name_format,
-                  "port_segment_size": port_segment_size,
-                  "first_port_name": first_port_name}
-        params.update(additional_settings)
-        self._create(name, node_id, params, default_name_format)
 
     def _createCallback(self, result):
         """
@@ -174,6 +149,14 @@ class VMwareVM(Node):
         """
 
         return self._settings["console"]
+
+    def bringToFront(self):
+        """
+        Bring the VM window to front.
+        """
+
+        if self.status() == Node.started:
+            bring_window_to_front_from_process_name("vmware")
 
     def configPage(self):
         """

@@ -40,6 +40,6 @@ VBOX_VM_SETTINGS = {
     "adapter_type": "Intel PRO/1000 MT Desktop (82540EM)",
     "headless": False,
     "acpi_shutdown": False,
-    "linked_base": False,
+    "linked_clone": False,
     "server": "local"
 }

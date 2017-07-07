@@ -29,7 +29,6 @@ from gns3.node import Node
 from gns3.topology import Topology
 from gns3.utils.run_in_terminal import RunInTerminal
 from gns3.utils.get_resource import get_resource
-from gns3.utils.get_default_base_config import get_default_base_config
 from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
 from gns3.compute_manager import ComputeManager
 
@@ -92,8 +91,8 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
 
         # location of the base config templates
-        self._base_startup_config_template = get_resource(os.path.join("configs", "ios_base_startup-config.txt"))
-        self._base_etherswitch_startup_config_template = get_resource(os.path.join("configs", "ios_etherswitch_startup-config.txt"))
+        self._base_startup_config_template = "ios_base_startup-config.txt"
+        self._base_etherswitch_startup_config_template = "ios_etherswitch_startup-config.txt"
 
         # FIXME: hide because of issue on Windows.
         self.uiTestIOSImagePushButton.hide()
@@ -420,7 +419,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         settings = {
             "name": self.uiNameLineEdit.text(),
             "image": image,
-            "startup_config": get_default_base_config(self._base_startup_config_template),
+            "startup_config": self._base_startup_config_template,
             "ram": self.uiRamSpinBox.value(),
             "nvram": PLATFORMS_DEFAULT_NVRAM[platform],
             "idlepc": self.uiIdlepcLineEdit.text(),
@@ -431,7 +430,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
         if self.uiEtherSwitchCheckBox.isChecked():
             settings["default_name_format"] = "ESW{0}"
-            settings["startup_config"] = get_default_base_config(self._base_etherswitch_startup_config_template)
+            settings["startup_config"] = self._base_etherswitch_startup_config_template
             settings["symbol"] = ":/symbols/multilayer_switch.svg"
             settings["disk0"] = 1  # adds 1MB disk to store vlan.dat
             settings["category"] = Node.switches

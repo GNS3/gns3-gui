@@ -27,16 +27,16 @@ def test_toSvg(project, controller):
     pen.setStyle(QtCore.Qt.DashLine)
     rect.setPen(pen)
     svg = ET.fromstring(rect.toSvg())
-    assert float(svg.get("width")) ==  400.0
-    assert float(svg.get("height")) ==  280.0
+    assert float(svg.get("width")) == 400.0
+    assert float(svg.get("height")) == 280.0
 
     rect = svg[0]
-    assert float(rect.get("width")) ==  400.0
-    assert float(rect.get("height")) ==  280.0
+    assert float(rect.get("width")) == 400.0
+    assert float(rect.get("height")) == 280.0
     assert rect.get("stroke-width") == "2"
     assert rect.get("stroke") == "#000000"
-    assert rect.get("fill", "#ffffff")
-    assert rect.get("fill-opacity", "1")
+    assert rect.get("fill") == "#ffffff"
+    assert rect.get("fill-opacity") == "1.0"
 
     assert rect.get("stroke-dasharray") == "25, 25"
 

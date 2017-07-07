@@ -99,7 +99,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
             "name": vmname,
             "server": self._compute_id,
             "vmx_path": vminfo["vmx_path"],
-            "linked_base": self.uiBaseVMCheckBox.isChecked()
+            "linked_clone": self.uiBaseVMCheckBox.isChecked()
         }
 
         return settings

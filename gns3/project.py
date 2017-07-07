@@ -16,14 +16,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from .qt import QtCore, qpartial, QtWidgets, QtNetwork
+import json
+from .qt import QtCore, qpartial, QtWidgets, QtNetwork, qslot
 
 from gns3.controller import Controller
 from gns3.compute_manager import ComputeManager
 from gns3.topology import Topology
 from gns3.local_config import LocalConfig
 from gns3.settings import GRAPHICS_VIEW_SETTINGS
-
+from gns3.appliance_manager import ApplianceManager
+from gns3.utils import parse_version
 
 import logging
 log = logging.getLogger(__name__)
@@ -44,6 +46,9 @@ class Project(QtCore.QObject):
 
     project_updated_signal = QtCore.Signal()
 
+    # Called when project is fully loaded
+    project_loaded_signal = QtCore.Signal()
+
     def __init__(self):
 
         self._id = None
@@ -58,6 +63,11 @@ class Project(QtCore.QObject):
         graphic_settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, GRAPHICS_VIEW_SETTINGS)
         self._scene_width = graphic_settings["scene_width"]
         self._scene_height = graphic_settings["scene_height"]
+        self._zoom = graphic_settings.get("zoom", None)
+        self._show_layers = graphic_settings.get("show_layers", False)
+        self._snap_to_grid = graphic_settings.get("snap_to_grid", False)
+        self._show_grid = graphic_settings.get("show_grid", False)
+        self._show_interface_labels = graphic_settings.get("show_interface_labels", False)
 
         self._name = "untitled"
         self._filename = None
@@ -113,6 +123,71 @@ class Project(QtCore.QObject):
 
     def autoStart(self):
         return self._auto_start
+
+    def setZoom(self, zoom):
+        """
+        Sets zoom factor of the view
+        """
+        self._zoom = zoom
+
+    def zoom(self):
+        """
+        Returns zoom factor of project
+        :return: float or None when not defined
+        """
+        return self._zoom
+
+    def setShowLayers(self, show_layers):
+        """
+        Sets show layers mode
+        """
+        self._show_layers = show_layers
+
+    def showLayers(self):
+        """
+        Returns if show layers mode is ON
+        :return: boolean
+        """
+        return self._show_layers
+
+    def setSnapToGrid(self, snap_to_grid):
+        """
+        Sets snap to grid mode
+        """
+        self._snap_to_grid = snap_to_grid
+
+    def snapToGrid(self):
+        """
+        Returns if snap to grid mode is ON
+        :return: boolean
+        """
+        return self._snap_to_grid
+
+    def setShowGrid(self, show_grid):
+        """
+        Sets show grid mode
+        """
+        self._show_grid = show_grid
+
+    def showGrid(self):
+        """
+        Returns if show grid mode is ON
+        :return: boolean
+        """
+        return self._show_grid
+
+    def setShowInterfaceLabels(self, show_interface_labels):
+        """
+        Sets show interface labels mode
+        """
+        self._show_interface_labels = show_interface_labels
+
+    def showInterfaceLabels(self):
+        """
+        Returns if show interface labels mode is ON
+        :return: boolean
+        """
+        return self._show_interface_labels
 
     def setName(self, name):
         """
@@ -312,7 +387,12 @@ class Project(QtCore.QObject):
             "auto_close": self._auto_close,
             "auto_start": self._auto_start,
             "scene_width": self._scene_width,
-            "scene_height": self._scene_height
+            "scene_height": self._scene_height,
+            "zoom": self._zoom,
+            "show_layers": self._show_layers,
+            "snap_to_grid": self._snap_to_grid,
+            "show_grid": self._show_grid,
+            "show_interface_labels": self._show_interface_labels
         }
         self.put("", self._projectUpdatedCallback, body=body)
 
@@ -347,6 +427,11 @@ class Project(QtCore.QObject):
         self._auto_close = result.get("auto_close", False)
         self._scene_width = result.get("scene_width", 2000)
         self._scene_height = result.get("scene_height", 1000)
+        self._zoom = result.get("zoom", None)
+        self._show_layers = result.get("show_layers", False)
+        self._snap_to_grid = result.get("snap_to_grid", False)
+        self._show_grid = result.get("show_grid", False)
+        self._show_interface_labels = result.get("show_interface_labels", False)
 
     def load(self, path=None):
         if not path:
@@ -397,6 +482,7 @@ class Project(QtCore.QObject):
         topo = Topology.instance()
         for drawing in result:
             topo.createDrawing(drawing)
+        self.project_loaded_signal.emit()
 
     def close(self, local_server_shutdown=False):
         """Close project"""
@@ -427,7 +513,7 @@ class Project(QtCore.QObject):
             log.error("Error while closing project {}: {}".format(self._id, result["message"]))
         else:
             self.stopListenNotifications()
-            log.info("Project {} closed".format(self._id))
+            log.debug("Project {} closed".format(self._id))
 
         self._closed = True
         self.project_closed_signal.emit()
@@ -443,13 +529,22 @@ class Project(QtCore.QObject):
     def _startListenNotifications(self):
         if not Controller.instance().connected():
             return
-        path = "/projects/{project_id}/notifications".format(project_id=self._id)
-        self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
-                                                                          downloadProgressCallback=self._event_received,
-                                                                          networkManager=self._notification_network_manager,
-                                                                          timeout=None,
-                                                                          showProgress=False,
-                                                                          ignoreErrors=True)
+
+        # Qt websocket before Qt 5.6 doesn't support auth
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0"):
+            path = "/projects/{project_id}/notifications".format(project_id=self._id)
+            self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
+                                                                              downloadProgressCallback=self._event_received,
+                                                                              networkManager=self._notification_network_manager,
+                                                                              timeout=None,
+                                                                              showProgress=False,
+                                                                              ignoreErrors=True)
+
+        else:
+            path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
+            self._notification_stream = Controller.instance().connectWebSocket(path)
+            self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
+            self._notification_stream.error.connect(self._websocket_error)
 
     def _endListenNotificationCallback(self, result, error=False, **kwargs):
         """
@@ -459,9 +554,21 @@ class Project(QtCore.QObject):
             self._notification_stream = None
             self._startListenNotifications()
 
-    def _event_received(self, result, server=None, **kwargs):
+    @qslot
+    def _websocket_error(self, error):
+        if self._notification_stream:
+            log.error(self._notification_stream.errorString())
+            self._notification_stream = None
+            self._startListenNotifications()
 
-        log.debug("Event received: %s", result)
+    @qslot
+    def _websocket_event_received(self, event):
+        self._event_received(json.loads(event))
+
+    def _event_received(self, result, *args, **kwargs):
+        # Log only relevant events
+        if result["action"] not in ("ping", "compute.updated"):
+            log.debug("Event received: %s", result)
         if result["action"] == "node.created":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is None:
@@ -515,5 +622,6 @@ class Project(QtCore.QObject):
             cm.computeDataReceivedCallback(result["event"])
         elif result["action"] == "settings.updated":
             LocalConfig.instance().refreshConfigFromController()
+            ApplianceManager.instance().refresh()
         elif result["action"] == "ping":
             pass

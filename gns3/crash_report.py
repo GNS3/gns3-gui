@@ -41,7 +41,7 @@ if __version_info__[3] != 0:
     import faulthandler
     # Display a traceback in case of segfault crash. Usefull when frozen
     # Not enabled by default for security reason
-    log.info("Enable catching segfault")
+    log.debug("Enable catching segfault")
     faulthandler.enable()
 
 
@@ -104,7 +104,7 @@ class CrashReport:
             except Exception as e:
                 log.error("Can't send crash report to Sentry: {}".format(e))
                 return
-            log.info("Crash report sent with event ID: {}".format(client.get_ident(report)))
+            log.debug("Crash report sent with event ID: {}".format(client.get_ident(report)))
 
     def _add_qt_information(self, context):
         try:

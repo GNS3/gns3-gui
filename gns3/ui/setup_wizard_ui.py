@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/moores/dev/gns3-gui/gns3/ui/setup_wizard.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/setup_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.8
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_SetupWizard(object):
+
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName("SetupWizard")
         SetupWizard.resize(754, 526)
@@ -196,23 +198,12 @@ class Ui_SetupWizard(object):
         self.uiRemoteControllerWizardPage.setObjectName("uiRemoteControllerWizardPage")
         self.gridLayout = QtWidgets.QGridLayout(self.uiRemoteControllerWizardPage)
         self.gridLayout.setObjectName("gridLayout")
-        self.label_7 = QtWidgets.QLabel(self.uiRemoteControllerWizardPage)
-        self.label_7.setObjectName("label_7")
-        self.gridLayout.addWidget(self.label_7, 0, 0, 1, 1)
-        self.uiRemoteMainServerProtocolComboBox = QtWidgets.QComboBox(self.uiRemoteControllerWizardPage)
-        self.uiRemoteMainServerProtocolComboBox.setObjectName("uiRemoteMainServerProtocolComboBox")
-        self.uiRemoteMainServerProtocolComboBox.addItem("")
-        self.uiRemoteMainServerProtocolComboBox.addItem("")
-        self.gridLayout.addWidget(self.uiRemoteMainServerProtocolComboBox, 0, 1, 1, 1)
-        self.label_3 = QtWidgets.QLabel(self.uiRemoteControllerWizardPage)
-        self.label_3.setObjectName("label_3")
-        self.gridLayout.addWidget(self.label_3, 1, 0, 1, 1)
-        self.uiRemoteMainServerHostLineEdit = QtWidgets.QLineEdit(self.uiRemoteControllerWizardPage)
-        self.uiRemoteMainServerHostLineEdit.setObjectName("uiRemoteMainServerHostLineEdit")
-        self.gridLayout.addWidget(self.uiRemoteMainServerHostLineEdit, 1, 1, 1, 1)
-        self.label_4 = QtWidgets.QLabel(self.uiRemoteControllerWizardPage)
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 2, 0, 1, 1)
+        self.label_5 = QtWidgets.QLabel(self.uiRemoteControllerWizardPage)
+        self.label_5.setObjectName("label_5")
+        self.gridLayout.addWidget(self.label_5, 3, 0, 1, 1)
+        self.label_6 = QtWidgets.QLabel(self.uiRemoteControllerWizardPage)
+        self.label_6.setObjectName("label_6")
+        self.gridLayout.addWidget(self.label_6, 4, 0, 1, 1)
         self.uiRemoteMainServerPortSpinBox = QtWidgets.QSpinBox(self.uiRemoteControllerWizardPage)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -222,23 +213,26 @@ class Ui_SetupWizard(object):
         self.uiRemoteMainServerPortSpinBox.setMaximum(65535)
         self.uiRemoteMainServerPortSpinBox.setProperty("value", 3080)
         self.uiRemoteMainServerPortSpinBox.setObjectName("uiRemoteMainServerPortSpinBox")
-        self.gridLayout.addWidget(self.uiRemoteMainServerPortSpinBox, 2, 1, 1, 1)
-        self.label_5 = QtWidgets.QLabel(self.uiRemoteControllerWizardPage)
-        self.label_5.setObjectName("label_5")
-        self.gridLayout.addWidget(self.label_5, 4, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiRemoteMainServerPortSpinBox, 1, 1, 1, 1)
+        self.label_3 = QtWidgets.QLabel(self.uiRemoteControllerWizardPage)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 0, 0, 1, 1)
+        self.uiRemoteMainServerHostLineEdit = QtWidgets.QLineEdit(self.uiRemoteControllerWizardPage)
+        self.uiRemoteMainServerHostLineEdit.setObjectName("uiRemoteMainServerHostLineEdit")
+        self.gridLayout.addWidget(self.uiRemoteMainServerHostLineEdit, 0, 1, 1, 1)
+        self.label_4 = QtWidgets.QLabel(self.uiRemoteControllerWizardPage)
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 1, 0, 1, 1)
         self.uiRemoteMainServerUserLineEdit = QtWidgets.QLineEdit(self.uiRemoteControllerWizardPage)
         self.uiRemoteMainServerUserLineEdit.setObjectName("uiRemoteMainServerUserLineEdit")
-        self.gridLayout.addWidget(self.uiRemoteMainServerUserLineEdit, 4, 1, 1, 1)
-        self.label_6 = QtWidgets.QLabel(self.uiRemoteControllerWizardPage)
-        self.label_6.setObjectName("label_6")
-        self.gridLayout.addWidget(self.label_6, 5, 0, 1, 1)
+        self.gridLayout.addWidget(self.uiRemoteMainServerUserLineEdit, 3, 1, 1, 1)
         self.uiRemoteMainServerPasswordLineEdit = QtWidgets.QLineEdit(self.uiRemoteControllerWizardPage)
         self.uiRemoteMainServerPasswordLineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.uiRemoteMainServerPasswordLineEdit.setObjectName("uiRemoteMainServerPasswordLineEdit")
-        self.gridLayout.addWidget(self.uiRemoteMainServerPasswordLineEdit, 5, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiRemoteMainServerPasswordLineEdit, 4, 1, 1, 1)
         self.uiRemoteMainServerAuthCheckBox = QtWidgets.QCheckBox(self.uiRemoteControllerWizardPage)
         self.uiRemoteMainServerAuthCheckBox.setObjectName("uiRemoteMainServerAuthCheckBox")
-        self.gridLayout.addWidget(self.uiRemoteMainServerAuthCheckBox, 3, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiRemoteMainServerAuthCheckBox, 2, 0, 1, 2)
         SetupWizard.addPage(self.uiRemoteControllerWizardPage)
         self.uiSummaryWizardPage = QtWidgets.QWizardPage()
         self.uiSummaryWizardPage.setObjectName("uiSummaryWizardPage")
@@ -292,14 +286,11 @@ class Ui_SetupWizard(object):
         self.uiRAMSpinBox.setSuffix(_translate("SetupWizard", " MB"))
         self.uiRemoteControllerWizardPage.setTitle(_translate("SetupWizard", "Remote server"))
         self.uiRemoteControllerWizardPage.setSubTitle(_translate("SetupWizard", "Everything will run on a remote server. No data will be saved on this computer."))
-        self.label_7.setText(_translate("SetupWizard", "Protocol:"))
-        self.uiRemoteMainServerProtocolComboBox.setItemText(0, _translate("SetupWizard", "http"))
-        self.uiRemoteMainServerProtocolComboBox.setItemText(1, _translate("SetupWizard", "https"))
-        self.label_3.setText(_translate("SetupWizard", "Host:"))
-        self.label_4.setText(_translate("SetupWizard", "Port:"))
-        self.uiRemoteMainServerPortSpinBox.setSuffix(_translate("SetupWizard", " TCP"))
         self.label_5.setText(_translate("SetupWizard", "User:"))
         self.label_6.setText(_translate("SetupWizard", "Password:"))
+        self.uiRemoteMainServerPortSpinBox.setSuffix(_translate("SetupWizard", " TCP"))
+        self.label_3.setText(_translate("SetupWizard", "Host:"))
+        self.label_4.setText(_translate("SetupWizard", "Port:"))
         self.uiRemoteMainServerAuthCheckBox.setText(_translate("SetupWizard", "Enable authentication"))
         self.uiSummaryWizardPage.setTitle(_translate("SetupWizard", "Summary"))
         self.uiSummaryWizardPage.setSubTitle(_translate("SetupWizard", "The server type has been configured, please see the summary of the settings below"))

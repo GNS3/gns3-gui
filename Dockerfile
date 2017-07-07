@@ -6,7 +6,7 @@ MAINTAINER GNS3 Team
 #ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
-RUN apt-get install -y --force-yes python3.4 python3-pyqt5 python3-pip python3-pyqt5.qtsvg python3.4-dev xvfb
+RUN apt-get install -y --force-yes python3.4 python3-pyqt5 python3-pip python3-pyqt5.qtsvg python3-qt5.qtwebsockets python3.4-dev xvfb
 RUN apt-get clean
 
 

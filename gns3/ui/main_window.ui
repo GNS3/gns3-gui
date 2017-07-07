@@ -38,16 +38,7 @@ background-none;
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -71,7 +62,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -157,6 +148,7 @@ background-none;
     <addaction name="uiInsertImageAction"/>
     <addaction name="uiDrawRectangleAction"/>
     <addaction name="uiDrawEllipseAction"/>
+    <addaction name="uiDrawLineAction"/>
     <addaction name="uiEditReadmeAction"/>
    </widget>
    <widget class="QMenu" name="uiDeviceMenu">
@@ -181,7 +173,7 @@ background-none;
    <addaction name="uiToolsMenu"/>
    <addaction name="uiHelpMenu"/>
   </widget>
-  <widget class="QStatusBar" name="uiStatusBar"/>
+  <widget class="StatusBar" name="uiStatusBar"/>
   <widget class="QToolBar" name="uiGeneralToolBar">
    <property name="windowTitle">
     <string>General</string>
@@ -210,7 +202,7 @@ background-none;
    <addaction name="uiNewProjectAction"/>
    <addaction name="uiOpenProjectAction"/>
   </widget>
-  <widget class="QDockWidget" name="uiNodesDockWidget">
+  <widget class="NodesDockWidget" name="uiNodesDockWidget">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -234,18 +226,51 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="leftMargin">
+     <property name="margin">
       <number>0</number>
      </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>3</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QComboBox" name="uiNodesFilterComboBox">
+         <item>
+          <property name="text">
+           <string>Installed &amp; Available appliances</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Installed appliances</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Available appliances</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="uiNodesFilterLineEdit">
+         <property name="placeholderText">
+          <string>Filter</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item>
       <widget class="NodesView" name="uiNodesView">
        <property name="sizePolicy">
@@ -380,16 +405,7 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
@@ -425,6 +441,7 @@ background-none;
    <addaction name="uiInsertImageAction"/>
    <addaction name="uiDrawRectangleAction"/>
    <addaction name="uiDrawEllipseAction"/>
+   <addaction name="uiDrawLineAction"/>
    <addaction name="uiZoomInAction"/>
    <addaction name="uiZoomOutAction"/>
    <addaction name="uiScreenshotAction"/>
@@ -453,16 +470,7 @@ background-none;
      </sizepolicy>
     </property>
     <layout class="QGridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -501,16 +509,7 @@ background-none;
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -1229,12 +1228,35 @@ background-none;
     <string>Web interface</string>
    </property>
   </action>
+  <action name="uiDrawLineAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/vertically.svg</normaloff>:/icons/vertically.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Drawn line</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>GraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>..graphics_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NodesDockWidget</class>
+   <extends>QDockWidget</extends>
+   <header>..nodes_dock_widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>..status_bar.h</header>
   </customwidget>
   <customwidget>
    <class>NodesView</class>

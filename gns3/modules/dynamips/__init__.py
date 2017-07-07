@@ -245,55 +245,8 @@ class Dynamips(Module):
         :param project: Project instance
         """
 
-        log.info("instantiating node {}".format(node_class))
         # create an instance of the node class
         return node_class(self, server, project)
-
-    def createNode(self, node, node_name):
-        """
-        Creates a node.
-
-        :param node: Node instance
-        :param node_name: Node name
-        """
-
-        log.info("creating node {}".format(node))
-
-        if isinstance(node, Router):
-            ios_router = None
-            if node_name:
-                for ios_key, info in self._ios_routers.items():
-                    if node_name == info["name"]:
-                        ios_router = self._ios_routers[ios_key]
-                        break
-
-            if not ios_router:
-                raise ModuleError("No IOS router for platform {}".format(node.settings()["platform"]))
-
-            vm_settings = {}
-            for setting_name, value in ios_router.items():
-                if setting_name in node.settings() and setting_name != "name" and value != "" and value is not None:
-                    vm_settings[setting_name] = value
-
-            default_name_format = IOS_ROUTER_SETTINGS["default_name_format"]
-            if ios_router["default_name_format"]:
-                default_name_format = ios_router["default_name_format"]
-
-            # Older GNS3 versions may have the following invalid settings in the VM template
-            if "console" in vm_settings:
-                del vm_settings["console"]
-            if "sensors" in vm_settings:
-                del vm_settings["sensors"]
-            if "power_supplies" in vm_settings:
-                del vm_settings["power_supplies"]
-
-            ram = vm_settings.pop("ram")
-            image = vm_settings.pop("image", None)
-            if image is None:
-                raise ModuleError("No IOS image has been associated with this IOS router")
-            node.create(image, ram, additional_settings=vm_settings, default_name_format=default_name_format)
-        else:
-            node.create()
 
     def updateImageIdlepc(self, image_path, idlepc):
         """
@@ -307,7 +260,7 @@ class Dynamips(Module):
             if os.path.basename(ios_router["image"]) == image_path:
                 if ios_router["idlepc"] != idlepc:
                     ios_router["idlepc"] = idlepc
-                    log.info("Idle-PC value {} saved into '{}' template".format(idlepc, ios_router["name"]))
+                    log.debug("Idle-PC value {} saved into '{}' template".format(idlepc, ios_router["name"]))
                     self._saveIOSRouters()
 
     def reset(self):
@@ -316,28 +269,6 @@ class Dynamips(Module):
         """
 
         self._nodes.clear()
-
-    def exportConfigs(self, directory):
-        """
-        Exports all configs for all nodes to a directory.
-
-        :param directory: destination directory path
-        """
-
-        for node in self._nodes:
-            if isinstance(node, Router) and node.initialized():
-                node.exportConfigToDirectory(directory)
-
-    def importConfigs(self, directory):
-        """
-        Imports configs to all nodes from a directory.
-
-        :param directory: source directory path
-        """
-
-        for node in self._nodes:
-            if isinstance(node, Router) and node.initialized():
-                node.importConfigFromDirectory(directory)
 
     def findAlternativeIOSImage(self, image, node):
         """
