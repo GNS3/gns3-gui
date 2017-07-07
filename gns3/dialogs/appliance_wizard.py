@@ -128,6 +128,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 self.uiInfoTreeWidget.addTopLevelItem(item)
 
         elif self.page(page_id) == self.uiServerWizardPage:
+            is_mac = ComputeManager.instance().localPlatform().startswith("darwin")
+            is_win = ComputeManager.instance().localPlatform().startswith("win")
+
             self.uiRemoteServersComboBox.clear()
             if len(ComputeManager.instance().remoteComputes()) == 0:
                 self.uiRemoteRadioButton.setEnabled(False)
@@ -141,7 +144,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
             if ComputeManager.instance().localPlatform() is None:
                 self.uiLocalRadioButton.setEnabled(False)
-            elif (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
+            elif is_mac or is_win:
                 if type == "qemu":
                     # Qemu has issues on OSX and Windows we disallow usage of the local server
                     if not LocalConfig.instance().experimental():
@@ -157,6 +160,14 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 self.uiRemoteRadioButton.setChecked(True)
             else:
                 self.uiRemoteRadioButton.setChecked(False)
+
+            if is_mac or is_win:
+                if not self.uiRemoteRadioButton.isEnabled() \
+                        and not self.uiVMRadioButton.isEnabled() \
+                        and not self.uiLocalRadioButton.isEnabled():
+                    QtWidgets.QMessageBox.warning(
+                        self, "No GNS3 VM available.",
+                        "GNS3 VM is not available, please configure GNS3 VM before adding new Appliance.")
 
         elif self.page(page_id) == self.uiFilesWizardPage:
             self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
