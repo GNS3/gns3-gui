@@ -45,19 +45,6 @@ class VPCSNode(Node):
 
         self.settings().update(vpcs_settings)
 
-    def create(self, name=None, node_id=None, additional_settings={}, default_name_format="PC{0}"):
-        """
-        Creates this VPCS node.
-
-        :param name: optional name
-        :param node_id: Node identifier
-        :param additional_settings: additional settings for this node
-        """
-
-        params = {}
-        params.update(additional_settings)
-        self._create(name, node_id, params, default_name_format)
-
     def update(self, new_settings):
         """
         Updates the settings for this VPCS node.

@@ -59,30 +59,6 @@ class VirtualBoxVM(Node):
 
         self.settings().update(virtualbox_vm_settings)
 
-    def create(self, vmname, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
-               first_port_name="", linked_clone=False, additional_settings={}, default_name_format=None):
-        """
-        Creates this VirtualBox VM.
-
-        :param vmname: VM name in VirtualBox
-        :param name: optional name
-        :param node_id: Node identifier
-        :param linked_clone: either the VM is a linked clone
-        :param additional_settings: additional settings for this VM
-        """
-
-        if not name:
-            name = vmname
-
-        self._linked_clone = linked_clone
-        params = {"vmname": vmname,
-                  "linked_clone": linked_clone,
-                  "port_name_format": port_name_format,
-                  "port_segment_size": port_segment_size,
-                  "first_port_name": first_port_name}
-        params.update(additional_settings)
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result):
         """
         Callback for create.

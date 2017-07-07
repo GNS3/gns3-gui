@@ -53,23 +53,6 @@ class DockerVM(Node):
 
         self.settings().update(docker_vm_settings)
 
-    def create(self, image, name=None, base_name=None, node_id=None, additional_settings={}, default_name_format="{name}-{0}"):
-        """Creates this Docker container.
-
-        :param image: image name
-        :param name: optional name
-        :param additional_settings: additional settings for this VM
-        """
-
-        params = {
-            "image": image,
-            "adapters": self._settings["adapters"]
-        }
-        params.update(additional_settings)
-        if base_name:
-            default_name_format = default_name_format.replace('{name}', base_name)
-        self._create(name=name, node_id=node_id, params=params, default_name_format=default_name_format, timeout=None)
-
     def _createCallback(self, result):
         """
         Callback for Docker container creating.

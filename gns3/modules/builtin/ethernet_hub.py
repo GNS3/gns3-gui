@@ -39,20 +39,6 @@ class EthernetHub(Node):
         self._always_on = True
         self.settings().update({"ports_mapping": []})
 
-    def create(self, name=None, node_id=None, ports=None, default_name_format="Hub{0}"):
-        """
-        Creates this hub.
-
-        :param name: optional name for this hub
-        :param node_id: node identifier on the server
-        :param ports: ports to automatically be added when creating this hub
-        """
-
-        params = {}
-        if ports:
-            params["ports_mapping"] = ports
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result):
         """
         Callback for create.

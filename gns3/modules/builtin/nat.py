@@ -46,17 +46,6 @@ class Nat(Node):
 
         return self._interfaces
 
-    def create(self, name=None, node_id=None, default_name_format="Nat{0}"):
-        """
-        Creates this nat.
-
-        :param name: optional name for this nat
-        :param node_id: Node identifier on the server
-        """
-
-        params = {}
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result, error=False, **kwargs):
         """
         Callback for create.
