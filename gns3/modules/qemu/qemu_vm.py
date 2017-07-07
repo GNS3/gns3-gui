@@ -87,24 +87,6 @@ class QemuVM(Node):
 
         self.settings().update(qemu_vm_settings)
 
-    def create(self, qemu_path, name=None, node_id=None, port_name_format="Ethernet{0}", port_segment_size=0,
-               first_port_name="", linked_clone=True, additional_settings={}, default_name_format=None):
-        """
-        Creates this QEMU VM.
-
-        :param name: optional name
-        :param node_id: Node identifier
-        """
-
-        self._linked_clone = linked_clone
-        params = {"qemu_path": qemu_path,
-                  "linked_clone": linked_clone,
-                  "port_name_format": port_name_format,
-                  "port_segment_size": port_segment_size,
-                  "first_port_name": first_port_name}
-        params.update(additional_settings)
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result):
         """
         Callback for create.

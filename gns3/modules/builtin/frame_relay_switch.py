@@ -41,20 +41,6 @@ class FrameRelaySwitch(Node):
         self._always_on = True
         self.settings().update({"mappings": {}})
 
-    def create(self, name=None, node_id=None, mappings={}, default_name_format="FR{0}"):
-        """
-        Creates this Frame Relay switch.
-
-        :param name: name for this switch.
-        :param node_id: node identifier on the server
-        :param mappings: mappings to be automatically added when creating this Frame relay switch
-        """
-
-        params = {}
-        if mappings:
-            params["mappings"] = mappings
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result):
         """
         Callback for create.

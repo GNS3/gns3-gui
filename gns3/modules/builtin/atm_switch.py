@@ -44,20 +44,6 @@ class ATMSwitch(Node):
         self._always_on = True
         self.settings().update({"mappings": {}})
 
-    def create(self, name=None, node_id=None, mappings=None, default_name_format="ATM{0}"):
-        """
-        Creates this ATM switch.
-
-        :param name: optional name for this switch.
-        :param node_id: Node identifier on the server
-        :param mappings: mappings to be automatically added when creating this ATM switch
-        """
-
-        params = {}
-        if mappings:
-            params["mappings"] = mappings
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result):
         """
         Callback for create.
@@ -166,27 +152,6 @@ class ATMSwitch(Node):
         if self._settings["mappings"]:
             atmsw["properties"]["mappings"] = self._settings["mappings"]
         return atmsw
-
-    def load(self, node_info):
-        """
-        Loads an ATM switch representation
-        (from a topology file).
-
-        :param node_info: representation of the node (dictionary)
-        """
-
-        super().load(node_info)
-        properties = node_info["properties"]
-        name = properties.pop("name")
-
-        # ATM switches do not have an UUID before version 2.0
-        node_id = properties.get("node_id", str(uuid.uuid4()))
-
-        mappings = {}
-        if "mappings" in properties:
-            mappings = properties["mappings"]
-
-        self.create(name, node_id, mappings)
 
     def configPage(self):
         """
