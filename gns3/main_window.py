@@ -313,6 +313,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called to create a new project.
         """
+
+        # prevents race condition
+        if self._project_dialog is not None:
+            return
+
         self._project_dialog = ProjectDialog(self)
         self._project_dialog.show()
         create_new_project = self._project_dialog.exec_()
@@ -321,7 +326,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiNodesDockWidget.setWindowTitle("")
 
         if create_new_project:
-            Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
+            Topology.instance().createLoadProject(
+                self._project_dialog.getProjectSettings())
 
         self._project_dialog = None
 
