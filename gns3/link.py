@@ -422,7 +422,7 @@ class Link(QtCore.QObject):
 
     def filters(self):
         """
-        :returns: List the filters actually active on the node
+        :returns: List the filters active on the node
         """
         return self._filters
 

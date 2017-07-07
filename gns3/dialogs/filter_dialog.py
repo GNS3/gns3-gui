@@ -100,7 +100,8 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
             self.uiVerticalLayout.addWidget(groupBox)
             self.adjustSize()
 
-    def _applyPreferencesSlot(self):
+    @qslot
+    def _applyPreferencesSlot(self, *args):
         new_filters = {}
         for filter in self._filters:
             new_filters[filter["type"]] = []
@@ -109,11 +110,17 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
         self._link.setFilters(new_filters)
         self._link.update()
 
-    def _helpSlot(self):
+    @qslot
+    def _helpSlot(self, *args):
         help_text = "Filters are applied to packets in both direction.\n\n"
 
+        filter_nb = 0
         for filter in self._filters:
-            help_text += "{}: {}\n\n".format(filter["name"], filter["description"])
+            help_text += "{}: {}".format(filter["name"], filter["description"])
+            filter_nb += 1
+            if len(self._filters) != filter_nb:
+                help_text += "\n\n"
+
         QtWidgets.QMessageBox.information(self, "Help for filters", help_text)
 
     def done(self, result):

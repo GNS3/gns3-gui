@@ -450,8 +450,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
     @qslot
     def _drawSymbol(self, *args):
         """
-        Draws a capture symbol in the middle of the link to indicate a capture is active.
-        And filter item if filter are enable
+        Draws a symbol in the middle of the link to indicate a capture or a filter is active.
         """
 
         if not self._adding_flag:
