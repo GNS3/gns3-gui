@@ -54,7 +54,7 @@ class FileCopyWorker(QtCore.QObject):
 
         self._is_running = True
         try:
-            shutil.copyfile(self._source, self._destination)
+            shutil.copy(self._source, self._destination)
         except OSError as e:
             log.warning("cannot copy: {}".format(e))
             self.error.emit("Could not copy file to {}: {}".format(self._destination, e), False)
