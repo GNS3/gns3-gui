@@ -117,8 +117,10 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
                 item.setIcon(0, QtGui.QIcon(':/icons/inspect.svg'))
                 capturing = True
             if len(link.filters()) > 0:
-                item.setIcon(0, QtGui.QIcon(':/icons/edit.svg'))
+                item.setIcon(0, QtGui.QIcon(':/icons/filter.svg'))
                 filtering = True
+            if link.capturing() and len(link.filters()) > 0:
+                item.setIcon(0, QtGui.QIcon(':/icons/filter-capture.svg'))
             self.addChild(item)
 
         if self._parent.show_only_devices_with_capture and capturing is False:
@@ -228,8 +230,8 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                 elif isinstance(item, LinkItem):
                     item.setHovered(False)
                     if not isinstance(current_item, TopologyNodeItem):
-                        port = current_item.data(0, QtCore.Qt.UserRole)
-                        if item.sourcePort() == port or item.destinationPort() == port:
+                        link = current_item.data(0, QtCore.Qt.UserRole)
+                        if item.link() == link:
                             item.setHovered(True)
 
     @qslot
@@ -246,8 +248,8 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                         view.centerOn(item)
                 elif isinstance(item, LinkItem):
                     if not isinstance(current_item, TopologyNodeItem):
-                        port = current_item.data(0, QtCore.Qt.UserRole)
-                        if item.sourcePort() == port or item.destinationPort() == port:
+                        link = current_item.data(0, QtCore.Qt.UserRole)
+                        if item.link() == link:
                             view.centerOn(item)
 
     def mousePressEvent(self, event):
@@ -285,7 +287,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             menu.addAction(devices_with_capture)
 
             devices_with_filters = QtWidgets.QAction("Show devices with packet filter(s)", menu)
-            devices_with_filters.setIcon(QtGui.QIcon(":/icons/edit.svg"))
+            devices_with_filters.setIcon(QtGui.QIcon(":/icons/filter.svg"))
             devices_with_filters.triggered.connect(self._devicesWithFiltersSlot)
             menu.addAction(devices_with_filters)
 
@@ -301,7 +303,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         menu.addAction(stop_all_captures)
 
         reset_all_filters = QtWidgets.QAction("Reset all filters", menu)
-        reset_all_filters.setIcon(QtGui.QIcon(":/icons/edit.svg"))
+        reset_all_filters.setIcon(QtGui.QIcon(":/icons/filter-reset.svg"))
         reset_all_filters.triggered.connect(self._resetAllFiltersSlot)
         menu.addAction(reset_all_filters)
 
@@ -313,9 +315,9 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             if isinstance(current_item, TopologyNodeItem):
                 view.populateDeviceContextualMenu(menu)
             else:
-                port = current_item.data(0, QtCore.Qt.UserRole)
+                link = current_item.data(0, QtCore.Qt.UserRole)
                 for item in view.scene().items():
-                    if isinstance(item, LinkItem) and (item.sourcePort() == port or item.destinationPort() == port):
+                    if isinstance(item, LinkItem) and item.link() == link:
                         item.populateLinkContextualMenu(menu)
                         break
 

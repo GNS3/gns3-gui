@@ -63,7 +63,8 @@ def link(devices, controller, project):
         "nodes": [
             {"node_id": devices[0].node_id(), "adapter_number": 0, "port_number": 0},
             {"node_id": devices[1].node_id(), "adapter_number": 0, "port_number": 0}
-        ]
+        ],
+        "filters": {},
     }
 
     controller.post.assert_called_with("/projects/{}/links".format(project.id()), link._linkCreatedCallback, body=data)
@@ -84,8 +85,9 @@ def test_create_link(devices, project, controller):
     data = {
         "nodes": [
             {"node_id": devices[0].node_id(), "adapter_number": 0, "port_number": 0},
-            {"node_id": devices[1].node_id(), "adapter_number": 0, "port_number": 0}
-        ]
+            {"node_id": devices[1].node_id(), "adapter_number": 0, "port_number": 0},
+        ],
+        "filters": {},
     }
 
     controller.post.assert_called_with("/projects/{}/links".format(project.id()), link._linkCreatedCallback, body=data)

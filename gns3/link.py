@@ -81,9 +81,9 @@ class Link(QtCore.QObject):
         self._initialized = False
         self._filters = {}
 
-        # Boolean if True we are creatin the first instance of this node
+        # Boolean if True we are creating the first instance of this node
         # if false the node already exist in the topology
-        # use to avoid erasing informations when reloading
+        # use to avoid erasing information when reloading
         self._creator = False
 
         self._nodes = []
@@ -253,10 +253,18 @@ class Link(QtCore.QObject):
 
     def __str__(self):
 
-        return "Link from {} port {} to {} port {}".format(self._source_node.name(),
+        description = "Link from {} port {} to {} port {}".format(self._source_node.name(),
                                                            self._source_port.name(),
                                                            self._destination_node.name(),
                                                            self._destination_port.name())
+
+        if self.capturing():
+            description += "\nPacket capture is active"
+
+        for filter_type in self._filters.keys():
+            description += "\nPacket filter '{}' is active".format(filter_type)
+
+        return description
 
     def capture_file_name(self):
         """

@@ -87,8 +87,10 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         # QGraphicsSvgItem to indicate a capture
         self._capturing_item = None
-        # QGraphicsSvgItem to indicate a filtering in progress
+        # QGraphicsSvgItem to indicate a filter is applied
         self._filter_item = None
+        # QGraphicsSvgItem to indicate a filter is applied and a capture is active
+        self._filter_capturing_item = None
 
         if not self._adding_flag:
             # there is a destination
@@ -239,7 +241,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         # Edit filters
         filter_action = QtWidgets.QAction("Filter", menu)
-        filter_action.setIcon(QtGui.QIcon(':/icons/edit.svg'))
+        filter_action.setIcon(QtGui.QIcon(':/icons/filter.svg'))
         filter_action.triggered.connect(self._filterActionSlot)
         menu.addAction(filter_action)
 
@@ -454,24 +456,47 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         """
 
         if not self._adding_flag:
-            if self._link.capturing() and self.length >= 150:
-                link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
-                if self._capturing_item is None:
-                    self._capturing_item = SvgIconItem(':/icons/inspect.svg', self)
-                    self._capturing_item.setScale(0.6)
-                self._capturing_item.setPos(link_center)
-                if not self._capturing_item.isVisible():
-                    self._capturing_item.show()
-            elif self._capturing_item:
-                self._capturing_item.hide()
 
-            if self.length >= 150 and len(self._link.filters()) > 0:
-                link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
-                if self._filter_item is None:
-                    self._filter_item = SvgIconItem(':/icons/edit.svg', self)
-                    self._filter_item.setScale(0.6)
-                if not self._filter_item.isVisible():
-                    self._filter_item.show()
-                self._filter_item.setPos(link_center)
-            elif self._filter_item:
-                self._filter_item.hide()
+            if self._link.capturing() and len(self._link.filters()) > 0:
+                if self.length >= 150:
+                    link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
+                    if self._filter_capturing_item is None:
+                        self._filter_capturing_item = SvgIconItem(':/icons/filter-capture.svg', self)
+                        self._filter_capturing_item.setScale(0.6)
+                    if not self._filter_capturing_item.isVisible():
+                        self._filter_capturing_item.show()
+                    self._filter_capturing_item.setPos(link_center)
+                elif self._filter_capturing_item:
+                    self._filter_capturing_item.hide()
+                if self._capturing_item:
+                    self._capturing_item.hide()
+                if self._filter_item:
+                    self._filter_item.hide()
+
+            elif self._link.capturing():
+                if self.length >= 150:
+                    link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
+                    if self._capturing_item is None:
+                        self._capturing_item = SvgIconItem(':/icons/inspect.svg', self)
+                        self._capturing_item.setScale(0.6)
+                    self._capturing_item.setPos(link_center)
+                    if not self._capturing_item.isVisible():
+                        self._capturing_item.show()
+                elif self._capturing_item:
+                    self._capturing_item.hide()
+                if self._filter_capturing_item:
+                    self._filter_capturing_item.hide()
+
+            elif len(self._link.filters()) > 0:
+                if self.length >= 150:
+                    link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
+                    if self._filter_item is None:
+                        self._filter_item = SvgIconItem(':/icons/filter.svg', self)
+                        self._filter_item.setScale(0.6)
+                    if not self._filter_item.isVisible():
+                        self._filter_item.show()
+                    self._filter_item.setPos(link_center)
+                elif self._filter_item:
+                    self._filter_item.hide()
+                if self._filter_capturing_item:
+                    self._filter_capturing_item.hide()
