@@ -500,3 +500,11 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                     self._filter_item.hide()
                 if self._filter_capturing_item:
                     self._filter_capturing_item.hide()
+
+            else:
+                if self._capturing_item:
+                    self._capturing_item.hide()
+                if self._filter_item:
+                    self._filter_item.hide()
+                if self._filter_capturing_item:
+                    self._filter_capturing_item.hide()
