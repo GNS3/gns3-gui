@@ -194,4 +194,4 @@ class EthernetLinkItem(LinkItem):
 
             painter.drawPoint(point2)
 
-        self._drawCaptureSymbol()
+        self._drawSymbol()

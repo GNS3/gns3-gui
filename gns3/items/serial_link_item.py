@@ -172,4 +172,4 @@ class SerialLinkItem(LinkItem):
 
             painter.drawPoint(self.destination_point)
 
-        self._drawCaptureSymbol()
+        self._drawSymbol()

@@ -55,6 +55,9 @@
         <file>icons/inspect.svg</file>
         <file>icons/capture-start.svg</file>
         <file>icons/capture-stop.svg</file>
+        <file>icons/filter.svg</file>
+        <file>icons/filter-reset.svg</file>
+        <file>icons/filter-capture.svg</file>
         <file>icons/show-hostname.svg</file>
         <file>icons/show-interface-names.svg</file>
         <file>icons/new.svg</file>

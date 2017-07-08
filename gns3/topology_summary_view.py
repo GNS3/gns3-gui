@@ -107,6 +107,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         self.takeChildren()
 
         capturing = False
+        filtering = False
         for link in self._node.links():
             item = QtWidgets.QTreeWidgetItem()
             port = link.getNodePort(self._node)
@@ -115,9 +116,16 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
             if link.capturing():
                 item.setIcon(0, QtGui.QIcon(':/icons/inspect.svg'))
                 capturing = True
+            if len(link.filters()) > 0:
+                item.setIcon(0, QtGui.QIcon(':/icons/filter.svg'))
+                filtering = True
+            if link.capturing() and len(link.filters()) > 0:
+                item.setIcon(0, QtGui.QIcon(':/icons/filter-capture.svg'))
             self.addChild(item)
 
         if self._parent.show_only_devices_with_capture and capturing is False:
+            self.setHidden(True)
+        elif self._parent.show_only_devices_with_filters and filtering is False:
             self.setHidden(True)
         else:
             self.setHidden(False)
@@ -156,6 +164,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self._topology.project_changed_signal.connect(self._projectChangedSlot)
         self.itemSelectionChanged.connect(self._itemSelectionChangedSlot)
         self.show_only_devices_with_capture = False
+        self.show_only_devices_with_filters = False
         self.setExpandsOnDoubleClick(False)
         self.itemDoubleClicked.connect(self._itemDoubleClickedSlot)
 
@@ -221,8 +230,8 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                 elif isinstance(item, LinkItem):
                     item.setHovered(False)
                     if not isinstance(current_item, TopologyNodeItem):
-                        port = current_item.data(0, QtCore.Qt.UserRole)
-                        if item.sourcePort() == port or item.destinationPort() == port:
+                        link = current_item.data(0, QtCore.Qt.UserRole)
+                        if item.link() == link:
                             item.setHovered(True)
 
     @qslot
@@ -239,8 +248,8 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                         view.centerOn(item)
                 elif isinstance(item, LinkItem):
                     if not isinstance(current_item, TopologyNodeItem):
-                        port = current_item.data(0, QtCore.Qt.UserRole)
-                        if item.sourcePort() == port or item.destinationPort() == port:
+                        link = current_item.data(0, QtCore.Qt.UserRole)
+                        if item.link() == link:
                             view.centerOn(item)
 
     def mousePressEvent(self, event):
@@ -271,11 +280,17 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         collapse_all.triggered.connect(self._collapseAllSlot)
         menu.addAction(collapse_all)
 
-        if self.show_only_devices_with_capture is False:
+        if self.show_only_devices_with_capture is False and self.show_only_devices_with_filters is False:
             devices_with_capture = QtWidgets.QAction("Show devices with capture(s)", menu)
             devices_with_capture.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
             devices_with_capture.triggered.connect(self._devicesWithCaptureSlot)
             menu.addAction(devices_with_capture)
+
+            devices_with_filters = QtWidgets.QAction("Show devices with packet filter(s)", menu)
+            devices_with_filters.setIcon(QtGui.QIcon(":/icons/filter.svg"))
+            devices_with_filters.triggered.connect(self._devicesWithFiltersSlot)
+            menu.addAction(devices_with_filters)
+
         else:
             show_all_devices = QtWidgets.QAction("Show all devices", menu)
             # show_all_devices.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
@@ -287,6 +302,11 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         stop_all_captures.triggered.connect(self._stopAllCapturesSlot)
         menu.addAction(stop_all_captures)
 
+        reset_all_filters = QtWidgets.QAction("Reset all filters", menu)
+        reset_all_filters.setIcon(QtGui.QIcon(":/icons/filter-reset.svg"))
+        reset_all_filters.triggered.connect(self._resetAllFiltersSlot)
+        menu.addAction(reset_all_filters)
+
         current_item = self.currentItem()
         from .main_window import MainWindow
         view = MainWindow.instance().uiGraphicsView
@@ -295,9 +315,9 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             if isinstance(current_item, TopologyNodeItem):
                 view.populateDeviceContextualMenu(menu)
             else:
-                port = current_item.data(0, QtCore.Qt.UserRole)
+                link = current_item.data(0, QtCore.Qt.UserRole)
                 for item in view.scene().items():
-                    if isinstance(item, LinkItem) and (item.sourcePort() == port or item.destinationPort() == port):
+                    if isinstance(item, LinkItem) and item.link() == link:
                         item.populateLinkContextualMenu(menu)
                         break
 
@@ -329,12 +349,22 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         self.refreshAllLinks()
 
     @qslot
+    def _devicesWithFiltersSlot(self, *args):
+        """
+        Show only devices with filters.
+        """
+
+        self.show_only_devices_with_filters = True
+        self.refreshAllLinks()
+
+    @qslot
     def _showAllDevicesSlot(self, *args):
         """
         Show all devices items.
         """
 
         self.show_only_devices_with_capture = False
+        self.show_only_devices_with_filters = False
         self.refreshAllLinks()
 
     @qslot
@@ -346,3 +376,15 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         for link in self._topology.links():
             if link.capturing():
                 PacketCapture.instance().stopCapture(link)
+
+    @qslot
+    def _resetAllFiltersSlot(self, *args):
+        """
+        Reset all packet filters
+        """
+
+        for link in self._topology.links():
+            if len(link.filters()) > 0:
+                filters = {}
+                link.setFilters(filters)
+                link.update()

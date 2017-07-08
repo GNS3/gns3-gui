@@ -30,11 +30,9 @@ log = logging.getLogger(__name__)
 from gns3.qt import QtNetwork, QtWidgets
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..topology import Topology
-from ..utils.progress_dialog import ProgressDialog
 from ..settings import LOCAL_SERVER_SETTINGS
 from ..dialogs.edit_compute_dialog import EditComputeDialog
 from ..local_server import LocalServer
-from ..local_config import LocalConfig
 from ..compute_manager import ComputeManager
 
 
