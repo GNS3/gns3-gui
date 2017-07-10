@@ -40,20 +40,6 @@ class EthernetSwitch(Node):
         self._always_on = True
         self.settings().update({"ports_mapping": [], "console": None, "console_type": "telnet"})
 
-    def create(self, name=None, node_id=None, ports=None, default_name_format="SW{0}"):
-        """
-        Creates this Ethernet switch.
-
-        :param name: optional name for this switch
-        :param node_id: node identifier on the server
-        :param ports: ports to be automatically added when creating this switch
-        """
-
-        params = {}
-        if ports:
-            params["ports_mapping"] = ports
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result):
         """
         Callback for create.

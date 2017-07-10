@@ -87,34 +87,6 @@ class Router(Node):
 
         self.settings().update(router_settings)
 
-    def create(self, image, ram, name=None, node_id=None, dynamips_id=None, additional_settings={}, default_name_format="R{0}"):
-        """
-        Creates this router.
-
-        :param image: IOS image path
-        :param ram: amount of RAM
-        :param name: optional name for this router
-        :param node_id: Node identifier on the server
-        :param dynamips_id: Dynamips identifier on the server
-        :param additional_settings: other additional and not mandatory settings
-        """
-
-        platform = self._settings["platform"]
-        self._settings["ram"] = ram
-        self._settings["image"] = image
-
-        # Minimum settings to send to the server in order to create a new router
-        params = {"name": name,
-                  "platform": platform,
-                  "ram": ram,
-                  "image": image}
-
-        if dynamips_id:
-            params["dynamips_id"] = dynamips_id
-
-        params.update(additional_settings)
-        self._create(name, node_id, params, default_name_format)
-
     def _createCallback(self, result):
         """
         Callback for create.
