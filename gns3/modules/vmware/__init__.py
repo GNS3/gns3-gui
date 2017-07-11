@@ -23,13 +23,13 @@ import os
 import sys
 import shutil
 import subprocess
+import codecs
 
-from gns3.qt import QtWidgets
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
+from collections import OrderedDict
 
 from gns3.modules.module import Module
-from gns3.modules.module_error import ModuleError
 from gns3.modules.vmware.vmware_vm import VMwareVM
 from gns3.modules.vmware.settings import VMWARE_SETTINGS
 from gns3.modules.vmware.settings import VMWARE_VM_SETTINGS
@@ -146,6 +146,46 @@ class VMware(Module):
             return "player"
         # Workstation is the default
         return "ws"
+
+    @staticmethod
+    def parseVMwareFile(path):
+        """
+        Parses a VMware file (VMX, preferences or inventory).
+
+        :param path: path to the VMware file
+
+        :returns: dict
+        """
+
+        pairs = OrderedDict()
+        encoding = "utf-8"
+        # get the first line to read the .encoding value
+        with open(path, "rb") as f:
+            line = f.readline().decode(encoding, errors="ignore")
+            if line.startswith("#!"):
+                # skip the shebang
+                line = f.readline().decode(encoding, errors="ignore")
+            try:
+                key, value = line.split('=', 1)
+                if key.strip().lower() == ".encoding":
+                    file_encoding = value.strip('" ')
+                    try:
+                        codecs.lookup(file_encoding)
+                        encoding = file_encoding
+                    except LookupError:
+                        log.warning("Invalid file encoding detected in '{}': {}".format(path, file_encoding))
+            except ValueError:
+                log.warning("Couldn't find file encoding in {}, using {}...".format(path, encoding))
+
+        # read the file with the correct encoding
+        with open(path, encoding=encoding, errors="ignore") as f:
+            for line in f.read().splitlines():
+                try:
+                    key, value = line.split('=', 1)
+                    pairs[key.strip().lower()] = value.strip('" ')
+                except ValueError:
+                    continue
+        return pairs
 
     def _loadSettings(self):
         """

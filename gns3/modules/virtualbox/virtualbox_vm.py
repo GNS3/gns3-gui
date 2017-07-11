@@ -133,8 +133,9 @@ class VirtualBoxVM(Node):
         """
 
         if self.status() == Node.started:
-            if not bring_window_to_front_from_process_name("VirtualBox.exe", title="{} [".format(self._settings["vmname"])):
-                bring_window_to_front_from_process_name("VirtualBox.exe", title="{} (".format(self._settings["vmname"]))
+            # try 2 different window title formats
+            bring_window_to_front_from_process_name("VirtualBox.exe", title="{} [".format(self._settings["vmname"]))
+            bring_window_to_front_from_process_name("VirtualBox.exe", title="{} (".format(self._settings["vmname"]))
 
     def configPage(self):
         """

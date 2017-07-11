@@ -156,7 +156,16 @@ class VMwareVM(Node):
         """
 
         if self.status() == Node.started:
-            bring_window_to_front_from_process_name("vmware")
+            try:
+                vmx_pairs = self.module().parseVMwareFile(self.settings()["vmx_path"])
+            except OSError as e:
+                log.debug("Could not read VMX file: {}".format(e))
+                return
+            if "displayname" in vmx_pairs:
+                window_name = "{} -".format(vmx_pairs["displayname"])
+                # try for both VMware Player and Workstation
+                bring_window_to_front_from_process_name("vmplayer.exe", title=window_name)
+                bring_window_to_front_from_process_name("vmware.exe", title=window_name)
 
     def configPage(self):
         """
