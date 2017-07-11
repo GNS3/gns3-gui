@@ -54,10 +54,13 @@ def bring_window_to_front_from_process_name(process_name, title=None):
                 for hwnd in get_windows_from_pid(proc.pid):
                     if title is None:
                         set_foreground_window(hwnd)
+                        return True
                     elif title in win32gui.GetWindowText(hwnd):
                         set_foreground_window(hwnd)
+                        return True
         except psutil.Error:
             continue
+    return False
 
 
 def bring_window_to_front_from_pid(pid):
@@ -71,3 +74,5 @@ def bring_window_to_front_from_title(title):
     hwnd = win32gui.FindWindow(None, title)
     if hwnd:
         set_foreground_window(hwnd)
+        return True
+    return False
