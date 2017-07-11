@@ -16,13 +16,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os
 import uuid
 import pathlib
-from gns3.local_server import LocalServer
+
 from gns3.controller import Controller
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
+from gns3.utils.bring_to_front import bring_windows_to_front_from_title
 from gns3.qt import QtGui, QtCore
 
 from .base_node import BaseNode
@@ -523,6 +523,14 @@ class Node(BaseNode):
             spiceConsole(self.consoleHost(), console_port, command)
         elif console_type == "http" or console_type == "https":
             QtGui.QDesktopServices.openUrl(QtCore.QUrl("{console_type}://{host}:{port}{path}".format(console_type=console_type, host=self.consoleHost(), port=console_port, path=self.consoleHttpPath())))
+
+    def bringToFront(self):
+        """
+        Bring the console window to front.
+        """
+
+        if self.status() == Node.started:
+            bring_windows_to_front_from_title(self.name())
 
     def setName(self, name):
         """
