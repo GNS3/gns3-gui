@@ -22,7 +22,7 @@ import pathlib
 from gns3.controller import Controller
 from gns3.ports.ethernet_port import EthernetPort
 from gns3.ports.serial_port import SerialPort
-from gns3.utils.bring_to_front import bring_windows_to_front_from_title
+from gns3.utils.bring_to_front import bring_window_to_front_from_title
 from gns3.qt import QtGui, QtCore
 
 from .base_node import BaseNode
@@ -530,7 +530,12 @@ class Node(BaseNode):
         """
 
         if self.status() == Node.started:
-            bring_windows_to_front_from_title(self.name())
+            if bring_window_to_front_from_title(self.name()):
+                return True
+            else:
+                log.info("Could not find window title '{}' to bring it to front".format(self.name()))
+        return False
+
 
     def setName(self, name):
         """

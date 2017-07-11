@@ -71,6 +71,8 @@ def bring_window_to_front_from_title(title):
     hwnd = win32gui.FindWindow(None, title)
     if hwnd:
         set_foreground_window(hwnd)
+        return True
+    return False
 
 
 def bring_windows_to_front_from_title(title):

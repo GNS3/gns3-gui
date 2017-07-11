@@ -137,6 +137,9 @@ class VirtualBoxVM(Node):
             bring_window_to_front_from_process_name("VirtualBox.exe", title="{} [".format(self._settings["vmname"]))
             bring_window_to_front_from_process_name("VirtualBox.exe", title="{} (".format(self._settings["vmname"]))
 
+        # bring any console to front
+        return Node.bringToFront(self)
+
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.

@@ -167,6 +167,9 @@ class VMwareVM(Node):
                 bring_window_to_front_from_process_name("vmplayer.exe", title=window_name)
                 bring_window_to_front_from_process_name("vmware.exe", title=window_name)
 
+        # bring any console to front
+        return Node.bringToFront(self)
+
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.

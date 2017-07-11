@@ -590,6 +590,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     self.configureSlot()
                     return
                 else:
+                    if sys.platform.startswith("win") and item.node().bringToFront():
+                        return
                     self.consoleFromItems(self.scene().selectedItems())
                     return
             elif isinstance(item, NoteItem) and isinstance(item.parentItem(), NodeItem):
@@ -823,7 +825,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if sys.platform.startswith("win") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
             # Action: bring console or window to front (Windows only)
             bring_to_front_action = QtWidgets.QAction("Bring to front", menu)
-            bring_to_front_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
+            bring_to_front_action.setIcon(QtGui.QIcon(':/icons/front.svg'))
             bring_to_front_action.triggered.connect(self.bringToFrontSlot)
             menu.addAction(bring_to_front_action)
 
