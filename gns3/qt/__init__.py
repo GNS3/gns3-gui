@@ -161,14 +161,12 @@ if hasattr(sys, '_called_from_test'):
             self._instances.add(self)
 
         def connect(self, func, style=None):
-            log.debug("{caller} connect to signal".format(caller=sys._getframe(1).f_code.co_name))
             self._callbacks.add(func)
 
         def disconnect(self, func):
             self._callbacks.remove(func)
 
         def emit(self, *args):
-            log.debug("{caller} emit signal".format(caller=sys._getframe(1).f_code.co_name))
             for callback in list(self._callbacks):
                 callback(*args)
 
