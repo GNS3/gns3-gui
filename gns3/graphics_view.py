@@ -737,6 +737,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             aux_console_action.triggered.connect(self.auxConsoleActionSlot)
             menu.addAction(aux_console_action)
 
+        if sys.platform.startswith("win") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
+            # Action: bring console or window to front (Windows only)
+            bring_to_front_action = QtWidgets.QAction("Bring to front", menu)
+            bring_to_front_action.setIcon(QtGui.QIcon(':/icons/front.svg'))
+            bring_to_front_action.triggered.connect(self.bringToFrontSlot)
+            menu.addAction(bring_to_front_action)
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
             import_config_action = QtWidgets.QAction("Import config", menu)
             import_config_action.setIcon(QtGui.QIcon(':/icons/import_config.svg'))
@@ -821,13 +828,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
             show_in_file_manager_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
             show_in_file_manager_action.triggered.connect(self.getCommandLineSlot)
             menu.addAction(show_in_file_manager_action)
-
-        if sys.platform.startswith("win") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
-            # Action: bring console or window to front (Windows only)
-            bring_to_front_action = QtWidgets.QAction("Bring to front", menu)
-            bring_to_front_action.setIcon(QtGui.QIcon(':/icons/front.svg'))
-            bring_to_front_action.triggered.connect(self.bringToFrontSlot)
-            menu.addAction(bring_to_front_action)
 
         if True in list(map(lambda item: isinstance(item, NoteItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
             # action only for port labels

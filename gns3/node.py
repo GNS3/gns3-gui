@@ -533,7 +533,7 @@ class Node(BaseNode):
             if bring_window_to_front_from_title(self.name()):
                 return True
             else:
-                log.info("Could not find window title '{}' to bring it to front".format(self.name()))
+                log.debug("Could not find window title '{}' to bring it to front".format(self.name()))
         return False
 
 

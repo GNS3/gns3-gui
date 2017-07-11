@@ -16,11 +16,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import logging
+
 if sys.platform.startswith("win"):
     import psutil
+    import pywintypes
     import win32process
     import win32gui
     import win32con
+
+log = logging.getLogger(__name__)
 
 
 def get_windows_from_pid(pid):
@@ -39,11 +44,14 @@ def get_windows_from_pid(pid):
 
 def set_foreground_window(hwnd):
 
-    if win32gui.IsIconic(hwnd):
-        win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-    if win32gui.IsWindowVisible(hwnd) == 0:
-        win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
-    win32gui.SetForegroundWindow(hwnd)
+    try:
+        if win32gui.IsIconic(hwnd):
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+        if win32gui.IsWindowVisible(hwnd) == 0:
+            win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
+        win32gui.SetForegroundWindow(hwnd)
+    except pywintypes.error as e:
+        log.debug("Could not bring window title to front '{}'".format(e.strerror))
 
 
 def bring_window_to_front_from_process_name(process_name, title=None):
