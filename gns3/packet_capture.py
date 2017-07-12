@@ -91,7 +91,7 @@ class PacketCapture:
 
         if link:
             if link.capturing():
-                if self._autostart[link]:
+                if self._autostart[link] and link not in self._tail_process:
                     self.startPacketCaptureReader(link)
                 log.debug("Has successfully started capturing packets on {} to {}".format(link.id(), link.capture_file_path()))
             else:
