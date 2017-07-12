@@ -62,7 +62,7 @@ class Ui_FilterDialog(object):
 
     def retranslateUi(self, FilterDialog):
         _translate = QtCore.QCoreApplication.translate
-        FilterDialog.setWindowTitle(_translate("FilterDialog", "Filters"))
+        FilterDialog.setWindowTitle(_translate("FilterDialog", "Packet filters"))
         self.groupBox.setTitle(_translate("FilterDialog", "Delay"))
         self.label_3.setText(_translate("FilterDialog", "Description"))
         self.label.setText(_translate("FilterDialog", "Delay:"))

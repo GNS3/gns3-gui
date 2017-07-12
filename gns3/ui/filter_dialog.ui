@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Filters</string>
+   <string>Packet filters</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
