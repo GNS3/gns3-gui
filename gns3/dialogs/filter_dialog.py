@@ -57,7 +57,7 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                 item.widget().deleteLater()
 
         if len(self._filters) == 0:
-            QtWidgets.QMessageBox.critical(None, "Link", "No filter available for this link. Try with a different node type.")
+            QtWidgets.QMessageBox.critical(self, "Link", "No filter available for this link. Try with a different node type.")
             self.reject()
 
         for filter in self._filters:

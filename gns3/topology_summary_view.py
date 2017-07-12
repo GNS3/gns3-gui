@@ -302,7 +302,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         stop_all_captures.triggered.connect(self._stopAllCapturesSlot)
         menu.addAction(stop_all_captures)
 
-        reset_all_filters = QtWidgets.QAction("Reset all filters", menu)
+        reset_all_filters = QtWidgets.QAction("Reset all packet filters", menu)
         reset_all_filters.setIcon(QtGui.QIcon(":/icons/filter-reset.svg"))
         reset_all_filters.triggered.connect(self._resetAllFiltersSlot)
         menu.addAction(reset_all_filters)

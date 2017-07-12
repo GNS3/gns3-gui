@@ -240,7 +240,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                 menu.addAction(analyze_action)
 
         # Edit filters
-        filter_action = QtWidgets.QAction("Filter", menu)
+        filter_action = QtWidgets.QAction("Packet filters", menu)
         filter_action.setIcon(QtGui.QIcon(':/icons/filter.svg'))
         filter_action.triggered.connect(self._filterActionSlot)
         menu.addAction(filter_action)
