@@ -1105,8 +1105,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 sys.exit(1)
                 return
 
+        run_as_root_path = LocalConfig.instance().runAsRootPath()
+
         if not sys.platform.startswith("win") and os.geteuid() == 0:
+            # touches file to know that user has run GNS3 as root and to prevent
+            # from running as user
+            if not os.path.exists(run_as_root_path):
+                open(run_as_root_path, 'a').close()
+
             QtWidgets.QMessageBox.warning(self, "Root", "Running GNS3 as root is not recommended and could be dangerous")
+
+        if os.getuid() != 0 and os.path.exists(run_as_root_path):
+            QtWidgets.QMessageBox.critical(
+                self, "Run as user", "GNS3 has been previously run as root. It is not possible "
+                                     "to change the user and GNS3 will be shutdown.")
+            sys.exit(1)
 
         # restore debug level
         if self._settings["debug_level"]:

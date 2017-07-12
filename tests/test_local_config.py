@@ -359,3 +359,7 @@ def test_migrateRemoveInternetVM(tmpdir):
     local_config._migrateOldConfig()
 
     assert len(local_config._settings["Qemu"]["vms"]) == 1
+
+
+def test_runAsRootPath(local_config):
+    assert 'run_as_root' in local_config.runAsRootPath()

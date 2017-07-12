@@ -70,11 +70,18 @@ class CrashReport:
 
     def captureException(self, exception, value, tb):
         from .local_server import LocalServer
+        from .local_config import LocalConfig
 
         local_server = LocalServer.instance().localServerSettings()
         if local_server["report_errors"]:
             if not RAVEN_AVAILABLE:
                 return
+
+            if os.path.exists(LocalConfig.instance().runAsRootPath()):
+                log.warning("User has run application as root. Crash reports are disabled.")
+                sys.exit(1)
+                return
+
             if os.path.exists(".git"):
                 log.warning("A .git directory exist crash report is turn off for developers. Instant exit")
                 sys.exit(1)
