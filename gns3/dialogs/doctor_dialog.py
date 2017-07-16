@@ -136,22 +136,15 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         if not os.path.exists(path):
             return (2, "Ubridge path {path} doesn't exists".format(path=path))
 
-        request_setuid = False
         if sys.platform.startswith("linux"):
             try:
-                if "security.capability" in os.listxattr(path):
-                    caps = os.getxattr(path, "security.capability")
-                    # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
-                    if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
-                        return (2, "Ubridge requires CAP_NET_RAW. Run sudo setcap cap_net_admin,cap_net_raw=ep {path}".format(path=path))
-                else:
-                    # capabilities not supported
-                    request_setuid = True
-            except AttributeError:
+                if "security.capability" not in os.listxattr(path) or not struct.unpack("<IIIII", os.getxattr(path, "security.capability"))[1] & 1 << 13:
+                    return (2, "Ubridge requires CAP_NET_RAW. Run sudo setcap cap_net_admin,cap_net_raw=ep {path}".format(path=path))
+            except (OSError, AttributeError) as e:
                 # Due to a Python bug, os.listxattr could be missing: https://github.com/GNS3/gns3-gui/issues/2010
-                return (1, "Could not determine if CAP_NET_RAW capability is set for uBridge (Python bug)".format(path=path))
+                return (1, "Could not determine if CAP_NET_RAW capability is set for uBridge: {}".format(e))
 
-        if sys.platform.startswith("darwin") or request_setuid:
+        if sys.platform.startswith("darwin"):
             if os.stat(path).st_uid != 0 or not os.stat(path).st_mode & stat.S_ISUID:
                 return (2, "Ubridge should be setuid. Run sudo chown root:admin {path} and sudo chmod 4750 {path}".format(path=path))
         return (0, None)

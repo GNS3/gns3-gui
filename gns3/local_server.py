@@ -157,28 +157,23 @@ class LocalServer(QtCore.QObject):
         if sys.platform.startswith("linux"):
             # test if the executable has the CAP_NET_RAW capability (Linux only)
             try:
-                if "security.capability" in os.listxattr(path):
-                    caps = os.getxattr(path, "security.capability")
-                    # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
-                    if not struct.unpack("<IIIII", caps)[1] & 1 << 13:
-                        proceed = QtWidgets.QMessageBox.question(
-                            self.parent(),
-                            "uBridge",
-                            "uBridge requires CAP_NET_RAW capability to interact with network interfaces. Set the capability to uBridge? All users on the system will be able to read packet from the network interfaces.",
-                            QtWidgets.QMessageBox.Yes,
-                            QtWidgets.QMessageBox.No)
-                        if proceed == QtWidgets.QMessageBox.Yes:
-                            sudo(["setcap", "cap_net_admin,cap_net_raw=ep"])
-                else:
-                    # capabilities not supported
-                    request_setuid = True
+                # test the 2nd byte and check if the 13th bit (CAP_NET_RAW) is set
+                if "security.capability" not in os.listxattr(path) or not struct.unpack("<IIIII", os.getxattr(path, "security.capability"))[1] & 1 << 13:
+                    proceed = QtWidgets.QMessageBox.question(
+                        self.parent(),
+                        "uBridge",
+                        "uBridge requires CAP_NET_RAW capability to interact with network interfaces. Set the capability to uBridge? All users on the system will be able to read packet from the network interfaces.",
+                        QtWidgets.QMessageBox.Yes,
+                        QtWidgets.QMessageBox.No)
+                    if proceed == QtWidgets.QMessageBox.Yes:
+                        sudo(["setcap", "cap_net_admin,cap_net_raw=ep", path])
             except AttributeError:
                 # Due to a Python bug, os.listxattr could be missing: https://github.com/GNS3/gns3-gui/issues/2010
                 log.warning("Could not determine if CAP_NET_RAW capability is set for uBridge (Python bug)")
                 return True
             except OSError as e:
                 QtWidgets.QMessageBox.critical(self.parent(), "uBridge", "Can't set CAP_NET_RAW capability to uBridge {}: {}".format(path, str(e)))
-                return False
+                request_setuid = True
 
         if sys.platform.startswith("darwin") or request_setuid:
             try:
@@ -186,7 +181,7 @@ class LocalServer(QtCore.QObject):
                     proceed = QtWidgets.QMessageBox.question(
                         self.parent(),
                         "uBridge",
-                        "uBridge requires root permissions to interact with network interfaces. Set root permissions to uBridge?  All admin users on the system will be able to read packet from the network interfaces.",
+                        "uBridge requires root permissions to interact with network interfaces. Set root permissions to uBridge? All admin users on the system will be able to read packet from the network interfaces.",
                         QtWidgets.QMessageBox.Yes,
                         QtWidgets.QMessageBox.No)
                     if proceed == QtWidgets.QMessageBox.Yes:
