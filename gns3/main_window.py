@@ -1122,8 +1122,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             QtWidgets.QMessageBox.critical(
                 self, "Run as user",
                 "GNS3 has been previously run as root. It is not possible "
-                "to change the user and GNS3 will be shutdown. Please change `{}` directory "
-                "permissions and start program again.".format(LocalConfig.instance().configDirectory()))
+                "to change to another user and GNS3 will be shutdown. Please delete the '{}' file "
+                "and start the program again.".format(run_as_root_path))
 
             sys.exit(1)
 
