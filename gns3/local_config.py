@@ -183,6 +183,13 @@ class LocalConfig(QtCore.QObject):
 
         return os.path.normpath(path)
 
+    def runAsRootPath(self):
+        """
+        Gets run as root filename
+        :return: string
+        """
+        return os.path.join(self.configDirectory(), "run_as_root")
+
     def _migrateOldConfigPath(self):
         """
         Migrate pre 1.4 config path
