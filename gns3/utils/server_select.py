@@ -56,7 +56,8 @@ def server_select(parent, node_type=None, allow_local_server=True):
     server_list = sorted(server_list, key=lambda compute_name: server_priority[compute_name])
 
     if len(server_list) == 0:
-        raise ValueError("No server available for this node type")
+        QtWidgets.QMessageBox.critical(parent, "Server", "No server available for this node type")
+        return None
     elif len(server_list) == 1:
         selection = server_list[0]
     else:

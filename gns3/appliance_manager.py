@@ -80,7 +80,8 @@ class ApplianceManager(QtCore.QObject):
             if appliance["appliance_id"] == appliance_id:
                 break
         if appliance.get("compute_id") is None:
-            server = server_select(None, node_type=appliance["node_type"])
+            from .main_window import MainWindow
+            server = server_select(MainWindow.instance(), node_type=appliance["node_type"])
             if server is None:
                 return False
             self._controller.post("/projects/" + project.id() + "/appliances/" + appliance_id, self._createNodeFromApplianceCallback, {
