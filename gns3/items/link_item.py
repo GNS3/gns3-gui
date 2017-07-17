@@ -251,6 +251,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         delete_action.triggered.connect(self._deleteActionSlot)
         menu.addAction(delete_action)
 
+    @qslot
     def mousePressEvent(self, event):
         """
         Called when the link is clicked and shows a contextual menu.
