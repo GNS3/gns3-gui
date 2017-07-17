@@ -60,15 +60,20 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
             QtWidgets.QMessageBox.critical(self, "Link", "No filter available for this link. Try with a different node type.")
             self.reject()
 
-        for filter in self._filters:
-            groupBox = QtWidgets.QGroupBox(self)
-            groupBox.setTitle(filter["name"])
-            groupBox.setToolTip(filter["description"])
-            vlayout = QtWidgets.QVBoxLayout(groupBox)
+        self._tabWidget = QtWidgets.QTabWidget(self)
+        self._tabWidget.setMinimumWidth(550)
+
+        for i, filter in enumerate(self._filters):
+            tab = QtWidgets.QWidget()
+            self._tabWidget.addTab(tab, filter['name'])
+            self._tabWidget.setTabToolTip(i, filter['description'])
+            vlayout = QtWidgets.QVBoxLayout()
+
             gridLayout = QtWidgets.QGridLayout()
             line = 0
             filter["spinBoxes"] = []
             filter["textEdits"] = []
+
             nb_spin = 0
 
             for param in filter["parameters"]:
@@ -81,6 +86,8 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                     filter["spinBoxes"].append(spinBox)
                     spinBox.setMinimum(param["minimum"])
                     spinBox.setMaximum(param["maximum"])
+
+                    spinBox.valueChanged[str].connect(self._onAnyChange)
 
                     sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
                     sizePolicy.setHorizontalStretch(0)
@@ -105,6 +112,7 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                     sizePolicy.setVerticalStretch(0)
                     textEdit.setMinimumWidth(300)
                     textEdit.setSizePolicy(sizePolicy)
+                    textEdit.textChanged.connect(self._onAnyChange)
                     try:
                         textEdit.setPlainText(self._link.filters()[filter["type"]][0])
                     except(KeyError, IndexError):
@@ -114,8 +122,27 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                 line += 1
 
             vlayout.addLayout(gridLayout)
-            self.uiVerticalLayout.addWidget(groupBox)
-            self.adjustSize()
+            tab.setLayout(vlayout)
+
+        self.uiVerticalLayout.addWidget(self._tabWidget)
+        self.adjustSize()
+
+    def _onAnyChange(self):
+        # when filter's value is not empty we add "+" to name of the tab
+        for i, filter in enumerate(self._filters):
+            not_empty = []
+            if 'spinBoxes' in filter.keys():
+                not_empty.extend([b for b in filter['spinBoxes'] if b.value() != 0])
+
+            if 'textEdits' in filter.keys():
+                not_empty.extend([e for e in filter['textEdits'] if e.toPlainText() != ''])
+
+            if len(not_empty) > 0:
+                text = "{} +".format(filter['name'])
+            else:
+                text = filter['name']
+
+            self._tabWidget.setTabText(i, text)
 
     @qslot
     def _applyPreferencesSlot(self, *args):
