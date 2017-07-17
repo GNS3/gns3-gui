@@ -81,6 +81,8 @@ class ApplianceManager(QtCore.QObject):
                 break
         if appliance.get("compute_id") is None:
             server = server_select(None, node_type=appliance["node_type"])
+            if server is None:
+                return False
             self._controller.post("/projects/" + project.id() + "/appliances/" + appliance_id, self._createNodeFromApplianceCallback, {
                 "compute_id": server.id(),
                 "x": int(x),
@@ -91,6 +93,7 @@ class ApplianceManager(QtCore.QObject):
                 "x": int(x),
                 "y": int(y)
             })
+        return True
 
     def _createNodeFromApplianceCallback(self, result, error=False, **kwargs):
         if error:

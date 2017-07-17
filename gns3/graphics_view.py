@@ -652,9 +652,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     for node_number in range(integer):
                         x = event.pos().x() - (150 / 2) + (node_number % max_nodes_per_line) * offset
                         y = event.pos().y() - (70 / 2) + (node_number // max_nodes_per_line) * offset
-                        self.createNodeFromApplianceId(appliance_id, QtCore.QPoint(x, y))
+                        if self.createNodeFromApplianceId(appliance_id, QtCore.QPoint(x, y)) is False:
+                            event.ignore()
+                            break
             else:
-                self.createNodeFromApplianceId(appliance_id, event.pos())
+                if self.createNodeFromApplianceId(appliance_id, event.pos()) is False:
+                    event.ignore()
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             # This should not arrive but we received bug report with it...
             if len(event.mimeData().urls()) == 0:
@@ -1474,7 +1477,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         Ask the server to create a node using this appliance
         """
         pos = self.mapToScene(pos)
-        ApplianceManager().instance().createNodeFromApplianceId(self._topology.project(), appliance_id, pos.x(), pos.y())
+        return ApplianceManager().instance().createNodeFromApplianceId(self._topology.project(), appliance_id, pos.x(), pos.y())
 
     def createNodeItem(self, node, symbol, x, y):
         node.setSymbol(symbol)
