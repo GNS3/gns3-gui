@@ -176,10 +176,14 @@ class Link(QtCore.QObject):
     def _updateLabel(self, label, label_data):
         if not label or sip.isdeleted(label):
             return
-        label.setPlainText(label_data["text"])
-        label.setPos(label_data["x"], label_data["y"])
-        label.setStyle(label_data["style"])
-        label.setRotation(label_data["rotation"])
+        if "text" in label_data:
+            label.setPlainText(label_data["text"])
+        if "x" in label_data and "y" in label_data:
+            label.setPos(label_data["x"], label_data["y"])
+        if "style" in label_data:
+            label.setStyle(label_data["style"])
+        if "rotation" in label_data:
+            label.setRotation(label_data["rotation"])
 
     def _prepareParams(self):
         body = {
