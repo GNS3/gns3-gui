@@ -39,10 +39,10 @@ def test_server_select_local_server_local_disallow(main_window, local_server):
     """
 
     with patch("gns3.qt.QtWidgets.QInputDialog.getItem") as mock:
-        with pytest.raises(ValueError):
-            server = server_select(main_window, allow_local_server=False)
+        server = server_select(main_window, allow_local_server=False)
 
-            assert not mock.called
+        assert not mock.called
+        assert server is None
 
 
 def test_server_select_local_server_and_remote_select_local(main_window, remote_server, local_server):
