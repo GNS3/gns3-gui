@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtWidgets, qslot
+from ..qt import QtGui, QtWidgets, qslot
 from ..ui.filter_dialog_ui import Ui_FilterDialog
 
 
@@ -36,6 +36,7 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
         self._filter_items = {}
         self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
         self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).clicked.connect(self._helpSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).clicked.connect(self._resetSlot)
 
     def _listAvailableFiltersCallback(self, result, error=False, *args, **kwargs):
         if error:
@@ -60,15 +61,19 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
             QtWidgets.QMessageBox.critical(self, "Link", "No filter available for this link. Try with a different node type.")
             self.reject()
 
-        for filter in self._filters:
-            groupBox = QtWidgets.QGroupBox(self)
-            groupBox.setTitle(filter["name"])
-            groupBox.setToolTip(filter["description"])
-            vlayout = QtWidgets.QVBoxLayout(groupBox)
+        self._tabWidget = QtWidgets.QTabWidget(self)
+        for i, filter in enumerate(self._filters):
+            tab = QtWidgets.QWidget()
+            self._tabWidget.addTab(tab, filter['name'])
+            self._tabWidget.setTabToolTip(i, filter['description'])
+            self._tabWidget.setTabIcon(i, QtGui.QIcon(':/icons/led_red.svg'))
+            vlayout = QtWidgets.QVBoxLayout()
+
             gridLayout = QtWidgets.QGridLayout()
             line = 0
             filter["spinBoxes"] = []
             filter["textEdits"] = []
+
             nb_spin = 0
 
             for param in filter["parameters"]:
@@ -88,7 +93,10 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                     sizePolicy.setHeightForWidth(spinBox.sizePolicy().hasHeightForWidth())
                     spinBox.setSizePolicy(sizePolicy)
                     try:
-                        spinBox.setValue(self._link.filters()[filter["type"]][nb_spin])
+                        value = self._link.filters()[filter["type"]][nb_spin]
+                        spinBox.setValue(value)
+                        if value != 0:
+                            self._tabWidget.setTabIcon(i, QtGui.QIcon(':/icons/led_green.svg'))
                     except(KeyError, IndexError):
                         pass
                     nb_spin += 1
@@ -106,16 +114,22 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                     textEdit.setMinimumWidth(300)
                     textEdit.setSizePolicy(sizePolicy)
                     try:
-                        textEdit.setPlainText(self._link.filters()[filter["type"]][0])
+                        text = self._link.filters()[filter["type"]][0]
+                        textEdit.setPlainText(text)
+                        if text:
+                            self._tabWidget.setTabIcon(i, QtGui.QIcon(':/icons/led_green.svg'))
                     except(KeyError, IndexError):
                         pass
                     gridLayout.addWidget(textEdit, line, 1, 1, 1)
 
                 line += 1
 
+            spacerItem = QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+            gridLayout.addItem(spacerItem, line, 0, 1, 1)
             vlayout.addLayout(gridLayout)
-            self.uiVerticalLayout.addWidget(groupBox)
-            self.adjustSize()
+            tab.setLayout(vlayout)
+
+        self.uiVerticalLayout.addWidget(self._tabWidget)
 
     @qslot
     def _applyPreferencesSlot(self, *args):
@@ -141,6 +155,13 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                 help_text += "\n\n"
 
         QtWidgets.QMessageBox.information(self, "Help for filters", help_text)
+
+    @qslot
+    def _resetSlot(self, *args):
+
+        filters = {}
+        self._link.setFilters(filters)
+        self._link.update()
 
     def done(self, result):
         """

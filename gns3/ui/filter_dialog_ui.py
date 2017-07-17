@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/filter_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.8.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ class Ui_FilterDialog(object):
     def setupUi(self, FilterDialog):
         FilterDialog.setObjectName("FilterDialog")
         FilterDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        FilterDialog.resize(857, 588)
+        FilterDialog.resize(1357, 255)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(FilterDialog)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiVerticalLayout = QtWidgets.QVBoxLayout()
@@ -45,13 +45,13 @@ class Ui_FilterDialog(object):
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 0, 2, 1, 1)
         self.verticalLayout_2.addLayout(self.gridLayout)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem)
         self.uiVerticalLayout.addWidget(self.groupBox)
         self.verticalLayout_3.addLayout(self.uiVerticalLayout)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_3.addItem(spacerItem)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(FilterDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Help|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Help|QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Reset)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.verticalLayout_3.addWidget(self.uiButtonBox)
 
