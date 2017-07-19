@@ -563,7 +563,7 @@ class Ui_MainWindow(object):
         self.uiNodesFilterComboBox.setItemText(0, _translate("MainWindow", "Installed & Available appliances"))
         self.uiNodesFilterComboBox.setItemText(1, _translate("MainWindow", "Installed appliances"))
         self.uiNodesFilterComboBox.setItemText(2, _translate("MainWindow", "Available appliances"))
-        self.uiNodesFilterComboBox.setItemText(3, _translate("MainWindow", "My available appliances"))
+        self.uiNodesFilterComboBox.setItemText(3, _translate("MainWindow", "Custom appliances"))
         self.uiNodesFilterLineEdit.setPlaceholderText(_translate("MainWindow", "Filter"))
         self.uiNodesView.setToolTip(_translate("MainWindow", "Drag a node to the workspace (Press SHIFT while dragging to add multiple identical nodes)."))
         self.uiNodesView.headerItem().setText(0, _translate("MainWindow", "1"))

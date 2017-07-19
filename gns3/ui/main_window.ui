@@ -280,7 +280,7 @@ background-none;
          </item>
          <item>
           <property name="text">
-           <string>My available appliances</string>
+           <string>Custom appliances</string>
           </property>
          </item>
         </widget>
