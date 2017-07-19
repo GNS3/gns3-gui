@@ -72,7 +72,6 @@ class Node(BaseNode):
             except OSError as e:
                 log.erro("Can't write %s: %s", context["path"], str(e))
 
-
     def creator(self):
         return self._creator
 
@@ -224,7 +223,7 @@ class Node(BaseNode):
 
         return body
 
-    def _create(self, name=None, node_id=None, params=None, default_name_format="Node{0}", timeout=120):
+    def _create(self, name=None, node_id=None, params=None, default_name_format="Node{0}", timeout=None):
         """
         Create the node on the controller
         """
