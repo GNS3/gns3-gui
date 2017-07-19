@@ -1,12 +1,12 @@
 # Run tests inside a container
-FROM ubuntu:vivid
+FROM ubuntu:yakkety
 
 MAINTAINER GNS3 Team
 
 #ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
-RUN apt-get install -y --force-yes python3.4 python3-pyqt5 python3-pip python3-pyqt5.qtsvg python3-qt5.qtwebsockets python3.4-dev xvfb
+RUN apt-get install -y --force-yes python3.5 python3-pyqt5 python3-pip python3-pyqt5.qtsvg python3-pyqt5.qtwebsockets python3.5-dev xvfb
 RUN apt-get clean
 
 
@@ -19,4 +19,4 @@ ADD . /src
 
 WORKDIR /src
 
-CMD xvfb-run python3.4 -m pytest -vv
+CMD xvfb-run python3.5 -m pytest -vv
