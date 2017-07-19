@@ -57,7 +57,7 @@ QtCore.Slot = QtCore.pyqtSlot
 QtCore.Property = QtCore.pyqtProperty
 
 from PyQt5.QtWidgets import QFileDialog as OldFileDialog
-
+from PyQt5.QtNetwork import QNetworkAccessManager
 
 # Do not use system proxy because it could be a parental control, virus or "Security software"...
 QtNetwork.QNetworkProxyFactory.setUseSystemConfiguration(False)
@@ -226,6 +226,31 @@ class StatsQtWidgetsQDialog(QtWidgets.QDialog):
         AnalyticsClient.instance().sendScreenView(name)
 
 QtWidgets.QDialog = StatsQtWidgetsQDialog
+
+
+class PatchNetworkAccessManager(QNetworkAccessManager):
+    """
+    Patch the network acces manager in order to solve
+    hibernation issues on windows and Linux
+
+    See: https://github.com/GNS3/gns3-gui/issues/2104
+    """
+
+    def __init__(self, *params, **kwargs):
+        super().__init__(*params, **kwargs)
+        self.setNetworkAccessible(QNetworkAccessManager.Accessible)
+        self.networkAccessibleChanged.connect(self.networkAccessibleChangedSlot)
+
+    def networkAccessibleChangedSlot(self, status):
+        """
+        When we lost the network we switch to another available network
+        """
+        if status == QtNetwork.QNetworkAccessManager.Accessible:
+            return
+        self.setConfiguration(QtNetwork.QNetworkConfigurationManager().defaultConfiguration())
+
+
+QtNetwork.QNetworkAccessManager = PatchNetworkAccessManager
 
 
 def qpartial(func, *args, **kwargs):
