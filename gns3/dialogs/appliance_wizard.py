@@ -17,6 +17,7 @@
 
 import os
 import sip
+import shutil
 
 from ..qt import QtWidgets, QtCore, QtGui, qpartial, qslot
 from ..ui.appliance_wizard_ui import Ui_ApplianceWizard
@@ -71,7 +72,16 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         self.uiLocalRadioButton.toggled.connect(self._localToggledSlot)
         if Controller.instance().isRemote():
-            self.uiLocalRadioButton.setText("Run the appliance on the main server")
+            self.uiLocalRadioButton.setText("Install the appliance on the main server")
+        else:
+            if not path.endswith('.builtin.gns3a'):
+                try:
+                    destination = Config().appliances_dir
+                    os.makedirs(destination, exist_ok=True)
+                    destination = os.path.join(destination, os.path.basename(path))
+                    shutil.copy(path, destination)
+                except OSError as e:
+                    QtWidgets.QMessageBox.warning(self.parent(), "Can't copy {} to {}".format(path, destination), str(e))
 
         self.uiServerWizardPage.isComplete = self._uiServerWizardPage_isComplete
 

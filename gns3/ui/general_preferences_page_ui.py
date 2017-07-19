@@ -8,7 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_GeneralPreferencesPageWidget(object):
+
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
         GeneralPreferencesPageWidget.resize(715, 644)
@@ -78,6 +80,18 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiConfigsPathToolButton.setObjectName("uiConfigsPathToolButton")
         self.horizontalLayout_7.addWidget(self.uiConfigsPathToolButton)
         self.verticalLayout_5.addLayout(self.horizontalLayout_7)
+        self.label_3 = QtWidgets.QLabel(self.uiLocalPathsGroupBox)
+        self.label_3.setObjectName("label_3")
+        self.verticalLayout_5.addWidget(self.label_3)
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
+        self.uiAppliancesPathLineEdit = QtWidgets.QLineEdit(self.uiLocalPathsGroupBox)
+        self.uiAppliancesPathLineEdit.setObjectName("uiAppliancesPathLineEdit")
+        self.horizontalLayout_12.addWidget(self.uiAppliancesPathLineEdit)
+        self.uiAppliancesPathToolButton = QtWidgets.QToolButton(self.uiLocalPathsGroupBox)
+        self.uiAppliancesPathToolButton.setObjectName("uiAppliancesPathToolButton")
+        self.horizontalLayout_12.addWidget(self.uiAppliancesPathToolButton)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_12)
         self.verticalLayout_4.addWidget(self.uiLocalPathsGroupBox)
         self.uiStyleGroupBox = QtWidgets.QGroupBox(self.uiGeneralTab)
         self.uiStyleGroupBox.setObjectName("uiStyleGroupBox")
@@ -409,6 +423,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiConfigsPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My configs:"))
         self.uiConfigsPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your binary images (e.g. IOS) are stored"))
         self.uiConfigsPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse..."))
+        self.label_3.setText(_translate("GeneralPreferencesPageWidget", "My appliances:"))
+        self.uiAppliancesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "Browse..."))
         self.uiStyleGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Style"))
         self.uiConfigurationFileGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Configuration file"))
         self.uiImportConfigurationFilePushButton.setText(_translate("GeneralPreferencesPageWidget", "&Import"))
@@ -463,4 +479,3 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Request for profile settings at application startup  (work profile / home profile)"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiMiscTab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
-
