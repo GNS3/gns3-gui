@@ -98,8 +98,6 @@ class NodesView(QtWidgets.QTreeWidget):
                     continue
                 if search != "" and search.lower() not in appliance["name"].lower():
                     continue
-                if appliance["name"] in display_appliances:
-                    continue
 
                 display_appliances.add(appliance["name"])
                 item = QtWidgets.QTreeWidgetItem(self)
