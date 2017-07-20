@@ -52,6 +52,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiSymbolsPathToolButton.clicked.connect(self._symbolsPathSlot)
         self.uiImagesPathToolButton.clicked.connect(self._imagesPathSlot)
         self.uiConfigsPathToolButton.clicked.connect(self._configsPathSlot)
+        self.uiAppliancesPathToolButton.clicked.connect(self._appliancesPathSlot)
         self.uiImportConfigurationFilePushButton.clicked.connect(self._importConfigurationFileSlot)
         self.uiExportConfigurationFilePushButton.clicked.connect(self._exportConfigurationFileSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
@@ -132,6 +133,18 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         if path:
             self.uiConfigsPathLineEdit.setText(path)
             self.uiConfigsPathLineEdit.setCursorPosition(0)
+
+    def _appliancesPathSlot(self):
+        """
+        Slot to select the appliances directory path.
+        """
+
+        local_server = LocalServer.instance().localServerSettings()
+        directory = local_server["appliances_path"]
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My custom appliances directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        if path:
+            self.uiAppliancesPathLineEdit.setText(path)
+            self.uiAppliancesPathLineEdit.setCursorPosition(0)
 
     def _restoreDefaultsSlot(self):
         """
@@ -265,6 +278,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiSymbolsPathLineEdit.setText(local_server["symbols_path"])
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
         self.uiConfigsPathLineEdit.setText(local_server["configs_path"])
+        self.uiAppliancesPathLineEdit.setText(local_server["appliances_path"])
         self.uiStatsCheckBox.setChecked(settings["send_stats"])
         self.uiOverlayNotificationsCheckBox.setChecked(settings["overlay_notifications"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
@@ -337,6 +351,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
                                      "projects_path": self.uiProjectsPathLineEdit.text(),
                                      "symbols_path": self.uiSymbolsPathLineEdit.text(),
                                      "configs_path": self.uiConfigsPathLineEdit.text(),
+                                     "appliances_path": self.uiAppliancesPathLineEdit.text(),
                                      "report_errors": self.uiCrashReportCheckBox.isChecked(),
                                      "additional_images_paths": ":".join(additional_images_paths)}
         LocalServer.instance().updateLocalServerSettings(new_local_server_settings)

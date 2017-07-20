@@ -36,13 +36,20 @@ class NodesDockWidget(QtWidgets.QDockWidget):
 
         if index == 0:
             self.window().uiNodesView.setShowInstalledAppliances(True)
-            self.window().uiNodesView.setShowAvailableAppliances(True)
+            self.window().uiNodesView.setShowBuiltinAvailableAppliances(True)
+            self.window().uiNodesView.setShowMyAvailableAppliances(True)
         elif index == 1:
             self.window().uiNodesView.setShowInstalledAppliances(True)
-            self.window().uiNodesView.setShowAvailableAppliances(False)
+            self.window().uiNodesView.setShowBuiltinAvailableAppliances(False)
+            self.window().uiNodesView.setShowMyAvailableAppliances(False)
+        elif index == 2:
+            self.window().uiNodesView.setShowInstalledAppliances(False)
+            self.window().uiNodesView.setShowBuiltinAvailableAppliances(True)
+            self.window().uiNodesView.setShowMyAvailableAppliances(True)
         else:
             self.window().uiNodesView.setShowInstalledAppliances(False)
-            self.window().uiNodesView.setShowAvailableAppliances(True)
+            self.window().uiNodesView.setShowBuiltinAvailableAppliances(False)
+            self.window().uiNodesView.setShowMyAvailableAppliances(True)
         self.window().uiNodesView.refresh()
 
     def populateNodesView(self, category):

@@ -55,7 +55,8 @@ class NodesView(QtWidgets.QTreeWidget):
         self._current_category = None
         self._current_search = ""
         self._show_installed_appliances = True
-        self._show_available_appliances = True
+        self._show_builtin_available_appliances = True
+        self._show_my_available_appliances = True
 
         # enables the possibility to drag items.
         self.setDragEnabled(True)
@@ -68,8 +69,11 @@ class NodesView(QtWidgets.QTreeWidget):
     def setShowInstalledAppliances(self, value):
         self._show_installed_appliances = value
 
-    def setShowAvailableAppliances(self, value):
-        self._show_available_appliances = value
+    def setShowBuiltinAvailableAppliances(self, value):
+        self._show_builtin_available_appliances = value
+
+    def setShowMyAvailableAppliances(self, value):
+        self._show_my_available_appliances = value
 
     def refresh(self):
         self.clear()
@@ -107,22 +111,26 @@ class NodesView(QtWidgets.QTreeWidget):
                 item.setSizeHint(0, QtCore.QSize(32, 32))
                 Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
 
-        if self._show_available_appliances:
-            for appliance in ApplianceManager.instance().appliance_templates():
-                if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
-                    continue
-                if search != "" and search.lower() not in appliance["name"].lower():
-                    continue
-                if appliance["name"] in display_appliances:
-                    continue
+        for appliance in ApplianceManager.instance().appliance_templates():
+            if not appliance["builtin"] and not self._show_my_available_appliances:
+                continue
+            if appliance["builtin"] and not self._show_builtin_available_appliances:
+                continue
 
-                item = QtWidgets.QTreeWidgetItem(self)
-                item.setForeground(0, QtGui.QBrush(QtGui.QColor("gray")))
-                item.setText(0, appliance["name"])
-                item.setData(0, QtCore.Qt.UserRole, appliance)
-                item.setData(1, QtCore.Qt.UserRole, "appliance_template")
-                item.setSizeHint(0, QtCore.QSize(32, 32))
-                Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
+            if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
+                continue
+            if search != "" and search.lower() not in appliance["name"].lower():
+                continue
+            if appliance["name"] in display_appliances:
+                continue
+
+            item = QtWidgets.QTreeWidgetItem(self)
+            item.setForeground(0, QtGui.QBrush(QtGui.QColor("gray")))
+            item.setText(0, appliance["name"])
+            item.setData(0, QtCore.Qt.UserRole, appliance)
+            item.setData(1, QtCore.Qt.UserRole, "appliance_template")
+            item.setSizeHint(0, QtCore.QSize(32, 32))
+            Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
@@ -158,7 +166,7 @@ class NodesView(QtWidgets.QTreeWidget):
 
             # retrieve the node class from the item data
             if item.data(1, QtCore.Qt.UserRole) == "appliance_template":
-                f = tempfile.NamedTemporaryFile(mode="w+", suffix=".gns3a", delete=False)
+                f = tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False)
                 json.dump(item.data(0, QtCore.Qt.UserRole), f)
                 f.close()
                 self.window().loadPath(f.name)

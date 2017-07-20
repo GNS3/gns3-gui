@@ -58,6 +58,13 @@ class Config:
         return LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)["images_path"]
 
     @property
+    def appliances_dir(self):
+        """
+        :returns: Location of the images directory on the server
+        """
+        return LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)["appliances_path"]
+
+    @property
     def symbols_dir(self):
         """
         :returns: Location of the symbols directory
