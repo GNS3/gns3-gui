@@ -89,6 +89,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         topology.setMainWindow(self)
         topology.project_changed_signal.connect(self._projectChangedSlot)
         Controller.instance().setParent(self)
+        LocalServer.instance().setParent(self)
 
         self._settings = {}
         HTTPClient.setProgressCallback(Progress.instance(self))
