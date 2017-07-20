@@ -1118,7 +1118,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             QtWidgets.QMessageBox.warning(self, "Root", "Running GNS3 as root is not recommended and could be dangerous")
 
-        if os.geteuid() != 0 and os.path.exists(run_as_root_path):
+        if not sys.platform.startswith("win") and os.geteuid() != 0 and os.path.exists(run_as_root_path):
             QtWidgets.QMessageBox.critical(
                 self, "Run as user",
                 "GNS3 has been previously run as root. It is not possible "
