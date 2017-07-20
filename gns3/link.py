@@ -135,7 +135,7 @@ class Link(QtCore.QObject):
     def creator(self):
         return self._creator
 
-    def suspend(self):
+    def suspended(self):
         return self._suspend
 
     def toggleSuspend(self):
