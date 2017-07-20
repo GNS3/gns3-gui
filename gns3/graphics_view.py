@@ -801,7 +801,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             reload_action.triggered.connect(self.reloadActionSlot)
             menu.addAction(reload_action)
 
-        if True in list(map(lambda item: isinstance(item, DrawingItem), items)):
+        if True in list(map(lambda item: isinstance(item, DrawingItem) or isinstance(item, NodeItem), items)):
             duplicate_action = QtWidgets.QAction("Duplicate", menu)
             duplicate_action.setIcon(QtGui.QIcon(':/icons/new.svg'))
             duplicate_action.triggered.connect(self.duplicateActionSlot)
@@ -1318,6 +1318,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 else:
                     type = "image"
                 self.createDrawingItem(type, item.pos().x() + 20, item.pos().y() + 20, item.zValue(), rotation=item.rotation(), svg=item.toSvg())
+            elif isinstance(item, NodeItem):
+                item.node().duplicate(item.pos().x() + 20, item.pos().y() + 20, item.zValue())
 
     def styleActionSlot(self):
         """
