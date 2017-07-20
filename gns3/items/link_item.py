@@ -89,6 +89,8 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         self._capturing_item = None
         # QGraphicsSvgItem to indicate a filter is applied
         self._filter_item = None
+        # QGraphicsSvgItem to indicate we suspend a link
+        self._suspend_item = None
         # QGraphicsSvgItem to indicate a filter is applied and a capture is active
         self._filter_capturing_item = None
 
@@ -128,6 +130,10 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         dialog = FilterDialog(self._main_window, self._link)
         dialog.show()
         dialog.exec_()
+
+    @qslot
+    def _suspendActionSlot(self, *args):
+        self._link.toggleSuspend()
 
     def delete(self):
         """
@@ -239,11 +245,24 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                 analyze_action.triggered.connect(self._analyzeCaptureActionSlot)
                 menu.addAction(analyze_action)
 
-        # Edit filters
-        filter_action = QtWidgets.QAction("Packet filters", menu)
-        filter_action.setIcon(QtGui.QIcon(':/icons/filter.svg'))
-        filter_action.triggered.connect(self._filterActionSlot)
-        menu.addAction(filter_action)
+        if self._link.suspended() is False:
+            # Edit filters
+            filter_action = QtWidgets.QAction("Packet filters", menu)
+            filter_action.setIcon(QtGui.QIcon(':/icons/filter.svg'))
+            filter_action.triggered.connect(self._filterActionSlot)
+            menu.addAction(filter_action)
+
+            # Suspend link
+            suspend_action = QtWidgets.QAction("Suspend", menu)
+            suspend_action.setIcon(QtGui.QIcon(':/icons/pause.svg'))
+            suspend_action.triggered.connect(self._suspendActionSlot)
+            menu.addAction(suspend_action)
+        else:
+            # Resume link
+            resume_action = QtWidgets.QAction("Resume", menu)
+            resume_action.setIcon(QtGui.QIcon(':/icons/start.svg'))
+            resume_action.triggered.connect(self._suspendActionSlot)
+            menu.addAction(resume_action)
 
         # delete
         delete_action = QtWidgets.QAction("Delete", menu)
@@ -453,12 +472,33 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
     @qslot
     def _drawSymbol(self, *args):
         """
-        Draws a symbol in the middle of the link to indicate a capture or a filter is active.
+        Draws a symbol in the middle of the link to indicate a capture, a suspend or a filter is active.
         """
 
+        #FIXME: refactor ugly symbol management
         if not self._adding_flag:
 
-            if self._link.capturing() and len(self._link.filters()) > 0:
+            if self._link.suspended():
+                if self.length >= 150:
+                    link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
+                    if self._suspend_item is None:
+                        self._suspend_item = SvgIconItem(':/icons/pause.svg', self)
+                    self._suspend_item.setScale(0.6)
+                    if not self._suspend_item.isVisible():
+                        self._suspend_item.show()
+                    self._suspend_item.setPos(link_center)
+                    if self._filter_item:
+                        self._filter_item.hide()
+                elif self._suspend_item:
+                    self._suspend_item.hide()
+                if self._filter_capturing_item:
+                    self._filter_capturing_item.hide()
+                if self._capturing_item:
+                    self._capturing_item.hide()
+                if self._filter_item:
+                    self._filter_item.hide()
+
+            elif self._link.capturing() and len(self._link.filters()) > 0:
                 if self.length >= 150:
                     link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
                     if self._filter_capturing_item is None:
@@ -473,6 +513,8 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                     self._capturing_item.hide()
                 if self._filter_item:
                     self._filter_item.hide()
+                if self._suspend_item:
+                    self._suspend_item.hide()
 
             elif self._link.capturing():
                 if self.length >= 150:
@@ -487,13 +529,15 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                     self._capturing_item.hide()
                 if self._filter_capturing_item:
                     self._filter_capturing_item.hide()
+                if self._suspend_item:
+                    self._suspend_item.hide()
 
             elif len(self._link.filters()) > 0:
                 if self.length >= 150:
                     link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
                     if self._filter_item is None:
                         self._filter_item = SvgIconItem(':/icons/filter.svg', self)
-                        self._filter_item.setScale(0.6)
+                    self._filter_item.setScale(0.6)
                     if not self._filter_item.isVisible():
                         self._filter_item.show()
                     self._filter_item.setPos(link_center)
@@ -501,10 +545,14 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                     self._filter_item.hide()
                 if self._filter_capturing_item:
                     self._filter_capturing_item.hide()
+                if self._suspend_item:
+                    self._suspend_item.hide()
 
             else:
                 if self._capturing_item:
                     self._capturing_item.hide()
+                if self._suspend_item:
+                    self._suspend_item.hide()
                 if self._filter_item:
                     self._filter_item.hide()
                 if self._filter_capturing_item:

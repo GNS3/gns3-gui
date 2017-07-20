@@ -448,7 +448,7 @@ class Node(BaseNode):
 
     def suspend(self):
         """
-        Suspends this router.
+        Suspends this node.
         """
 
         if self.status() == Node.suspended:

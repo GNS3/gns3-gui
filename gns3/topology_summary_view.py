@@ -121,6 +121,8 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
                 filtering = True
             if link.capturing() and len(link.filters()) > 0:
                 item.setIcon(0, QtGui.QIcon(':/icons/filter-capture.svg'))
+            if link.suspended():
+                item.setIcon(0, QtGui.QIcon(':/icons/pause.svg'))
             self.addChild(item)
 
         if self._parent.show_only_devices_with_capture and capturing is False:

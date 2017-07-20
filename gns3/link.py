@@ -80,6 +80,7 @@ class Link(QtCore.QObject):
         self._capture_file = None
         self._initialized = False
         self._filters = {}
+        self._suspend = False
 
         # Boolean if True we are creating the first instance of this node
         # if false the node already exist in the topology
@@ -127,10 +128,19 @@ class Link(QtCore.QObject):
             self._updateLabels()
         if "filters" in result:
             self._filters = result["filters"]
+        if "suspend" in result:
+            self._suspend = result["suspend"]
         self.updated_link_signal.emit(self._id)
 
     def creator(self):
         return self._creator
+
+    def suspended(self):
+        return self._suspend
+
+    def toggleSuspend(self):
+        self._suspend = not self._suspend
+        self.update()
 
     def initialized(self):
         return self._initialized
@@ -199,7 +209,8 @@ class Link(QtCore.QObject):
                     "port_number": self._destination_port.portNumber()
                 }
             ],
-            "filters": self._filters
+            "filters": self._filters,
+            "suspend": self._suspend
         }
         if self._source_port.label():
             body["nodes"][0]["label"] = self._source_port.label().dump()
@@ -258,9 +269,9 @@ class Link(QtCore.QObject):
     def __str__(self):
 
         description = "Link from {} port {} to {} port {}".format(self._source_node.name(),
-                                                           self._source_port.name(),
-                                                           self._destination_node.name(),
-                                                           self._destination_port.name())
+                                                                  self._source_port.name(),
+                                                                  self._destination_node.name(),
+                                                                  self._destination_port.name())
 
         if self.capturing():
             description += "\nPacket capture is active"

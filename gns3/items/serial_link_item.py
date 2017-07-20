@@ -114,19 +114,19 @@ class SerialLinkItem(LinkItem):
                 return
 
             # source point color
-            if self._source_port.status() == Port.started:
+            if self._link.suspended() or self._source_port.status() == Port.suspended:
+                # link or port is suspended
+                shape = QtCore.Qt.RoundCap
+                color = QtCore.Qt.yellow
+            elif self._source_port.status() == Port.started:
                 # port is active
                 shape = QtCore.Qt.RoundCap
                 color = QtCore.Qt.green
-            elif self._source_port.status() == Port.suspended:
-                # port is suspended
-                shape = QtCore.Qt.RoundCap
-                color = QtCore.Qt.yellow
             else:
                 shape = QtCore.Qt.SquareCap
                 color = QtCore.Qt.red
 
-            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.MiterJoin))
+            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, shape, QtCore.Qt.MiterJoin))
 
             source_port_label = self._source_port.label()
             if source_port_label is None:
@@ -143,13 +143,13 @@ class SerialLinkItem(LinkItem):
             painter.drawPoint(self.source_point)
 
             # destination point color
-            if self._destination_port.status() == Port.started:
+            if self._link.suspended() or self._destination_port.status() == Port.suspended:
+                # link or port is suspended
+                color = QtCore.Qt.yellow
+                shape = QtCore.Qt.RoundCap
+            elif self._destination_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
-                shape = QtCore.Qt.RoundCap
-            elif self._destination_port.status() == Port.suspended:
-                # port is suspended
-                color = QtCore.Qt.yellow
                 shape = QtCore.Qt.RoundCap
             else:
                 color = QtCore.Qt.red

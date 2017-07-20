@@ -112,13 +112,13 @@ class EthernetLinkItem(LinkItem):
             if self.length < 100:
                 return
 
-            if self._source_port.status() == Port.started:
+            if self._link.suspended() or self._source_port.status() == Port.suspended:
+                # link or port is suspended
+                color = QtCore.Qt.yellow
+                shape = QtCore.Qt.RoundCap
+            elif self._source_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
-                shape = QtCore.Qt.RoundCap
-            elif self._source_port.status() == Port.suspended:
-                # port is suspended
-                color = QtCore.Qt.yellow
                 shape = QtCore.Qt.RoundCap
             else:
                 color = QtCore.Qt.red
@@ -153,13 +153,13 @@ class EthernetLinkItem(LinkItem):
 
             painter.drawPoint(point1)
 
-            if self._destination_port.status() == Port.started:
+            if self._link.suspended() or self._destination_port.status() == Port.suspended:
+                # link or port is suspended
+                color = QtCore.Qt.yellow
+                shape = QtCore.Qt.RoundCap
+            elif self._destination_port.status() == Port.started:
                 # port is active
                 color = QtCore.Qt.green
-                shape = QtCore.Qt.RoundCap
-            elif self._destination_port.status() == Port.suspended:
-                # port is suspended
-                color = QtCore.Qt.yellow
                 shape = QtCore.Qt.RoundCap
             else:
                 color = QtCore.Qt.red
