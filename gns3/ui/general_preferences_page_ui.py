@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.8
+# Created by: PyQt5 UI code generator 5.8.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_GeneralPreferencesPageWidget(object):
-
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
         GeneralPreferencesPageWidget.resize(715, 644)
@@ -423,7 +421,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiConfigsPathLabel.setText(_translate("GeneralPreferencesPageWidget", "My configs:"))
         self.uiConfigsPathLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "Directory where your binary images (e.g. IOS) are stored"))
         self.uiConfigsPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "&Browse..."))
-        self.label_3.setText(_translate("GeneralPreferencesPageWidget", "My appliances:"))
+        self.label_3.setText(_translate("GeneralPreferencesPageWidget", "My custom appliances:"))
         self.uiAppliancesPathToolButton.setText(_translate("GeneralPreferencesPageWidget", "Browse..."))
         self.uiStyleGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Style"))
         self.uiConfigurationFileGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Configuration file"))
@@ -479,3 +477,4 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Request for profile settings at application startup  (work profile / home profile)"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiMiscTab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
+

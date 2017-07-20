@@ -141,7 +141,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         local_server = LocalServer.instance().localServerSettings()
         directory = local_server["appliances_path"]
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My appliances directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My custom appliances directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
         if path:
             self.uiAppliancesPathLineEdit.setText(path)
             self.uiAppliancesPathLineEdit.setCursorPosition(0)
