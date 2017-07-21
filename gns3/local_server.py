@@ -59,13 +59,15 @@ class StopLocalServerWorker(QtCore.QObject):
     def __init__(self, local_server_process):
         super().__init__()
         self._local_server_process = local_server_process
-        self._remaining_trial = 10
+        self._precision = 100  # In MS
+        self._remaining_trial = int(10 * (1000 / self._precision))
 
     @qslot
     def _callbackSlot(self, *params):
+        self._local_server_process.poll()
         if self._local_server_process.returncode is None and self._remaining_trial > 0:
             self._remaining_trial -= 1
-            QtCore.QTimer.singleShot(1000, self._callbackSlot)
+            QtCore.QTimer.singleShot(self._precision, self._callbackSlot)
         else:
             self.finished.emit()
 
