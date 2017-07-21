@@ -164,7 +164,6 @@ class Topology(QtCore.QObject):
 
             self._main_window.uiGraphicsView.setZoom(self._project.zoom())
 
-
     def createLoadProject(self, project_settings):
         """
         Create load a project based on settings, not on the .gns3
@@ -217,8 +216,10 @@ class Topology(QtCore.QObject):
         dialog.exec_()
 
     def _projectCreationErrorSlot(self, message):
-        self.setProject(None)
-        QtWidgets.QMessageBox.critical(self._main_window, "New project", message)
+        if self._project:
+            self._project.project_creation_error_signal.disconnect(self._projectCreationErrorSlot)
+            self.setProject(None)
+            QtWidgets.QMessageBox.critical(self._main_window, "New project", message)
 
     def exportProject(self):
         include_image_question = """Would you like to include any base image?
