@@ -30,7 +30,7 @@ import signal
 import subprocess
 
 
-from gns3.qt import QtWidgets, QtCore
+from gns3.qt import QtWidgets, QtCore, qslot
 from gns3.settings import LOCAL_SERVER_SETTINGS
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
@@ -59,17 +59,20 @@ class StopLocalServerWorker(QtCore.QObject):
     def __init__(self, local_server_process):
         super().__init__()
         self._local_server_process = local_server_process
+        self._precision = 100  # In MS
+        self._remaining_trial = int(10 * (1000 / self._precision))
+
+    @qslot
+    def _callbackSlot(self, *params):
+        self._local_server_process.poll()
+        if self._local_server_process.returncode is None and self._remaining_trial > 0:
+            self._remaining_trial -= 1
+            QtCore.QTimer.singleShot(self._precision, self._callbackSlot)
+        else:
+            self.finished.emit()
 
     def run(self):
-        precision = 1
-        remaining_trial = 4 / precision  # 4 Seconds
-        while remaining_trial > 0:
-            if self._local_server_process.returncode is None:
-                remaining_trial -= 1
-                self.thread().sleep(precision)
-            else:
-                break
-        self.finished.emit()
+        QtCore.QTimer.singleShot(1000, self._callbackSlot)
 
     def cancel(self):
         return
