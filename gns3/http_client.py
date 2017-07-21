@@ -95,6 +95,8 @@ class HTTPClient(QtCore.QObject):
         # List of query waiting for the connection
         self._query_waiting_connections = []
 
+        self._websocket = QtWebSockets.QWebSocket()
+
     def setMaxTimeDifferenceBetweenQueries(self, value):
         self._max_time_difference_between_queries = value
 
@@ -446,12 +448,11 @@ class HTTPClient(QtCore.QObject):
         Path of the websocket endpoint
         """
         host = self._getHostForQuery()
-        socket = QtWebSockets.QWebSocket()
-        request = socket.request()
+        request = self._websocket.request()
         request.setUrl(QtCore.QUrl("ws://{host}:{port}{prefix}{path}".format(host=host, port=self._port, path=path, prefix=prefix)))
         self._addAuth(request)
-        socket.open(request)
-        return socket
+        self._websocket.open(request)
+        return self._websocket
 
     def _getHostForQuery(self):
         """
