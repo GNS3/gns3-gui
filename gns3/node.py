@@ -268,7 +268,7 @@ class Node(BaseNode):
     def _duplicateCallback(self, result, error=False, **kwargs):
         if error:
             if "message" in result:
-                log.error("Error while duplicate: {}".format(result["message"]))
+                log.error("Error while duplicating: {}".format(result["message"]))
             return
 
     def _parseResponse(self, result):
