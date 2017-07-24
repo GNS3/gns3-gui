@@ -250,6 +250,27 @@ class Node(BaseNode):
         self.updated_signal.emit()
         return True
 
+    def duplicate(self, x, y, z):
+        """
+        Duplicate the node
+        """
+        body = {
+            "x": int(x),
+            "y": int(y),
+            "z": int(z)
+        }
+        self.controllerHttpPost("/nodes/{node_id}/duplicate".format(
+            node_id=self._node_id),
+            self._duplicateCallback,
+            body=body,
+            timeout=None)
+
+    def _duplicateCallback(self, result, error=False, **kwargs):
+        if error:
+            if "message" in result:
+                log.error("Error while duplicating: {}".format(result["message"]))
+            return
+
     def _parseResponse(self, result):
         """
         Parse node object from API
@@ -535,7 +556,6 @@ class Node(BaseNode):
             else:
                 log.debug("Could not find window title '{}' to bring it to front".format(self.name()))
         return False
-
 
     def setName(self, name):
         """

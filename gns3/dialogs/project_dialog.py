@@ -144,7 +144,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
     def _duplicateCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while duplicate project: {}".format(result["message"]))
+            log.error("Error while duplicating project: {}".format(result["message"]))
             return
         Controller.instance().refreshProjectList()
 
