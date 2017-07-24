@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.1.0a1 24/07/2017
+
+* Packet filtering
+* Suspend a link
+* Duplicate a node
+* Move config to central server
+* Appliance templates on server
+
 ## 2.0.3 13/06/2017
 
 * Display error when we can't export files
