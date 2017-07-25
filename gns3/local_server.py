@@ -145,7 +145,7 @@ class LocalServer(QtCore.QObject):
 
         path = os.path.abspath(self._settings["ubridge_path"])
 
-        if not path or len(path) == 0 or not os.path.exists(path):
+        if not path or len(path) == 0 or not os.path.exists(path) or not os.path.isfile(path):
             return False
 
         if sys.platform.startswith("win"):
