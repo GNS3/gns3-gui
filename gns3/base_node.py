@@ -379,7 +379,7 @@ class BaseNode(QtCore.QObject):
         try:
             contents = os.listdir(directory)
         except OSError as e:
-            self.warning_signal.emit(self.id(), "Can't list file in {}: {}".format(directory, str(e)))
+            self.error_signal.emit(self.id(), "Can't list file in {}: {}".format(directory, str(e)))
             return
 
         for file in self.configFiles():
@@ -390,7 +390,7 @@ class BaseNode(QtCore.QObject):
                     file=file), self._importConfigCallback,
                     pathlib.Path(os.path.join(directory, filename)))
             else:
-                self.warning_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(filename))
+                self.error_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(filename))
 
     def _importConfigCallback(self, result, error=False, **kwargs):
         if error:
