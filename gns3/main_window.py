@@ -75,6 +75,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         super().__init__(parent)
+        self._settings = {}
+
         self.setupUi(self)
 
         self._notif_dialog = NotifDialog(self)
@@ -91,7 +93,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Controller.instance().setParent(self)
         LocalServer.instance().setParent(self)
 
-        self._settings = {}
         HTTPClient.setProgressCallback(Progress.instance(self))
 
         self._first_file_load = True
