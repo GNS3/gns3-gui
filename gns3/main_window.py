@@ -123,6 +123,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         action.setIconText("All devices")
         self.uiDocksMenu.addAction(action)
 
+        # Sometimes the parent seem invalid https://github.com/GNS3/gns3-gui/issues/2182
+        self.uiNodesDockWidget.setParent(self)
         # make sure the dock widget is not open
         self.uiNodesDockWidget.setVisible(False)
 
