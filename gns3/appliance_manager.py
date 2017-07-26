@@ -88,12 +88,14 @@ class ApplianceManager(QtCore.QObject):
                 "compute_id": server.id(),
                 "x": int(x),
                 "y": int(y)
-            })
+            },
+                timeout=None)
         else:
             self._controller.post("/projects/" + project.id() + "/appliances/" + appliance_id, self._createNodeFromApplianceCallback, {
                 "x": int(x),
                 "y": int(y)
-            })
+            },
+                timeout=None)
         return True
 
     def _createNodeFromApplianceCallback(self, result, error=False, **kwargs):
@@ -101,18 +103,6 @@ class ApplianceManager(QtCore.QObject):
             if "message" in result:
                 log.error("Error while creating node: {}".format(result["message"]))
             return
-
-    def _controllerDisconnectedSlot(self):
-        self._appliances = []
-
-    def appliances(self):
-        return self._appliances
-
-    def _listAppliancesCallback(self, result, error=False, **kwargs):
-        if error is True:
-            log.error("Error while getting appliance list: {}".format(result["message"]))
-            return
-        self._appliances = result
 
     @staticmethod
     def instance():
