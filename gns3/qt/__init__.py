@@ -238,14 +238,14 @@ class PatchNetworkAccessManager(QNetworkAccessManager):
 
     def __init__(self, *params, **kwargs):
         super().__init__(*params, **kwargs)
-        self.setNetworkAccessible(QNetworkAccessManager.Accessible)
+        self.setNetworkAccessible(self.Accessible)
         self.networkAccessibleChanged.connect(self.networkAccessibleChangedSlot)
 
     def networkAccessibleChangedSlot(self, status):
         """
         When we lost the network we switch to another available network
         """
-        if status == QtNetwork.QNetworkAccessManager.Accessible:
+        if status == self.Accessible:
             return
         self.setConfiguration(QtNetwork.QNetworkConfigurationManager().defaultConfiguration())
 
