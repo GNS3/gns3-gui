@@ -467,6 +467,22 @@ class HTTPClient(QtCore.QObject):
             host = self._host
         return host
 
+    def _paramsToQueryString(self, params):
+        """
+        :param params: Dictionnary of query string parameters
+        :returns: String of the query string
+        """
+        if params == {}:
+            query_string = ""
+        else:
+            query_string = "?"
+            params = params.copy()
+            for key, value in params.copy().items():
+                if value is None:
+                    del params[key]
+            query_string += urllib.parse.urlencode(params)
+        return query_string
+
     def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", params={}, networkManager=None, **kwargs):
         """
         Call the remote server
@@ -488,10 +504,7 @@ class HTTPClient(QtCore.QObject):
         """
 
         host = self._getHostForQuery()
-        if params == {}:
-            query_string = ""
-        else:
-            query_string = "?" + urllib.parse.urlencode(params)
+        query_string = self._paramsToQueryString(params)
 
         log.debug("{method} {protocol}://{host}:{port}{prefix}{path} {body}{query_string}".format(method=method, protocol=self._protocol, host=host, port=self._port, path=path, body=body, prefix=prefix, query_string=query_string))
         if self._user:
