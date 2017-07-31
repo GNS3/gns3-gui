@@ -1,5 +1,15 @@
 # Change Log
 
+## 2.1.0a2 31/07/2017
+
+* Fix permission error when importing a project on a remote server
+* Fix RecursionError
+* Fix 'NodesDockWidget' object has no attribute 'loadPath'
+* Fix 'MainWindow' object has no attribute '_settings
+* Fix object has no attribute 'warning_signal'
+* Fix timeout issues when using an appliance
+* Make sure ubridge path is not a directory
+
 ## 2.1.0a1 24/07/2017
 
 * Packet filtering
