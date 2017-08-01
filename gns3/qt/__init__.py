@@ -112,6 +112,8 @@ class LogQMessageBox(QtWidgets.QMessageBox):
     """
     @staticmethod
     def critical(parent, title, message, *args):
+        if message.startswith("QXcbConnection"):  # Qt noise not relevant
+            return
         LogQMessageBox._get_logger().critical(re.sub(r"<[^<]+?>", "", message), stack_info=LogQMessageBox.stack_info())
         if sip_is_deleted(parent):
             return
