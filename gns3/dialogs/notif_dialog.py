@@ -19,7 +19,6 @@
 Display error to the user in an overlay popup
 """
 
-import os
 import time
 
 from gns3.qt import QtWidgets, QtCore, qslot
@@ -79,7 +78,7 @@ class NotifDialog(QtWidgets.QWidget):
 
     @qslot
     def addNotif(self, level, message):
-        if not self.parent().settings()["overlay_notifications"]:
+        if not self.parent().settings().get("overlay_notifications", True):
             return
 
         # This unicode char prevent the wordwrap at /
