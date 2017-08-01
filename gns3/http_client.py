@@ -673,12 +673,12 @@ class HTTPClient(QtCore.QObject):
             except UnicodeDecodeError:
                 body = None
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
-            # log.debug(body)
             if body and len(body.strip(" \n\t")) > 0 and content_type == "application/json":
                 try:
                     params = json.loads(body)
                 except ValueError:  # Partial JSON
-                    raise HttpBadRequest(body)
+                    params = {}
+                    status = 504
             else:
                 params = {}
             if callback is not None:
