@@ -563,7 +563,11 @@ class Project(QtCore.QObject):
 
     @qslot
     def _websocket_event_received(self, event):
-        self._event_received(json.loads(event))
+        try:
+            self._event_received(json.loads(event))
+        except ValueError as e:
+            log.error("Invalid event received: {}".format(e))
+            return
 
     def _event_received(self, result, *args, **kwargs):
         # Log only relevant events
