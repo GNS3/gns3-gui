@@ -523,7 +523,11 @@ class HTTPClient(QtCore.QObject):
         if not networkManager:
             networkManager = self._network_manager
 
-        response = networkManager.sendCustomRequest(request, method.encode(), body)
+        try:
+            response = networkManager.sendCustomRequest(request, method.encode(), body)
+        except SystemError as e:
+            log.error("Can't send query: {}".format(str(e)))
+            return
 
         context = copy.copy(context)
         context["query_id"] = str(uuid.uuid4())
