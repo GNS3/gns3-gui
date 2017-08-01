@@ -549,7 +549,11 @@ It is your responsability to check if you have the right to distribute the image
 
         :param drawing_data: Dict send by the API
         """
-        svg = ET.fromstring(drawing_data["svg"])
+        try:
+            svg = ET.fromstring(drawing_data["svg"])
+        except ET.ParseError as e:
+            log.error(str(e))
+            return
         try:
             # If SVG is more complex we consider it as an image
             if len(svg[0]) != 0:
