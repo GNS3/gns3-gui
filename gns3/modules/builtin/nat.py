@@ -90,7 +90,9 @@ class Nat(Node):
 
         info = """Nat device {name} is always-on
 This is a node for external connections
-""".format(name=self.name())
+Device run on {host}
+""".format(name=self.name(),
+           host=self.compute().name())
 
         port_info = ""
         for port in self._ports:
