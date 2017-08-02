@@ -88,10 +88,15 @@ class DockerVM(Node):
 
         info = """Docker container {name} is {state}
   Node ID is {id}, server's Docker container ID is {node_id}
+  Docker VM's server run on {host}
+  Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state)
+           state=state,
+           host=self.compute().name(),
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:
