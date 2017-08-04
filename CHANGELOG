@@ -1,5 +1,16 @@
 # Change Log
 
+## 2.1.0b1 04/08/2017
+
+* Info added to the Nat node
+* Add missing popup information in cloud and docker node
+* Handle invalid json in websockets
+* Avoid invalid bad request error when receiving partial answer
+* Catch parse error for broken SVG
+* Filter QXcbConnection log messages
+* Catch class 'PyQt5.QtNetwork.QNetworkReply'> returned a result with an error set
+* Fix KeyError: 'overlay_notifications'
+
 ## 2.1.0a2 31/07/2017
 
 * Fix permission error when importing a project on a remote server
