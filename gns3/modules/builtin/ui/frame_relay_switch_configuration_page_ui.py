@@ -134,7 +134,7 @@ class Ui_frameRelaySwitchConfigPageWidget(object):
     def retranslateUi(self, frameRelaySwitchConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
         frameRelaySwitchConfigPageWidget.setWindowTitle(_translate("frameRelaySwitchConfigPageWidget", "Frame Relay Switch"))
-        frameRelaySwitchConfigPageWidget.setWhatsThis(_translate("frameRelaySwitchConfigPageWidget", "<html><head/><body><p>This is a simple Frame Relay switch. Only serial links can be connected to it. <span style=\" font-weight:600;\">Note that only the Frame-Relay LMI AINSI type is supported.</span></p></body></html>"))
+        frameRelaySwitchConfigPageWidget.setWhatsThis(_translate("frameRelaySwitchConfigPageWidget", "<html><head/><body><p>This is a simple Frame Relay switch. Only serial links can be connected to it. <span style=\" font-weight:600;\">Note that only the Frame-Relay LMI ANSI type is supported.</span></p></body></html>"))
         self.uiGeneralGroupBox.setTitle(_translate("frameRelaySwitchConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("frameRelaySwitchConfigPageWidget", "Name:"))
         self.uiFrameRelayMappingGroupBox.setTitle(_translate("frameRelaySwitchConfigPageWidget", "Mapping"))
