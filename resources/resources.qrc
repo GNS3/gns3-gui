@@ -177,6 +177,10 @@
         <file>classic_icons/preferences-hover.svg</file>
         <file>classic_icons/quit.svg</file>
         <file>classic_icons/quit-hover.svg</file>
+        <file>classic_icons/lock.svg</file>
+        <file>classic_icons/lock-hover.svg</file>
+        <file>classic_icons/unlock.svg</file>
+        <file>classic_icons/unlock-hover.svg</file>
         <file>charcoal_icons/add-link-1.svg</file>
         <file>charcoal_icons/add-link-1-hover.svg</file>
         <file>charcoal_icons/add-link-1-cancel.svg</file>
@@ -243,6 +247,10 @@
         <file>charcoal_icons/preferences-hover.svg</file>
         <file>charcoal_icons/quit.svg</file>
         <file>charcoal_icons/quit-hover.svg</file>
+        <file>charcoal_icons/lock.svg</file>
+        <file>charcoal_icons/lock-hover.svg</file>
+        <file>charcoal_icons/unlock.svg</file>
+        <file>charcoal_icons/unlock-hover.svg</file>
         <file>images/vmware_fusion_banner.jpg</file>
         <file>images/vmware_workstation_banner.jpg</file>
         <file>styles/charcoal.css</file>
