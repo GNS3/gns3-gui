@@ -1,37 +1,35 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/main_window.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.8
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_MainWindow(object):
-
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
         MainWindow.resize(984, 715)
         MainWindow.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
         MainWindow.setStyleSheet("#toolBar_Devices QToolButton {\n"
-                                 "width: 50px;\n"
-                                 "height: 55px;\n"
-                                 "border:solid 1px black opacity 0.4;\n"
-                                 "background-none;\n"
-                                 "}\n"
-                                 "\n"
-                                 "#toolBar_General QToolButton {\n"
-                                 "width: 36px;\n"
-                                 "height: 36px;\n"
-                                 "border:solid 1px black opacity 0.4;\n"
-                                 "background-none;\n"
-                                 "}\n"
-                                 "\n"
-                                 "")
-        MainWindow.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks | QtWidgets.QMainWindow.AnimatedDocks)
+"width: 50px;\n"
+"height: 55px;\n"
+"border:solid 1px black opacity 0.4;\n"
+"background-none;\n"
+"}\n"
+"\n"
+"#toolBar_General QToolButton {\n"
+"width: 36px;\n"
+"height: 36px;\n"
+"border:solid 1px black opacity 0.4;\n"
+"background-none;\n"
+"}\n"
+"\n"
+"")
+        MainWindow.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks|QtWidgets.QMainWindow.AnimatedDocks)
         self.uiCentralWidget = QtWidgets.QWidget(MainWindow)
         self.uiCentralWidget.setObjectName("uiCentralWidget")
         self.gridlayout = QtWidgets.QGridLayout(self.uiCentralWidget)
@@ -48,7 +46,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtWidgets.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 22))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 984, 40))
         self.uiMenuBar.setObjectName("uiMenuBar")
         self.uiEditMenu = QtWidgets.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName("uiEditMenu")
@@ -83,7 +81,7 @@ class Ui_MainWindow(object):
         self.uiNodesDockWidget.setEnabled(True)
         self.uiNodesDockWidget.setVisible(True)
         self.uiNodesDockWidget.setFloating(False)
-        self.uiNodesDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
+        self.uiNodesDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
         self.uiNodesDockWidget.setObjectName("uiNodesDockWidget")
         self.uiNodesDockWidgetContents = QtWidgets.QWidget()
         self.uiNodesDockWidgetContents.setObjectName("uiNodesDockWidgetContents")
@@ -228,22 +226,22 @@ class Ui_MainWindow(object):
         self.uiOnlineHelpAction.setObjectName("uiOnlineHelpAction")
         self.uiScreenshotAction = QtWidgets.QAction(MainWindow)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/camera-photo.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon4.addPixmap(QtGui.QPixmap(":/icons/camera-photo-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(":/icons/camera-photo.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiScreenshotAction.setIcon(icon4)
         self.uiScreenshotAction.setObjectName("uiScreenshotAction")
         self.uiStartAllAction = QtWidgets.QAction(MainWindow)
         self.uiStartAllAction.setEnabled(True)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/start.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon5.addPixmap(QtGui.QPixmap(":/icons/start-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(":/icons/start.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiStartAllAction.setIcon(icon5)
         self.uiStartAllAction.setObjectName("uiStartAllAction")
         self.uiStopAllAction = QtWidgets.QAction(MainWindow)
         self.uiStopAllAction.setEnabled(True)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/stop.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon6.addPixmap(QtGui.QPixmap(":/icons/stop-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(":/icons/stop.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiStopAllAction.setIcon(icon6)
         self.uiStopAllAction.setObjectName("uiStopAllAction")
         self.uiConsoleAllAction = QtWidgets.QAction(MainWindow)
@@ -257,14 +255,14 @@ class Ui_MainWindow(object):
         self.uiAboutQtAction.setObjectName("uiAboutQtAction")
         self.uiZoomInAction = QtWidgets.QAction(MainWindow)
         icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/icons/zoom-in.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon8.addPixmap(QtGui.QPixmap(":/icons/zoom-in-hover.png"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon8.addPixmap(QtGui.QPixmap(":/icons/zoom-in.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiZoomInAction.setIcon(icon8)
         self.uiZoomInAction.setObjectName("uiZoomInAction")
         self.uiZoomOutAction = QtWidgets.QAction(MainWindow)
         icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/icons/zoom-out.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon9.addPixmap(QtGui.QPixmap(":/icons/zoom-out-hover.png"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon9.addPixmap(QtGui.QPixmap(":/icons/zoom-out.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiZoomOutAction.setIcon(icon9)
         self.uiZoomOutAction.setObjectName("uiZoomOutAction")
         self.uiZoomResetAction = QtWidgets.QAction(MainWindow)
@@ -281,8 +279,8 @@ class Ui_MainWindow(object):
         self.uiPreferencesAction.setObjectName("uiPreferencesAction")
         self.uiSuspendAllAction = QtWidgets.QAction(MainWindow)
         icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(":/icons/pause.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon11.addPixmap(QtGui.QPixmap(":/icons/pause-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon11.addPixmap(QtGui.QPixmap(":/icons/pause.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiSuspendAllAction.setIcon(icon11)
         self.uiSuspendAllAction.setObjectName("uiSuspendAllAction")
         self.uiAddNoteAction = QtWidgets.QAction(MainWindow)
@@ -310,15 +308,15 @@ class Ui_MainWindow(object):
         self.uiDrawRectangleAction = QtWidgets.QAction(MainWindow)
         self.uiDrawRectangleAction.setCheckable(True)
         icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap(":/icons/rectangle.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon16.addPixmap(QtGui.QPixmap(":/icons/rectangle-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon16.addPixmap(QtGui.QPixmap(":/icons/rectangle.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiDrawRectangleAction.setIcon(icon16)
         self.uiDrawRectangleAction.setObjectName("uiDrawRectangleAction")
         self.uiDrawEllipseAction = QtWidgets.QAction(MainWindow)
         self.uiDrawEllipseAction.setCheckable(True)
         icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(":/icons/ellipse.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon17.addPixmap(QtGui.QPixmap(":/icons/ellipse-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon17.addPixmap(QtGui.QPixmap(":/icons/ellipse.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiDrawEllipseAction.setIcon(icon17)
         self.uiDrawEllipseAction.setObjectName("uiDrawEllipseAction")
         self.uiShowPortNamesAction = QtWidgets.QAction(MainWindow)
@@ -360,40 +358,40 @@ class Ui_MainWindow(object):
         self.uiCheckForUpdateAction.setObjectName("uiCheckForUpdateAction")
         self.uiBrowseRoutersAction = QtWidgets.QAction(MainWindow)
         icon23 = QtGui.QIcon()
-        icon23.addPixmap(QtGui.QPixmap(":/icons/router.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon23.addPixmap(QtGui.QPixmap(":/icons/router-hover.png"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon23.addPixmap(QtGui.QPixmap(":/icons/router.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiBrowseRoutersAction.setIcon(icon23)
         self.uiBrowseRoutersAction.setObjectName("uiBrowseRoutersAction")
         self.uiBrowseSwitchesAction = QtWidgets.QAction(MainWindow)
         icon24 = QtGui.QIcon()
-        icon24.addPixmap(QtGui.QPixmap(":/icons/switch.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon24.addPixmap(QtGui.QPixmap(":/icons/switch-hover.png"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon24.addPixmap(QtGui.QPixmap(":/icons/switch.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiBrowseSwitchesAction.setIcon(icon24)
         self.uiBrowseSwitchesAction.setObjectName("uiBrowseSwitchesAction")
         self.uiBrowseEndDevicesAction = QtWidgets.QAction(MainWindow)
         icon25 = QtGui.QIcon()
-        icon25.addPixmap(QtGui.QPixmap(":/icons/PC.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon25.addPixmap(QtGui.QPixmap(":/icons/PC-hover.png"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon25.addPixmap(QtGui.QPixmap(":/icons/PC.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiBrowseEndDevicesAction.setIcon(icon25)
         self.uiBrowseEndDevicesAction.setObjectName("uiBrowseEndDevicesAction")
         self.uiBrowseSecurityDevicesAction = QtWidgets.QAction(MainWindow)
         icon26 = QtGui.QIcon()
-        icon26.addPixmap(QtGui.QPixmap(":/icons/firewall.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon26.addPixmap(QtGui.QPixmap(":/icons/firewall-hover.png"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon26.addPixmap(QtGui.QPixmap(":/icons/firewall.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiBrowseSecurityDevicesAction.setIcon(icon26)
         self.uiBrowseSecurityDevicesAction.setObjectName("uiBrowseSecurityDevicesAction")
         self.uiBrowseAllDevicesAction = QtWidgets.QAction(MainWindow)
         icon27 = QtGui.QIcon()
-        icon27.addPixmap(QtGui.QPixmap(":/icons/browse-all-icons.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon27.addPixmap(QtGui.QPixmap(":/icons/browse-all-icons-hover.png"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon27.addPixmap(QtGui.QPixmap(":/icons/browse-all-icons.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiBrowseAllDevicesAction.setIcon(icon27)
         self.uiBrowseAllDevicesAction.setObjectName("uiBrowseAllDevicesAction")
         self.uiAddLinkAction = QtWidgets.QAction(MainWindow)
         self.uiAddLinkAction.setCheckable(True)
         icon28 = QtGui.QIcon()
-        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon28)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
@@ -525,8 +523,8 @@ class Ui_MainWindow(object):
         self.uiBrowsersToolBar.addSeparator()
         self.uiControlToolBar.addAction(self.uiSnapshotAction)
         self.uiControlToolBar.addAction(self.uiShowPortNamesAction)
-        self.uiControlToolBar.addAction(self.uiConsoleAllAction)
         self.uiControlToolBar.addSeparator()
+        self.uiControlToolBar.addAction(self.uiConsoleAllAction)
         self.uiControlToolBar.addAction(self.uiStartAllAction)
         self.uiControlToolBar.addAction(self.uiSuspendAllAction)
         self.uiControlToolBar.addAction(self.uiStopAllAction)
