@@ -157,6 +157,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         # clear the topology summary
         self._main_window.uiTopologySummaryTreeWidget.clear()
 
+        # reset the lock button
+        self._main_window.uiLockAllAction.setChecked(False)
+
         # clear all objects on the scene
         self.scene().clear()
 

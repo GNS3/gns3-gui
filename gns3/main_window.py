@@ -224,6 +224,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
         self.uiShowGridAction.triggered.connect(self._showGridActionSlot)
         self.uiSnapToGridAction.triggered.connect(self._snapToGridActionSlot)
+        self.uiLockAllAction.triggered.connect(self._lockActionSlot)
 
         # tool menu connections
         self.uiWebInterfaceAction.triggered.connect(self._openWebInterfaceActionSlot)
@@ -332,6 +333,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if project is not None:
             project.setSnapToGrid(self.uiSnapToGridAction.isChecked())
             project.update()
+
+    def _lockActionSlot(self):
+        """
+        Called when user click on the lock menu item
+        :return: None
+        """
+
+        for item in self.uiGraphicsView.items():
+            item.setEnabled(not self.uiLockAllAction.isChecked())
 
     def analyticsClient(self):
         """

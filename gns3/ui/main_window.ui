@@ -126,6 +126,7 @@ background-none;
     <addaction name="uiShowGridAction"/>
     <addaction name="uiResetPortLabelsAction"/>
     <addaction name="uiShowPortNamesAction"/>
+    <addaction name="uiLockAllAction"/>
     <addaction name="separator"/>
     <addaction name="uiDocksMenu"/>
    </widget>
@@ -447,6 +448,7 @@ background-none;
    <addaction name="uiDrawRectangleAction"/>
    <addaction name="uiDrawEllipseAction"/>
    <addaction name="uiDrawLineAction"/>
+   <addaction name="uiLockAllAction"/>
    <addaction name="uiZoomInAction"/>
    <addaction name="uiZoomOutAction"/>
    <addaction name="uiScreenshotAction"/>
@@ -1243,6 +1245,29 @@ background-none;
    </property>
    <property name="text">
     <string>Drawn line</string>
+   </property>
+  </action>
+  <action name="uiLockAllAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/classic_icons/unlock.svg</normaloff>
+     <normalon>:/classic_icons/lock.svg</normalon>
+     <disabledoff>:/classic_icons/lock-hover.svg</disabledoff>
+     <disabledon>:/classic_icons/lock-hover.svg</disabledon>
+     <activeoff>:/classic_icons/unlock-hover.svg</activeoff>
+     <activeon>:/classic_icons/lock-hover.svg</activeon>:/classic_icons/unlock.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Lock or unlock all items</string>
+   </property>
+   <property name="toolTip">
+    <string>Lock or unlock all items</string>
    </property>
   </action>
  </widget>
