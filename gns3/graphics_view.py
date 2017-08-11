@@ -866,6 +866,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
             lower_layer_action.triggered.connect(self.lowerLayerActionSlot)
             menu.addAction(lower_layer_action)
 
+            if len(items) > 1:
+                lock_action = QtWidgets.QAction("Lock or unlock items", menu)
+                lock_action.setIcon(QtGui.QIcon(':/classic_icons/lock.svg'))
+            else:
+                item = items[0]
+                if item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable:
+                    lock_action = QtWidgets.QAction("Lock item", menu)
+                    lock_action.setIcon(QtGui.QIcon(':/classic_icons/lock.svg'))
+                else:
+                    lock_action = QtWidgets.QAction("Unlock item", menu)
+                    lock_action.setIcon(QtGui.QIcon(':/classic_icons/unlock.svg'))
+            lock_action.triggered.connect(self.lockActionSlot)
+            menu.addAction(lock_action)
+
             delete_action = QtWidgets.QAction("Delete", menu)
             delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
             delete_action.triggered.connect(self.deleteActionSlot)
@@ -1430,6 +1444,18 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
                 if item.zValue() == -1:
                     self._background_warning_msgbox.showMessage("Object moved to a background layer. You will now have to use the right-click action to select this object in the future and raise it to layer 0 to be able to move it")
+
+    def lockActionSlot(self):
+        """
+        Slot to receive events from the lock action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if not isinstance(item, LinkItem) and item.zValue() >= 0:
+                item.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, not item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable)
+                for child in item.childItems():
+                    child.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, not child.flags() & QtWidgets.QGraphicsItem.ItemIsMovable)
 
     def deleteActionSlot(self):
         """
