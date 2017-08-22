@@ -135,6 +135,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self.scene().addItem(item)
         super().setEnabled(enabled)
 
+        self.toggleUiDeviceMenu()
+
     def reset(self):
         """
         Remove all the items from the scene and
@@ -473,6 +475,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             super().mousePressEvent(event)
 
+        self.toggleUiDeviceMenu()
+
     def mouseReleaseEvent(self, event):
         """
         Handles all mouse release events.
@@ -494,6 +498,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if item is not None and not event.modifiers() & QtCore.Qt.ControlModifier:
                 item.setSelected(True)
             super().mouseReleaseEvent(event)
+
+        self.toggleUiDeviceMenu()
 
     def wheelEvent(self, event):
         """
@@ -1454,6 +1460,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
             elif item.parentItem() is None:
                 item.delete()
 
+        self.scene().clearSelection()
+        self.toggleUiDeviceMenu()
+
     def allocateCompute(self, node_data, module_instance):
         """
         Allocates a server.
@@ -1546,3 +1555,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 painter.drawLine(rect.left(), y, rect.right(), y)
                 y += gridSize
             painter.restore()
+
+    def toggleUiDeviceMenu(self):
+        """ Hook which enables/disables uiDeviceMenu based on the current items selection"""
+        items = self.scene().selectedItems()
+        if len(items) > 0:
+            self._main_window.uiDeviceMenu.setEnabled(True)
+        else:
+            self._main_window.uiDeviceMenu.setEnabled(False)
