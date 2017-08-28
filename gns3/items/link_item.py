@@ -483,7 +483,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                     link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
                     if self._suspend_item is None:
                         self._suspend_item = SvgIconItem(':/icons/pause.svg', self)
-                    self._suspend_item.setScale(0.6)
+                        self._suspend_item.setScale(0.6)
                     if not self._suspend_item.isVisible():
                         self._suspend_item.show()
                     self._suspend_item.setPos(link_center)
@@ -537,7 +537,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                     link_center = QtCore.QPointF(self.source.x() + self.dx / 2.0 - 11, self.source.y() + self.dy / 2.0 - 11)
                     if self._filter_item is None:
                         self._filter_item = SvgIconItem(':/icons/filter.svg', self)
-                    self._filter_item.setScale(0.6)
+                        self._filter_item.setScale(0.6)
                     if not self._filter_item.isVisible():
                         self._filter_item.show()
                     self._filter_item.setPos(link_center)
