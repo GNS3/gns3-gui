@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/filter_dialog.ui'
+# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/ui/filter_dialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.8.2
 #
@@ -12,7 +12,7 @@ class Ui_FilterDialog(object):
     def setupUi(self, FilterDialog):
         FilterDialog.setObjectName("FilterDialog")
         FilterDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        FilterDialog.resize(1357, 255)
+        FilterDialog.resize(799, 255)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(FilterDialog)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.uiVerticalLayout = QtWidgets.QVBoxLayout()
