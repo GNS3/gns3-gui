@@ -48,6 +48,13 @@ class EllipseItem(QtWidgets.QGraphicsEllipseItem, ShapeItem):
         super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
 
+    def setZValue(self, value):
+        """
+        Sets Z value of the item
+        :param value: z layer
+        """
+        return ShapeItem.setZValue(self, value)
+
     def toSvg(self):
         """
         Return an SVG version of the shape

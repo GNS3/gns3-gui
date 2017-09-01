@@ -46,6 +46,13 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
         super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
 
+    def setZValue(self, value):
+        """
+        Sets Z value of the item
+        :param value: z layer
+        """
+        return ShapeItem.setZValue(self, value)
+
     def toSvg(self):
         """
         Return an SVG version of the shape
@@ -61,4 +68,3 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
         rect = self._styleSvg(rect)
 
         return ET.tostring(svg, encoding="utf-8").decode("utf-8")
-

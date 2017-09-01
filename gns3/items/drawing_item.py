@@ -165,6 +165,7 @@ class DrawingItem:
         """
 
         QtWidgets.QGraphicsItem.setZValue(self, value)
+
         if self.zValue() < 0:
             self.setFlag(self.ItemIsSelectable, False)
             self.setFlag(self.ItemIsMovable, False)
