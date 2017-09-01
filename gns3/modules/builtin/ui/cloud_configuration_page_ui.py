@@ -271,4 +271,3 @@ class Ui_cloudConfigPageWidget(object):
         self.uiCategoryLabel.setText(_translate("cloudConfigPageWidget", "Category:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.MiscTab), _translate("cloudConfigPageWidget", "Misc."))
 
-from . import resources_rc
