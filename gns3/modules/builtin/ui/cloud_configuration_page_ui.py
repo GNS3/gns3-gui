@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.8.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_cloudConfigPageWidget(object):
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
-        cloudConfigPageWidget.resize(758, 299)
+        cloudConfigPageWidget.resize(821, 363)
         self.verticalLayout = QtWidgets.QVBoxLayout(cloudConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(cloudConfigPageWidget)
@@ -271,3 +271,4 @@ class Ui_cloudConfigPageWidget(object):
         self.uiCategoryLabel.setText(_translate("cloudConfigPageWidget", "Category:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.MiscTab), _translate("cloudConfigPageWidget", "Misc."))
 
+from . import resources_rc

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" height="48" width="48" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<linearGradient id="a" y2="50" gradientUnits="userSpaceOnUse" x2="42" y1="18" x1="12">
+<stop stop-color="#ddd" offset="0"/>
+<stop stop-color="#fff" offset="1"/>
+</linearGradient>
+<linearGradient id="e" x2="0" gradientUnits="userSpaceOnUse" y2="46.2" y1="41.2">
+<stop offset="0"/>
+<stop stop-opacity="0" offset="1"/>
+</linearGradient>
+<linearGradient id="b" y2="51" gradientUnits="userSpaceOnUse" y1="24" x2="38" x1="6">
+<stop stop-color="#e88" offset="0"/>
+<stop stop-color="#d33" offset="1"/>
+</linearGradient>
+<radialGradient id="f" gradientUnits="userSpaceOnUse" cy="41.2" cx="39.1" gradientTransform="matrix(2 0 0 1.28 -39.1 -11.6)" r="3.9">
+<stop offset="0"/>
+<stop stop-opacity="0" offset="1"/>
+</radialGradient>
+</defs>
+<g opacity=".4">
+<path id="d" fill="url(#f)" d="m39.1 46.1c3.23 0 7.9-2.24 7.9-5s-3.7-5-7.9-5z"/>
+<use x="-48" xlink:href="#d" transform="scale(-1,1)"/>
+<path fill="url(#e)" d="m8.9 36.1h30.2v10h-30.2z"/>
+</g>
+<g stroke-linejoin="round">
+<g stroke="#900" stroke-width="6">
+<path id="c" d="m7 40h34l-17-32z"/>
+</g>
+<use stroke-width="4" stroke="url(#b)" xlink:href="#c"/>
+<use stroke-width="2" stroke="#c00" xlink:href="#c" fill="#c00"/>
+<path stroke="url(#a)" d="m9.8 38.3h28.4l-14.2-26.7z" fill="url(#a)"/>
+</g>
+<path d="m22.75 30.4l-0.5-10h3.5l-0.6 10z"/>
+<circle cy="33.58" cx="24" r="2"/>
+</svg>
