@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.1.0rc1 13/09/2017
+
+* Fix missing spice console option in appliance template schema. Fixes #2255.
+
 ## 2.1.0b2 05/09/2017
 
 * Fix resources dependencies for cloud configuration page (Fixes: #2251)
