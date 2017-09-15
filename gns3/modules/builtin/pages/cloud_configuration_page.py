@@ -19,7 +19,7 @@
 Configuration page for clouds.
 """
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.controller import Controller
 from gns3.node import Node
@@ -67,6 +67,12 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         self.uiShowSpecialInterfacesCheckBox.stateChanged.connect(self._showSpecialInterfacesSlot)
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
+
+        # add an icon to warning button
+        icon = QtGui.QIcon.fromTheme("dialog-warning")
+        if not icon.isNull():
+            icon = QtGui.QIcon(':/icons/dialog-warning.svg')
+        self.uiEthernetWarningPushButton.setIcon(icon)
 
     def _EthernetChangedSlot(self):
         """
