@@ -1146,6 +1146,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                                                             self._import_config_dir,
                                                             "All files (*.*);;Config files (*.cfg)",
                                                             "Config files (*.cfg)")
+            if not path:
+                continue
             self._import_config_dir = os.path.dirname(path)
             item.node().importFile(config_file, path)
 
@@ -1193,12 +1195,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         for item in items:
             for config_file in item.node().configFiles():
                 path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_configs_to_dir, item.node().name() + "_" + os.path.basename(config_file)), "All files (*.*);;Config files (*.cfg)")
-
                 if not path:
                     continue
-
                 self._export_configs_to_dir = os.path.dirname(path)
-
                 item.node().exportFile(config_file, path)
 
     def getCommandLineSlot(self):
