@@ -70,7 +70,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         # add an icon to warning button
         icon = QtGui.QIcon.fromTheme("dialog-warning")
-        if not icon.isNull():
+        if icon.isNull():
             icon = QtGui.QIcon(':/icons/dialog-warning.svg')
         self.uiEthernetWarningPushButton.setIcon(icon)
 
