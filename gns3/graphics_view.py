@@ -1509,9 +1509,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
         node = Topology.instance().getNode(node_id)
         name = "Node"
-        if node:
-            if node.name():
-                name = node.name()
+        if node and node.name():
+            name = node.name()
         if self._main_window and not sip.isdeleted(self._main_window):
             QtWidgets.QMessageBox.critical(self._main_window, name, message.strip())
 

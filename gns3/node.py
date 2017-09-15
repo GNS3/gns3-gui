@@ -402,7 +402,7 @@ class Node(BaseNode):
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-            return
+        # delete the node even if there is an error on server side
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
