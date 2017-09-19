@@ -470,6 +470,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         while len(appliance_configuration["name"]) == 0 or not config.is_name_available(appliance_configuration["name"]):
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "The name \"{}\" is already used by another appliance".format(appliance_configuration["name"]))
             appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add appliance", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
+            if not ok:
+                return False
             appliance_configuration["name"] = appliance_configuration["name"].strip()
 
         if "qemu" in appliance_configuration:
