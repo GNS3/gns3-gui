@@ -54,8 +54,6 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
         else:
             # VMnet limit on Linux is 255
             self.uiVMnetEndRangeSpinBox.setMaximum(255)
-            # Block host network traffic is only supported on Windows for now
-            self.uiBlockHostTrafficCheckBox.setEnabled(False)
 
     def _vmrunPathBrowserSlot(self):
         """
