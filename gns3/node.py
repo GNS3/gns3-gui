@@ -230,7 +230,7 @@ class Node(BaseNode):
         if self.initialized():
             log.debug("{} is updating settings: {}".format(self.name(), params))
             body = self._prepareBody(params)
-            self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout)
+            self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout, showProgress=False)
 
     def updateNodeCallback(self, result, error=False, **kwargs):
         """
