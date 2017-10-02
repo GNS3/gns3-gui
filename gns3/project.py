@@ -531,7 +531,7 @@ class Project(QtCore.QObject):
             return
 
         # Qt websocket before Qt 5.6 doesn't support auth
-        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0"):
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
             path = "/projects/{project_id}/notifications".format(project_id=self._id)
             self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
                                                                               downloadProgressCallback=self._event_received,
