@@ -592,7 +592,7 @@ class HTTPClient(QtCore.QObject):
         # We check if we received HTTP headers
         if not sip.isdeleted(response) and response.isRunning() and not len(response.rawHeaderList()) > 0:
             if not response.error() != QtNetwork.QNetworkReply.NoError:
-                log.warning("Timeout after {} for request {}".format(timeout, response.url().toString()))
+                log.warning("Timeout after {} seconds for request {}".format(timeout, response.url().toString()))
                 response.abort()
 
     def disconnect(self):
