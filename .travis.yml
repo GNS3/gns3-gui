@@ -6,6 +6,8 @@ notifications:
 script:
 - docker build -t gns3-gui-test .
 - docker run gns3-gui-test
+before_deploy:
+    pip install twine
 deploy:
   provider: pypi
   user: noplay
