@@ -60,6 +60,16 @@ class ConsoleThread(QtCore.QThread):
             except ValueError:
                 self.consoleError.emit("Syntax error in command: {}".format(command))
                 return
+            if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
+                # Add to the path where the OS search executables, this is to force using the embedded telnet
+                # in the DMG on Mac OS
+                frozen_dir = os.path.dirname(os.path.abspath(sys.executable))
+                if sys.platform.startswith("darwin"):
+                    frozen_dirs = [
+                        frozen_dir,
+                        os.path.normpath(os.path.join(frozen_dir, '..', 'Resources'))
+                    ]
+                os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
             subprocess.call(args, env=os.environ)
 
     def run(self):
