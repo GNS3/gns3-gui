@@ -305,6 +305,8 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             if len(path) > 0:
                 self.uiImageDirectoriesListWidget.addItem(path)
 
+        self.uiDirectFileUpload.setChecked(settings["direct_file_upload"])
+
     def _populateGraphicsViewSettingWidgets(self, settings):
         """
         Populates the widgets with the settings.
@@ -367,7 +369,8 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             "spice_console_command": self.uiSPICEConsoleCommandLineEdit.text(),
             "delay_console_all": self.uiDelayConsoleAllSpinBox.value(),
             "send_stats": self.uiStatsCheckBox.isChecked(),
-            "multi_profiles": self.uiMultiProfilesCheckBox.isChecked()
+            "multi_profiles": self.uiMultiProfilesCheckBox.isChecked(),
+            "direct_file_upload": self.uiDirectFileUpload.isChecked()
         }
 
         from ..main_window import MainWindow
