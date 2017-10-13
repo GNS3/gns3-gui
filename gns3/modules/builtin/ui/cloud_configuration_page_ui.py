@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_cloudConfigPageWidget(object):
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
-        cloudConfigPageWidget.resize(758, 299)
+        cloudConfigPageWidget.resize(821, 363)
         self.verticalLayout = QtWidgets.QVBoxLayout(cloudConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(cloudConfigPageWidget)
@@ -46,8 +46,6 @@ class Ui_cloudConfigPageWidget(object):
         self.gridLayout_3.addWidget(self.uiEthernetListWidget, 1, 0, 1, 5)
         self.uiEthernetWarningPushButton = QtWidgets.QPushButton(self.EthernetTab)
         self.uiEthernetWarningPushButton.setText("")
-        icon = QtGui.QIcon.fromTheme("dialog-warning")
-        self.uiEthernetWarningPushButton.setIcon(icon)
         self.uiEthernetWarningPushButton.setObjectName("uiEthernetWarningPushButton")
         self.gridLayout_3.addWidget(self.uiEthernetWarningPushButton, 0, 1, 1, 1)
         self.uiShowSpecialInterfacesCheckBox = QtWidgets.QCheckBox(self.EthernetTab)

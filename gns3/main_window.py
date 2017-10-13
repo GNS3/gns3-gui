@@ -651,10 +651,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
         self._screenshots_dir = os.path.dirname(path)
 
-        # add the extension if missing
-        file_format = "." + selected_filter[:4].lower().strip()
-        if not path.endswith(file_format):
-            path += file_format
+        # add the extension if missing (Mac OS automatically adds an extension already)
+        if not sys.platform.startswith("darwin"):
+            file_format = "." + selected_filter[:4].lower().strip()
+            if not path.endswith(file_format):
+                path += file_format
 
         if not self.createScreenshot(path):
             QtWidgets.QMessageBox.critical(self, "Screenshot", "Could not create screenshot file {}".format(path))

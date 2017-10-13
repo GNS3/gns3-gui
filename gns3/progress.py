@@ -38,7 +38,7 @@ class Progress(QtCore.QObject):
     show_signal = QtCore.Signal()
     hide_signal = QtCore.Signal()
 
-    def __init__(self, parent, min_duration=1000, delay=250):
+    def __init__(self, parent, min_duration=1000, delay=500):
         """
         :param min_duration: When the windows is display the windows is display for at least min_duration
         :param delay: Delay before display the first dialog
@@ -47,11 +47,6 @@ class Progress(QtCore.QObject):
         super().__init__(parent)
         self._progress_dialog = None
         self._show_lock = False
-
-        # Timer called for refreshing the progress dialog status
-        self._rtimer = QtCore.QTimer()
-        self._rtimer.timeout.connect(self.update)
-        self._rtimer.start(250)
 
         # When in millisecond we started to show the progress dialog
         self._display_start_time = 0

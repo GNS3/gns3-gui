@@ -288,12 +288,12 @@ def qslot(func):
     return func_wrapper
 
 
-# Log qt error to Python log
+# Log Qt messages to Python log
 def myQtMsgHandler(msg_type, msg_log_context, msg_string):
     if "_COMPIZ_TOOLKIT_ACTION" in msg_string:
         # Qt < 5.6 issue: https://github.com/GNS3/gns3-gui/issues/2020
         return
-    log.error(msg_string)
+    log.info(msg_string)
 
 
 QtCore.qInstallMessageHandler(myQtMsgHandler)

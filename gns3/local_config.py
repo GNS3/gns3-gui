@@ -150,7 +150,7 @@ class LocalConfig(QtCore.QObject):
     def _getSettingsCallback(self, result, error=False, **kwargs):
         self._refreshingSettings = False
         if error:
-            log.error("Can't get settings from controller")
+            log.debug("Can't get settings from controller")
             return
         if result == {} and self._settings != {}:
             self._settings_retrieved_from_controller = True

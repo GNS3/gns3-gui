@@ -132,7 +132,7 @@ class LocalServer(QtCore.QObject):
             if win32serviceutil.QueryServiceStatus(service_name, None)[1] != win32service.SERVICE_RUNNING:
                 return False
         except pywintypes.error as e:
-            if e.winerror == 1060:
+            if e.winerror == 1060:  # service is not installed
                 return False
             else:
                 log.error("Could not check if the {} service is running: {}".format(service_name, e.strerror))

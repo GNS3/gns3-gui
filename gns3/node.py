@@ -230,7 +230,7 @@ class Node(BaseNode):
         if self.initialized():
             log.debug("{} is updating settings: {}".format(self.name(), params))
             body = self._prepareBody(params)
-            self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout)
+            self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout, showProgress=False)
 
     def updateNodeCallback(self, result, error=False, **kwargs):
         """
@@ -402,7 +402,7 @@ class Node(BaseNode):
         if error:
             log.error("error while deleting {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
-            return
+        # delete the node even if there is an error on server side
         self.deleted_signal.emit()
         self._module.removeNode(self)
 

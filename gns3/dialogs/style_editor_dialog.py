@@ -21,6 +21,7 @@ Style editor to edit Shape items.
 
 from ..qt import QtCore, QtWidgets, QtGui
 from ..ui.style_editor_dialog_ui import Ui_StyleEditorDialog
+from ..items.shape_item import ShapeItem
 
 
 class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
@@ -115,7 +116,9 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
         for item in self._items:
             item.setPen(pen)
-            if brush:
+            # on multiselection it's possible to select many type of items
+            # but brush can be applied only on ShapeItem,
+            if brush and isinstance(item, ShapeItem):
                 item.setBrush(brush)
             item.setRotation(self.uiRotationSpinBox.value())
 

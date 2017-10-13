@@ -1,5 +1,39 @@
 # Change Log
 
+## 2.1.0rc2 04/10/2017
+
+* Only show "can't get settings from controller" message in debug mode.
+* Remove explicit Telnet path on OS X. Ref #2274
+* Disable WebSocket notification for lower PyQT version than 5.6. Fixes #2272
+* Increase timeout to 5 minutes when creating and restoring a snapshot.
+* Add more information when a request timeouts. Ref #2277.
+* Do not show the progress dialog when moving a node. Ref #2275.
+* Increase timer before showing a progress dialog from 250ms to 500ms. Ref #2275.
+* Use embedded Telnet client on OS X. Ref #2274.
+* Fix small bug when adding an appliance template and the name already exists.
+* Use RAW sockets by default on Linux for VMware VM connections.
+* Increase timeout to get compute servers from controller. Ref #2269.
+* Fix "Node doesn't exist" after deletion, but still on the canvas. Fixes #2266.
+* Make sure the warning button icon appears in cloud properties dialog on Windows. Fixes #2245.
+* Fix bug when cancelling the importation of a configuration file. Fixes #2260.
+
+## 2.1.0rc1 13/09/2017
+
+* Fix missing spice console option in appliance template schema. Fixes #2255.
+
+## 2.1.0b2 05/09/2017
+
+* Fix resources dependencies for cloud configuration page (Fixes: #2251)
+* Disabled possibility of moving items under zero layer (Fixes #2220)
+* dialog-warning.svg fallback for themed icon (Ref. #2245)
+* Change width of packet filters dialog (Fixes #2244)
+* Fix high CPU usage when using packet filters. Fixes #2240.
+* Toggle Node menu item (Fixes #2227)
+* Fixes multiselection styles change crash on LineItem (#2216)
+* Fixes loading symbols for QEMU at Edit Page (#2214)
+* Fixes exception when right click on Dynamips router in the device dock (#2211)
+* Update frame_relay_switch_configuration_page.ui
+
 ## 2.1.0b1 04/08/2017
 
 * Info added to the Nat node

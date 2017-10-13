@@ -64,6 +64,13 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
         super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
 
+    def setZValue(self, value):
+        """
+        Sets Z value of the item
+        :param value: z layer
+        """
+        return DrawingItem.setZValue(self, value)
+
     def fromSvg(self, svg):
         renderer = QImageSvgRenderer(svg)
         self.setSharedRenderer(renderer)

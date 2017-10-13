@@ -309,10 +309,10 @@ class HTTPClient(QtCore.QObject):
             return request()
         else:
             self._query_waiting_connections.append((request, callback))
-            # If we are not connected and we enqueue the first query we open the conection
+            # enqueue the first query and open the connection if we are not connected
             if len(self._query_waiting_connections) == 1:
                 log.debug("Connection to {}".format(self.url()))
-                self._executeHTTPQuery("GET", "/version", self._callbackConnect, {}, server=server, timeout=5, showProgress=False)
+                self._executeHTTPQuery("GET", "/version", self._callbackConnect, {}, server=server, timeout=10, showProgress=False)
 
     def _connectionError(self, callback, msg="", server=None):
         """
@@ -550,7 +550,7 @@ class HTTPClient(QtCore.QObject):
             self._notify_progress_start_query(context["query_id"], progressText, response)
 
         if timeout is not None:
-            QtCore.QTimer.singleShot(timeout * 1000, qpartial(self._timeoutSlot, response))
+            QtCore.QTimer.singleShot(timeout * 1000, qpartial(self._timeoutSlot, response, timeout))
 
         return response
 
@@ -585,14 +585,14 @@ class HTTPClient(QtCore.QObject):
         else:
             callback(content, server=server, context=context)
 
-    def _timeoutSlot(self, response):
+    def _timeoutSlot(self, response, timeout):
         """
         Beware it's call for all request you need to check the status of the response
         """
         # We check if we received HTTP headers
         if not sip.isdeleted(response) and response.isRunning() and not len(response.rawHeaderList()) > 0:
             if not response.error() != QtNetwork.QNetworkReply.NoError:
-                log.warn("Timeout request {}".format(response.url().toString()))
+                log.warning("Timeout after {} seconds for request {}".format(timeout, response.url().toString()))
                 response.abort()
 
     def disconnect(self):

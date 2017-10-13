@@ -195,7 +195,11 @@ class NodesView(QtWidgets.QTreeWidget):
         if not node:
             return
         for module in MODULES:
-            node_class = module.getNodeType(node["node_type"])
+            if node["node_type"] == "dynamips":
+                node_class = module.getNodeType(node["node_type"], node["platform"])
+            else:
+                node_class = module.getNodeType(node["node_type"])
+
             if node_class:
                 break
 

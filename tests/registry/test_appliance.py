@@ -189,7 +189,7 @@ def test_create_new_version():
     # tests what happens without versions in file
     wrong_appliance_fp, wrong_appliance_file = tempfile.mkstemp()
 
-    with open(appliance_path) as f:
+    with open(appliance_path, encoding='utf-8') as f:
         appliance = json.loads(f.read())
         del appliance['versions']
         os.write(wrong_appliance_fp, json.dumps(appliance).encode())

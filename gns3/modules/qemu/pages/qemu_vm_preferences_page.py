@@ -199,7 +199,8 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                item.setIcon(0, QtGui.QIcon(qemu_vm["symbol"]))
+                Controller.instance().getSymbolIcon(qemu_vm["symbol"], qpartial(self._setItemIcon, item))
+
                 if qemu_vm["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=qemu_vm["server"], name=qemu_vm["name"])
                     if new_key in self._qemu_vms:
