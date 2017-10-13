@@ -15,15 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
 import os
 import hashlib
-import tarfile
 import pathlib
 
 
 from gns3.controller import Controller
-
+from gns3.local_config import LocalConfig
 
 import logging
 log = logging.getLogger(__name__)
@@ -145,5 +143,14 @@ class Image:
         """
         Upload image to the controller
         """
+
         upload_endpoint = "/{}/images".format(self._emulator)
-        Controller.instance().postCompute('{}/{}'.format(upload_endpoint, self.filename), compute_id, callback, body=pathlib.Path(self.path), progressText="Uploading {}".format(self.filename), timeout=None)
+        path = '{}/{}'.format(upload_endpoint, self.filename)
+
+        if LocalConfig.instance().directFileUpload():
+            def onLoadEndpoint():
+                pass
+
+            Controller.instance().getEndpoint(path, compute_id, onLoadEndpoint)
+        else:
+            Controller.instance().postCompute(path, compute_id, callback, body=pathlib.Path(self.path), progressText="Uploading {}".format(self.filename), timeout=None)
