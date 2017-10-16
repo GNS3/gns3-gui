@@ -25,6 +25,8 @@ import base64
 import datetime
 import ipaddress
 import urllib.request
+import urllib.parse
+
 
 from .version import __version__, __version_info__
 from .qt import QtCore, QtNetwork, qpartial, sip_is_deleted, QtWebSockets
@@ -737,3 +739,23 @@ class HTTPClient(QtCore.QObject):
         except (OSError, http.client.BadStatusLine, ValueError) as e:
             log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
         return 0, None
+
+    @classmethod
+    def fromUrl(cls, url, network_manager=None, base_settings=None):
+        """
+        Returns HttpClient instance based on the url
+        :param url: Url to parse
+        :param network_manager: Optional network_manager
+        :param base_settings: Source of the settings, if necessary
+        :return: HttpClient
+        """
+        settings = {}
+        if base_settings is not None:
+            settings.update(**base_settings)
+        parse_results = urllib.parse.urlparse(url)
+        settings['protocol'] = parse_results.scheme
+        settings['host'] = parse_results.hostname
+        settings['port'] = parse_results.port
+        settings['user'] = parse_results.username
+        settings['password'] = parse_results.password
+        return cls(settings, network_manager)

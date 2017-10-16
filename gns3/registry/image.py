@@ -18,10 +18,12 @@
 import os
 import hashlib
 import pathlib
+import urllib.parse
 
 
 from gns3.controller import Controller
 from gns3.local_config import LocalConfig
+from gns3.http_client import HTTPClient
 
 import logging
 log = logging.getLogger(__name__)
@@ -148,9 +150,17 @@ class Image:
         path = '{}/{}'.format(upload_endpoint, self.filename)
 
         if LocalConfig.instance().directFileUpload():
-            def onLoadEndpoint():
-                pass
+            def onLoadEndpoint(result, **kwargs):
+                endpoint = result['endpoint']
+                parse_results = urllib.parse.urlparse(endpoint)
+
+                client = HTTPClient.fromUrl(endpoint)
+                client.createHTTPQuery(
+                    'POST', parse_results.path, callback, body=pathlib.Path(self.path),
+                    progressText="Uploading {}".format(self.filename), timeout=None)
 
             Controller.instance().getEndpoint(path, compute_id, onLoadEndpoint)
         else:
-            Controller.instance().postCompute(path, compute_id, callback, body=pathlib.Path(self.path), progressText="Uploading {}".format(self.filename), timeout=None)
+            Controller.instance().postCompute(
+                path, compute_id, callback, body=pathlib.Path(self.path),
+                progressText="Uploading {}".format(self.filename), timeout=None)
