@@ -269,7 +269,8 @@ GENERAL_SETTINGS = {
     "preferences_dialog_geometry": "",
     "debug_level": 0,
     "multi_profiles": False,
-    "hdpi": not sys.platform.startswith("linux")
+    "hdpi": not sys.platform.startswith("linux"),
+    "direct_file_upload": False
 }
 
 NODES_VIEW_SETTINGS = {

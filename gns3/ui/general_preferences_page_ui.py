@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
 # Created by: PyQt5 UI code generator 5.8.2
 #
@@ -392,6 +392,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiMultiProfilesCheckBox = QtWidgets.QCheckBox(self.uiMiscTab)
         self.uiMultiProfilesCheckBox.setObjectName("uiMultiProfilesCheckBox")
         self.verticalLayout_2.addWidget(self.uiMultiProfilesCheckBox)
+        self.uiDirectFileUpload = QtWidgets.QCheckBox(self.uiMiscTab)
+        self.uiDirectFileUpload.setObjectName("uiDirectFileUpload")
+        self.verticalLayout_2.addWidget(self.uiDirectFileUpload)
         spacerItem8 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem8)
         self.uiMiscTabWidget.addTab(self.uiMiscTab, "")
@@ -475,6 +478,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiExperimentalFeaturesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable experimental features (dangerous, restart required)"))
         self.uiHdpiCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable HDPI mode (this may crash the application on Linux, restart required)"))
         self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Request for profile settings at application startup  (work profile / home profile)"))
+        self.uiDirectFileUpload.setText(_translate("GeneralPreferencesPageWidget", "Upload files directly to computes (experimental, requires computes visibility from GUI network)"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiMiscTab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
 

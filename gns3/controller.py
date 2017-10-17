@@ -92,6 +92,12 @@ class Controller(QtCore.QObject):
             self._http_client.connection_disconnected_signal.connect(self._httpClientDisconnectedSlot)
             self._connectingToServer()
 
+    def getHttpClient(self):
+        """
+        :return: Instance of HTTP client to communicate with the server
+        """
+        return self._http_client
+
     def setDisplayError(self, val):
         """
         Allow error to be visible or not
@@ -180,6 +186,14 @@ class Controller(QtCore.QObject):
             except KeyError:
                 return compute_id
         return compute_id
+
+    def getEndpoint(self, path, compute_id, *args, **kwargs):
+        """
+        API post on a specific compute
+        """
+        compute_id = self.__fix_compute_id(compute_id)
+        path = "/computes/endpoint/{}{}".format(compute_id, path)
+        return self.get(path, *args, **kwargs)
 
     def put(self, *args, **kwargs):
         return self.createHTTPQuery("PUT", *args, **kwargs)
