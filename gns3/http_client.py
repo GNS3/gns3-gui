@@ -171,6 +171,12 @@ class HTTPClient(QtCore.QObject):
         self.createHTTPQuery("POST", "/shutdown", None, showProgress=False)
         self._shutdown = True
 
+    def getNetworkManager(self):
+        """
+        :return: instance of NetworkManager
+        """
+        return self._network_manager
+
     def _notify_progress_start_query(self, query_id, progress_text, response):
         """
         Called when a query start

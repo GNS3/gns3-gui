@@ -154,10 +154,11 @@ class Image:
                 endpoint = result['endpoint']
                 parse_results = urllib.parse.urlparse(endpoint)
 
-                client = HTTPClient.fromUrl(endpoint)
+                network_manager = Controller.instance().getHttpClient().getNetworkManager()
+                client = HTTPClient.fromUrl(endpoint, network_manager=network_manager)
                 client.createHTTPQuery(
                     'POST', parse_results.path, callback, body=pathlib.Path(self.path),
-                    progressText="Uploading {}".format(self.filename), timeout=None)
+                    progressText="Uploading {}".format(self.filename), timeout=None, prefix="")
 
             Controller.instance().getEndpoint(path, compute_id, onLoadEndpoint)
         else:

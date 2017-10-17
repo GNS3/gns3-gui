@@ -92,6 +92,12 @@ class Controller(QtCore.QObject):
             self._http_client.connection_disconnected_signal.connect(self._httpClientDisconnectedSlot)
             self._connectingToServer()
 
+    def getHttpClient(self):
+        """
+        :return: Instance of HTTP client to communicate with the server
+        """
+        return self._http_client
+
     def setDisplayError(self, val):
         """
         Allow error to be visible or not
