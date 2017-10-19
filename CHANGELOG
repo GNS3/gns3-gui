@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.1.0rc3 19/10/2017
+
+* Add debug when using Telnet path on OSX. Ref #2274.
+* Force to use the telnet client embedded in DMG. Ref #2274.
+* Upload directly to compute - experimental feature
+* Filter additional QXcbConnection log messages
+* Do not add missing file extension for screenshot file names on Mac. Fixes #2287.
+* Log Qt messages as info instead of error. Ref #2281.
+
 ## 2.1.0rc2 04/10/2017
 
 * Only show "can't get settings from controller" message in debug mode.
