@@ -390,7 +390,7 @@ class BaseNode(QtCore.QObject):
                     file=file), self._importConfigCallback,
                     pathlib.Path(os.path.join(directory, filename)))
             else:
-                self.error_signal.emit(self.id(), "no script file could be found, expected file name: {}".format(filename))
+                log.warning("{}: config file '{}' not found".format(self.name(), filename))
 
     def _importConfigCallback(self, result, error=False, **kwargs):
         if error:
