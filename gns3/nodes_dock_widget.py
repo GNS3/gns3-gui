@@ -53,11 +53,14 @@ class NodesDockWidget(QtWidgets.QDockWidget):
         self.window().uiNodesView.refresh()
 
     def populateNodesView(self, category):
-        if self.window().uiNodesFilterComboBox.currentIndex() != self._settings["nodes_view_filter"]:
-            self.window().uiNodesFilterComboBox.setCurrentIndex(self._settings["nodes_view_filter"])
-            self._filterIndexChangedSlot(self._settings["nodes_view_filter"])
-        self.window().uiNodesFilterComboBox.activated.connect(self._filterIndexChangedSlot)
-        self.window().uiNodesFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
-        self.window().uiNodesView.clear()
-        text = self.window().uiNodesFilterLineEdit.text().strip().lower()
-        self.window().uiNodesView.populateNodesView(category, text)
+        # it's common race condition that uiNodesFilterComboBox that doesn't exist
+        # ref. https://github.com/GNS3/gns3-gui/issues/2304
+        if hasattr(self.window(), 'uiNodesFilterComboBox'):
+            if self.window().uiNodesFilterComboBox.currentIndex() != self._settings["nodes_view_filter"]:
+                self.window().uiNodesFilterComboBox.setCurrentIndex(self._settings["nodes_view_filter"])
+                self._filterIndexChangedSlot(self._settings["nodes_view_filter"])
+            self.window().uiNodesFilterComboBox.activated.connect(self._filterIndexChangedSlot)
+            self.window().uiNodesFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
+            self.window().uiNodesView.clear()
+            text = self.window().uiNodesFilterLineEdit.text().strip().lower()
+            self.window().uiNodesView.populateNodesView(category, text)
