@@ -29,26 +29,26 @@ class ImageUploadManager(object):
     Manager over the image upload. Encapsulates file uploads to computes or via controller.
     """
 
-    def __init__(self, image, controller, compute_id, callback=None, direct_file_upload=False):
+    def __init__(self, image, controller, compute_id, callback=None, directFileUpload=False):
         self._image = image
         self._compute_id = compute_id
         self._callback = callback
-        self._direct_file_upload = direct_file_upload
+        self._directFileUpload = directFileUpload
         self._controller = controller
 
     def upload(self):
-        if self._direct_file_upload:
+        if self._directFileUpload:
             # first obtain endpoint and know when target request
             self._controller.getEndpoint(
-                self._getComputePath(), self._compute_id, self._on_load_endpoint_callback)
+                self._getComputePath(), self._compute_id, self._onLoadEndpointCallback)
         else:
-            self._file_upload_to_controller()
+            self._fileUploadToController()
 
     def _getComputePath(self):
         return '/{emulator}/images/{filename}'.format(
             emulator=self._image.emulator, filename=self._image.filename)
 
-    def _on_load_endpoint_callback(self, result, error=False, **kwargs):
+    def _onLoadEndpointCallback(self, result, error=False, **kwargs):
         if error:
             if "message" in result:
                 log.error("Error while getting endpoint: {}".format(result["message"]))
@@ -56,23 +56,23 @@ class ImageUploadManager(object):
 
         # we know where is the endpoint and we trying to post there a file
         endpoint = result['endpoint']
-        self._file_upload_to_compute(endpoint)
+        self._fileUploadToCompute(endpoint)
 
-    def _check_if_successful_callback(self, result, error=False, **kwargs):
+    def _checkIfSuccessfulCallback(self, result, error=False, **kwargs):
         if error:
             connection_error = kwargs.get('connection_error', False)
             if connection_error:
                 log.debug("During direct file upload compute is not visible. Fallback to upload via controller.")
                 # there was an issue with connection, probably we don't have a direct access to compute
                 # we need to fallback to uploading files via controller
-                self._file_upload_to_controller()
+                self._fileUploadToController()
             else:
                 if "message" in result:
                     log.error("Error while direct file upload: {}".format(result["message"]))
             return
         self._callback(result, error, **kwargs)
 
-    def _file_upload_to_compute(self, endpoint):
+    def _fileUploadToCompute(self, endpoint):
         log.info("Uploading file to compute: {}".format(endpoint))
 
         parse_results = urllib.parse.urlparse(endpoint)
@@ -81,10 +81,10 @@ class ImageUploadManager(object):
         # We don't retry connection as in case of fail we try direct file upload
         client.setMaxRetryConnection(0)
         client.createHTTPQuery(
-            'POST', parse_results.path, self._check_if_successful_callback, body=pathlib.Path(self._image.path),
+            'POST', parse_results.path, self._checkIfSuccessfulCallback, body=pathlib.Path(self._image.path),
             progressText="Uploading {}".format(self._image.filename), timeout=None, prefix="")
 
-    def _file_upload_to_controller(self):
+    def _fileUploadToController(self):
         log.info("Uploading file to controller: {}".format(self._getComputePath()))
         self._controller.postCompute(
             self._getComputePath(), self._compute_id, self._callback, body=pathlib.Path(self._image.path),
