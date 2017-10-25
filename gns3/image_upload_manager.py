@@ -62,6 +62,7 @@ class ImageUploadManager(object):
         if error:
             connection_error = kwargs.get('connection_error', False)
             if connection_error:
+                log.debug("During direct file upload compute is not visible. Fallback to upload via controller.")
                 # there was an issue with connection, probably we don't have a direct access to compute
                 # we need to fallback to uploading files via controller
                 self._file_upload_to_controller()
@@ -72,6 +73,8 @@ class ImageUploadManager(object):
         self._callback(result, error, **kwargs)
 
     def _file_upload_to_compute(self, endpoint):
+        log.info("Uploading file to compute: {}".format(endpoint))
+
         parse_results = urllib.parse.urlparse(endpoint)
         network_manager = self._controller.getHttpClient().getNetworkManager()
         client = HTTPClient.fromUrl(endpoint, network_manager=network_manager)
@@ -82,6 +85,7 @@ class ImageUploadManager(object):
             progressText="Uploading {}".format(self._image.filename), timeout=None, prefix="")
 
     def _file_upload_to_controller(self):
+        log.info("Uploading file to controller: {}".format(self._getComputePath()))
         self._controller.postCompute(
             self._getComputePath(), self._compute_id, self._callback, body=pathlib.Path(self._image.path),
             progressText="Uploading {}".format(self._image.filename), timeout=None)
