@@ -51,7 +51,7 @@ class Progress(QtCore.QObject):
         # Timer called for refreshing the progress dialog status
         self._rtimer = QtCore.QTimer()
         self._rtimer.timeout.connect(self.update)
-        self._rtimer.start(250)
+        self._rtimer.start(delay)
 
         # When in millisecond we started to show the progress dialog
         self._display_start_time = 0
