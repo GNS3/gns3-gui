@@ -78,8 +78,8 @@ class Progress(QtCore.QObject):
         self._queries[query_id] = {"explanation": explanation, "current": 0, "maximum": 0, "response": response}
 
     def _removeQuerySlot(self, query_id):
-        self._finished_query_during_display += 1
         if query_id in self._queries:
+            self._finished_query_during_display += 1
             del self._queries[query_id]
 
     def reset(self):

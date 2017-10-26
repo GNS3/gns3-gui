@@ -270,7 +270,7 @@ GENERAL_SETTINGS = {
     "debug_level": 0,
     "multi_profiles": False,
     "hdpi": not sys.platform.startswith("linux"),
-    "direct_file_upload": False
+    "direct_file_upload": True
 }
 
 NODES_VIEW_SETTINGS = {
