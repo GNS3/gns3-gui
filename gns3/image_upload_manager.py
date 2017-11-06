@@ -40,7 +40,7 @@ class ImageUploadManager(object):
         if self._directFileUpload:
             # first obtain endpoint and know when target request
             self._controller.getEndpoint(
-                self._getComputePath(), self._compute_id, self._onLoadEndpointCallback)
+                self._getComputePath(), self._compute_id, self._onLoadEndpointCallback, showProgress=False)
         else:
             self._fileUploadToController()
 
