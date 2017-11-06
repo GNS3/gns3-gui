@@ -43,7 +43,8 @@ def test_direct_file_upload(image, controller, callback):
     controller.getEndpoint.assert_called_with(
         '/QEMU/images/test.img',
         'compute_id',
-        manager._onLoadEndpointCallback
+        manager._onLoadEndpointCallback,
+        showProgress=False
     )
 
     with unittest.mock.patch('gns3.image_upload_manager.HTTPClient') as client:
