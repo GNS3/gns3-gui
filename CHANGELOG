@@ -1,5 +1,19 @@
 # Change Log
 
+## 2.1.0rc4 07/11/2017
+
+* Accurate upload progress dialogs for large files
+* Disable direct file upload on default
+* Add registry version 5
+* Direct file upload enabled on default
+* Progress Dialog: don't count finished queries done in background
+* Add debug messages to file upload
+* Image Upload Manager for uploading
+* Fix race condition on NodesDockWidget, fixes: #2304
+* Do not write an error message when importing non existing config from a directory. Fixes #2296.
+* Fix bug when replacing Telnet path on OSX. Ref #2274.
+* Back to development on 2.1.0rc3
+
 ## 2.1.0rc3 19/10/2017
 
 * Add debug when using Telnet path on OSX. Ref #2274.
