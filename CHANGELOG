@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.1.0 09/11/2017
+
+* Update dynamips binary on OSX
+
 ## 2.1.0rc4 07/11/2017
 
 * Accurate upload progress dialogs for large files
