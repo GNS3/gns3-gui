@@ -31,6 +31,7 @@ from .link import Link
 from .node import Node
 from .modules import MODULES
 from .modules.module_error import ModuleError
+from .modules.builtin import Builtin
 from .settings import GRAPHICS_VIEW_SETTINGS
 from .topology import Topology
 from .appliance_manager import ApplianceManager
@@ -1043,6 +1044,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
             callback = qpartial(self.consoleToNode, node)
             self._main_window.run_later(counter, callback)
             counter += delay
+
+    def consoleFromAllItems(self):
+        """
+        Console from all scene items, except builtin devices.
+        """
+
+        items = [item for item in self.scene().items()
+                 if not (isinstance(item, NodeItem) and isinstance(item.node().module(), Builtin))]
+        self.consoleFromItems(items)
 
     def consoleActionSlot(self):
         """
