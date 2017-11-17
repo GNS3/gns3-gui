@@ -362,7 +362,7 @@ class Link(QtCore.QObject):
                 try:
                     os.remove(self._capture_file_path)
                 except OSError as e:
-                    log.error("Can't remove file {}".format(self._capture_file_path))
+                    log.error("Can't remove file {}: {}".format(self._capture_file_path, e))
         self._capture_file_path = None
         Controller.instance().post(
             "/projects/{project_id}/links/{link_id}/stop_capture".format(
