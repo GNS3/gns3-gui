@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>594</width>
-    <height>645</height>
+    <width>655</width>
+    <height>696</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,16 +24,7 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item row="4" column="0">
@@ -203,16 +194,7 @@
        <string>HDD</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -435,16 +417,7 @@
        <string>CD/DVD</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -500,16 +473,7 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item row="6" column="1">
@@ -633,16 +597,7 @@
        <string>Advanced settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -836,7 +791,18 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="uiQemuOptionsLineEdit"/>
+           <widget class="QLineEdit" name="uiQemuOptionsLineEdit">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Variable replacements:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;%vm-name% =VM name&lt;/li&gt;
+&lt;li&gt;%vm-id% =VM ID&lt;/li&gt;
+&lt;li&gt;%project-id% = project ID&lt;/li&gt;
+&lt;li&gt;%project-path% = project path&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0" colspan="2">
            <widget class="QCheckBox" name="uiBaseVMCheckBox">
