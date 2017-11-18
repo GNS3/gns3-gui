@@ -82,12 +82,11 @@ class FrameRelaySwitch(Node):
   Local node ID is {id}
   Server's Node ID is {node_id}
   Hardware is Dynamips emulated simple Frame relay switch
-  Switch's server runs on {host}:{port}
+  Switch's server runs on {host}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self._compute.host(),
-           port=self._compute.port())
+           host=self._compute.name())
 
         port_info = ""
         for port in self._ports:

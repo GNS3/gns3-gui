@@ -19,10 +19,10 @@
 Compute summary view that list all the compute, their status.
 """
 
-import sip
-
 from .qt import QtGui, QtCore, QtWidgets
 from .compute_manager import ComputeManager
+from .topology import Topology
+from .node import Node
 
 import logging
 log = logging.getLogger(__name__)
@@ -78,6 +78,21 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
                 self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
         self._parent.sortItems(0, QtCore.Qt.AscendingOrder)
 
+        # add nodes belonging to this compute
+        self.takeChildren()
+        nodes = Topology.instance().nodes()
+        for node in nodes:
+            if node.compute().id() == self._compute.id():
+                item = QtWidgets.QTreeWidgetItem()
+                item.setText(0, node.name())
+                if node.status() == Node.started:
+                    item.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))
+                elif node.status() == Node.suspended:
+                    item.setIcon(0, QtGui.QIcon(':/icons/led_yellow.svg'))
+                else:
+                    item.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
+                self.addChild(item)
+        self.sortChildren(0, QtCore.Qt.AscendingOrder)
 
 class ComputeSummaryView(QtWidgets.QTreeWidget):
 
