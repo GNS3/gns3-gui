@@ -73,7 +73,7 @@ elif sys.platform.startswith("darwin"):
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
         'Terminal': r"""osascript -e 'tell application "Terminal"'"""
                     r""" -e 'activate'"""
-                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; telnet %h %p ; exit"'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=\"" & (system attribute "PATH") & "\" telnet %h %p ; exit"'"""
                     r""" -e 'end tell'""",
         'Terminal tabbed (experimental)': r"""osascript -e 'tell application "Terminal"'"""
                     r""" -e 'activate'"""
@@ -87,7 +87,7 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'repeat while the busy of window 1 = true'"""
                     r""" -e 'delay 0.01'"""
                     r""" -e 'end repeat'"""
-                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; telnet %h %p ; exit" in window 1'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=\"" & (system attribute "PATH") & "\" telnet %h %p ; exit" in window 1'"""
                     r""" -e 'end tell'""",
         'iTerm2 2.x': r"""osascript -e 'tell application "iTerm"'"""
                     r""" -e 'activate'"""
@@ -99,7 +99,7 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'tell t'"""
                     r""" -e '  set s to (make new session at the end of sessions)'"""
                     r""" -e '  tell s'"""
-                    r""" -e '    exec command "telnet %h %p"'"""
+                    r""" -e '    exec command "sh -c \"PATH=\\\"" & (system attribute "PATH") & "\\\" telnet %h %p"'"""
 
                     r""" -e '  end tell'"""
                     r""" -e 'end tell'"""
@@ -116,7 +116,7 @@ elif sys.platform.startswith("darwin"):
                     r""" -e '    set s to current session'"""
                     r""" -e '    tell s'"""
                     r""" -e '        set name to "%d"'"""
-                    r""" -e '        write text "exec telnet %h %p"'"""
+                    r""" -e '        write text "PATH=\"" & (system attribute "PATH") & "\" exec telnet %h %p"'"""
                     r""" -e '    end tell'"""
                     r""" -e 'end tell'"""
                     r""" -e 'end tell'""",
