@@ -24,7 +24,6 @@ from .qt import QtCore, QtWidgets
 import os
 import sys
 import shlex
-import shutil
 import subprocess
 from .main_window import MainWindow
 from .controller import Controller
@@ -55,21 +54,22 @@ class ConsoleThread(QtCore.QThread):
             # use the string on Windows
             subprocess.call(command)
         else:
-            if sys.platform.startswith("darwin"):
-                # Apple removed the telnet client in OSX 10.13 High Sierra
-                # use the one embedded in GNS3 DMG (search path has been modified in main)
-                telnet_path = shutil.which("telnet")
-                if telnet_path:
-                    command.replace("telnet", telnet_path)
-                else:
-                    self.consoleError.emit("Could not find a telnet client, please install one")
-                    return
             # use arguments on other platforms
             try:
                 args = shlex.split(command)
             except ValueError:
                 self.consoleError.emit("Syntax error in command: {}".format(command))
                 return
+            if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
+                # Add to the path where the OS search executables, this is to force using the embedded telnet
+                # in the DMG on Mac OS
+                frozen_dir = os.path.dirname(os.path.abspath(sys.executable))
+                if sys.platform.startswith("darwin"):
+                    frozen_dirs = [
+                        frozen_dir,
+                        os.path.normpath(os.path.join(frozen_dir, '..', 'Resources'))
+                    ]
+                os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
             subprocess.call(args, env=os.environ)
 
     def run(self):
