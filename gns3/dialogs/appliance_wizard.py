@@ -76,8 +76,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiLocalRadioButton.setText("Install the appliance on the main server")
         else:
             if not path.endswith('.builtin.gns3a'):
+                destination = Config().appliances_dir
                 try:
-                    destination = Config().appliances_dir
                     os.makedirs(destination, exist_ok=True)
                     destination = os.path.join(destination, os.path.basename(path))
                     shutil.copy(path, destination)
