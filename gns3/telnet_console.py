@@ -60,7 +60,7 @@ class ConsoleThread(QtCore.QThread):
                 # use the one embedded in GNS3 DMG (search path has been modified in main)
                 telnet_path = shutil.which("telnet")
                 if telnet_path:
-                    command = command.replace("telnet", telnet_path)
+                    command.replace("telnet", telnet_path)
                     log.debug('Telnet path replaced in console command: "{}"'.format(command))
                 else:
                     self.consoleError.emit("Could not find a telnet client, please install one")
