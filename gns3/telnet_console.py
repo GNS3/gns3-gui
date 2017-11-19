@@ -61,7 +61,6 @@ class ConsoleThread(QtCore.QThread):
                 telnet_path = shutil.which("telnet")
                 if telnet_path:
                     command.replace("telnet", telnet_path)
-                    log.debug('Telnet path replaced in console command: "{}"'.format(command))
                 else:
                     self.consoleError.emit("Could not find a telnet client, please install one")
                     return
