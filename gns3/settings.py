@@ -73,7 +73,7 @@ elif sys.platform.startswith("darwin"):
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
         'Terminal': "osascript -e 'tell application \"Terminal\"'"
                     " -e 'activate'"
-                    " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\"; clear; \"telnet\" %h %p ; exit\"'"
+                    " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\"; clear; telnet %h %p ; exit\"'"
                     " -e 'end tell'",
         'Terminal tabbed (experimental)': "osascript -e 'tell application \"Terminal\"'"
                     " -e 'activate'"
@@ -87,7 +87,7 @@ elif sys.platform.startswith("darwin"):
         " -e 'repeat while the busy of window 1 = true'"
         " -e 'delay 0.01'"
         " -e 'end repeat'"
-        " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\" ; \"telnet\" %h %p ; exit\" in window 1'"
+        " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\" ; telnet %h %p ; exit\" in window 1'"
                     " -e 'end tell'",
         'iTerm2 2.x': "osascript -e 'tell application \"iTerm\"'"
         " -e 'activate'"
