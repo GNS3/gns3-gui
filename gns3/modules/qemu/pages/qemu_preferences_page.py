@@ -40,10 +40,23 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
 
         # connect signals
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
+        self.uiKVMAccelerationCheckBox.stateChanged.connect(self._kvmAccelerationSlot)
 
         if not sys.platform.startswith("linux"):
             # KVM can only run on Linux
             self.uiKVMAccelerationCheckBox.hide()
+
+    def _kvmAccelerationSlot(self, state):
+        """
+        Slot to enable or not the require KVM acceleration check box.
+        """
+
+        if state:
+            self.uiRequireKVMAccelerationCheckBox.setEnabled(True)
+            self.uiRequireKVMAccelerationCheckBox.setChecked(True)
+        else:
+            self.uiRequireKVMAccelerationCheckBox.setEnabled(False)
+            self.uiRequireKVMAccelerationCheckBox.setChecked(False)
 
     def _restoreDefaultsSlot(self):
         """
@@ -60,6 +73,7 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
         """
 
         self.uiKVMAccelerationCheckBox.setChecked(settings["enable_kvm"])
+        self.uiRequireKVMAccelerationCheckBox.setChecked(settings["require_kvm"])
 
     def loadPreferences(self):
         """
@@ -74,5 +88,6 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
         Saves QEMU preferences.
         """
 
-        new_settings = {"enable_kvm": self.uiKVMAccelerationCheckBox.isChecked()}
+        new_settings = {"enable_kvm": self.uiKVMAccelerationCheckBox.isChecked(),
+                        "require_kvm": self.uiRequireKVMAccelerationCheckBox.isChecked()}
         Qemu.instance().setSettings(new_settings)

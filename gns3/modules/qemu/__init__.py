@@ -75,6 +75,7 @@ class Qemu(Module):
         if sys.platform.startswith("linux"):
             server_settings = {
                 "enable_kvm": self._settings["enable_kvm"],
+                "require_kvm": self._settings["require_kvm"]
             }
 
             LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)

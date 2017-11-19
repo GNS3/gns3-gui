@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_preferences_page.ui'
 #
-# Created: Wed Dec  7 21:25:31 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_QemuPreferencesPageWidget(object):
     def setupUi(self, QemuPreferencesPageWidget):
         QemuPreferencesPageWidget.setObjectName("QemuPreferencesPageWidget")
-        QemuPreferencesPageWidget.resize(366, 183)
+        QemuPreferencesPageWidget.resize(414, 223)
         self.verticalLayout = QtWidgets.QVBoxLayout(QemuPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(QemuPreferencesPageWidget)
@@ -26,6 +25,9 @@ class Ui_QemuPreferencesPageWidget(object):
         self.uiKVMAccelerationCheckBox = QtWidgets.QCheckBox(self.uiServerSettingsTabWidget)
         self.uiKVMAccelerationCheckBox.setObjectName("uiKVMAccelerationCheckBox")
         self.verticalLayout_2.addWidget(self.uiKVMAccelerationCheckBox)
+        self.uiRequireKVMAccelerationCheckBox = QtWidgets.QCheckBox(self.uiServerSettingsTabWidget)
+        self.uiRequireKVMAccelerationCheckBox.setObjectName("uiRequireKVMAccelerationCheckBox")
+        self.verticalLayout_2.addWidget(self.uiRequireKVMAccelerationCheckBox)
         spacerItem = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
         self.uiTabWidget.addTab(self.uiServerSettingsTabWidget, "")
@@ -47,6 +49,7 @@ class Ui_QemuPreferencesPageWidget(object):
         _translate = QtCore.QCoreApplication.translate
         QemuPreferencesPageWidget.setWindowTitle(_translate("QemuPreferencesPageWidget", "QEMU"))
         self.uiKVMAccelerationCheckBox.setText(_translate("QemuPreferencesPageWidget", "Enable KVM acceleration"))
+        self.uiRequireKVMAccelerationCheckBox.setText(_translate("QemuPreferencesPageWidget", "Require KVM acceleration"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("QemuPreferencesPageWidget", "Local settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("QemuPreferencesPageWidget", "Restore defaults"))
 
