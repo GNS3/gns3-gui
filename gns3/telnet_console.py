@@ -24,7 +24,6 @@ from .qt import QtCore, QtWidgets
 import os
 import sys
 import shlex
-import shutil
 import subprocess
 from .main_window import MainWindow
 from .controller import Controller
@@ -55,16 +54,6 @@ class ConsoleThread(QtCore.QThread):
             # use the string on Windows
             subprocess.call(command)
         else:
-            if sys.platform.startswith("darwin"):
-                # Apple removed the telnet client in OSX 10.13 High Sierra
-                # use the one embedded in GNS3 DMG (search path has been modified in main)
-                telnet_path = shutil.which("telnet")
-                if telnet_path:
-                    command = command.replace("telnet", telnet_path)
-                    log.debug('Telnet path replaced in console command: "{}"'.format(command))
-                else:
-                    self.consoleError.emit("Could not find a telnet client, please install one")
-                    return
             # use arguments on other platforms
             try:
                 args = shlex.split(command)
