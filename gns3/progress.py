@@ -129,6 +129,7 @@ class Progress(QtCore.QObject):
 
     @qslot
     def _showSlot(self, *args):
+
         if self._show_lock:
             return
         self._show_lock = True

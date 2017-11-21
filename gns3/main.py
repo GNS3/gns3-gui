@@ -18,6 +18,7 @@
 
 import sys
 import os
+import faulthandler
 
 # Try to install updates & restart application if an update is installed
 try:
@@ -109,6 +110,9 @@ def main():
     """
     Entry point for GNS3 GUI.
     """
+
+    # Get Python tracebacks explicitly, on a fault like segfault
+    faulthandler.enable()
 
     # Sometimes (for example at first launch) the OSX app service launcher add
     # an extra argument starting with -psn_. We filter it
