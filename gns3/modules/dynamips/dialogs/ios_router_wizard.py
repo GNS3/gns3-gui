@@ -217,13 +217,15 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         """
         image = self.uiIOSImageLineEdit.text()
         platform = self.uiPlatformComboBox.currentText()
-        Controller.instance().postCompute("/autoidlepc",
+        ram = self.uiRamSpinBox.value()
+        Controller.instance().postCompute("/auto_idlepc",
                                           self._compute_id,
                                           self._computeAutoIdlepcCallback,
                                           timeout=None,
                                           body={
                                               "image": image,
-                                              "platform": platform
+                                              "platform": platform,
+                                              "ram": ram
                                           })
         self.uiIdlePCFinderPushButton.setEnabled(False)
 
