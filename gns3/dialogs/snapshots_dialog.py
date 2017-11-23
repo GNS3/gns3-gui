@@ -91,7 +91,7 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
             snapshot_worker.finished.connect(self._createSnapshotsCallback)
 
             progress_dialog = ProgressDialog(snapshot_worker, "Snapshot progress", "Creation of snapshot in progress...",
-                                             "Cancel", parent=self, create_thread=False, cancelable=True)
+                                             "Cancel", busy=True, parent=self, create_thread=False, cancelable=True)
             progress_dialog.show()
             progress_dialog.exec_()
 
