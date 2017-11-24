@@ -272,6 +272,7 @@ class HTTPClient(QtCore.QObject):
                         prefix="/v2",
                         params={},
                         networkManager=None,
+                        eventsHandler=None,
                         **kwargs):
         """
         Call the remote server, if not connected, check connection before
@@ -289,6 +290,8 @@ class HTTPClient(QtCore.QObject):
         :param timeout: Delay in seconds before raising a timeout
         :param prefix: Prefix to the path
         :param networkManager: QNetworkAccessManager None use the default
+        :param eventsHandler: Handler receiving and triggering events like `updated`, `cancelled`.
+                              If not specified and showProgress is `True` then `ProgressDialog` receives them.
         :param params: Query arguments parameters
         :returns: QNetworkReply
         """
@@ -320,6 +323,7 @@ class HTTPClient(QtCore.QObject):
                            server=server,
                            timeout=timeout,
                            prefix=prefix,
+                           eventsHandler=eventsHandler,
                            params=params)
 
         if self._connected:
@@ -500,7 +504,7 @@ class HTTPClient(QtCore.QObject):
             query_string += urllib.parse.urlencode(params)
         return query_string
 
-    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", params={}, networkManager=None, **kwargs):
+    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", params={}, networkManager=None, eventsHandler=None, **kwargs):
         """
         Call the remote server
 
@@ -516,6 +520,8 @@ class HTTPClient(QtCore.QObject):
         :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
         :param server: The server where the query is executed
         :param timeout: Delay in seconds before raising a timeout
+        :param eventsHandler: Handler receiving and triggering events like `updated`, `cancelled`.
+                      If not specified and showProgress is `True` then `ProgressDialog` receives them.
         :param params: Query arguments parameters
         :returns: QNetworkReply
         """
@@ -555,8 +561,11 @@ class HTTPClient(QtCore.QObject):
         if downloadProgressCallback is not None:
             response.readyRead.connect(qpartial(self._readyReadySlot, response, downloadProgressCallback, context, server))
 
-        if not sip_is_deleted(HTTPClient._progress_callback) and HTTPClient._progress_callback.progress_dialog():
-            request_canceled = qpartial(self._requestCanceled, response, context)
+        request_canceled = qpartial(self._requestCanceled, response, context)
+
+        if eventsHandler is not None:
+            eventsHandler.canceled.connect(request_canceled)
+        elif not sip_is_deleted(HTTPClient._progress_callback) and HTTPClient._progress_callback.progress_dialog():
             HTTPClient._progress_callback.progress_dialog().canceled.connect(request_canceled)
 
         if showProgress:
