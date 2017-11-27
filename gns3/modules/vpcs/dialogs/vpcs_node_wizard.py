@@ -39,7 +39,7 @@ class VPCSNodeWizard(VMWizard, Ui_VPCSNodeWizard):
 
         super().__init__(vpcs_nodes, parent)
 
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/computer.svg"))
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/vpcs_guest.svg"))
         self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)
 
     def getSettings(self):

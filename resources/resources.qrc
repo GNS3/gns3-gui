@@ -1,10 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>symbols/router.svg</file>
-        <file>symbols/iosv_virl.svg</file>
-        <file>symbols/label_switch_router.svg</file>
-        <file>symbols/optical_router.svg</file>
-        <file>symbols/PIX_firewall.svg</file>
         <file>symbols/firewall.svg</file>
         <file>symbols/computer.svg</file>
         <file>symbols/qemu_guest.svg</file>
@@ -12,17 +8,11 @@
         <file>symbols/vpcs_guest.svg</file>
         <file>symbols/vmware_guest.svg</file>
         <file>symbols/docker_guest.svg</file>
-        <file>symbols/voice_router.svg</file>
-        <file>symbols/ids.svg</file>
         <file>symbols/asa.svg</file>
         <file>symbols/multilayer_switch.svg</file>
-        <file>symbols/iosv_l2_virl.svg</file>
-        <file>symbols/lightweight_ap.svg</file>
-        <file>symbols/wlan_controller.svg</file>
         <file>symbols/atm_switch.svg</file>
         <file>symbols/frame_relay_switch.svg</file>
         <file>symbols/ethernet_switch.svg</file>
-        <file>symbols/access_point.svg</file>
         <file>symbols/cloud.svg</file>
         <file>symbols/hub.svg</file>
         <file alias="icons/default.svg">icons/cancel.svg</file>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>715</width>
-    <height>644</height>
+    <width>1324</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,16 +30,7 @@
        <string>General</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -247,16 +238,7 @@
        <string>Binary images</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -390,16 +372,7 @@
        <string>Console applications</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -426,7 +399,17 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Command line replacements:&lt;/p&gt;&lt;p&gt;%h = device server &lt;/p&gt;&lt;p&gt;%p = device port&lt;/p&gt;&lt;p&gt;%d = device hostname&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Command line replacements:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;%h = console IP or hostname&lt;/li&gt;
+&lt;li&gt;%p = console port&lt;/li&gt;
+&lt;li&gt;%P = VNC display&lt;/li&gt;
+&lt;li&gt;%s = path of the serial connection&lt;/li&gt;
+&lt;li&gt;%d = title of the console&lt;/li&gt;
+&lt;li&gt;%i = project UUID&lt;/li&gt;
+&lt;li&gt;%c = server URL&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="readOnly">
                <bool>true</bool>
@@ -457,13 +440,6 @@
           <string>Miscellaneous</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
-          <item row="0" column="0">
-           <widget class="QLabel" name="uiSlowConsoleAllLabel">
-            <property name="text">
-             <string>Delay between each console launch when consoling to all devices:</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QSpinBox" name="uiDelayConsoleAllSpinBox">
             <property name="suffix">
@@ -474,6 +450,13 @@
             </property>
             <property name="value">
              <number>500</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiSlowConsoleAllLabel">
+            <property name="text">
+             <string>Delay between each console launch when consoling to all devices:</string>
             </property>
            </widget>
           </item>
@@ -500,16 +483,7 @@
        <string>VNC</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -536,7 +510,17 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Command line replacements:&lt;/p&gt;&lt;p&gt;%h = device server &lt;/p&gt;&lt;p&gt;%p = device port&lt;/p&gt;&lt;p&gt;%d = device hostname&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Command line replacements:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;%h = console IP or hostname&lt;/li&gt;
+&lt;li&gt;%p = console port&lt;/li&gt;
+&lt;li&gt;%P = VNC display&lt;/li&gt;
+&lt;li&gt;%s = path of the serial connection&lt;/li&gt;
+&lt;li&gt;%d = title of the console&lt;/li&gt;
+&lt;li&gt;%i = project UUID&lt;/li&gt;
+&lt;li&gt;%c = server URL&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="readOnly">
                <bool>true</bool>
@@ -580,90 +564,87 @@
       <attribute name="title">
        <string>SPICE</string>
       </attribute>
-      <widget class="QGroupBox" name="uiSPICEConsoleSettingsGroupBox">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>673</width>
-         <height>538</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Settings for SPICE connections</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_11">
-        <item>
-         <widget class="QLabel" name="uiSPICEConsoleCommandLabel">
-          <property name="text">
-           <string>Console application command for SPICE:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="uiSPICEConsoleSettingsGroupBox">
+         <property name="title">
+          <string>Settings for SPICE connections</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
-           <widget class="QLineEdit" name="uiSPICEConsoleCommandLineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Command line replacements:&lt;/p&gt;&lt;p&gt;%h = device server &lt;/p&gt;&lt;p&gt;%p = device port&lt;/p&gt;&lt;p&gt;%d = device hostname&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
+           <widget class="QLabel" name="uiSPICEConsoleCommandLabel">
+            <property name="text">
+             <string>Console application command for SPICE:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="uiSPICEConsolePreconfiguredCommandPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <widget class="QLineEdit" name="uiSPICEConsoleCommandLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Command line replacements:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;%h = console IP or hostname&lt;/li&gt;
+&lt;li&gt;%p = console port&lt;/li&gt;
+&lt;li&gt;%P = VNC display&lt;/li&gt;
+&lt;li&gt;%s = path of the serial connection&lt;/li&gt;
+&lt;li&gt;%d = title of the console&lt;/li&gt;
+&lt;li&gt;%i = project UUID&lt;/li&gt;
+&lt;li&gt;%c = server URL&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="uiSPICEConsolePreconfiguredCommandPushButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>&amp;Edit</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
-            <property name="text">
-             <string>&amp;Edit</string>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>5</height>
+             </size>
             </property>
-           </widget>
+           </spacer>
           </item>
          </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_6">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>5</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="uiSceneTab">
       <attribute name="title">
        <string>Topology view</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_8">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item row="9" column="0" colspan="2">
@@ -825,16 +806,7 @@
        <string>Miscellaneous</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -892,6 +864,13 @@
         <widget class="QCheckBox" name="uiMultiProfilesCheckBox">
          <property name="text">
           <string>Request for profile settings at application startup  (work profile / home profile)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="uiDirectFileUpload">
+         <property name="text">
+          <string>Upload files directly to computes (experimental, requires computes visibility from GUI network)</string>
          </property>
         </widget>
        </item>

@@ -302,7 +302,7 @@ class Router(Node):
            specific_info=router_specific_info,
            ram=self._settings["ram"],
            nvram=self._settings["nvram"],
-           host=self.compute().id(),
+           host=self.compute().name(),
            console=self._settings["console"],
            aux=self._settings["aux"],
            image_name=os.path.basename(self._settings["image"]),

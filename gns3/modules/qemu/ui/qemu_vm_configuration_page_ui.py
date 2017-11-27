@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.8
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_QemuVMConfigPageWidget(object):
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
-        QemuVMConfigPageWidget.resize(594, 645)
+        QemuVMConfigPageWidget.resize(655, 696)
         self.verticalLayout = QtWidgets.QVBoxLayout(QemuVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiQemutabWidget = QtWidgets.QTabWidget(QemuVMConfigPageWidget)
@@ -493,6 +493,14 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiProcessPriorityComboBox.setItemText(5, _translate("QemuVMConfigPageWidget", "Very low"))
         self.groupBox.setTitle(_translate("QemuVMConfigPageWidget", "Additional settings"))
         self.uiQemuOptionsLabel.setText(_translate("QemuVMConfigPageWidget", "Options:"))
+        self.uiQemuOptionsLineEdit.setToolTip(_translate("QemuVMConfigPageWidget", "<html><head/><body><p>Variable replacements:</p>\n"
+"<ul>\n"
+"<li>%vm-name% =VM name</li>\n"
+"<li>%vm-id% =VM ID</li>\n"
+"<li>%project-id% = project ID</li>\n"
+"<li>%project-path% = project path</li>\n"
+"</ul>\n"
+"</body></html>"))
         self.uiBaseVMCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use as a linked base VM"))
         self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown (experimental)"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiAdvancedSettingsTab), _translate("QemuVMConfigPageWidget", "Advanced settings"))

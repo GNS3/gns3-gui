@@ -25,6 +25,7 @@ from gns3.settings import LOCAL_SERVER_SETTINGS
 from gns3.controller import Controller
 from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.utils.progress_dialog import ProgressDialog
+from gns3.registry.image import Image
 
 
 class ImageManager:
@@ -33,7 +34,29 @@ class ImageManager:
         # Remember if we already ask the user about this image for this server
         self._asked_for_this_image = {}
 
-    def askCopyUploadImage(self, parent, path, server, node_type):
+    def _getUniqueDestinationPath(self, source_image, node_type, path):
+        """
+        Get a unique destination path (with counter).
+        """
+
+        if not os.path.exists(path):
+            return path
+        path, extension = os.path.splitext(path)
+        counter = 1
+        new_path = "{}-{}{}".format(path, counter, extension)
+        while os.path.exists(new_path):
+            destination_image = Image(node_type, new_path, filename=os.path.basename(new_path))
+            try:
+                if source_image.md5sum == destination_image.md5sum:
+                    # the source and destination images are identical
+                    return new_path
+            except OSError:
+                continue
+            counter += 1
+            new_path = "{}-{}{}".format(path, counter, extension)
+        return new_path
+
+    def askCopyUploadImage(self, parent, source_path, server, node_type):
         """
         Ask user for copying the image to the default directory or upload
         it to remote server.
@@ -46,34 +69,51 @@ class ImageManager:
         """
 
         if (server and server != "local") or Controller.instance().isRemote():
-            return self._uploadImageToRemoteServer(path, server, node_type)
+            return self._uploadImageToRemoteServer(source_path, server, node_type)
         else:
             destination_directory = self.getDirectoryForType(node_type)
-            if os.path.normpath(os.path.dirname(path)) != destination_directory:
-                # the IOS image is not in the default images directory
+            destination_path = os.path.join(destination_directory, os.path.basename(source_path))
+            source_filename = os.path.basename(source_path)
+            destination_filename = os.path.basename(destination_path)
+            if os.path.normpath(os.path.dirname(source_path)) != destination_directory:
+                # the image is not in the default images directory
+                if source_filename == destination_filename:
+                    # the filename already exists in the default images directory
+                    source_image = Image(node_type, source_path, filename=source_filename)
+                    destination_image = Image(node_type, destination_path, filename=destination_filename)
+                    try:
+                        if source_image.md5sum == destination_image.md5sum:
+                            # the source and destination images are identical
+                            return source_path
+                    except OSError as e:
+                        QtWidgets.QMessageBox.critical(parent, 'Image', 'Cannot compare image file {} with {}: {}.'.format(source_path, destination_path, str(e)))
+                        return source_path
+                    # find a new unique path to avoid overwriting existing destination file
+                    destination_path = self._getUniqueDestinationPath(source_image, node_type, destination_path)
+
                 reply = QtWidgets.QMessageBox.question(parent,
                                                        'Image',
-                                                       'Would you like to copy {} to the default images directory'.format(os.path.basename(path)),
+                                                       'Would you like to copy {} to the default images directory'.format(source_filename),
                                                        QtWidgets.QMessageBox.Yes,
                                                        QtWidgets.QMessageBox.No)
                 if reply == QtWidgets.QMessageBox.Yes:
-                    destination_path = os.path.join(destination_directory, os.path.basename(path))
                     try:
                         os.makedirs(destination_directory, exist_ok=True)
                     except OSError as e:
                         QtWidgets.QMessageBox.critical(parent, 'Image', 'Could not create destination directory {}: {}'.format(destination_directory, str(e)))
-                        return path
-                    worker = FileCopyWorker(path, destination_path)
-                    progress_dialog = ProgressDialog(worker, 'Image', 'Copying {}'.format(os.path.basename(path)), 'Cancel', busy=True, parent=parent)
+                        return source_path
+
+                    worker = FileCopyWorker(source_path, destination_path)
+                    progress_dialog = ProgressDialog(worker, 'Image', 'Copying {}'.format(source_filename), 'Cancel', busy=True, parent=parent)
                     progress_dialog.show()
                     progress_dialog.exec_()
                     errors = progress_dialog.errors()
                     if errors:
                         QtWidgets.QMessageBox.critical(parent, 'Image', '{}'.format(''.join(errors)))
-                        return path
+                        return source_path
                     else:
-                        path = destination_path
-            return path
+                        source_path = destination_path
+            return source_path
 
     def _uploadImageToRemoteServer(self, path, server, node_type):
         """
@@ -95,21 +135,8 @@ class ImageManager:
             raise Exception('Invalid node type')
 
         filename = self._getRelativeImagePath(path, node_type).replace("\\", "/")
-
         Controller.instance().postCompute('{}/{}'.format(upload_endpoint, filename), server, None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
         return filename
-
-    def _askForUploadMissingImage(self, filename, server):
-        from gns3.main_window import MainWindow
-        parent = MainWindow.instance()
-        reply = QtWidgets.QMessageBox.warning(parent,
-                                              'Image',
-                                              '{} is missing on server {} but exist on your computer. Do you want to upload it?'.format(filename, server.url()),
-                                              QtWidgets.QMessageBox.Yes,
-                                              QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
-            return True
-        return False
 
     def _getRelativeImagePath(self, path, node_type):
         """

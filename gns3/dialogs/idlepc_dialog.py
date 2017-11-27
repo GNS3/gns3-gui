@@ -40,7 +40,8 @@ class IdlePCDialog(QtWidgets.QDialog, Ui_IdlePCDialog):
         self._idlepcs = idlepcs
 
         for value in self._idlepcs:
-            match = re.search(r"^(0x[0-9a-f]+)\s+\[(\d+)\]$", value)
+            # validate idle-pc format, e.g. 0x60c09aa0
+            match = re.search(r"^(0x[0-9a-f]{8})\s+\[(\d+)\]$", value)
             if match:
                 idlepc = match.group(1)
                 count = int(match.group(2))

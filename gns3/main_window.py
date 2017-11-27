@@ -827,7 +827,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when connecting to all the nodes using the console.
         """
 
-        self.uiGraphicsView.consoleFromItems(self.uiGraphicsView.scene().items())
+        self.uiGraphicsView.consoleFromAllItems()
 
     def _addNoteActionSlot(self):
         """

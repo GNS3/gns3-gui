@@ -492,11 +492,16 @@ background-none;
         </sizepolicy>
        </property>
        <attribute name="headerVisible">
-        <bool>false</bool>
+        <bool>true</bool>
        </attribute>
        <column>
         <property name="text">
-         <string>1</string>
+         <string>Node</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Console</string>
         </property>
        </column>
       </widget>

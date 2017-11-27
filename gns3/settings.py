@@ -71,54 +71,55 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
-        'Terminal': "osascript -e 'tell application \"Terminal\"'"
-                    " -e 'activate'"
-                    " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\"; clear; telnet %h %p ; exit\"'"
-                    " -e 'end tell'",
-        'Terminal tabbed (experimental)': "osascript -e 'tell application \"Terminal\"'"
-                    " -e 'activate'"
-        " -e 'tell application \"System Events\" to tell process \"Terminal\" to keystroke \"t\" using command down'"
-        " -e 'if (the (count of the window) = 0) then'"
-        " -e 'repeat while contents of selected tab of window 1 starts with linefeed'"
-        " -e 'delay 0.01'"
-        " -e 'end repeat'"
-        " -e 'tell application \"System Events\" to keystroke \"n\" using command down'"
-        " -e 'end if'"
-        " -e 'repeat while the busy of window 1 = true'"
-        " -e 'delay 0.01'"
-        " -e 'end repeat'"
-        " -e 'do script \"echo -n -e \\\"\\\\033]0;%d\\\\007\\\" ; telnet %h %p ; exit\" in window 1'"
-                    " -e 'end tell'",
-        'iTerm2 2.x': "osascript -e 'tell application \"iTerm\"'"
-        " -e 'activate'"
-        " -e 'if (count of terminals) = 0 then'"
-        " -e '  set t to (make new terminal)'"
-        " -e 'else'"
-        " -e '  set t to current terminal'"
-        " -e 'end if'"
-        " -e 'tell t'"
-        " -e '  set s to (make new session at the end of sessions)'"
-        " -e '  tell s'"
-        " -e '    exec command (\"telnet %h %p\")'"
-        " -e '  end tell'"
-        " -e 'end tell'"
-        " -e 'end tell'",
-        'iTerm2 3.x': "osascript -e 'tell application \"iTerm\"'"
-                    " -e 'activate'"
-                    " -e 'if (count of windows) = 0 then'"
-                    " -e '   set t to (create window with default profile)'"
-                    " -e 'else'"
-                    " -e '   set t to current window'"
-                    " -e 'end if'"
-                    " -e 'tell t'"
-                    " -e '    create tab with default profile command \"sh\"'"
-                    " -e '    set s to current session'"
-                    " -e '    tell s'"
-                    " -e '        set name to \"%d\"'"
-                    " -e '        write text \"exec telnet %h %p\"'"
-                    " -e '    end tell'"
-                    " -e 'end tell'"
-                    " -e 'end tell'",
+        'Terminal': r"""osascript -e 'tell application "Terminal"'"""
+                    r""" -e 'activate'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=\"" & (system attribute "PATH") & "\" telnet %h %p ; exit"'"""
+                    r""" -e 'end tell'""",
+        'Terminal tabbed (experimental)': r"""osascript -e 'tell application "Terminal"'"""
+                    r""" -e 'activate'"""
+                    r""" -e 'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"""
+                    r""" -e 'if (the (count of the window) = 0) then'"""
+                    r""" -e 'repeat while contents of selected tab of window 1 starts with linefeed'"""
+                    r""" -e 'delay 0.01'"""
+                    r""" -e 'end repeat'"""
+                    r""" -e 'tell application "System Events" to keystroke "n" using command down'"""
+                    r""" -e 'end if'"""
+                    r""" -e 'repeat while the busy of window 1 = true'"""
+                    r""" -e 'delay 0.01'"""
+                    r""" -e 'end repeat'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=\"" & (system attribute "PATH") & "\" telnet %h %p ; exit" in window 1'"""
+                    r""" -e 'end tell'""",
+        'iTerm2 2.x': r"""osascript -e 'tell application "iTerm"'"""
+                    r""" -e 'activate'"""
+                    r""" -e 'if (count of terminals) = 0 then'"""
+                    r""" -e '  set t to (make new terminal)'"""
+                    r""" -e 'else'"""
+                    r""" -e '  set t to current terminal'"""
+                    r""" -e 'end if'"""
+                    r""" -e 'tell t'"""
+                    r""" -e '  set s to (make new session at the end of sessions)'"""
+                    r""" -e '  tell s'"""
+                    r""" -e '    exec command "sh -c \"PATH=\\\"" & (system attribute "PATH") & "\\\" telnet %h %p"'"""
+
+                    r""" -e '  end tell'"""
+                    r""" -e 'end tell'"""
+                    r""" -e 'end tell'""",
+        'iTerm2 3.x': r"""osascript -e 'tell application "iTerm"'"""
+                    r""" -e 'activate'"""
+                    r""" -e 'if (count of windows) = 0 then'"""
+                    r""" -e '   set t to (create window with default profile)'"""
+                    r""" -e 'else'"""
+                    r""" -e '   set t to current window'"""
+                    r""" -e 'end if'"""
+                    r""" -e 'tell t'"""
+                    r""" -e '    create tab with default profile command "sh"'"""
+                    r""" -e '    set s to current session'"""
+                    r""" -e '    tell s'"""
+                    r""" -e '        set name to "%d"'"""
+                    r""" -e '        write text "PATH=\"" & (system attribute "PATH") & "\" exec telnet %h %p"'"""
+                    r""" -e '    end tell'"""
+                    r""" -e 'end tell'"""
+                    r""" -e 'end tell'""",
         'Royal TSX': "open 'rtsx://telnet%3A%2F%2F%h:%p'",
         'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "%d" /T /TELNET %h %p',
         'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"',
@@ -269,7 +270,8 @@ GENERAL_SETTINGS = {
     "preferences_dialog_geometry": "",
     "debug_level": 0,
     "multi_profiles": False,
-    "hdpi": not sys.platform.startswith("linux")
+    "hdpi": not sys.platform.startswith("linux"),
+    "direct_file_upload": False
 }
 
 NODES_VIEW_SETTINGS = {

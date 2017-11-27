@@ -15,15 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
 import os
 import hashlib
-import tarfile
-import pathlib
-
-
-from gns3.controller import Controller
-
 
 import logging
 log = logging.getLogger(__name__)
@@ -141,9 +134,6 @@ class Image:
     def filesize(self, val):
         self._filesize = val
 
-    def upload(self, compute_id, callback=None):
-        """
-        Upload image to the controller
-        """
-        upload_endpoint = "/{}/images".format(self._emulator)
-        Controller.instance().postCompute('{}/{}'.format(upload_endpoint, self.filename), compute_id, callback, body=pathlib.Path(self.path), progressText="Uploading {}".format(self.filename), timeout=None)
+    @property
+    def emulator(self):
+        return self._emulator

@@ -55,7 +55,7 @@
       "title": "An optional product url on vendor website"
     },
     "registry_version": {
-      "enum": [1, 2, 3, 4],
+      "enum": [1, 2, 3, 4, 5],
       "title": "Version of the registry compatible with this appliance"
     },
     "status": {

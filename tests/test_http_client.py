@@ -143,7 +143,7 @@ def test_post_not_connected(http_client, http_request, network_manager, response
 
 def test_post_not_connected_connection_failed(http_client, http_request, network_manager, response):
 
-    http_client.MAX_RETRY_CONNECTION = 0
+    http_client.setMaxRetryConnection(0)
     http_client._connected = False
     callback = unittest.mock.MagicMock()
 
@@ -165,7 +165,7 @@ def test_post_not_connected_connection_failed_retry(http_client, http_request, n
     The client shoud retry connection
     """
 
-    http_client.MAX_RETRY_CONNECTION = 5
+    http_client.setMaxRetryConnection(5)
     http_client._connected = False
     http_client._retryConnection = unittest.mock.MagicMock()
     callback = unittest.mock.MagicMock()
@@ -331,7 +331,7 @@ def test_callbackConnect_minor_version_invalid(http_client):
 
 def test_callbackConnect_non_gns3_server(http_client):
 
-    http_client.MAX_RETRY_CONNECTION = 0
+    http_client.setMaxRetryConnection(0)
     params = {
         "virus": True,
     }

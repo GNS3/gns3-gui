@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(715, 644)
+        GeneralPreferencesPageWidget.resize(1324, 738)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
@@ -219,14 +219,14 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiConsoleMiscGroupBox.setObjectName("uiConsoleMiscGroupBox")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.uiConsoleMiscGroupBox)
         self.gridLayout_7.setObjectName("gridLayout_7")
-        self.uiSlowConsoleAllLabel = QtWidgets.QLabel(self.uiConsoleMiscGroupBox)
-        self.uiSlowConsoleAllLabel.setObjectName("uiSlowConsoleAllLabel")
-        self.gridLayout_7.addWidget(self.uiSlowConsoleAllLabel, 0, 0, 1, 1)
         self.uiDelayConsoleAllSpinBox = QtWidgets.QSpinBox(self.uiConsoleMiscGroupBox)
         self.uiDelayConsoleAllSpinBox.setMaximum(10000)
         self.uiDelayConsoleAllSpinBox.setProperty("value", 500)
         self.uiDelayConsoleAllSpinBox.setObjectName("uiDelayConsoleAllSpinBox")
         self.gridLayout_7.addWidget(self.uiDelayConsoleAllSpinBox, 1, 0, 1, 1)
+        self.uiSlowConsoleAllLabel = QtWidgets.QLabel(self.uiConsoleMiscGroupBox)
+        self.uiSlowConsoleAllLabel.setObjectName("uiSlowConsoleAllLabel")
+        self.gridLayout_7.addWidget(self.uiSlowConsoleAllLabel, 0, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.uiConsoleMiscGroupBox)
         spacerItem3 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem3)
@@ -269,8 +269,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiMiscTabWidget.addTab(self.uiVNCTab, "")
         self.uiSPICETab = QtWidgets.QWidget()
         self.uiSPICETab.setObjectName("uiSPICETab")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.uiSPICETab)
+        self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiSPICEConsoleSettingsGroupBox = QtWidgets.QGroupBox(self.uiSPICETab)
-        self.uiSPICEConsoleSettingsGroupBox.setGeometry(QtCore.QRect(10, 10, 673, 538))
         self.uiSPICEConsoleSettingsGroupBox.setObjectName("uiSPICEConsoleSettingsGroupBox")
         self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.uiSPICEConsoleSettingsGroupBox)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
@@ -299,6 +300,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.verticalLayout_11.addLayout(self.horizontalLayout_10)
         spacerItem5 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_11.addItem(spacerItem5)
+        self.gridLayout_2.addWidget(self.uiSPICEConsoleSettingsGroupBox, 0, 0, 1, 1)
         self.uiMiscTabWidget.addTab(self.uiSPICETab, "")
         self.uiSceneTab = QtWidgets.QWidget()
         self.uiSceneTab.setObjectName("uiSceneTab")
@@ -392,6 +394,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiMultiProfilesCheckBox = QtWidgets.QCheckBox(self.uiMiscTab)
         self.uiMultiProfilesCheckBox.setObjectName("uiMultiProfilesCheckBox")
         self.verticalLayout_2.addWidget(self.uiMultiProfilesCheckBox)
+        self.uiDirectFileUpload = QtWidgets.QCheckBox(self.uiMiscTab)
+        self.uiDirectFileUpload.setObjectName("uiDirectFileUpload")
+        self.verticalLayout_2.addWidget(self.uiDirectFileUpload)
         spacerItem8 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem8)
         self.uiMiscTabWidget.addTab(self.uiMiscTab, "")
@@ -440,20 +445,50 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiImagesTab), _translate("GeneralPreferencesPageWidget", "Binary images"))
         self.uiTelnetConsoleSettingsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Console settings"))
         self.uiTelnetConsoleCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Console application command for Telnet:"))
-        self.uiTelnetConsoleCommandLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p><p>%h = device server </p><p>%p = device port</p><p>%d = device hostname</p></body></html>"))
+        self.uiTelnetConsoleCommandLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p>\n"
+"<ul>\n"
+"<li>%h = console IP or hostname</li>\n"
+"<li>%p = console port</li>\n"
+"<li>%P = VNC display</li>\n"
+"<li>%s = path of the serial connection</li>\n"
+"<li>%d = title of the console</li>\n"
+"<li>%i = project UUID</li>\n"
+"<li>%c = server URL</li>\n"
+"</ul>\n"
+"</body></html>"))
         self.uiTelnetConsolePreconfiguredCommandPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Edit"))
         self.uiConsoleMiscGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Miscellaneous"))
-        self.uiSlowConsoleAllLabel.setText(_translate("GeneralPreferencesPageWidget", "Delay between each console launch when consoling to all devices:"))
         self.uiDelayConsoleAllSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " ms"))
+        self.uiSlowConsoleAllLabel.setText(_translate("GeneralPreferencesPageWidget", "Delay between each console launch when consoling to all devices:"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiConsoleTab), _translate("GeneralPreferencesPageWidget", "Console applications"))
         self.uiVNCConsoleSettingsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Settings for VNC connections"))
         self.uiVNCConsoleCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Console application command for VNC:"))
-        self.uiVNCConsoleCommandLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p><p>%h = device server </p><p>%p = device port</p><p>%d = device hostname</p></body></html>"))
+        self.uiVNCConsoleCommandLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p>\n"
+"<ul>\n"
+"<li>%h = console IP or hostname</li>\n"
+"<li>%p = console port</li>\n"
+"<li>%P = VNC display</li>\n"
+"<li>%s = path of the serial connection</li>\n"
+"<li>%d = title of the console</li>\n"
+"<li>%i = project UUID</li>\n"
+"<li>%c = server URL</li>\n"
+"</ul>\n"
+"</body></html>"))
         self.uiVNCConsolePreconfiguredCommandPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Edit"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiVNCTab), _translate("GeneralPreferencesPageWidget", "VNC"))
         self.uiSPICEConsoleSettingsGroupBox.setTitle(_translate("GeneralPreferencesPageWidget", "Settings for SPICE connections"))
         self.uiSPICEConsoleCommandLabel.setText(_translate("GeneralPreferencesPageWidget", "Console application command for SPICE:"))
-        self.uiSPICEConsoleCommandLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p><p>%h = device server </p><p>%p = device port</p><p>%d = device hostname</p></body></html>"))
+        self.uiSPICEConsoleCommandLineEdit.setToolTip(_translate("GeneralPreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p>\n"
+"<ul>\n"
+"<li>%h = console IP or hostname</li>\n"
+"<li>%p = console port</li>\n"
+"<li>%P = VNC display</li>\n"
+"<li>%s = path of the serial connection</li>\n"
+"<li>%d = title of the console</li>\n"
+"<li>%i = project UUID</li>\n"
+"<li>%c = server URL</li>\n"
+"</ul>\n"
+"</body></html>"))
         self.uiSPICEConsolePreconfiguredCommandPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Edit"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiSPICETab), _translate("GeneralPreferencesPageWidget", "SPICE"))
         self.uiDefaultLabelFontPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Select default font"))
@@ -475,6 +510,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiExperimentalFeaturesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable experimental features (dangerous, restart required)"))
         self.uiHdpiCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable HDPI mode (this may crash the application on Linux, restart required)"))
         self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Request for profile settings at application startup  (work profile / home profile)"))
+        self.uiDirectFileUpload.setText(_translate("GeneralPreferencesPageWidget", "Upload files directly to computes (experimental, requires computes visibility from GUI network)"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiMiscTab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
 

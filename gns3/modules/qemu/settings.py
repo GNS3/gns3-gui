@@ -23,6 +23,7 @@ from gns3.node import Node
 
 QEMU_SETTINGS = {
     "enable_kvm": True,
+    "require_kvm": True,
 }
 
 QEMU_VM_SETTINGS = {

@@ -20,6 +20,7 @@ Progress dialog that blocking tasks (file operations, network connections etc.)
 """
 
 import sip
+from gns3.version import __version__
 from ..qt import QtWidgets, QtCore, qslot
 
 import logging
@@ -44,7 +45,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
     def __init__(self, worker, title, label_text, cancel_button_text, busy=False, parent=None, delay=0, create_thread=True):
 
-        assert QtCore.QThread.currentThread() == QtWidgets.QApplication.instance().thread()
+        if "dev" in __version__:
+            assert QtCore.QThread.currentThread() == QtWidgets.QApplication.instance().thread()
 
         minimum = 0
         maximum = 100
@@ -64,8 +66,12 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self._worker.setObjectName(worker.__class__.__name__)
         if create_thread:
             self._thread = QtCore.QThread()
+            if "dev" in __version__:
+                assert not self._worker.parent()
+            log.debug("Set worker inside a thread {}".format(self._worker.__class__))
             self._worker.moveToThread(self._thread)
         else:
+            log.debug("Set worker outside of a thread {}".format(self._worker.__class__))
             self._thread = None
         self._worker.finished.connect(self.accept)
         self._worker.updated.connect(self._updateProgressSlot)

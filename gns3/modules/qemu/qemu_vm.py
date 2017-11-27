@@ -20,7 +20,6 @@ QEMU VM implementation.
 """
 
 from gns3.node import Node
-from gns3.image_manager import ImageManager
 from .settings import QEMU_VM_SETTINGS
 
 

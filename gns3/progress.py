@@ -34,7 +34,7 @@ class Progress(QtCore.QObject):
 
     add_query_signal = QtCore.Signal(str, str, QtNetwork.QNetworkReply)
     remove_query_signal = QtCore.Signal(str)
-    progress_signal = QtCore.Signal(str, int, int)
+    progress_signal = QtCore.Signal(str, str, str)
     show_signal = QtCore.Signal()
     hide_signal = QtCore.Signal()
 
@@ -47,6 +47,11 @@ class Progress(QtCore.QObject):
         super().__init__(parent)
         self._progress_dialog = None
         self._show_lock = False
+
+        # Timer called for refreshing the progress dialog status
+        self._rtimer = QtCore.QTimer()
+        self._rtimer.timeout.connect(self.update)
+        self._rtimer.start(delay)
 
         # When in millisecond we started to show the progress dialog
         self._display_start_time = 0
@@ -73,8 +78,8 @@ class Progress(QtCore.QObject):
         self._queries[query_id] = {"explanation": explanation, "current": 0, "maximum": 0, "response": response}
 
     def _removeQuerySlot(self, query_id):
-        self._finished_query_during_display += 1
         if query_id in self._queries:
+            self._finished_query_during_display += 1
             del self._queries[query_id]
 
     def reset(self):
@@ -86,6 +91,9 @@ class Progress(QtCore.QObject):
         return self._progress_dialog
 
     def _progressSlot(self, query_id, current, maximum):
+        current = int(current)
+        maximum = int(maximum)
+
         if query_id in self._queries:
             self._queries[query_id]["current"] = current
             self._queries[query_id]["maximum"] = maximum
@@ -121,6 +129,7 @@ class Progress(QtCore.QObject):
 
     @qslot
     def _showSlot(self, *args):
+
         if self._show_lock:
             return
         self._show_lock = True
@@ -165,7 +174,6 @@ class Progress(QtCore.QObject):
             elif len(self._queries) == 1:
                 query = list(self._queries.values())[0]
                 if query["maximum"] == query["current"]:
-
                     # We animate the bar. In theory Qt should be able to do it but
                     # due to all the manipulation of the dialog he is getting lost
                     bar_speed = 8
@@ -178,8 +186,10 @@ class Progress(QtCore.QObject):
                         progress_dialog.setValue(progress_dialog.value() + 1)
 
                 else:
-                    progress_dialog.setMaximum(query["maximum"])
-                    progress_dialog.setValue(query["current"])
+                    # Due to Qt limitations for large numbers (above 32bit int) we calculate "progress" ourselves
+                    current, maximum = self._normalize(query['current'], query['maximum'])
+                    progress_dialog.setMaximum(maximum)
+                    progress_dialog.setValue(current)
 
                 if text and query["maximum"] > 1000:
                     text += "\n{} / {}".format(human_filesize(query["current"]), human_filesize(query["maximum"]))
@@ -187,6 +197,18 @@ class Progress(QtCore.QObject):
             if text:
                 progress_dialog.setLabelText(text)
         self._show_lock = False
+
+    def _normalize(self, large_current, large_maximum):
+        """
+        Transforms progress values into set between 0 and 100
+        :param large_current:
+        :param large_maximum:
+        :return: current, maximum
+        """
+        try:
+            return int(large_current*100/large_maximum), 100
+        except ZeroDivisionError:
+            return -1, -1
 
     @qslot
     def _hideSlot(self):

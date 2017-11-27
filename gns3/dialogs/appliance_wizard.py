@@ -32,6 +32,7 @@ from ..utils.progress_dialog import ProgressDialog
 from ..compute_manager import ComputeManager
 from ..controller import Controller
 from ..local_config import LocalConfig
+from ..image_upload_manager import ImageUploadManager
 
 
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
@@ -75,8 +76,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiLocalRadioButton.setText("Install the appliance on the main server")
         else:
             if not path.endswith('.builtin.gns3a'):
+                destination = Config().appliances_dir
                 try:
-                    destination = Config().appliances_dir
                     os.makedirs(destination, exist_ok=True)
                     destination = os.path.join(destination, os.path.basename(path))
                     shutil.copy(path, destination)
@@ -419,7 +420,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         except OSError as e:
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Can't access to the image file {}: {}.".format(path, str(e)))
             return
-        image.upload(self._compute_id, callback=self._imageUploadedCallback)
+
+        image_upload_manger = ImageUploadManager(
+            image, Controller.instance(), self._compute_id,
+            self._imageUploadedCallback, LocalConfig.instance().directFileUpload())
+        image_upload_manger.upload()
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
         """
@@ -499,7 +504,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         for image in appliance_configuration["images"]:
             if image["location"] == "local":
                 image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
-                image.upload(self._compute_id, self._applianceImageUploadedCallback)
+
+                image_upload_manger = ImageUploadManager(
+                    image, Controller.instance(), self._compute_id,
+                    self._applianceImageUploadedCallback, LocalConfig.instance().directFileUpload())
+                image_upload_manger.upload()
+
                 self._image_uploading_count += 1
 
     def _applianceImageUploadedCallback(self, result, error=False, **kwargs):

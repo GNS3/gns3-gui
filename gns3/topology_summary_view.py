@@ -96,6 +96,10 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
             # refresh all the other item if the node name has changed
             self._parent.refreshAllLinks(source_child=self)
         self.setText(0, self._node.name())
+        if self._node.consoleType() and self._node.console():
+            self.setText(1, "{} {}:{}".format(self._node.consoleType(), self._node.consoleHost(), self._node.console()))
+        else:
+            self.setText(1, "not supported")
         self.refreshLinks()
         self._parent.invisibleRootItem().sortChildren(0, QtCore.Qt.AscendingOrder)
 
@@ -213,6 +217,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             return
         self.nodes_id.add(node.id())
         TopologyNodeItem(self, node)
+        self.resizeColumnToContents(0)
 
     @qslot
     def _itemSelectionChangedSlot(self, *args):

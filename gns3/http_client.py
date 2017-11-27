@@ -25,6 +25,8 @@ import base64
 import datetime
 import ipaddress
 import urllib.request
+import urllib.parse
+
 
 from .version import __version__, __version_info__
 from .qt import QtCore, QtNetwork, qpartial, sip_is_deleted, QtWebSockets
@@ -49,17 +51,13 @@ class HTTPClient(QtCore.QObject):
     :param network_manager: A QT network manager
     """
 
-    # How many times we need to retry a connection
-    MAX_RETRY_CONNECTION = 5
-
     # Callback class used for displaying progress
     _progress_callback = None
 
     connection_connected_signal = QtCore.Signal()
     connection_disconnected_signal = QtCore.Signal()
 
-    def __init__(self, settings, network_manager=None):
-
+    def __init__(self, settings, network_manager=None, max_retry_connection=5):
         super().__init__()
 
         self._protocol = settings.get("protocol", "http")
@@ -74,8 +72,9 @@ class HTTPClient(QtCore.QObject):
         self._port = int(settings["port"])
         self._user = settings.get("user", None)
         self._password = settings.get("password", None)
-        # How many time we have retry connection
+        # How many time we have already retried connection
         self._retry = 0
+        self._max_retry_connection = max_retry_connection
         self._connected = False
         self._shutdown = False  # Shutdown in progress
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
@@ -84,7 +83,6 @@ class HTTPClient(QtCore.QObject):
         # query and disconnect if time is too long between two query
         self._last_query_timestamp = None
         self._max_time_difference_between_queries = None
-
         if network_manager:
             self._network_manager = network_manager
         else:
@@ -169,6 +167,25 @@ class HTTPClient(QtCore.QObject):
         self.createHTTPQuery("POST", "/shutdown", None, showProgress=False)
         self._shutdown = True
 
+    def getNetworkManager(self):
+        """
+        :return: instance of NetworkManager
+        """
+        return self._network_manager
+
+    def setMaxRetryConnection(self, retries):
+        """
+        Sets how many times we need to retry a connection
+        :param retries: integer
+        """
+        self._max_retry_connection = retries
+
+    def getMaxRetryConnection(self):
+        """
+        Returns how many times we need to retry a connection
+        """
+        return self._max_retry_connection
+
     def _notify_progress_start_query(self, query_id, progress_text, response):
         """
         Called when a query start
@@ -192,7 +209,7 @@ class HTTPClient(QtCore.QObject):
         Called when a query upload progress
         """
         if not sip_is_deleted(HTTPClient._progress_callback):
-            HTTPClient._progress_callback.progress_signal.emit(query_id, sent, total)
+            HTTPClient._progress_callback.progress_signal.emit(query_id, str(sent), str(total))
 
     def _notify_progress_download(self, query_id, sent, total):
         """
@@ -201,7 +218,7 @@ class HTTPClient(QtCore.QObject):
         if not sip_is_deleted(HTTPClient._progress_callback):
             # abs() for maxium because sometimes the system send negative
             # values
-            HTTPClient._progress_callback.progress_signal.emit(query_id, sent, abs(total))
+            HTTPClient._progress_callback.progress_signal.emit(query_id, str(sent), str(abs(total)))
 
     @classmethod
     def setProgressCallback(cls, progress_callback):
@@ -329,7 +346,7 @@ class HTTPClient(QtCore.QObject):
             msg = "Cannot connect to {}. Please check if GNS3 is allowed in your antivirus and firewall. And that server version is {}.".format(self.url(), __version__)
         for request, callback in self._query_waiting_connections:
             if callback is not None:
-                callback({"message": msg}, error=True, server=server)
+                callback({"message": msg}, error=True, server=server, connection_error=True)
         self._query_waiting_connections = []
 
     def _retryConnection(self, server=None):
@@ -349,7 +366,7 @@ class HTTPClient(QtCore.QObject):
         """
 
         if error is not False:
-            if self._retry < self.MAX_RETRY_CONNECTION:
+            if self._retry < self.getMaxRetryConnection():
                 self._retryConnection(server=server)
                 return
             for request, callback in self._query_waiting_connections:
@@ -358,7 +375,7 @@ class HTTPClient(QtCore.QObject):
             return
 
         if "version" not in params or "local" not in params:
-            if self._retry < self.MAX_RETRY_CONNECTION:
+            if self._retry < self.getMaxRetryConnection():
                 self._retryConnection(server=server)
                 return
             msg = "The remote server {} is not a GNS3 server".format(self.url())
@@ -737,3 +754,23 @@ class HTTPClient(QtCore.QObject):
         except (OSError, http.client.BadStatusLine, ValueError) as e:
             log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
         return 0, None
+
+    @classmethod
+    def fromUrl(cls, url, network_manager=None, base_settings=None):
+        """
+        Returns HttpClient instance based on the url
+        :param url: Url to parse
+        :param network_manager: Optional network_manager
+        :param base_settings: Source of the settings, if necessary
+        :return: HttpClient
+        """
+        settings = {}
+        if base_settings is not None:
+            settings.update(**base_settings)
+        parse_results = urllib.parse.urlparse(url)
+        settings['protocol'] = parse_results.scheme
+        settings['host'] = parse_results.hostname
+        settings['port'] = parse_results.port
+        settings['user'] = parse_results.username
+        settings['password'] = parse_results.password
+        return cls(settings, network_manager)
