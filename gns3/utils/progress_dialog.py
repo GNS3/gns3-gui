@@ -43,7 +43,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
     :param parent: parent widget
     """
 
-    def __init__(self, worker, title, label_text, cancel_button_text, busy=False, parent=None, delay=0, create_thread=True):
+    def __init__(self, worker, title, label_text, cancel_button_text, busy=False, parent=None, delay=0, create_thread=True, cancelable=False):
 
         if "dev" in __version__:
             assert QtCore.QThread.currentThread() == QtWidgets.QApplication.instance().thread()
@@ -61,7 +61,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
         self.setWindowTitle(title)
         self.canceled.connect(self._canceledSlot)
         self.destroyed.connect(self._cleanup)
-
+        self._cancelable = cancelable
         self._worker = worker
         self._worker.setObjectName(worker.__class__.__name__)
         if create_thread:
@@ -115,6 +115,9 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
     @qslot
     def _canceledSlot(self):
+        if self._cancelable and not self._thread:
+            self._worker.cancel()
+            log.debug("{} worker canceled".format(self._worker.objectName()))
 
         if self._thread:
             self._worker.cancel()
@@ -176,8 +179,8 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
         if stop:
             log.critical("{} thread stopping with an error: {}".format(self._worker.objectName(), message))
-            QtWidgets.QMessageBox.critical(self.parentWidget(), "Error", "{}".format(message))
             self._canceledSlot()
+            QtWidgets.QMessageBox.critical(self.parentWidget(), "Error", "{}".format(message))
         else:
             self._errors.append(message)
             self._cleanup()

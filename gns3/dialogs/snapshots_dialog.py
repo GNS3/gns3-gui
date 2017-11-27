@@ -22,6 +22,8 @@ Dialog to manage the snapshots.
 from ..qt import QtCore, QtWidgets
 from ..ui.snapshots_dialog_ui import Ui_SnapshotsDialog
 from ..controller import Controller
+from ..utils.progress_dialog import ProgressDialog
+from ..utils.create_snapshot_worker import CreateSnapshotWorker
 
 from datetime import datetime
 
@@ -85,14 +87,20 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
         snapshot_name, ok = QtWidgets.QInputDialog.getText(self, "Snapshot", "Snapshot name:", QtWidgets.QLineEdit.Normal, "Unnamed")
         if ok and snapshot_name and self._project:
-            Controller.instance().post("/projects/{}/snapshots".format(self._project.id()), self._createSnapshotsCallback, {"name": snapshot_name}, timeout=300)
+            snapshot_worker = CreateSnapshotWorker(self._project, snapshot_name)
+            snapshot_worker.finished.connect(self._createSnapshotsCallback)
 
-    def _createSnapshotsCallback(self, result, error=False, server=None, context={}, **kwargs):
-        if error:
-            if result:
-                log.error(result["message"])
-            return
+            progress_dialog = ProgressDialog(snapshot_worker, "Snapshot progress", "Creation of snapshot in progress...",
+                                             "Cancel", busy=True, parent=self, create_thread=False, cancelable=True)
+            progress_dialog.show()
+            progress_dialog.exec_()
+
+
+    def _createSnapshotsCallback(self):
         self._listSnapshots()
+
+    def _createSnapshotsErrorCallback(self, message, error):
+        log.error(message)
 
     def _deleteSnapshotSlot(self):
         """
