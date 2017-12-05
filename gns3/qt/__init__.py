@@ -295,7 +295,7 @@ def myQtMsgHandler(msg_type, msg_log_context, msg_string):
         return
     if msg_string.startswith("QXcbConnection"):  # Qt noise not relevant
         return
-    log.info(msg_string)
+    log.debug(msg_string)
 
 
 QtCore.qInstallMessageHandler(myQtMsgHandler)
