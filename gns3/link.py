@@ -105,7 +105,7 @@ class Link(QtCore.QObject):
         self._capturing = result.get("capturing", False)
 
         # If the controller is remote the capture path should be rewrite to something local
-        if Controller.instance().isRemote():
+        if Controller.instance().isRemote() and self._capturing:
             if self._capture_file_path is None and result.get("capture_file_path", None) is not None:
                 self._capture_file = QtCore.QTemporaryFile()
                 self._capture_file.open(QtCore.QFile.WriteOnly)
@@ -358,7 +358,7 @@ class Link(QtCore.QObject):
             if self._capture_file:
                 self._capture_file.close()
                 self._capture_file = None
-            if self._capture_file_path:
+            if self._capture_file_path and os.path.exists(self._capture_file_path):
                 try:
                     os.remove(self._capture_file_path)
                 except OSError as e:
