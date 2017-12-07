@@ -105,23 +105,24 @@ class Link(QtCore.QObject):
         self._capturing = result.get("capturing", False)
 
         # If the controller is remote the capture path should be rewrite to something local
-        if Controller.instance().isRemote() and self._capturing:
-            if self._capture_file_path is None and result.get("capture_file_path", None) is not None:
-                self._capture_file = QtCore.QTemporaryFile()
-                self._capture_file.open(QtCore.QFile.WriteOnly)
-                self._capture_file.setAutoRemove(True)
-                self._capture_file_path = self._capture_file.fileName()
-                Controller.instance().get(
-                    "/projects/{project_id}/links/{link_id}/pcap".format(
-                        project_id=self.project().id(),
-                        link_id=self._link_id),
-                    None,
-                    showProgress=False,
-                    downloadProgressCallback=self._downloadPcapProgress,
-                    ignoreErrors=True,  # If something is wrong avoid disconnect us from server
-                    timeout=None)
-        else:
-            self._capture_file_path = result["capture_file_path"]
+        if self._capturing:
+            if Controller.instance().isRemote():
+                if self._capture_file_path is None and result.get("capture_file_path", None) is not None:
+                    self._capture_file = QtCore.QTemporaryFile()
+                    self._capture_file.open(QtCore.QFile.WriteOnly)
+                    self._capture_file.setAutoRemove(True)
+                    self._capture_file_path = self._capture_file.fileName()
+                    Controller.instance().get(
+                        "/projects/{project_id}/links/{link_id}/pcap".format(
+                            project_id=self.project().id(),
+                            link_id=self._link_id),
+                        None,
+                        showProgress=False,
+                        downloadProgressCallback=self._downloadPcapProgress,
+                        ignoreErrors=True,  # If something is wrong avoid disconnect us from server
+                        timeout=None)
+            else:
+                self._capture_file_path = result["capture_file_path"]
 
         if "nodes" in result:
             self._nodes = result["nodes"]
