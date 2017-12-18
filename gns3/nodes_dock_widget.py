@@ -27,8 +27,10 @@ class NodesDockWidget(QtWidgets.QDockWidget):
         self._settings = LocalConfig.instance().loadSectionSettings("NodesView", NODES_VIEW_SETTINGS)
 
     def _filterTextChangedSlot(self, text):
-        self.window().uiNodesView.setCurrentSearch(text)
-        self.window().uiNodesView.refresh()
+        # probably RC
+        if hasattr(self.window(), 'uiNodesView'):
+            self.window().uiNodesView.setCurrentSearch(text)
+            self.window().uiNodesView.refresh()
 
     def _filterIndexChangedSlot(self, index):
         self._settings["nodes_view_filter"] = index
