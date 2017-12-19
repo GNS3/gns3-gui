@@ -206,6 +206,7 @@ class NodesView(QtWidgets.QTreeWidget):
         # We can not edit stuff like EthernetSwitch
         # or without config template like VPCS
         if not node["builtin"] and hasattr(module, "vmConfigurationPage"):
+            vm = None
             for vm_key, vm in module.instance().VMs().items():
                 if vm["name"] == node["name"]:
                     break
