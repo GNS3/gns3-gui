@@ -145,7 +145,19 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         return svg
 
     def fromSvg(self, svg):
-        svg = ET.fromstring(svg)
+
+        # sometimes we receive \0 at the end of string inside <svg> element
+        try:
+            svg = svg.replace("\u0000", "")
+        except AttributeError:
+            pass
+
+        try:
+            svg = ET.fromstring(svg)
+        except ET.ParseError:
+            self.setPlainText("Unable to parse `text_item`")
+            return
+
         text = svg[0]
 
         font = QtGui.QFont()
