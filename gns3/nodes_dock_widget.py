@@ -27,42 +27,37 @@ class NodesDockWidget(QtWidgets.QDockWidget):
         self._settings = LocalConfig.instance().loadSectionSettings("NodesView", NODES_VIEW_SETTINGS)
 
     def _filterTextChangedSlot(self, text):
-        # probably RC
-        if hasattr(self.window(), 'uiNodesView'):
-            self.window().uiNodesView.setCurrentSearch(text)
-            self.window().uiNodesView.refresh()
+        self.parent().uiNodesView.setCurrentSearch(text)
+        self.parent().uiNodesView.refresh()
 
     def _filterIndexChangedSlot(self, index):
         self._settings["nodes_view_filter"] = index
         LocalConfig.instance().saveSectionSettings("NodesView", self._settings)
 
         if index == 0:
-            self.window().uiNodesView.setShowInstalledAppliances(True)
-            self.window().uiNodesView.setShowBuiltinAvailableAppliances(True)
-            self.window().uiNodesView.setShowMyAvailableAppliances(True)
+            self.parent().uiNodesView.setShowInstalledAppliances(True)
+            self.parent().uiNodesView.setShowBuiltinAvailableAppliances(True)
+            self.parent().uiNodesView.setShowMyAvailableAppliances(True)
         elif index == 1:
-            self.window().uiNodesView.setShowInstalledAppliances(True)
-            self.window().uiNodesView.setShowBuiltinAvailableAppliances(False)
-            self.window().uiNodesView.setShowMyAvailableAppliances(False)
+            self.parent().uiNodesView.setShowInstalledAppliances(True)
+            self.parent().uiNodesView.setShowBuiltinAvailableAppliances(False)
+            self.parent().uiNodesView.setShowMyAvailableAppliances(False)
         elif index == 2:
-            self.window().uiNodesView.setShowInstalledAppliances(False)
-            self.window().uiNodesView.setShowBuiltinAvailableAppliances(True)
-            self.window().uiNodesView.setShowMyAvailableAppliances(True)
+            self.parent().uiNodesView.setShowInstalledAppliances(False)
+            self.parent().uiNodesView.setShowBuiltinAvailableAppliances(True)
+            self.parent().uiNodesView.setShowMyAvailableAppliances(True)
         else:
-            self.window().uiNodesView.setShowInstalledAppliances(False)
-            self.window().uiNodesView.setShowBuiltinAvailableAppliances(False)
-            self.window().uiNodesView.setShowMyAvailableAppliances(True)
-        self.window().uiNodesView.refresh()
+            self.parent().uiNodesView.setShowInstalledAppliances(False)
+            self.parent().uiNodesView.setShowBuiltinAvailableAppliances(False)
+            self.parent().uiNodesView.setShowMyAvailableAppliances(True)
+        self.parent().uiNodesView.refresh()
 
     def populateNodesView(self, category):
-        # it's common race condition that uiNodesFilterComboBox that doesn't exist
-        # ref. https://github.com/GNS3/gns3-gui/issues/2304
-        if hasattr(self.window(), 'uiNodesFilterComboBox'):
-            if self.window().uiNodesFilterComboBox.currentIndex() != self._settings["nodes_view_filter"]:
-                self.window().uiNodesFilterComboBox.setCurrentIndex(self._settings["nodes_view_filter"])
-                self._filterIndexChangedSlot(self._settings["nodes_view_filter"])
-            self.window().uiNodesFilterComboBox.activated.connect(self._filterIndexChangedSlot)
-            self.window().uiNodesFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
-            self.window().uiNodesView.clear()
-            text = self.window().uiNodesFilterLineEdit.text().strip().lower()
-            self.window().uiNodesView.populateNodesView(category, text)
+        if self.parent().uiNodesFilterComboBox.currentIndex() != self._settings["nodes_view_filter"]:
+            self.parent().uiNodesFilterComboBox.setCurrentIndex(self._settings["nodes_view_filter"])
+            self._filterIndexChangedSlot(self._settings["nodes_view_filter"])
+        self.parent().uiNodesFilterComboBox.activated.connect(self._filterIndexChangedSlot)
+        self.parent().uiNodesFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
+        self.parent().uiNodesView.clear()
+        text = self.parent().uiNodesFilterLineEdit.text().strip().lower()
+        self.parent().uiNodesView.populateNodesView(category, text)
