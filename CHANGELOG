@@ -1,5 +1,36 @@
 # Change Log
 
+## 2.1.1 22/12/2017
+
+* Fix dragging appliance into topology from nodes window, fixes: #2363
+* Fix Appliances in Docked mode, fixes: #2362
+* Create local variable in order to debug issue in the next occurrence, #2366
+* Fix ParseError: not well-formed (invalid token), #2364
+* Fix local variable 'vm' referenced before assignment #2365
+* Fix: 'NodesDockWidget' object has no attribute 'uiNodesView', #2362
+* Tentative fix for packet capture not working correctly when remote main server is configured. Ref #2111.
+* Log Qt messages with log.debug() instead of log.info().
+* Fix auto idle-pc from preferences. Fixes #2344.
+* Snapshoting project without timeout but with  button. Ref. #2314
+* Improve validation for idle-pc.
+* Activate faulthandler.
+* Add PATH to OS X console commands
+* Use raw triple quotes in large console settings This eliminates one level of quoting
+* Fix issue in node summary when console is not supported by a node.
+* Remove unused symbols. Fixes #2320.
+* Show console information in Topology Summary Dock. Fixes #2258.
+* New option: require KVM. If false, Qemu VMs will not be prevented to run without KVM.
+* Implement variable replacement for Qemu VM options.
+* Show on what server a node is installed in the servers summary pane. Fixes #2279.
+* Add more info when cannot remove capture file after stopping packet capture in a remote project. Ref #1223.
+* Do not overwrites the disk images when copied to default directory. Fixes #2326.
+* Only replace quoted telnet for macOS Telnet commands. Ref #2328.
+* Support Telnet path containing spaces. Ref #2328.
+* Fix problem when embedded telnet client path contains a space on macOS. Ref #2328.
+* Do not launch console for builtin nodes when using the "Console to all nodes" button. Fixes #2309.
+* Update frame_relay_switch_configuration_page_ui.py
+* Turn off timeout for node creation
+
 ## 2.1.0 09/11/2017
 
 * Update dynamips binary on OSX
