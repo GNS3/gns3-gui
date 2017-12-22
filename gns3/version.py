@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__version__ = "2.1.1"
+__version__ = "2.1.2dev1"
 __version_info__ = (2, 1, 1, 0)
 
 # If it's a git checkout try to add the commit
