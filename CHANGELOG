@@ -4,7 +4,7 @@
 
 * Update VMware promotion in setup wizard.
 * Confirm exit. Fixes #2359.
-* Development on v2.1.2dev1
+* Fix with .exe build
 
 ## 2.1.1 22/12/2017
 
