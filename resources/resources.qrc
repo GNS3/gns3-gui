@@ -234,8 +234,8 @@
         <file>charcoal_icons/preferences-hover.svg</file>
         <file>charcoal_icons/quit.svg</file>
         <file>charcoal_icons/quit-hover.svg</file>
-        <file>images/vmware_fusion_banner.jpg</file>
-        <file>images/vmware_workstation_banner.jpg</file>
+        <file>images/vmware_fusion_banner.png</file>
+        <file>images/vmware_workstation_banner.png</file>
         <file>styles/charcoal.css</file>
     </qresource>
 </RCC>

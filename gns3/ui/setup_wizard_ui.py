@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/setup_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/setup_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.8
+# Created by: PyQt5 UI code generator 5.9.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_SetupWizard(object):
-
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName("SetupWizard")
         SetupWizard.resize(754, 526)
@@ -140,7 +138,7 @@ class Ui_SetupWizard(object):
         self.uiVMwareBannerButton = QtWidgets.QPushButton(self.uiVMWizardPage)
         self.uiVMwareBannerButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/images/vmware_fusion_banner.jpg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/images/vmware_fusion_banner.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.uiVMwareBannerButton.setIcon(icon)
         self.uiVMwareBannerButton.setIconSize(QtCore.QSize(454, 150))
         self.uiVMwareBannerButton.setFlat(True)

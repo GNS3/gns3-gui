@@ -305,7 +305,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normalon>:/images/vmware_fusion_banner.jpg</normalon>
+          <normalon>:/images/vmware_fusion_banner.png</normalon>
          </iconset>
         </property>
         <property name="iconSize">
