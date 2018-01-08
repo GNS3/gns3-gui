@@ -1050,6 +1050,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param event: QCloseEvent
         """
 
+        if Topology.instance().project():
+            reply = QtWidgets.QMessageBox.question(self, "Confirm Exit", "Are you sure you want to exit GNS3?",
+                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
+                event.ignore()
+                return
+
         progress = Progress.instance()
         progress.setAllowCancelQuery(True)
         progress.setCancelButtonText("Force quit")
