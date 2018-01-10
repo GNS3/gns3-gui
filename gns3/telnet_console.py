@@ -70,7 +70,7 @@ class ConsoleThread(QtCore.QThread):
         # replace the place-holders by the actual values
         command = self._command.replace("%h", host)
         command = command.replace("%p", str(port))
-        command = command.replace("%d", self._name)
+        command = command.replace("%d", self._name.replace('"', '\\"'))
         command = command.replace("%i", self._node.project().id())
         command = command.replace("%n", str(self._node.id()))
         command = command.replace("%c", Controller.instance().httpClient().fullUrl())
