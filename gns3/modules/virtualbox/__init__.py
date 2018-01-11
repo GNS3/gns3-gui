@@ -23,12 +23,10 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtWidgets
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 
 from ..module import Module
-from ..module_error import ModuleError
 from .virtualbox_vm import VirtualBoxVM
 from .settings import VBOX_SETTINGS
 from .settings import VBOX_VM_SETTINGS
@@ -78,7 +76,8 @@ class VirtualBox(Module):
             vboxmanage_path_osx = "/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
             if os.path.exists(vboxmanage_path_osx):
                 vboxmanage_path = vboxmanage_path_osx
-        else:
+
+        if vboxmanage_path is None:
             vboxmanage_path = shutil.which("vboxmanage")
 
         if vboxmanage_path is None:
