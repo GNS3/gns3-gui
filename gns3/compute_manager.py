@@ -84,6 +84,7 @@ class ComputeManager(QtCore.QObject):
         Called when we received data from a compute
         node.
         """
+
         self._last_computes_refresh = datetime.datetime.now().timestamp()
 
         new_node = False
