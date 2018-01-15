@@ -55,7 +55,7 @@ class ComputeManager(QtCore.QObject):
     def _refreshComputesSlot(self):
         if self._refreshingComputes:
             return
-        if self._controller.connected() and datetime.datetime.now().timestamp() - self._last_computes_refresh > 5:
+        if self._controller.connected() and datetime.datetime.now().timestamp() - self._last_computes_refresh > 1:
             self._last_computes_refresh = datetime.datetime.now().timestamp()
             self._refreshingComputes = True
             self._controller.get("/computes", self._listComputesCallback, showProgress=False, timeout=30)
