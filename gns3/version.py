@@ -15,9 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# __version__ is a human-readable version number.
 
-__version__ = "2.1.3dev1"
-__version_info__ = (2, 1, 2, 0)
+# __version_info__ is a four-tuple for programmatic comparison. The first
+# three numbers are the components of the version number. The fourth
+# is zero for an official release, positive for a development branch,
+# or negative for a release candidate or beta (after the base version
+# number has been incremented)
+
+__version__ = "2.1.3dev2"
+__version_info__ = (2, 1, 3, 99)
 
 # If it's a git checkout try to add the commit
 if "dev" in __version__:
