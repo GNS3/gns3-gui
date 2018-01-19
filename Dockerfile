@@ -1,5 +1,5 @@
 # Run tests inside a container
-FROM ubuntu:yakkety
+FROM ubuntu:16.04
 
 MAINTAINER GNS3 Team
 
