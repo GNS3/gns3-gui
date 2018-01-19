@@ -1,5 +1,5 @@
 # Run tests inside a container
-FROM ubuntu:16.04
+FROM ubuntu:17.10
 
 MAINTAINER GNS3 Team
 
