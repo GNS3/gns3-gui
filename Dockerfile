@@ -19,4 +19,4 @@ ADD . /src
 
 WORKDIR /src
 
-CMD xvfb-run python3.5 -m pytest -vv
+CMD xvfb-run python3.6 -m pytest -vv
