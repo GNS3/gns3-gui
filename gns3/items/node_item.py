@@ -60,7 +60,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self._node_label = None
 
         self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
-        self.setZValue(self._node.z())
 
         # Temporary symbol during loading
         renderer = QImageSvgRenderer(":/icons/reload.svg")
@@ -79,6 +78,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable)
         self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
+
+        # update z value and set proper flags - not movable in case z < 0
+        self.setZValue(self._node.z())
 
         # connect signals to know about some events
         # e.g. when the node has been started, stopped or suspended etc.
@@ -376,6 +378,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             self._node_label.setPlainText(label_data["text"])
         self._node_label.setStyle(label_data.get("style", ""))
         self._node_label.setRotation(label_data.get("rotation", 0))
+
+        if self._node.z() < 0:
+            self._node_label.setFlag(self.ItemIsSelectable, False)
+            self._node_label.setFlag(self.ItemIsMovable, False)
+
         if label_data["x"] is None:
             self._centerLabel()
             self.updateNode()
