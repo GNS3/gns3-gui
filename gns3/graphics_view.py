@@ -1499,9 +1499,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         pos = self.mapToScene(pos)
         return ApplianceManager().instance().createNodeFromApplianceId(self._topology.project(), appliance_id, pos.x(), pos.y())
 
-    def createNodeItem(self, node, symbol, x, y):
+    def createNodeItem(self, node, symbol, x, y, z):
         node.setSymbol(symbol)
-        node.setPos(x, y)
+        node.setPos(x, y, z)
         node_item = NodeItem(node)
 
         self.scene().addItem(node_item)

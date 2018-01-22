@@ -36,11 +36,9 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
     """
 
     def __init__(self, svg=None, **kws):
-
         super().__init__(**kws)
 
         from ..main_window import MainWindow
-
         main_window = MainWindow.instance()
         view_settings = main_window.uiGraphicsView.settings()
         qt_font = QtGui.QFont()
@@ -53,6 +51,10 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
                 svg = self.fromSvg(svg)
             except ET.ParseError as e:
                 log.warning(str(e))
+
+        # re-evaluate `z` position after creation
+        if 'z' in kws.keys():
+            self.setZValue(kws['z'])
 
         if self._id is None:
             self.create()

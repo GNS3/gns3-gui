@@ -35,7 +35,7 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
         self._image_path = image_path
         # Because we call the Qt C++ code we need to handle the case of pos is None otherwise we will get a conversion error
         if pos:
-            super().__init__(pos=pos, **kws)
+            super().__init__(pos=pos,**kws)
         else:
             super().__init__(**kws)
 
@@ -51,6 +51,9 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
 
         if svg:
             svg = self.fromSvg(svg)
+
+        if 'z' in kws.keys():
+            self.setZValue(kws['z'])
 
     def paint(self, painter, option, widget=None):
         """
