@@ -65,6 +65,8 @@ log = logging.getLogger(__name__)
 
 
 class GraphicsView(QtWidgets.QGraphicsView):
+    LOCKED_LAYER = -1
+    UNLOCKED_LAYER = 0
 
     """
     Graphics view that displays the scene.
@@ -846,6 +848,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
             reset_label_position_action.triggered.connect(self.resetLabelPositionActionSlot)
             menu.addAction(reset_label_position_action)
 
+        if True in list(map(lambda item: item.parentItem() is None and hasattr(item, 'zValue') and item.zValue() >= 0, items)):
+            # Action: Lock item
+            lock_item_action = QtWidgets.QAction("Lock item", menu)
+            lock_item_action.setIcon(QtGui.QIcon(':/icons/lock.svg'))
+            lock_item_action.triggered.connect(self.lockItemActionSlot)
+            menu.addAction(lock_item_action)
+
+        if True in list(map(lambda item: item.parentItem() is None and hasattr(item, 'zValue') and item.zValue() < 0, items)):
+            # Action: Unlock item
+            unlock_item_action = QtWidgets.QAction("Unlock item", menu)
+            unlock_item_action.setIcon(QtGui.QIcon(':/icons/unlock.svg'))
+            unlock_item_action.triggered.connect(self.unlockItemActionSlot)
+            menu.addAction(unlock_item_action)
+
         # item must have no parent
         if True in list(map(lambda item: item.parentItem() is None, items)):
 
@@ -1471,6 +1487,23 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         self.scene().clearSelection()
         self.toggleUiDeviceMenu()
+
+
+    def lockItemActionSlot(self):
+        """
+        Slot to receive events from locking items in the contextual menu.
+        """
+        for item in self.scene().selectedItems():
+            if item.zValue() >= 0:
+                item.setZValue(self.LOCKED_LAYER)
+
+    def unlockItemActionSlot(self):
+        """
+        Slot to receive events from unlocking items in the contextual menu.
+        """
+        for item in self.scene().selectedItems():
+            if item.zValue() < 0:
+                item.setZValue(self.UNLOCKED_LAYER)
 
     def allocateCompute(self, node_data, module_instance):
         """
