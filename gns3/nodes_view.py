@@ -138,6 +138,15 @@ class NodesView(QtWidgets.QTreeWidget):
         if not sip.isdeleted(item):
             item.setIcon(0, icon)
 
+    def _getMainWindow(self):
+        from .main_window import MainWindow
+        window = self.window()
+        # when we're docked in main window
+        if isinstance(window, MainWindow):
+            return window
+        # when we're in docked mode, outside main window
+        return self.window().parent()
+
     def mousePressEvent(self, event):
         """
         Handles all mouse press events.
@@ -169,7 +178,7 @@ class NodesView(QtWidgets.QTreeWidget):
                 f = tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False)
                 json.dump(item.data(0, QtCore.Qt.UserRole), f)
                 f.close()
-                self.window().loadPath(f.name)
+                self._getMainWindow().loadPath(f.name)
                 return
 
             icon = item.icon(0)
@@ -206,6 +215,7 @@ class NodesView(QtWidgets.QTreeWidget):
         # We can not edit stuff like EthernetSwitch
         # or without config template like VPCS
         if not node["builtin"] and hasattr(module, "vmConfigurationPage"):
+            vm = None
             for vm_key, vm in module.instance().VMs().items():
                 if vm["name"] == node["name"]:
                     break

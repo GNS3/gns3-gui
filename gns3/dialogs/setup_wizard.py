@@ -86,9 +86,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
 
         if sys.platform.startswith("darwin"):
-            self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_fusion_banner.jpg"))
+            self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_fusion_banner.png"))
         else:
-            self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_workstation_banner.jpg"))
+            self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_workstation_banner.png"))
 
         if sys.platform.startswith("linux"):
             self.uiVMRadioButton.setText("Run the topologies in an isolated and standard VM")
@@ -116,9 +116,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
     def _VMwareBannerButtonClickedSlot(self):
         if sys.platform.startswith("darwin"):
-            url = "http://send.onenetworkdirect.net/z/616461/CD225091/"
+            url = "http://send.onenetworkdirect.net/z/621394/CD225091/"
         else:
-            url = "http://send.onenetworkdirect.net/z/616460/CD225091/"
+            url = "http://send.onenetworkdirect.net/z/616207/CD225091/"
         QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
 
     def _listVMwareVMsSlot(self):

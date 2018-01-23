@@ -95,13 +95,14 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
     def checkAVGInstalled(self):
         """Checking if AVG software is not installed"""
 
-        for proc in psutil.process_iter():
-            try:
-                psinfo = proc.as_dict(["exe"])
-                if psinfo["exe"] and "AVG\\" in psinfo["exe"]:
-                    return (2, "AVG has known issues with GNS3, even after you disable it. You must whitelist dynamips.exe in the AVG preferences.")
-            except psutil.NoSuchProcess:
-                pass
+        if sys.platform.startswith("win32"):
+            for proc in psutil.process_iter():
+                try:
+                    psinfo = proc.as_dict(["exe"])
+                    if psinfo["exe"] and "AVG\\" in psinfo["exe"]:
+                        return (2, "AVG has known issues with GNS3, even after you disable it. You must whitelist dynamips.exe in the AVG preferences.")
+                except psutil.NoSuchProcess:
+                    pass
         return (0, None)
 
     def checkFreeRam(self):
