@@ -54,6 +54,10 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
             except ET.ParseError as e:
                 log.warning(str(e))
 
+        # re-evaluate `z` position after creation
+        if 'z' in kws.keys():
+            self.setZValue(kws['z'])
+
         if self._id is None:
             self.create()
 

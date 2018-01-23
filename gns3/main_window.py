@@ -341,8 +341,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.items():
-            if not isinstance(item, LinkItem) and item.zValue() >= 0:
-                item.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, not self.uiLockAllAction.isChecked())
+            if not isinstance(item, LinkItem):
+                if self.uiLockAllAction.isChecked():
+                    item.setZValue(self.uiGraphicsView.LOCKED_LAYER)
+                else:
+                    item.setZValue(self.uiGraphicsView.UNLOCKED_LAYER)
 
     def analyticsClient(self):
         """

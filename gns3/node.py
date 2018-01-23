@@ -116,9 +116,11 @@ class Node(BaseNode):
     def symbol(self):
         return self._settings["symbol"]
 
-    def setPos(self, x, y):
+    def setPos(self, x, y, z=None):
         self._settings["x"] = int(x)
         self._settings["y"] = int(y)
+        if z is not None:
+            self._settings["z"] = int(z)
 
     def x(self):
         return self._settings["x"]

@@ -65,12 +65,14 @@ log = logging.getLogger(__name__)
 
 
 class GraphicsView(QtWidgets.QGraphicsView):
-
     """
     Graphics view that displays the scene.
 
     :param parent: parent widget
     """
+
+    LOCKED_LAYER = -1
+    UNLOCKED_LAYER = 0
 
     def __init__(self, parent):
 
@@ -1484,10 +1486,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if not isinstance(item, LinkItem) and item.zValue() >= 0:
-                item.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, not item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable)
-                for child in item.childItems():
-                    child.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, not child.flags() & QtWidgets.QGraphicsItem.ItemIsMovable)
+            if not isinstance(item, LinkItem):
+                if item.zValue() >= 0:
+                    item.setZValue(self.LOCKED_LAYER)
+                else:
+                    item.setZValue(self.UNLOCKED_LAYER)
 
     def deleteActionSlot(self):
         """
@@ -1545,9 +1548,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         pos = self.mapToScene(pos)
         return ApplianceManager().instance().createNodeFromApplianceId(self._topology.project(), appliance_id, pos.x(), pos.y())
 
-    def createNodeItem(self, node, symbol, x, y):
+    def createNodeItem(self, node, symbol, x, y, z):
         node.setSymbol(symbol)
-        node.setPos(x, y)
+        node.setPos(x, y, z)
         node_item = NodeItem(node)
 
         self.scene().addItem(node_item)

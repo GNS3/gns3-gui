@@ -45,8 +45,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
         qt_font.fromString(view_settings["default_label_font"])
         self.setDefaultTextColor(QtGui.QColor(view_settings["default_label_color"]))
         self.setFont(qt_font)
-        self.setFlag(self.ItemIsMovable)
-        self.setFlag(self.ItemIsSelectable)
+        self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsSelectable)
         self.setZValue(2)
         self._editable = True
 
@@ -183,10 +182,8 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
 
         super().setZValue(value)
         if self.zValue() < 0:
-            self.setFlag(self.ItemIsSelectable, False)
             self.setFlag(self.ItemIsMovable, False)
         else:
-            self.setFlag(self.ItemIsSelectable, True)
             self.setFlag(self.ItemIsMovable, True)
 
     def setStyle(self, styles):

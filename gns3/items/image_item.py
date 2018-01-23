@@ -52,6 +52,9 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
         if svg:
             svg = self.fromSvg(svg)
 
+        if 'z' in kws.keys():
+            self.setZValue(kws['z'])
+
     def paint(self, painter, option, widget=None):
         """
         Paints the contents of an item in local coordinates.
