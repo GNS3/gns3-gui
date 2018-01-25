@@ -85,6 +85,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     QtWidgets.QMessageBox.warning(self.parent(), "Can't copy {} to {}".format(path, destination), str(e))
 
         self.uiServerWizardPage.isComplete = self._uiServerWizardPage_isComplete
+        self.allowCustomFiles.clicked.connect(self._allowCustomFilesChangedSlot)
+
 
     def initializePage(self, page_id):
         """
@@ -327,7 +329,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         for version in self._appliance["versions"]:
             for image in version["images"].values():
-                img = self._registry.search_image_file(self._appliance.emulator(), image["filename"], image.get("md5sum"), image.get("filesize"))
+                img = self._registry.search_image_file(
+                    self._appliance.emulator(), image["filename"], image.get("md5sum"), image.get("filesize"),
+                    strict_md5_check=not self.allowCustomFiles.isChecked()
+                )
                 if img:
                     image["status"] = "Found"
                     image["md5sum"] = img.md5sum
@@ -413,9 +418,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return
 
         image = Image(self._appliance.emulator(), path, filename=disk["filename"])
+        disallow_custom_images = not self.allowCustomFiles.isChecked()
+
         try:
-            if "md5sum" in disk and image.md5sum != disk["md5sum"]:
-                QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}.".format(image.md5sum, disk["md5sum"]))
+            if disallow_custom_images and ("md5sum" in disk and image.md5sum != disk["md5sum"]):
+                QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}.".format(image.md5sum, disk["md5sum"]))
                 return
         except OSError as e:
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Can't access to the image file {}: {}.".format(path, str(e)))
@@ -623,3 +630,23 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if checked:
             self.uiRemoteServersGroupBox.setEnabled(False)
             self.uiRemoteServersGroupBox.hide()
+
+    @qslot
+    def _allowCustomFilesChangedSlot(self, checked):
+        """
+        Slot for when user want to upload images which don't match md5
+
+        :param checked: if allows or doesn't allow custom files
+        :return:
+        """
+        if checked:
+            are_you_sure = QtWidgets.QMessageBox.question(
+                self, "Custom files",
+                "This option allows files with custom MD5 checksum. This feature is only for advance users and can lead "
+                "to serious unexpected problems. Are you sure you would like to enable it?",
+                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
+            )
+
+            if are_you_sure == QtWidgets.QMessageBox.No:
+                self.allowCustomFiles.setChecked(False)
+                return False

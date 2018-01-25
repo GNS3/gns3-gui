@@ -67,7 +67,7 @@ class Registry(QtCore.QObject):
             self._remote_images.append(image)
         self.image_list_changed_signal.emit()
 
-    def search_image_file(self, emulator, filename, md5sum, size):
+    def search_image_file(self, emulator, filename, md5sum, size, strict_md5_check=True):
         """
         Search an image based on its MD5 checksum
 
@@ -75,13 +75,15 @@ class Registry(QtCore.QObject):
         :param filename: Image filename (used for ova in order to return the correct file in the archive)
         :param md5sum: Hash of the image
         :param size: File size
+        :param strict_md5_check: If `True` then performs MD5 checksum checks, otherwise ignores them
         :returns: Image object or None
         """
 
         for remote_image in list(self._remote_images):
+            print(filename, remote_image.filename)
             if remote_image.md5sum == md5sum:
                 return remote_image
-            elif md5sum is None:  # We create a new version
+            elif md5sum is None or strict_md5_check is False:  # We create a new version or allow custom files
                 if filename == remote_image.filename:
                     return remote_image
 
@@ -93,7 +95,7 @@ class Registry(QtCore.QObject):
                         path = os.path.join(directory, file)
                         try:
                             if os.path.isfile(path):
-                                if md5sum is None:
+                                if md5sum is None or strict_md5_check is False:
                                     if filename == os.path.basename(path):
                                         return Image(emulator, path)
                                 else:
