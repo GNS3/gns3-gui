@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/appliance_wizard.ui'
+# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui-2.2/gns3/ui/appliance_wizard.ui'
 #
-# Created: Tue Mar  7 08:40:14 2017
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -174,6 +173,10 @@ class Ui_ApplianceWizard(object):
         self.horizontalLayout.addWidget(self.uiDownloadPushButton)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
+        self.allowCustomFiles = QtWidgets.QCheckBox(self.uiFilesWizardPage)
+        self.allowCustomFiles.setToolTip("")
+        self.allowCustomFiles.setObjectName("allowCustomFiles")
+        self.horizontalLayout.addWidget(self.allowCustomFiles)
         self.uiCreateVersionPushButton = QtWidgets.QPushButton(self.uiFilesWizardPage)
         self.uiCreateVersionPushButton.setObjectName("uiCreateVersionPushButton")
         self.horizontalLayout.addWidget(self.uiCreateVersionPushButton)
@@ -288,6 +291,7 @@ class Ui_ApplianceWizard(object):
         self.uiExplainDownloadLabel.setText(_translate("ApplianceWizard", "Click on a the download button to access to a location where you can download the file."))
         self.uiImportPushButton.setText(_translate("ApplianceWizard", "&Import"))
         self.uiDownloadPushButton.setText(_translate("ApplianceWizard", "&Download"))
+        self.allowCustomFiles.setText(_translate("ApplianceWizard", "Allow custom files"))
         self.uiCreateVersionPushButton.setText(_translate("ApplianceWizard", "Create a new version"))
         self.uiRefreshPushButton.setText(_translate("ApplianceWizard", "Refresh"))
         self.uiQemuWizardPage.setTitle(_translate("ApplianceWizard", "Qemu settings"))
@@ -317,7 +321,7 @@ class Ui_ApplianceWizard(object):
         self.uiUsageTextEdit.setHtml(_translate("ApplianceWizard", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The default username/password is admin/admin. A default configuration is present.</p></body></html>"))
+"</style></head><body style=\" font-family:\'Noto Sans\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">The default username/password is admin/admin. A default configuration is present.</span></p></body></html>"))
 
 from . import resources_rc
