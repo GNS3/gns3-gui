@@ -80,7 +80,6 @@ class Registry(QtCore.QObject):
         """
 
         for remote_image in list(self._remote_images):
-            print(filename, remote_image.filename)
             if remote_image.md5sum == md5sum:
                 return remote_image
             elif md5sum is None or strict_md5_check is False:  # We create a new version or allow custom files
