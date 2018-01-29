@@ -278,7 +278,7 @@ class Config:
 
     def _set_symbol(self, symbol):
         """
-        Download symbol for the web if need
+        Download symbol from the web if needed
         """
 
         # GNS3 builtin symbol
