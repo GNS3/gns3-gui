@@ -237,13 +237,9 @@ class Controller(QtCore.QObject):
         if not self._http_client:
             return
 
-        m = hashlib.md5()
-        m.update(url.encode())
-        if ".svg" in url:
-            extension = ".svg"
-        else:
-            extension = ".png"
-        path = os.path.join(self._cache_directory, m.hexdigest() + extension)
+
+        path = self.getStaticCachedPath(url)
+
         if os.path.exists(path):
             callback(path)
         elif path in self._static_asset_download_queue:
@@ -278,6 +274,21 @@ class Controller(QtCore.QObject):
             callback(path)
         del self._static_asset_download_queue[path]
 
+    def getStaticCachedPath(self, url):
+        """
+        Returns static cached (hashed) path
+        :param url:
+        :return:
+        """
+        m = hashlib.md5()
+        m.update(url.encode())
+        if ".svg" in url:
+            extension = ".svg"
+        else:
+            extension = ".png"
+        path = os.path.join(self._cache_directory, m.hexdigest() + extension)
+        return path
+
     def getSymbolIcon(self, symbol_id, callback, fallback=None):
         """
         Get a QIcon for a symbol from the controller
@@ -297,6 +308,9 @@ class Controller(QtCore.QObject):
         icon = QtGui.QIcon()
         icon.addFile(path)
         callback(icon)
+
+    def getSymbols(self, callback):
+        self.get('/symbols', callback=callback)
 
     def deleteProject(self, project_id, callback=None):
         Controller.instance().delete("/projects/{}".format(project_id), qpartial(self._deleteProjectCallback, callback=callback, project_id=project_id))
