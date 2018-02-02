@@ -98,7 +98,7 @@ class Config:
                 return False
         return True
 
-    def add_appliance(self, appliance_config, server, controller_symbols):
+    def add_appliance(self, appliance_config, server, controller_symbols=None):
         """
         Add appliance to the user configuration
 
@@ -107,6 +107,9 @@ class Config:
         :param controller_symbols: Symbols located on controller
         """
 
+        if controller_symbols is None:
+            controller_symbols = []
+            
         new_config = {
             "server": server,
             "name": appliance_config["name"]
