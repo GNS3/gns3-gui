@@ -21,6 +21,7 @@ import json
 import os
 import urllib
 import shutil
+from ssl import CertificateError
 
 from gns3.controller import Controller
 from ..local_config import LocalConfig
@@ -109,7 +110,7 @@ class Config:
 
         if controller_symbols is None:
             controller_symbols = []
-            
+
         new_config = {
             "server": server,
             "name": appliance_config["name"]
@@ -313,7 +314,7 @@ class Config:
         try:
             urllib.request.urlretrieve(url, path)
             return os.path.basename(path)
-        except OSError:
+        except (OSError, CertificateError):
             return None
 
     def _relative_image_path(self, image_dir_type, path):
