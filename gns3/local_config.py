@@ -265,11 +265,13 @@ class LocalConfig(QtCore.QObject):
         if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("2.0.0"):
             if "IOU" in self._settings and "iourc_path" in self._settings["IOU"] and "iourc_content" not in self._settings["IOU"]:
                 try:
-                    with open(self._settings["IOU"]["iourc_path"], "r") as f:
+                    with open(self._settings["IOU"]["iourc_path"], "r", encoding="utf-8") as f:
                         self._settings["IOU"]["iourc_content"] = f.read().replace("\r\n", "\n")
                         del self._settings["IOU"]["iourc_path"]
                 except OSError as e:
-                    log.warn("Can't import IOU licence {}: {}".format(self._settings["IOU"]["iourc_path"], str(e)))
+                    log.warning("Can't import IOU licence {}: {}".format(self._settings["IOU"]["iourc_path"], str(e)))
+                except UnicodeDecodeError as e:
+                    log.warning("Non ascii characters in iourc file {}, please remove them: {}".format(self._settings["IOU"]["iourc_path"], str(e)))
 
     def _readConfig(self, config_path):
         """

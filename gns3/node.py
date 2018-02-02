@@ -355,7 +355,6 @@ class Node(BaseNode):
             return False
 
         result = self._parseResponse(result)
-        self._created = True
         self._createCallback(result)
 
         if self._loading:
