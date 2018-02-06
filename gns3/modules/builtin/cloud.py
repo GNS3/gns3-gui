@@ -58,18 +58,19 @@ class Cloud(Node):
         if "interfaces" in result:
             self._interfaces = result["interfaces"].copy()
 
-    def update(self, new_settings):
+    def update(self, new_settings, force=False):
         """
         Updates the settings for this cloud.
 
         :param new_settings: settings dictionary
+        :param force: force this node to update
         """
 
         params = {}
         for name, value in new_settings.items():
             if name in self._settings and self._settings[name] != value:
                 params[name] = value
-        if params:
+        if params or force:
             self._update(params)
 
     def _updateCallback(self, result):

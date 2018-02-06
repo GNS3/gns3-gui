@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_cloudConfigPageWidget(object):
     def setupUi(self, cloudConfigPageWidget):
         cloudConfigPageWidget.setObjectName("cloudConfigPageWidget")
-        cloudConfigPageWidget.resize(821, 363)
+        cloudConfigPageWidget.resize(1000, 378)
         self.verticalLayout = QtWidgets.QVBoxLayout(cloudConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(cloudConfigPageWidget)
@@ -39,11 +39,11 @@ class Ui_cloudConfigPageWidget(object):
         self.uiDeleteEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
         self.uiDeleteEthernetPushButton.setEnabled(False)
         self.uiDeleteEthernetPushButton.setObjectName("uiDeleteEthernetPushButton")
-        self.gridLayout_3.addWidget(self.uiDeleteEthernetPushButton, 0, 4, 1, 1)
+        self.gridLayout_3.addWidget(self.uiDeleteEthernetPushButton, 0, 5, 1, 1)
         self.uiEthernetListWidget = QtWidgets.QListWidget(self.EthernetTab)
         self.uiEthernetListWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.uiEthernetListWidget.setObjectName("uiEthernetListWidget")
-        self.gridLayout_3.addWidget(self.uiEthernetListWidget, 1, 0, 1, 5)
+        self.gridLayout_3.addWidget(self.uiEthernetListWidget, 1, 0, 1, 6)
         self.uiEthernetWarningPushButton = QtWidgets.QPushButton(self.EthernetTab)
         self.uiEthernetWarningPushButton.setText("")
         self.uiEthernetWarningPushButton.setObjectName("uiEthernetWarningPushButton")
@@ -51,6 +51,9 @@ class Ui_cloudConfigPageWidget(object):
         self.uiShowSpecialInterfacesCheckBox = QtWidgets.QCheckBox(self.EthernetTab)
         self.uiShowSpecialInterfacesCheckBox.setObjectName("uiShowSpecialInterfacesCheckBox")
         self.gridLayout_3.addWidget(self.uiShowSpecialInterfacesCheckBox, 2, 0, 1, 2)
+        self.uiRefreshEthernetPushButton = QtWidgets.QPushButton(self.EthernetTab)
+        self.uiRefreshEthernetPushButton.setObjectName("uiRefreshEthernetPushButton")
+        self.gridLayout_3.addWidget(self.uiRefreshEthernetPushButton, 0, 4, 1, 1)
         self.uiEthernetListWidget.raise_()
         self.uiEthernetComboBox.raise_()
         self.uiAddEthernetPushButton.raise_()
@@ -58,6 +61,7 @@ class Ui_cloudConfigPageWidget(object):
         self.uiAddAllEthernetPushButton.raise_()
         self.uiShowSpecialInterfacesCheckBox.raise_()
         self.uiEthernetWarningPushButton.raise_()
+        self.uiRefreshEthernetPushButton.raise_()
         self.uiTabWidget.addTab(self.EthernetTab, "")
         self.TAPTab = QtWidgets.QWidget()
         self.TAPTab.setObjectName("TAPTab")
@@ -66,11 +70,11 @@ class Ui_cloudConfigPageWidget(object):
         self.uiDeleteTAPPushButton = QtWidgets.QPushButton(self.TAPTab)
         self.uiDeleteTAPPushButton.setEnabled(False)
         self.uiDeleteTAPPushButton.setObjectName("uiDeleteTAPPushButton")
-        self.gridLayout_2.addWidget(self.uiDeleteTAPPushButton, 1, 4, 1, 1)
+        self.gridLayout_2.addWidget(self.uiDeleteTAPPushButton, 1, 5, 1, 1)
         self.uiTAPListWidget = QtWidgets.QListWidget(self.TAPTab)
         self.uiTAPListWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.uiTAPListWidget.setObjectName("uiTAPListWidget")
-        self.gridLayout_2.addWidget(self.uiTAPListWidget, 2, 0, 1, 5)
+        self.gridLayout_2.addWidget(self.uiTAPListWidget, 2, 0, 1, 6)
         self.uiTAPLineEdit = QtWidgets.QLineEdit(self.TAPTab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -91,10 +95,13 @@ class Ui_cloudConfigPageWidget(object):
         self.uiTAPComboBox.setInsertPolicy(QtWidgets.QComboBox.InsertAlphabetically)
         self.uiTAPComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
         self.uiTAPComboBox.setObjectName("uiTAPComboBox")
-        self.gridLayout_2.addWidget(self.uiTAPComboBox, 0, 1, 1, 4)
+        self.gridLayout_2.addWidget(self.uiTAPComboBox, 0, 1, 1, 5)
         self.uiAddAllTAPPushButton = QtWidgets.QPushButton(self.TAPTab)
         self.uiAddAllTAPPushButton.setObjectName("uiAddAllTAPPushButton")
         self.gridLayout_2.addWidget(self.uiAddAllTAPPushButton, 1, 3, 1, 1)
+        self.uiRefreshTAPPushButton = QtWidgets.QPushButton(self.TAPTab)
+        self.uiRefreshTAPPushButton.setObjectName("uiRefreshTAPPushButton")
+        self.gridLayout_2.addWidget(self.uiRefreshTAPPushButton, 1, 4, 1, 1)
         self.uiTabWidget.addTab(self.TAPTab, "")
         self.UDPTab = QtWidgets.QWidget()
         self.UDPTab.setObjectName("UDPTab")
@@ -241,11 +248,13 @@ class Ui_cloudConfigPageWidget(object):
         self.uiDeleteEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Delete"))
         self.uiEthernetListWidget.setSortingEnabled(True)
         self.uiShowSpecialInterfacesCheckBox.setText(_translate("cloudConfigPageWidget", "&Show special Ethernet interfaces"))
+        self.uiRefreshEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Refresh"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.EthernetTab), _translate("cloudConfigPageWidget", "Ethernet interfaces"))
         self.uiDeleteTAPPushButton.setText(_translate("cloudConfigPageWidget", "&Delete"))
         self.uiTAPListWidget.setSortingEnabled(True)
         self.uiAddTAPPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))
         self.uiAddAllTAPPushButton.setText(_translate("cloudConfigPageWidget", "&Add all"))
+        self.uiRefreshTAPPushButton.setText(_translate("cloudConfigPageWidget", "&Refresh"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.TAPTab), _translate("cloudConfigPageWidget", "TAP interfaces"))
         self.uiUDPTunnelSettingsGroupBox.setTitle(_translate("cloudConfigPageWidget", "UDP tunnel settings"))
         self.uiRemoteHostLineEdit.setText(_translate("cloudConfigPageWidget", "127.0.0.1"))
