@@ -20,7 +20,10 @@
 import json
 import os
 import urllib
+import shutil
+from ssl import CertificateError
 
+from gns3.controller import Controller
 from ..local_config import LocalConfig
 from ..local_server_config import LocalServerConfig
 from ..settings import LOCAL_SERVER_SETTINGS
@@ -96,13 +99,17 @@ class Config:
                 return False
         return True
 
-    def add_appliance(self, appliance_config, server):
+    def add_appliance(self, appliance_config, server, controller_symbols=None):
         """
         Add appliance to the user configuration
 
         :param appliance_config: Dictionary with appliance configuration
         :param server
+        :param controller_symbols: Symbols located on controller
         """
+
+        if controller_symbols is None:
+            controller_symbols = []
 
         new_config = {
             "server": server,
@@ -124,7 +131,7 @@ class Config:
             new_config["category"] = 1
 
         if "symbol" in appliance_config:
-            new_config["symbol"] = self._set_symbol(appliance_config["symbol"])
+            new_config["symbol"] = self._set_symbol(appliance_config["symbol"], controller_symbols)
 
         if new_config.get("symbol") is None:
             if appliance_config["category"] == "guest":
@@ -276,9 +283,9 @@ class Config:
         self._config["Qemu"].setdefault("vms", [])
         self._config["Qemu"]["vms"].append(new_config)
 
-    def _set_symbol(self, symbol):
+    def _set_symbol(self, symbol, controller_symbols):
         """
-        Download symbol from the web if needed
+        Check if exists on controller or download symbol from the web if needed
         """
 
         # GNS3 builtin symbol
@@ -289,11 +296,25 @@ class Config:
         if os.path.exists(path):
             return os.path.basename(path)
 
+        is_symbol_on_controller = len([s for s in controller_symbols
+                                       if s['symbol_id'] == symbol]) > 0
+
+        if is_symbol_on_controller:
+            cached = Controller.instance().getStaticCachedPath(symbol)
+            if os.path.exists(cached):
+                try:
+                    shutil.copy(cached, path)
+                except IOError as e:
+                    log.warning("Cannot copy cached symbol from `{}` to `{}` due `{}`".format(
+                        cached, path, str(e)
+                    ))
+            return symbol
+
         url = "https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/{}".format(symbol)
         try:
             urllib.request.urlretrieve(url, path)
             return os.path.basename(path)
-        except OSError:
+        except (OSError, CertificateError):
             return None
 
     def _relative_image_path(self, image_dir_type, path):

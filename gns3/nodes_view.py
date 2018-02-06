@@ -131,7 +131,6 @@ class NodesView(QtWidgets.QTreeWidget):
             item.setData(1, QtCore.Qt.UserRole, "appliance_template")
             item.setSizeHint(0, QtCore.QSize(32, 32))
             Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
-
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def _setItemIcon(self, item, icon):
