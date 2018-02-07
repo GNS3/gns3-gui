@@ -259,8 +259,7 @@ class Controller(QtCore.QObject):
                     self.getStatic(fallback, callback)
                 fallback_used = True
             if fallback_used:
-                log.error("Error while downloading file: {}".format(url))
-            log.error("Error while downloading file: {}".format(url))
+                log.debug("Error while downloading file: {}".format(url))
             del self._static_asset_download_queue[path]
             return
         try:
