@@ -477,6 +477,21 @@ class LocalConfig(QtCore.QObject):
         settings["direct_file_upload"] = value
         self.saveSectionSettings("MainWindow", settings)
 
+    def showInterfaceLabelsOnNewProject(self):
+        """
+        :returns: Boolean. True if show_interface_labels_on_new_project is enabled
+        """
+
+        from gns3.settings import GRAPHICS_VIEW_SETTINGS
+        return self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS) \
+                .get("show_interface_labels_on_new_project", False)
+
+    def setShowInterfaceLabelsOnNewProject(self, value):
+        from gns3.settings import GRAPHICS_VIEW_SETTINGS
+        settings = self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS)
+        settings["show_interface_labels_on_new_project"] = value
+        self.saveSectionSettings("GraphicsView", settings)
+
     @staticmethod
     def instance():
         """
