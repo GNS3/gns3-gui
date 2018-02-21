@@ -22,6 +22,9 @@ if sys.platform.startswith('win'):
         PATH = os.path.join(PATH, "bin")
     PYUIC = os.path.join(PATH, "pyuic5")
     PYRCC = os.path.join(PATH, "pyrcc5")
+
+    if not os.path.exists(PYUIC):
+        PYUIC = "pyuic5.exe"
 else:
     PYUIC = shutil.which("pyuic5")
     PYRCC = shutil.which("pyrcc5")

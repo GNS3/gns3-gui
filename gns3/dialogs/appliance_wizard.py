@@ -34,6 +34,9 @@ from ..controller import Controller
 from ..local_config import LocalConfig
 from ..image_upload_manager import ImageUploadManager
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
     images_changed_signal = QtCore.Signal()
@@ -41,6 +44,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
     def __init__(self, parent, path):
         super().__init__(parent)
+
         self.setupUi(self)
         self.images_changed_signal.connect(self._refreshVersions)
         self.versions_changed_signal.connect(self._versionRefreshedSlot)
@@ -88,6 +92,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.allowCustomFiles.clicked.connect(self._allowCustomFilesChangedSlot)
 
 
+        # symbols loaded from controller
+        self._symbols = []
+
+
     def initializePage(self, page_id):
         """
         Initialize Wizard pages.
@@ -112,6 +120,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             type = "dynamips"
 
         if self.page(page_id) == self.uiInfoWizardPage:
+            Controller.instance().getSymbols(self._getSymbolsCallback)
+
             self.uiInfoWizardPage.setTitle(self._appliance["product_name"])
             self.uiDescriptionLabel.setText(self._appliance["description"])
 
@@ -318,6 +328,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiApplianceVersionTreeWidget.resizeColumnToContents(1)
         self._refreshing = False
 
+    def _getSymbolsCallback(self, result, error=False, **kwargs):
+        if error:
+            log.warning("Cannot load symbols from controller")
+        else:
+            self._symbols = result
+
     def _refreshDialogWorker(self):
         """
         Scan local directory in order to found the images on disk
@@ -489,7 +505,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, self._compute_id), allowed_exceptions=[ConfigException, OSError])
+        worker = WaitForLambdaWorker(
+            lambda: config.add_appliance(appliance_configuration, self._compute_id, self._symbols),
+            allowed_exceptions=[ConfigException, OSError])
+
         progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
         progress_dialog.show()
         if not progress_dialog.exec_():

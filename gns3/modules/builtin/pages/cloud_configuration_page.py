@@ -50,6 +50,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiEthernetWarningPushButton.clicked.connect(self._EthernetWarningSlot)
         self.uiAddEthernetPushButton.clicked.connect(self._EthernetAddSlot)
         self.uiAddAllEthernetPushButton.clicked.connect(self._EthernetAddAllSlot)
+        self.uiRefreshEthernetPushButton.clicked.connect(self._EthernetRefreshSlot)
         self.uiDeleteEthernetPushButton.clicked.connect(self._EthernetDeleteSlot)
 
         # connect TAP slots
@@ -57,6 +58,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiTAPListWidget.itemSelectionChanged.connect(self._TAPChangedSlot)
         self.uiAddTAPPushButton.clicked.connect(self._TAPAddSlot)
         self.uiAddAllTAPPushButton.clicked.connect(self._TAPAddAllSlot)
+        self.uiRefreshTAPPushButton.clicked.connect(self._TAPRefreshSlot)
         self.uiDeleteTAPPushButton.clicked.connect(self._TAPDeleteSlot)
 
         # connect UDP slots
@@ -73,6 +75,16 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         if icon.isNull():
             icon = QtGui.QIcon(':/icons/dialog-warning.svg')
         self.uiEthernetWarningPushButton.setIcon(icon)
+
+    def _refreshInterfaces(self):
+        """
+        Refresh the network interfaces.
+        """
+
+        if self._node:
+            self._interfaces = self._node.interfaces()
+            self._loadNetworkInterfaces(self._interfaces)
+            self._node.updated_signal.disconnect(self._refreshInterfaces)
 
     def _EthernetChangedSlot(self):
         """
@@ -120,6 +132,15 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         for index in range(0, self.uiEthernetComboBox.count()):
             interface = self.uiEthernetComboBox.itemText(index)
             self._EthernetAddSlot(interface)
+
+    def _EthernetRefreshSlot(self):
+        """
+        Refresh all Ethernet interfaces.
+        """
+
+        if self._node:
+            self._node.update({}, force=True)
+            self._node.updated_signal.connect(self._refreshInterfaces)
 
     def _EthernetDeleteSlot(self):
         """
@@ -198,6 +219,15 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         for index in range(0, self.uiTAPComboBox.count()):
             interface = self.uiTAPComboBox.itemText(index)
             self._TAPAddSlot(interface)
+
+    def _TAPRefreshSlot(self):
+        """
+        Refresh all TAP interfaces.
+        """
+
+        if self._node:
+            self._node.update({}, force=True)
+            self._node.updated_signal.connect(self._refreshInterfaces)
 
     def _TAPDeleteSlot(self):
         """

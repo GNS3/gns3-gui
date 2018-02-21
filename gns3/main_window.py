@@ -625,7 +625,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for item in self.uiGraphicsView.scene().items():
             if isinstance(item, LinkItem):
                 item.adjust()
-
+        
     def _updateZoomSettings(self, zoom=None):
         """
         Updates zoom settings

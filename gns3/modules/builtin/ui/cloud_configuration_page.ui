@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>821</width>
-    <height>363</height>
+    <width>1000</width>
+    <height>378</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="4">
+       <item row="0" column="5">
         <widget class="QPushButton" name="uiDeleteEthernetPushButton">
          <property name="enabled">
           <bool>false</bool>
@@ -67,7 +67,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="5">
+       <item row="1" column="0" colspan="6">
         <widget class="QListWidget" name="uiEthernetListWidget">
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
@@ -91,6 +91,13 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="uiRefreshEthernetPushButton">
+         <property name="text">
+          <string>&amp;Refresh</string>
+         </property>
+        </widget>
+       </item>
       </layout>
       <zorder>uiEthernetListWidget</zorder>
       <zorder>uiEthernetComboBox</zorder>
@@ -99,13 +106,14 @@
       <zorder>uiAddAllEthernetPushButton</zorder>
       <zorder>uiShowSpecialInterfacesCheckBox</zorder>
       <zorder>uiEthernetWarningPushButton</zorder>
+      <zorder>uiRefreshEthernetPushButton</zorder>
      </widget>
      <widget class="QWidget" name="TAPTab">
       <attribute name="title">
        <string>TAP interfaces</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="4">
+       <item row="1" column="5">
         <widget class="QPushButton" name="uiDeleteTAPPushButton">
          <property name="enabled">
           <bool>false</bool>
@@ -115,7 +123,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="5">
+       <item row="2" column="0" colspan="6">
         <widget class="QListWidget" name="uiTAPListWidget">
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
@@ -142,7 +150,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1" colspan="4">
+       <item row="0" column="1" colspan="5">
         <widget class="QComboBox" name="uiTAPComboBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -162,6 +170,13 @@
         <widget class="QPushButton" name="uiAddAllTAPPushButton">
          <property name="text">
           <string>&amp;Add all</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QPushButton" name="uiRefreshTAPPushButton">
+         <property name="text">
+          <string>&amp;Refresh</string>
          </property>
         </widget>
        </item>
