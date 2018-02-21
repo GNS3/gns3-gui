@@ -1,6 +1,6 @@
 -rrequirements.txt
 
 pep8==1.7.0
-pytest==3.1.0
+pytest==3.4.1
 pytest-pythonpath==0.7.2 # useful for running tests outside tox
 pytest-timeout==1.2.0
