@@ -55,5 +55,5 @@ def vncConsole(host, port, command):
             args = shlex.split(command)
             subprocess.Popen(args, env=os.environ)
     except (OSError, ValueError, subprocess.SubprocessError) as e:
-        log.warning('could not start VNC program "{}": {}'.format(command, e))
+        log.error("Could not start VNC program with command '{}': {}".format(command, e))
         raise

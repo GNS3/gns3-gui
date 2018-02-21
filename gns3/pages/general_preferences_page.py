@@ -318,6 +318,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiSceneHeightSpinBox.setValue(settings["scene_height"])
         self.uiRectangleSelectedItemCheckBox.setChecked(settings["draw_rectangle_selected_item"])
         self.uiDrawLinkStatusPointsCheckBox.setChecked(settings["draw_link_status_points"])
+        self.uiShowInterfaceLabelsOnNewProject.setChecked(settings["show_interface_labels_on_new_project"])
 
         qt_font = QtGui.QFont()
         if qt_font.fromString(settings["default_label_font"]):
@@ -380,6 +381,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
                                       "scene_height": self.uiSceneHeightSpinBox.value(),
                                       "draw_rectangle_selected_item": self.uiRectangleSelectedItemCheckBox.isChecked(),
                                       "draw_link_status_points": self.uiDrawLinkStatusPointsCheckBox.isChecked(),
+                                      "show_interface_labels_on_new_project": self.uiShowInterfaceLabelsOnNewProject.isChecked(),
                                       "default_label_font": self.uiDefaultLabelStylePlainTextEdit.font().toString(),
                                       "default_label_color": self._default_label_color.name()}
         MainWindow.instance().uiGraphicsView.setSettings(new_graphics_view_settings)
