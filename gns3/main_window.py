@@ -310,7 +310,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings.update(new_settings)
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
-        print("called")
         self.settings_updated_signal.emit()
 
     def _openWebInterfaceActionSlot(self):
