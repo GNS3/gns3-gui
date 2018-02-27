@@ -54,6 +54,7 @@ from .dialogs.new_appliance_dialog import NewApplianceDialog
 from .dialogs.notif_dialog import NotifDialog, NotifDialogHandler
 from .status_bar import StatusBarHandler
 from .registry.appliance import ApplianceError
+from .appliance_manager import ApplianceManager
 
 log = logging.getLogger(__name__)
 
@@ -68,6 +69,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # signal to tell the view if the user is adding a link or not
     adding_link_signal = QtCore.pyqtSignal(bool)
+
+    # Signal of settings updates
+    settings_updated_signal = QtCore.Signal()
 
     def __init__(self, parent=None, open_file=None):
         """
@@ -110,6 +114,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._local_config_timer.timeout.connect(local_config.checkConfigChanged)
         self._local_config_timer.start(1000)  # milliseconds
         self._analytics_client = AnalyticsClient()
+        self._appliance_manager = ApplianceManager()
 
         # restore the geometry and state of the main window.
         self.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["geometry"].encode()))
@@ -189,6 +194,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
+
+        self.settings_updated_signal.connect(self.settingsChangedSlot)
 
     def _connections(self):
         """
@@ -303,6 +310,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings.update(new_settings)
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
+        print("called")
+        self.settings_updated_signal.emit()
 
     def _openWebInterfaceActionSlot(self):
         if Controller.instance().connected():
@@ -490,6 +499,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._project_dialog.reject()
             self._project_dialog = None
         self._refreshVisibleWidgets()
+
+    @qslot
+    def settingsChangedSlot(self, *args):
+        """
+        Called when settings are updated
+        """
+        # It covers case when project is not set
+        # and we need to refresh appliance manager
+        project = Topology.instance().project()
+        if project is None:
+            self._appliance_manager.instance().refresh()
 
     def _refreshVisibleWidgets(self):
         """
