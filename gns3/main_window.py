@@ -971,6 +971,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         self.uiNodesView.refresh()
+        self._loadSettings()
 
     def _browseRoutersActionSlot(self):
         """
