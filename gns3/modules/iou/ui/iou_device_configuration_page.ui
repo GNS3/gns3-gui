@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
-    <height>503</height>
+    <width>767</width>
+    <height>685</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -181,7 +181,7 @@
              <bool>true</bool>
             </property>
             <property name="text">
-             <string>Enable layer 1 keepalive messages (testing only)</string>
+             <string>Enable layer 1 keepalive messages (non-functional)</string>
             </property>
             <property name="checked">
              <bool>false</bool>
