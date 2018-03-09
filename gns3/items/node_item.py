@@ -118,8 +118,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Sync change to the node
         """
-        if self._initialized:
-            self._node.setGraphics(self)
+        self._node.setGraphics(self)
 
     @qslot
     def setSymbol(self, symbol):
