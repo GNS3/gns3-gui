@@ -195,8 +195,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
 
-        self.settings_updated_signal.connect(self.settingsChangedSlot)
-
     def _connections(self):
         """
         Connect widgets to slots
@@ -277,6 +275,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # connect the signal to the view
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
+
+        # connect to the signal when settings change
+        self.settings_updated_signal.connect(self.settingsChangedSlot)
 
     def _loadSettings(self):
         """
