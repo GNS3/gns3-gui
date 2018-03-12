@@ -1,5 +1,21 @@
 # Change Log
 
+## 2.1.4 12/03/2018
+
+* Update node on server on any change, Fixes: #2429
+* Mark IOU layer 1 keepalive messages feature as non-functional. Fixes #2431.
+* Images refresh when added via settings, Fixes:#2423
+* Emit project_loaded_signal after project creation
+* Add option Show interface labels on new project, Ref. #2308
+* Improve finding pyuic3.exe on Windows
+* Use debug for error downloading file messages. Fixes #2398.
+* Refresh buttons in the cloud node to query the server for available interfaces. Fixes #2416.
+* Handle Certifacte Error, Ref. gns3-server#1262
+* Backward compatibility for tests, Ref. #2405?
+* Use UTF-8 for IOURC file migration.
+* Look for symbols on controller, Ref. #2405
+* Display an error message if Telnet console program cannot be executed.
+
 ## 2.1.3 19/01/2018
 
 * Change messages when there are different client and server versions. Fixes #2391.
