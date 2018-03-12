@@ -100,15 +100,11 @@ class Node(BaseNode):
         for key in data:
             if key not in self._settings or self._settings[key] != data[key]:
                 changed = True
+
         if not changed:
             return
 
-        # If it's the initialization we don't resend it
-        # to the server
-        if self._settings["x"] is not None:
-            self._update(data)
-        else:
-            self._settings.update(data)
+        self._update(data)
 
     def setSymbol(self, symbol):
         self._settings["symbol"] = symbol
@@ -229,10 +225,9 @@ class Node(BaseNode):
         Update the node on the controller
         """
 
-        if self.initialized():
-            log.debug("{} is updating settings: {}".format(self.name(), params))
-            body = self._prepareBody(params)
-            self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout, showProgress=False)
+        log.debug("{} is updating settings: {}".format(self.name(), params))
+        body = self._prepareBody(params)
+        self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout, showProgress=False)
 
     def updateNodeCallback(self, result, error=False, **kwargs):
         """
@@ -357,7 +352,6 @@ class Node(BaseNode):
             return False
 
         result = self._parseResponse(result)
-        self._created = True
         self._createCallback(result)
 
         if self._loading:

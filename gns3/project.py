@@ -60,7 +60,9 @@ class Project(QtCore.QObject):
         self._auto_open = False
         self._auto_close = False
 
-        graphic_settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, GRAPHICS_VIEW_SETTINGS)
+        config = LocalConfig.instance()
+
+        graphic_settings = LocalConfig.instance().loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS)
         self._scene_width = graphic_settings["scene_width"]
         self._scene_height = graphic_settings["scene_height"]
         self._zoom = graphic_settings.get("zoom", None)
@@ -68,6 +70,7 @@ class Project(QtCore.QObject):
         self._snap_to_grid = graphic_settings.get("snap_to_grid", False)
         self._show_grid = graphic_settings.get("show_grid", False)
         self._show_interface_labels = graphic_settings.get("show_interface_labels", False)
+        self._show_interface_labels_on_new_project = config.showInterfaceLabelsOnNewProject()
 
         self._name = "untitled"
         self._filename = None
@@ -373,7 +376,8 @@ class Project(QtCore.QObject):
         """
         body = {
             "name": self._name,
-            "path": self.filesDir()
+            "path": self.filesDir(),
+            "show_interface_labels": self._show_interface_labels_on_new_project
         }
         Controller.instance().post("/projects", self._projectCreatedCallback, body=body)
 
@@ -413,6 +417,7 @@ class Project(QtCore.QObject):
             self._closing = False
             self._startListenNotifications()
         self.project_updated_signal.emit()
+        self.project_loaded_signal.emit()
 
     def _parseResponse(self, result):
         """

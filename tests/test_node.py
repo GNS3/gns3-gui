@@ -141,3 +141,39 @@ def test_updatePorts_PortChange(vpcs_device):
     ])
     assert port == vpcs_device._ports[0]
     assert port.status() == Port.started
+
+
+def test_node_setGraphics(vpcs_device):
+    node = MagicMock(
+        pos=MagicMock(
+            return_value=MagicMock(
+                x=MagicMock(
+                    return_value=10
+                ),
+                y=MagicMock(
+                    return_value=20
+                )
+            )
+        ),
+        zValue=MagicMock(
+            return_value=2
+        ),
+        symbol=MagicMock(
+            return_value="symbol.svg"
+        )
+    )
+    with patch('gns3.base_node.BaseNode.controllerHttpPut') as mock:
+        vpcs_device.setGraphics(node)
+        assert mock.call_count == 1
+        args, kwargs = mock.call_args
+        assert args[0] == "/nodes/{node_id}".format(node_id=vpcs_device.node_id())
+
+        # second call should not make an update
+        vpcs_device.setSettingValue('x', 10)
+        vpcs_device.setSettingValue('y', 20)
+        vpcs_device.setSettingValue('z', 2)
+        vpcs_device.setSettingValue('symbol', "symbol.svg")
+        vpcs_device.setSettingValue('label', node.label().dump())
+
+        vpcs_device.setGraphics(node)
+        assert mock.call_count == 1

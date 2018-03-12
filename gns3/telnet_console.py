@@ -19,7 +19,7 @@
 Functions to start external console terminals.
 """
 
-from .qt import QtCore, QtWidgets
+from .qt import QtCore
 
 import os
 import sys
@@ -58,7 +58,7 @@ class ConsoleThread(QtCore.QThread):
             try:
                 args = shlex.split(command)
             except ValueError:
-                self.consoleError.emit("Syntax error in command: {}".format(command))
+                self.consoleError.emit("Syntax error in command: '{}'".format(command))
                 return
             subprocess.call(args, env=os.environ)
 
@@ -83,8 +83,7 @@ class ConsoleThread(QtCore.QThread):
         try:
             self.exec_command(command)
         except (OSError, subprocess.SubprocessError) as e:
-            pass
-            # log.warning('could not start Telnet console "{}": {}'.format(self._command, e))
+            self.consoleError.emit("Could not start Telnet console with command '{}': {}".format(command, e))
         finally:
             log.debug('Telnet console {}:{} closed'.format(host, port))
             if sys.platform.startswith("darwin") and "osascript" in command:
@@ -115,4 +114,4 @@ def nodeTelnetConsole(node, port, command=None):
 
 
 def _consoleErrorSlot(message):
-    QtWidgets.QMessageBox.critical(MainWindow.instance(), "Error", message)
+    log.error(message)

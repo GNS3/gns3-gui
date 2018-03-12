@@ -289,7 +289,8 @@ GRAPHICS_VIEW_SETTINGS = {
     "show_layers": False,
     "snap_to_grid": False,
     "show_grid": False,
-    "show_interface_labels": False
+    "show_interface_labels": False,
+    "show_interface_labels_on_new_project": False
 }
 
 LOCAL_SERVER_SETTINGS = {
