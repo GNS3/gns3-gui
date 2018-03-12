@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2014 GNS3 Technologies Inc.
+# Copyright (C) 2018 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,14 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gns3.modules.builtin import Builtin
-from gns3.modules.dynamips import Dynamips
-from gns3.modules.iou import IOU
-from gns3.modules.vpcs import VPCS
-from gns3.modules.traceng import TraceNG
-from gns3.modules.virtualbox import VirtualBox
-from gns3.modules.qemu import Qemu
-from gns3.modules.vmware import VMware
-from gns3.modules.docker import Docker
+"""
+Default TraceNG settings.
+"""
 
-MODULES = [Builtin, VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Docker, TraceNG]
+from gns3.node import Node
+
+TRACENG_SETTINGS = {
+    "traceng_path": "",
+}
+
+TRACENG_NODES_SETTINGS = {
+    "name": "",
+    "default_name_format": "TraceNG{0}",
+    "symbol": ":/symbols/vpcs_guest.svg",
+    "category": Node.end_devices,
+}
