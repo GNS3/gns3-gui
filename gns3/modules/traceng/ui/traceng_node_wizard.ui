@@ -93,7 +93,7 @@
     <string>Name</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a descriptive name for the new VPCS node.</string>
+    <string>Please choose a descriptive name for the new TraceNG node.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">

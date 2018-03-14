@@ -77,10 +77,11 @@ class TraceNG(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        server_settings = copy.copy(self._settings)
-        if server_settings["traceng_path"]:
+        server_settings = {}
+        if self._settings["traceng_path"]:
             # save some settings to the server config file
-            server_settings["traceng_path"] = os.path.normpath(server_settings["traceng_path"])
+            server_settings["traceng_path"] = os.path.normpath(self._settings["traceng_path"])
+
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
 

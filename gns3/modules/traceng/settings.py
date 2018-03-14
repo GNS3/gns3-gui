@@ -28,6 +28,6 @@ TRACENG_SETTINGS = {
 TRACENG_NODES_SETTINGS = {
     "name": "",
     "default_name_format": "TraceNG{0}",
-    "symbol": ":/symbols/vpcs_guest.svg",
+    "symbol": ":/symbols/traceng.svg",
     "category": Node.end_devices,
 }

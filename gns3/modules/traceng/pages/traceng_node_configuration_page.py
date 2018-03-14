@@ -94,8 +94,6 @@ class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWi
             index = self.uiCategoryComboBox.findData(settings["category"])
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
-
-            self.uiScriptFileEdit.setText(settings["base_script_file"])
         else:
             self.uiDefaultNameFormatLabel.hide()
             self.uiDefaultNameFormatLineEdit.hide()

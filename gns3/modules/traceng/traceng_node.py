@@ -118,7 +118,7 @@ class TraceNGNode(Node):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/vpcs_guest.svg"
+        return ":/symbols/traceng.svg"
 
     @staticmethod
     def symbolName():

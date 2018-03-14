@@ -77,6 +77,6 @@ class Ui_TraceNGNodeWizard(object):
         self.uiRemoteServersGroupBox.setTitle(_translate("TraceNGNodeWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("TraceNGNodeWizard", "Run on:"))
         self.uiNameWizardPage.setTitle(_translate("TraceNGNodeWizard", "Name"))
-        self.uiNameWizardPage.setSubTitle(_translate("TraceNGNodeWizard", "Please choose a descriptive name for the new VPCS node."))
+        self.uiNameWizardPage.setSubTitle(_translate("TraceNGNodeWizard", "Please choose a descriptive name for the new TraceNG node."))
         self.uiNameLabel.setText(_translate("TraceNGNodeWizard", "Name:"))
 

@@ -39,7 +39,7 @@ class TraceNGNodeWizard(VMWizard, Ui_TraceNGNodeWizard):
 
         super().__init__(traceng_nodes, parent)
 
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/vpcs_guest.svg"))
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/traceng.png"))
         self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)
 
     def getSettings(self):
@@ -50,7 +50,7 @@ class TraceNGNodeWizard(VMWizard, Ui_TraceNGNodeWizard):
         """
 
         settings = {"name": self.uiNameLineEdit.text(),
-                    "symbol": ":/symbols/vpcs_guest.svg",
+                    "symbol": ":/symbols/traceng.svg",
                     "category": Node.end_devices,
                     "server": self._compute_id}
 
