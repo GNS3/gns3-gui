@@ -121,7 +121,7 @@ def init_logger(level, logfile, quiet=False):
         handler.formatter = logging.Formatter("{asctime} {levelname} {filename}:{lineno} {message}", "%Y-%m-%d %H:%M:%S", "{")
         log.addHandler(handler)
     except OSError as e:
-        log.warn("could not log to {}: {}".format(logfile, e))
+        log.warning("could not log to {}: {}".format(logfile, e))
 
     log.info('Log level: {}'.format(logging.getLevelName(level)))
 

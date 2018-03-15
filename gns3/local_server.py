@@ -375,7 +375,7 @@ class LocalServer(QtCore.QObject):
         # check the local server path
         local_server_path = self.localServerPath()
         if not local_server_path:
-            log.warn("No local server is configured")
+            log.warning("No local server is configured")
             return False
         if not os.path.isfile(local_server_path):
             QtWidgets.QMessageBox.critical(self.parent(), "Local server", "Could not find local server {}".format(local_server_path))
@@ -462,7 +462,7 @@ class LocalServer(QtCore.QObject):
                 except FileNotFoundError:
                     pass
                 except OSError as e:
-                    log.warn("could not delete server log file {}: {}".format(logpath, e))
+                    log.warning("could not delete server log file {}: {}".format(logpath, e))
             command += ' --log="{}" --pid="{}"'.format(logpath, self._pid_path())
 
         log.debug("Starting local server process with {}".format(command))

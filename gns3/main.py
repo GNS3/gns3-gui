@@ -90,13 +90,13 @@ def locale_check():
         log.error("could not determine the current locale: {}".format(e))
     if not language and not encoding:
         try:
-            log.warn("could not find a default locale, switching to C.UTF-8...")
+            log.warning("could not find a default locale, switching to C.UTF-8...")
             locale.setlocale(locale.LC_ALL, ("C", "UTF-8"))
         except locale.Error as e:
             log.error("could not switch to the C.UTF-8 locale: {}".format(e))
             raise SystemExit
     elif encoding != "UTF-8":
-        log.warn("your locale {}.{} encoding is not UTF-8, switching to the UTF-8 version...".format(language, encoding))
+        log.warning("your locale {}.{} encoding is not UTF-8, switching to the UTF-8 version...".format(language, encoding))
         try:
             locale.setlocale(locale.LC_ALL, (language, "UTF-8"))
         except locale.Error as e:

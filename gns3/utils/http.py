@@ -58,10 +58,10 @@ def getSynchronous(protocol, host, port, endpoint, timeout=2, user=None, passwor
         else:
             return response.status, None
     except http.client.InvalidURL as e:
-        log.warn("Invalid local server url: {}".format(e))
+        log.warning("Invalid local server url: {}".format(e))
         return 0, None
     except http.client.UnknownProtocol:
-        log.warn("Unknown server running on {}:{}".format(host, port))
+        log.warning("Unknown server running on {}:{}".format(host, port))
         return 0, None
     except urllib.error.URLError:
         # Connection refused. It's a normal behavior if server is not started

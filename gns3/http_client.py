@@ -632,7 +632,7 @@ class HTTPClient(QtCore.QObject):
     def _requestCanceled(self, response, context):
 
         if response.isRunning() and not response.error() != QtNetwork.QNetworkReply.NoError:
-            log.warn("Aborting request for {}".format(response.url().toString()))
+            log.warning("Aborting request for {}".format(response.url().toString()))
             response.abort()
         if "query_id" in context:
             self._notify_progress_end_query(context["query_id"])
@@ -753,7 +753,7 @@ class HTTPClient(QtCore.QObject):
             else:
                 return response.status, None
         except http.client.InvalidURL as e:
-            log.warn("Invalid local server url: {}".format(e))
+            log.warning("Invalid local server url: {}".format(e))
             return 0, None
         except urllib.error.URLError:
             # Connection refused. It's a normal behavior if server is not started
