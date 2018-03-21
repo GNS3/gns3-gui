@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_QemuPreferencesPageWidget(object):
     def setupUi(self, QemuPreferencesPageWidget):
         QemuPreferencesPageWidget.setObjectName("QemuPreferencesPageWidget")
-        QemuPreferencesPageWidget.resize(414, 223)
+        QemuPreferencesPageWidget.resize(769, 325)
         self.verticalLayout = QtWidgets.QVBoxLayout(QemuPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(QemuPreferencesPageWidget)
@@ -22,12 +22,12 @@ class Ui_QemuPreferencesPageWidget(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiServerSettingsTabWidget)
         self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.uiKVMAccelerationCheckBox = QtWidgets.QCheckBox(self.uiServerSettingsTabWidget)
-        self.uiKVMAccelerationCheckBox.setObjectName("uiKVMAccelerationCheckBox")
-        self.verticalLayout_2.addWidget(self.uiKVMAccelerationCheckBox)
-        self.uiRequireKVMAccelerationCheckBox = QtWidgets.QCheckBox(self.uiServerSettingsTabWidget)
-        self.uiRequireKVMAccelerationCheckBox.setObjectName("uiRequireKVMAccelerationCheckBox")
-        self.verticalLayout_2.addWidget(self.uiRequireKVMAccelerationCheckBox)
+        self.uiEnableHardwareAccelerationCheckBox = QtWidgets.QCheckBox(self.uiServerSettingsTabWidget)
+        self.uiEnableHardwareAccelerationCheckBox.setObjectName("uiEnableHardwareAccelerationCheckBox")
+        self.verticalLayout_2.addWidget(self.uiEnableHardwareAccelerationCheckBox)
+        self.uiRequireHardwareAccelerationCheckBox = QtWidgets.QCheckBox(self.uiServerSettingsTabWidget)
+        self.uiRequireHardwareAccelerationCheckBox.setObjectName("uiRequireHardwareAccelerationCheckBox")
+        self.verticalLayout_2.addWidget(self.uiRequireHardwareAccelerationCheckBox)
         spacerItem = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
         self.uiTabWidget.addTab(self.uiServerSettingsTabWidget, "")
@@ -48,8 +48,8 @@ class Ui_QemuPreferencesPageWidget(object):
     def retranslateUi(self, QemuPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         QemuPreferencesPageWidget.setWindowTitle(_translate("QemuPreferencesPageWidget", "QEMU"))
-        self.uiKVMAccelerationCheckBox.setText(_translate("QemuPreferencesPageWidget", "Enable KVM acceleration"))
-        self.uiRequireKVMAccelerationCheckBox.setText(_translate("QemuPreferencesPageWidget", "Require KVM acceleration"))
+        self.uiEnableHardwareAccelerationCheckBox.setText(_translate("QemuPreferencesPageWidget", "Enable hardware acceleration (KVM/HAXM)"))
+        self.uiRequireHardwareAccelerationCheckBox.setText(_translate("QemuPreferencesPageWidget", "Require hardware acceleration (KVM/HAXM)"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiServerSettingsTabWidget), _translate("QemuPreferencesPageWidget", "Local settings"))
         self.uiRestoreDefaultsPushButton.setText(_translate("QemuPreferencesPageWidget", "Restore defaults"))
 

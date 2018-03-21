@@ -22,8 +22,8 @@ Default QEMU settings.
 from gns3.node import Node
 
 QEMU_SETTINGS = {
-    "enable_kvm": True,
-    "require_kvm": True,
+    "enable_hardware_acceleration": True,
+    "require_hardware_acceleration": True,
 }
 
 QEMU_VM_SETTINGS = {

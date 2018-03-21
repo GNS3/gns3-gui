@@ -216,7 +216,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             )
 
         elif self.page(page_id) == self.uiCheckServerWizardPage:
-            self.uiCheckServerLabel.setText("Please wait while checking server capacities...")
+            self.uiCheckServerLabel.setText("Please wait while checking server capabilities...")
             if 'qemu' in self._appliance:
                 if self._appliance['qemu'].get('kvm', 'require') == 'require':
                     self._server_check = False  # If the server as the capacities for running the appliance

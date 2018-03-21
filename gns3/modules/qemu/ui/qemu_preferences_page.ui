@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>414</width>
-    <height>223</height>
+    <width>769</width>
+    <height>325</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,16 +31,16 @@
         <number>10</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="uiKVMAccelerationCheckBox">
+        <widget class="QCheckBox" name="uiEnableHardwareAccelerationCheckBox">
          <property name="text">
-          <string>Enable KVM acceleration</string>
+          <string>Enable hardware acceleration (KVM/HAXM)</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="uiRequireKVMAccelerationCheckBox">
+        <widget class="QCheckBox" name="uiRequireHardwareAccelerationCheckBox">
          <property name="text">
-          <string>Require KVM acceleration</string>
+          <string>Require hardware acceleration (KVM/HAXM)</string>
          </property>
         </widget>
        </item>
