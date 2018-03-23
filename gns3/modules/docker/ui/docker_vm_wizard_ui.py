@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
 #
-# Created: Tue Sep 20 17:45:46 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DockerVMWizard(object):
     def setupUi(self, DockerVMWizard):
         DockerVMWizard.setObjectName("DockerVMWizard")
-        DockerVMWizard.resize(638, 437)
+        DockerVMWizard.resize(660, 452)
         DockerVMWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -168,6 +167,7 @@ class Ui_DockerVMWizard(object):
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
+        self.uiConsoleTypeComboBox.addItem("")
         self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.uiConsoleTypeComboBox)
         DockerVMWizard.addPage(self.uiConsoleWizardPage)
         self.uiEnvironmentWizardPage = QtWidgets.QWizardPage()
@@ -226,6 +226,7 @@ class Ui_DockerVMWizard(object):
         self.uiConsoleTypeComboBox.setItemText(1, _translate("DockerVMWizard", "vnc"))
         self.uiConsoleTypeComboBox.setItemText(2, _translate("DockerVMWizard", "http"))
         self.uiConsoleTypeComboBox.setItemText(3, _translate("DockerVMWizard", "https"))
+        self.uiConsoleTypeComboBox.setItemText(4, _translate("DockerVMWizard", "none"))
         self.uiEnvironmentWizardPage.setTitle(_translate("DockerVMWizard", "Environment"))
         self.uiEnvironmentWizardPage.setSubTitle(_translate("DockerVMWizard", "These variables will be passed to the container. Please read the container documentation to find what variables are used."))
         self.label_3.setText(_translate("DockerVMWizard", "There must be one pair by line, example: "))

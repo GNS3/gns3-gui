@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_QemuVMWizard(object):
     def setupUi(self, QemuVMWizard):
         QemuVMWizard.setObjectName("QemuVMWizard")
-        QemuVMWizard.resize(623, 417)
+        QemuVMWizard.resize(647, 452)
         QemuVMWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -95,6 +95,7 @@ class Ui_QemuVMWizard(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiQemuConsoleTypeComboBox = QtWidgets.QComboBox(self.uiConsoleTypeWizardPage)
         self.uiQemuConsoleTypeComboBox.setObjectName("uiQemuConsoleTypeComboBox")
+        self.uiQemuConsoleTypeComboBox.addItem("")
         self.uiQemuConsoleTypeComboBox.addItem("")
         self.uiQemuConsoleTypeComboBox.addItem("")
         self.uiQemuConsoleTypeComboBox.addItem("")
@@ -234,6 +235,7 @@ class Ui_QemuVMWizard(object):
         self.uiQemuConsoleTypeComboBox.setItemText(0, _translate("QemuVMWizard", "telnet"))
         self.uiQemuConsoleTypeComboBox.setItemText(1, _translate("QemuVMWizard", "vnc"))
         self.uiQemuConsoleTypeComboBox.setItemText(2, _translate("QemuVMWizard", "spice"))
+        self.uiQemuConsoleTypeComboBox.setItemText(3, _translate("QemuVMWizard", "none"))
         self.label.setText(_translate("QemuVMWizard", "Note: You don\'t need to install anything on the VM itself."))
         self.uiDiskWizardPage.setTitle(_translate("QemuVMWizard", "Disk image"))
         self.uiDiskWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a base disk image for your virtual machine."))

@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_configuration_page.ui'
 #
-# Created: Thu Jan  5 14:49:45 2017
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_dockerVMConfigPageWidget(object):
     def setupUi(self, dockerVMConfigPageWidget):
         dockerVMConfigPageWidget.setObjectName("dockerVMConfigPageWidget")
-        dockerVMConfigPageWidget.resize(613, 519)
+        dockerVMConfigPageWidget.resize(661, 698)
         self.verticalLayout = QtWidgets.QVBoxLayout(dockerVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(dockerVMConfigPageWidget)
@@ -65,6 +64,7 @@ class Ui_dockerVMConfigPageWidget(object):
         self.gridLayout.addWidget(self.uiNetworkConfigEditButton, 11, 1, 1, 1)
         self.uiConsoleTypeComboBox = QtWidgets.QComboBox(self.tab)
         self.uiConsoleTypeComboBox.setObjectName("uiConsoleTypeComboBox")
+        self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
@@ -145,6 +145,7 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiConsoleTypeComboBox.setItemText(1, _translate("dockerVMConfigPageWidget", "vnc"))
         self.uiConsoleTypeComboBox.setItemText(2, _translate("dockerVMConfigPageWidget", "http"))
         self.uiConsoleTypeComboBox.setItemText(3, _translate("dockerVMConfigPageWidget", "https"))
+        self.uiConsoleTypeComboBox.setItemText(4, _translate("dockerVMConfigPageWidget", "none"))
         self.uiNetworkConfigLabel.setText(_translate("dockerVMConfigPageWidget", "Network configuration"))
         self.uiNameLabel.setText(_translate("dockerVMConfigPageWidget", "Name:"))
         self.uiCategoryComboBox.setItemText(0, _translate("dockerVMConfigPageWidget", "Router"))
