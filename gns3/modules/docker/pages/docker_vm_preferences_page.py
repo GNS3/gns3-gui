@@ -48,6 +48,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         self._items = []
 
         self.uiNewDockerVMPushButton.clicked.connect(self._dockerImageNewSlot)
+        self.uiCopyDockerVMPushButton.clicked.connect(self._dockerImageCopySlot)
         self.uiEditDockerVMPushButton.clicked.connect(self._dockerImageEditSlot)
         self.uiDeleteDockerVMPushButton.clicked.connect(self._dockerImageDeleteSlot)
         self.uiDockerVMsTreeWidget.itemSelectionChanged.connect(self._dockerImageChangedSlot)
@@ -93,6 +94,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         self.uiDeleteDockerVMPushButton.setEnabled(len(selection) != 0)
         single_selected = len(selection) == 1
         self.uiEditDockerVMPushButton.setEnabled(single_selected)
+        self.uiCopyDockerVMPushButton.setEnabled(single_selected)
 
         if single_selected:
             key = selection[0].data(0, QtCore.Qt.UserRole)
@@ -120,6 +122,32 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
             self._items.append(item)
             self.uiDockerVMsTreeWidget.setCurrentItem(item)
 
+    def _dockerImageCopySlot(self):
+        """
+        Copies a Docker image.
+        """
+
+        item = self.uiDockerVMsTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            copied_containers_settings = self._docker_containers[key]
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Docker container template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_containers_settings["name"]))
+            if ok:
+                key = "{server}:{name}".format(server=copied_containers_settings["server"], name=new_name)
+                if key in self._docker_containers:
+                    QtWidgets.QMessageBox.critical(self, "Docker container", "Container name {} already exists".format(new_name))
+                    return
+                self._docker_containers[key] = DOCKER_CONTAINER_SETTINGS.copy()
+                self._docker_containers[key].update(copied_containers_settings)
+                self._docker_containers[key]["name"] = new_name
+
+                item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
+                item.setText(0, self._docker_containers[key]["name"])
+                Controller.instance().getSymbolIcon(self._docker_containers[key]["symbol"], qpartial(self._setItemIcon, item))
+                item.setData(0, QtCore.Qt.UserRole, key)
+                self._items.append(item)
+                self.uiDockerVMsTreeWidget.setCurrentItem(item)
+
     def _dockerImageEditSlot(self):
         """
         Edits a Docker image.
@@ -137,7 +165,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
                 if docker_image["name"] != item.text(0):
                     new_key = "{server}:{name}".format(server=docker_image["server"], name=docker_image["name"])
                     if new_key in self._docker_containers:
-                        QtWidgets.QMessageBox.critical(self, "Docker image", "Docker container name {} already exists for server {}".format(docker_image["name"],
+                        QtWidgets.QMessageBox.critical(self, "Docker container", "Docker container name {} already exists for server {}".format(docker_image["name"],
                                                                                                                                             docker_image["server"]))
                         docker_image["name"] = item.text(0)
                         return

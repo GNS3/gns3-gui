@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_preferences_page.ui'
 #
-# Created: Sun Mar 27 12:02:29 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,14 +11,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_QemuVMPreferencesPageWidget(object):
     def setupUi(self, QemuVMPreferencesPageWidget):
         QemuVMPreferencesPageWidget.setObjectName("QemuVMPreferencesPageWidget")
-        QemuVMPreferencesPageWidget.resize(572, 514)
+        QemuVMPreferencesPageWidget.resize(526, 400)
         QemuVMPreferencesPageWidget.setAccessibleDescription("")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(QemuVMPreferencesPageWidget)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.splitter = QtWidgets.QSplitter(QemuVMPreferencesPageWidget)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setObjectName("splitter")
-        self.uiQemuVMsTreeWidget = QtWidgets.QTreeWidget(self.splitter)
+        self.gridLayout = QtWidgets.QGridLayout(QemuVMPreferencesPageWidget)
+        self.gridLayout.setObjectName("gridLayout")
+        self.uiQemuVMsTreeWidget = QtWidgets.QTreeWidget(QemuVMPreferencesPageWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -37,12 +33,10 @@ class Ui_QemuVMPreferencesPageWidget(object):
         self.uiQemuVMsTreeWidget.setObjectName("uiQemuVMsTreeWidget")
         self.uiQemuVMsTreeWidget.headerItem().setText(0, "1")
         self.uiQemuVMsTreeWidget.header().setVisible(False)
-        self.layoutWidget = QtWidgets.QWidget(self.splitter)
-        self.layoutWidget.setObjectName("layoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.addWidget(self.uiQemuVMsTreeWidget, 0, 0, 1, 1)
+        self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        self.uiQemuVMInfoTreeWidget = QtWidgets.QTreeWidget(self.layoutWidget)
+        self.uiQemuVMInfoTreeWidget = QtWidgets.QTreeWidget(QemuVMPreferencesPageWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -53,21 +47,25 @@ class Ui_QemuVMPreferencesPageWidget(object):
         self.uiQemuVMInfoTreeWidget.setObjectName("uiQemuVMInfoTreeWidget")
         self.uiQemuVMInfoTreeWidget.header().setVisible(False)
         self.verticalLayout.addWidget(self.uiQemuVMInfoTreeWidget)
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.uiNewQemuVMPushButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.uiNewQemuVMPushButton = QtWidgets.QPushButton(QemuVMPreferencesPageWidget)
         self.uiNewQemuVMPushButton.setObjectName("uiNewQemuVMPushButton")
-        self.horizontalLayout_5.addWidget(self.uiNewQemuVMPushButton)
-        self.uiEditQemuVMPushButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.horizontalLayout.addWidget(self.uiNewQemuVMPushButton)
+        self.uiCopyQemuVMPushButton = QtWidgets.QPushButton(QemuVMPreferencesPageWidget)
+        self.uiCopyQemuVMPushButton.setEnabled(False)
+        self.uiCopyQemuVMPushButton.setObjectName("uiCopyQemuVMPushButton")
+        self.horizontalLayout.addWidget(self.uiCopyQemuVMPushButton)
+        self.uiEditQemuVMPushButton = QtWidgets.QPushButton(QemuVMPreferencesPageWidget)
         self.uiEditQemuVMPushButton.setEnabled(False)
         self.uiEditQemuVMPushButton.setObjectName("uiEditQemuVMPushButton")
-        self.horizontalLayout_5.addWidget(self.uiEditQemuVMPushButton)
-        self.uiDeleteQemuVMPushButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.horizontalLayout.addWidget(self.uiEditQemuVMPushButton)
+        self.uiDeleteQemuVMPushButton = QtWidgets.QPushButton(QemuVMPreferencesPageWidget)
         self.uiDeleteQemuVMPushButton.setEnabled(False)
         self.uiDeleteQemuVMPushButton.setObjectName("uiDeleteQemuVMPushButton")
-        self.horizontalLayout_5.addWidget(self.uiDeleteQemuVMPushButton)
-        self.verticalLayout.addLayout(self.horizontalLayout_5)
-        self.verticalLayout_2.addWidget(self.splitter)
+        self.horizontalLayout.addWidget(self.uiDeleteQemuVMPushButton)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.gridLayout.addLayout(self.verticalLayout, 0, 1, 1, 1)
 
         self.retranslateUi(QemuVMPreferencesPageWidget)
         QtCore.QMetaObject.connectSlotsByName(QemuVMPreferencesPageWidget)
@@ -80,6 +78,7 @@ class Ui_QemuVMPreferencesPageWidget(object):
         self.uiQemuVMInfoTreeWidget.headerItem().setText(0, _translate("QemuVMPreferencesPageWidget", "1"))
         self.uiQemuVMInfoTreeWidget.headerItem().setText(1, _translate("QemuVMPreferencesPageWidget", "2"))
         self.uiNewQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "&New"))
+        self.uiCopyQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "&Copy"))
         self.uiEditQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "&Edit"))
         self.uiDeleteQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "&Delete"))
 

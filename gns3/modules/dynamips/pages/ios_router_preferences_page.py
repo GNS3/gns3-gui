@@ -26,7 +26,7 @@ import math
 import zipfile
 import logging
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial, qslot
+from gns3.qt import QtCore, QtWidgets, qpartial, qslot
 from gns3.controller import Controller
 
 from gns3.main_window import MainWindow
@@ -65,6 +65,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         self._items = []
 
         self.uiNewIOSRouterPushButton.clicked.connect(self._iosRouterNewSlot)
+        self.uiCopyIOSRouterPushButton.clicked.connect(self._iosRouterCopySlot)
         self.uiEditIOSRouterPushButton.clicked.connect(self._iosRouterEditSlot)
         self.uiDeleteIOSRouterPushButton.clicked.connect(self._iosRouterDeleteSlot)
         self.uiIOSRoutersTreeWidget.itemSelectionChanged.connect(self._iosRouterChangedSlot)
@@ -79,6 +80,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         self.uiDeleteIOSRouterPushButton.setEnabled(len(selection) != 0)
         single_selected = len(selection) == 1
         self.uiEditIOSRouterPushButton.setEnabled(single_selected)
+        self.uiCopyIOSRouterPushButton.setEnabled(single_selected)
         self.uiDecompressIOSPushButton.setEnabled(single_selected)
 
         if single_selected:
@@ -127,6 +129,32 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiIOSRoutersTreeWidget.setCurrentItem(item)
+
+    def _iosRouterCopySlot(self):
+        """
+        Copies an IOS router.
+        """
+
+        item = self.uiIOSRoutersTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            copied_ios_router_settings = self._ios_routers[key]
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOS router template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_ios_router_settings["name"]))
+            if ok:
+                key = "{server}:{name}".format(server=copied_ios_router_settings["server"], name=new_name)
+                if key in self._ios_routers:
+                    QtWidgets.QMessageBox.critical(self, "IOS router", "IOS router name {} already exists".format(new_name))
+                    return
+                self._ios_routers[key] = IOS_ROUTER_SETTINGS.copy()
+                self._ios_routers[key].update(copied_ios_router_settings)
+                self._ios_routers[key]["name"] = new_name
+
+                item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
+                item.setText(0, self._ios_routers[key]["name"])
+                Controller.instance().getSymbolIcon(self._ios_routers[key]["symbol"], qpartial(self._setItemIcon, item))
+                item.setData(0, QtCore.Qt.UserRole, key)
+                self._items.append(item)
+                self.uiIOSRoutersTreeWidget.setCurrentItem(item)
 
     def _iosRouterEditSlot(self):
         """

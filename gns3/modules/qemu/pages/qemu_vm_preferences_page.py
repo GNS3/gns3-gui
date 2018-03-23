@@ -50,6 +50,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self._items = []
 
         self.uiNewQemuVMPushButton.clicked.connect(self._qemuVMNewSlot)
+        self.uiCopyQemuVMPushButton.clicked.connect(self._qemuVMCopySlot)
         self.uiEditQemuVMPushButton.clicked.connect(self._qemuVMEditSlot)
         self.uiDeleteQemuVMPushButton.clicked.connect(self._qemuVMDeleteSlot)
         self.uiQemuVMsTreeWidget.itemSelectionChanged.connect(self._qemuVMChangedSlot)
@@ -154,6 +155,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiDeleteQemuVMPushButton.setEnabled(len(selection) != 0)
         single_selected = len(selection) == 1
         self.uiEditQemuVMPushButton.setEnabled(single_selected)
+        self.uiCopyQemuVMPushButton.setEnabled(single_selected)
 
         if single_selected:
             key = selection[0].data(0, QtCore.Qt.UserRole)
@@ -185,6 +187,32 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiQemuVMsTreeWidget.setCurrentItem(item)
+
+    def _qemuVMCopySlot(self):
+        """
+        Copies a QEMU VM.
+        """
+
+        item = self.uiQemuVMsTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            copied_vm_settings = self._qemu_vms[key]
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Qemu VM template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_vm_settings["name"]))
+            if ok:
+                key = "{server}:{name}".format(server=copied_vm_settings["server"], name=new_name)
+                if key in self._qemu_vms:
+                    QtWidgets.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(new_name))
+                    return
+                self._qemu_vms[key] = QEMU_VM_SETTINGS.copy()
+                self._qemu_vms[key].update(copied_vm_settings)
+                self._qemu_vms[key]["name"] = new_name
+
+                item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
+                item.setText(0, self._qemu_vms[key]["name"])
+                Controller.instance().getSymbolIcon(self._qemu_vms[key]["symbol"], qpartial(self._setItemIcon, item))
+                item.setData(0, QtCore.Qt.UserRole, key)
+                self._items.append(item)
+                self.uiQemuVMsTreeWidget.setCurrentItem(item)
 
     def _qemuVMEditSlot(self):
         """

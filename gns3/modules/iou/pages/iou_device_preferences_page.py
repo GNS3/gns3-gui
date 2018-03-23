@@ -54,6 +54,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         self._items = []
 
         self.uiNewIOUDevicePushButton.clicked.connect(self._iouDeviceNewSlot)
+        self.uiCopyIOUDevicePushButton.clicked.connect(self._iouDeviceCopySlot)
         self.uiEditIOUDevicePushButton.clicked.connect(self._iouDeviceEditSlot)
         self.uiDeleteIOUDevicePushButton.clicked.connect(self._iouDeviceDeleteSlot)
         self.uiIOUDevicesTreeWidget.itemSelectionChanged.connect(self._iouDeviceChangedSlot)
@@ -115,6 +116,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         self.uiDeleteIOUDevicePushButton.setEnabled(len(selection) != 0)
         single_selected = len(selection) == 1
         self.uiEditIOUDevicePushButton.setEnabled(single_selected)
+        self.uiCopyIOUDevicePushButton.setEnabled(single_selected)
 
         if single_selected:
             key = selection[0].data(0, QtCore.Qt.UserRole)
@@ -143,6 +145,32 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiIOUDevicesTreeWidget.setCurrentItem(item)
+
+    def _iouDeviceCopySlot(self):
+        """
+        Copies an IOU device.
+        """
+
+        item = self.uiIOUDevicesTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            copied_iou_device_settings = self._iou_devices[key]
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOU device template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_iou_device_settings["name"]))
+            if ok:
+                key = "{server}:{name}".format(server=copied_iou_device_settings["server"], name=new_name)
+                if key in self._iou_devices:
+                    QtWidgets.QMessageBox.critical(self, "IOU device", "IOU device name {} already exists".format(new_name))
+                    return
+                self._iou_devices[key] = IOU_DEVICE_SETTINGS.copy()
+                self._iou_devices[key].update(copied_iou_device_settings)
+                self._iou_devices[key]["name"] = new_name
+
+                item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
+                item.setText(0, self._iou_devices[key]["name"])
+                Controller.instance().getSymbolIcon(self._iou_devices[key]["symbol"], qpartial(self._setItemIcon, item))
+                item.setData(0, QtCore.Qt.UserRole, key)
+                self._items.append(item)
+                self.uiIOUDevicesTreeWidget.setCurrentItem(item)
 
     def _iouDeviceEditSlot(self):
         """
