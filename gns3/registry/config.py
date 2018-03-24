@@ -210,6 +210,7 @@ class Config:
         new_config["use_default_iou_values"] = True
         new_config["nvram"] = appliance_config["iou"]["nvram"]
         new_config["ram"] = appliance_config["iou"]["ram"]
+        new_config["console_type"] = appliance_config["iou"].get("console_type", "telnet")
 
         for image in appliance_config["images"]:
             if "path" not in image:

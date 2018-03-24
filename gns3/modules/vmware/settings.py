@@ -49,5 +49,6 @@ VMWARE_VM_SETTINGS = {
     "headless": False,
     "acpi_shutdown": False,
     "linked_clone": False,
+    "console_type": "telnet",
     "server": "local"
 }

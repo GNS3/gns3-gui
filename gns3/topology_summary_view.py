@@ -96,10 +96,10 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
             # refresh all the other item if the node name has changed
             self._parent.refreshAllLinks(source_child=self)
         self.setText(0, self._node.name())
-        if self._node.consoleType() and self._node.console():
+        if self._node.consoleType() and self._node.console() and self._node.consoleType() != "none":
             self.setText(1, "{} {}:{}".format(self._node.consoleType(), self._node.consoleHost(), self._node.console()))
         else:
-            self.setText(1, "not supported")
+            self.setText(1, "none")
         self.refreshLinks()
         self._parent.invisibleRootItem().sortChildren(0, QtCore.Qt.AscendingOrder)
 

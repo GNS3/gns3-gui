@@ -46,5 +46,6 @@ ETHERNET_SWITCH_SETTINGS = {
     "default_name_format": "Switch{0}",
     "symbol": ":/symbols/ethernet_switch.svg",
     "category": Node.switches,
+    "console_type": "telnet",
     "ports_mapping": [],
 }

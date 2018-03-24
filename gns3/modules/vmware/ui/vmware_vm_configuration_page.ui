@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>546</width>
-    <height>470</height>
+    <width>767</width>
+    <height>479</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,20 +24,32 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
-        <number>10</number>
-       </property>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="uiCategoryComboBox"/>
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiNameLabel">
+         <property name="text">
+          <string>Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="uiNameLineEdit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiDefaultNameFormatLabel">
+         <property name="text">
+          <string>Default name format:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
+         <property name="text">
+          <string>Symbol:</string>
+         </property>
+        </widget>
        </item>
        <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -56,14 +68,65 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiSymbolLabel">
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
-          <string>Symbol:</string>
+          <string>Category:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="3" column="1">
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="uiConsoleTypeComboBox">
+         <item>
+          <property name="text">
+           <string>telnet</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>none</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
+         <property name="text">
+          <string>Enable ACPI shutdown</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
+         <property name="text">
+          <string>Start VM in headless mode</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiBaseVMCheckBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Use as a linked base VM (experimental)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -76,60 +139,6 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiNameLabel">
-         <property name="text">
-          <string>Name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiBaseVMCheckBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Use as a linked base VM (experimental)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiCategoryLabel">
-         <property name="text">
-          <string>Category:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
-         <property name="text">
-          <string>Enable ACPI shutdown</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
-         <property name="text">
-          <string>Start VM in headless mode</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiDefaultNameFormatLabel">
-         <property name="text">
-          <string>Default name format:</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -137,16 +146,7 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item row="2" column="2">

@@ -41,6 +41,7 @@ class VPCSNode(Node):
 
         vpcs_settings = {"console_host": None,
                          "startup_script": None,
+                         "console_type": "telnet",
                          "console": None}
 
         self.settings().update(vpcs_settings)
@@ -75,13 +76,14 @@ class VPCSNode(Node):
         info = """Node {name} is {state}
   Local node ID is {id}
   Server's VPCS node ID is {node_id}
-  VPCS's server runs on {host}, console is on port {console}
+  VPCS's server runs on {host}, console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
            state=state,
            host=self.compute().name(),
-           console=self._settings["console"])
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:

@@ -48,6 +48,7 @@ class IOUDevice(Node):
                                "md5sum": "",
                                "startup_config": "",
                                "private_config": "",
+                               "console_type": "telnet",
                                "l1_keepalives": False,
                                "use_default_iou_values": IOU_DEVICE_SETTINGS["use_default_iou_values"],
                                "ram": IOU_DEVICE_SETTINGS["ram"],
@@ -115,7 +116,7 @@ class IOUDevice(Node):
         info = """Device {name} is {state}
   Node ID is {id}, server's IOU device ID is {node_id}
   Hardware is Cisco IOU generic device with {memories_info}
-  Device's server runs on {host}, console is on port {console}
+  Device's server runs on {host}, console is on port {console} and type is {console_type}
   Image is {image_name}
   {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
 """.format(name=self.name(),
@@ -125,6 +126,7 @@ class IOUDevice(Node):
            memories_info=memories_info,
            host=self.compute().name(),
            console=self._settings["console"],
+           console_type=self._settings["console_type"],
            image_name=os.path.basename(self._settings["path"]),
            nb_ethernet=self._settings["ethernet_adapters"],
            nb_serial=self._settings["serial_adapters"])

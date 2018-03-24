@@ -126,6 +126,11 @@ class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
             self.uiScriptFileEdit.hide()
             self.uiScriptFileToolButton.hide()
 
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
     def saveSettings(self, settings, node=None, group=False):
         """
         Saves the VPCS nodesettings.
@@ -165,6 +170,9 @@ class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
                     settings["base_script_file"] = base_script_file
                 else:
                     QtWidgets.QMessageBox.critical(self, "Base script config file", "Cannot read the base script config file")
+
+        # save console type
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
         return settings
 
     def _configFileValid(self, path):

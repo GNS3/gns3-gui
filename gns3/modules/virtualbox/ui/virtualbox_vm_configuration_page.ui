@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>410</height>
+    <width>774</width>
+    <height>552</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,30 +24,34 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <property name="margin">
-        <number>10</number>
-       </property>
-       <item row="4" column="1">
-        <widget class="QComboBox" name="uiVMListComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiNameLabel">
+         <property name="text">
+          <string>Name:</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="0" column="2">
         <widget class="QLineEdit" name="uiNameLineEdit"/>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiVMRamLabel">
+       <item row="1" column="0" colspan="2">
+        <widget class="QLabel" name="uiDefaultNameFormatLabel">
          <property name="text">
-          <string>RAM:</string>
+          <string>Default name format:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="1" column="2">
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
+         <property name="text">
+          <string>Symbol:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="QLineEdit" name="uiSymbolLineEdit"/>
@@ -64,30 +68,65 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiNameLabel">
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
-          <string>Name:</string>
+          <string>Category:</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
-        <widget class="QSpinBox" name="uiVMRamSpinBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="suffix">
-          <string> MB</string>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
+       <item row="3" column="2">
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiVMListLabel">
+         <property name="text">
+          <string>VM name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiVMRamLabel">
+         <property name="text">
+          <string>RAM:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="3">
+        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
+         <property name="text">
+          <string>Enable ACPI shutdown</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="3">
+        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
+         <property name="text">
+          <string>Start VM in headless mode</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="3">
+        <widget class="QCheckBox" name="uiBaseVMCheckBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Use as a linked base VM (experimental)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="2">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -100,64 +139,43 @@
          </property>
         </spacer>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiSymbolLabel">
-         <property name="text">
-          <string>Symbol:</string>
+       <item row="4" column="2">
+        <widget class="QComboBox" name="uiConsoleTypeComboBox">
+         <item>
+          <property name="text">
+           <string>telnet</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>none</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QComboBox" name="uiVMListComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
-         <property name="text">
-          <string>Enable ACPI shutdown</string>
+       <item row="6" column="2">
+        <widget class="QSpinBox" name="uiVMRamSpinBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="uiCategoryComboBox"/>
-       </item>
-       <item row="8" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiBaseVMCheckBox">
-         <property name="enabled">
-          <bool>true</bool>
+         <property name="suffix">
+          <string> MB</string>
          </property>
-         <property name="text">
-          <string>Use as a linked base VM (experimental)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiCategoryLabel">
-         <property name="text">
-          <string>Category:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
-         <property name="text">
-          <string>Start VM in headless mode</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiVMListLabel">
-         <property name="text">
-          <string>VM name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiDefaultNameFormatLabel">
-         <property name="text">
-          <string>Default name format:</string>
+         <property name="maximum">
+          <number>65535</number>
          </property>
         </widget>
        </item>

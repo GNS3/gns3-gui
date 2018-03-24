@@ -205,6 +205,11 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             self.uiCategoryLabel.hide()
             self.uiCategoryComboBox.hide()
 
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
         # load advanced settings
         if "l1_keepalives" in settings:
             self.uiL1KeepalivesCheckBox.setChecked(settings["l1_keepalives"])
@@ -300,6 +305,8 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
 
         settings["ethernet_adapters"] = ethernet_adapters
         settings["serial_adapters"] = serial_adapters
+        # save console type
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
         return settings
 
     def _configFileValid(self, path):

@@ -132,6 +132,11 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             self.uiFirstPortNameLabel.hide()
             self.uiFirstPortNameLineEdit.hide()
 
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
@@ -195,6 +200,9 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
         settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
+
+        # save console type
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
 
         adapters = self.uiAdaptersSpinBox.value()
         if node and node.settings()["adapters"] != adapters:

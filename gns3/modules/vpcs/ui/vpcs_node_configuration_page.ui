@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>445</width>
-    <height>209</height>
+    <width>722</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,7 +65,7 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="3" column="0">
     <widget class="QLabel" name="uiSymbolLabel">
      <property name="text">
       <string>Symbol:</string>
@@ -89,7 +89,7 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="4" column="0">
     <widget class="QLabel" name="uiCategoryLabel">
      <property name="text">
       <string>Category:</string>
@@ -99,7 +99,28 @@
    <item row="4" column="2">
     <widget class="QComboBox" name="uiCategoryComboBox"/>
    </item>
-   <item row="5" column="1" colspan="2">
+   <item row="5" column="0" colspan="2">
+    <widget class="QLabel" name="uiConsoleTypeLabel">
+     <property name="text">
+      <string>Console type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QComboBox" name="uiConsoleTypeComboBox">
+     <item>
+      <property name="text">
+       <string>telnet</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>none</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="2">
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

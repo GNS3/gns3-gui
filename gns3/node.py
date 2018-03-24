@@ -227,7 +227,12 @@ class Node(BaseNode):
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         body = self._prepareBody(params)
-        self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self.updateNodeCallback, body=body, timeout=timeout, showProgress=False)
+        self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self._updateNodeCallback, body=body, timeout=timeout, showProgress=False)
+
+    def _updateNodeCallback(self, result, error=False, **kwargs):
+        if error:
+            self.server_error_signal.emit(self.id(), result["message"])
+            return False
 
     def updateNodeCallback(self, result, error=False, **kwargs):
         """

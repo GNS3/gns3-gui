@@ -366,6 +366,11 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             # load the I/O memory setting
             self.uiIomemSpinBox.setValue(settings["iomem"])
 
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
         # load the memories and disks settings
         self.uiRamSpinBox.setValue(settings["ram"])
         self.uiNvramSpinBox.setValue(settings["nvram"])
@@ -564,6 +569,9 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         else:
             # save the I/O memory setting
             settings["iomem"] = self.uiIomemSpinBox.value()
+
+        # save console type
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
 
         # save the memories and disks settings
         settings["ram"] = self.uiRamSpinBox.value()

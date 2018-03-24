@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>767</width>
-    <height>685</height>
+    <width>765</width>
+    <height>762</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,9 +24,6 @@
        <string>General settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="margin">
-        <number>10</number>
-       </property>
        <item>
         <widget class="QGroupBox" name="uiGeneralgroupBox">
          <property name="styleSheet">
@@ -36,6 +33,20 @@
           <string>General</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
+          <item row="7" column="1">
+           <widget class="QComboBox" name="uiConsoleTypeComboBox">
+            <item>
+             <property name="text">
+              <string>telnet</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>none</string>
+             </property>
+            </item>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="uiNameLabel">
             <property name="text">
@@ -46,12 +57,43 @@
           <item row="0" column="1">
            <widget class="QLineEdit" name="uiNameLineEdit"/>
           </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiDefaultNameFormatLabel">
+            <property name="text">
+             <string>Default name format:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="uiSymbolLabel">
             <property name="text">
              <string>Symbol:</string>
             </property>
            </widget>
+          </item>
+          <item row="4" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLineEdit" name="uiIOUImageLineEdit"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiIOUImageToolButton">
+              <property name="text">
+               <string>&amp;Browse...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextOnly</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="2" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -80,38 +122,21 @@
           <item row="3" column="1">
            <widget class="QComboBox" name="uiCategoryComboBox"/>
           </item>
-          <item row="5" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="uiIOUImageLabel">
             <property name="text">
              <string>IOU image path:</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QLineEdit" name="uiIOUImageLineEdit"/>
-            </item>
-            <item>
-             <widget class="QToolButton" name="uiIOUImageToolButton">
-              <property name="text">
-               <string>&amp;Browse...</string>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextOnly</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="6" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="uiStartupConfigLabel">
             <property name="text">
              <string>Startup-config:</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
+          <item row="5" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <widget class="QLineEdit" name="uiStartupConfigLineEdit"/>
@@ -128,14 +153,14 @@
             </item>
            </layout>
           </item>
-          <item row="7" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="uiPrivateConfigLabel">
             <property name="text">
              <string>Private-config:</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="1">
+          <item row="6" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
              <widget class="QLineEdit" name="uiPrivateConfigLineEdit"/>
@@ -152,17 +177,10 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="uiDefaultNameFormatLabel">
+          <item row="7" column="0">
+           <widget class="QLabel" name="uiConsoleTypeLabel">
             <property name="text">
-             <string>Default name format:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit">
-            <property name="text">
-             <string/>
+             <string>Console type:</string>
             </property>
            </widget>
           </item>

@@ -84,11 +84,13 @@ class EthernetSwitch(Node):
         info = """Ethernet switch {name} is always-on
   Local node ID is {id}
   Server's Node ID is {node_id}
-  Switch's server runs on {host}
+  Switch's server runs on {host}, console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self.compute().name())
+           host=self.compute().name(),
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:

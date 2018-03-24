@@ -134,6 +134,11 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
             self.uiFirstPortNameLabel.hide()
             self.uiFirstPortNameLineEdit.hide()
 
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
@@ -194,6 +199,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
 
             settings["first_port_name"] = self.uiFirstPortNameLineEdit.text().strip()
 
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
         settings["ram"] = self.uiVMRamSpinBox.value()
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()

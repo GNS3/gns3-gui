@@ -229,6 +229,11 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
             self.uiPortsTreeWidget.addTopLevelItem(item)
             self._ports[port_info["port_number"]] = port_info
 
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
         self.uiPortsTreeWidget.resizeColumnToContents(0)
         self.uiPortsTreeWidget.resizeColumnToContents(1)
         if len(self._ports) > 0:
@@ -265,6 +270,9 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
             settings["symbol"] = symbol_path
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
+
+        # save console type
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
 
         settings["ports_mapping"] = list(self._ports.values())
         return settings

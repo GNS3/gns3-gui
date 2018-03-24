@@ -380,6 +380,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         if ios_router["chassis"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Image:", ios_router["image"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Console type:", ios_router["console_type"]])
         if ios_router["idlepc"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Idle-PC:", ios_router["idlepc"]])
         if ios_router["startup_config"]:

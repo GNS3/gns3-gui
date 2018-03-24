@@ -23,7 +23,6 @@ import os
 import re
 
 from gns3.node import Node
-from gns3.utils.normalize_filename import normalize_filename
 
 from ..adapters import ADAPTER_MATRIX
 from ..wics import WIC_MATRIX
@@ -70,6 +69,7 @@ class Router(Node):
                            "disk1": 0,
                            "auto_delete_disks": False,
                            "console": None,
+                           "console_type": "telnet",
                            "console_host": None,
                            "aux": None,
                            "mac_addr": None,
@@ -289,7 +289,7 @@ class Router(Node):
   Server's node ID is {node_id}
   Dynamips ID is {dynamips_id}
   Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
-  Router's server runs on {host}, console is on port {console}, aux is on port {aux}
+  Router's server runs on {host}, console is on port {console} and type is {console_type}, aux is on port {aux}
   Image is {image_name}
   {idlepc_info}
   {disk0} MB disk0 size, {disk1} MB disk1 size
@@ -304,6 +304,7 @@ class Router(Node):
            nvram=self._settings["nvram"],
            host=self.compute().name(),
            console=self._settings["console"],
+           console_type=self._settings["console_type"],
            aux=self._settings["aux"],
            image_name=os.path.basename(self._settings["image"]),
            idlepc_info=idlepc_info,

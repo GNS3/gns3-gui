@@ -53,6 +53,7 @@ class VirtualBoxVM(Node):
                                   "ram": VBOX_VM_SETTINGS["ram"],
                                   "headless": VBOX_VM_SETTINGS["headless"],
                                   "acpi_shutdown": VBOX_VM_SETTINGS["acpi_shutdown"],
+                                  "console_type": VBOX_VM_SETTINGS["console_type"],
                                   "port_name_format": "Ethernet0",
                                   "port_segment_size": 0,
                                   "first_port_name": None}
@@ -99,7 +100,7 @@ class VirtualBoxVM(Node):
   Server's node ID is {node_id}
   VirtualBox name is "{vmname}"
   RAM is {ram} MB
-  VirtualBox VM's server runs on {host}, console is on port {console}
+  VirtualBox VM's server runs on {host}, console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
@@ -107,7 +108,8 @@ class VirtualBoxVM(Node):
            vmname=self._settings["vmname"],
            ram=self._settings["ram"],
            host=self.compute().name(),
-           console=self._settings["console"])
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:

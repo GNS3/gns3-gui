@@ -37,6 +37,7 @@ IOU_DEVICE_SETTINGS = {
     "image": "",
     "startup_config": "",
     "private_config": "",
+    "console_type": "telnet",
     "use_default_iou_values": True,
     "ram": 256,
     "nvram": 128,

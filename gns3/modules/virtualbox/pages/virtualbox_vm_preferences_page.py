@@ -80,6 +80,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
         QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vbox_vm["acpi_shutdown"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vbox_vm["linked_clone"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vbox_vm["console_type"]])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")

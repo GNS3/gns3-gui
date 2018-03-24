@@ -54,6 +54,7 @@ class VMwareVM(Node):
                               "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
                               "headless": VMWARE_VM_SETTINGS["headless"],
                               "acpi_shutdown": VMWARE_VM_SETTINGS["acpi_shutdown"],
+                              "console_type": VMWARE_VM_SETTINGS["console_type"],
                               "port_name_format": "Ethernet{0}",
                               "port_segment_size": 0,
                               "first_port_name": None}
@@ -97,13 +98,14 @@ class VMwareVM(Node):
         info = """VMware VM {name} is {state}
   Local node ID is {id}
   Server's node ID is {node_id}
-  VMware VM's server runs on {host}, console is on port {console}
+  VMware VM's server runs on {host}, console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
            state=state,
            host=self.compute().name(),
-           console=self._settings["console"])
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:

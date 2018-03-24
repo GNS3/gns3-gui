@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_node_configuration_page.ui'
 #
-# Created: Sun Jul 10 16:55:31 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_VPCSNodeConfigPageWidget(object):
     def setupUi(self, VPCSNodeConfigPageWidget):
         VPCSNodeConfigPageWidget.setObjectName("VPCSNodeConfigPageWidget")
-        VPCSNodeConfigPageWidget.resize(445, 209)
+        VPCSNodeConfigPageWidget.resize(722, 341)
         self.gridLayout = QtWidgets.QGridLayout(VPCSNodeConfigPageWidget)
         self.gridLayout.setObjectName("gridLayout")
         self.uiNameLabel = QtWidgets.QLabel(VPCSNodeConfigPageWidget)
@@ -47,7 +46,7 @@ class Ui_VPCSNodeConfigPageWidget(object):
         self.gridLayout.addLayout(self.horizontalLayout_6, 2, 2, 1, 1)
         self.uiSymbolLabel = QtWidgets.QLabel(VPCSNodeConfigPageWidget)
         self.uiSymbolLabel.setObjectName("uiSymbolLabel")
-        self.gridLayout.addWidget(self.uiSymbolLabel, 3, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiSymbolLabel, 3, 0, 1, 1)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.uiSymbolLineEdit = QtWidgets.QLineEdit(VPCSNodeConfigPageWidget)
@@ -60,12 +59,20 @@ class Ui_VPCSNodeConfigPageWidget(object):
         self.gridLayout.addLayout(self.horizontalLayout_7, 3, 2, 1, 1)
         self.uiCategoryLabel = QtWidgets.QLabel(VPCSNodeConfigPageWidget)
         self.uiCategoryLabel.setObjectName("uiCategoryLabel")
-        self.gridLayout.addWidget(self.uiCategoryLabel, 4, 0, 1, 2)
+        self.gridLayout.addWidget(self.uiCategoryLabel, 4, 0, 1, 1)
         self.uiCategoryComboBox = QtWidgets.QComboBox(VPCSNodeConfigPageWidget)
         self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
         self.gridLayout.addWidget(self.uiCategoryComboBox, 4, 2, 1, 1)
+        self.uiConsoleTypeLabel = QtWidgets.QLabel(VPCSNodeConfigPageWidget)
+        self.uiConsoleTypeLabel.setObjectName("uiConsoleTypeLabel")
+        self.gridLayout.addWidget(self.uiConsoleTypeLabel, 5, 0, 1, 2)
+        self.uiConsoleTypeComboBox = QtWidgets.QComboBox(VPCSNodeConfigPageWidget)
+        self.uiConsoleTypeComboBox.setObjectName("uiConsoleTypeComboBox")
+        self.uiConsoleTypeComboBox.addItem("")
+        self.uiConsoleTypeComboBox.addItem("")
+        self.gridLayout.addWidget(self.uiConsoleTypeComboBox, 5, 2, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(263, 212, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 5, 1, 1, 2)
+        self.gridLayout.addItem(spacerItem, 6, 1, 1, 2)
 
         self.retranslateUi(VPCSNodeConfigPageWidget)
         QtCore.QMetaObject.connectSlotsByName(VPCSNodeConfigPageWidget)
@@ -80,4 +87,7 @@ class Ui_VPCSNodeConfigPageWidget(object):
         self.uiSymbolLabel.setText(_translate("VPCSNodeConfigPageWidget", "Symbol:"))
         self.uiSymbolToolButton.setText(_translate("VPCSNodeConfigPageWidget", "&Browse..."))
         self.uiCategoryLabel.setText(_translate("VPCSNodeConfigPageWidget", "Category:"))
+        self.uiConsoleTypeLabel.setText(_translate("VPCSNodeConfigPageWidget", "Console type:"))
+        self.uiConsoleTypeComboBox.setItemText(0, _translate("VPCSNodeConfigPageWidget", "telnet"))
+        self.uiConsoleTypeComboBox.setItemText(1, _translate("VPCSNodeConfigPageWidget", "none"))
 

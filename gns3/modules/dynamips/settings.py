@@ -37,6 +37,7 @@ IOS_ROUTER_SETTINGS = {
     "category": Node.routers,
     "startup_config": "",
     "private_config": "",
+    "console_type": "telnet",
     "platform": "",
     "chassis": "",
     "idlepc": "",

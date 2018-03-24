@@ -75,6 +75,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         except KeyError:
             pass
 
+        QtWidgets.QTreeWidgetItem(section_item, ["Console type:", ethernet_switch["console_type"]])
         for port in ethernet_switch["ports_mapping"]:
             section_item = self._createSectionItem("Port{}".format(port["port_number"]))
             QtWidgets.QTreeWidgetItem(section_item, ["Name:", port["name"]])
