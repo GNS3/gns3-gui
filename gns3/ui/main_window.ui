@@ -1180,7 +1180,7 @@ background-none;
   <action name="uiExportProjectAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/export.svg</normaloff>:/icons/export_config.svg</iconset>
+     <normaloff>:/icons/export.svg</normaloff>:/icons/export.svg</iconset>
    </property>
    <property name="text">
     <string>Export portable project</string>
@@ -1189,7 +1189,7 @@ background-none;
   <action name="uiImportProjectAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/import.svg</normaloff>:/icons/import_config.svg</iconset>
+     <normaloff>:/icons/import.svg</normaloff>:/icons/import.svg</iconset>
    </property>
    <property name="text">
     <string>Import portable project</string>
@@ -1261,12 +1261,10 @@ background-none;
    </property>
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/classic_icons/unlock.svg</normaloff>
-     <normalon>:/classic_icons/lock.svg</normalon>
-     <disabledoff>:/classic_icons/lock-hover.svg</disabledoff>
-     <disabledon>:/classic_icons/lock-hover.svg</disabledon>
-     <activeoff>:/classic_icons/unlock-hover.svg</activeoff>
-     <activeon>:/classic_icons/lock-hover.svg</activeon>:/classic_icons/unlock.svg</iconset>
+     <normaloff>:/icons/unlock.svg</normaloff>
+     <normalon>:/icons/lock.svg</normalon>
+     <activeoff>:/icons/unlock.svg</activeoff>
+     <activeon>:/icons/lock.svg</activeon>:/icons/unlock.svg</iconset>
    </property>
    <property name="text">
     <string>Lock or unlock all items</string>

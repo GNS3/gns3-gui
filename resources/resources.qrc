@@ -68,6 +68,8 @@
         <file>icons/node_conception.svg</file>
         <file>icons/raise_z_value.svg</file>
         <file>icons/lower_z_value.svg</file>
+        <file>icons/lock.svg</file>
+        <file>icons/unlock.svg</file>
         <file>icons/drawing.svg</file>
         <file>icons/rectangle.svg</file>
         <file>icons/rectangle-hover.svg</file>

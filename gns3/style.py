@@ -84,12 +84,12 @@ class Style:
         self._mw.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/icons/browse-all-icons.png", ":/icons/browse-all-icons-hover.png"))
         self._mw.uiAddLinkAction.setIcon(self._getStyleIcon(":/icons/connection-new.svg", ":/charcoal_icons/connection-new-hover.svg"))
 
-        # Lock action has 4 different icons (use the ones from classic theme)
+        # Lock action has 4 different icons
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/lock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/unlock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         self._mw.uiLockAllAction.setIcon(icon)
 
 
