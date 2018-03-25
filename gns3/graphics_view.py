@@ -1107,7 +1107,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         console_type = "telnet"
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
-                if item.node().consoleType() not in ("telnet", "serial", "vnc", "spice"):
+                if item.node().consoleType() not in ("telnet", "serial", "vnc", "spice", "spice+agent"):
                     continue
                 current_cmd = item.node().consoleCommand()
                 console_type = item.node().consoleType()
@@ -1117,7 +1117,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             for item in self.scene().selectedItems():
                 if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
                     node = item.node()
-                    if node.consoleType() not in ("telnet", "serial", "vnc", "spice"):
+                    if node.consoleType() not in ("telnet", "serial", "vnc", "spice", "spice+agent"):
                         continue
                     try:
                         node.openConsole(command=cmd)

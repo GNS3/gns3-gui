@@ -279,7 +279,7 @@
           "title": "Architecture emulated"
         },
         "console_type": {
-          "enum": ["telnet", "vnc", "spice", "none"],
+          "enum": ["telnet", "vnc", "spice", "spice+agent", "none"],
           "title": "Type of console connection for the administration of the appliance"
         },
         "boot_priority": {

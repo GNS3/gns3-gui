@@ -192,6 +192,11 @@
       </item>
       <item>
        <property name="text">
+        <string>spice+agent</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>none</string>
        </property>
       </item>

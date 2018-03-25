@@ -63,7 +63,7 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
         elif self._console_type == "vnc":
             self._consoles = copy.copy(PRECONFIGURED_VNC_CONSOLE_COMMANDS)
             self._consoles.update(self._settings[self._console_type])
-        elif self._console_type == "spice":
+        elif self._console_type.startswith("spice"):
             self._consoles = copy.copy(PRECONFIGURED_SPICE_CONSOLE_COMMANDS)
             self._consoles.update(self._settings[self._console_type])
 

@@ -148,7 +148,7 @@ class Node(BaseNode):
             console_type = self.consoleType()
             if console_type == "vnc":
                 return general_settings["vnc_console_command"]
-            if console_type == "spice":
+            if console_type.startswith("spice"):
                 return general_settings["spice_console_command"]
         return general_settings["telnet_console_command"]
 
@@ -540,7 +540,7 @@ class Node(BaseNode):
         elif console_type == "vnc":
             from .vnc_console import vncConsole
             vncConsole(self.consoleHost(), console_port, command)
-        elif console_type == "spice":
+        elif console_type.startswith("spice"):
             from .spice_console import spiceConsole
             spiceConsole(self.consoleHost(), console_port, command)
         elif console_type == "http" or console_type == "https":
