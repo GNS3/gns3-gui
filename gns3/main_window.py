@@ -729,7 +729,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to scale in the view.
         """
 
-        factor_in = pow(2.0, 120 / 240.0)
+        factor_in = pow(2.0, 60 / 240.0)
         self.uiGraphicsView.scaleView(factor_in)
         self._updateZoomSettings()
 
@@ -738,7 +738,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to scale out the view.
         """
 
-        factor_out = pow(2.0, -120 / 240.0)
+        factor_out = pow(2.0, -60 / 240.0)
         self.uiGraphicsView.scaleView(factor_out)
         self._updateZoomSettings()
 
