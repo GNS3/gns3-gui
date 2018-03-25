@@ -24,7 +24,9 @@
         <file>icons/connection-new-hover.svg</file>
         <file>icons/console.svg</file>
         <file>icons/console_edit.svg</file>
+        <file>icons/command_line.svg</file>
         <file>icons/aux-console.svg</file>
+        <file>icons/command_line.svg</file>
         <file>icons/delete.svg</file>
         <file>icons/led_green.svg</file>
         <file>icons/led_red.svg</file>
@@ -52,6 +54,7 @@
         <file>icons/show-interface-names.svg</file>
         <file>icons/new.svg</file>
         <file>icons/new-project.svg</file>
+        <file>icons/duplicate.svg</file>
         <file>icons/save-as-project.svg</file>
         <file>icons/help.svg</file>
         <file>icons/quit.svg</file>
@@ -76,8 +79,8 @@
         <file>icons/reset.svg</file>
         <file>icons/horizontally.svg</file>
         <file>icons/vertically.svg</file>
-        <file>icons/export_config.svg</file>
-        <file>icons/import_config.svg</file>
+        <file>icons/export.svg</file>
+        <file>icons/import.svg</file>
         <file>icons/import_export_configs.svg</file>
         <file>icons/zoom-in.png</file>
         <file>icons/zoom-out.png</file>
@@ -108,12 +111,21 @@
         <file>classic_icons/add-note.svg</file>
         <file>classic_icons/add-note-hover.svg</file>
         <file>classic_icons/edit.svg</file>
+        <file>classic_icons/edit-hover.svg</file>
+        <file>classic_icons/duplicate.svg</file>
+        <file>classic_icons/duplicate-hover.svg</file>
         <file>classic_icons/browse-all-icons.svg</file>
         <file>classic_icons/browse-all-icons-hover.svg</file>
         <file>classic_icons/camera-photo.svg</file>
         <file>classic_icons/camera-photo-hover.svg</file>
+        <file>classic_icons/delete.svg</file>
+        <file>classic_icons/delete-hover.svg</file>
         <file>classic_icons/console.svg</file>
         <file>classic_icons/console-hover.svg</file>
+        <file>classic_icons/console_edit.svg</file>
+        <file>classic_icons/console_edit-hover.svg</file>
+        <file>classic_icons/command_line.svg</file>
+        <file>classic_icons/command_line-hover.svg</file>
         <file>classic_icons/aux-console.svg</file>
         <file>classic_icons/aux-console-hover.svg</file>
         <file>classic_icons/ellipse.svg</file>
@@ -132,6 +144,10 @@
         <file>classic_icons/new-project-hover.svg</file>
         <file>classic_icons/open.svg</file>
         <file>classic_icons/open-hover.svg</file>
+        <file>classic_icons/configuration.svg</file>
+        <file>classic_icons/configuration-hover.svg</file>
+        <file>classic_icons/node_conception.svg</file>
+        <file>classic_icons/node_conception-hover.svg</file>
         <file>classic_icons/pause.svg</file>
         <file>classic_icons/pause-hover.svg</file>
         <file>classic_icons/pc.svg</file>
@@ -162,8 +178,14 @@
         <file>classic_icons/zoom-in-hover.svg</file>
         <file>classic_icons/zoom-out.svg</file>
         <file>classic_icons/zoom-out-hover.svg</file>
+        <file>classic_icons/show-hostname.svg</file>
+        <file>classic_icons/show-hostname-hover.svg</file>
         <file>classic_icons/help.svg</file>
         <file>classic_icons/help-hover.svg</file>
+        <file>classic_icons/front.svg</file>
+        <file>classic_icons/front-hover.svg</file>
+        <file>classic_icons/calculate.svg</file>
+        <file>classic_icons/calculate-hover.svg</file>
         <file>classic_icons/preferences.svg</file>
         <file>classic_icons/preferences-hover.svg</file>
         <file>classic_icons/quit.svg</file>
@@ -172,18 +194,31 @@
         <file>classic_icons/lock-hover.svg</file>
         <file>classic_icons/unlock.svg</file>
         <file>classic_icons/unlock-hover.svg</file>
+        <file>classic_icons/raise_z_value.svg</file>
+        <file>classic_icons/raise_z_value-hover.svg</file>
+        <file>classic_icons/lower_z_value.svg</file>
+        <file>classic_icons/lower_z_value-hover.svg</file>
         <file>charcoal_icons/add-link-1.svg</file>
         <file>charcoal_icons/add-link-1-hover.svg</file>
         <file>charcoal_icons/add-link-1-cancel.svg</file>
         <file>charcoal_icons/add-note.svg</file>
         <file>charcoal_icons/add-note-hover.svg</file>
         <file>charcoal_icons/edit.svg</file>
+        <file>charcoal_icons/edit-hover.svg</file>
+        <file>charcoal_icons/duplicate.svg</file>
+        <file>charcoal_icons/duplicate-hover.svg</file>
         <file>charcoal_icons/browse-all-icons.svg</file>
         <file>charcoal_icons/browse-all-icons-hover.svg</file>
         <file>charcoal_icons/camera-photo.svg</file>
         <file>charcoal_icons/camera-photo-hover.svg</file>
+        <file>charcoal_icons/delete.svg</file>
+        <file>charcoal_icons/delete-hover.svg</file>
         <file>charcoal_icons/console.svg</file>
         <file>charcoal_icons/console-hover.svg</file>
+        <file>charcoal_icons/console_edit.svg</file>
+        <file>charcoal_icons/console_edit-hover.svg</file>
+        <file>charcoal_icons/command_line.svg</file>
+        <file>charcoal_icons/command_line-hover.svg</file>
         <file>charcoal_icons/aux-console.svg</file>
         <file>charcoal_icons/aux-console-hover.svg</file>
         <file>charcoal_icons/ellipse.svg</file>
@@ -202,6 +237,10 @@
         <file>charcoal_icons/new-project-hover.svg</file>
         <file>charcoal_icons/open.svg</file>
         <file>charcoal_icons/open-hover.svg</file>
+        <file>charcoal_icons/configuration.svg</file>
+        <file>charcoal_icons/configuration-hover.svg</file>
+        <file>charcoal_icons/node_conception.svg</file>
+        <file>charcoal_icons/node_conception-hover.svg</file>
         <file>charcoal_icons/pause.svg</file>
         <file>charcoal_icons/pause-hover.svg</file>
         <file>charcoal_icons/pc.svg</file>
@@ -232,8 +271,14 @@
         <file>charcoal_icons/zoom-in-hover.svg</file>
         <file>charcoal_icons/zoom-out.svg</file>
         <file>charcoal_icons/zoom-out-hover.svg</file>
+        <file>charcoal_icons/show-hostname.svg</file>
+        <file>charcoal_icons/show-hostname-hover.svg</file>
         <file>charcoal_icons/help.svg</file>
         <file>charcoal_icons/help-hover.svg</file>
+        <file>charcoal_icons/front.svg</file>
+        <file>charcoal_icons/front-hover.svg</file>
+        <file>charcoal_icons/calculate.svg</file>
+        <file>charcoal_icons/calculate-hover.svg</file>
         <file>charcoal_icons/preferences.svg</file>
         <file>charcoal_icons/preferences-hover.svg</file>
         <file>charcoal_icons/quit.svg</file>
@@ -242,8 +287,12 @@
         <file>charcoal_icons/lock-hover.svg</file>
         <file>charcoal_icons/unlock.svg</file>
         <file>charcoal_icons/unlock-hover.svg</file>
-        <file>images/vmware_fusion_banner.jpg</file>
-        <file>images/vmware_workstation_banner.jpg</file>
+        <file>charcoal_icons/raise_z_value.svg</file>
+        <file>charcoal_icons/raise_z_value-hover.svg</file>
+        <file>charcoal_icons/lower_z_value.svg</file>
+        <file>charcoal_icons/lower_z_value-hover.svg</file>
+        <file>images/vmware_fusion_banner.png</file>
+        <file>images/vmware_workstation_banner.png</file>
         <file>styles/charcoal.css</file>
     </qresource>
 </RCC>

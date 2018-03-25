@@ -1180,7 +1180,7 @@ background-none;
   <action name="uiExportProjectAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/export_config.svg</normaloff>:/icons/export_config.svg</iconset>
+     <normaloff>:/icons/export.svg</normaloff>:/icons/export_config.svg</iconset>
    </property>
    <property name="text">
     <string>Export portable project</string>
@@ -1189,7 +1189,7 @@ background-none;
   <action name="uiImportProjectAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/import_config.svg</normaloff>:/icons/import_config.svg</iconset>
+     <normaloff>:/icons/import.svg</normaloff>:/icons/import_config.svg</iconset>
    </property>
    <property name="text">
     <string>Import portable project</string>

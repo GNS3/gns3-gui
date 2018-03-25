@@ -745,7 +745,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if True in list(map(lambda item: isinstance(item, DrawingItem) or isinstance(item, NodeItem), items)):
             duplicate_action = QtWidgets.QAction("Duplicate", menu)
-            duplicate_action.setIcon(self._getIcon(style_dir, "new.svg"))
+            duplicate_action.setIcon(self._getIcon(style_dir, "duplicate.svg"))
             duplicate_action.triggered.connect(self.duplicateActionSlot)
             menu.addAction(duplicate_action)
 
@@ -783,13 +783,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
             import_config_action = QtWidgets.QAction("Import config", menu)
-            import_config_action.setIcon(self._getIcon(style_dir, "import_config.svg"))
+            import_config_action.setIcon(self._getIcon(style_dir, "import.svg"))
             import_config_action.triggered.connect(self.importConfigActionSlot)
             menu.addAction(import_config_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
             export_config_action = QtWidgets.QAction("Export config", menu)
-            export_config_action.setIcon(self._getIcon(style_dir, "export_config.svg"))
+            export_config_action.setIcon(self._getIcon(style_dir, "export.svg"))
             export_config_action.triggered.connect(self.exportConfigActionSlot)
             menu.addAction(export_config_action)
 
@@ -849,14 +849,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if True in list(map(lambda item: isinstance(item, ShapeItem) or isinstance(item, LineItem), items)):
             style_action = QtWidgets.QAction("Style", menu)
-            style_action.setIcon(self._getIcon(style_dir, "drawing.svg"))
+            style_action.setIcon(self._getIcon(style_dir, "node_conception.svg"))
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "commandLine"), items)):
             # Action: Get command line
             show_in_file_manager_action = QtWidgets.QAction("Command line", menu)
-            show_in_file_manager_action.setIcon(self._getIcon(style_dir, "console.svg"))
+            show_in_file_manager_action.setIcon(self._getIcon(style_dir, "command_line.svg"))
             show_in_file_manager_action.triggered.connect(self.getCommandLineSlot)
             menu.addAction(show_in_file_manager_action)
 
@@ -891,18 +891,17 @@ class GraphicsView(QtWidgets.QGraphicsView):
             lower_layer_action.triggered.connect(self.lowerLayerActionSlot)
             menu.addAction(lower_layer_action)
 
-            #TODO: classic lock and unlock icons
             if len(items) > 1:
                 lock_action = QtWidgets.QAction("Lock or unlock items", menu)
-                lock_action.setIcon(QtGui.QIcon(':/classic_icons/lock.svg'))
+                lock_action.setIcon(self._getIcon(style_dir, "lock.svg"))
             else:
                 item = items[0]
                 if item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable:
                     lock_action = QtWidgets.QAction("Lock item", menu)
-                    lock_action.setIcon(QtGui.QIcon(':/classic_icons/lock.svg'))
+                    lock_action.setIcon(self._getIcon(style_dir, "lock.svg"))
                 else:
                     lock_action = QtWidgets.QAction("Unlock item", menu)
-                    lock_action.setIcon(QtGui.QIcon(':/classic_icons/unlock.svg'))
+                    lock_action.setIcon(self._getIcon(style_dir, "unlock.svg"))
             lock_action.triggered.connect(self.lockActionSlot)
             menu.addAction(lock_action)
 
