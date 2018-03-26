@@ -19,11 +19,18 @@
 Default Built-in settings.
 """
 
+import sys
+
 from gns3.node import Node
 
-BUILTIN_SETTINGS = {
-}
+if sys.platform.startswith("linux"):
+    DEFAULT_NAT_INTERFACE = "virbr0"
+else:
+    DEFAULT_NAT_INTERFACE = "vmnet8"
 
+BUILTIN_SETTINGS = {
+    "default_nat_interface": DEFAULT_NAT_INTERFACE
+}
 
 CLOUD_SETTINGS = {
     "name": "",

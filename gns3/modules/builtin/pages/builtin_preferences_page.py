@@ -23,6 +23,7 @@ from gns3.qt import QtWidgets
 from .. import Builtin
 from ..ui.builtin_preferences_page_ui import Ui_BuiltinPreferencesPageWidget
 from ..settings import BUILTIN_SETTINGS
+from gns3.utils.interfaces import interfaces
 
 
 class BuiltinPreferencesPage(QtWidgets.QWidget, Ui_BuiltinPreferencesPageWidget):
@@ -47,6 +48,16 @@ class BuiltinPreferencesPage(QtWidgets.QWidget, Ui_BuiltinPreferencesPageWidget)
         :param settings: Built-in settings
         """
 
+        self.uiNATInterfaceComboBox.clear()
+        self.uiNATInterfaceComboBox.addItem("")
+        for interface in interfaces():
+            self.uiNATInterfaceComboBox.addItem(interface["name"])
+
+        # load the console type
+        index = self.uiNATInterfaceComboBox.findText(settings["default_nat_interface"])
+        if index != -1:
+            self.uiNATInterfaceComboBox.setCurrentIndex(index)
+
     def loadPreferences(self):
         """Loads Built-in preferences."""
 
@@ -57,4 +68,6 @@ class BuiltinPreferencesPage(QtWidgets.QWidget, Ui_BuiltinPreferencesPageWidget)
         """Saves Built-in preferences."""
 
         new_settings = {}
+        default_nat_interface = self.uiNATInterfaceComboBox.currentText().lower()
+        new_settings["default_nat_interface"] = default_nat_interface
         Builtin.instance().setSettings(new_settings)
