@@ -108,6 +108,17 @@ class QemuVM(Node):
         if params:
             self._update(params)
 
+    def resizeDiskImage(self, drive_name, size, callback):
+        """
+        Resize a disk image allocated to the VM.
+
+        :param callback: callback for the reply from the server
+        """
+
+        params = {"drive_name": drive_name,
+                  "extend": size}
+        self.post("/resize_disk", callback, body=params)
+
     def info(self):
         """
         Returns information about this QEMU VM instance.

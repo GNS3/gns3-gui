@@ -67,6 +67,11 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiHdcDiskImageCreateToolButton.clicked.connect(self._hdcDiskImageCreateSlot)
         self.uiHddDiskImageCreateToolButton.clicked.connect(self._hddDiskImageCreateSlot)
 
+        self.uiHdaDiskImageResizeToolButton.clicked.connect(self._hdaDiskImageResizeSlot)
+        self.uiHdbDiskImageResizeToolButton.clicked.connect(self._hdbDiskImageResizeSlot)
+        self.uiHdcDiskImageResizeToolButton.clicked.connect(self._hdcDiskImageResizeSlot)
+        self.uiHddDiskImageResizeToolButton.clicked.connect(self._hddDiskImageResizeSlot)
+
         disk_interfaces = ["ide", "sata", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"]
         self.uiHdaDiskInterfaceComboBox.addItems(disk_interfaces)
         self.uiHdbDiskInterfaceComboBox.addItems(disk_interfaces)
@@ -236,6 +241,39 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if QtWidgets.QDialog.Accepted == create_dialog.exec_():
             self.uiHddDiskImageLineEdit.setText(create_dialog.uiLocationLineEdit.text())
 
+    def _resizeDiskImageCallback(self, result, error=False, **kwargs):
+        """
+        Callback for resizing a disk image in a VM.
+
+        :param result: server response
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            QtWidgets.QMessageBox.critical(self, "Disk image", "{}".format(result["message"]))
+        else:
+            QtWidgets.QMessageBox.information(self, "Disk image", "The disk has been resized")
+
+    def _hdaDiskImageResizeSlot(self):
+        size, ok = QtWidgets.QInputDialog.getInt(self, "HDA disk size", "Increase hda disk size in MB:", 10000, 1, 1000000000, 1000)
+        if ok and self._node:
+            self._node.resizeDiskImage("hda", size, self._resizeDiskImageCallback)
+
+    def _hdbDiskImageResizeSlot(self):
+        size, ok = QtWidgets.QInputDialog.getInt(self, "HDB disk size", "Increase hdb disk size in MB:", 10000, 1, 1000000000, 1000)
+        if ok and self._node:
+            self._node.resizeDiskImage("hdb", size, self._resizeDiskImageCallback)
+
+    def _hdcDiskImageResizeSlot(self):
+        size, ok = QtWidgets.QInputDialog.getInt(self, "HDC disk size", "Increase hdc disk size in MB:", 10000, 1, 1000000000, 1000)
+        if ok and self._node:
+            self._node.resizeDiskImage("hdc", size, self._resizeDiskImageCallback)
+
+    def _hddDiskImageResizeSlot(self):
+        size, ok = QtWidgets.QInputDialog.getInt(self, "HDD disk size", "Increase hdd disk size in MB:", 10000, 1, 1000000000, 1000)
+        if ok and self._node:
+            self._node.resizeDiskImage("hdd", size, self._resizeDiskImageCallback)
+
     def _initrdBrowserSlot(self):
         """
         Slot to open a file browser and select a QEMU initrd.
@@ -315,8 +353,10 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
         if node:
             self._compute_id = node.compute().id()
+            self._node = node
         else:
             self._compute_id = settings["server"]
+            self._node = None
 
         if self._compute_id is None:
             QtWidgets.QMessageBox.warning(self, "Qemu", "Server {} is not running, cannot retrieve the QEMU binaries list".format(settings["server"]))
@@ -383,6 +423,11 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiPortNameFormatLineEdit.setText(settings["port_name_format"])
             self.uiPortSegmentSizeSpinBox.setValue(settings["port_segment_size"])
             self.uiFirstPortNameLineEdit.setText(settings["first_port_name"])
+
+            self.uiHdaDiskImageResizeToolButton.hide()
+            self.uiHdbDiskImageResizeToolButton.hide()
+            self.uiHdcDiskImageResizeToolButton.hide()
+            self.uiHddDiskImageResizeToolButton.hide()
         else:
             self.uiDefaultNameFormatLabel.hide()
             self.uiDefaultNameFormatLineEdit.hide()

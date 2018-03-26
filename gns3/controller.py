@@ -198,6 +198,14 @@ class Controller(QtCore.QObject):
     def put(self, *args, **kwargs):
         return self.createHTTPQuery("PUT", *args, **kwargs)
 
+    def putCompute(self, path, compute_id, *args, **kwargs):
+        """
+        API put on a specific compute
+        """
+        compute_id = self.__fix_compute_id(compute_id)
+        path = "/computes/{}{}".format(compute_id, path)
+        return self.put(path, *args, **kwargs)
+
     def delete(self, *args, **kwargs):
         return self.createHTTPQuery("DELETE", *args, **kwargs)
 

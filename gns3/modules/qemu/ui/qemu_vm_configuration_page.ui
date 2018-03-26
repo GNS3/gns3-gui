@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>655</width>
-    <height>696</height>
+    <width>888</width>
+    <height>882</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -200,11 +200,8 @@
       <attribute name="title">
        <string>HDD</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="margin">
-        <number>10</number>
-       </property>
-       <item>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="0" column="0">
         <widget class="QGroupBox" name="uiHdaGroupBox">
          <property name="title">
           <string>HDA (Primary Master)</string>
@@ -239,6 +236,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="uiHdaDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="0">
@@ -254,7 +258,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
         <widget class="QGroupBox" name="uiHdbgroupBox">
          <property name="title">
           <string>HDB (Primary Slave)</string>
@@ -289,6 +293,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="uiHdbDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="0">
@@ -304,7 +315,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="2" column="0">
         <widget class="QGroupBox" name="uiHdcGroupBox">
          <property name="title">
           <string>HDC (Secondary Master)</string>
@@ -339,6 +350,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="uiHdcDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="0">
@@ -354,7 +372,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="3" column="0">
         <widget class="QGroupBox" name="uiHddGroupBox">
          <property name="title">
           <string>HDD (Secondary Slave)</string>
@@ -389,6 +407,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="uiHddDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="0" rowspan="2">
@@ -404,7 +429,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="4" column="0">
         <spacer name="spacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
