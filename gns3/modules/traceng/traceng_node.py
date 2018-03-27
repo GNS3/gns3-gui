@@ -20,6 +20,7 @@ TraceNG node implementation.
 """
 
 from gns3.node import Node
+from gns3.qt import QtWidgets
 
 import logging
 log = logging.getLogger(__name__)
@@ -39,7 +40,9 @@ class TraceNGNode(Node):
         super().__init__(module, server, project)
 
         traceng_settings = {"console_host": None,
-                         "console": None}
+                            "console": None,
+                            "console_type": "none",
+                            "ip_address": ""}
 
         self.settings().update(traceng_settings)
 
@@ -57,6 +60,21 @@ class TraceNGNode(Node):
 
         if params:
             self._update(params)
+
+    def start(self):
+        """
+        Starts this node instance.
+        """
+
+        if self.isStarted():
+            log.debug("{} is already running".format(self.name()))
+            return
+
+        destination, ok = QtWidgets.QInputDialog.getText(self.parent(), "Trace IP address", "Destination host or IP address:")
+        if ok:
+            params = {"destination": destination}
+            log.debug("{} is starting".format(self.name()))
+            self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, body=params, timeout=None, progressText="{} is starting".format(self.name()))
 
     def info(self):
         """

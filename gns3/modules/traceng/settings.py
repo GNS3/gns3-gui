@@ -27,7 +27,9 @@ TRACENG_SETTINGS = {
 
 TRACENG_NODES_SETTINGS = {
     "name": "",
+    "ip_address": "",
     "default_name_format": "TraceNG{0}",
+    "console_type": "none",
     "symbol": ":/symbols/traceng.svg",
     "category": Node.end_devices,
 }

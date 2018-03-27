@@ -69,6 +69,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", traceng_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["IP address:", traceng_node["ip_address"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", traceng_node["default_name_format"]])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(traceng_node["server"]).name()])

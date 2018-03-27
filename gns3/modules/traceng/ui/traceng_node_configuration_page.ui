@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>722</width>
-    <height>262</height>
+    <width>565</width>
+    <height>390</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,23 +25,33 @@
     <widget class="QLineEdit" name="uiNameLineEdit"/>
    </item>
    <item row="1" column="0" colspan="2">
+    <widget class="QLabel" name="uiIPAddressLabel">
+     <property name="text">
+      <string>IP address:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="uiIPAddressLineEdit"/>
+   </item>
+   <item row="2" column="0" colspan="2">
     <widget class="QLabel" name="uiDefaultNameFormatLabel">
      <property name="text">
       <string>Default name format:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
+   <item row="2" column="2">
     <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="3" column="0">
     <widget class="QLabel" name="uiSymbolLabel">
      <property name="text">
       <string>Symbol:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="3" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
       <widget class="QLineEdit" name="uiSymbolLineEdit"/>
@@ -58,17 +68,17 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="4" column="0">
     <widget class="QLabel" name="uiCategoryLabel">
      <property name="text">
       <string>Category:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="2">
+   <item row="4" column="2">
     <widget class="QComboBox" name="uiCategoryComboBox"/>
    </item>
-   <item row="4" column="1" colspan="2">
+   <item row="5" column="1" colspan="2">
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -82,6 +92,17 @@
     </spacer>
    </item>
   </layout>
+  <zorder>uiNameLabel</zorder>
+  <zorder>uiNameLineEdit</zorder>
+  <zorder>uiDefaultNameFormatLabel</zorder>
+  <zorder>uiDefaultNameFormatLineEdit</zorder>
+  <zorder>uiSymbolLabel</zorder>
+  <zorder>uiCategoryLabel</zorder>
+  <zorder>uiCategoryComboBox</zorder>
+  <zorder>uiSymbolLineEdit</zorder>
+  <zorder>uiSymbolToolButton</zorder>
+  <zorder>uiIPAddressLabel</zorder>
+  <zorder>uiIPAddressLineEdit</zorder>
  </widget>
  <resources/>
  <connections/>

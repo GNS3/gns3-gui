@@ -73,7 +73,10 @@ class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWi
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
+            self.uiIPAddressLineEdit.setText(settings["ip_address"])
         else:
+            self.uiIPAddressLabel.hide()
+            self.uiIPAddressLineEdit.hide()
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
 
@@ -122,6 +125,7 @@ class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWi
                 QtWidgets.QMessageBox.critical(self, "Name", "TraceNG node name cannot be empty!")
             else:
                 settings["name"] = name
+            settings["ip_address"] = self.uiIPAddressLineEdit.text()
 
         if not node:
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
