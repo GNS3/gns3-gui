@@ -19,6 +19,8 @@
 Wizard for TraceNG nodes.
 """
 
+import sys
+import ipaddress
 
 from gns3.qt import QtGui, QtWidgets
 from gns3.node import Node
@@ -40,6 +42,33 @@ class TraceNGNodeWizard(VMWizard, Ui_TraceNGNodeWizard):
         super().__init__(traceng_nodes, parent)
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/traceng.png"))
         self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)
+
+        # TraceNG is only supported on a local server
+        self.uiRemoteRadioButton.setEnabled(False)
+        self.uiVMRadioButton.setEnabled(False)
+
+    def validateCurrentPage(self):
+        """
+        Validates the server.
+        """
+
+        if super().validateCurrentPage() is False:
+            return False
+
+        if self.currentPage() == self.uiNameWizardPage:
+
+            if not sys.platform.startswith("win"):
+                QtWidgets.QMessageBox.critical(self, "TraceNG", "TraceNG can only run on Windows with a local server")
+                return False
+
+            ip_address = self.uiIPAddressLineEdit.text()
+            if ip_address:
+                try:
+                    ipaddress.IPv4Address(ip_address)
+                except ipaddress.AddressValueError:
+                    QtWidgets.QMessageBox.critical(self, "IP address", "Invalid IP address format")
+                    return False
+        return True
 
     def getSettings(self):
         """

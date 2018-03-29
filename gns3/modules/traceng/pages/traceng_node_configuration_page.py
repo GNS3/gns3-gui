@@ -19,7 +19,8 @@
 Configuration page for TraceNG nodes
 """
 
-import os
+import ipaddress
+
 from gns3.qt import QtWidgets
 from gns3.local_server import LocalServer
 from gns3.node import Node
@@ -27,7 +28,7 @@ from gns3.controller import Controller
 
 from ..ui.traceng_node_configuration_page_ui import Ui_TraceNGNodeConfigPageWidget
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
-
+from gns3.dialogs.node_properties_dialog import ConfigurationError
 
 class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWidget):
 
@@ -125,7 +126,16 @@ class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWi
                 QtWidgets.QMessageBox.critical(self, "Name", "TraceNG node name cannot be empty!")
             else:
                 settings["name"] = name
-            settings["ip_address"] = self.uiIPAddressLineEdit.text()
+
+            ip_address = self.uiIPAddressLineEdit.text()
+            if ip_address:
+                try:
+                    ipaddress.IPv4Address(ip_address)
+                    settings["ip_address"] = ip_address
+                except ipaddress.AddressValueError:
+                    QtWidgets.QMessageBox.critical(self, "IP address", "Invalid IP address format")
+                    if node:
+                        raise ConfigurationError()
 
         if not node:
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()

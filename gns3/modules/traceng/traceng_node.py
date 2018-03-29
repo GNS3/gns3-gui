@@ -70,8 +70,11 @@ class TraceNGNode(Node):
             log.debug("{} is already running".format(self.name()))
             return
 
-        destination, ok = QtWidgets.QInputDialog.getText(self.parent(), "Trace IP address", "Destination host or IP address:")
+        destination, ok = QtWidgets.QInputDialog.getText(self.parent(), "TraceNG", "Destination host or IP address:")
         if ok:
+            if not destination:
+                QtWidgets.QMessageBox.critical(self, "TraceNG", "Please provide a host or IP address to trace")
+                return
             params = {"destination": destination}
             log.debug("{} is starting".format(self.name()))
             self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, body=params, timeout=None, progressText="{} is starting".format(self.name()))
