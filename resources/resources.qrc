@@ -61,6 +61,7 @@
         <file>icons/virtualbox.png</file>
         <file>icons/qemu.svg</file>
         <file>icons/rtv.png</file>
+        <file>icons/traceng.png</file>
         <file>icons/image.svg</file>
         <file>icons/node_conception.svg</file>
         <file>icons/raise_z_value.svg</file>

@@ -19,9 +19,10 @@ from gns3.modules.builtin import Builtin
 from gns3.modules.dynamips import Dynamips
 from gns3.modules.iou import IOU
 from gns3.modules.vpcs import VPCS
+from gns3.modules.traceng import TraceNG
 from gns3.modules.virtualbox import VirtualBox
 from gns3.modules.qemu import Qemu
 from gns3.modules.vmware import VMware
 from gns3.modules.docker import Docker
 
-MODULES = [Builtin, VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Docker]
+MODULES = [Builtin, VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Docker, TraceNG]
