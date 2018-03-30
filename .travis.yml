@@ -11,6 +11,8 @@ before_deploy:
 - sudo pip install urllib3[secure]
 deploy:
   provider: pypi
+  edge:
+    branch: v1.8.45
   user: noplay
   password:
     secure: FofcqlJjgqf2jaDaXpLHeigVoexbrOz3WwnDuiJpwJxeFUlPY8s2cQs/Bm+dzxzZaOaGiVE0A83v/Xa10yD5tflThHt4sqYJK3iQCinA7wgeAlDimB4xrWUNplfNJZ/Eod5Ssa++E02W+3i29PxpXY//mjCY7qDxaoxul1gnFJY=

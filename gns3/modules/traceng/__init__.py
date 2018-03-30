@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2014 GNS3 Technologies Inc.
+# Copyright (C) 2018 GNS3 Technologies Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-VPCS module implementation.
+TraceNG module implementation.
 """
 
 import os
@@ -27,18 +27,18 @@ from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
 
 from ..module import Module
-from .vpcs_node import VPCSNode
-from .settings import VPCS_SETTINGS
-from .settings import VPCS_NODES_SETTINGS
+from .traceng_node import TraceNGNode
+from .settings import TRACENG_SETTINGS
+from .settings import TRACENG_NODES_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class VPCS(Module):
+class TraceNG(Module):
 
     """
-    VPCS module.
+    TraceNG module.
     """
 
     def __init__(self):
@@ -46,7 +46,7 @@ class VPCS(Module):
 
         self._settings = {}
         self._nodes = []
-        self._vpcs_nodes = {}
+        self._traceng_nodes = {}
         self._working_dir = ""
         self._loadSettings()
 
@@ -59,15 +59,15 @@ class VPCS(Module):
         Loads the settings from the persistent settings file.
         """
 
-        self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, VPCS_SETTINGS)
-        if not os.path.exists(self._settings["vpcs_path"]):
-            vpcs_path = shutil.which("vpcs")
-            if vpcs_path:
-                self._settings["vpcs_path"] = os.path.abspath(vpcs_path)
+        self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, TRACENG_SETTINGS)
+        if not os.path.exists(self._settings["traceng_path"]):
+            traceng_path = shutil.which("traceng")
+            if traceng_path:
+                self._settings["traceng_path"] = os.path.abspath(traceng_path)
             else:
-                self._settings["vpcs_path"] = ""
+                self._settings["traceng_path"] = ""
 
-        self._loadVPCSNodes()
+        self._loadTraceNGNodes()
 
     def _saveSettings(self):
         """
@@ -78,36 +78,37 @@ class VPCS(Module):
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
         server_settings = {}
-        if self._settings["vpcs_path"]:
+        if self._settings["traceng_path"]:
             # save some settings to the server config file
-            server_settings["vpcs_path"] = os.path.normpath(self._settings["vpcs_path"])
+            server_settings["traceng_path"] = os.path.normpath(self._settings["traceng_path"])
+
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
 
-    def _loadVPCSNodes(self):
+    def _loadTraceNGNodes(self):
         """
-        Load the VPCS nodes from the persistent settings file.
+        Load the TraceNG nodes from the persistent settings file.
         """
 
-        self._vpcs_nodes = {}
+        self._traceng_nodes = {}
         settings = LocalConfig.instance().settings()
         if "nodes" in settings.get(self.__class__.__name__, {}):
             for node in settings[self.__class__.__name__]["nodes"]:
                 name = node.get("name")
                 server = node.get("server")
                 key = "{server}:{name}".format(server=server, name=name)
-                if key in self._vpcs_nodes or not name or not server:
+                if key in self._traceng_nodes or not name or not server:
                     continue
-                node_settings = VPCS_NODES_SETTINGS.copy()
+                node_settings = TRACENG_NODES_SETTINGS.copy()
                 node_settings.update(node)
-                self._vpcs_nodes[key] = node_settings
+                self._traceng_nodes[key] = node_settings
 
-    def _saveVPCSNodes(self):
+    def _saveTraceNGNodes(self):
         """
-        Saves the VPCS nodes to the persistent settings file.
+        Saves the TraceNG nodes to the persistent settings file.
         """
 
-        self._settings["nodes"] = list(self._vpcs_nodes.values())
+        self._settings["nodes"] = list(self._traceng_nodes.values())
         self._saveSettings()
 
     def addNode(self, node):
@@ -169,31 +170,31 @@ class VPCS(Module):
 
     @staticmethod
     def getNodeType(name, platform=None):
-        if name == "vpcs":
-            return VPCSNode
+        if name == "traceng":
+            return TraceNGNode
         return None
 
     @staticmethod
     def vmConfigurationPage():
-        from .pages.vpcs_node_configuration_page import VPCSNodeConfigurationPage
-        return VPCSNodeConfigurationPage
+        from .pages.traceng_node_configuration_page import TraceNGNodeConfigurationPage
+        return TraceNGNodeConfigurationPage
 
     def VMs(self):
         """
-        Returns list of VPCS nodes
+        Returns list of TraceNG nodes
         """
 
-        return self._vpcs_nodes
+        return self._traceng_nodes
 
-    def setVMs(self, new_vpcs_nodes):
+    def setVMs(self, new_traceng_nodes):
         """
-        Sets VPCS list
+        Sets TraceNG list
 
-        :param new_vpcs_vms: VPCS node list
+        :param new_traceng_vms: TraceNG node list
         """
 
-        self._vpcs_nodes = new_vpcs_nodes.copy()
-        self._saveVPCSNodes()
+        self._traceng_nodes = new_traceng_nodes.copy()
+        self._saveTraceNGNodes()
 
     @staticmethod
     def classes():
@@ -203,7 +204,7 @@ class VPCS(Module):
         :returns: list of classes
         """
 
-        return [VPCSNode]
+        return [TraceNGNode]
 
     def nodes(self):
         """
@@ -213,13 +214,13 @@ class VPCS(Module):
 
         nodes = []
 
-        # Add a default VPCS not linked to a specific server
+        # Add a default TraceNG not linked to a specific server
         nodes.append(
             {
-                "class": VPCSNode.__name__,
-                "name": "VPCS",
-                "categories": [VPCSNode.end_devices],
-                "symbol": VPCSNode.defaultSymbol(),
+                "class": TraceNGNode.__name__,
+                "name": "TraceNG",
+                "categories": [TraceNGNode.end_devices],
+                "symbol": TraceNGNode.defaultSymbol(),
                 "builtin": True
             }
         )
@@ -231,18 +232,18 @@ class VPCS(Module):
         :returns: QWidget object list
         """
 
-        from .pages.vpcs_preferences_page import VPCSPreferencesPage
-        from .pages.vpcs_node_preferences_page import VPCSNodePreferencesPage
-        return [VPCSPreferencesPage, VPCSNodePreferencesPage]
+        from .pages.traceng_preferences_page import TraceNGPreferencesPage
+        from .pages.traceng_node_preferences_page import TraceNGNodePreferencesPage
+        return [TraceNGPreferencesPage, TraceNGNodePreferencesPage]
 
     @staticmethod
     def instance():
         """
-        Singleton to return only on instance of VPCS module.
+        Singleton to return only on instance of TraceNG module.
 
-        :returns: instance of VPCS
+        :returns: instance of TraceNG
         """
 
-        if not hasattr(VPCS, "_instance"):
-            VPCS._instance = VPCS()
-        return VPCS._instance
+        if not hasattr(TraceNG, "_instance"):
+            TraceNG._instance = TraceNG()
+        return TraceNG._instance
