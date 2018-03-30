@@ -47,7 +47,7 @@ VMWARE_VM_SETTINGS = {
     "adapter_type": "e1000",
     "use_any_adapter": False,
     "headless": False,
-    "acpi_shutdown": False,
+    "on_close": "power_off",
     "linked_clone": False,
     "console_type": "telnet",
     "server": "local"

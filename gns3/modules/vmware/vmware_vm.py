@@ -53,7 +53,7 @@ class VMwareVM(Node):
                               "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
                               "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
                               "headless": VMWARE_VM_SETTINGS["headless"],
-                              "acpi_shutdown": VMWARE_VM_SETTINGS["acpi_shutdown"],
+                              "on_close": VMWARE_VM_SETTINGS["on_close"],
                               "console_type": VMWARE_VM_SETTINGS["console_type"],
                               "port_name_format": "Ethernet{0}",
                               "port_segment_size": 0,

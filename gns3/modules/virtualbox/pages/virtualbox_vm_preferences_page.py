@@ -78,7 +78,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vbox_vm["acpi_shutdown"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["On close:", "{}".format(vbox_vm["on_close"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vbox_vm["linked_clone"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vbox_vm["console_type"]])
 

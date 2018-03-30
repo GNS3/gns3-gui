@@ -39,7 +39,7 @@ VBOX_VM_SETTINGS = {
     "use_any_adapter": False,
     "adapter_type": "Intel PRO/1000 MT Desktop (82540EM)",
     "headless": False,
-    "acpi_shutdown": False,
+    "on_close": "power_off",
     "linked_clone": False,
     "console_type": "telnet",
     "server": "local"

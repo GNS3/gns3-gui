@@ -53,6 +53,10 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         for name, category in Node.defaultCategories().items():
             self.uiCategoryComboBox.addItem(name, category)
 
+        # add the on close options
+        for name, option_name in Node.onCloseOptions().items():
+            self.uiOnCloseComboBox.addItem(name, option_name)
+
     def _symbolBrowserSlot(self):
         """
         Slot to open the symbol browser and select a new symbol.
@@ -143,7 +147,11 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
         self.uiUseAnyAdapterCheckBox.setChecked(settings["use_any_adapter"])
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
-        self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
+
+        # load the on close option
+        index = self.uiOnCloseComboBox.findData(settings["on_close"])
+        if index != -1:
+            self.uiOnCloseComboBox.setCurrentIndex(index)
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -199,7 +207,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
-        settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
+        settings["on_close"] = self.uiOnCloseComboBox.itemData(self.uiOnCloseComboBox.currentIndex())
 
         # save console type
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()

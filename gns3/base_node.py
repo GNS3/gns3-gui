@@ -244,6 +244,20 @@ class BaseNode(QtCore.QObject):
         return categories
 
     @staticmethod
+    def onCloseOptions():
+        """
+        Returns the on close options.
+
+        :returns: dict
+        """
+
+        options = {"Power off the VM": "power_off",
+                   "Send the shutdown signal (ACPI)": "shutdown_signal",
+                   "Save the VM state": "save_vm_state"}
+
+        return options
+
+    @staticmethod
     def defaultSymbol():
         """
         Returns the default symbol path for this node.

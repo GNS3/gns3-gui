@@ -40,6 +40,11 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
 
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiAdapterTypesComboBox.clear()
+
+        # add the on close options
+        for name, option_name in Node.onCloseOptions().items():
+            self.uiOnCloseComboBox.addItem(name, option_name)
+
         self.uiAdapterTypesComboBox.addItems(["PCnet-PCI II (Am79C970A)",
                                               "PCNet-FAST III (Am79C973)",
                                               "Intel PRO/1000 MT Desktop (82540EM)",
@@ -146,7 +151,11 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
         self.uiUseAnyAdapterCheckBox.setChecked(settings["use_any_adapter"])
         self.uiVMRamSpinBox.setValue(settings["ram"])
         self.uiHeadlessModeCheckBox.setChecked(settings["headless"])
-        self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
+
+        # load the on close option
+        index = self.uiOnCloseComboBox.findData(settings["on_close"])
+        if index != -1:
+            self.uiOnCloseComboBox.setCurrentIndex(index)
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -203,7 +212,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
         settings["ram"] = self.uiVMRamSpinBox.value()
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["headless"] = self.uiHeadlessModeCheckBox.isChecked()
-        settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
+        settings["on_close"] = self.uiOnCloseComboBox.itemData(self.uiOnCloseComboBox.currentIndex())
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()
 
         adapters = self.uiAdaptersSpinBox.value()

@@ -88,6 +88,10 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         for name, category in Node.defaultCategories().items():
             self.uiCategoryComboBox.addItem(name, category)
 
+        # add the on close options
+        for name, option_name in Node.onCloseOptions().items():
+            self.uiOnCloseComboBox.addItem(name, option_name)
+
         self._legacy_devices = ("e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio")
         self._qemu_network_devices = OrderedDict([("e1000", "Intel Gigabit Ethernet"),
                                                   ("i82550", "Intel i82550 Ethernet"),
@@ -464,8 +468,11 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         else:
             self.uiMacAddrLineEdit.clear()
 
-        self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
-        self.uiSaveVMStateCheckBox.setChecked(settings["save_vm_state"])
+        # load the on close option
+        index = self.uiOnCloseComboBox.findData(settings["on_close"])
+        if index != -1:
+            self.uiOnCloseComboBox.setCurrentIndex(index)
+
         index = self.uiAdapterTypesComboBox.findData(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
@@ -578,9 +585,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                     raise ConfigurationError()
 
         settings["adapters"] = adapters
-        settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
-        settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
-        settings["save_vm_state"] = self.uiSaveVMStateCheckBox.isChecked()
+        settings["on_close"] = self.uiOnCloseComboBox.itemData(self.uiOnCloseComboBox.currentIndex())
         settings["cpus"] = self.uiCPUSpinBox.value()
         settings["ram"] = self.uiRamSpinBox.value()
         if self.uiActivateCPUThrottlingCheckBox.isChecked():

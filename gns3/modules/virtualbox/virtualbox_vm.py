@@ -52,7 +52,7 @@ class VirtualBoxVM(Node):
                                   "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
                                   "ram": VBOX_VM_SETTINGS["ram"],
                                   "headless": VBOX_VM_SETTINGS["headless"],
-                                  "acpi_shutdown": VBOX_VM_SETTINGS["acpi_shutdown"],
+                                  "on_close": VBOX_VM_SETTINGS["on_close"],
                                   "console_type": VBOX_VM_SETTINGS["console_type"],
                                   "port_name_format": "Ethernet0",
                                   "port_segment_size": 0,

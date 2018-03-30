@@ -139,8 +139,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         section_item = self._createSectionItem("Additional options")
         if qemu_vm["options"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Options:", qemu_vm["options"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown:", "{}".format(qemu_vm["acpi_shutdown"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Save VM state:", "{}".format(qemu_vm["save_vm_state"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["On close:", "{}".format(qemu_vm["on_close"])])
 
         self.uiQemuVMInfoTreeWidget.expandAll()
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(0)

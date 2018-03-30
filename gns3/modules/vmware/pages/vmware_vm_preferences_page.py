@@ -76,7 +76,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vmware_vm["acpi_shutdown"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["On close:", "{}".format(vmware_vm["on_close"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vmware_vm["linked_clone"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vmware_vm["console_type"]])
 
