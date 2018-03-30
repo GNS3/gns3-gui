@@ -125,6 +125,7 @@ def test_add_appliance_iou(empty_config, iou_l3):
         "serial_adapters": 2,
         "ethernet_adapters": 2,
         "use_default_iou_values": True,
+        "console_type": "telnet",
         "startup_config": "iou_l3_base_startup-config.txt",
         "image": os.path.basename(iou_l3),
         "path": os.path.basename(iou_l3)

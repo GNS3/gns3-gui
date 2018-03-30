@@ -46,8 +46,10 @@ class EthernetSwitch(Node):
 
         :param result: server response (dict)
         """
+
         self.settings()["ports_mapping"] = result["ports_mapping"]
         self.settings()["console"] = result["console"]
+        self.settings()["console_type"] = result["console_type"]
 
     def console(self):
         return self.settings()["console"]
@@ -72,7 +74,9 @@ class EthernetSwitch(Node):
 
         :param result: server response
         """
+
         self.settings()["ports_mapping"] = result["ports_mapping"]
+        self.settings()["console_type"] = result["console_type"]
 
     def info(self):
         """
