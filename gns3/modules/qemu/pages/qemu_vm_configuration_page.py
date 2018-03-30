@@ -465,6 +465,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiMacAddrLineEdit.clear()
 
         self.uiACPIShutdownCheckBox.setChecked(settings["acpi_shutdown"])
+        self.uiSaveVMStateCheckBox.setChecked(settings["save_vm_state"])
         index = self.uiAdapterTypesComboBox.findData(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
@@ -579,6 +580,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         settings["adapters"] = adapters
         settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
         settings["acpi_shutdown"] = self.uiACPIShutdownCheckBox.isChecked()
+        settings["save_vm_state"] = self.uiSaveVMStateCheckBox.isChecked()
         settings["cpus"] = self.uiCPUSpinBox.value()
         settings["ram"] = self.uiRamSpinBox.value()
         if self.uiActivateCPUThrottlingCheckBox.isChecked():

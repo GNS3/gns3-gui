@@ -73,6 +73,7 @@ class QemuVM(Node):
                             "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
                             "platform": QEMU_VM_SETTINGS["platform"],
                             "acpi_shutdown": QEMU_VM_SETTINGS["acpi_shutdown"],
+                            "save_vm_state": QEMU_VM_SETTINGS["save_vm_state"],
                             "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],
                             "process_priority": QEMU_VM_SETTINGS["process_priority"],
                             "initrd": "",

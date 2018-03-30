@@ -55,6 +55,7 @@ QEMU_VM_SETTINGS = {
     "mac_address": "",
     "legacy_networking": False,
     "acpi_shutdown": False,
+    "save_vm_state": False,
     "platform": "",
     "cpu_throttling": 0,
     "process_priority": "normal",

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -317,7 +317,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiAdvancedSettingsTab = QtWidgets.QWidget()
         self.uiAdvancedSettingsTab.setObjectName("uiAdvancedSettingsTab")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiAdvancedSettingsTab)
-        self.verticalLayout_2.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.uiLinuxBootGroupBox = QtWidgets.QGroupBox(self.uiAdvancedSettingsTab)
         self.uiLinuxBootGroupBox.setObjectName("uiLinuxBootGroupBox")
@@ -416,10 +415,14 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiACPIShutdownCheckBox = QtWidgets.QCheckBox(self.groupBox)
         self.uiACPIShutdownCheckBox.setObjectName("uiACPIShutdownCheckBox")
         self.gridLayout_3.addWidget(self.uiACPIShutdownCheckBox, 2, 0, 1, 2)
+        self.uiSaveVMStateCheckBox = QtWidgets.QCheckBox(self.groupBox)
+        self.uiSaveVMStateCheckBox.setObjectName("uiSaveVMStateCheckBox")
+        self.gridLayout_3.addWidget(self.uiSaveVMStateCheckBox, 3, 0, 1, 2)
         self.uiQemuOptionsLineEdit.raise_()
         self.uiQemuOptionsLabel.raise_()
         self.uiACPIShutdownCheckBox.raise_()
         self.uiBaseVMCheckBox.raise_()
+        self.uiSaveVMStateCheckBox.raise_()
         self.verticalLayout_2.addWidget(self.groupBox)
         spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem4)
@@ -521,5 +524,6 @@ class Ui_QemuVMConfigPageWidget(object):
 "</body></html>"))
         self.uiBaseVMCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use as a linked base VM"))
         self.uiACPIShutdownCheckBox.setText(_translate("QemuVMConfigPageWidget", "Enable ACPI shutdown (experimental)"))
+        self.uiSaveVMStateCheckBox.setText(_translate("QemuVMConfigPageWidget", "Save the VM state (experimental)"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiAdvancedSettingsTab), _translate("QemuVMConfigPageWidget", "Advanced settings"))
 
