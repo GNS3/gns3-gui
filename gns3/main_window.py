@@ -1321,7 +1321,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             try:
                 if file_path and os.path.exists(file_path):
                     action = self.recent_file_actions[index]
-                    action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
+                    duplicate = False
+                    for file_path_2 in self._settings["recent_files"]:
+                        if file_path != file_path_2 and os.path.basename(file_path) == os.path.basename(file_path_2):
+                            duplicate = True
+                            break
+                    if duplicate:
+                        action.setText(" {}. {} [{}]".format(index + 1, os.path.basename(file_path), file_path))
+                    else:
+                        action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
                     action.setData(file_path)
                     action.setVisible(True)
                     index += 1

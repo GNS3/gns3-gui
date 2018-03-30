@@ -268,17 +268,17 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         for existing_project in Controller.instance().projects():
             if self._project_settings["project_name"] == existing_project["name"] \
-               or ("project_files_dir" in self._project_settings and self._project_settings["project_files_dir"] == existing_project["path"]):
+               and ("project_files_dir" in self._project_settings and self._project_settings["project_files_dir"] == existing_project["path"]):
 
                 if existing_project["status"] == "opened":
                     QtWidgets.QMessageBox.critical(self,
                                                    "New project",
-                                                   "Project {} is open you can not overwrite it".format(self._project_settings["project_name"]))
+                                                   'Project "{}" is opened, it cannot be overwritten'.format(self._project_settings["project_name"]))
                     return False
 
                 reply = QtWidgets.QMessageBox.warning(self,
                                                       "New project",
-                                                      "Project {} already exists, overwrite it?".format(existing_project["name"]),
+                                                      'Project "{}" already exists in location "{}", overwrite it?'.format(existing_project["name"], existing_project["path"]),
                                                       QtWidgets.QMessageBox.Yes,
                                                       QtWidgets.QMessageBox.No)
 
