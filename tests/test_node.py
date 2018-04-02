@@ -109,7 +109,7 @@ def test_updatePorts(vpcs_device):
     assert len(vpcs_device._ports) == 1
     port = vpcs_device._ports[0]
     assert port.status() == Port.started
-    assert isinstance(port, SerialPort)
+    assert isinstance(port, EthernetPort)
 
 
 def test_updatePorts_PortChange(vpcs_device):
