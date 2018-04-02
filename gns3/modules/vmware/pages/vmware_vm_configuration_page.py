@@ -22,6 +22,8 @@ Configuration page for VMware VMs.
 from gns3.qt import QtWidgets
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.dialogs.custom_adapters_configuration_dialog import CustomAdaptersConfigurationDialog
+from gns3.ports.port_name_factory import StandardPortNameFactory
 from gns3.node import Node
 
 from ..ui.vmware_vm_configuration_page_ui import Ui_VMwareVMConfigPageWidget
@@ -37,17 +39,24 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
 
         super().__init__()
         self.setupUi(self)
+        self._settings = None
+        self._custom_adapters = []
 
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
+        self.uiCustomAdaptersConfigurationPushButton.clicked.connect(self._customAdaptersConfigurationSlot)
         self.uiAdapterTypesComboBox.clear()
-        self.uiAdapterTypesComboBox.addItems(["default",
-                                              "e1000",
-                                              "e1000e",
-                                              "flexible",
-                                              "vlance",
-                                              "vmxnet",
-                                              "vmxnet2",
-                                              "vmxnet3"])
+
+
+        self._adapter_types = ["default",
+                               "e1000",
+                               "e1000e",
+                               "flexible",
+                               "vlance",
+                               "vmxnet",
+                               "vmxnet2",
+                               "vmxnet3"]
+
+        self.uiAdapterTypesComboBox.addItems(self._adapter_types)
 
         # add the categories
         for name, category in Node.defaultCategories().items():
@@ -70,6 +79,44 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
 
+    def _customAdaptersConfigurationSlot(self):
+        """
+        Slot to open the custom adapters configuration dialog
+        """
+
+        if self._node:
+            first_port_name = self._settings["first_port_name"]
+            port_segment_size = self._settings["port_segment_size"]
+            port_name_format = self._settings["port_name_format"]
+            adapters = self._settings["adapters"]
+            default_adapter = self._settings["adapter_type"]
+        else:
+            first_port_name = self.uiFirstPortNameLineEdit.text().strip()
+            port_name_format = self.uiPortNameFormatLineEdit.text()
+            if '{0}' not in port_name_format and '{port0}' not in port_name_format and '{port1}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format",
+                                               "The format must contain at least {0}, {port0} or {port1}")
+                return
+
+            port_segment_size = self.uiPortSegmentSizeSpinBox.value()
+            if port_segment_size and '{1}' not in port_name_format and '{segment0}' not in port_name_format and '{segment1}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format",
+                                               "The format must contain {1}, {segment0} or {segment1} if the segment size is not 0")
+                return
+
+            adapters = self.uiAdaptersSpinBox.value()
+            default_adapter = self.uiAdapterTypesComboBox.currentText()
+
+        try:
+            ports = StandardPortNameFactory(adapters, first_port_name, port_name_format, port_segment_size)
+        except (ValueError, KeyError):
+            QtWidgets.QMessageBox.critical(self, "Invalid format", "Invalid port name format")
+            return
+
+        dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, default_adapter, self._adapter_types, parent=self)
+        dialog.show()
+        dialog.exec_()
+
     def loadSettings(self, settings, node=None, group=False):
         """
         Loads the VMware VM settings.
@@ -78,6 +125,12 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         :param node: Node instance
         :param group: indicates the settings apply to a group of VMs
         """
+
+        if node:
+            self._node = node
+            self._settings = settings
+        else:
+            self._node = None
 
         if not group:
 
@@ -142,6 +195,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             self.uiConsoleTypeComboBox.setCurrentIndex(index)
 
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
+        self._custom_adapters = settings["custom_adapters"].copy()
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
         if index != -1:
             self.uiAdapterTypesComboBox.setCurrentIndex(index)
@@ -220,4 +274,5 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
                     QtWidgets.QMessageBox.critical(self, node.name(), "Changing the number of adapters while links are connected isn't supported yet! Please delete all the links first.")
                     raise ConfigurationError()
         settings["adapters"] = adapters
+        settings["custom_adapters"] = self._custom_adapters.copy()
         return settings

@@ -34,6 +34,7 @@ VBOX_VM_SETTINGS = {
     "port_name_format": "Ethernet{0}",
     "port_segment_size": 0,
     "first_port_name": "",
+    "custom_adapters": [],
     "adapters": 1,
     "ram": 0,
     "use_any_adapter": False,

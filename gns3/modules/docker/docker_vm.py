@@ -41,6 +41,7 @@ class DockerVM(Node):
 
         docker_vm_settings = {"image": "",
                               "adapters": DOCKER_CONTAINER_SETTINGS["adapters"],
+                              "custom_adapters": DOCKER_CONTAINER_SETTINGS["custom_adapters"],
                               "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
                               "environment": DOCKER_CONTAINER_SETTINGS["environment"],
                               "console": None,

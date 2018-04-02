@@ -35,6 +35,7 @@ QEMU_VM_SETTINGS = {
     "port_name_format": "Ethernet{0}",
     "port_segment_size": 0,
     "first_port_name": "",
+    "custom_adapters": [],
     "qemu_path": "",
     "hda_disk_image": "",
     "hdb_disk_image": "",

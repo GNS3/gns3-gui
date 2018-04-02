@@ -20,6 +20,7 @@ Configuration page for Docker images.
 """
 
 from gns3.qt import QtWidgets
+from gns3.dialogs.custom_adapters_configuration_dialog import CustomAdaptersConfigurationDialog
 
 from ..ui.docker_vm_configuration_page_ui import Ui_dockerVMConfigPageWidget
 from ....dialogs.file_editor_dialog import FileEditorDialog
@@ -36,8 +37,12 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
 
         super().__init__()
         self.setupUi(self)
+        self._settings = None
+        self._custom_adapters = []
+
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiNetworkConfigEditButton.released.connect(self._networkConfigEditSlot)
+        self.uiCustomAdaptersConfigurationPushButton.clicked.connect(self._customAdaptersConfigurationSlot)
 
     def _symbolBrowserSlot(self):
         """
@@ -52,6 +57,25 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
 
+    def _customAdaptersConfigurationSlot(self):
+        """
+        Slot to open the custom adapters configuration dialog
+        """
+
+        if self._node:
+            adapters = self._settings["adapters"]
+        else:
+            adapters = self.uiAdapterSpinBox.value()
+
+        ports = []
+        for adapter_number in range(0, adapters):
+            port_name = "eth{}".format(adapter_number)
+            ports.append(port_name)
+
+        dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, parent=self)
+        dialog.show()
+        dialog.exec_()
+
     def loadSettings(self, settings, node=None, group=False):
         """
         Loads the Docker VM settings.
@@ -60,6 +84,12 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         :param node: Node instance
         :param group: indicates the settings apply to a group of images
         """
+
+        if node:
+            self._node = node
+            self._settings = settings
+        else:
+            self._node = None
 
         self.uiCMDLineEdit.setText(settings["start_command"])
         self.uiEnvironmentTextEdit.setText(settings["environment"])
@@ -71,6 +101,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
             self.uiAdapterSpinBox.setValue(settings["adapters"])
+            self._custom_adapters = settings["custom_adapters"].copy()
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
@@ -79,6 +110,8 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
             self.uiAdapterLabel.hide()
             self.uiAdapterSpinBox.hide()
             self.uiCategoryComboBox.hide()
+            self.uiCustomAdaptersLabel.hide()
+            self.uiCustomAdaptersConfigurationPushButton.hide()
 
         if not node:
             # these are template settings
@@ -141,6 +174,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
                             raise ConfigurationError()
 
             settings["adapters"] = adapters
+            settings["custom_adapters"] = self._custom_adapters.copy()
 
             name = self.uiNameLineEdit.text()
             if not name:

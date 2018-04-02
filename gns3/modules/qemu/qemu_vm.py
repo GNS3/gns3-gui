@@ -68,6 +68,7 @@ class QemuVM(Node):
                             "console_host": None,
                             "console_type": QEMU_VM_SETTINGS["console_type"],
                             "adapters": QEMU_VM_SETTINGS["adapters"],
+                            "custom_adapters": QEMU_VM_SETTINGS["custom_adapters"],
                             "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                             "mac_address": QEMU_VM_SETTINGS["mac_address"],
                             "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
@@ -123,7 +124,7 @@ class QemuVM(Node):
         """
         Returns information about this QEMU VM instance.
 
-        :returns: formated string
+        :returns: formatted string
         """
 
         if self.status() == Node.started:

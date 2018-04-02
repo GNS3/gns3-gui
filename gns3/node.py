@@ -277,6 +277,7 @@ class Node(BaseNode):
         """
         Parse node object from API
         """
+
         if "node_id" in result:
             self._node_id = result["node_id"]
 
@@ -296,6 +297,9 @@ class Node(BaseNode):
                 self.setStatus(Node.stopped)
             elif result["status"] == "suspended":
                 self.setStatus(Node.suspended)
+
+        if "custom_adapters" in result:
+            self._settings["custom_adapters"] = result["custom_adapters"]
 
         if "ports" in result:
             self._updatePorts(result["ports"])
@@ -325,8 +329,9 @@ class Node(BaseNode):
 
             # Update port if already exist
             for old_port in old_ports:
-                if old_port.adapterNumber() == port["adapter_number"] and old_port.portNumber() == port["port_number"] and old_port.name() == port["name"]:
+                if old_port.adapterNumber() == port["adapter_number"] and old_port.portNumber() == port["port_number"]:
                     new_port = old_port
+                    old_port.setName(port["name"])
                     old_ports.remove(old_port)
                     break
 

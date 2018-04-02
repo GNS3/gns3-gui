@@ -25,6 +25,8 @@ import re
 from collections import OrderedDict
 from gns3.modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from gns3.dialogs.custom_adapters_configuration_dialog import CustomAdaptersConfigurationDialog
+from gns3.ports.port_name_factory import StandardPortNameFactory
 from gns3.node import Node
 from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.modules.module_error import ModuleError
@@ -48,6 +50,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         super().__init__()
         self.setupUi(self)
         self._compute_id = None
+        self._settings = None
+        self._custom_adapters = []
 
         self.uiBootPriorityComboBox.addItem("HDD", "c")
         self.uiBootPriorityComboBox.addItem("CD/DVD-ROM", "d")
@@ -83,6 +87,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
         self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
         self.uiLegacyNetworkingCheckBox.stateChanged.connect(self._legacyNetworkingChangedSlot)
+        self.uiCustomAdaptersConfigurationPushButton.clicked.connect(self._customAdaptersConfigurationSlot)
 
         # add the categories
         for name, category in Node.defaultCategories().items():
@@ -346,6 +351,55 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         else:
             self._refreshQemuNetworkDevices()
 
+    def _customAdaptersConfigurationSlot(self):
+        """
+        Slot to open the custom adapters configuration dialog
+        """
+
+        if self._node:
+            first_port_name = self._settings["first_port_name"]
+            port_segment_size = self._settings["port_segment_size"]
+            port_name_format = self._settings["port_name_format"]
+            adapters = self._settings["adapters"]
+            default_adapter = self._settings["adapter_type"]
+            base_mac_address = self._settings["mac_address"]
+        else:
+            first_port_name = self.uiFirstPortNameLineEdit.text().strip()
+            port_name_format = self.uiPortNameFormatLineEdit.text()
+            if '{0}' not in port_name_format and '{port0}' not in port_name_format and '{port1}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format",
+                                               "The format must contain at least {0}, {port0} or {port1}")
+                return
+
+            port_segment_size = self.uiPortSegmentSizeSpinBox.value()
+            if port_segment_size and '{1}' not in port_name_format and '{segment0}' not in port_name_format and '{segment1}' not in port_name_format:
+                QtWidgets.QMessageBox.critical(self, "Port name format",
+                                               "The format must contain {1}, {segment0} or {segment1} if the segment size is not 0")
+                return
+
+            adapters = self.uiAdaptersSpinBox.value()
+            default_adapter = self.uiAdapterTypesComboBox.currentData()
+
+            mac = self.uiMacAddrLineEdit.text()
+            if mac != ":::::":
+                if not re.search(r"""^([0-9a-fA-F]{2}[:]){5}[0-9a-fA-F]{2}$""", mac):
+                    QtWidgets.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hh:hh:hh:hh:hh:hh)")
+                    return
+                else:
+                    base_mac_address = mac
+            else:
+                base_mac_address = None
+
+        try:
+            ports = StandardPortNameFactory(adapters, first_port_name, port_name_format, port_segment_size)
+        except (ValueError, KeyError):
+            QtWidgets.QMessageBox.critical(self, "Invalid format", "Invalid port name format")
+            return
+
+        dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, default_adapter, self._qemu_network_devices, base_mac_address, parent=self)
+        dialog.show()
+        dialog.exec_()
+
     def loadSettings(self, settings, node=None, group=False):
         """
         Loads the QEMU VM settings.
@@ -358,6 +412,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if node:
             self._compute_id = node.compute().id()
             self._node = node
+            self._settings = settings
         else:
             self._compute_id = settings["server"]
             self._node = None
@@ -458,6 +513,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
+        self._custom_adapters = settings["custom_adapters"].copy()
 
         self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
 
@@ -585,6 +641,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                     raise ConfigurationError()
 
         settings["adapters"] = adapters
+        settings["custom_adapters"] = self._custom_adapters.copy()
         settings["on_close"] = self.uiOnCloseComboBox.itemData(self.uiOnCloseComboBox.currentIndex())
         settings["cpus"] = self.uiCPUSpinBox.value()
         settings["ram"] = self.uiRamSpinBox.value()

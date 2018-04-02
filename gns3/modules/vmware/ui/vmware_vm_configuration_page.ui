@@ -149,13 +149,17 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <property name="margin">
-        <number>10</number>
-       </property>
-       <item row="2" column="2">
-        <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiAdaptersLabel">
          <property name="text">
-          <string/>
+          <string>Adapters:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiFirstPortNameLabel">
+         <property name="text">
+          <string>First port name:</string>
          </property>
         </widget>
        </item>
@@ -176,23 +180,34 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
-        <widget class="QSpinBox" name="uiAdaptersSpinBox">
-         <property name="minimum">
-          <number>0</number>
-         </property>
-         <property name="maximum">
-          <number>10</number>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Type:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
-        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
-         <property name="maximum">
-          <number>128</number>
+       <item row="5" column="0" colspan="2">
+        <widget class="QLabel" name="uiCustomAdaptersLabel">
+         <property name="text">
+          <string>Custom adapters:</string>
          </property>
-         <property name="singleStep">
-          <number>4</number>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QPushButton" name="uiCustomAdaptersConfigurationPushButton">
+         <property name="text">
+          <string>&amp;Configure custom adapters</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="3">
+        <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option will allow GNS3 to replace all adapters of the VM. This allow you to use any interface of the VM in GNS3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Allow GNS3 to override non custom VMware adapter</string>
          </property>
         </widget>
        </item>
@@ -209,14 +224,7 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiAdaptersLabel">
-         <property name="text">
-          <string>Adapters:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="2">
+       <item row="4" column="2">
         <widget class="QComboBox" name="uiAdapterTypesComboBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -226,32 +234,35 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Type:</string>
+       <item row="3" column="2">
+        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
+         <property name="maximum">
+          <number>128</number>
+         </property>
+         <property name="singleStep">
+          <number>4</number>
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="3">
-        <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option will allow GNS3 to replace all adapters of the VM. This allow you to use any interface of the VM in GNS3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
+       <item row="2" column="2">
+        <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
          <property name="text">
-          <string>Allow GNS3 to override non custom VMware adapter</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiFirstPortNameLabel">
-         <property name="text">
-          <string>First port name:</string>
+          <string/>
          </property>
         </widget>
        </item>
        <item row="1" column="2">
         <widget class="QLineEdit" name="uiFirstPortNameLineEdit"/>
+       </item>
+       <item row="0" column="2">
+        <widget class="QSpinBox" name="uiAdaptersSpinBox">
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>10</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
