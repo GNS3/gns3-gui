@@ -277,6 +277,9 @@ class Config:
         if "port_segment_size" in appliance_config:
             new_config["port_segment_size"] = appliance_config["port_segment_size"]
 
+        if "custom_adapters" in appliance_config:
+            new_config["custom_adapters"] = appliance_config["custom_adapters"]
+
         if "linked_clone" in appliance_config:
             new_config["linked_clone"] = appliance_config["linked_clone"]
 
