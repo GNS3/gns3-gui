@@ -361,23 +361,6 @@ class VMware(Module):
 
         return [VMwareVM]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        for vmware_vm in self._vmware_vms.values():
-            nodes.append(
-                {"class": VMwareVM.__name__,
-                 "name": vmware_vm["name"],
-                 "server": vmware_vm["server"],
-                 "symbol": vmware_vm["symbol"],
-                 "categories": [vmware_vm["category"]]}
-            )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """

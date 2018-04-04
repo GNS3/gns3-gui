@@ -254,24 +254,6 @@ class IOU(Module):
 
         return [IOUDevice]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        for iou_device in self._iou_devices.values():
-            nodes.append(
-                {"class": IOUDevice.__name__,
-                 "name": iou_device["name"],
-                 "server": iou_device["server"],
-                 "symbol": iou_device["symbol"],
-                 "categories": [iou_device["category"]]
-                 }
-            )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """

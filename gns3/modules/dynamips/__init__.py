@@ -350,25 +350,6 @@ class Dynamips(Module):
 
         return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EtherSwitchRouter]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        for ios_router in self._ios_routers.values():
-            node_class = PLATFORM_TO_CLASS[ios_router["platform"]]
-            nodes.append(
-                {"class": node_class.__name__,
-                 "name": ios_router["name"],
-                 "server": ios_router["server"],
-                 "symbol": ios_router["symbol"],
-                 "categories": [ios_router["category"]]}
-            )
-
-        return nodes
-
     @staticmethod
     def preferencePages():
         """

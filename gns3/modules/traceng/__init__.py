@@ -206,26 +206,6 @@ class TraceNG(Module):
 
         return [TraceNGNode]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-
-        # Add a default TraceNG not linked to a specific server
-        nodes.append(
-            {
-                "class": TraceNGNode.__name__,
-                "name": "TraceNG",
-                "categories": [TraceNGNode.end_devices],
-                "symbol": TraceNGNode.defaultSymbol(),
-                "builtin": True
-            }
-        )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """

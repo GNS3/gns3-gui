@@ -205,26 +205,6 @@ class VPCS(Module):
 
         return [VPCSNode]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-
-        # Add a default VPCS not linked to a specific server
-        nodes.append(
-            {
-                "class": VPCSNode.__name__,
-                "name": "VPCS",
-                "categories": [VPCSNode.end_devices],
-                "symbol": VPCSNode.defaultSymbol(),
-                "builtin": True
-            }
-        )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """

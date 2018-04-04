@@ -176,22 +176,6 @@ class Docker(Module):
         """
         return [DockerVM]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-        nodes = []
-        for docker_image in self._docker_containers.values():
-            nodes.append({
-                "class": DockerVM.__name__,
-                "name": docker_image["name"],
-                "server": docker_image["server"],
-                "symbol": docker_image["symbol"],
-                "categories": [docker_image["category"]]
-            })
-        return nodes
-
     @staticmethod
     def preferencePages():
         """

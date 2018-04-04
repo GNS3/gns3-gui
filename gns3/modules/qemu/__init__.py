@@ -266,24 +266,6 @@ class Qemu(Module):
 
         return [QemuVM]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        for qemu_vm in self._qemu_vms.values():
-            nodes.append(
-                {"class": QemuVM.__name__,
-                 "name": qemu_vm["name"],
-                 "server": qemu_vm["server"],
-                 "symbol": qemu_vm["symbol"],
-                 "categories": [qemu_vm["category"]]
-                 }
-            )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """

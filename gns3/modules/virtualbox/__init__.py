@@ -253,23 +253,6 @@ class VirtualBox(Module):
 
         return [VirtualBoxVM]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        for vbox_vm in self._virtualbox_vms.values():
-            nodes.append(
-                {"class": VirtualBoxVM.__name__,
-                 "name": vbox_vm["name"],
-                 "server": vbox_vm["server"],
-                 "symbol": vbox_vm["symbol"],
-                 "categories": [vbox_vm["category"]]}
-            )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """

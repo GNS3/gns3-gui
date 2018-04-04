@@ -50,17 +50,6 @@ class Module(QtCore.QObject):
         raise NotImplementedError("Missing getNodeType in {}".format(self.__class__.__name__))
 
     @staticmethod
-    def nodes(self):
-        """
-        Returns all nodes supported by this module.
-        Must be overloaded.
-
-        :returns: list of node classes
-        """
-
-        raise NotImplementedError()
-
-    @staticmethod
     def preferencePages():
         """
         Returns all the preference pages used by this module.

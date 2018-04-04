@@ -298,47 +298,6 @@ class Builtin(Module):
 
         return [Nat, Cloud, EthernetHub, EthernetSwitch, FrameRelaySwitch, ATMSwitch]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        # add custom cloud node templates
-        for cloud_node in self._cloud_nodes.values():
-            nodes.append(
-                {"class": Cloud.__name__,
-                 "name": cloud_node["name"],
-                 "server": cloud_node["server"],
-                 "symbol": cloud_node["symbol"],
-                 "categories": [cloud_node["category"]]
-                 }
-            )
-
-        # add custom Ethernet hub templates
-        for hub in self._ethernet_hubs.values():
-            nodes.append(
-                {"class": EthernetHub.__name__,
-                 "name": hub["name"],
-                 "server": hub["server"],
-                 "symbol": hub["symbol"],
-                 "categories": [hub["category"]]
-                 }
-            )
-
-        # add custom Ethernet switch templates
-        for switch in self._ethernet_switches.values():
-            nodes.append(
-                {"class": EthernetSwitch.__name__,
-                 "name": switch["name"],
-                 "server": switch["server"],
-                 "symbol": switch["symbol"],
-                 "categories": [switch["category"]]
-                }
-            )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """
