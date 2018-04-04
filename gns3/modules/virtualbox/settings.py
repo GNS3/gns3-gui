@@ -42,6 +42,7 @@ VBOX_VM_SETTINGS = {
     "headless": False,
     "on_close": "power_off",
     "linked_clone": False,
-    "console_type": "telnet",
+    "console_type": "none",
+    "console_auto_start": True,
     "server": "local"
 }

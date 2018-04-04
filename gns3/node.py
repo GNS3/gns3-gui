@@ -207,7 +207,7 @@ class Node(BaseNode):
 
         # We have two kind of properties. The general properties common to all
         # nodes and the specific that we need to put in the properties field
-        node_general_properties = ("name", "console", "console_type", "x", "y", "z", "symbol", "label", "port_name_format", "port_segment_size", "first_port_name")
+        node_general_properties = ("name", "console", "console_type", "x", "y", "z", "symbol", "label", "port_name_format", "port_segment_size", "first_port_name", "console_auto_start")
         # No need to send this back to the server because it's read only
         ignore_properties = ("console_host", "symbol_url", "width", "height", "node_id")
         for key, value in params.items():
@@ -298,8 +298,11 @@ class Node(BaseNode):
             elif result["status"] == "suspended":
                 self.setStatus(Node.suspended)
 
-        if "custom_adapters" in result:
+        if "custom_adapters" in result and "custom_adapters" in self._settings:
             self._settings["custom_adapters"] = result["custom_adapters"]
+
+        if "console_auto_start" in result and "console_auto_start" in self._settings:
+            self._settings["console_auto_start"] = result["console_auto_start"]
 
         if "ports" in result:
             self._updatePorts(result["ports"])
@@ -518,6 +521,17 @@ class Node(BaseNode):
         if error:
             log.error("error while reloading {}: {}".format(self.name(), result["message"]))
             self.server_error_signal.emit(self.id(), result["message"])
+
+    def setStatus(self, status):
+        """
+        Overloaded setStatus method for console auto start.
+        """
+
+        if self.status() == status:
+            return
+        super().setStatus(status)
+        if status == self.started and "console_auto_start" in self.settings() and self.settings()["console_auto_start"]:
+            self.openConsole()
 
     def openConsole(self, command=None, aux=False):
         if command is None:

@@ -22,7 +22,6 @@ IOU device implementation.
 import os
 import re
 from gns3.node import Node
-from gns3.utils.normalize_filename import normalize_filename
 from .settings import IOU_DEVICE_SETTINGS
 
 import logging
@@ -48,7 +47,8 @@ class IOUDevice(Node):
                                "md5sum": "",
                                "startup_config": "",
                                "private_config": "",
-                               "console_type": "telnet",
+                               "console_type": IOU_DEVICE_SETTINGS["console_type"],
+                               "console_auto_start": IOU_DEVICE_SETTINGS["console_auto_start"],
                                "l1_keepalives": False,
                                "use_default_iou_values": IOU_DEVICE_SETTINGS["use_default_iou_values"],
                                "ram": IOU_DEVICE_SETTINGS["ram"],

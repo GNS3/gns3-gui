@@ -79,6 +79,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         QtWidgets.QTreeWidgetItem(section_item, ["On close:", "{}".format(vmware_vm["on_close"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vmware_vm["linked_clone"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vmware_vm["console_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(vmware_vm["console_auto_start"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")

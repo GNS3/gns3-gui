@@ -210,6 +210,8 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         if index != -1:
             self.uiConsoleTypeComboBox.setCurrentIndex(index)
 
+        self.uiConsoleAutoStartCheckBox.setChecked(settings["console_auto_start"])
+
         # load advanced settings
         if "l1_keepalives" in settings:
             self.uiL1KeepalivesCheckBox.setChecked(settings["l1_keepalives"])
@@ -307,6 +309,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         settings["serial_adapters"] = serial_adapters
         # save console type
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
+        settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
         return settings
 
     def _configFileValid(self, path):

@@ -55,6 +55,7 @@ class VMwareVM(Node):
                               "headless": VMWARE_VM_SETTINGS["headless"],
                               "on_close": VMWARE_VM_SETTINGS["on_close"],
                               "console_type": VMWARE_VM_SETTINGS["console_type"],
+                              "console_auto_start": VMWARE_VM_SETTINGS["console_auto_start"],
                               "custom_adapters": VMWARE_VM_SETTINGS["custom_adapters"],
                               "port_name_format": "Ethernet{0}",
                               "port_segment_size": 0,

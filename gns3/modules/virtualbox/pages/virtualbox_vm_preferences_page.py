@@ -81,6 +81,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         QtWidgets.QTreeWidgetItem(section_item, ["On close:", "{}".format(vbox_vm["on_close"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vbox_vm["linked_clone"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vbox_vm["console_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(vbox_vm["console_auto_start"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")

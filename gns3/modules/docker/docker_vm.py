@@ -48,6 +48,7 @@ class DockerVM(Node):
                               "console_host": None,
                               "aux": None,
                               "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
+                              "console_auto_start": DOCKER_CONTAINER_SETTINGS["console_auto_start"],
                               "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"],
                               "console_http_port": DOCKER_CONTAINER_SETTINGS["console_http_port"],
                               "console_http_path": DOCKER_CONTAINER_SETTINGS["console_http_path"]}

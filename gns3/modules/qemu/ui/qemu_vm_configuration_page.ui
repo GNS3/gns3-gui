@@ -31,17 +31,17 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="0" column="1">
         <widget class="QLineEdit" name="uiNameLineEdit"/>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="1" column="0">
         <widget class="QLabel" name="uiDefaultNameFormatLabel">
          <property name="text">
           <string>Default name format:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
+       <item row="1" column="1">
         <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
        </item>
        <item row="2" column="0">
@@ -51,7 +51,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="2">
+       <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="QLineEdit" name="uiSymbolLineEdit"/>
@@ -75,7 +75,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
+       <item row="3" column="1">
         <widget class="QComboBox" name="uiCategoryComboBox"/>
        </item>
        <item row="4" column="0">
@@ -85,7 +85,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="2">
+       <item row="4" column="1">
         <widget class="QSpinBox" name="uiRamSpinBox">
          <property name="suffix">
           <string> MB</string>
@@ -108,7 +108,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="2">
+       <item row="5" column="1">
         <widget class="QSpinBox" name="uiCPUSpinBox">
          <property name="minimum">
           <number>1</number>
@@ -125,7 +125,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="2">
+       <item row="6" column="1">
         <widget class="QComboBox" name="uiQemuListComboBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -142,53 +142,67 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="2">
+       <item row="7" column="1">
         <widget class="QComboBox" name="uiBootPriorityComboBox"/>
        </item>
        <item row="8" column="0">
-        <widget class="QLabel" name="uiConsoleTypeLabel">
-         <property name="text">
-          <string>Console type:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="2">
-        <widget class="QComboBox" name="uiConsoleTypeComboBox">
-         <item>
-          <property name="text">
-           <string>telnet</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>vnc</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>spice</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>spice+agent</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>none</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="9" column="0">
         <widget class="QLabel" name="uiOnCloseLabel">
          <property name="text">
           <string>On close:</string>
          </property>
         </widget>
        </item>
-       <item row="10" column="1" colspan="2">
+       <item row="8" column="1">
+        <widget class="QComboBox" name="uiOnCloseComboBox"/>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QComboBox" name="uiConsoleTypeComboBox">
+           <item>
+            <property name="text">
+             <string>telnet</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>vnc</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>spice</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>spice+agent</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>none</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="uiConsoleAutoStartCheckBox">
+           <property name="text">
+            <string>Auto start console</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="10" column="1">
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -200,9 +214,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="9" column="2">
-        <widget class="QComboBox" name="uiOnCloseComboBox"/>
        </item>
       </layout>
      </widget>

@@ -71,6 +71,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vpcs_node["name"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vpcs_node["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vpcs_node["console_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(vpcs_node["console_auto_start"])])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vpcs_node["server"]).name()])
         except KeyError:

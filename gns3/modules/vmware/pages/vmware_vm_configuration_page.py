@@ -194,6 +194,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         if index != -1:
             self.uiConsoleTypeComboBox.setCurrentIndex(index)
 
+        self.uiConsoleAutoStartCheckBox.setChecked(settings["console_auto_start"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         self._custom_adapters = settings["custom_adapters"].copy()
         index = self.uiAdapterTypesComboBox.findText(settings["adapter_type"])
@@ -265,6 +266,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
 
         # save console type
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
+        settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
 
         adapters = self.uiAdaptersSpinBox.value()
         if node and node.settings()["adapters"] != adapters:

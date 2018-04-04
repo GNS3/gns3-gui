@@ -82,6 +82,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             # Compute doesn't exists
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", iou_device["console_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(iou_device["console_auto_start"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Image:", iou_device["path"]])
         if iou_device["startup_config"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Startup-config:", iou_device["startup_config"]])

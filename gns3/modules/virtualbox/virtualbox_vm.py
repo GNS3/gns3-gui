@@ -54,6 +54,7 @@ class VirtualBoxVM(Node):
                                   "headless": VBOX_VM_SETTINGS["headless"],
                                   "on_close": VBOX_VM_SETTINGS["on_close"],
                                   "console_type": VBOX_VM_SETTINGS["console_type"],
+                                  "console_auto_start": VBOX_VM_SETTINGS["console_auto_start"],
                                   "custom_adapters": VBOX_VM_SETTINGS["custom_adapters"],
                                   "port_name_format": "Ethernet0",
                                   "port_segment_size": 0,

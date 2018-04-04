@@ -86,18 +86,29 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QComboBox" name="uiConsoleTypeComboBox">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <property name="text">
-           <string>telnet</string>
-          </property>
+          <widget class="QComboBox" name="uiConsoleTypeComboBox">
+           <item>
+            <property name="text">
+             <string>telnet</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>none</string>
+            </property>
+           </item>
+          </widget>
          </item>
          <item>
-          <property name="text">
-           <string>none</string>
-          </property>
+          <widget class="QCheckBox" name="uiConsoleAutoStartCheckBox">
+           <property name="text">
+            <string>Auto start console</string>
+           </property>
+          </widget>
          </item>
-        </widget>
+        </layout>
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="uiVMListLabel">

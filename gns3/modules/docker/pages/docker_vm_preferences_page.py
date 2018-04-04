@@ -73,6 +73,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", str(docker_image["console_type"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(docker_image["console_auto_start"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_image["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(docker_image["adapters"])])
         if docker_image["start_command"]:

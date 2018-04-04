@@ -38,6 +38,7 @@ IOS_ROUTER_SETTINGS = {
     "startup_config": "",
     "private_config": "",
     "console_type": "telnet",
+    "console_auto_start": True,
     "platform": "",
     "chassis": "",
     "idlepc": "",

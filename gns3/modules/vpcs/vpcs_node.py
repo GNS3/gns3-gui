@@ -42,6 +42,7 @@ class VPCSNode(Node):
         vpcs_settings = {"console_host": None,
                          "startup_script": None,
                          "console_type": "telnet",
+                         "console_auto_start": True,
                          "console": None}
 
         self.settings().update(vpcs_settings)

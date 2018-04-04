@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>635</width>
-    <height>721</height>
+    <width>795</width>
+    <height>727</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,7 +106,7 @@
        <item row="5" column="2">
         <widget class="QComboBox" name="uiCategoryComboBox"/>
        </item>
-       <item row="6" column="0">
+       <item row="6" column="0" colspan="2">
         <widget class="QLabel" name="uiIOSImageLabel">
          <property name="text">
           <string>IOS image path:</string>
@@ -130,7 +130,7 @@
          </item>
         </layout>
        </item>
-       <item row="7" column="0">
+       <item row="7" column="0" colspan="2">
         <widget class="QLabel" name="uiStartupConfigLabel">
          <property name="text">
           <string>Initial startup-config:</string>
@@ -154,7 +154,7 @@
          </item>
         </layout>
        </item>
-       <item row="8" column="0">
+       <item row="8" column="0" colspan="2">
         <widget class="QLabel" name="uiPrivateConfigLabel">
          <property name="text">
           <string>Initial private-config:</string>
@@ -218,12 +218,37 @@
          </property>
         </widget>
        </item>
-       <item row="11" column="0">
+       <item row="11" column="0" colspan="2">
         <widget class="QLabel" name="uiConsoleTypeLabel">
          <property name="text">
           <string>Console type:</string>
          </property>
         </widget>
+       </item>
+       <item row="11" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QComboBox" name="uiConsoleTypeComboBox">
+           <item>
+            <property name="text">
+             <string>telnet</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>none</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="uiConsoleAutoStartCheckBox">
+           <property name="text">
+            <string>Auto start console</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item row="12" column="1" colspan="2">
         <spacer>
@@ -237,20 +262,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="11" column="2">
-        <widget class="QComboBox" name="uiConsoleTypeComboBox">
-         <item>
-          <property name="text">
-           <string>telnet</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>none</string>
-          </property>
-         </item>
-        </widget>
        </item>
       </layout>
      </widget>

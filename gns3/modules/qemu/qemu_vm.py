@@ -67,6 +67,7 @@ class QemuVM(Node):
                             "console": None,
                             "console_host": None,
                             "console_type": QEMU_VM_SETTINGS["console_type"],
+                            "console_auto_start": QEMU_VM_SETTINGS["console_auto_start"],
                             "adapters": QEMU_VM_SETTINGS["adapters"],
                             "custom_adapters": QEMU_VM_SETTINGS["custom_adapters"],
                             "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
