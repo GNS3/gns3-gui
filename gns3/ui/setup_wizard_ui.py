@@ -254,7 +254,7 @@ class Ui_SetupWizard(object):
         self.uiVMRadioButton.setToolTip(_translate("SetupWizard", "Dynamips, IOU, VPCS and Qemu will use this virtual machine."))
         self.uiVMRadioButton.setText(_translate("SetupWizard", "Run modern IOS (IOSv or IOU), ASA and appliances from non Cisco manufacturers. "))
         self.label.setText(_translate("SetupWizard", "This will require an additional VM (the GNS3 VM is available for free) ."))
-        self.uiLocalRadioButton.setToolTip(_translate("SetupWizard", "Eveything that is supported by your system will run on your computer."))
+        self.uiLocalRadioButton.setToolTip(_translate("SetupWizard", "Everything that is supported by your system will run on your computer."))
         self.uiLocalRadioButton.setText(_translate("SetupWizard", "Run only legacy IOS on my computer"))
         self.uiLocalLabel.setText(_translate("SetupWizard", "Requires IOS images <= C7200"))
         self.uiRemoteControllerRadioButton.setText(_translate("SetupWizard", "Run everything on a remote server (advanced usage)"))
