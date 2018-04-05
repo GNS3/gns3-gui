@@ -70,7 +70,7 @@ class Router(Node):
                            "auto_delete_disks": False,
                            "console": None,
                            "console_type": "telnet",
-                           "console_auto_start": True,
+                           "console_auto_start": False,
                            "console_host": None,
                            "aux": None,
                            "mac_addr": None,

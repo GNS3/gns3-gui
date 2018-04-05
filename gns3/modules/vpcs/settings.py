@@ -30,7 +30,7 @@ VPCS_NODES_SETTINGS = {
     "default_name_format": "PC{0}",
     "base_script_file": "",
     "console_type": "telnet",
-    "console_auto_start": True,
+    "console_auto_start": False,
     "symbol": ":/symbols/vpcs_guest.svg",
     "category": Node.end_devices,
 }

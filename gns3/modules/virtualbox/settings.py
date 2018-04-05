@@ -43,6 +43,6 @@ VBOX_VM_SETTINGS = {
     "on_close": "power_off",
     "linked_clone": False,
     "console_type": "none",
-    "console_auto_start": True,
+    "console_auto_start": False,
     "server": "local"
 }

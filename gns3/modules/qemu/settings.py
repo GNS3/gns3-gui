@@ -49,7 +49,7 @@ QEMU_VM_SETTINGS = {
     "bios_image": "",
     "boot_priority": "c",
     "console_type": "telnet",
-    "console_auto_start": True,
+    "console_auto_start": False,
     "ram": 256,
     "cpus": 1,
     "adapters": 1,
