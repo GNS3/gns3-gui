@@ -89,7 +89,7 @@
        </font>
       </property>
       <property name="toolTip">
-       <string>Eveything that is supported by your system will run on your computer.</string>
+       <string>Everything that is supported by your system will run on your computer.</string>
       </property>
       <property name="text">
        <string>Run only legacy IOS on my computer</string>
