@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CustomAdaptersConfigurationDialog(object):
     def setupUi(self, CustomAdaptersConfigurationDialog):
         CustomAdaptersConfigurationDialog.setObjectName("CustomAdaptersConfigurationDialog")
-        CustomAdaptersConfigurationDialog.resize(1420, 381)
+        CustomAdaptersConfigurationDialog.resize(827, 320)
         CustomAdaptersConfigurationDialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(CustomAdaptersConfigurationDialog)
         self.verticalLayout.setObjectName("verticalLayout")
