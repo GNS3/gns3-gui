@@ -240,7 +240,13 @@ class NodesView(QtWidgets.QTreeWidget):
         if dialog.exec_():
             module.instance().setVMs(module.instance().VMs())
             LocalConfig.instance().writeConfig()
-            self.refresh()
+            #self.refresh()
+
+            # FIXME: temporary fix: close the nodes dock to refresh the node list
+            from .main_window import MainWindow
+            main_window = MainWindow.instance()
+            main_window.uiNodesDockWidget.setVisible(False)
+            main_window.uiNodesDockWidget.setWindowTitle("")
 
     def _deleteSlot(self, vm_key, vm, module, source):
 
@@ -251,4 +257,10 @@ class NodesView(QtWidgets.QTreeWidget):
             vms.pop(vm_key)
             module.instance().setVMs(vms)
             LocalConfig.instance().writeConfig()
-            self.refresh()
+            #self.refresh()
+
+            # FIXME: temporary fix: close the nodes dock to refresh the node list
+            from .main_window import MainWindow
+            main_window = MainWindow.instance()
+            main_window.uiNodesDockWidget.setVisible(False)
+            main_window.uiNodesDockWidget.setWindowTitle("")
