@@ -93,11 +93,11 @@ class Cloud(Node):
         :returns: formatted string
         """
 
-        info = """Cloud device {name} is always-on
-This is a node for external connections
-Device run on {host}
+        info = """Cloud {name} is always-on
+  Running on server {host} with port {port}
 """.format(name=self.name(),
-           host=self.compute().name())
+           host=self.compute().name(),
+           port=self.compute().port())
 
         port_info = ""
         for port in self._ports:

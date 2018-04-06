@@ -78,27 +78,26 @@ class DockerVM(Node):
             self._update(params)
 
     def info(self):
-        """Returns information about this Docker container.
+        """
+        Returns information about this Docker container.
 
         :returns: formatted string
-        :rtype: string
         """
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
 
         info = """Docker container {name} is {state}
-  Node ID is {id}, server's Docker container ID is {node_id}
-  Docker VM's server run on {host}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  Docker image is "{image}"
   Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            host=self.compute().name(),
+           port=self.compute().port(),
            console=self._settings["console"],
-           console_type=self._settings["console_type"])
+           console_type=self._settings["console_type"],
+           image=self._settings["image"])
 
         port_info = ""
         for port in self._ports:

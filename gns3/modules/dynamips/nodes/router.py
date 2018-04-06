@@ -200,7 +200,7 @@ class Router(Node):
             else:
                 port_string = "ports"
 
-            slot_info = slot_info + "   slot {slot_number} hardware is {adapter} with {nb_ports} {port_string}\n".format(slot_number=str(slot_number),
+            slot_info = slot_info + "    slot {slot_number} hardware is {adapter} with {nb_ports} {port_string}\n".format(slot_number=str(slot_number),
                                                                                                                          adapter=adapter_name,
                                                                                                                          nb_ports=nb_ports,
                                                                                                                          port_string=port_string)
@@ -214,10 +214,10 @@ class Router(Node):
             for port_name in sorted_ports:
                 port_info = port_names[port_name]
                 if port_info.isFree():
-                    slot_info += "     {} is empty\n".format(port_name)
+                    slot_info += "      {} is empty\n".format(port_name)
                 else:
-                    slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
-                                                                                port_description=port_info.description())
+                    slot_info += "      {port_name} {port_description}\n".format(port_name=port_name,
+                                                                                 port_description=port_info.description())
 
         wic_slots = {}
         for name, value in self._settings.items():
@@ -233,7 +233,7 @@ class Router(Node):
             else:
                 port_string = "ports"
 
-            slot_info = slot_info + "   {wic_name} installed in WIC slot {wic_slot_number} with {nb_ports} {port_string}\n".format(wic_name=wic_name,
+            slot_info = slot_info + "    {wic_name} installed in WIC slot {wic_slot_number} with {nb_ports} {port_string}\n".format(wic_name=wic_name,
                                                                                                                                    wic_slot_number=wic_slot_number,
                                                                                                                                    nb_ports=nb_ports,
                                                                                                                                    port_string=port_string)
@@ -249,10 +249,10 @@ class Router(Node):
             for port_name in sorted_ports:
                 port_info = port_names[port_name]
                 if port_info.isFree():
-                    slot_info += "     {} is empty\n".format(port_name)
+                    slot_info += "      {} is empty\n".format(port_name)
                 else:
-                    slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
-                                                                                port_description=port_info.description())
+                    slot_info += "      {port_name} {port_description}\n".format(port_name=port_name,
+                                                                                 port_description=port_info.description())
 
         return slot_info
 
@@ -262,13 +262,6 @@ class Router(Node):
 
         :returns: formated string
         """
-
-        if self.status() == Node.started:
-            state = "started"
-        elif self.status() == Node.suspended:
-            state = "suspended"
-        else:
-            state = "stopped"
 
         platform = self._settings["platform"]
         router_specific_info = ""
@@ -286,24 +279,25 @@ class Router(Node):
                                                                                                                        idlesleep=self._settings["idlesleep"])
 
         info = """Router {name} is {state}
-  Local node ID is {id}
-  Server's node ID is {node_id}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
   Dynamips ID is {dynamips_id}
-  Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
-  Router's server runs on {host}, console is on port {console} and type is {console_type}, aux is on port {aux}
-  Image is {image_name}
+  Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram}MB RAM and {nvram}KB NVRAM
+  Console is on port {console} and type is {console_type}, AUX console is on port {aux}
+  IOS image is "{image_name}"
   {idlepc_info}
-  {disk0} MB disk0 size, {disk1} MB disk1 size
+  PCMCIA disks: disk0 is {disk0}MB and disk1 is {disk1}MB
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
            dynamips_id=self._dynamips_id,
-           state=state,
+           state=self.state(),
            platform=platform,
            specific_info=router_specific_info,
            ram=self._settings["ram"],
            nvram=self._settings["nvram"],
            host=self.compute().name(),
+           port=self.compute().port(),
            console=self._settings["console"],
            console_type=self._settings["console_type"],
            aux=self._settings["aux"],

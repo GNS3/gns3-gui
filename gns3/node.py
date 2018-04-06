@@ -348,6 +348,8 @@ class Node(BaseNode):
             new_port.setPortNumber(port["port_number"])
             new_port.setDataLinkTypes(port["data_link_types"])
             new_port.setStatus(self.status())
+            new_port.setAdapterType(port["adapter_type"])
+            new_port.setMacAddress(port["mac_address"])
             self._ports.append(new_port)
 
     def createNodeCallback(self, result, error=False, **kwargs):

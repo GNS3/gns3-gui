@@ -98,6 +98,22 @@ class BaseNode(QtCore.QObject):
         except KeyError:
             pass
 
+    def state(self):
+        """
+        Returns a human readable status of this node.
+
+        :returns: string
+        """
+
+        status = self.status()
+        if status == self.started:
+            return "started"
+        elif status == self.stopped:
+            return "stopped"
+        elif status == self.suspended:
+            return "suspended"
+        return "unknown"
+
     @classmethod
     def reset(cls):
         """

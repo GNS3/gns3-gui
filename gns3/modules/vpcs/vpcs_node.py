@@ -69,20 +69,16 @@ class VPCSNode(Node):
         :returns: formatted string
         """
 
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
         info = """Node {name} is {state}
-  Local node ID is {id}
-  Server's VPCS node ID is {node_id}
-  VPCS's server runs on {host}, console is on port {console} and type is {console_type}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            host=self.compute().name(),
+           port=self.compute().port(),
            console=self._settings["console"],
            console_type=self._settings["console_type"])
 

@@ -102,29 +102,26 @@ class IOUDevice(Node):
         :returns: formated string
         """
 
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
         if self._settings["use_default_iou_values"]:
-            memories_info = "default RAM and NVRAM IOU values"
+            memories_info = "default RAM and NVRAM values"
         else:
-            memories_info = "{ram} MB RAM and {nvram} KB NVRAM".format(ram=self._settings["ram"],
-                                                                       nvram=self._settings["nvram"])
+            memories_info = "{ram}MB RAM and {nvram}KB NVRAM".format(ram=self._settings["ram"],
+                                                                     nvram=self._settings["nvram"])
 
         info = """Device {name} is {state}
-  Node ID is {id}, server's IOU device ID is {node_id}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
   Hardware is Cisco IOU generic device with {memories_info}
-  Device's server runs on {host}, console is on port {console} and type is {console_type}
-  Image is {image_name}
+  Console is on port {console} and type is {console_type}
+  IOU image is "{image_name}"
   {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            memories_info=memories_info,
            host=self.compute().name(),
+           port=self.compute().port(),
            console=self._settings["console"],
            console_type=self._settings["console_type"],
            image_name=os.path.basename(self._settings["path"]),

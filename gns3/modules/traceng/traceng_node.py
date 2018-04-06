@@ -86,21 +86,19 @@ class TraceNGNode(Node):
         :returns: formatted string
         """
 
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
         info = """Node {name} is {state}
-  Local node ID is {id}
-  Server's VPCS node ID is {node_id}
-  TraceNG's server runs on {host}, console is on port {console}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  Console is on port {console}
+  IP address is {ip_address}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            host=self.compute().name(),
-           console=self._settings["console"])
+           port=self.compute().port(),
+           console=self._settings["console"],
+           ip_address=self._settings["ip_address"])
 
         port_info = ""
         for port in self._ports:

@@ -82,14 +82,14 @@ class ATMSwitch(Node):
         """
 
         info = """ATM switch {name} is always-on
-  Local node ID is {id}
-  Server's Node ID is {node_id}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
   Hardware is Dynamips emulated simple ATM switch
-  Switch's server runs on {host}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self._compute.name())
+           host=self._compute.name(),
+           port=self._compute.port())
 
         port_info = ""
         mapping = re.compile(r"""^([0-9]*):([0-9]*):([0-9]*)$""")

@@ -89,27 +89,23 @@ class VirtualBoxVM(Node):
         """
         Returns information about this VirtualBox VM instance.
 
-        :returns: formated string
+        :returns: formatted string
         """
 
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
         info = """VirtualBox VM {name} is {state}
-  Local node ID is {id}
-  Server's node ID is {node_id}
-  VirtualBox name is "{vmname}"
-  RAM is {ram} MB
-  VirtualBox VM's server runs on {host}, console is on port {console} and type is {console_type}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  VirtualBox's name is "{vmname}"
+  Amount of memory is {ram}MB
+  Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            vmname=self._settings["vmname"],
            ram=self._settings["ram"],
            host=self.compute().name(),
+           port=self.compute().port(),
            console=self._settings["console"],
            console_type=self._settings["console_type"])
 
