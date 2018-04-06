@@ -22,7 +22,7 @@ Custom adapters configuration.
 import textwrap
 import re
 
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtCore, QtWidgets
 from ..ui.custom_adapters_configuration_dialog_ui import Ui_CustomAdaptersConfigurationDialog
 
 
@@ -65,8 +65,11 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
 
         self._populateWidgets()
 
-        # header = self.uiAdaptersTreeWidget.header()
-        # self.resize(header.width() + 30, self.height())
+        # resize to fit the tree widget
+        width = 0
+        for column in range(self.uiAdaptersTreeWidget.columnCount()):
+            width += 20 + self.uiAdaptersTreeWidget.columnWidth(column)
+        self.resize(QtCore.QSize(width, self.height()))
 
     def _getCustomAdapterSettings(self, adapter_number):
 
@@ -110,11 +113,13 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
                 if type(self._adapter_types) == list:
                     for adapter_type in self._adapter_types:
                         combobox.addItem("{}".format(adapter_type))
-                        adapter_type_index = combobox.findText(custom_adapter.get("adapter_type", self._default_adapter_type))
                 else:
+                    index = 0
                     for adapter_type, adapter_description in self._adapter_types.items():
-                        combobox.addItem("{} ({})".format(adapter_description, adapter_type), adapter_type)
-                        adapter_type_index = combobox.findData(custom_adapter.get("adapter_type", self._default_adapter_type))
+                        combobox.addItem("{}".format(adapter_type))
+                        combobox.setItemData(index, adapter_description, QtCore.Qt.ToolTipRole)
+                        index += 1
+                adapter_type_index = combobox.findText(custom_adapter.get("adapter_type", self._default_adapter_type))
                 combobox.setCurrentIndex(adapter_type_index)
                 self.uiAdaptersTreeWidget.setItemWidget(item, 2, combobox)
 
@@ -153,10 +158,7 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
             if original_port_name != port_name:
                 custom_adapter_settings["port_name"] = port_name
             if self._default_adapter_type and self._adapter_types:
-                if type(self._adapter_types) == list:
-                    adapter_type = self.uiAdaptersTreeWidget.itemWidget(item, 2).currentText()
-                else:
-                    adapter_type = self.uiAdaptersTreeWidget.itemWidget(item, 2).currentData()
+                adapter_type = self.uiAdaptersTreeWidget.itemWidget(item, 2).currentText()
                 if self._default_adapter_type != adapter_type:
                     custom_adapter_settings["adapter_type"] = adapter_type
             if self._base_mac_address:
