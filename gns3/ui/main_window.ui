@@ -313,7 +313,7 @@ background-none;
      <item>
       <widget class="QPushButton" name="uiNewAppliancePushButton">
        <property name="text">
-        <string>New appliance template</string>
+        <string>New appliance</string>
        </property>
        <property name="icon">
         <iconset resource="../../resources/resources.qrc">

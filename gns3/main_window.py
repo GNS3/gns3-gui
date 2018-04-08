@@ -138,6 +138,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
         self._screenshots_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
         self._pictures_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
+        self._appliance_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        self._portable_project_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        self._project_dir = None
 
         # add recent file actions to the File menu
         for i in range(0, self._maxrecent_files):
@@ -407,14 +410,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to open an appliance.
         """
 
-        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-        if len(directory) == 0:
+        directory = self._appliance_dir
+        if not os.path.exists(self._appliance_dir):
             directory = Topology.instance().projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
                                                         "All files (*.*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
                                                         "GNS3 Appliance (*.gns3appliance *.gns3a)")
         if path:
             self.loadPath(path)
+            self._appliance_dir = os.path.dirname(path)
 
     def openProjectActionSlot(self):
         """
@@ -425,11 +429,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # If the server is remote we use the new project windows with the project library
             self._newProjectActionSlot()
         else:
-            path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", Topology.instance().projectsDirPath(),
+            directory = self._project_dir
+            if not os.path.exists(self._project_dir):
+                directory = Topology.instance().projectsDirPath()
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", directory,
                                                             "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
                                                             "GNS3 Project (*.gns3)")
             if path:
                 self.loadPath(path)
+                self._project_dir = os.path.dirname(path)
 
     def openRecentFileSlot(self):
         """
@@ -1374,14 +1382,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called to import a portable project
         """
-        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-        if len(directory) == 0:
+
+        directory = self._portable_project_dir
+        if not os.path.exists(directory):
             directory = Topology.instance().projectsDirPath()
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open portable project", directory,
                                                         "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
                                                         "GNS3 Portable Project (*.gns3project *.gns3p)")
         if path:
             Topology.instance().importProject(path)
+            self._portable_project_dir = os.path.dirname(path)
 
     def _editProjectActionSlot(self):
         if Topology.instance().project() is None:

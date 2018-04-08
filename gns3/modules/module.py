@@ -41,13 +41,25 @@ class Module(QtCore.QObject):
 
     def configChangedSlot(self):
         """
-        Call when the configuration file has changed
+        Called when the configuration file has changed.
+        Must be overloaded.
         """
 
-        raise NotImplementedError("Missing configChangedSlot in {}".format(self.__class__.__name__))
+        raise NotImplementedError("Missing configChangedSlot() method in {}".format(self.__class__.__name__))
 
-    def getNodeType(self, type, platform=None):
-        raise NotImplementedError("Missing getNodeType in {}".format(self.__class__.__name__))
+    @staticmethod
+    def getNodeClass(node_type, platform=None):
+        """
+        Returns the class corresponding to node type.
+        Must be overloaded.
+
+        :param node_type: name of the node
+        :param platform: platform (for Dynamips only)
+
+        :returns: class or None
+        """
+
+        raise NotImplementedError()
 
     @staticmethod
     def preferencePages():
