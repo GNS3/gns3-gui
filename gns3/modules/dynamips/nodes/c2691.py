@@ -49,8 +49,3 @@ class C2691(Router):
     def __str__(self):
 
         return "Router c2691"
-
-    @staticmethod
-    def symbolName():
-
-        return "Router c2691"

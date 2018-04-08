@@ -46,21 +46,6 @@ class TraceNGNode(Node):
 
         self.settings().update(traceng_settings)
 
-    def update(self, new_settings):
-        """
-        Updates the settings for this TraceNG node.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
-        if params:
-            self._update(params)
-
     def start(self):
         """
         Starts this node instance.
@@ -110,15 +95,6 @@ class TraceNGNode(Node):
 
         return info + port_info
 
-    def console(self):
-        """
-        Returns the console port for this TraceNG node.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
-
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.
@@ -138,11 +114,6 @@ class TraceNGNode(Node):
         """
 
         return ":/symbols/traceng.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "TraceNG"
 
     @staticmethod
     def categories():

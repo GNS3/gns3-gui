@@ -97,26 +97,6 @@ class Router(Node):
 
         self._dynamips_id = result.get("dynamips_id")
 
-    def update(self, new_settings):
-        """
-        Updates the settings for this router.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-
-        for name, value in new_settings.items():
-            if name in self._settings:
-                if self._settings[name] != value:
-                    params[name] = value
-            else:
-                # All key should be known
-                raise ValueError(name)
-
-        if params:
-            self._update(params)
-
     def _updateCallback(self, result):
         """
         Callback for update.
@@ -318,15 +298,6 @@ class Router(Node):
             "configs/i{}_startup-config.cfg".format(self._dynamips_id),
             "configs/i{}_private-config.cfg".format(self._dynamips_id)
         ]
-
-    def console(self):
-        """
-        Returns the console port for this router.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
 
     def auxConsole(self):
         """

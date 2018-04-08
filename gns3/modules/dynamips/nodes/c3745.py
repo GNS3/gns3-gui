@@ -49,8 +49,3 @@ class C3745(Router):
     def __str__(self):
 
         return "Router c3745"
-
-    @staticmethod
-    def symbolName():
-
-        return "Router c3745"

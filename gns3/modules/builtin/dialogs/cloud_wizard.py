@@ -24,7 +24,6 @@ from gns3.node import Node
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.cloud_wizard_ui import Ui_CloudNodeWizard
-from .. import Builtin
 
 
 class CloudWizard(VMWizard, Ui_CloudNodeWizard):

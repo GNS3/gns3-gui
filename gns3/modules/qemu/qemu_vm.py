@@ -96,20 +96,6 @@ class QemuVM(Node):
         """
         pass
 
-    def update(self, new_settings):
-        """
-        Updates the settings for this QEMU VM.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
-
     def resizeDiskImage(self, drive_name, size, callback):
         """
         Resize a disk image allocated to the VM.
@@ -159,15 +145,6 @@ class QemuVM(Node):
 
         return info + port_info
 
-    def console(self):
-        """
-        Returns the console port for this QEMU VM instance.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
-
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.
@@ -187,11 +164,6 @@ class QemuVM(Node):
         """
 
         return ":/symbols/qemu_guest.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "QEMU VM"
 
     @staticmethod
     def categories():

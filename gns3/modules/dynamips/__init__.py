@@ -323,20 +323,17 @@ class Dynamips(Module):
         return alternative_image
 
     @staticmethod
-    def getNodeClass(name):
+    def getNodeClass(node_type, platform=None):
         """
-        Returns the object with the corresponding name.
+        Returns the class corresponding to node type.
 
-        :param name: object name
+        :param node_type: node type (string)
+        :param platform: Dynamips platform
+
+        :returns: class or None
         """
 
-        if name in globals():
-            return globals()[name]
-        return None
-
-    @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "dynamips":
+        if node_type == "dynamips":
             return PLATFORM_TO_CLASS[platform]
         return None
 

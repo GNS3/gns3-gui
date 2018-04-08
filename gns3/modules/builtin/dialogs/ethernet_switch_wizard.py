@@ -24,7 +24,6 @@ from gns3.node import Node
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.ethernet_switch_wizard_ui import Ui_EthernetSwitchWizard
-from .. import Builtin
 
 
 class EthernetSwitchWizard(VMWizard, Ui_EthernetSwitchWizard):

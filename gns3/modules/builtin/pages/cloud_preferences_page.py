@@ -21,7 +21,7 @@ Configuration page for cloud node preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
@@ -53,6 +53,11 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         self.uiCloudNodesTreeWidget.itemSelectionChanged.connect(self._cloudNodeChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiCloudNodeInfoTreeWidget)
         section_item.setText(0, name)
@@ -62,6 +67,9 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         return section_item
 
     def _refreshInfo(self, cloud_node):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiCloudNodeInfoTreeWidget.clear()
 
@@ -177,6 +185,10 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
             self.uiCloudNodesTreeWidget.setMaximumWidth(self.uiCloudNodesTreeWidget.sizeHintForColumn(0) + 20)
 
     def _setItemIcon(self, item, icon):
+        """
+        Sets an item icon.
+        """
+
         item.setIcon(0, icon)
         self.uiCloudNodesTreeWidget.setMaximumWidth(self.uiCloudNodesTreeWidget.sizeHintForColumn(0) + 20)
 

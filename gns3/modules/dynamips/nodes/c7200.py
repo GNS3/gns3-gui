@@ -57,8 +57,3 @@ class C7200(Router):
     def __str__(self):
 
         return "Router c7200"
-
-    @staticmethod
-    def symbolName():
-
-        return "Router c7200"

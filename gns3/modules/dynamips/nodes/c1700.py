@@ -55,7 +55,3 @@ class C1700(Router):
 
         return "Router c1700"
 
-    @staticmethod
-    def symbolName():
-
-        return "Router c1700"

@@ -81,6 +81,10 @@ class Node(BaseNode):
         """
         self._settings[key] = value
 
+    def console(self):
+
+        return self.settings()["console"]
+
     def setGraphics(self, node_item):
         """
         Sync the remote object with the node_item
@@ -199,6 +203,7 @@ class Node(BaseNode):
         """
         :returns: Body for Create and update
         """
+
         assert self._node_id is not None
         body = {"properties": {},
                 "node_type": self.URL_PREFIX,
@@ -219,6 +224,24 @@ class Node(BaseNode):
                 body["properties"][key] = value
 
         return body
+
+    def update(self, new_settings, force=False):
+        """
+        Updates the settings for this node.
+
+        :param new_settings: settings dictionary
+        :param force: force this node to update
+        """
+
+        params = {}
+        for name, value in new_settings.items():
+            if name in self._settings:
+                if self._settings[name] != value:
+                    params[name] = value
+            else:
+                log.warning("'{}' setting is unknown".format(name))
+        if params or force:
+            self._update(params)
 
     def _update(self, params, timeout=60):
         """
@@ -247,7 +270,6 @@ class Node(BaseNode):
             return False
 
         result = self._parseResponse(result)
-
         self._updateCallback(result)
         self.updated_signal.emit()
         return True

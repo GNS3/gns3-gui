@@ -24,7 +24,6 @@ from gns3.node import Node
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.ethernet_hub_wizard_ui import Ui_EthernetHubWizard
-from .. import Builtin
 
 
 class EthernetHubWizard(VMWizard, Ui_EthernetHubWizard):

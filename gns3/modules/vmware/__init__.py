@@ -334,20 +334,17 @@ class VMware(Module):
         self._nodes.clear()
 
     @staticmethod
-    def getNodeClass(name):
+    def getNodeClass(node_type, platform=None):
         """
-        Returns the object with the corresponding name.
+        Returns the class corresponding to node type.
 
-        :param name: object name
+        :param node_type: name of the node
+        :param platform: not used
+
+        :returns: class or None
         """
 
-        if name in globals():
-            return globals()[name]
-        return None
-
-    @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "vmware":
+        if node_type == "vmware":
             return VMwareVM
         return None
 

@@ -36,6 +36,7 @@ class Cloud(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
+        # this is an always-on node
         self.setStatus(Node.started)
         self._always_on = True
         self._interfaces = {}
@@ -52,26 +53,9 @@ class Cloud(Node):
 
         :param result: server response
         """
-        if "ports_mapping" in result:
-            self._settings["ports_mapping"] = result["ports_mapping"].copy()
 
         if "interfaces" in result:
             self._interfaces = result["interfaces"].copy()
-
-    def update(self, new_settings, force=False):
-        """
-        Updates the settings for this cloud.
-
-        :param new_settings: settings dictionary
-        :param force: force this node to update
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params or force:
-            self._update(params)
 
     def _updateCallback(self, result):
         """
@@ -79,9 +63,6 @@ class Cloud(Node):
 
         :param result: server response
         """
-
-        if "ports_mapping" in result:
-            self._settings["ports_mapping"] = result["ports_mapping"].copy()
 
         if "interfaces" in result:
             self._interfaces = result["interfaces"].copy()
@@ -128,11 +109,6 @@ class Cloud(Node):
         """
 
         return ":/symbols/cloud.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "Cloud"
 
     @staticmethod
     def categories():

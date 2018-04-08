@@ -35,8 +35,8 @@ class ATMSwitchConfigurationPage(QtWidgets.QWidget, Ui_atmSwitchConfigPageWidget
         super().__init__()
         self.setupUi(self)
         self._mapping = {}
+        self._node = None
 
-        # connect slots
         self.uiAddPushButton.clicked.connect(self._addMappingSlot)
         self.uiDeletePushButton.clicked.connect(self._deleteMappingSlot)
         self.uiMappingTreeWidget.itemActivated.connect(self._mappingSelectedSlot)

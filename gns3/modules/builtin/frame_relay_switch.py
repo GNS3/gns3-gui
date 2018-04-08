@@ -49,20 +49,6 @@ class FrameRelaySwitch(Node):
         """
         self.settings()["mappings"] = result["mappings"]
 
-    def update(self, new_settings):
-        """
-        Updates the settings for this Frame Relay switch.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
-
     def _updateCallback(self, result):
         """
         Callback for update.
@@ -135,11 +121,6 @@ class FrameRelaySwitch(Node):
         """
 
         return ":/symbols/frame_relay_switch.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "Frame Relay switch"
 
     @staticmethod
     def categories():

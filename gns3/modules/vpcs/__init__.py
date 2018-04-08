@@ -168,8 +168,17 @@ class VPCS(Module):
         self._nodes.clear()
 
     @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "vpcs":
+    def getNodeClass(node_type, platform=None):
+        """
+        Returns the class corresponding to node type.
+
+        :param node_type: name of the node
+        :param platform: not used
+
+        :returns: class or None
+        """
+
+        if node_type == "vpcs":
             return VPCSNode
         return None
 

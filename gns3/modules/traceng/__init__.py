@@ -169,8 +169,17 @@ class TraceNG(Module):
         self._nodes.clear()
 
     @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "traceng":
+    def getNodeClass(node_type, platform=None):
+        """
+        Returns the class corresponding to node type.
+
+        :param node_type: node type (string)
+        :param platform: not used
+
+        :returns: class or None
+        """
+
+        if node_type == "traceng":
             return TraceNGNode
         return None
 

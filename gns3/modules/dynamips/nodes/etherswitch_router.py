@@ -71,8 +71,3 @@ class EtherSwitchRouter(Router):
     def __str__(self):
 
         return "EtherSwitch router"
-
-    @staticmethod
-    def symbolName():
-
-        return "EtherSwitch router"

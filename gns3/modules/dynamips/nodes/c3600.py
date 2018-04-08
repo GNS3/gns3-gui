@@ -53,8 +53,3 @@ class C3600(Router):
     def __str__(self):
 
         return "Router c3600"
-
-    @staticmethod
-    def symbolName():
-
-        return "Router c3600"

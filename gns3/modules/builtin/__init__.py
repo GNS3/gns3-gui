@@ -19,8 +19,6 @@
 Built-in module implementation.
 """
 
-import copy
-
 from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
@@ -77,7 +75,8 @@ class Builtin(Module):
         return self._settings
 
     def setSettings(self, settings):
-        """Sets the module settings
+        """
+        Sets the module settings
 
         :param settings: module settings (dictionary)
         """
@@ -95,7 +94,7 @@ class Builtin(Module):
         server_settings = {}
         config = LocalServerConfig.instance()
         if self._settings["default_nat_interface"]:
-            # save some settings to the server config file
+            # save some settings to the local server config file
             server_settings["default_nat_interface"] = self._settings["default_nat_interface"]
             config.saveSettings(self.__class__.__name__, server_settings)
         else:
@@ -240,6 +239,14 @@ class Builtin(Module):
 
     @staticmethod
     def findAlternativeInterface(node, missing_interface):
+        """
+        Select an alternative interface if one does not exist.
+
+        :param node: node with the missing interface
+        :param missing_interface: missing interface name
+
+        :returns: replacement interface
+        """
 
         from gns3.main_window import MainWindow
         mainwindow = MainWindow.instance()
@@ -261,30 +268,27 @@ class Builtin(Module):
             return missing_interface
 
     @staticmethod
-    def getNodeClass(name):
+    def getNodeClass(node_type, platform=None):
         """
-        Returns the object with the corresponding name.
+        Returns the class corresponding to node type.
 
-        :param name: object name
+        :param node_type: node type (string)
+        :param platform: not used
+
+        :returns: class or None
         """
 
-        if name in globals():
-            return globals()[name]
-        return None
-
-    @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "cloud":
+        if node_type == "cloud":
             return Cloud
-        elif name == "nat":
+        elif node_type == "nat":
             return Nat
-        elif name == "ethernet_hub":
+        elif node_type == "ethernet_hub":
             return EthernetHub
-        elif name == "ethernet_switch":
+        elif node_type == "ethernet_switch":
             return EthernetSwitch
-        elif name == "frame_relay_switch":
+        elif node_type == "frame_relay_switch":
             return FrameRelaySwitch
-        elif name == "atm_switch":
+        elif node_type == "atm_switch":
             return ATMSwitch
         return None
 

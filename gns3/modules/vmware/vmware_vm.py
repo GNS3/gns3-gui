@@ -71,20 +71,6 @@ class VMwareVM(Node):
         """
         pass
 
-    def update(self, new_settings):
-        """
-        Updates the settings for this VMware VM.
-
-        :param new_settings: settings (dict)
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
-
     def info(self):
         """
         Returns information about this VMware VM instance.
@@ -141,15 +127,6 @@ class VMwareVM(Node):
             log.debug("{} has allocated VMnet interface {}".format(self.name(), vmnet))
             self.allocate_vmnet_nio_signal.emit(self.id(), port_id, vmnet)
 
-    def console(self):
-        """
-        Returns the console port for this VMware VM instance.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
-
     def bringToFront(self):
         """
         Bring the VM window to front.
@@ -189,11 +166,6 @@ class VMwareVM(Node):
         """
 
         return ":/symbols/vmware_guest.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "VMware VM"
 
     @staticmethod
     def categories():

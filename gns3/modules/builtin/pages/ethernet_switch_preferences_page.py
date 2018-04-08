@@ -21,7 +21,7 @@ Configuration page for Ethernet switch preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.controller import Controller
 
 from gns3.main_window import MainWindow
@@ -54,6 +54,11 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         self.uiEthernetSwitchesTreeWidget.itemSelectionChanged.connect(self._ethernetSwitchChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiEthernetSwitchInfoTreeWidget)
         section_item.setText(0, name)
@@ -63,6 +68,9 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         return section_item
 
     def _refreshInfo(self, ethernet_switch):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiEthernetSwitchInfoTreeWidget.clear()
 
@@ -183,13 +191,17 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
             self.uiEthernetSwitchesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
             self.uiEthernetSwitchesTreeWidget.setMaximumWidth(self.uiEthernetSwitchesTreeWidget.sizeHintForColumn(0) + 20)
 
+    def _setItemIcon(self, item, icon):
+        """
+        Sets an item icon.
+        """
+
+        item.setIcon(0, icon)
+        self.uiEthernetSwitchesTreeWidget.setMaximumWidth(self.uiEthernetSwitchesTreeWidget.sizeHintForColumn(0) + 20)
+
     def savePreferences(self):
         """
         Saves the Ethernet switch preferences.
         """
 
         Builtin.instance().setEthernetSwitches(self._ethernet_switches)
-
-    def _setItemIcon(self, item, icon):
-        item.setIcon(0, icon)
-        self.uiEthernetSwitchesTreeWidget.setMaximumWidth(self.uiEthernetSwitchesTreeWidget.sizeHintForColumn(0) + 20)

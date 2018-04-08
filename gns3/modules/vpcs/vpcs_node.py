@@ -47,21 +47,6 @@ class VPCSNode(Node):
 
         self.settings().update(vpcs_settings)
 
-    def update(self, new_settings):
-        """
-        Updates the settings for this VPCS node.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
-        if params:
-            self._update(params)
-
     def info(self):
         """
         Returns information about this VPCS node.
@@ -98,15 +83,6 @@ class VPCSNode(Node):
         """
         return ["startup.vpc"]
 
-    def console(self):
-        """
-        Returns the console port for this VPCS node.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
-
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.
@@ -126,11 +102,6 @@ class VPCSNode(Node):
         """
 
         return ":/symbols/vpcs_guest.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "VPCS"
 
     @staticmethod
     def categories():

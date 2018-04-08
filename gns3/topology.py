@@ -504,9 +504,9 @@ It is your responsability to check if you have the right to distribute the image
         for module in MODULES:
             instance = module.instance()
             if node_data["node_type"] == "dynamips":
-                node_class = module.getNodeType(node_data["node_type"], node_data["properties"]["platform"])
+                node_class = module.getNodeClass(node_data["node_type"], node_data["properties"]["platform"])
             else:
-                node_class = module.getNodeType(node_data["node_type"])
+                node_class = module.getNodeClass(node_data["node_type"])
             if node_class:
                 node_module = module.instance()
                 break

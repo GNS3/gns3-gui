@@ -239,20 +239,17 @@ class Qemu(Module):
         Controller.instance().putCompute("/qemu/img", compute_id, callback, body=options)
 
     @staticmethod
-    def getNodeClass(name):
+    def getNodeClass(node_type, platform=None):
         """
-        Returns the object with the corresponding name.
+        Returns the class corresponding to node type.
 
-        :param name: object name
+        :param node_type: node type (string)
+        :param platform: not used
+
+        :returns: class or None
         """
 
-        if name in globals():
-            return globals()[name]
-        return None
-
-    @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "qemu":
+        if node_type == "qemu":
             return QemuVM
         return None
 

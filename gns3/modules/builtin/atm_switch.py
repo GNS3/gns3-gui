@@ -17,7 +17,6 @@
 
 
 import re
-import uuid
 
 from gns3.node import Node
 
@@ -34,6 +33,7 @@ class ATMSwitch(Node):
     :param server: GNS3 server instance
     :param project: Project instance
     """
+
     URL_PREFIX = "atm_switch"
 
     def __init__(self, module, server, project):
@@ -43,36 +43,6 @@ class ATMSwitch(Node):
         self.setStatus(Node.started)
         self._always_on = True
         self.settings().update({"mappings": {}})
-
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        self.settings()["mappings"] = result["mappings"]
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this ATM switch.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
-
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-        self.settings()["mappings"] = result["mappings"]
 
     def info(self):
         """
@@ -140,19 +110,6 @@ class ATMSwitch(Node):
 
         return info + port_info
 
-    def dump(self):
-        """
-        Returns a representation of this ATM switch
-        (to be saved in a topology file).
-
-        :returns: dictionary
-        """
-
-        atmsw = super().dump()
-        if self._settings["mappings"]:
-            atmsw["properties"]["mappings"] = self._settings["mappings"]
-        return atmsw
-
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.
@@ -172,11 +129,6 @@ class ATMSwitch(Node):
         """
 
         return ":/symbols/atm_switch.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "ATM switch"
 
     @staticmethod
     def categories():

@@ -80,21 +80,6 @@ class IOUDevice(Node):
         log.debug("{} is starting".format(self.name()))
         self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, progressText="{} is starting".format(self.name()))
 
-    def update(self, new_settings):
-        """
-        Updates the settings for this IOU device.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
-        if params:
-            self._update(params)
-
     def info(self):
         """
         Returns information about this IOU device.
@@ -144,15 +129,6 @@ class IOUDevice(Node):
         """
         return ["startup-config.cfg", "private-config.cfg"]
 
-    def console(self):
-        """
-        Returns the console port for this IOU device.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
-
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.
@@ -189,11 +165,6 @@ class IOUDevice(Node):
         """
 
         return ":/symbols/multilayer_switch.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "IOU device"
 
     @staticmethod
     def categories():

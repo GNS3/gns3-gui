@@ -67,10 +67,11 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         self.uiAddUDPPushButton.clicked.connect(self._UDPAddSlot)
         self.uiDeleteUDPPushButton.clicked.connect(self._UDPDeleteSlot)
 
+        # connect other slots
         self.uiShowSpecialInterfacesCheckBox.stateChanged.connect(self._showSpecialInterfacesSlot)
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
 
-        # add an icon to warning button
+        # add an icon to the warning button
         icon = QtGui.QIcon.fromTheme("dialog-warning")
         if icon.isNull():
             icon = QtGui.QIcon(':/icons/dialog-warning.svg')
@@ -348,6 +349,9 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             self.uiUDPNameLineEdit.setText("UDP tunnel {}".format(nb_tunnels + 1))
 
     def _showSpecialInterfacesSlot(self, state):
+        """
+        Shows special Ethernet interfaces.
+        """
 
         self.uiEthernetComboBox.clear()
         index = 0
@@ -374,6 +378,9 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
 
     def _loadNetworkInterfaces(self, interfaces):
+        """
+        Loads Ethernet and TAP interfaces.
+        """
 
         self.uiEthernetComboBox.clear()
         index = 0

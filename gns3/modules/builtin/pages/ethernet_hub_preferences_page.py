@@ -21,7 +21,7 @@ Configuration page for Ethernet hub preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
@@ -54,6 +54,11 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         self.uiEthernetHubsTreeWidget.itemSelectionChanged.connect(self._ethernetHubChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiEthernetHubInfoTreeWidget)
         section_item.setText(0, name)
@@ -63,6 +68,9 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         return section_item
 
     def _refreshInfo(self, ethernet_hub):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiEthernetHubInfoTreeWidget.clear()
 
@@ -178,6 +186,10 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
             self.uiEthernetHubsTreeWidget.setMaximumWidth(self.uiEthernetHubsTreeWidget.sizeHintForColumn(0) + 20)
 
     def _setItemIcon(self, item, icon):
+        """
+        Sets an item icon.
+        """
+
         item.setIcon(0, icon)
         self.uiEthernetHubsTreeWidget.setMaximumWidth(self.uiEthernetHubsTreeWidget.sizeHintForColumn(0) + 20)
 

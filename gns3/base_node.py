@@ -285,16 +285,6 @@ class BaseNode(QtCore.QObject):
         raise NotImplementedError()
 
     @staticmethod
-    def symbolName():
-        """
-        Returns the symbol name (for the nodes view).
-
-        :returns: name (string)
-        """
-
-        raise NotImplementedError()
-
-    @staticmethod
     def categories(self):
         """
         Returns the node categories the node is part of (used by the device panel).

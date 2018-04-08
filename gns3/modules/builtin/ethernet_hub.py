@@ -29,6 +29,7 @@ class EthernetHub(Node):
     :param server: GNS3 server instance
     :param project: Project instance
     """
+
     URL_PREFIX = "ethernet_hub"
 
     def __init__(self, module, server, project):
@@ -38,37 +39,6 @@ class EthernetHub(Node):
         self.setStatus(Node.started)
         self._always_on = True
         self.settings().update({"ports_mapping": []})
-
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        self.settings()["ports_mapping"] = result["ports_mapping"]
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this Ethernet hub.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        if "name" in new_settings:
-            params["name"] = new_settings["name"]
-        if "ports_mapping" in new_settings:
-            params["ports_mapping"] = new_settings["ports_mapping"]
-        if params:
-            self._update(params)
-
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-        self.settings()["ports_mapping"] = result["ports_mapping"]
 
     def info(self):
         """
@@ -115,11 +85,6 @@ class EthernetHub(Node):
         """
 
         return ":/symbols/hub.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "Ethernet hub"
 
     @staticmethod
     def categories():

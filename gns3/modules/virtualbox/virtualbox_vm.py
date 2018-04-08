@@ -70,21 +70,6 @@ class VirtualBoxVM(Node):
         """
         pass
 
-    def update(self, new_settings):
-        """
-        Updates the settings for this VirtualBox VM.
-
-        :param new_settings: settings (dict)
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
-        if params:
-            self._update(params)
-
     def info(self):
         """
         Returns information about this VirtualBox VM instance.
@@ -119,14 +104,6 @@ class VirtualBoxVM(Node):
 
         return info + port_info
 
-    def console(self):
-        """
-        Returns the console port for this VirtualBox VM instance.
-
-        :returns: port (integer)
-        """
-        return self._settings["console"]
-
     def bringToFront(self):
         """
         Bring the VM window to front.
@@ -159,11 +136,6 @@ class VirtualBoxVM(Node):
         """
 
         return ":/symbols/vbox_guest.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "VirtualBox VM"
 
     @staticmethod
     def categories():

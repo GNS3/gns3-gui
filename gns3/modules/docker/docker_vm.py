@@ -55,28 +55,6 @@ class DockerVM(Node):
 
         self.settings().update(docker_vm_settings)
 
-    def _createCallback(self, result):
-        """
-        Callback for Docker container creating.
-
-        :param result: server response
-        """
-        pass
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this Docker container.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
-
     def info(self):
         """
         Returns information about this Docker container.
@@ -110,14 +88,6 @@ class DockerVM(Node):
                     port_description=port.description())
 
         return info + port_info
-
-    def console(self):
-        """
-        Returns the console port for this Docker VM instance.
-
-        :returns: port (integer)
-        """
-        return self._settings["console"]
 
     def consoleHttpPath(self):
         """
@@ -156,10 +126,6 @@ class DockerVM(Node):
         Return path of the /etc/network/interfaces
         """
         return ["etc/network/interfaces"]
-
-    @staticmethod
-    def symbolName():
-        return "Docker container"
 
     @staticmethod
     def categories():

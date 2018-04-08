@@ -109,11 +109,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
 
         # default directories for QFileDialog
-        self._import_configs_from_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-        self._import_config_dir = ""
-        self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-        self._export_config_dir = ""
-
+        self._import_config_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        self._export_config_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
         self._local_addresses = ['0.0.0.0', '127.0.0.1', 'localhost', '::1', '0:0:0:0:0:0:0:1', '::', QtNetwork.QHostInfo.localHostName()]
 
     def setSceneSize(self, width, height):
@@ -756,13 +753,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             show_in_file_manager_action.triggered.connect(self.showInFileManagerSlot)
             menu.addAction(show_in_file_manager_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
             console_action = QtWidgets.QAction("Console", menu)
             console_action.setIcon(self._getIcon(style_dir, "console.svg"))
             console_action.triggered.connect(self.consoleActionSlot)
             menu.addAction(console_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
             console_edit_action = QtWidgets.QAction("Custom console", menu)
             console_edit_action.setIcon(self._getIcon(style_dir, "console_edit.svg"))
             console_edit_action.triggered.connect(self.customConsoleActionSlot)
@@ -1060,7 +1057,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         nodes = {}
         node_initialized = False
         for item in items:
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
+            if isinstance(item, NodeItem) and item.node().console() is not None and item.node().initialized():
                 node_initialized = True
                 if item.node().status() == Node.started:
                     node = item.node()
@@ -1105,7 +1102,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         current_cmd = None
         console_type = "telnet"
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
+            if isinstance(item, NodeItem) and item.node().console() is not None and item.node().initialized() and item.node().status() == Node.started:
                 if item.node().consoleType() not in ("telnet", "serial", "vnc", "spice", "spice+agent"):
                     continue
                 current_cmd = item.node().consoleCommand()
@@ -1114,7 +1111,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type=console_type, current=current_cmd)
         if ok:
             for item in self.scene().selectedItems():
-                if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
+                if isinstance(item, NodeItem) and item.node().console() is not None and item.node().initialized() and item.node().status() == Node.started:
                     node = item.node()
                     if node.consoleType() not in ("telnet", "serial", "vnc", "spice", "spice+agent"):
                         continue
@@ -1183,9 +1180,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 if not ok:
                     continue
 
-            if not self._import_config_dir:
-                self._import_config_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                             "Import {}".format(os.path.basename(config_file)),
                                                             self._import_config_dir,
@@ -1234,15 +1228,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             return
 
-        if not self._export_configs_to_dir:
-            self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-
         for item in items:
             for config_file in item.node().configFiles():
-                path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_configs_to_dir, item.node().name() + "_" + os.path.basename(config_file)), "All files (*.*);;Config files (*.cfg)")
+                path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_config_directory, item.node().name() + "_" + os.path.basename(config_file)), "All files (*.*);;Config files (*.cfg)")
                 if not path:
                     continue
-                self._export_configs_to_dir = os.path.dirname(path)
+                self._export_config_directory = os.path.dirname(path)
                 item.node().exportFile(config_file, path)
 
     def getCommandLineSlot(self):
