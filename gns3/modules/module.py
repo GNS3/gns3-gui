@@ -27,7 +27,6 @@ log = logging.getLogger(__name__)
 
 
 class Module(QtCore.QObject):
-
     """
     Module interface.
     """
@@ -37,15 +36,89 @@ class Module(QtCore.QObject):
     def __init__(self):
 
         super().__init__()
-        LocalConfig.instance().config_changed_signal.connect(self.configChangedSlot)
+        self._settings = {}
+        self._nodes = []
+        LocalConfig.instance().config_changed_signal.connect(self._configChangedSlot)
 
-    def configChangedSlot(self):
+    def settings(self):
+        """
+        Returns the module settings
+
+        :returns: module settings (dictionary)
+        """
+
+        return self._settings
+
+    def setSettings(self, settings):
+        """
+        Sets the module settings
+
+        :param settings: module settings (dictionary)
+        """
+
+        self._settings.update(settings)
+        self._saveSettings()
+
+    def addNode(self, node):
+        """
+        Adds a node to this module.
+
+        :param node: Node instance
+        """
+
+        self._nodes.append(node)
+
+    def removeNode(self, node):
+        """
+        Removes a node from this module.
+
+        :param node: Node instance
+        """
+
+        if node in self._nodes:
+            self._nodes.remove(node)
+
+    def reset(self):
+        """
+        Resets the module.
+        """
+
+        self._nodes.clear()
+
+    def instantiateNode(self, node_class, server, project):
+        """
+        Instantiate a new node.
+
+        :param node_class: Node object
+        :param server: HTTPClient instance
+        :param project: Project instance
+        """
+
+        # create an instance of the node class
+        return node_class(self, server, project)
+
+    def _configChangedSlot(self):
         """
         Called when the configuration file has changed.
+        """
+
+        self._loadSettings()
+
+    def _saveSettings(self):
+        """
+        Saves the settings to the persistent settings file.
         Must be overloaded.
         """
 
-        raise NotImplementedError("Missing configChangedSlot() method in {}".format(self.__class__.__name__))
+        raise NotImplementedError()
+
+    def _loadSettings(self):
+        """
+        Loads the settings from the persistent settings file.
+        Must be overloaded.
+        """
+
+        raise NotImplementedError()
 
     @staticmethod
     def getNodeClass(node_type, platform=None):

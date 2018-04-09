@@ -78,7 +78,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
 
     def loadSettings(self, settings, node=None, group=False):
         """
-        Loads the Docker VM settings.
+        Loads the Docker container settings.
 
         :param settings: the settings (dictionary)
         :param node: Node instance
@@ -143,13 +143,15 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
             self.uiSymbolToolButton.hide()
 
     def _networkConfigEditSlot(self):
+
         dialog = FileEditorDialog(self._node, self._node.configFiles()[0])
         dialog.setModal(True)
         self.stackUnder(dialog)
         dialog.show()
 
     def saveSettings(self, settings, node=None, group=False):
-        """Saves the Docker container settings.
+        """
+        Saves the Docker container settings.
 
         :param settings: the settings (dictionary)
         :param node: Node instance
@@ -183,7 +185,6 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
                 QtWidgets.QMessageBox.critical(self, "Name", "Docker name cannot be empty!")
             else:
                 settings["name"] = name
-
 
         if not node:
             # these are template settings

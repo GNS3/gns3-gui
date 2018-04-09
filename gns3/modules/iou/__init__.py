@@ -19,15 +19,10 @@
 IOU module implementation.
 """
 
-import sys
-import os
-import shutil
-
 from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
 
 from ..module import Module
-from ..module_error import ModuleError
 from .iou_device import IOUDevice
 from .settings import IOU_SETTINGS
 from .settings import IOU_DEVICE_SETTINGS
@@ -37,23 +32,14 @@ log = logging.getLogger(__name__)
 
 
 class IOU(Module):
-
     """
     IOU module.
     """
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
-        self._nodes = []
         self._iou_devices = {}
         self._iou_images_cache = {}
-
-        self.configChangedSlot()
-
-    def configChangedSlot(self):
-        # load the settings
         self._loadSettings()
 
     def _loadSettings(self):
@@ -103,26 +89,7 @@ class IOU(Module):
         self._settings["devices"] = list(self._iou_devices.values())
         self._saveSettings()
 
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def VMs(self):
+    def nodeTemplates(self):
         """
         Returns IOU devices settings.
 
@@ -131,7 +98,7 @@ class IOU(Module):
 
         return self._iou_devices
 
-    def setVMs(self, new_iou_devices):
+    def setNodeTemplates(self, new_iou_devices):
         """
         Sets IOS devices settings.
 
@@ -142,47 +109,15 @@ class IOU(Module):
         self._saveIOUDevices()
 
     @staticmethod
-    def vmConfigurationPage():
+    def configurationPage():
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
         from .pages.iou_device_configuration_page import iouDeviceConfigurationPage
         return iouDeviceConfigurationPage
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
-
-    def reset(self):
-        """
-        Resets the servers.
-        """
-
-        self._nodes.clear()
 
     def findAlternativeIOUImage(self, image):
         """
@@ -198,7 +133,7 @@ class IOU(Module):
 
         from gns3.main_window import MainWindow
         mainwindow = MainWindow.instance()
-        iou_devices = self.VMs()
+        iou_devices = self.nodeTemplates()
         candidate_iou_images = {}
 
         alternative_image = image
@@ -254,6 +189,8 @@ class IOU(Module):
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 

@@ -314,8 +314,9 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
 
     def _configFileValid(self, path):
         """
-        Return true if it's a valid configuration file
+        Return true if it is a valid configuration file
         """
+
         if not os.path.isabs(path):
             path = os.path.join(LocalServer.instance().localServerSettings()["configs_path"], path)
         return os.access(path, os.R_OK)

@@ -28,7 +28,6 @@ log = logging.getLogger(__name__)
 
 
 class VirtualBoxVM(Node):
-
     """
     VirtualBox VM.
 
@@ -45,8 +44,6 @@ class VirtualBoxVM(Node):
         self._linked_clone = False
 
         virtualbox_vm_settings = {"vmname": "",
-                                  "console": None,
-                                  "console_host": None,
                                   "adapters": VBOX_VM_SETTINGS["adapters"],
                                   "use_any_adapter": VBOX_VM_SETTINGS["use_any_adapter"],
                                   "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
@@ -55,20 +52,9 @@ class VirtualBoxVM(Node):
                                   "on_close": VBOX_VM_SETTINGS["on_close"],
                                   "console_type": VBOX_VM_SETTINGS["console_type"],
                                   "console_auto_start": VBOX_VM_SETTINGS["console_auto_start"],
-                                  "custom_adapters": VBOX_VM_SETTINGS["custom_adapters"],
-                                  "port_name_format": "Ethernet0",
-                                  "port_segment_size": 0,
-                                  "first_port_name": None}
+                                  "custom_adapters": VBOX_VM_SETTINGS["custom_adapters"]}
 
         self.settings().update(virtualbox_vm_settings)
-
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        pass
 
     def info(self):
         """

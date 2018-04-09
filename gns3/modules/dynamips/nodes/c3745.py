@@ -23,7 +23,6 @@ from .router import Router
 
 
 class C3745(Router):
-
     """
     Dynamips c3745 router.
 

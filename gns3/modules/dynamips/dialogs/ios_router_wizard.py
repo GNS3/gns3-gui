@@ -55,7 +55,6 @@ log = logging.getLogger(__name__)
 
 
 class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
-
     """
     Wizard to create an IOS router.
 
@@ -121,6 +120,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         """
         Try to guess the platform based on image name
         """
+
         # try to guess the platform
         image = os.path.basename(self.uiIOSImageLineEdit.text())
         match = re.match("^(c[0-9]+)p?\\-\w+", image.lower())
@@ -225,8 +225,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
                                           body={
                                               "image": image,
                                               "platform": platform,
-                                              "ram": ram
-                                          })
+                                              "ram": ram})
         self.uiIdlePCFinderPushButton.setEnabled(False)
 
     def _etherSwitchSlot(self, state):

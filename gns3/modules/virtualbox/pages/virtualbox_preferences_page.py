@@ -22,8 +22,7 @@ Configuration page for VirtualBox preferences.
 import os
 import sys
 import shutil
-from gns3.qt import QtWidgets, qpartial
-from gns3.controller import Controller
+from gns3.qt import QtWidgets
 
 from .. import VirtualBox
 from ..ui.virtualbox_preferences_page_ui import Ui_VirtualBoxPreferencesPageWidget
@@ -31,7 +30,6 @@ from ..settings import VBOX_SETTINGS
 
 
 class VirtualBoxPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxPreferencesPageWidget):
-
     """
     QWidget preference page for VirtualBox.
     """

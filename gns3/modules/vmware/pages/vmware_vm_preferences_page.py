@@ -54,6 +54,11 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiVMwareVMsTreeWidget.itemSelectionChanged.connect(self._vmwareVMChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiVMwareVMInfoTreeWidget)
         section_item.setText(0, name)
@@ -63,6 +68,9 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         return section_item
 
     def _refreshInfo(self, vmware_vm):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiVMwareVMInfoTreeWidget.clear()
 
@@ -180,7 +188,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         """
 
         vmware_module = VMware.instance()
-        self._vmware_vms = copy.deepcopy(vmware_module.VMs())
+        self._vmware_vms = copy.deepcopy(vmware_module.nodeTemplates())
         self._items.clear()
 
         for key, vmware_vm in self._vmware_vms.items():
@@ -201,8 +209,9 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         Saves the VMware VM preferences.
         """
 
-        VMware.instance().setVMs(self._vmware_vms)
+        VMware.instance().setNodeTemplates(self._vmware_vms)
 
     def _setItemIcon(self, item, icon):
+
         item.setIcon(0, icon)
         self.uiVMwareVMsTreeWidget.setMaximumWidth(self.uiVMwareVMsTreeWidget.sizeHintForColumn(0) + 10)

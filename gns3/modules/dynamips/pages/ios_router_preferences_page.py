@@ -356,6 +356,11 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
                 self._refreshInfo(ios_router)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiIOSRouterInfoTreeWidget)
         section_item.setText(0, name)
@@ -365,6 +370,9 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         return section_item
 
     def _refreshInfo(self, ios_router):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiIOSRouterInfoTreeWidget.clear()
 
@@ -431,7 +439,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         """
 
         dynamips_module = Dynamips.instance()
-        self._ios_routers = copy.deepcopy(dynamips_module.VMs())
+        self._ios_routers = copy.deepcopy(dynamips_module.nodeTemplates())
         self._items.clear()
 
         for key, ios_router in self._ios_routers.items():
@@ -451,7 +459,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         Saves the IOS router preferences.
         """
 
-        Dynamips.instance().setVMs(self._ios_routers)
+        Dynamips.instance().setNodeTemplates(self._ios_routers)
 
     def _setItemIcon(self, item, icon):
         item.setIcon(0, icon)

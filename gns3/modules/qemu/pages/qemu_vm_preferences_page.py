@@ -22,7 +22,7 @@ Configuration page for QEMU VM preferences.
 import os
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
@@ -36,7 +36,6 @@ from ..dialogs.qemu_vm_wizard import QemuVMWizard
 
 
 class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
-
     """
     QWidget preference page for QEMU VM preferences.
     """
@@ -56,6 +55,11 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiQemuVMsTreeWidget.itemSelectionChanged.connect(self._qemuVMChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiQemuVMInfoTreeWidget)
         section_item.setText(0, name)
@@ -65,6 +69,9 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         return section_item
 
     def _refreshInfo(self, qemu_vm):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiQemuVMInfoTreeWidget.clear()
 
@@ -261,7 +268,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         """
 
         qemu_module = Qemu.instance()
-        self._qemu_vms = copy.deepcopy(qemu_module.VMs())
+        self._qemu_vms = copy.deepcopy(qemu_module.nodeTemplates())
         self._items.clear()
 
         for key, qemu_vm in self._qemu_vms.items():
@@ -285,4 +292,4 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         Saves the QEMU VM preferences.
         """
 
-        Qemu.instance().setVMs(self._qemu_vms)
+        Qemu.instance().setNodeTemplates(self._qemu_vms)

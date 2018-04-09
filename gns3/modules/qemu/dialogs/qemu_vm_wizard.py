@@ -34,7 +34,6 @@ from .qemu_image_wizard import QemuImageWizard
 
 
 class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
-
     """
     Wizard to create a Qemu VM.
 

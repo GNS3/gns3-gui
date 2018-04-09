@@ -19,15 +19,11 @@
 QEMU module implementation.
 """
 
-import sys
-
-from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
 
 from ...controller import Controller
 from ..module import Module
-from ..module_error import ModuleError
 from .qemu_vm import QemuVM
 from .settings import QEMU_SETTINGS
 from .settings import QEMU_VM_SETTINGS
@@ -37,22 +33,13 @@ log = logging.getLogger(__name__)
 
 
 class Qemu(Module):
-
     """
     QEMU module.
     """
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
         self._qemu_vms = {}
-        self._nodes = []
-
-        self.configChangedSlot()
-
-    def configChangedSlot(self):
-        # load the settings
         self._loadSettings()
 
     def _loadSettings(self):
@@ -70,11 +57,8 @@ class Qemu(Module):
 
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
-        server_settings = {
-            "enable_hardware_acceleration": self._settings["enable_hardware_acceleration"],
-            "require_hardware_acceleration": self._settings["require_hardware_acceleration"]
-        }
-
+        server_settings = {"enable_hardware_acceleration": self._settings["enable_hardware_acceleration"],
+                           "require_hardware_acceleration": self._settings["require_hardware_acceleration"]}
         LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)
 
     def _loadQemuVMs(self):
@@ -107,7 +91,7 @@ class Qemu(Module):
         self._settings["vms"] = list(self._qemu_vms.values())
         self._saveSettings()
 
-    def VMs(self):
+    def nodeTemplates(self):
         """
         Returns QEMU VMs settings.
 
@@ -116,7 +100,7 @@ class Qemu(Module):
 
         return self._qemu_vms
 
-    def setVMs(self, new_qemu_vms):
+    def setNodeTemplates(self, new_qemu_vms):
         """
         Sets QEMU VM settings.
 
@@ -125,62 +109,6 @@ class Qemu(Module):
 
         self._qemu_vms = new_qemu_vms.copy()
         self._saveQemuVMs()
-
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
-
-    def reset(self):
-        """
-        Resets the servers.
-        """
-
-        self._nodes.clear()
 
     def getQemuBinariesFromServer(self, compute_id, callback, archs=None):
         """
@@ -266,6 +194,8 @@ class Qemu(Module):
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 
@@ -274,7 +204,13 @@ class Qemu(Module):
         return [QemuPreferencesPage, QemuVMPreferencesPage]
 
     @staticmethod
-    def vmConfigurationPage():
+    def configurationPage():
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
         from .pages.qemu_vm_configuration_page import QemuVMConfigurationPage
         return QemuVMConfigurationPage
 

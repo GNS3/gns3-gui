@@ -65,7 +65,6 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-
         if self.page(page_id) == self.uiImageWizardPage:
             Docker.instance().getDockerImagesFromServer(self._compute_id, self._getDockerImagesFromServerCallback)
 

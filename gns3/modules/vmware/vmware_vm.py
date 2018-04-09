@@ -29,7 +29,6 @@ log = logging.getLogger(__name__)
 
 
 class VMwareVM(Node):
-
     """
     VirtualBox VM.
 
@@ -47,8 +46,6 @@ class VMwareVM(Node):
         self._linked_clone = False
 
         vmware_vm_settings = {"vmx_path": "",
-                              "console": None,
-                              "console_host": None,
                               "adapters": VMWARE_VM_SETTINGS["adapters"],
                               "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
                               "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
@@ -56,20 +53,9 @@ class VMwareVM(Node):
                               "on_close": VMWARE_VM_SETTINGS["on_close"],
                               "console_type": VMWARE_VM_SETTINGS["console_type"],
                               "console_auto_start": VMWARE_VM_SETTINGS["console_auto_start"],
-                              "custom_adapters": VMWARE_VM_SETTINGS["custom_adapters"],
-                              "port_name_format": "Ethernet{0}",
-                              "port_segment_size": 0,
-                              "first_port_name": None}
+                              "custom_adapters": VMWARE_VM_SETTINGS["custom_adapters"]}
 
         self.settings().update(vmware_vm_settings)
-
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        pass
 
     def info(self):
         """

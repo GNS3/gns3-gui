@@ -34,14 +34,13 @@ class TraceNGNode(Node):
     :param server: GNS3 server instance
     :param project: Project instance
     """
+
     URL_PREFIX = "traceng"
 
     def __init__(self, module, server, project):
         super().__init__(module, server, project)
 
-        traceng_settings = {"console_host": None,
-                            "console": None,
-                            "console_type": "none",
+        traceng_settings = {"console_type": "none",
                             "ip_address": ""}
 
         self.settings().update(traceng_settings)

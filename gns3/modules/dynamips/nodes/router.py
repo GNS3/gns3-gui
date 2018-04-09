@@ -32,7 +32,6 @@ log = logging.getLogger(__name__)
 
 
 class Router(Node):
-
     """
     Dynamips router (client implementation).
 
@@ -68,10 +67,8 @@ class Router(Node):
                            "disk0": 0,
                            "disk1": 0,
                            "auto_delete_disks": False,
-                           "console": None,
                            "console_type": "telnet",
                            "console_auto_start": False,
-                           "console_host": None,
                            "aux": None,
                            "mac_addr": None,
                            "system_id": "FTX0945W0MY",
@@ -97,35 +94,17 @@ class Router(Node):
 
         self._dynamips_id = result.get("dynamips_id")
 
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-
-        for name, value in result.items():
-            if name in self._settings:
-                if self._settings[name] != value:
-                    log.debug("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                    self._settings[name] = value
-            elif name not in ("project_id", "port_name_format", "port_segment_size", "first_port_name", "node_directory", "status", "node_id", "width", "height", "compute_id", "node_type", "dynamips_id", "command_line"):
-                # All key should be known, but we raise error only in debug
-                if logging.getLogger().isEnabledFor(logging.DEBUG):
-                    raise ValueError(name)
-
     def computeIdlepcs(self, callback):
         """
         Get idle-PC proposals.
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.controllerHttpGet("/nodes/{node_id}/dynamips/idlepc_proposals".format(
-            node_id=self._node_id),
-            callback,
-            timeout=240,
-            context={"router": self},
-            progressText="Computing Idle-PC values, please wait...")
+        self.controllerHttpGet("/nodes/{node_id}/dynamips/idlepc_proposals".format(node_id=self._node_id),
+                               callback,
+                               timeout=240,
+                               context={"router": self},
+                               progressText="Computing Idle-PC values, please wait...")
 
     def computeAutoIdlepc(self, callback):
         """
@@ -133,12 +112,11 @@ class Router(Node):
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.controllerHttpGet("/nodes/{node_id}/dynamips/auto_idlepc".format(
-            node_id=self._node_id),
-            callback,
-            timeout=240,
-            context={"router": self},
-            progressText="Computing Idle-PC values, please wait...")
+        self.controllerHttpGet("/nodes/{node_id}/dynamips/auto_idlepc".format(node_id=self._node_id),
+                               callback,
+                               timeout=240,
+                               context={"router": self},
+                               progressText="Computing Idle-PC values, please wait...")
 
     def idlepc(self):
         """
@@ -294,10 +272,9 @@ class Router(Node):
         """
         Name of the configuration files
         """
-        return [
-            "configs/i{}_startup-config.cfg".format(self._dynamips_id),
-            "configs/i{}_private-config.cfg".format(self._dynamips_id)
-        ]
+
+        return ["configs/i{}_startup-config.cfg".format(self._dynamips_id),
+                "configs/i{}_private-config.cfg".format(self._dynamips_id)]
 
     def auxConsole(self):
         """

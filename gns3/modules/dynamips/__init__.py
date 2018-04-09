@@ -29,7 +29,6 @@ from gns3.image_manager import ImageManager
 from gns3.local_server_config import LocalServerConfig
 
 from ..module import Module
-from ..module_error import ModuleError
 from .nodes.router import Router
 from .nodes.c1700 import C1700
 from .nodes.c2600 import C2600
@@ -58,31 +57,23 @@ log = logging.getLogger(__name__)
 
 
 class Dynamips(Module):
-
     """
     Dynamips module.
     """
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
         self._ios_routers = {}
-        self._nodes = []
         self._ios_images_cache = {}
-
-        self.configChangedSlot()
-
-    def configChangedSlot(self):
-        # load the settings and IOS images.
         self._loadSettings()
 
     @staticmethod
     def getDefaultIdlePC(path):
         """
-        Return the default IDLE PC for an image if the image
+        Returns the default IDLE PC for an image if the image
         exists or None otherwise
         """
+
         if not os.path.isfile(path):
             path = os.path.join(ImageManager.instance().getDirectoryForType("DYNAMIPS"), path)
             if not os.path.isfile(path):
@@ -98,6 +89,13 @@ class Dynamips(Module):
 
     @staticmethod
     def _md5sum(path):
+        """
+        Calculate MD5 checksum for image.
+
+        :param path: image path
+        :returns: MD5 checksum
+        """
+
         with open(path, "rb") as fd:
             m = hashlib.md5()
             while True:
@@ -174,26 +172,7 @@ class Dynamips(Module):
         self._settings["routers"] = list(self._ios_routers.values())
         self._saveSettings()
 
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def VMs(self):
+    def nodeTemplates(self):
         """
         Returns IOS routers settings.
 
@@ -202,7 +181,7 @@ class Dynamips(Module):
 
         return self._ios_routers
 
-    def setVMs(self, new_ios_routers):
+    def setNodeTemplates(self, new_ios_routers):
         """
         Sets IOS images settings.
 
@@ -211,42 +190,6 @@ class Dynamips(Module):
 
         self._ios_routers = new_ios_routers.copy()
         self._saveIOSRouters()
-
-    @staticmethod
-    def vmConfigurationPage():
-        from .pages.ios_router_configuration_page import IOSRouterConfigurationPage
-        return IOSRouterConfigurationPage
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
 
     def updateImageIdlepc(self, image_path, idlepc):
         """
@@ -263,13 +206,6 @@ class Dynamips(Module):
                     log.debug("Idle-PC value {} saved into '{}' template".format(idlepc, ios_router["name"]))
                     self._saveIOSRouters()
 
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
-
     def findAlternativeIOSImage(self, image, node):
         """
         Tries to find an alternative IOS image.
@@ -285,7 +221,7 @@ class Dynamips(Module):
 
         from gns3.main_window import MainWindow
         mainwindow = MainWindow.instance()
-        ios_routers = self.VMs()
+        ios_routers = self.nodeTemplates()
         candidate_ios_images = {}
         alternative_image = {"image": image,
                              "ram": None,
@@ -323,6 +259,17 @@ class Dynamips(Module):
         return alternative_image
 
     @staticmethod
+    def configurationPage():
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
+        from .pages.ios_router_configuration_page import IOSRouterConfigurationPage
+        return IOSRouterConfigurationPage
+
+    @staticmethod
     def getNodeClass(node_type, platform=None):
         """
         Returns the class corresponding to node type.
@@ -350,6 +297,8 @@ class Dynamips(Module):
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 

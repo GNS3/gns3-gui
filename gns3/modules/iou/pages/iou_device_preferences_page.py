@@ -60,6 +60,11 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         self.uiIOUDevicesTreeWidget.itemSelectionChanged.connect(self._iouDeviceChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiIOUDeviceInfoTreeWidget)
         section_item.setText(0, name)
@@ -69,6 +74,9 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         return section_item
 
     def _refreshInfo(self, iou_device):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiIOUDeviceInfoTreeWidget.clear()
 
@@ -218,7 +226,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         """
 
         iou_module = IOU.instance()
-        self._iou_devices = copy.deepcopy(iou_module.VMs())
+        self._iou_devices = copy.deepcopy(iou_module.nodeTemplates())
         self._items.clear()
 
         for key, iou_device in self._iou_devices.items():
@@ -240,7 +248,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         """
 
         # self._iouImageSaveSlot()
-        IOU.instance().setVMs(self._iou_devices)
+        IOU.instance().setNodeTemplates(self._iou_devices)
 
     def _imageUploadComplete(self):
         if self._upload_image_progress_dialog.wasCanceled():

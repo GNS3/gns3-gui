@@ -19,18 +19,12 @@
 Wizard for IOU devices.
 """
 
-import os
-import sys
-
 from gns3.qt import QtGui, QtWidgets
 from gns3.node import Node
-from gns3.utils.get_resource import get_resource
 from gns3.dialogs.vm_with_images_wizard import VMWithImagesWizard
 from gns3.compute_manager import ComputeManager
 
-
 from ..ui.iou_device_wizard_ui import Ui_IOUDeviceWizard
-from .. import IOU
 
 
 class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):

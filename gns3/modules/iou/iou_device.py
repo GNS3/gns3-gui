@@ -29,7 +29,6 @@ log = logging.getLogger(__name__)
 
 
 class IOUDevice(Node):
-
     """
     IOU device.
 
@@ -54,37 +53,15 @@ class IOUDevice(Node):
                                "ram": IOU_DEVICE_SETTINGS["ram"],
                                "nvram": IOU_DEVICE_SETTINGS["nvram"],
                                "ethernet_adapters": IOU_DEVICE_SETTINGS["ethernet_adapters"],
-                               "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"],
-                               "console": None,
-                               "console_host": None}
+                               "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"]}
 
         self.settings().update(iou_device_settings)
-
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response
-        """
-        pass
-
-    def start(self):
-        """
-        Starts this VM instance.
-        """
-
-        if self.status() == Node.started:
-            log.debug("{} is already running".format(self.name()))
-            return
-
-        log.debug("{} is starting".format(self.name()))
-        self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, progressText="{} is starting".format(self.name()))
 
     def info(self):
         """
         Returns information about this IOU device.
 
-        :returns: formated string
+        :returns: formatted string
         """
 
         if self._settings["use_default_iou_values"]:
@@ -127,6 +104,7 @@ class IOUDevice(Node):
         """
         Name of the configuration files
         """
+
         return ["startup-config.cfg", "private-config.cfg"]
 
     def configPage(self):

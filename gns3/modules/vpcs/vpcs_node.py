@@ -26,7 +26,6 @@ log = logging.getLogger(__name__)
 
 
 class VPCSNode(Node):
-
     """
     VPCS node.
 
@@ -34,16 +33,15 @@ class VPCSNode(Node):
     :param server: GNS3 server instance
     :param project: Project instance
     """
+
     URL_PREFIX = "vpcs"
 
     def __init__(self, module, server, project):
         super().__init__(module, server, project)
 
-        vpcs_settings = {"console_host": None,
-                         "startup_script": None,
+        vpcs_settings = {"startup_script": None,
                          "console_type": "telnet",
-                         "console_auto_start": True,
-                         "console": None}
+                         "console_auto_start": True}
 
         self.settings().update(vpcs_settings)
 
@@ -81,6 +79,7 @@ class VPCSNode(Node):
         """
         Name of the configuration files
         """
+
         return ["startup.vpc"]
 
     def configPage(self):

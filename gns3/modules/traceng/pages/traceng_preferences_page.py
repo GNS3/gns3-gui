@@ -31,7 +31,6 @@ from ..settings import TRACENG_SETTINGS
 
 
 class TraceNGPreferencesPage(QtWidgets.QWidget, Ui_TraceNGPreferencesPageWidget):
-
     """
     QWidget preference page for TraceNG
     """

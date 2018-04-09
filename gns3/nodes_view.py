@@ -213,9 +213,9 @@ class NodesView(QtWidgets.QTreeWidget):
 
         # We can not edit stuff like EthernetSwitch
         # or without config template like VPCS
-        if not node["builtin"] and hasattr(module, "vmConfigurationPage"):
+        if not node["builtin"] and hasattr(module, "configurationPage"):
             vm = None
-            for vm_key, vm in module.instance().VMs().items():
+            for vm_key, vm in module.instance().nodeTemplates().items():
                 if vm["name"] == node["name"]:
                     break
             if vm is None:
@@ -235,10 +235,10 @@ class NodesView(QtWidgets.QTreeWidget):
 
     def _configurationSlot(self, vm, module, source):
 
-        dialog = ConfigurationDialog(vm["name"], vm, module.vmConfigurationPage()(), parent=self)
+        dialog = ConfigurationDialog(vm["name"], vm, module.configurationPage()(), parent=self)
         dialog.show()
         if dialog.exec_():
-            module.instance().setVMs(module.instance().VMs())
+            module.instance().setNodeTemplates(module.instance().nodeTemplates())
             LocalConfig.instance().writeConfig()
             #self.refresh()
 
@@ -253,9 +253,9 @@ class NodesView(QtWidgets.QTreeWidget):
         reply = QtWidgets.QMessageBox.question(self, "Template", "Delete {} template?".format(vm["name"]),
                                                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
-            vms = module.instance().VMs()
+            vms = module.instance().nodeTemplates()
             vms.pop(vm_key)
-            module.instance().setVMs(vms)
+            module.instance().setNodeTemplates(vms)
             LocalConfig.instance().writeConfig()
             #self.refresh()
 

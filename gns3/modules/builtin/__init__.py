@@ -50,9 +50,6 @@ class Builtin(Module):
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
-        self._nodes = []
         self._cloud_nodes = {}
         self._nat_nodes = {}
         self._ethernet_hubs = {}
@@ -60,29 +57,6 @@ class Builtin(Module):
 
         # load the settings
         self._loadSettings()
-
-    def configChangedSlot(self):
-
-        pass
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -198,44 +172,6 @@ class Builtin(Module):
 
         self._ethernet_switches = new_ethernet_switches.copy()
         self._saveNodes()
-
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
 
     @staticmethod
     def findAlternativeInterface(node, missing_interface):

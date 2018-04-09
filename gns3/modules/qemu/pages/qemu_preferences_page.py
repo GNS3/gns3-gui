@@ -19,8 +19,6 @@
 Configuration page for QEMU preferences.
 """
 
-import sys
-
 from gns3.qt import QtWidgets
 from .. import Qemu
 from ..ui.qemu_preferences_page_ui import Ui_QemuPreferencesPageWidget
@@ -28,7 +26,6 @@ from ..settings import QEMU_SETTINGS
 
 
 class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
-
     """
     QWidget preference page for QEMU.
     """

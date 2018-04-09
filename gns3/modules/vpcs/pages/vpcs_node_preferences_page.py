@@ -54,6 +54,11 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         self.uiVPCSTreeWidget.itemSelectionChanged.connect(self._vpcsChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiVPCSInfoTreeWidget)
         section_item.setText(0, name)
@@ -63,6 +68,9 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         return section_item
 
     def _refreshInfo(self, vpcs_node):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiVPCSInfoTreeWidget.clear()
 
@@ -165,7 +173,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         """
 
         vpcs_module = VPCS.instance()
-        self._vpcs_nodes = copy.deepcopy(vpcs_module.VMs())
+        self._vpcs_nodes = copy.deepcopy(vpcs_module.nodeTemplates())
         self._items.clear()
 
         for key, node in self._vpcs_nodes.items():
@@ -189,4 +197,4 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         Saves the VPCS node preferences.
         """
 
-        VPCS.instance().setVMs(self._vpcs_nodes)
+        VPCS.instance().setNodeTemplates(self._vpcs_nodes)

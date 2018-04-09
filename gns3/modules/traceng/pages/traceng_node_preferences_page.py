@@ -54,6 +54,11 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         self.uiTraceNGTreeWidget.itemSelectionChanged.connect(self._tracengChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiTraceNGInfoTreeWidget)
         section_item.setText(0, name)
@@ -63,6 +68,9 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         return section_item
 
     def _refreshInfo(self, traceng_node):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiTraceNGInfoTreeWidget.clear()
 
@@ -162,7 +170,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         """
 
         traceng_module = TraceNG.instance()
-        self._traceng_nodes = copy.deepcopy(traceng_module.VMs())
+        self._traceng_nodes = copy.deepcopy(traceng_module.nodeTemplates())
         self._items.clear()
 
         for key, node in self._traceng_nodes.items():
@@ -186,4 +194,4 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         Saves the TraceNG node preferences.
         """
 
-        TraceNG.instance().setVMs(self._traceng_nodes)
+        TraceNG.instance().setNodeTemplates(self._traceng_nodes)

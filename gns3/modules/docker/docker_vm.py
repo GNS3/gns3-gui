@@ -44,8 +44,6 @@ class DockerVM(Node):
                               "custom_adapters": DOCKER_CONTAINER_SETTINGS["custom_adapters"],
                               "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
                               "environment": DOCKER_CONTAINER_SETTINGS["environment"],
-                              "console": None,
-                              "console_host": None,
                               "aux": None,
                               "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
                               "console_auto_start": DOCKER_CONTAINER_SETTINGS["console_auto_start"],
@@ -106,7 +104,8 @@ class DockerVM(Node):
         return self._settings["aux"]
 
     def configPage(self):
-        """Returns the configuration page widget to be used by the node configurator.
+        """
+        Returns the configuration page widget to be used by the node configurator.
 
         :returns: QWidget object
         """
@@ -115,7 +114,8 @@ class DockerVM(Node):
 
     @staticmethod
     def defaultSymbol():
-        """Returns the default symbol path for this node.
+        """
+        Returns the default symbol path for this node.
 
         :returns: symbol path (or resource).
         """
@@ -123,7 +123,7 @@ class DockerVM(Node):
 
     def configFiles(self):
         """
-        Return path of the /etc/network/interfaces
+        Returns the path of the /etc/network/interfaces
         """
         return ["etc/network/interfaces"]
 

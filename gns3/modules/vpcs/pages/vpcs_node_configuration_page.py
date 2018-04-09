@@ -30,7 +30,6 @@ from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 
 
 class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
-
     """
     QWidget configuration page for VPCS nodes.
     """

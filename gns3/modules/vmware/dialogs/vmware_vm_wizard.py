@@ -24,11 +24,9 @@ from gns3.controller import Controller
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.vmware_vm_wizard_ui import Ui_VMwareVMWizard
-from .. import VMware
 
 
 class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
-
     """
     Wizard to create a VMware VM.
 
@@ -95,11 +93,9 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         vmname = self.uiVMListComboBox.itemText(index)
         vminfo = self.uiVMListComboBox.itemData(index)
 
-        settings = {
-            "name": vmname,
-            "server": self._compute_id,
-            "vmx_path": vminfo["vmx_path"],
-            "linked_clone": self.uiBaseVMCheckBox.isChecked()
-        }
+        settings = {"name": vmname,
+                    "server": self._compute_id,
+                    "vmx_path": vminfo["vmx_path"],
+                    "linked_clone": self.uiBaseVMCheckBox.isChecked()}
 
         return settings

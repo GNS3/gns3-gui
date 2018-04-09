@@ -46,15 +46,7 @@ class VMware(Module):
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
         self._vmware_vms = {}
-        self._nodes = []
-
-        self.configChangedSlot()
-
-    def configChangedSlot(self):
-        # load the settings
         self._loadSettings()
 
     @staticmethod
@@ -252,7 +244,7 @@ class VMware(Module):
         self._settings["vms"] = list(self._vmware_vms.values())
         self._saveSettings()
 
-    def VMs(self):
+    def nodeTemplates(self):
         """
         Returns VMware VMs settings.
 
@@ -261,7 +253,7 @@ class VMware(Module):
 
         return self._vmware_vms
 
-    def setVMs(self, new_vmware_vms):
+    def setNodeTemplates(self, new_vmware_vms):
         """
         Sets VMware VM settings.
 
@@ -272,66 +264,15 @@ class VMware(Module):
         self._saveVMwareVMs()
 
     @staticmethod
-    def vmConfigurationPage():
+    def configurationPage():
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
         from .pages.vmware_vm_configuration_page import VMwareVMConfigurationPage
         return VMwareVMConfigurationPage
-
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
-
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
 
     @staticmethod
     def getNodeClass(node_type, platform=None):
@@ -361,6 +302,8 @@ class VMware(Module):
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 

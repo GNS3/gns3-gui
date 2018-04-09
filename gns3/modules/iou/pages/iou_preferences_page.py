@@ -20,11 +20,8 @@ Configuration page for IOU preferences.
 """
 
 import os
-import sys
-import shutil
 
-from gns3.qt import QtCore, QtWidgets, qpartial
-from gns3.controller import Controller
+from gns3.qt import QtCore, QtWidgets
 
 from .. import IOU
 from ..ui.iou_preferences_page_ui import Ui_IOUPreferencesPageWidget
@@ -45,10 +42,6 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         # connect signals
         self.uiIOURCPathToolButton.clicked.connect(self._iourcPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
-
-        # if not sys.platform.startswith("linux"):
-        #    self.uiUseLocalServercheckBox.setChecked(False)
-        #    self.uiUseLocalServercheckBox.setEnabled(False)
 
     def _iourcPathBrowserSlot(self):
         """
@@ -117,7 +110,6 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
 
         iourc_content = self.IOULicenceTextEdit.toPlainText().strip().replace("\r\n", "\n")
 
-        new_settings = {
-            "iourc_content": iourc_content,
-            "license_check": self.uiLicensecheckBox.isChecked()}
+        new_settings = {"iourc_content": iourc_content,
+                        "license_check": self.uiLicensecheckBox.isChecked()}
         IOU.instance().setSettings(new_settings)

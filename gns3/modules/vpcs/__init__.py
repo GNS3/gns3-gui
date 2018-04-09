@@ -20,7 +20,6 @@ VPCS module implementation.
 """
 
 import os
-import copy
 import shutil
 
 from gns3.local_config import LocalConfig
@@ -36,22 +35,14 @@ log = logging.getLogger(__name__)
 
 
 class VPCS(Module):
-
     """
     VPCS module.
     """
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
-        self._nodes = []
         self._vpcs_nodes = {}
         self._working_dir = ""
-        self._loadSettings()
-
-    def configChangedSlot(self):
-        # load the settings
         self._loadSettings()
 
     def _loadSettings(self):
@@ -110,63 +101,6 @@ class VPCS(Module):
         self._settings["nodes"] = list(self._vpcs_nodes.values())
         self._saveSettings()
 
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
-
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
-
     @staticmethod
     def getNodeClass(node_type, platform=None):
         """
@@ -183,18 +117,24 @@ class VPCS(Module):
         return None
 
     @staticmethod
-    def vmConfigurationPage():
+    def configurationPage():
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
         from .pages.vpcs_node_configuration_page import VPCSNodeConfigurationPage
         return VPCSNodeConfigurationPage
 
-    def VMs(self):
+    def nodeTemplates(self):
         """
         Returns list of VPCS nodes
         """
 
         return self._vpcs_nodes
 
-    def setVMs(self, new_vpcs_nodes):
+    def setNodeTemplates(self, new_vpcs_nodes):
         """
         Sets VPCS list
 
@@ -217,6 +157,8 @@ class VPCS(Module):
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 

@@ -19,8 +19,8 @@
 Default Docker settings.
 """
 
-import sys
 from gns3.node import Node
+
 
 DOCKER_SETTINGS = {
     "containers": []

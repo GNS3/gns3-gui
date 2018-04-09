@@ -30,6 +30,7 @@ from ..ui.traceng_node_configuration_page_ui import Ui_TraceNGNodeConfigPageWidg
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 
+
 class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWidget):
 
     """

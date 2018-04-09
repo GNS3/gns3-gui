@@ -54,6 +54,11 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         self.uiVirtualBoxVMsTreeWidget.itemSelectionChanged.connect(self._vboxVMChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMInfoTreeWidget)
         section_item.setText(0, name)
@@ -63,6 +68,9 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         return section_item
 
     def _refreshInfo(self, vbox_vm):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiVirtualBoxVMInfoTreeWidget.clear()
 
@@ -173,7 +181,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         """
 
         vbox_module = VirtualBox.instance()
-        self._virtualbox_vms = copy.deepcopy(vbox_module.VMs())
+        self._virtualbox_vms = copy.deepcopy(vbox_module.nodeTemplates())
         self._items.clear()
 
         for key, vbox_vm in self._virtualbox_vms.items():
@@ -193,9 +201,9 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         Saves the VirtualBox VM preferences.
         """
 
-        # self._vboxVMSaveSlot()
-        VirtualBox.instance().setVMs(self._virtualbox_vms)
+        VirtualBox.instance().setNodeTemplates(self._virtualbox_vms)
 
     def _setItemIcon(self, item, icon):
+
         item.setIcon(0, icon)
         self.uiVirtualBoxVMsTreeWidget.setMaximumWidth(self.uiVirtualBoxVMsTreeWidget.sizeHintForColumn(0) + 10)

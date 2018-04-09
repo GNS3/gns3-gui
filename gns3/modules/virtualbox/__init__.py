@@ -36,22 +36,13 @@ log = logging.getLogger(__name__)
 
 
 class VirtualBox(Module):
-
     """
     VirtualBox module.
     """
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
         self._virtualbox_vms = {}
-        self._nodes = []
-
-        self.configChangedSlot()
-
-    def configChangedSlot(self):
-        # load the settings
         self._loadSettings()
 
     @staticmethod
@@ -144,7 +135,7 @@ class VirtualBox(Module):
         self._settings["vms"] = list(self._virtualbox_vms.values())
         self._saveSettings()
 
-    def VMs(self):
+    def nodeTemplates(self):
         """
         Returns VirtualBox VMs settings.
 
@@ -153,12 +144,7 @@ class VirtualBox(Module):
 
         return self._virtualbox_vms
 
-    @staticmethod
-    def vmConfigurationPage():
-        from .pages.virtualbox_vm_configuration_page import VirtualBoxVMConfigurationPage
-        return VirtualBoxVMConfigurationPage
-
-    def setVMs(self, new_virtualbox_vms):
+    def setNodeTemplates(self, new_virtualbox_vms):
         """
         Sets VirtualBox VM settings.
 
@@ -168,62 +154,16 @@ class VirtualBox(Module):
         self._virtualbox_vms = new_virtualbox_vms.copy()
         self._saveVirtualBoxVMs()
 
-    def addNode(self, node):
+    @staticmethod
+    def configurationPage():
         """
-        Adds a node to this module.
+        Returns the configuration page for this module.
 
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
+        :returns: QWidget object
         """
 
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
-
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
+        from .pages.virtualbox_vm_configuration_page import VirtualBoxVMConfigurationPage
+        return VirtualBoxVMConfigurationPage
 
     @staticmethod
     def getNodeClass(node_type, platform=None):
@@ -253,6 +193,8 @@ class VirtualBox(Module):
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 

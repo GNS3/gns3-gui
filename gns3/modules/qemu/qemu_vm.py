@@ -28,13 +28,13 @@ log = logging.getLogger(__name__)
 
 
 class QemuVM(Node):
-
     """
     QEMU VM.
 
     :param module: parent module for this node
     :param server: GNS3 server instance
     """
+
     URL_PREFIX = "qemu"
 
     def __init__(self, module, server, project):
@@ -64,8 +64,6 @@ class QemuVM(Node):
                             "options": "",
                             "ram": QEMU_VM_SETTINGS["ram"],
                             "cpus": QEMU_VM_SETTINGS["cpus"],
-                            "console": None,
-                            "console_host": None,
                             "console_type": QEMU_VM_SETTINGS["console_type"],
                             "console_auto_start": QEMU_VM_SETTINGS["console_auto_start"],
                             "adapters": QEMU_VM_SETTINGS["adapters"],
@@ -87,14 +85,6 @@ class QemuVM(Node):
                             "first_port_name": ""}
 
         self.settings().update(qemu_vm_settings)
-
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response
-        """
-        pass
 
     def resizeDiskImage(self, drive_name, size, callback):
         """

@@ -38,7 +38,6 @@ from .. import Qemu
 
 
 class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
-
     """
     QWidget configuration page for QEMU VMs.
     """

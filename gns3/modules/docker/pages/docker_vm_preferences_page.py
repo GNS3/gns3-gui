@@ -21,7 +21,7 @@ Configuration page for Docker image preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
@@ -54,6 +54,12 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         self.uiDockerVMsTreeWidget.itemSelectionChanged.connect(self._dockerImageChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
+
         section_item = QtWidgets.QTreeWidgetItem(self.uiDockerVMInfoTreeWidget)
         section_item.setText(0, name)
         font = section_item.font(0)
@@ -62,6 +68,9 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         return section_item
 
     def _refreshInfo(self, docker_image):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiDockerVMInfoTreeWidget.clear()
 
@@ -167,7 +176,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
                     new_key = "{server}:{name}".format(server=docker_image["server"], name=docker_image["name"])
                     if new_key in self._docker_containers:
                         QtWidgets.QMessageBox.critical(self, "Docker container", "Docker container name {} already exists for server {}".format(docker_image["name"],
-                                                                                                                                            docker_image["server"]))
+                                                                                                                                                docker_image["server"]))
                         docker_image["name"] = item.text(0)
                         return
                     self._docker_containers[new_key] = self._docker_containers[key]
@@ -193,15 +202,13 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         """
 
         docker_module = Docker.instance()
-        self._docker_containers = copy.deepcopy(docker_module.VMs())
+        self._docker_containers = copy.deepcopy(docker_module.nodeTemplates())
         self._items.clear()
 
         for key, docker_image in self._docker_containers.items():
             item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
             item.setText(0, docker_image["name"])
-
             Controller.instance().getSymbolIcon(docker_image["symbol"], qpartial(self._setItemIcon, item))
-
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 
@@ -215,7 +222,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         Saves the Docker image preferences.
         """
 
-        Docker.instance().setVMs(self._docker_containers)
+        Docker.instance().setNodeTemplates(self._docker_containers)
 
     def _setItemIcon(self, item, icon):
         item.setIcon(0, icon)
