@@ -575,6 +575,7 @@ class Project(QtCore.QObject):
             return
 
     def _event_received(self, result, *args, **kwargs):
+
         # Log only relevant events
         if result["action"] not in ("ping", "compute.updated"):
             log.debug("Event received: %s", result)

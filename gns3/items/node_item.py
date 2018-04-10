@@ -120,6 +120,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
         Sync change to the node
         """
+
         self._node.setGraphics(self)
 
     @qslot

@@ -41,22 +41,6 @@ class FrameRelaySwitch(Node):
         self._always_on = True
         self.settings().update({"mappings": {}})
 
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        self.settings()["mappings"] = result["mappings"]
-
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-        self.settings()["mappings"] = result["mappings"]
-
     def info(self):
         """
         Returns information about this Frame Relay switch.

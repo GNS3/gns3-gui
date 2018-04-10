@@ -47,7 +47,7 @@ class Cloud(Node):
 
         return self._interfaces
 
-    def _createCallback(self, result, error=False, **kwargs):
+    def _createCallback(self, result):
         """
         Callback for create.
 

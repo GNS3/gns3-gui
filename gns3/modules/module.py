@@ -154,7 +154,7 @@ class Module(QtCore.QObject):
 
         for node in self._nodes:
             if hasattr(node, "initialized") and node.initialized():
-                node.exportConfigToDirectory(directory)
+                node.exportConfigsToDirectory(directory)
 
     def importConfigs(self, directory):
         """
@@ -165,4 +165,4 @@ class Module(QtCore.QObject):
 
         for node in self._nodes:
             if hasattr(node, "initialized") and node.initialized():
-                node.importConfigFromDirectory(directory)
+                node.importConfigsFromDirectory(directory)
