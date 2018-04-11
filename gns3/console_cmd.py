@@ -23,7 +23,6 @@ import sys
 import cmd
 import struct
 import sip
-import json
 
 from .node import Node
 from .qt import QtCore

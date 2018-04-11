@@ -110,6 +110,9 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         self._topology = Topology.instance()
 
     def _writeMessageSlot(self, message, level):
+        """
+        Write a message in the console.
+        """
         if level == "error":
             self.write(message, error=True)
         elif level == "warning":

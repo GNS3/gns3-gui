@@ -20,10 +20,11 @@ import uuid
 
 class Compute:
     """
-    A compute node on the remote server
+    An instance of a compute server.
     """
 
     def __init__(self, compute_id=None):
+
         if compute_id is None:
             compute_id = str(uuid.uuid4())
         self._compute_id = compute_id
@@ -36,85 +37,204 @@ class Compute:
         self._password = None
         self._cpu_usage_percent = None
         self._memory_usage_percent = None
-        self._capabilities = {
-            "node_types": []
-        }
+        self._capabilities = {"node_types": []}
 
     def id(self):
+        """
+        Returns the compute server ID.
+
+        :returns: compute identifier
+        """
+
         return self._compute_id
 
     def name(self):
+        """
+        Returns the compute server name.
+
+        :returns: compute name
+        """
+
         return self._name
 
     def setName(self, name):
+        """
+        Sets the compute server name.
+
+        :param name: compute name
+        """
+
         self._name = name
 
     def connected(self):
+        """
+        Returns whether or not there is a connection to the compute server.
+
+        :returns: boolean
+        """
+
         return self._connected
 
     def setConnected(self, value):
+        """
+        Sets whether or not there is a connection to the compute server.
+
+        :param value: boolean
+        """
+
         self._connected = value
 
-    def port(self):
-        return self._port
-
-    def setPort(self, port):
-        self._port = port
-
-    def user(self):
-        return self._user
-
-    def setUser(self, user):
-        self._user = user
-
-    def setPassword(self, password):
-        self._password = password
-
-    def protocol(self):
-        return self._protocol
-
-    def setProtocol(self, protocol):
-        self._protocol = protocol
-
     def host(self):
+        """
+        Returns the compute server host.
+
+        :returns: host (string)
+        """
+
         return self._host
 
     def setHost(self, host):
+        """
+        Sets the compute server host.
+
+        :param host: host (string)
+        """
+
         self._host = host
 
-    def setCpuUsagePercent(self, usage):
-        self._cpu_usage_percent = usage
+    def port(self):
+        """
+        Returns the compute server port number.
+
+        :returns: port number (integer)
+        """
+
+        return self._port
+
+    def setPort(self, port):
+        """
+        Sets the compute server port number.
+
+        :param port: port number (integer)
+        """
+
+        self._port = port
+
+    def user(self):
+        """
+        Returns the compute server user for HTTP authentication.
+
+        :returns: user (string)
+        """
+
+        return self._user
+
+    def setUser(self, user):
+        """
+        Sets the compute server user for HTTP authentication.
+
+        :param user: user (string)
+        """
+
+        self._user = user
+
+    def setPassword(self, password):
+        """
+        Returns the compute server password for HTTP authentication.
+
+        :returns: password (string)
+        """
+
+        self._password = password
+
+    def protocol(self):
+        """
+        Returns the compute server protocol.
+
+        :returns: protocol (string)
+        """
+
+        return self._protocol
+
+    def setProtocol(self, protocol):
+        """
+        Sets the compute server protocol.
+
+        :param protocol: protocol (string)
+        """
+
+        self._protocol = protocol
 
     def cpuUsagePercent(self):
+        """
+        Returns the compute server CPU usage.
+
+        :returns: CPU usage (integer)
+        """
+
         return self._cpu_usage_percent
 
+    def setCpuUsagePercent(self, usage):
+        """
+        Sets the compute server CPU usage.
+
+        :param usage: CPU usage (integer)
+        """
+
+        self._cpu_usage_percent = usage
+
     def setMemoryUsagePercent(self, usage):
+        """
+        Returns the compute server memory usage.
+
+        :returns: memory usage (integer)
+        """
+
         self._memory_usage_percent = usage
 
     def memoryUsagePercent(self):
+        """
+        Sets the compute server memory usage.
+
+        :param usage: memory usage (integer)
+        """
+
         return self._memory_usage_percent
 
     def capabilities(self):
+        """
+        Returns the compute server capabilities
+
+        :returns: capabilities (dictionary)
+        """
+
         return self._capabilities
 
-    def setCapabilities(self, val):
-        self._capabilities = val
+    def setCapabilities(self, value):
+        """
+        Sets the compute server capabilities
+
+        :param value: capabilities (dictionary)
+        """
+
+        self._capabilities = value
 
     def __str__(self):
+
         return self._compute_id
 
     def __json__(self):
-        return {
-            "host": self._host,
-            "port": self._port,
-            "protocol": self._protocol,
-            "user": self._user,
-            "password": self._password,
-            "name": self._name,
-            "compute_id": self._compute_id
-        }
+
+        return {"host": self._host,
+                "port": self._port,
+                "protocol": self._protocol,
+                "user": self._user,
+                "password": self._password,
+                "name": self._name,
+                "compute_id": self._compute_id}
 
     def __eq__(self, v):
+
         if isinstance(v, Compute):
             return self.__json__() == v.__json__()
         return False

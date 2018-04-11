@@ -24,10 +24,14 @@ log = logging.getLogger(__name__)
 
 
 class ApplianceManager(QtCore.QObject):
+    """
+    Manager for appliances and appliance templates.
+    """
 
     appliances_changed_signal = QtCore.Signal()
 
     def __init__(self):
+
         super().__init__()
         self._appliance_templates = []
         self._appliances = []
@@ -37,38 +41,70 @@ class ApplianceManager(QtCore.QObject):
         self.refresh()
 
     def refresh(self):
+        """
+        Gets the appliances and appliance templates from the controller.
+        """
+
         if self._controller.connected():
             self._controller.get("/appliances/templates", self._listApplianceTemplateCallback)
             self._controller.get("/appliances", self._listAppliancesCallback)
 
     def _controllerDisconnectedSlot(self):
+        """
+        Called when the controller has been disconnected.
+        """
+
         self._appliance_templates = []
         self._appliances = []
         self.appliances_changed_signal.emit()
 
-    def appliance_templates(self):
+    def applianceTemplates(self):
+        """
+        Returns the appliance templates.
+
+        :returns: array of appliance templates
+        """
+
         return self._appliance_templates
 
     def appliances(self):
+        """
+        Returns the appliances
+
+        :returns: array of appliances
+        """
+
         return self._appliances
 
     def getAppliance(self, appliance_id):
         """
-        Look for an appliance by appliance ID
+        Look for an appliance by appliance ID.
+
+        :param appliance_id: appliance identifier
+        :returns: appliance or None
         """
+
         for appliance in self._appliances:
             if appliance["appliance_id"] == appliance_id:
                 return appliance
         return None
 
     def _listAppliancesCallback(self, result, error=False, **kwargs):
+        """
+        Callback to get the appliances.
+        """
+
         if error is True:
-            log.error("Error while getting appliances list: {}".format(result["message"]))
+            log.error("Error while getting the appliances list: {}".format(result["message"]))
             return
         self._appliances = result
         self.appliances_changed_signal.emit()
 
     def _listApplianceTemplateCallback(self, result, error=False, **kwargs):
+        """
+        Callback to get the appliance templates.
+        """
+
         if error is True:
             log.error("Error while getting appliance templates list: {}".format(result["message"]))
             return
@@ -76,35 +112,35 @@ class ApplianceManager(QtCore.QObject):
         self.appliances_changed_signal.emit()
 
     def createNodeFromApplianceId(self, project, appliance_id, x, y):
+        """
+        Creates a new node from an appliance.
+        """
+
         for appliance in self._appliances:
             if appliance["appliance_id"] == appliance_id:
                 break
 
-        project_id = project.id()
-
+        params = {"x": int(x), "y": int(y)}
         if appliance.get("compute_id") is None:
             from .main_window import MainWindow
             server = server_select(MainWindow.instance(), node_type=appliance["node_type"])
             if server is None:
                 return False
-            self._controller.post("/projects/" + project_id + "/appliances/" + appliance_id, self._createNodeFromApplianceCallback, {
-                "compute_id": server.id(),
-                "x": int(x),
-                "y": int(y)
-            },
-                timeout=None)
-        else:
-            self._controller.post("/projects/" + project_id + "/appliances/" + appliance_id, self._createNodeFromApplianceCallback, {
-                "x": int(x),
-                "y": int(y)
-            },
-                timeout=None)
+            params["compute_id"] = server.id()
+
+        self._controller.post("/projects/{project_id}/appliances/{appliance_id}".format(project_id=project.id(), appliance_id=appliance_id),
+                              self._createNodeFromApplianceCallback,
+                              params,
+                              timeout=None)
         return True
 
     def _createNodeFromApplianceCallback(self, result, error=False, **kwargs):
-        if error:
-            if "message" in result:
-                log.error("Error while creating node: {}".format(result["message"]))
+        """
+        Callback to create node from appliance (for errors only).
+        """
+
+        if error and "message" in result:
+            log.error("Error while creating node: {}".format(result["message"]))
             return
 
     @staticmethod

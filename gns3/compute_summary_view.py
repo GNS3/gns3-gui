@@ -29,7 +29,6 @@ log = logging.getLogger(__name__)
 
 
 class ComputeItem(QtWidgets.QTreeWidgetItem):
-
     """
     Custom item for the QTreeWidget instance
     (topology summary view).
@@ -94,8 +93,8 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
                 self.addChild(item)
         self.sortChildren(0, QtCore.Qt.AscendingOrder)
 
-class ComputeSummaryView(QtWidgets.QTreeWidget):
 
+class ComputeSummaryView(QtWidgets.QTreeWidget):
     """
     Compute summary view implementation.
 
@@ -105,9 +104,7 @@ class ComputeSummaryView(QtWidgets.QTreeWidget):
     def __init__(self, parent):
 
         super().__init__(parent)
-
         self._computes = {}
-
         ComputeManager.instance().created_signal.connect(self._computeAddedSlot)
         ComputeManager.instance().updated_signal.connect(self._computeUpdatedSlot)
         ComputeManager.instance().deleted_signal.connect(self._computeRemovedSlot)

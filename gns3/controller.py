@@ -30,20 +30,21 @@ log = logging.getLogger(__name__)
 
 class Controller(QtCore.QObject):
     """
-    An instance of the GNS3 server controller
+    An instance of the server controller.
     """
+
     connected_signal = QtCore.Signal()
     disconnected_signal = QtCore.Signal()
     connection_failed_signal = QtCore.Signal()
     project_list_updated_signal = QtCore.Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self):
+
         super().__init__()
         self._connected = False
         self._connecting = False
         self._cache_directory = tempfile.mkdtemp()
         self._http_client = None
-        # If it's the first error we display an alert box to the user
         self._first_error = True
         self._error_dialog = None
         self._display_error = True
@@ -53,12 +54,14 @@ class Controller(QtCore.QObject):
         self._static_asset_download_queue = {}
 
     def host(self):
+
         return self._http_client.host()
 
     def isRemote(self):
         """
         :returns Boolean: True if the controller is remote
         """
+
         settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
         return not settings["auto_start"]
 
@@ -66,24 +69,28 @@ class Controller(QtCore.QObject):
         """
         :returns: True if connection is in progress
         """
+
         return self._connecting
 
     def connected(self):
         """
         Is the controller connected
         """
+
         return self._connected
 
     def httpClient(self):
         """
-        :returns: HTTP client for connected to the controller
+        :returns: HTTP client to connect to the controller
         """
+
         return self._http_client
 
     def setHttpClient(self, http_client):
         """
         :param http_client: Instance of HTTP client to communicate with the server
         """
+
         self._http_client = http_client
         if self._http_client:
             if self.isRemote():
@@ -96,12 +103,14 @@ class Controller(QtCore.QObject):
         """
         :return: Instance of HTTP client to communicate with the server
         """
+
         return self._http_client
 
     def setDisplayError(self, val):
         """
         Allow error to be visible or not
         """
+
         self._display_error = val
         self._first_error = True
 
@@ -109,6 +118,7 @@ class Controller(QtCore.QObject):
         """
         Connection process as started
         """
+
         self._connected = False
         self._connecting = True
         self.get('/version', self._versionGetSlot)
@@ -121,8 +131,9 @@ class Controller(QtCore.QObject):
 
     def _versionGetSlot(self, result, error=False, **kwargs):
         """
-        Called after the inital version get
+        Called after the initial version get
         """
+
         if error:
             if self._first_error:
                 self._connecting = False
@@ -134,7 +145,7 @@ class Controller(QtCore.QObject):
                     self._error_dialog.setText("Error when connecting to the GNS3 server:\n{}".format(result["message"]))
                     self._error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
                     self._error_dialog.show()
-            # Try to connect again in x seconds
+            # Try to connect again in 5 seconds
             QtCore.QTimer.singleShot(5000, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
             self._first_error = False
         else:
@@ -144,30 +155,39 @@ class Controller(QtCore.QObject):
                 self._error_dialog = None
 
     def _httpClientConnectedSlot(self):
+
         if not self._connected:
             self._connected = True
             self._connecting = False
             self.connected_signal.emit()
             self.refreshProjectList()
 
+    def post(self, *args, **kwargs):
+        return self.createHTTPQuery("POST", *args, **kwargs)
+
     def get(self, *args, **kwargs):
         return self.createHTTPQuery("GET", *args, **kwargs)
+
+    def put(self, *args, **kwargs):
+        return self.createHTTPQuery("PUT", *args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        return self.createHTTPQuery("DELETE", *args, **kwargs)
 
     def getCompute(self, path, compute_id, *args, **kwargs):
         """
         API get on a specific compute
         """
+
         compute_id = self.__fix_compute_id(compute_id)
         path = "/computes/{}{}".format(compute_id, path)
         return self.get(path, *args, **kwargs)
-
-    def post(self, *args, **kwargs):
-        return self.createHTTPQuery("POST", *args, **kwargs)
 
     def postCompute(self, path, compute_id, *args, **kwargs):
         """
         API post on a specific compute
         """
+
         compute_id = self.__fix_compute_id(compute_id)
         path = "/computes/{}{}".format(compute_id, path)
         return self.post(path, *args, **kwargs)
@@ -179,6 +199,7 @@ class Controller(QtCore.QObject):
         when all the appliance template will be managed
         on server
         """
+
         if compute_id.startswith("http:") or compute_id.startswith("https:"):
             from .compute_manager import ComputeManager
             try:
@@ -191,28 +212,25 @@ class Controller(QtCore.QObject):
         """
         API post on a specific compute
         """
+
         compute_id = self.__fix_compute_id(compute_id)
         path = "/computes/endpoint/{}{}".format(compute_id, path)
         return self.get(path, *args, **kwargs)
-
-    def put(self, *args, **kwargs):
-        return self.createHTTPQuery("PUT", *args, **kwargs)
 
     def putCompute(self, path, compute_id, *args, **kwargs):
         """
         API put on a specific compute
         """
+
         compute_id = self.__fix_compute_id(compute_id)
         path = "/computes/{}{}".format(compute_id, path)
         return self.put(path, *args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        return self.createHTTPQuery("DELETE", *args, **kwargs)
 
     def createHTTPQuery(self, method, path, *args, **kwargs):
         """
         Forward the query to the HTTP client or controller depending of the path
         """
+
         if self._http_client:
             return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
 

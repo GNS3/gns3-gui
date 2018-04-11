@@ -31,8 +31,9 @@ log = logging.getLogger(__name__)
 
 
 class PacketCapture:
-
-    """This class manage packet capture, it's a singleton"""
+    """
+    This class manage packet capture, it's a singleton
+    """
 
     def __init__(self):
         self._tail_process = {}

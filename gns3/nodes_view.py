@@ -111,7 +111,7 @@ class NodesView(QtWidgets.QTreeWidget):
                 item.setSizeHint(0, QtCore.QSize(32, 32))
                 Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
 
-        for appliance in ApplianceManager.instance().appliance_templates():
+        for appliance in ApplianceManager.instance().applianceTemplates():
             if not appliance["builtin"] and not self._show_my_available_appliances:
                 continue
             if appliance["builtin"] and not self._show_builtin_available_appliances:

@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .qt import QtCore
-
 from .compute import Compute
 from .controller import Controller
 
@@ -31,11 +30,16 @@ log = logging.getLogger(__name__)
 
 
 class ComputeManager(QtCore.QObject):
+    """
+    Manager for compute servers.
+    """
+
     created_signal = QtCore.Signal(str)
     updated_signal = QtCore.Signal(str)
     deleted_signal = QtCore.Signal(str)
 
     def __init__(self):
+
         super().__init__()
         self._computes = {}
         self._controller = Controller.instance()
@@ -43,7 +47,7 @@ class ComputeManager(QtCore.QObject):
         self._controller.disconnected_signal.connect(self._controllerDisconnectedSlot)
         self._controllerConnectedSlot()
 
-        # If we receive fresh data from the notification feed no need to refresh via an API call
+        # No need to refresh via an API call if we received fresh data from the notification feed
         self._last_computes_refresh = datetime.datetime.now().timestamp()
 
         self._timer = QtCore.QTimer()
@@ -53,6 +57,10 @@ class ComputeManager(QtCore.QObject):
         self._timer.start()
 
     def _refreshComputesSlot(self):
+        """
+        Called when compute servers are refreshed.
+        """
+
         if self._refreshingComputes:
             return
         if self._controller.connected() and datetime.datetime.now().timestamp() - self._last_computes_refresh > 1:
@@ -61,16 +69,28 @@ class ComputeManager(QtCore.QObject):
             self._controller.get("/computes", self._listComputesCallback, showProgress=False, timeout=30)
 
     def _controllerConnectedSlot(self):
+        """
+        Called when connected to a compute server.
+        """
+
         if self._controller.connected():
             self._refreshingComputes = True
             self._controller.get("/computes", self._listComputesCallback, showProgress=False, timeout=30)
 
     def _controllerDisconnectedSlot(self):
+        """
+        Called when disconnected from a compute server.
+        """
+
         for compute_id in list(self._computes):
             del self._computes[compute_id]
             self.deleted_signal.emit(compute_id)
 
     def _listComputesCallback(self, result, error=False, **kwargs):
+        """
+        Callback to list compute servers.
+        """
+
         self._refreshingComputes = False
         if error is True:
             log.error("Error while getting compute list: {}".format(result["message"]))
@@ -81,8 +101,7 @@ class ComputeManager(QtCore.QObject):
 
     def computeDataReceivedCallback(self, compute):
         """
-        Called when we received data from a compute
-        node.
+        Called when we received data from a compute node.
         """
 
         self._last_computes_refresh = datetime.datetime.now().timestamp()
@@ -110,8 +129,9 @@ class ComputeManager(QtCore.QObject):
 
     def computeIsTheRemoteGNS3VM(self, compute):
         """
-        :returns: Boolean True if the remote server is the remote GNS3 VM
+        :returns: boolean True if the remote server is the remote GNS3 VM
         """
+
         if compute.id() != "local" and compute.id() != "vm":
             if self.vmCompute() and "GNS3 VM ({})".format(compute.name()) == self.vmCompute().name():
                 return True
@@ -121,6 +141,7 @@ class ComputeManager(QtCore.QObject):
         """
         :returns: List of computes nodes
         """
+
         computes = []
         for compute in self._computes.values():
             # We filter the remote GNS3 VM compute from the computes list
@@ -132,6 +153,7 @@ class ComputeManager(QtCore.QObject):
         """
         :returns: The GNS3 VM compute node or None
         """
+
         try:
             return self._computes["vm"]
         except KeyError:
@@ -141,6 +163,7 @@ class ComputeManager(QtCore.QObject):
         """
         :returns: The local compute node or None
         """
+
         try:
             return self._computes["local"]
         except KeyError:
@@ -152,6 +175,7 @@ class ComputeManager(QtCore.QObject):
 
         With a remote controller it could be different of our local platform
         """
+
         c = self.localCompute()
         if c is None:
             return sys.platform
@@ -161,31 +185,45 @@ class ComputeManager(QtCore.QObject):
         """
         :returns: List of non local and non VM computes
         """
+
         return [c for c in self._computes.values() if c.id() != "local" and c.id() != "vm"]
 
     def getCompute(self, compute_id):
+        """
+        Gets a compute server by ID
+
+        :param compute_id: compute server identifier
+        :returns: compute server
+        """
+
         if compute_id.startswith("http:") or compute_id.startswith("https:"):
             u = urllib.parse.urlsplit(compute_id)
             for compute in self._computes.values():
                 if "{}:{}".format(compute.host(), compute.port()) == u.netloc:
                     return compute
-            raise KeyError("Compute {} is missing.".format(compute_id))
+            raise KeyError("Compute ID {} is missing.".format(compute_id))
         if compute_id not in self._computes:
             self._computes[compute_id] = Compute(compute_id)
             self.created_signal.emit(compute_id)
         return self._computes[compute_id]
 
     def deleteCompute(self, compute_id):
+        """
+        Deletes a compute server by ID
+
+        :param compute_id: compute server identifier
+        """
+
         if compute_id in self._computes:
-            compute = self._computes[compute_id]
             del self._computes[compute_id]
-            self._controller.delete("/computes/" + compute_id, None)
+            self._controller.delete("/computes/{compute_id}".format(compute_id=compute_id), None)
         self.deleted_signal.emit(compute_id)
 
     def updateList(self, computes):
         """
         Sync an array of compute server with remote
         """
+
         for compute_id in copy.copy(self._computes):
             # Delete compute on controller not in the new computes
             if compute_id in ["local", "vm"]:
