@@ -69,6 +69,7 @@ class Project(QtCore.QObject):
         self._show_layers = graphic_settings.get("show_layers", False)
         self._snap_to_grid = graphic_settings.get("snap_to_grid", False)
         self._show_grid = graphic_settings.get("show_grid", False)
+        self._grid_size = graphic_settings.get("grid_size", 75)
         self._show_interface_labels = graphic_settings.get("show_interface_labels", False)
         self._show_interface_labels_on_new_project = config.showInterfaceLabelsOnNewProject()
 
@@ -178,6 +179,21 @@ class Project(QtCore.QObject):
         :return: boolean
         """
         return self._show_grid
+
+    def setGridSize(self, grid_size):
+        """
+        Sets the grid size
+        """
+
+        self._grid_size = grid_size
+
+    def gridSize(self):
+        """
+        Returns the grid size
+        :return: integer
+        """
+
+        return self._grid_size
 
     def setShowInterfaceLabels(self, show_interface_labels):
         """
@@ -396,6 +412,7 @@ class Project(QtCore.QObject):
             "show_layers": self._show_layers,
             "snap_to_grid": self._snap_to_grid,
             "show_grid": self._show_grid,
+            "grid_size": self._grid_size,
             "show_interface_labels": self._show_interface_labels
         }
         self.put("", self._projectUpdatedCallback, body=body)
@@ -436,6 +453,9 @@ class Project(QtCore.QObject):
         self._show_layers = result.get("show_layers", False)
         self._snap_to_grid = result.get("snap_to_grid", False)
         self._show_grid = result.get("show_grid", False)
+        grid_size = result.get("grid_size", None)
+        if grid_size:
+            self._grid_size = grid_size
         self._show_interface_labels = result.get("show_interface_labels", False)
 
     def load(self, path=None):

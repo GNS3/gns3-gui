@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\dominik.ziajka\projects\gns3-gui\gns3\ui\general_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.8
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(1324, 738)
+        GeneralPreferencesPageWidget.resize(1324, 741)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
@@ -270,7 +270,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSPICETab = QtWidgets.QWidget()
         self.uiSPICETab.setObjectName("uiSPICETab")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.uiSPICETab)
-        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiSPICEConsoleSettingsGroupBox = QtWidgets.QGroupBox(self.uiSPICETab)
         self.uiSPICEConsoleSettingsGroupBox.setObjectName("uiSPICEConsoleSettingsGroupBox")
@@ -311,7 +310,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiRectangleSelectedItemCheckBox = QtWidgets.QCheckBox(self.uiSceneTab)
         self.uiRectangleSelectedItemCheckBox.setChecked(True)
         self.uiRectangleSelectedItemCheckBox.setObjectName("uiRectangleSelectedItemCheckBox")
-        self.gridLayout_8.addWidget(self.uiRectangleSelectedItemCheckBox, 5, 0, 1, 2)
+        self.gridLayout_8.addWidget(self.uiRectangleSelectedItemCheckBox, 6, 0, 1, 2)
         self.uiSceneWidthLabel = QtWidgets.QLabel(self.uiSceneTab)
         self.uiSceneWidthLabel.setObjectName("uiSceneWidthLabel")
         self.gridLayout_8.addWidget(self.uiSceneWidthLabel, 0, 0, 1, 1)
@@ -325,7 +324,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.horizontalLayout_5.addWidget(self.uiDefaultLabelColorPushButton)
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem6)
-        self.gridLayout_8.addLayout(self.horizontalLayout_5, 10, 0, 1, 2)
+        self.gridLayout_8.addLayout(self.horizontalLayout_5, 11, 0, 1, 2)
         self.uiSceneHeightLabel = QtWidgets.QLabel(self.uiSceneTab)
         self.uiSceneHeightLabel.setObjectName("uiSceneHeightLabel")
         self.gridLayout_8.addWidget(self.uiSceneHeightLabel, 2, 0, 1, 1)
@@ -338,11 +337,11 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.gridLayout_8.addWidget(self.uiSceneHeightSpinBox, 3, 0, 1, 2)
         self.uiLabelPreviewLabel = QtWidgets.QLabel(self.uiSceneTab)
         self.uiLabelPreviewLabel.setObjectName("uiLabelPreviewLabel")
-        self.gridLayout_8.addWidget(self.uiLabelPreviewLabel, 8, 0, 1, 1)
+        self.gridLayout_8.addWidget(self.uiLabelPreviewLabel, 9, 0, 1, 1)
         self.uiDrawLinkStatusPointsCheckBox = QtWidgets.QCheckBox(self.uiSceneTab)
         self.uiDrawLinkStatusPointsCheckBox.setChecked(True)
         self.uiDrawLinkStatusPointsCheckBox.setObjectName("uiDrawLinkStatusPointsCheckBox")
-        self.gridLayout_8.addWidget(self.uiDrawLinkStatusPointsCheckBox, 6, 0, 1, 1)
+        self.gridLayout_8.addWidget(self.uiDrawLinkStatusPointsCheckBox, 7, 0, 1, 1)
         self.uiDefaultLabelStylePlainTextEdit = QtWidgets.QPlainTextEdit(self.uiSceneTab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -352,9 +351,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDefaultLabelStylePlainTextEdit.setMaximumSize(QtCore.QSize(16777215, 50))
         self.uiDefaultLabelStylePlainTextEdit.setReadOnly(True)
         self.uiDefaultLabelStylePlainTextEdit.setObjectName("uiDefaultLabelStylePlainTextEdit")
-        self.gridLayout_8.addWidget(self.uiDefaultLabelStylePlainTextEdit, 9, 0, 1, 2)
+        self.gridLayout_8.addWidget(self.uiDefaultLabelStylePlainTextEdit, 10, 0, 1, 2)
         spacerItem7 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_8.addItem(spacerItem7, 11, 0, 1, 1)
+        self.gridLayout_8.addItem(spacerItem7, 12, 0, 1, 1)
         self.uiSceneWidthSpinBox = QtWidgets.QSpinBox(self.uiSceneTab)
         self.uiSceneWidthSpinBox.setMinimum(500)
         self.uiSceneWidthSpinBox.setMaximum(1000000)
@@ -362,12 +361,19 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSceneWidthSpinBox.setProperty("value", 2000)
         self.uiSceneWidthSpinBox.setObjectName("uiSceneWidthSpinBox")
         self.gridLayout_8.addWidget(self.uiSceneWidthSpinBox, 1, 0, 1, 2)
-        self.label_2 = QtWidgets.QLabel(self.uiSceneTab)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_8.addWidget(self.label_2, 4, 0, 1, 1)
         self.uiShowInterfaceLabelsOnNewProject = QtWidgets.QCheckBox(self.uiSceneTab)
         self.uiShowInterfaceLabelsOnNewProject.setObjectName("uiShowInterfaceLabelsOnNewProject")
-        self.gridLayout_8.addWidget(self.uiShowInterfaceLabelsOnNewProject, 7, 0, 1, 1)
+        self.gridLayout_8.addWidget(self.uiShowInterfaceLabelsOnNewProject, 8, 0, 1, 1)
+        self.uiGridSizeLabel = QtWidgets.QLabel(self.uiSceneTab)
+        self.uiGridSizeLabel.setObjectName("uiGridSizeLabel")
+        self.gridLayout_8.addWidget(self.uiGridSizeLabel, 4, 0, 1, 1)
+        self.uiGridSizeSpinBox = QtWidgets.QSpinBox(self.uiSceneTab)
+        self.uiGridSizeSpinBox.setMinimum(10)
+        self.uiGridSizeSpinBox.setMaximum(100)
+        self.uiGridSizeSpinBox.setSingleStep(10)
+        self.uiGridSizeSpinBox.setProperty("value", 75)
+        self.uiGridSizeSpinBox.setObjectName("uiGridSizeSpinBox")
+        self.gridLayout_8.addWidget(self.uiGridSizeSpinBox, 5, 0, 1, 2)
         self.uiMiscTabWidget.addTab(self.uiSceneTab, "")
         self.uiMiscTab = QtWidgets.QWidget()
         self.uiMiscTab.setObjectName("uiMiscTab")
@@ -505,8 +511,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDrawLinkStatusPointsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Draw link status points"))
         self.uiDefaultLabelStylePlainTextEdit.setPlainText(_translate("GeneralPreferencesPageWidget", "AaBbYyZz"))
         self.uiSceneWidthSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " pixels"))
-        self.label_2.setText(_translate("GeneralPreferencesPageWidget", "If you want to change the size of the current project. Via the project menu you can edit it."))
         self.uiShowInterfaceLabelsOnNewProject.setText(_translate("GeneralPreferencesPageWidget", "Show interface labels on new project"))
+        self.uiGridSizeLabel.setText(_translate("GeneralPreferencesPageWidget", "Grid size:"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiSceneTab), _translate("GeneralPreferencesPageWidget", "Topology view"))
         self.uiCheckForUpdateCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically check for update"))
         self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send anonymous crash reports"))
