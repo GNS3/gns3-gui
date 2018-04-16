@@ -18,14 +18,14 @@
 """
 Dialog to manage the snapshots.
 """
+from datetime import datetime
 
 from ..qt import QtCore, QtWidgets
 from ..ui.snapshots_dialog_ui import Ui_SnapshotsDialog
 from ..controller import Controller
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.create_snapshot_worker import CreateSnapshotWorker
-
-from datetime import datetime
+from  ..local_config import LocalConfig
 
 import logging
 log = logging.getLogger(__name__)
@@ -51,6 +51,9 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
         self.uiRestorePushButton.clicked.connect(self._restoreSnapshotSlot)
         self.uiSnapshotsList.itemDoubleClicked.connect(self._snapshotDoubleClickedSlot)
         self._listSnapshots()
+
+        self.uiIncludeSnapshots.setChecked(LocalConfig.instance().includeSnapshots())
+        self.uiIncludeSnapshots.stateChanged.connect(self._includeSnapshotsChangedSlot)
 
     def _listSnapshots(self):
         """
@@ -155,3 +158,9 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
         snapshot_id = item.data(QtCore.Qt.UserRole)
         self._restoreSnapshot(snapshot_id)
+
+    def _includeSnapshotsChangedSlot(self, value):
+        """
+        Slot for receiving if include_snapshots changes
+        """
+        LocalConfig.instance().setIncludeSnapshots(value > 1)

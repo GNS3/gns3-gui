@@ -363,3 +363,8 @@ def test_migrateRemoveInternetVM(tmpdir):
 
 def test_runAsRootPath(local_config):
     assert 'run_as_root' in local_config.runAsRootPath()
+
+def test_include_snapshots(local_config):
+    assert local_config.includeSnapshots()
+    local_config.setIncludeSnapshots(False)
+    assert not local_config.includeSnapshots()

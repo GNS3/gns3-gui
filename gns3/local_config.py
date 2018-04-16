@@ -492,6 +492,21 @@ class LocalConfig(QtCore.QObject):
         settings["show_interface_labels_on_new_project"] = value
         self.saveSectionSettings("GraphicsView", settings)
 
+    def includeSnapshots(self):
+        """
+        :returns: Boolean. True if we need to include snapshots in previous snapshots
+        """
+
+        from gns3.settings import GENERAL_SETTINGS
+        return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS) \
+                .get("include_snapshots", True)
+
+    def setIncludeSnapshots(self, value):
+        from gns3.settings import GENERAL_SETTINGS
+        settings = self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)
+        settings["include_snapshots"] = value
+        self.saveSectionSettings("MainWindow", settings)
+
     @staticmethod
     def instance():
         """
