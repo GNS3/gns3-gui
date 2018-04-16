@@ -50,7 +50,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         if super().validateCurrentPage() is False:
             return False
 
-        if self.currentPage() == self.uiVirtualBoxWizardPage:
+        if self.currentPage() == self.uiVMwareWizardPage:
             if not self.uiVMListComboBox.count():
                 QtWidgets.QMessageBox.critical(self, "VMware VMs", "There is no VMware VM available!")
                 return False
@@ -59,7 +59,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
-        if self.page(page_id) == self.uiVirtualBoxWizardPage:
+        if self.page(page_id) == self.uiVMwareWizardPage:
             self.uiVMListComboBox.clear()
             Controller.instance().getCompute("/vmware/vms", self._compute_id, self._getVMwareVMsFromServerCallback, progressText="Listing VMware VMs...")
 
