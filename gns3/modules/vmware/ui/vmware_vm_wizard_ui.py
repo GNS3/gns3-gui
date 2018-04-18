@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_wizard.ui'
 #
-# Created: Tue Sep 20 17:45:46 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_VMwareVMWizard(object):
     def setupUi(self, VMwareVMWizard):
         VMwareVMWizard.setObjectName("VMwareVMWizard")
-        VMwareVMWizard.resize(598, 453)
+        VMwareVMWizard.resize(755, 453)
         VMwareVMWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -48,14 +47,14 @@ class Ui_VMwareVMWizard(object):
         self.gridLayout_8.addWidget(self.uiRemoteServersLabel, 0, 0, 1, 1)
         self.gridLayout_2.addWidget(self.uiRemoteServersGroupBox, 1, 0, 1, 1)
         VMwareVMWizard.addPage(self.uiServerWizardPage)
-        self.uiVirtualBoxWizardPage = QtWidgets.QWizardPage()
-        self.uiVirtualBoxWizardPage.setObjectName("uiVirtualBoxWizardPage")
-        self.gridLayout = QtWidgets.QGridLayout(self.uiVirtualBoxWizardPage)
+        self.uiVMwareWizardPage = QtWidgets.QWizardPage()
+        self.uiVMwareWizardPage.setObjectName("uiVMwareWizardPage")
+        self.gridLayout = QtWidgets.QGridLayout(self.uiVMwareWizardPage)
         self.gridLayout.setObjectName("gridLayout")
-        self.uiVMListLabel = QtWidgets.QLabel(self.uiVirtualBoxWizardPage)
+        self.uiVMListLabel = QtWidgets.QLabel(self.uiVMwareWizardPage)
         self.uiVMListLabel.setObjectName("uiVMListLabel")
         self.gridLayout.addWidget(self.uiVMListLabel, 0, 0, 1, 1)
-        self.uiVMListComboBox = QtWidgets.QComboBox(self.uiVirtualBoxWizardPage)
+        self.uiVMListComboBox = QtWidgets.QComboBox(self.uiVMwareWizardPage)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -63,11 +62,11 @@ class Ui_VMwareVMWizard(object):
         self.uiVMListComboBox.setSizePolicy(sizePolicy)
         self.uiVMListComboBox.setObjectName("uiVMListComboBox")
         self.gridLayout.addWidget(self.uiVMListComboBox, 0, 1, 1, 1)
-        self.uiBaseVMCheckBox = QtWidgets.QCheckBox(self.uiVirtualBoxWizardPage)
+        self.uiBaseVMCheckBox = QtWidgets.QCheckBox(self.uiVMwareWizardPage)
         self.uiBaseVMCheckBox.setEnabled(True)
         self.uiBaseVMCheckBox.setObjectName("uiBaseVMCheckBox")
         self.gridLayout.addWidget(self.uiBaseVMCheckBox, 1, 0, 1, 2)
-        VMwareVMWizard.addPage(self.uiVirtualBoxWizardPage)
+        VMwareVMWizard.addPage(self.uiVMwareWizardPage)
 
         self.retranslateUi(VMwareVMWizard)
         QtCore.QMetaObject.connectSlotsByName(VMwareVMWizard)
@@ -82,8 +81,8 @@ class Ui_VMwareVMWizard(object):
         self.uiLocalRadioButton.setText(_translate("VMwareVMWizard", "Run this VMware VM on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("VMwareVMWizard", "Remote servers"))
         self.uiRemoteServersLabel.setText(_translate("VMwareVMWizard", "Run on server:"))
-        self.uiVirtualBoxWizardPage.setTitle(_translate("VMwareVMWizard", "VMware Virtual Machine"))
-        self.uiVirtualBoxWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a VMware virtual machine from the list."))
+        self.uiVMwareWizardPage.setTitle(_translate("VMwareVMWizard", "VMware Virtual Machine"))
+        self.uiVMwareWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a VMware virtual machine from the list."))
         self.uiVMListLabel.setText(_translate("VMwareVMWizard", "VM list:"))
         self.uiBaseVMCheckBox.setText(_translate("VMwareVMWizard", "Use as a linked base VM (experimental)"))
 

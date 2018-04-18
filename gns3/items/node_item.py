@@ -41,7 +41,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
     """
 
     show_layer = False
-    GRID_SIZE = 75
 
     def __init__(self, node):
         super().__init__()
@@ -110,10 +109,12 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             self.createdSlot(node.id())
 
     def _snapToGrid(self):
+
+        grid_size = self._main_window.uiGraphicsView.gridSize()
         mid_x = self.boundingRect().width() / 2
-        x = (self.GRID_SIZE * round((self.x() + mid_x) / self.GRID_SIZE)) - mid_x
+        x = (grid_size * round((self.x() + mid_x) / grid_size)) - mid_x
         mid_y = self.boundingRect().height() / 2
-        y = (self.GRID_SIZE * round((self.y() + mid_y) / self.GRID_SIZE)) - mid_y
+        y = (grid_size * round((self.y() + mid_y) / grid_size)) - mid_y
         self.setPos(x, y)
 
     def updateNode(self):
@@ -464,10 +465,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if change == QtWidgets.QGraphicsItem.ItemPositionChange and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
+            grid_size = self._main_window.uiGraphicsView.gridSize()
             mid_x = self.boundingRect().width() / 2
-            value.setX((self.GRID_SIZE * round((value.x() + mid_x) / self.GRID_SIZE)) - mid_x)
+            value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)
             mid_y = self.boundingRect().height() / 2
-            value.setY((self.GRID_SIZE * round((value.y() + mid_y) / self.GRID_SIZE)) - mid_y)
+            value.setY((grid_size * round((value.y() + mid_y) / grid_size)) - mid_y)
 
         # dynamically change the renderer when this node item is selected/unselected.
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:

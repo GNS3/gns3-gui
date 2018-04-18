@@ -327,8 +327,12 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if index != -1:
             self.uiQemuListComboBox.setCurrentIndex(index)
         else:
-            QtWidgets.QMessageBox.critical(self, "Qemu", "Could not find {} in the Qemu binaries list".format(qemu_path))
-            self.uiQemuListComboBox.clear()
+            index = self.uiQemuListComboBox.findData("{path}".format(path=os.path.basename(qemu_path)), flags=QtCore.Qt.MatchEndsWith)
+            self.uiQemuListComboBox.setCurrentIndex(index)
+            if index == -1:
+                QtWidgets.QMessageBox.warning(self, "Qemu","Could not find '{}' in the Qemu binaries list, please select a new binary".format(qemu_path))
+            else:
+                QtWidgets.QMessageBox.warning(self, "Qemu","Could not find '{}' in the Qemu binaries list, an alternative path has been selected".format(qemu_path))
 
     def _cpuThrottlingChangedSlot(self, state):
         """
@@ -420,11 +424,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             QtWidgets.QMessageBox.warning(self, "Qemu", "Server {} is not running, cannot retrieve the QEMU binaries list".format(settings["server"]))
         else:
             callback = qpartial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
-            try:
-                Qemu.instance().getQemuBinariesFromServer(self._compute_id, callback)
-            except ModuleError as e:
-                QtWidgets.QMessageBox.critical(self, "Qemu", "Error while getting the QEMU binaries list: {}".format(e))
-                self.uiQemuListComboBox.clear()
+            Qemu.instance().getQemuBinariesFromServer(self._compute_id, callback)
 
         if not group:
             # set the device name
@@ -622,9 +622,13 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
             settings["first_port_name"] = self.uiFirstPortNameLineEdit.text().strip()
 
-        if self.uiQemuListComboBox.count():
+        if self.uiQemuListComboBox.currentIndex() != -1:
             qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
             settings["qemu_path"] = qemu_path
+        else:
+            QtWidgets.QMessageBox.critical(self, "Qemu binary", "Please select a Qemu binary")
+            if node:
+                raise ConfigurationError()
 
         settings["boot_priority"] = self.uiBootPriorityComboBox.itemData(self.uiBootPriorityComboBox.currentIndex())
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()

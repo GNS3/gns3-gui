@@ -76,9 +76,12 @@ class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWi
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
             self.uiIPAddressLineEdit.setText(settings["ip_address"])
+            self.uiDefaultDestinationLineEdit.setText(settings["default_destination"])
         else:
             self.uiIPAddressLabel.hide()
             self.uiIPAddressLineEdit.hide()
+            self.uiDefaultDestinationLabel.hide()
+            self.uiDefaultDestinationLineEdit.hide()
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
 
@@ -128,7 +131,7 @@ class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWi
             else:
                 settings["name"] = name
 
-            ip_address = self.uiIPAddressLineEdit.text()
+            ip_address = self.uiIPAddressLineEdit.text().strip()
             if ip_address:
                 try:
                     ipaddress.IPv4Address(ip_address)
@@ -137,6 +140,8 @@ class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWi
                     QtWidgets.QMessageBox.critical(self, "IP address", "Invalid IP address format")
                     if node:
                         raise ConfigurationError()
+
+            settings["default_destination"] = self.uiDefaultDestinationLineEdit.text().strip()
 
         if not node:
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()

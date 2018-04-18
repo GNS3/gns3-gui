@@ -41,8 +41,10 @@ class TraceNGNode(Node):
         super().__init__(module, server, project)
 
         traceng_settings = {"console_type": "none",
-                            "ip_address": ""}
+                            "ip_address": "",
+                            "default_destination": ""}
 
+        self._last_destination = ""
         self.settings().update(traceng_settings)
 
     def start(self):
@@ -54,11 +56,20 @@ class TraceNGNode(Node):
             log.debug("{} is already running".format(self.name()))
             return
 
-        destination, ok = QtWidgets.QInputDialog.getText(self.parent(), "TraceNG", "Destination host or IP address:")
+        if self._last_destination:
+            destination = self._last_destination
+        else:
+            destination = self.settings()["default_destination"]
+        destination, ok = QtWidgets.QInputDialog.getText(self.parent(), "TraceNG", "Destination host or IP address:", text=destination)
         if ok:
             if not destination:
                 QtWidgets.QMessageBox.critical(self, "TraceNG", "Please provide a host or IP address to trace")
                 return
+            ip_address = self.settings()["ip_address"]
+            if destination == ip_address:
+                QtWidgets.QMessageBox.critical(self, "TraceNG", "Destination cannot be the same as this node IP address ({})".format(ip_address))
+                return
+            self._last_destination = destination
             params = {"destination": destination}
             log.debug("{} is starting".format(self.name()))
             self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, body=params, timeout=None, progressText="{} is starting".format(self.name()))
