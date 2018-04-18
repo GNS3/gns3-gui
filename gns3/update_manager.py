@@ -73,6 +73,9 @@ class UpdateManager(QtCore.QObject):
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
         request.setRawHeader(b'User-Agent', b'GNS3 Check For Update')
         request.setAttribute(QtNetwork.QNetworkRequest.User, user_attribute)
+        if parse_version(QtCore.QT_VERSION_STR) >= parse_version("5.6.0") and parse_version(QtCore.PYQT_VERSION_STR) >= parse_version("5.6.0"):
+            # follow redirects only supported starting with Qt 5.6.0
+            request.setAttribute(QtNetwork.QNetworkRequest.FollowRedirectsAttribute, True)
         reply = self._network_manager.get(request)
         reply.finished.connect(finished_slot)
         log.debug('Download %s', url)
@@ -90,7 +93,7 @@ class UpdateManager(QtCore.QObject):
         self._parent = parent
 
         if hasattr(sys, "frozen") and LocalConfig.instance().experimental():
-            url = 'https://pypi.python.org/pypi/gns3-gui/json'
+            url = 'https://pypi.org/pypi/gns3-gui/json'
             self._get(url, self._pypiReplySlot)
         else:
             self._get('http://update.gns3.net', self._gns3UpdateReplySlot)
@@ -130,7 +133,9 @@ class UpdateManager(QtCore.QObject):
             body = bytes(network_reply.readAll()).decode("utf-8")
             body = json.loads(body)
         except (UnicodeEncodeError, ValueError) as e:
-            log.warning("Invalid answer from the PyPi server")
+            log.warning("Invalid answer from the PyPi server: {}".format(e))
+            QtWidgets.QMessageBox.critical(self._parent, "Check For Update", "Invalid answer from PyPi server")
+            return
 
         last_version = self._getLastMinorVersionFromPyPiReply(body)
         if parse_version(last_version) > parse_version(version.__version__):
@@ -154,6 +159,7 @@ class UpdateManager(QtCore.QObject):
 
         If no valid version is found it's return the current.
         """
+
         current_version = parse_version(version.__version__)
         for release in sorted(body['releases'].keys(), reverse=True):
             release_version = parse_version(release)
