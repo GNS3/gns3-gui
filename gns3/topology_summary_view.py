@@ -99,7 +99,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         if self._node.consoleType() and self._node.console():
             self.setText(1, "{} {}:{}".format(self._node.consoleType(), self._node.consoleHost(), self._node.console()))
         else:
-            self.setText(1, "not supported")
+            self.setText(1, "none")
         self.refreshLinks()
         self._parent.invisibleRootItem().sortChildren(0, QtCore.Qt.AscendingOrder)
 
