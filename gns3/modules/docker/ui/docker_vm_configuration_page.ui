@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>613</width>
-    <height>519</height>
+    <height>524</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,16 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item row="0" column="1">
@@ -262,6 +271,45 @@
         <widget class="QLineEdit" name="uiHttpConsolePathLineEdit"/>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="advancedTab">
+      <attribute name="title">
+       <string>Advanced</string>
+      </attribute>
+      <widget class="QLabel" name="uiExtraHostsLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>152</width>
+         <height>82</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Extra hosts added to 
+/etc/hosts file.
+(hostname:IP, one per line)</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QTextEdit" name="uiExtraHostsTextEdit">
+       <property name="geometry">
+        <rect>
+         <x>168</x>
+         <y>10</y>
+         <width>413</width>
+         <height>82</height>
+        </rect>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>

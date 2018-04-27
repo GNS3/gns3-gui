@@ -49,7 +49,8 @@ class DockerVM(Node):
                               "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
                               "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"],
                               "console_http_port": DOCKER_CONTAINER_SETTINGS["console_http_port"],
-                              "console_http_path": DOCKER_CONTAINER_SETTINGS["console_http_path"]}
+                              "console_http_path": DOCKER_CONTAINER_SETTINGS["console_http_path"],
+                              "extra_hosts": DOCKER_CONTAINER_SETTINGS["extra_hosts"]}
 
         self.settings().update(docker_vm_settings)
 

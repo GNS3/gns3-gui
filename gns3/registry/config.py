@@ -174,6 +174,7 @@ class Config:
         new_config["console_type"] = appliance_config["docker"].get("console_type", "telnet")
         new_config["console_http_port"] = appliance_config["docker"].get("console_http_port", 80)
         new_config["console_http_path"] = appliance_config["docker"].get("console_http_path", "/")
+        new_config["extra_hosts"] = appliance_config["docker"].get("extra_hosts", "")
         self._config["Docker"]["containers"].append(new_config)
 
     def _add_dynamips_config(self, new_config, appliance_config):

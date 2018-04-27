@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/modules/docker/ui/docker_vm_configuration_page.ui'
 #
-# Created: Thu Jan  5 14:49:45 2017
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.8.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_dockerVMConfigPageWidget(object):
     def setupUi(self, dockerVMConfigPageWidget):
         dockerVMConfigPageWidget.setObjectName("dockerVMConfigPageWidget")
-        dockerVMConfigPageWidget.resize(613, 519)
+        dockerVMConfigPageWidget.resize(613, 524)
         self.verticalLayout = QtWidgets.QVBoxLayout(dockerVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(dockerVMConfigPageWidget)
@@ -122,6 +121,21 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiHttpConsolePathLineEdit.setObjectName("uiHttpConsolePathLineEdit")
         self.gridLayout.addWidget(self.uiHttpConsolePathLineEdit, 9, 1, 1, 1)
         self.uiTabWidget.addTab(self.tab, "")
+        self.advancedTab = QtWidgets.QWidget()
+        self.advancedTab.setObjectName("advancedTab")
+        self.uiExtraHostsLabel = QtWidgets.QLabel(self.advancedTab)
+        self.uiExtraHostsLabel.setGeometry(QtCore.QRect(10, 10, 152, 82))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiExtraHostsLabel.sizePolicy().hasHeightForWidth())
+        self.uiExtraHostsLabel.setSizePolicy(sizePolicy)
+        self.uiExtraHostsLabel.setWordWrap(True)
+        self.uiExtraHostsLabel.setObjectName("uiExtraHostsLabel")
+        self.uiExtraHostsTextEdit = QtWidgets.QTextEdit(self.advancedTab)
+        self.uiExtraHostsTextEdit.setGeometry(QtCore.QRect(168, 10, 413, 82))
+        self.uiExtraHostsTextEdit.setObjectName("uiExtraHostsTextEdit")
+        self.uiTabWidget.addTab(self.advancedTab, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
@@ -164,4 +178,8 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiConsoleResolutionLabel.setText(_translate("dockerVMConfigPageWidget", "VNC console resolution:"))
         self.label_2.setText(_translate("dockerVMConfigPageWidget", "HTTP path:"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("dockerVMConfigPageWidget", "General settings"))
+        self.uiExtraHostsLabel.setText(_translate("dockerVMConfigPageWidget", "Extra hosts added to \n"
+"/etc/hosts file.\n"
+"(hostname:IP, one per line)"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.advancedTab), _translate("dockerVMConfigPageWidget", "Advanced"))
 

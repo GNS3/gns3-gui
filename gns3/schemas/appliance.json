@@ -131,6 +131,10 @@
             "console_http_path": {
                 "description": "Path of the web interface",
                 "type": "string"
+            },
+            "extra_hosts": {
+                "description": "Hosts which will be written to /etc/hosts into container" ,
+                "type": "string"
             }
         },
         "required": [
