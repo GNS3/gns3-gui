@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.1.5 18/04/2018
+
+* Fix Qemu binary list locks when a version is deleted. Fixes #2474.
+* Fix invalid answer from the PyPi server. Fixes #2473.
+* Fix wrong wizard page name.
+* Grid size support for projects. Fixes #2469.
+* Remove 'include INSTALL' from MANIFEST. Fixes #2470.
+* Check for valid IP address and prevent to run on non-Windows platforms.
+
 ## 2.1.4 12/03/2018
 
 * Update node on server on any change, Fixes: #2429
