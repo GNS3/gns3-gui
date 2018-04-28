@@ -284,7 +284,11 @@ class Project(QtCore.QObject):
         """
         Duplicate a project
         """
-        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id), qpartial(self._duplicateCallback, callback), body={"name": name, "path": path}, timeout=None)
+        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id),
+                                   qpartial(self._duplicateCallback, callback),
+                                   body={"name": name, "path": path},
+                                   progressText="Duplicating project '{}'...".format(name),
+                                   timeout=None)
 
     def _duplicateCallback(self, callback, result, error=False, **kwargs):
         if error:

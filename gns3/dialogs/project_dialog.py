@@ -106,6 +106,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             Controller.instance().deleteProject(project_id)
 
     def _duplicateProjectSlot(self):
+
         if len(self.uiProjectsTreeWidget.selectedItems()) == 0:
             QtWidgets.QMessageBox.critical(self, "Duplicate project", "No project selected")
             return
@@ -135,12 +136,16 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 if Controller.instance().isRemote():
                     Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
                                                self._duplicateCallback,
-                                               body={"name": name})
+                                               body={"name": name},
+                                               progressText="Duplicating project '{}'...".format(name),
+                                               timeout=None)
                 else:
                     project_location = os.path.join(Topology.instance().projectsDirPath(), name)
                     Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
                                                self._duplicateCallback,
-                                               body={"name": name, "path": project_location})
+                                               body={"name": name, "path": project_location},
+                                               progressText="Duplicating project '{}'...".format(name),
+                                               timeout=None)
 
     def _duplicateCallback(self, result, error=False, **kwargs):
         if error:

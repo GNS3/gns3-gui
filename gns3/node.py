@@ -258,6 +258,7 @@ class Node(BaseNode):
             node_id=self._node_id),
             self._duplicateCallback,
             body=body,
+            progressText="Duplicating node {}...".format(self.name()),
             timeout=None)
 
     def _duplicateCallback(self, result, error=False, **kwargs):
