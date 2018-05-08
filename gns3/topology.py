@@ -168,6 +168,7 @@ class Topology(QtCore.QObject):
 
             self._main_window.uiGraphicsView.setZoom(self._project.zoom())
 
+
     def createLoadProject(self, project_settings):
         """
         Create load a project based on settings, not on the .gns3

@@ -72,6 +72,8 @@ class Project(QtCore.QObject):
         self._grid_size = graphic_settings.get("grid_size", 75)
         self._show_interface_labels = graphic_settings.get("show_interface_labels", False)
         self._show_interface_labels_on_new_project = config.showInterfaceLabelsOnNewProject()
+        self._variables = None
+        self._supplier = None
 
         self._name = "untitled"
         self._filename = None
@@ -207,6 +209,32 @@ class Project(QtCore.QObject):
         :return: boolean
         """
         return self._show_interface_labels
+
+    def setVariables(self, variables):
+        """
+        Sets variables of project
+        """
+        self._variables = variables
+
+    def variables(self):
+        """
+        Returns variables assigned to the project
+        :return: boolean
+        """
+        return self._variables
+
+    def setSupplier(self, supplier):
+        """
+        Sets supplier of project
+        """
+        self._supplier = supplier
+
+    def supplier(self):
+        """
+        Returns supplier
+        :return: boolean
+        """
+        return self._supplier
 
     def setName(self, name):
         """
@@ -413,7 +441,9 @@ class Project(QtCore.QObject):
             "snap_to_grid": self._snap_to_grid,
             "show_grid": self._show_grid,
             "grid_size": self._grid_size,
-            "show_interface_labels": self._show_interface_labels
+            "show_interface_labels": self._show_interface_labels,
+            "variables": self._variables,
+            "supplier": self._supplier
         }
         self.put("", self._projectUpdatedCallback, body=body)
 
@@ -453,6 +483,9 @@ class Project(QtCore.QObject):
         self._show_layers = result.get("show_layers", False)
         self._snap_to_grid = result.get("snap_to_grid", False)
         self._show_grid = result.get("show_grid", False)
+        self._variables = result.get("variables", None)
+        self._supplier = result.get("supplier", None)
+
         grid_size = result.get("grid_size", None)
         if grid_size:
             self._grid_size = grid_size
