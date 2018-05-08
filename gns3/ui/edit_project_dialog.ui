@@ -25,7 +25,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="uiGeneralTab">
       <attribute name="title">
        <string>General</string>
       </attribute>
@@ -126,7 +126,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="uiGlobalVariablesTab">
       <attribute name="title">
        <string>Global variables</string>
       </attribute>
