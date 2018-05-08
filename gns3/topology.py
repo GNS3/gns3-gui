@@ -168,6 +168,13 @@ class Topology(QtCore.QObject):
 
             self._main_window.uiGraphicsView.setZoom(self._project.zoom())
 
+            supplier = self._project.supplier()
+            if supplier:
+                self._main_window.uiGraphicsView.addLogo(
+                    supplier.get('logo', None),
+                    supplier.get('url', None)
+                )
+
 
     def createLoadProject(self, project_settings):
         """
