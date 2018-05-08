@@ -29,7 +29,7 @@
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout" name="uiGeneralGrid">
        <item row="2" column="0">
         <widget class="QLabel" name="uiSceneWidthLabel">
          <property name="text">
@@ -130,7 +130,7 @@
       <attribute name="title">
        <string>Global variables</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_4"/>
+      <layout class="QGridLayout" name="uiGlobalVariablesGrid"/>
      </widget>
     </widget>
    </item>
