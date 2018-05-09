@@ -465,7 +465,6 @@ class Project(QtCore.QObject):
             self._closing = False
             self._startListenNotifications()
 
-        self.project_created_signal.emit()
         self.project_updated_signal.emit()
         self.project_loaded_signal.emit()
 
