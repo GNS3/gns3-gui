@@ -128,4 +128,4 @@ class LogoItem(QtSvg.QGraphicsSvgItem):
     def mousePressEvent(self, event):
         url = QtCore.QUrl(self._logo_url)
         if not QtGui.QDesktopServices.openUrl(url):
-            QtGui.QMessageBox.warning(self, 'Open Url', 'Could not open url')
+            QtWidgets.QMessageBox.warning(self, 'Open Url', 'Could not open url')

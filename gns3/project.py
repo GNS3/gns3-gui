@@ -49,6 +49,7 @@ class Project(QtCore.QObject):
     # Called when project is fully loaded
     project_loaded_signal = QtCore.Signal()
 
+
     def __init__(self):
 
         self._id = None
@@ -463,6 +464,8 @@ class Project(QtCore.QObject):
             self._closed = False
             self._closing = False
             self._startListenNotifications()
+
+        self.project_created_signal.emit()
         self.project_updated_signal.emit()
         self.project_loaded_signal.emit()
 
