@@ -82,7 +82,7 @@ class ProjectWelcomeDialog(QtWidgets.QDialog, Ui_ProjectWelcomeDialog):
             if reply == QtWidgets.QMessageBox.No:
                 return
 
-        self._project.variables = self._variables
+        self._project.setVariables(self._variables)
         self._project.update()
         self.accept()
 
