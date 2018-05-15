@@ -67,6 +67,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         self.uiConsoleResolutionComboBox.setCurrentIndex(self.uiConsoleResolutionComboBox.findText(settings["console_resolution"]))
         self.uiConsoleHttpPortSpinBox.setValue(settings["console_http_port"])
         self.uiHttpConsolePathLineEdit.setText(settings["console_http_path"])
+        self.uiExtraHostsTextEdit.setText(settings["extra_hosts"])
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -128,6 +129,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         settings["console_resolution"] = self.uiConsoleResolutionComboBox.currentText()
         settings["console_http_port"] = self.uiConsoleHttpPortSpinBox.value()
         settings["console_http_path"] = self.uiHttpConsolePathLineEdit.text()
+        settings["extra_hosts"] = self.uiExtraHostsTextEdit.toPlainText()
 
         if not group:
             adapters = self.uiAdapterSpinBox.value()

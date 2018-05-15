@@ -61,7 +61,6 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         return section_item
 
     def _refreshInfo(self, docker_image):
-
         self.uiDockerVMInfoTreeWidget.clear()
 
         # fill out the General section
@@ -78,6 +77,9 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
             QtWidgets.QTreeWidgetItem(section_item, ["Start command:", str(docker_image["start_command"])])
         if docker_image["environment"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Environment:", str(docker_image["environment"])])
+
+        if docker_image["extra_hosts"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Extra hosts:", str(docker_image["extra_hosts"])])
 
         self.uiDockerVMInfoTreeWidget.expandAll()
         self.uiDockerVMInfoTreeWidget.resizeColumnToContents(0)

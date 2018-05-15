@@ -30,6 +30,7 @@ from .utils.progress_dialog import ProgressDialog
 from .utils.export_project_worker import ExportProjectWorker
 from .utils.import_project_worker import ImportProjectWorker
 from .dialogs.file_editor_dialog import FileEditorDialog
+from .dialogs.project_welcome_dialog import ProjectWelcomeDialog
 
 from .modules import MODULES
 from .modules.module_error import ModuleError
@@ -134,6 +135,7 @@ class Topology(QtCore.QObject):
 
         self.project_changed_signal.emit()
 
+
     def _projectUpdatedSlot(self):
         if not self._project or not self._project.filesDir() or not self._project.filename():
             return
@@ -168,12 +170,29 @@ class Topology(QtCore.QObject):
 
             self._main_window.uiGraphicsView.setZoom(self._project.zoom())
 
+            supplier = self._project.supplier()
+            if supplier:
+                self._main_window.uiGraphicsView.addLogo(
+                    supplier.get('logo', None),
+                    supplier.get('url', None)
+                )
+
+            self._displayProjectWelcomeDialog()
+
+    def _displayProjectWelcomeDialog(self):
+        variables = self.project().variables()
+        if variables:
+            missing = [v for v in variables if v.get("value", "").strip() == ""]
+            if len(missing) > 0:
+                dialog = ProjectWelcomeDialog(self._main_window, self.project())
+                dialog.show()
+                dialog.exec_()
+
     def createLoadProject(self, project_settings):
         """
         Create load a project based on settings, not on the .gns3
         """
         self.setProject(None)
-
         from .project import Project
         project = Project()
 

@@ -60,6 +60,7 @@ from .items.rectangle_item import RectangleItem
 from .items.line_item import LineItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
+from .items.logo_item import  LogoItem
 
 log = logging.getLogger(__name__)
 
@@ -293,6 +294,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         image_item.create()
         self.scene().addItem(image_item)
         self._topology.addDrawing(image_item)
+
+    def addLogo(self, logo_path, logo_url):
+        logo_item = LogoItem(logo_path, logo_url, self._topology.project())
+        self.scene().addItem(logo_item)
 
     def addLink(self, source_node, source_port, destination_node, destination_port, **link_data):
         """
