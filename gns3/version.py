@@ -24,7 +24,7 @@
 # number has been incremented)
 
 __version__ = "2.1.6"
-__version_info__ = (2, 1, 6, 99)
+__version_info__ = (2, 1, 6, 0)
 
 # If it's a git checkout try to add the commit
 if "dev" in __version__:

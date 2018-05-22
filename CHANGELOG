@@ -1,5 +1,19 @@
 # Change Log
 
+## 2.1.6 22/05/2018
+
+* Ask for global variables when project is loaded
+* Add/Edit global variables of project
+* Rename tabs at Edit Project
+* Global variables tab on Edit project
+* Support of supplier logo and url
+* Add missing crowdfunder name in About dialog.
+* Project variables and supplier
+* No timeout when duplicating a project.
+* No timeout when restoring snapshot.
+* Add advanced settings for docker and ExtraHosts param, Ref. #2482
+* Replace "not supported" by "none" in topology summary view.
+
 ## 2.1.5 18/04/2018
 
 * Fix Qemu binary list locks when a version is deleted. Fixes #2474.
