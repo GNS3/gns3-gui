@@ -419,12 +419,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         is_not_link = True
+        is_not_logo = True
+
         item = self.itemAt(event.pos())
         if item and sip.isdeleted(item):
             return
 
         if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
             is_not_link = False
+        if item and (isinstance(item, LogoItem) or isinstance(item.parentItem(), LogoItem)):
+            is_not_logo = False
         else:
             for it in self.scene().items():
                 if isinstance(it, LinkItem):
@@ -444,7 +448,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 item.setSelected(False)
             else:
                 item.setSelected(True)
-        elif is_not_link and event.button() == QtCore.Qt.RightButton and not self._adding_link:
+        elif is_not_link and is_not_logo and event.button() == QtCore.Qt.RightButton and not self._adding_link:
             if item and not sip.isdeleted(item):
                 # Prevent right clicking on a selected item from de-selecting all other items
                 if not item.isSelected():
