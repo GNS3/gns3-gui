@@ -102,9 +102,14 @@ class LogoItem(QtSvg.QGraphicsSvgItem):
         width = self._main_window.uiGraphicsView.viewport().width()
         height = self._main_window.uiGraphicsView.viewport().height()
         rect = self._main_window.uiGraphicsView.mapToScene(QtCore.QRect(0, 0, width, height)).boundingRect()
-        self.setX(rect.x() + rect.width() - self.MARGIN - logo_rect.width())
-        self.setY(rect.y() + rect.height() - self.MARGIN - logo_rect.height())
-        self.update()
+        x = rect.x() + rect.width() - self.MARGIN - logo_rect.width()
+        y = rect.y() + rect.height() - self.MARGIN - logo_rect.height()
+
+        # update only when changes
+        if [int(self.x()), int(self.y())] != [int(x), int(y)]:
+            self.setX(x)
+            self.setY(y)
+            self.update()
 
     def hoverEnterEvent(self, event):
         """
