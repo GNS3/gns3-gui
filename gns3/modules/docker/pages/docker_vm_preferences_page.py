@@ -90,6 +90,9 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         if docker_image["environment"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Environment:", str(docker_image["environment"])])
 
+        if docker_image["extra_hosts"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Extra hosts:", str(docker_image["extra_hosts"])])
+
         self.uiDockerVMInfoTreeWidget.expandAll()
         self.uiDockerVMInfoTreeWidget.resizeColumnToContents(0)
         self.uiDockerVMInfoTreeWidget.resizeColumnToContents(1)

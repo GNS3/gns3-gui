@@ -93,17 +93,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
         else:
             first_port_name = self.uiFirstPortNameLineEdit.text().strip()
             port_name_format = self.uiPortNameFormatLineEdit.text()
-            if '{0}' not in port_name_format and '{port0}' not in port_name_format and '{port1}' not in port_name_format:
-                QtWidgets.QMessageBox.critical(self, "Port name format",
-                                               "The format must contain at least {0}, {port0} or {port1}")
-                return
-
             port_segment_size = self.uiPortSegmentSizeSpinBox.value()
-            if port_segment_size and '{1}' not in port_name_format and '{segment0}' not in port_name_format and '{segment1}' not in port_name_format:
-                QtWidgets.QMessageBox.critical(self, "Port name format",
-                                               "The format must contain {1}, {segment0} or {segment1} if the segment size is not 0")
-                return
-
             adapters = self.uiAdaptersSpinBox.value()
             default_adapter = self.uiAdapterTypesComboBox.currentText()
 
@@ -243,21 +233,21 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
 
             symbol_path = self.uiSymbolLineEdit.text()
             settings["symbol"] = symbol_path
-
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
+
             port_name_format = self.uiPortNameFormatLineEdit.text()
-            if '{0}' not in port_name_format and '{port0}' not in port_name_format and '{port1}' not in port_name_format:
-                QtWidgets.QMessageBox.critical(self, "Port name format", "The format must contain at least {0}, {port0} or {port1}")
-            else:
-                settings["port_name_format"] = self.uiPortNameFormatLineEdit.text()
-
             port_segment_size = self.uiPortSegmentSizeSpinBox.value()
-            if port_segment_size and '{1}' not in port_name_format and '{segment0}' not in port_name_format and '{segment1}' not in port_name_format:
-                QtWidgets.QMessageBox.critical(self, "Port name format", "If the segment size is not 0, the format must contain {1}, {segment0} or {segment1}")
-            else:
-                settings["port_segment_size"] = port_segment_size
+            first_port_name = self.uiFirstPortNameLineEdit.text().strip()
 
-            settings["first_port_name"] = self.uiFirstPortNameLineEdit.text().strip()
+            try:
+                StandardPortNameFactory(self.uiAdaptersSpinBox.value(), first_port_name, port_name_format, port_segment_size)
+            except (ValueError, KeyError):
+                QtWidgets.QMessageBox.critical(self, "Invalid format", "Invalid port name format")
+                raise ConfigurationError()
+
+            settings["port_name_format"] = self.uiPortNameFormatLineEdit.text()
+            settings["port_segment_size"] = port_segment_size
+            settings["first_port_name"] = first_port_name
 
         settings["adapter_type"] = self.uiAdapterTypesComboBox.currentText()
         settings["use_any_adapter"] = self.uiUseAnyAdapterCheckBox.isChecked()

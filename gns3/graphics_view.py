@@ -60,6 +60,7 @@ from .items.rectangle_item import RectangleItem
 from .items.line_item import LineItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
+from .items.logo_item import  LogoItem
 
 log = logging.getLogger(__name__)
 
@@ -296,6 +297,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.scene().addItem(image_item)
         self._topology.addDrawing(image_item)
 
+    def addLogo(self, logo_path, logo_url):
+        logo_item = LogoItem(logo_path, logo_url, self._topology.project())
+        self.scene().addItem(logo_item)
+
     def addLink(self, source_node, source_port, destination_node, destination_port, **link_data):
         """
         Creates a Link instance representing a connection between 2 devices.
@@ -416,12 +421,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         is_not_link = True
+        is_not_logo = True
+
         item = self.itemAt(event.pos())
         if item and sip.isdeleted(item):
             return
 
         if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
             is_not_link = False
+        if item and (isinstance(item, LogoItem) or isinstance(item.parentItem(), LogoItem)):
+            is_not_logo = False
         else:
             for it in self.scene().items():
                 if isinstance(it, LinkItem):
@@ -441,7 +450,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 item.setSelected(False)
             else:
                 item.setSelected(True)
-        elif is_not_link and event.button() == QtCore.Qt.RightButton and not self._adding_link:
+        elif is_not_link and is_not_logo and event.button() == QtCore.Qt.RightButton and not self._adding_link:
             if item and not sip.isdeleted(item):
                 # Prevent right clicking on a selected item from de-selecting all other items
                 if not item.isSelected():

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtWidgets
+from ..qt import QtWidgets, QtCore, qslot, qpartial
 from ..topology import Topology
 from ..ui.edit_project_dialog_ui import Ui_EditProjectDialog
 
@@ -38,6 +38,67 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         self.uiSceneHeightSpinBox.setValue(self._project.sceneHeight())
         self.uiGridSizeSpinBox.setValue(self._project.gridSize())
 
+        self.uiGlobalVariablesGrid.setAlignment(QtCore.Qt.AlignTop)
+
+        self.uiNewVarButton = QtWidgets.QPushButton('Add new variable', self)
+        self.uiNewVarButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        self.uiNewVarButton.clicked.connect(self.onAddNewVariable)
+        self.uiGlobalVariablesGrid.addWidget(self.uiNewVarButton, 0, 3, QtCore.Qt.AlignRight)
+
+        self._variables = self.setUpVariables()
+        self.updateGlobalVariables()
+
+    def setUpVariables(self):
+        new_variable = {"name": "", "value": ""}
+        variables = self._project.variables()
+
+        if variables is not None:
+            variables.append(new_variable)
+        else:
+            variables = [new_variable]
+        return variables
+
+    def updateGlobalVariables(self):
+        while True:
+            item = self.uiGlobalVariablesGrid.takeAt(1)
+            if item is None:
+                break
+            elif item.widget():
+                item.widget().deleteLater()
+
+        for i, variable in enumerate(self._variables, start=1):
+            nameLabel = QtWidgets.QLabel()
+            nameLabel.setText("Name:")
+            self.uiGlobalVariablesGrid.addWidget(nameLabel, i, 0)
+
+            nameEdit = QtWidgets.QLineEdit()
+            nameEdit.setText(variable.get("name", ""))
+            nameEdit.textChanged.connect(qpartial(self.onNameChange, variable))
+            self.uiGlobalVariablesGrid.addWidget(nameEdit, i, 1)
+
+            valueLabel = QtWidgets.QLabel()
+            valueLabel.setText("Value:")
+            self.uiGlobalVariablesGrid.addWidget(valueLabel, i, 2)
+
+            valueEdit = QtWidgets.QLineEdit()
+            valueEdit.setText(variable.get("value", ""))
+            valueEdit.textChanged.connect(qpartial(self.onValueChange, variable))
+            self.uiGlobalVariablesGrid.addWidget(valueEdit, i, 3)
+
+    @qslot
+    def onAddNewVariable(self, event):
+        self._variables += [{"name": "", "value": ""}]
+        self.updateGlobalVariables()
+
+    def onNameChange(self, variable, text):
+        variable["name"] = text
+
+    def onValueChange(self, variable, text):
+        variable["value"] = text
+
+    def _cleanVariables(self):
+        return [v for v in self._variables if v.get("name", "").strip() != ""]
+
     def done(self, result):
         """
         Called when the dialog is closed.
@@ -53,5 +114,6 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
             self._project.setSceneHeight(self.uiSceneHeightSpinBox.value())
             self._project.setSceneWidth(self.uiSceneWidthSpinBox.value())
             self._project.setGridSize(self.uiGridSizeSpinBox.value())
+            self._project.setVariables(self._cleanVariables())
             self._project.update()
         super().done(result)
