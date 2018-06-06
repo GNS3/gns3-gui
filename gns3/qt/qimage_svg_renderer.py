@@ -60,6 +60,14 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
             res = super().load(path_or_data)
             # If we can't render a SVG we load and base64 the image to create a SVG
             if self.isValid():
+                if not path_or_data.startswith(":") and path_exists:
+                    try:
+                        with open(path_or_data, "rb") as f:
+                            self._svg = f.read().decode()
+                    except UnicodeError as e:
+                        log.error("Could not decode '{}' content: {}".format(path_or_data, e))
+                    except OSError as e:
+                        log.error("Could not read '{}': {}".format(path_or_data, e))
                 return res
         except ET.ParseError:
             pass
