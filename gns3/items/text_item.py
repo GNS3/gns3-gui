@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Graphical representation of a note on the QGraphicsScene.
-"""
-
 import xml.etree.ElementTree as ET
 
 from ..qt import QtCore, QtWidgets, QtGui
@@ -44,8 +40,8 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         main_window = MainWindow.instance()
         view_settings = main_window.uiGraphicsView.settings()
         qt_font = QtGui.QFont()
-        qt_font.fromString(view_settings["default_label_font"])
-        self.setDefaultTextColor(QtGui.QColor(view_settings["default_label_color"]))
+        qt_font.fromString(view_settings["default_note_font"])
+        self.setDefaultTextColor(QtGui.QColor(view_settings["default_note_color"]))
         self.setFont(qt_font)
 
         if svg:

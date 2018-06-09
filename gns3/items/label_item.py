@@ -15,20 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Graphical representation of a note on the QGraphicsScene.
-"""
-
 from ..qt import QtCore, QtWidgets, QtGui
 from .utils import colorFromSvg
 
 
-class NoteItem(QtWidgets.QGraphicsTextItem):
+class LabelItem(QtWidgets.QGraphicsTextItem):
     """
-    Text note for the QGraphicsView.
+    Label for links and nodes.
 
     :param parent: optional parent
     """
+
     item_unselected_signal = QtCore.Signal()
 
     show_layer = False

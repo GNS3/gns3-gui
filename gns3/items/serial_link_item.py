@@ -22,7 +22,7 @@ Graphical representation of a Serial link on the QGraphicsScene.
 import math
 from ..qt import QtCore, QtGui, QtWidgets
 from .link_item import LinkItem
-from .note_item import NoteItem
+from .label_item import LabelItem
 from ..ports.port import Port
 
 
@@ -130,7 +130,7 @@ class SerialLinkItem(LinkItem):
 
             source_port_label = self._source_port.label()
             if source_port_label is None:
-                source_port_label = NoteItem(self._source_item)
+                source_port_label = LabelItem(self._source_item)
                 source_port_label.setPlainText(self._source_port.shortName())
                 source_port_label.setPos(self.mapToItem(self._source_item, self.source))
                 self._source_port.setLabel(source_port_label)
@@ -160,7 +160,7 @@ class SerialLinkItem(LinkItem):
             destination_port_label = self._destination_port.label()
 
             if destination_port_label is None:
-                destination_port_label = NoteItem(self._destination_item)
+                destination_port_label = LabelItem(self._destination_item)
                 destination_port_label.setPlainText(self._destination_port.shortName())
                 destination_port_label.setPos(self.mapToItem(self._destination_item, self.destination))
                 self._destination_port.setLabel(destination_port_label)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1324</width>
-    <height>741</height>
+    <height>830</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -643,10 +643,82 @@
       <attribute name="title">
        <string>Topology view</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_8">
-       <property name="margin">
-        <number>10</number>
-       </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiSceneWidthLabel">
+         <property name="text">
+          <string>Default width:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QSpinBox" name="uiSceneWidthSpinBox">
+         <property name="suffix">
+          <string> pixels</string>
+         </property>
+         <property name="minimum">
+          <number>500</number>
+         </property>
+         <property name="maximum">
+          <number>1000000</number>
+         </property>
+         <property name="singleStep">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>2000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiSceneHeightLabel">
+         <property name="text">
+          <string>Default height:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QSpinBox" name="uiSceneHeightSpinBox">
+         <property name="suffix">
+          <string> pixels</string>
+         </property>
+         <property name="minimum">
+          <number>500</number>
+         </property>
+         <property name="maximum">
+          <number>1000000</number>
+         </property>
+         <property name="singleStep">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>1000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiGridSizeLabel">
+         <property name="text">
+          <string>Grid size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QSpinBox" name="uiGridSizeSpinBox">
+         <property name="minimum">
+          <number>10</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="value">
+          <number>75</number>
+         </property>
+        </widget>
+       </item>
        <item row="6" column="0" colspan="2">
         <widget class="QCheckBox" name="uiRectangleSelectedItemCheckBox">
          <property name="text">
@@ -657,10 +729,49 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiSceneWidthLabel">
+       <item row="7" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiDrawLinkStatusPointsCheckBox">
          <property name="text">
-          <string>Default width:</string>
+          <string>Draw link status points</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiShowInterfaceLabelsOnNewProject">
+         <property name="text">
+          <string>Show interface labels on new project</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <widget class="QLabel" name="uiLabelPreviewLabel">
+         <property name="text">
+          <string>Default label style:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0" colspan="2">
+        <widget class="QPlainTextEdit" name="uiDefaultLabelStylePlainTextEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="plainText">
+          <string>AaBbYyZz</string>
          </property>
         </widget>
        </item>
@@ -695,51 +806,15 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiSceneHeightLabel">
+       <item row="12" column="0" colspan="2">
+        <widget class="QLabel" name="uiNotePreviewLabel">
          <property name="text">
-          <string>Default height:</string>
+          <string>Default note style:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="QSpinBox" name="uiSceneHeightSpinBox">
-         <property name="suffix">
-          <string> pixels</string>
-         </property>
-         <property name="minimum">
-          <number>500</number>
-         </property>
-         <property name="maximum">
-          <number>1000000</number>
-         </property>
-         <property name="singleStep">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>1000</number>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="uiLabelPreviewLabel">
-         <property name="text">
-          <string>Default label style:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QCheckBox" name="uiDrawLinkStatusPointsCheckBox">
-         <property name="text">
-          <string>Draw link status points</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0" colspan="2">
-        <widget class="QPlainTextEdit" name="uiDefaultLabelStylePlainTextEdit">
+       <item row="13" column="0" colspan="2">
+        <widget class="QPlainTextEdit" name="uiDefaultNoteStylePlainTextEdit">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -760,7 +835,38 @@
          </property>
         </widget>
        </item>
-       <item row="12" column="0">
+       <item row="14" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <item>
+          <widget class="QPushButton" name="uiDefaultNoteFontPushButton">
+           <property name="text">
+            <string>&amp;Select default font</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiDefaultNoteColorPushButton">
+           <property name="text">
+            <string>&amp;Select default color</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="15" column="1">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -772,55 +878,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QSpinBox" name="uiSceneWidthSpinBox">
-         <property name="suffix">
-          <string> pixels</string>
-         </property>
-         <property name="minimum">
-          <number>500</number>
-         </property>
-         <property name="maximum">
-          <number>1000000</number>
-         </property>
-         <property name="singleStep">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>2000</number>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QCheckBox" name="uiShowInterfaceLabelsOnNewProject">
-         <property name="text">
-          <string>Show interface labels on new project</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiGridSizeLabel">
-         <property name="text">
-          <string>Grid size:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QSpinBox" name="uiGridSizeSpinBox">
-         <property name="minimum">
-          <number>10</number>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="singleStep">
-          <number>10</number>
-         </property>
-         <property name="value">
-          <number>75</number>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>

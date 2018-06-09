@@ -52,7 +52,7 @@ from .items.ethernet_link_item import EthernetLinkItem
 from .items.serial_link_item import SerialLinkItem
 
 # other items
-from .items.note_item import NoteItem
+from .items.label_item import LabelItem
 from .items.text_item import TextItem
 from .items.shape_item import ShapeItem
 from .items.drawing_item import DrawingItem
@@ -568,9 +568,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         if event.key() == QtCore.Qt.Key_Delete:
-            # check if we are editing an NoteItem instance, then send the delete key event to it
+            # check if we are editing an LabelItem instance, then send the delete key event to it
             for item in self.scene().selectedItems():
-                if (isinstance(item, NoteItem) or isinstance(item, TextItem)) and item.hasFocus():
+                if (isinstance(item, LabelItem) or isinstance(item, TextItem)) and item.hasFocus():
                     super().keyPressEvent(event)
                     return
             self.deleteActionSlot()
@@ -631,7 +631,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                         return
                     self.consoleFromItems(self.scene().selectedItems())
                     return
-            elif isinstance(item, NoteItem) and isinstance(item.parentItem(), NodeItem):
+            elif isinstance(item, LabelItem) and isinstance(item.parentItem(), NodeItem):
                 if item.parentItem().node().initialized():
                     item.parentItem().setSelected(True)
                     self.changeHostnameActionSlot()
@@ -860,7 +860,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             reload_action.triggered.connect(self.reloadActionSlot)
             menu.addAction(reload_action)
 
-        if True in list(map(lambda item: isinstance(item, NoteItem), items)):
+        if True in list(map(lambda item: isinstance(item, LabelItem), items)):
             text_edit_action = QtWidgets.QAction("Text edit", menu)
             text_edit_action.setIcon(self._getIcon(style_dir, "show-hostname.svg"))
             text_edit_action.triggered.connect(self.textEditActionSlot)
@@ -885,7 +885,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             show_in_file_manager_action.triggered.connect(self.getCommandLineSlot)
             menu.addAction(show_in_file_manager_action)
 
-        if True in list(map(lambda item: isinstance(item, NoteItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
+        if True in list(map(lambda item: isinstance(item, LabelItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
             # action only for port labels
             reset_label_position_action = QtWidgets.QAction("Reset position", menu)
             reset_label_position_action.setIcon(self._getIcon(style_dir, "reset.svg"))
@@ -1413,7 +1413,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NoteItem) or isinstance(item, TextItem):
+            if isinstance(item, LabelItem) or isinstance(item, TextItem):
                 items.append(item)
         if items:
             text_edit_dialog = TextEditorDialog(self._main_window, items)
@@ -1427,7 +1427,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if isinstance(item, NoteItem) and item.parentItem():
+            if isinstance(item, LabelItem) and item.parentItem():
                 links = item.parentItem().links()
                 for port in item.parentItem().node().ports():
                     # find the correct port associated with the label
@@ -1509,6 +1509,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     item.setZValue(self.LOCKED_LAYER)
                 else:
                     item.setZValue(self.UNLOCKED_LAYER)
+                item.update()
 
     def deleteActionSlot(self):
         """

@@ -61,6 +61,8 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiSPICEConsolePreconfiguredCommandPushButton.clicked.connect(self._spiceConsolePreconfiguredCommandSlot)
         self.uiDefaultLabelFontPushButton.clicked.connect(self._setDefaultLabelFontSlot)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
+        self.uiDefaultNoteFontPushButton.clicked.connect(self._setDefaultNoteFontSlot)
+        self.uiDefaultNoteColorPushButton.clicked.connect(self._setDefaultNoteColorSlot)
         self.uiBrowseConfigurationPushButton.clicked.connect(self._browseConfigurationDirectorySlot)
         self._default_label_color = QtGui.QColor(QtCore.Qt.black)
         self.uiStyleComboBox.addItems(STYLES)
@@ -266,6 +268,25 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             self._default_label_color = color
             self.uiDefaultLabelStylePlainTextEdit.setStyleSheet("color : {}".format(color.name()))
 
+    def _setDefaultNoteFontSlot(self):
+        """
+        Slot to select the default note font.
+        """
+
+        selected_font, ok = QtWidgets.QFontDialog.getFont(self.uiDefaultNoteStylePlainTextEdit.font(), self)
+        if ok:
+            self.uiDefaultNoteStylePlainTextEdit.setFont(selected_font)
+
+    def _setDefaultNoteColorSlot(self):
+        """
+        Slot to select the default note color.
+        """
+
+        color = QtWidgets.QColorDialog.getColor(self._default_note_color, self)
+        if color.isValid():
+            self._default_note_color = color
+            self.uiDefaultNoteStylePlainTextEdit.setStyleSheet("color : {}".format(color.name()))
+
     def _populateGeneralSettingWidgets(self, settings):
         """
         Populates the widgets with the settings.
@@ -329,6 +350,14 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             self._default_label_color = qt_color
             self.uiDefaultLabelStylePlainTextEdit.setStyleSheet("color : {}".format(qt_color.name()))
 
+        qt_font = QtGui.QFont()
+        if qt_font.fromString(settings["default_note_font"]):
+            self.uiDefaultNoteStylePlainTextEdit.setFont(qt_font)
+        qt_color = QtGui.QColor(settings["default_note_color"])
+        if qt_color.isValid():
+            self._default_note_color = qt_color
+            self.uiDefaultNoteStylePlainTextEdit.setStyleSheet("color : {}".format(qt_color.name()))
+
     def loadPreferences(self):
         """
         Loads the general preferences.
@@ -385,5 +414,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
                                       "draw_link_status_points": self.uiDrawLinkStatusPointsCheckBox.isChecked(),
                                       "show_interface_labels_on_new_project": self.uiShowInterfaceLabelsOnNewProject.isChecked(),
                                       "default_label_font": self.uiDefaultLabelStylePlainTextEdit.font().toString(),
-                                      "default_label_color": self._default_label_color.name()}
+                                      "default_label_color": self._default_label_color.name(),
+                                      "default_note_font": self.uiDefaultNoteStylePlainTextEdit.font().toString(),
+                                      "default_note_color": self._default_note_color.name()}
         MainWindow.instance().uiGraphicsView.setSettings(new_graphics_view_settings)

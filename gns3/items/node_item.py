@@ -23,7 +23,7 @@ import sip
 
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
-from .note_item import NoteItem
+from .label_item import LabelItem
 from ..symbol import Symbol
 from ..controller import Controller
 
@@ -360,7 +360,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if not self._node_label:
-            self._node_label = NoteItem(self)
+            self._node_label = LabelItem(self)
             self._node_label.item_unselected_signal.connect(self._labelUnselectedSlot)
             self._node_label.setEditable(False)
             self._updateLabel()

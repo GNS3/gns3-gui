@@ -358,6 +358,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     item.setZValue(self.uiGraphicsView.LOCKED_LAYER)
                 else:
                     item.setZValue(self.uiGraphicsView.UNLOCKED_LAYER)
+                item.update()
 
     def analyticsClient(self):
         """
