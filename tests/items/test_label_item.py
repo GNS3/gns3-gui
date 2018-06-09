@@ -18,12 +18,12 @@
 from gns3.qt import QtGui, QtCore
 
 
-from gns3.items.note_item import NoteItem
+from gns3.items.label_item import LabelItem
 
 
 def test_dump():
-    note = NoteItem()
-    note.setPlainText("Test")
+    label = LabelItem()
+    label.setPlainText("Test")
     font = QtGui.QFont()
     font.setPointSizeF(55.8)
     font.setFamily("Verdana")
@@ -31,10 +31,10 @@ def test_dump():
     font.setItalic(True)
     font.setUnderline(True)
     font.setStrikeOut(True)
-    note.setFont(font)
-    note.setDefaultTextColor(QtCore.Qt.red)
+    label.setFont(font)
+    label.setDefaultTextColor(QtCore.Qt.red)
 
-    assert note.dump() == {
+    assert label.dump() == {
         "text": "Test",
         "x": 0,
         "y": 0,
@@ -44,8 +44,8 @@ def test_dump():
 
 
 def test_setStyle():
-    note = NoteItem()
-    note.setPlainText("Test")
+    label = LabelItem()
+    label.setPlainText("Test")
     font = QtGui.QFont()
     font.setPointSizeF(55.8)
     font.setFamily("Verdana")
@@ -53,16 +53,16 @@ def test_setStyle():
     font.setItalic(True)
     font.setUnderline(True)
     font.setStrikeOut(False)
-    note.setFont(font)
-    note.setDefaultTextColor(QtCore.Qt.red)
+    label.setFont(font)
+    label.setDefaultTextColor(QtCore.Qt.red)
 
-    style = note.dump()["style"]
-    note2 = NoteItem()
-    note2.setStyle(style)
-    assert note2.font().pointSizeF() == 55.8
-    assert note2.font().family() == "Verdana"
-    assert note2.font().italic()
-    assert note2.font().bold()
-    assert note2.font().strikeOut() is False
-    assert note2.font().underline()
-    assert note2.defaultTextColor() == QtCore.Qt.red
+    style = label.dump()["style"]
+    label2 = LabelItem()
+    label2.setStyle(style)
+    assert label2.font().pointSizeF() == 55.8
+    assert label2.font().family() == "Verdana"
+    assert label2.font().italic()
+    assert label2.font().bold()
+    assert label2.font().strikeOut() is False
+    assert label2.font().underline()
+    assert label2.defaultTextColor() == QtCore.Qt.red
