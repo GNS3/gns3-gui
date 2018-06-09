@@ -143,7 +143,7 @@ class PacketCapture:
         command = command.replace("%c", '"' + capture_file_path + '"')
 
         # Add description
-        description = "{} {} to {} {}".format(link.sourceNode().name(),
+        description = "{}[{}]->{}[{}]".format(link.sourceNode().name(),
                                               link.sourcePort().name(),
                                               link.destinationNode().name(),
                                               link.destinationPort().name())
