@@ -673,7 +673,7 @@ class Node(BaseNode):
         else:
             console_port = self.console()
             if "console_type" in self.settings():
-                console_type = self.settings()["console_type"]
+                console_type = self.consoleType()
 
         if console_type == "telnet":
             from .telnet_console import nodeTelnetConsole

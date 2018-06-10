@@ -34,6 +34,10 @@ BUILTIN_SETTINGS = {
 
 CLOUD_SETTINGS = {
     "name": "",
+    "remote_console_host": "127.0.0.1",
+    "remote_console_port": 23,
+    "remote_console_type": "none",
+    "remote_console_http_path": "/",
     "default_name_format": "Cloud{0}",
     "symbol": ":/symbols/cloud.svg",
     "category": Node.end_devices,

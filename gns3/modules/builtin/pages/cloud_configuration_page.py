@@ -21,6 +21,7 @@ Configuration page for clouds.
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
+from ....dialogs.node_properties_dialog import ConfigurationError
 from gns3.controller import Controller
 from gns3.node import Node
 
@@ -70,6 +71,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         # connect other slots
         self.uiShowSpecialInterfacesCheckBox.stateChanged.connect(self._showSpecialInterfacesSlot)
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
+        self.uiConsoleTypeComboBox.currentTextChanged.connect(self._consoleTypeChangedSlot)
 
         # add an icon to the warning button
         icon = QtGui.QIcon.fromTheme("dialog-warning")
@@ -412,6 +414,25 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             self._interfaces = result
             self._loadNetworkInterfaces(result)
 
+    def _consoleTypeChangedSlot(self, console_type):
+        """
+        Slot called when the console type has been changed.
+
+        :param console_type: console type
+        """
+
+        if console_type in ("http", "https"):
+            self.uiConsoleHttpPathLineEdit.setEnabled(True)
+        else:
+            self.uiConsoleHttpPathLineEdit.setEnabled(False)
+
+        if console_type != "none":
+            self.uiConsoleHostLineEdit.setEnabled(True)
+            self.uiConsolePortSpinBox.setEnabled(True)
+        else:
+            self.uiConsoleHostLineEdit.setEnabled(False)
+            self.uiConsolePortSpinBox.setEnabled(False)
+
     def loadSettings(self, settings, node=None, group=False):
         """
         Loads the cloud settings.
@@ -423,6 +444,12 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
+            self.uiConsoleHostLineEdit.setText(settings["remote_console_host"])
+            self.uiConsolePortSpinBox.setValue(settings["remote_console_port"])
+            index = self.uiConsoleTypeComboBox.findText(settings["remote_console_type"])
+            if index != -1:
+                self.uiConsoleTypeComboBox.setCurrentIndex(index)
+            self.uiConsoleHttpPathLineEdit.setText(settings["remote_console_http_path"])
         else:
             self.uiNameLineEdit.setEnabled(False)
 
@@ -502,6 +529,17 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
 
         if not group:
             settings["name"] = self.uiNameLineEdit.text()
+            console_host = self.uiConsoleHostLineEdit.text().strip()
+
+            if self.uiConsoleTypeComboBox.currentText().lower() != "none":
+                if not console_host:
+                    QtWidgets.QMessageBox.critical(self, "Console host", "Console host cannot be blank if console type is not set to none")
+                    raise ConfigurationError()
+
+            settings["remote_console_host"] = console_host
+            settings["remote_console_port"] = self.uiConsolePortSpinBox.value()
+            settings["remote_console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
+            settings["remote_console_http_path"] = self.uiConsoleHttpPathLineEdit.text().strip()
 
         if not node:
             # these are template settings

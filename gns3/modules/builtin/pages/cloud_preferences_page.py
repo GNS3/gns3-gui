@@ -76,6 +76,12 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", cloud_node["name"]])
+        if cloud_node["remote_console_type"] != "none":
+            QtWidgets.QTreeWidgetItem(section_item, ["Console host:", cloud_node["remote_console_host"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Console port:", "{}".format(cloud_node["remote_console_port"])])
+            if cloud_node["remote_console_type"] in ("http", "https"):
+                QtWidgets.QTreeWidgetItem(section_item, ["Console HTTP path:", cloud_node["remote_console_http_path"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Console type:", cloud_node["remote_console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", cloud_node["default_name_format"]])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(cloud_node["server"]).name()])

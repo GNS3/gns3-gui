@@ -96,7 +96,13 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
             # refresh all the other item if the node name has changed
             self._parent.refreshAllLinks(source_child=self)
         self.setText(0, self._node.name())
-        if self._node.consoleType() and self._node.console() and self._node.consoleType() != "none":
+        if self._node.consoleType() in ("http", "https") and self._node.consoleType() and self._node.console():
+            http_path = "{console_type}://{host}:{port}{path}".format(console_type=self._node.consoleType(),
+                                                                      host=self._node.consoleHost(),
+                                                                      port=self._node.console(),
+                                                                      path=self._node.consoleHttpPath())
+            self.setText(1, "{}".format(http_path))
+        elif self._node.consoleType() != "none" and self._node.consoleType() and self._node.console():
             self.setText(1, "{} {}:{}".format(self._node.consoleType(), self._node.consoleHost(), self._node.console()))
         else:
             self.setText(1, "none")

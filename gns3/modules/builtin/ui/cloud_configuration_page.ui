@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>378</height>
+    <width>979</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -390,6 +390,19 @@
        <string>Misc.</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="3" column="2">
+        <widget class="QSpinBox" name="uiConsolePortSpinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>23</number>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="uiNameLabel">
          <property name="text">
@@ -400,24 +413,64 @@
        <item row="0" column="2">
         <widget class="QLineEdit" name="uiNameLineEdit"/>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiConsoleHostLabel">
+         <property name="text">
+          <string>Console host:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLineEdit" name="uiConsoleHostLineEdit"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="labeluiConsolePortLabel">
+         <property name="text">
+          <string>Console port:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiConsoleHttpPathLabel">
+         <property name="text">
+          <string>Console HTTP path:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLineEdit" name="uiConsoleHttpPathLineEdit"/>
+       </item>
+       <item row="6" column="0">
         <widget class="QLabel" name="uiDefaultNameFormatLabel">
          <property name="text">
           <string>Default name format:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
+       <item row="6" column="2">
         <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
        </item>
-       <item row="2" column="0" colspan="2">
+       <item row="7" column="0">
         <widget class="QLabel" name="uiSymbolLabel">
          <property name="text">
           <string>Symbol:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="2">
+       <item row="9" column="0" colspan="3">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>399</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="7" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="QLineEdit" name="uiSymbolLineEdit"/>
@@ -434,30 +487,73 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0" colspan="2">
+       <item row="8" column="0">
         <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
           <string>Category:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
+       <item row="8" column="2">
         <widget class="QComboBox" name="uiCategoryComboBox"/>
        </item>
-       <item row="4" column="1" colspan="2">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>399</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QComboBox" name="uiConsoleTypeComboBox">
+         <item>
+          <property name="text">
+           <string>telnet</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>vnc</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>spice</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>http</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>https</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>none</string>
+          </property>
+         </item>
+        </widget>
        </item>
       </layout>
+      <zorder>uiNameLabel</zorder>
+      <zorder>uiNameLineEdit</zorder>
+      <zorder>uiDefaultNameFormatLabel</zorder>
+      <zorder>uiDefaultNameFormatLineEdit</zorder>
+      <zorder>uiSymbolLabel</zorder>
+      <zorder>uiCategoryLabel</zorder>
+      <zorder>uiCategoryComboBox</zorder>
+      <zorder>labeluiConsolePortLabel</zorder>
+      <zorder>uiConsoleHostLabel</zorder>
+      <zorder>uiConsoleHostLineEdit</zorder>
+      <zorder>uiConsolePortSpinBox</zorder>
+      <zorder>uiConsoleHttpPathLabel</zorder>
+      <zorder>uiConsoleHttpPathLineEdit</zorder>
+      <zorder>uiConsoleTypeLabel</zorder>
+      <zorder>uiConsoleTypeComboBox</zorder>
      </widget>
     </widget>
    </item>
