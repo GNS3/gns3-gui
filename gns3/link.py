@@ -76,6 +76,7 @@ class Link(QtCore.QObject):
         self._destination_label = None
         self._link_id = link_id
         self._capturing = False
+        self._deleting = False
         self._capture_file_path = None
         self._capture_file = None
         self._initialized = False
@@ -158,7 +159,7 @@ class Link(QtCore.QObject):
             self._updateLabels()
 
     def update(self):
-        if not self._link_id:
+        if not self._link_id or self.deleting():
             return
         body = self._prepareParams()
         Controller.instance().put("/projects/{project_id}/links/{link_id}".format(project_id=self._source_node.project().id(), link_id=self._link_id), self.updateLinkCallback, body=body)
@@ -244,6 +245,19 @@ class Link(QtCore.QObject):
     def link_id(self):
         return self._link_id
 
+    def deleting(self):
+        """
+        Is the link being deleted
+        """
+        return self._deleting
+
+    def setDeleting(self):
+        """
+        Mark this link as being deleted
+        """
+
+        self._deleting = True
+
     def capturing(self):
         """
         Is a capture running on the link?
@@ -306,8 +320,10 @@ class Link(QtCore.QObject):
         if skip_controller:
             self._linkDeletedCallback({})
         else:
+            self.setDeleting()
             Controller.instance().delete("/projects/{project_id}/links/{link_id}".format(project_id=self.project().id(),
-                                                                                         link_id=self._link_id), self._linkDeletedCallback)
+                                                                                         link_id=self._link_id),
+                                                                                         self._linkDeletedCallback)
 
     def _linkDeletedCallback(self, result, error=False, **kwargs):
         """

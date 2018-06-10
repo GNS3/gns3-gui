@@ -97,7 +97,7 @@ class Image:
 
             if os.path.exists(self.path + ".md5sum"):
                 with open(self.path + ".md5sum", encoding="utf-8") as f:
-                    self._md5sum = f.read()
+                    self._md5sum = f.read().strip()
                     return self._md5sum
 
             if not os.path.isfile(self.path):
