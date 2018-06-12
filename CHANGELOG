@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.1.7 12/06/2018
+
+* Do not try to update link if it is being deleted. Fixes #2483.
+* Fix can't add SVG image to project. Fixes #2502
+* Remove unwanted trailing characters and other white spaces when reading .md5sum files. Fixes #2498.
+* Update interface sequence number check. Fixes #2491.
+* Logo should not have context menu, Fixes: #2507
+* Update logo position only when changes, Fixes: #2506
+
 ## 2.1.6 22/05/2018
 
 * Ask for global variables when project is loaded
