@@ -435,6 +435,8 @@ class Node(BaseNode):
         """
 
         if not skip_controller:
+            for link in self.links():
+                link.setDeleting()
             self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback)
         else:
             self.deleted_signal.emit()
