@@ -555,11 +555,11 @@ class Node(BaseNode):
                     return True
                 else:
                     log.debug("Could not find process name '' and window title '{}' to bring it to front".format(process_name, self.name()))
+
+            if bring_window_to_front_from_title(self.name()):
+                return True
             else:
-                if bring_window_to_front_from_title(self.name()):
-                    return True
-                else:
-                    log.debug("Could not find window title '{}' to bring it to front".format(self.name()))
+                log.debug("Could not find window title '{}' to bring it to front".format(self.name()))
         return False
 
     def setName(self, name):
