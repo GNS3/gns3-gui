@@ -30,6 +30,9 @@ from gns3.controller import Controller
 from gns3.utils.get_resource import get_resource
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget):
 
@@ -262,7 +265,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
                 if self._configFileValid(startup_config):
                     settings["startup_config"] = startup_config
                 else:
-                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot access or read the startup-config file")
 
             # save the private-config
             private_config = self.uiPrivateConfigLineEdit.text().strip()
@@ -272,7 +275,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
                 if self._configFileValid(private_config):
                     settings["private_config"] = private_config
                 else:
-                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
+                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot access or read the private-config file")
 
             settings["symbol"] = self.uiSymbolLineEdit.text()
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
@@ -306,6 +309,13 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         """
         Return true if it's a valid configuration file
         """
+
         if not os.path.isabs(path):
             path = os.path.join(LocalServer.instance().localServerSettings()["configs_path"], path)
-        return os.access(path, os.R_OK)
+        result = os.access(path, os.R_OK)
+        if not result:
+            if not os.path.exists(path):
+                log.error("Cannot access config file '{}'".format(path))
+            else:
+                log.error("Cannot read config file '{}'".format(path))
+        return result
