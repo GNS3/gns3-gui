@@ -354,11 +354,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         for item in self.uiGraphicsView.items():
             if not isinstance(item, LinkItem):
-                if self.uiLockAllAction.isChecked():
-                    item.setZValue(self.uiGraphicsView.LOCKED_LAYER)
-                else:
-                    item.setZValue(self.uiGraphicsView.UNLOCKED_LAYER)
-                item.update()
+                if self.uiLockAllAction.isChecked() and item.zValue() >= 0:
+                    item.setZValue(-(item.zValue() + 1))
+                    if item.parentItem() is None:
+                        item.updateNode()
+                    item.update()
+                elif not self.uiLockAllAction.isChecked() and item.zValue() < 0:
+                    item.setZValue(-(item.zValue() + 1))
+                    if item.parentItem() is None:
+                        item.updateNode()
+                    item.update()
 
     def analyticsClient(self):
         """

@@ -72,9 +72,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
     :param parent: parent widget
     """
 
-    LOCKED_LAYER = -1
-    UNLOCKED_LAYER = 0
-
     def __init__(self, parent):
 
         # Our parent is the central widget which parent is the main window.
@@ -184,6 +181,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # clear all objects on the scene
         self.scene().clear()
+
 
     def _loadSettings(self):
         """
@@ -1505,10 +1503,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in self.scene().selectedItems():
             if not isinstance(item, LinkItem):
-                if item.zValue() >= 0:
-                    item.setZValue(self.LOCKED_LAYER)
-                else:
-                    item.setZValue(self.UNLOCKED_LAYER)
+                item.setZValue(-(item.zValue() + 1))
+                if item.parentItem() is None:
+                    item.updateNode()
                 item.update()
 
     def deleteActionSlot(self):
