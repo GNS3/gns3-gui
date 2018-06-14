@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_dockerVMConfigPageWidget(object):
     def setupUi(self, dockerVMConfigPageWidget):
         dockerVMConfigPageWidget.setObjectName("dockerVMConfigPageWidget")
-        dockerVMConfigPageWidget.resize(793, 878)
+        dockerVMConfigPageWidget.resize(938, 872)
         self.verticalLayout = QtWidgets.QVBoxLayout(dockerVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(dockerVMConfigPageWidget)
@@ -134,6 +134,25 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiNetworkConfigEditButton.setObjectName("uiNetworkConfigEditButton")
         self.gridLayout.addWidget(self.uiNetworkConfigEditButton, 12, 1, 1, 1)
         self.uiTabWidget.addTab(self.tab, "")
+        self.tab_2 = QtWidgets.QWidget()
+        self.tab_2.setObjectName("tab_2")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.tab_2)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.uiExtraHostsLabel = QtWidgets.QLabel(self.tab_2)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiExtraHostsLabel.sizePolicy().hasHeightForWidth())
+        self.uiExtraHostsLabel.setSizePolicy(sizePolicy)
+        self.uiExtraHostsLabel.setWordWrap(True)
+        self.uiExtraHostsLabel.setObjectName("uiExtraHostsLabel")
+        self.gridLayout_2.addWidget(self.uiExtraHostsLabel, 0, 0, 1, 1)
+        self.uiExtraHostsTextEdit = QtWidgets.QTextEdit(self.tab_2)
+        self.uiExtraHostsTextEdit.setObjectName("uiExtraHostsTextEdit")
+        self.gridLayout_2.addWidget(self.uiExtraHostsTextEdit, 0, 1, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(20, 388, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem, 1, 1, 1, 1)
+        self.uiTabWidget.addTab(self.tab_2, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
 
         self.retranslateUi(dockerVMConfigPageWidget)
@@ -178,4 +197,9 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiNetworkConfigLabel.setText(_translate("dockerVMConfigPageWidget", "Network configuration"))
         self.uiNetworkConfigEditButton.setText(_translate("dockerVMConfigPageWidget", "Edit"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab), _translate("dockerVMConfigPageWidget", "General settings"))
+        self.uiExtraHostsLabel.setText(_translate("dockerVMConfigPageWidget", "Extra hosts added\n"
+"to the /etc/hosts file.\n"
+"(hostname:IP\n"
+"one per line)"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("dockerVMConfigPageWidget", "Advanced"))
 
