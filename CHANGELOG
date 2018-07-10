@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.1.8 14/06/2018
+
+* Add error information when cannot access/read IOS/IOU config file. Ref #2501
+* Fallback when using process name to bring console to front.
+* Use process name to bring console to front. Fixes #2514.
+
 ## 2.1.7 12/06/2018
 
 * Do not try to update link if it is being deleted. Fixes #2483.
