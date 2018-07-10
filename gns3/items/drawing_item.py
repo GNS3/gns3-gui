@@ -43,6 +43,7 @@ class DrawingItem:
 
     def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, rotation=0, **kws):
         self._id = drawing_id
+        self._deleting = False
         if self._id is None:
             self._id = str(uuid.uuid4())
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable | QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
@@ -81,13 +82,13 @@ class DrawingItem:
         """
 
         if error:
-            log.error("Error while setting up drawing: {}".format(result["message"]))
+            log.error("Error while creating drawing: {}".format(result["message"]))
             return False
         self._id = result["drawing_id"]
         self.updateDrawingCallback(result)
 
     def updateDrawing(self):
-        if self._id:
+        if self._id and not self.deleting():
             self._project.put("/drawings/" + self._id, self.updateDrawingCallback, body=self.__json__(), showProgress=False)
 
     @qslot
@@ -101,7 +102,7 @@ class DrawingItem:
         """
 
         if error:
-            log.error("Error while setting up drawing: {}".format(result["message"]))
+            log.error("Error while updating drawing: {}".format(result["message"]))
             return False
         self.setPos(QtCore.QPoint(result["x"], result["y"]))
         self.setZValue(result["z"])
@@ -173,6 +174,20 @@ class DrawingItem:
             self.setFlag(self.ItemIsSelectable, True)
             self.setFlag(self.ItemIsMovable, True)
 
+    def deleting(self):
+        """
+        Is the link being deleted
+        """
+
+        return self._deleting
+
+    def setDeleting(self):
+        """
+        Mark this drawing as being deleted
+        """
+
+        self._deleting = True
+
     def delete(self, skip_controller=False):
         """
         Deletes this drawing.
@@ -180,6 +195,7 @@ class DrawingItem:
         :param skip_controller: Do not replicate change on the controller (usefull when it's already deleted on controller)
         """
 
+        self.setDeleting()
         self.scene().removeItem(self)
         from ..topology import Topology
         Topology.instance().removeDrawing(self)
