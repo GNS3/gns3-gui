@@ -80,13 +80,18 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiLocalRadioButton.setText("Install the appliance on the main server")
         else:
             if not path.endswith('.builtin.gns3a'):
-                destination = Config().appliances_dir
+                destination = None
                 try:
-                    os.makedirs(destination, exist_ok=True)
-                    destination = os.path.join(destination, os.path.basename(path))
-                    shutil.copy(path, destination)
+                    destination = Config().appliances_dir
                 except OSError as e:
-                    QtWidgets.QMessageBox.warning(self.parent(), "Can't copy {} to {}".format(path, destination), str(e))
+                    QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", "Invalid appliance file: {}".format(e))
+                if destination:
+                    try:
+                        os.makedirs(destination, exist_ok=True)
+                        destination = os.path.join(destination, os.path.basename(path))
+                        shutil.copy(path, destination)
+                    except OSError as e:
+                        QtWidgets.QMessageBox.warning(self.parent(), "Cannot copy {} to {}".format(path, destination), str(e))
 
         self.uiServerWizardPage.isComplete = self._uiServerWizardPage_isComplete
 
