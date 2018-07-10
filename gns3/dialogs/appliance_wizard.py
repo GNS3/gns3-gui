@@ -436,15 +436,16 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         image = Image(self._appliance.emulator(), path, filename=disk["filename"])
         try:
             if "md5sum" in disk and image.md5sum != disk["md5sum"]:
-                QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 sum is {} and should be {}.".format(image.md5sum, disk["md5sum"]))
-                return
+                reply = QtWidgets.QMessageBox.question(self, "Add appliance",
+                                                       "This is not the correct file. The MD5 sum is {} and should be {}.\nDo you want to accept it at your own risks?".format(image.md5sum, disk["md5sum"]),
+                                                       QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                if reply == QtWidgets.QMessageBox.No:
+                    return
         except OSError as e:
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Can't access to the image file {}: {}.".format(path, str(e)))
             return
 
-        image_upload_manger = ImageUploadManager(
-            image, Controller.instance(), self._compute_id,
-            self._imageUploadedCallback, LocalConfig.instance().directFileUpload())
+        image_upload_manger = ImageUploadManager(image, Controller.instance(), self._compute_id, self._imageUploadedCallback, LocalConfig.instance().directFileUpload())
         image_upload_manger.upload()
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
