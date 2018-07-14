@@ -71,11 +71,15 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
-        'Terminal': r"""osascript -e 'tell application "Terminal"'"""
+        'Terminal': r"""osascript"""
+                    r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
+                    r""" -e 'tell application "Terminal"'"""
                     r""" -e 'activate'"""
-                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=\"" & (system attribute "PATH") & "\" telnet %h %p ; exit"'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=" & quoted form of posix_path & " telnet %h %p ; exit"'"""
                     r""" -e 'end tell'""",
-        'Terminal tabbed (experimental)': r"""osascript -e 'tell application "Terminal"'"""
+        'Terminal tabbed (experimental)': r"""osascript"""
+                    r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
+                    r""" -e 'tell application "Terminal"'"""
                     r""" -e 'activate'"""
                     r""" -e 'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"""
                     r""" -e 'if (the (count of the window) = 0) then'"""
@@ -87,9 +91,11 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'repeat while the busy of window 1 = true'"""
                     r""" -e 'delay 0.01'"""
                     r""" -e 'end repeat'"""
-                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=\"" & (system attribute "PATH") & "\" telnet %h %p ; exit" in window 1'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=" & quoted form of posix_path & " telnet %h %p ; exit" in window 1'"""
                     r""" -e 'end tell'""",
-        'iTerm2 2.x': r"""osascript -e 'tell application "iTerm"'"""
+        'iTerm2 2.x': r"""osascript"""
+                    r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
+                    r""" -e 'tell application "iTerm"'"""
                     r""" -e 'activate'"""
                     r""" -e 'if (count of terminals) = 0 then'"""
                     r""" -e '  set t to (make new terminal)'"""
@@ -99,12 +105,14 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'tell t'"""
                     r""" -e '  set s to (make new session at the end of sessions)'"""
                     r""" -e '  tell s'"""
-                    r""" -e '    exec command "sh -c \"PATH=\\\"" & (system attribute "PATH") & "\\\" telnet %h %p"'"""
-
+                    r""" -e '    exec command "sh"'"""
+                    r""" -e '    write text "PATH=" & quoted form of posix_path & " exec telnet %h %p"'"""
                     r""" -e '  end tell'"""
                     r""" -e 'end tell'"""
                     r""" -e 'end tell'""",
-        'iTerm2 3.x': r"""osascript -e 'tell application "iTerm"'"""
+        'iTerm2 3.x': r"""osascript"""
+                    r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
+                    r""" -e 'tell application "iTerm"'"""
                     r""" -e 'activate'"""
                     r""" -e 'if (count of windows) = 0 then'"""
                     r""" -e '   set t to (create window with default profile)'"""
@@ -116,7 +124,7 @@ elif sys.platform.startswith("darwin"):
                     r""" -e '    set s to current session'"""
                     r""" -e '    tell s'"""
                     r""" -e '        set name to "%d"'"""
-                    r""" -e '        write text "PATH=\"" & (system attribute "PATH") & "\" exec telnet %h %p"'"""
+                    r""" -e '        write text "PATH=" & quoted form of posix_path & " exec telnet %h %p"'"""
                     r""" -e '    end tell'"""
                     r""" -e 'end tell'"""
                     r""" -e 'end tell'""",
