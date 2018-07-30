@@ -343,7 +343,7 @@ def test_add_appliance_with_boot_priority(empty_config, linux_microcore_img):
             "path": linux_microcore_img
         }
     ]
-    config["boot_priority"] = "dc"
+    config["qemu"]["boot_priority"] = "dc"
     empty_config.add_appliance(config, "local")
     assert empty_config._config["Qemu"]["vms"][0]["boot_priority"] == "dc"
 
