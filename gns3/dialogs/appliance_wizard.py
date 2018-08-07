@@ -96,13 +96,18 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             self.uiLocalRadioButton.setText("Install the appliance on the main server")
         else:
             if not path.endswith('.builtin.gns3a'):
-                destination = Config().appliances_dir
+                destination = None
                 try:
-                    os.makedirs(destination, exist_ok=True)
-                    destination = os.path.join(destination, os.path.basename(path))
-                    shutil.copy(path, destination)
+                    destination = Config().appliances_dir
                 except OSError as e:
-                    QtWidgets.QMessageBox.warning(self.parent(), "Cannot copy '{}' to '{}'".format(path, destination), str(e))
+                    QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", "Invalid appliance file: {}".format(e))
+                if destination:
+                    try:
+                        os.makedirs(destination, exist_ok=True)
+                        destination = os.path.join(destination, os.path.basename(path))
+                        shutil.copy(path, destination)
+                    except OSError as e:
+                        QtWidgets.QMessageBox.warning(self.parent(), "Cannot copy {} to {}".format(path, destination), str(e))
 
         self.uiServerWizardPage.isComplete = self._uiServerWizardPage_isComplete
 
@@ -434,17 +439,20 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return
 
         image = Image(self._appliance.emulator(), path, filename=disk["filename"])
-        disallow_custom_images = not self.allowCustomFiles.isChecked()
-
         try:
-            if disallow_custom_images and ("md5sum" in disk and image.md5sum != disk["md5sum"]):
-                QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "This is not the correct file. The MD5 checksum is {} and it should be {}.".format(image.md5sum, disk["md5sum"]))
-                return
+            if "md5sum" in disk and image.md5sum != disk["md5sum"]:
+                reply = QtWidgets.QMessageBox.question(self, "Add appliance",
+                                                       "This is not the correct file. The MD5 sum is {} and should be {}.\nDo you want to accept it at your own risks?".format(image.md5sum, disk["md5sum"]),
+                                                       QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                if reply == QtWidgets.QMessageBox.No:
+                    return
         except OSError as e:
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Cannot access to the image file '{}': {}.".format(path, str(e)))
+            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Can't access to the image file {}: {}.".format(path, str(e)))
             return
 
-        image_upload_manger = ImageUploadManager(image, Controller.instance(), self._compute_id, self._imageUploadedCallback, LocalConfig.instance().directFileUpload())
+        image_upload_manger = ImageUploadManager(
+            image, Controller.instance(), self._compute_id,
+            self._imageUploadedCallback, LocalConfig.instance().directFileUpload())
         image_upload_manger.upload()
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):

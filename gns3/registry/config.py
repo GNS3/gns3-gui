@@ -266,8 +266,8 @@ class Config:
         else:
             new_config["qemu_path"] = "qemu-system-{}".format(appliance_config["qemu"]["arch"])
 
-        if "boot_priority" in appliance_config:
-            new_config["boot_priority"] = appliance_config["boot_priority"]
+        if "boot_priority" in appliance_config["qemu"]:
+            new_config["boot_priority"] = appliance_config["qemu"]["boot_priority"]
 
         if "first_port_name" in appliance_config:
             new_config["first_port_name"] = appliance_config["first_port_name"]

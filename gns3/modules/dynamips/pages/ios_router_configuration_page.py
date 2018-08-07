@@ -31,6 +31,9 @@ from gns3.node import Node
 from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
 from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget):
 
@@ -520,7 +523,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if self._configFileValid(startup_config):
                     settings["startup_config"] = startup_config
                 else:
-                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot access or read the startup-config file")
 
             private_config = self.uiPrivateConfigLineEdit.text().strip()
             if not private_config:
@@ -529,7 +532,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if self._configFileValid(private_config):
                     settings["private_config"] = private_config
                 else:
-                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
+                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot access or read the private-config file")
 
             symbol_path = self.uiSymbolLineEdit.text()
             settings["symbol"] = symbol_path
@@ -645,6 +648,13 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         """
         Return true if it's a valid configuration file
         """
+
         if not os.path.isabs(path):
             path = os.path.join(LocalServer.instance().localServerSettings()["configs_path"], path)
-        return os.access(path, os.R_OK)
+        result = os.access(path, os.R_OK)
+        if not result:
+            if not os.path.exists(path):
+                log.error("Cannot access config file '{}'".format(path))
+            else:
+                log.error("Cannot read config file '{}'".format(path))
+        return result
