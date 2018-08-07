@@ -235,7 +235,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiLockAllAction.triggered.connect(self._lockActionSlot)
 
         # tool menu connections
-        self.uiWebInterfaceAction.triggered.connect(self._openWebInterfaceActionSlot)
+        self.uiWebInterfaceAction.triggered.connect(self._openLightWebInterfaceActionSlot)
+        self.uiWebUIAction.triggered.connect(self._openWebInterfaceActionSlot)
 
         # control menu connections
         self.uiStartAllAction.triggered.connect(self._startAllActionSlot)
@@ -317,9 +318,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
         self.settings_updated_signal.emit()
 
-    def _openWebInterfaceActionSlot(self):
+    def _openLightWebInterfaceActionSlot(self):
         if Controller.instance().connected():
             QtGui.QDesktopServices.openUrl(QtCore.QUrl(Controller.instance().httpClient().fullUrl()))
+
+    def _openWebInterfaceActionSlot(self):
+        if Controller.instance().connected():
+            base_url = Controller.instance().httpClient().fullUrl()
+            webui_url = "{}/static/web-ui/local".format(base_url)
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl(webui_url))
 
     def _showGridActionSlot(self):
         """
