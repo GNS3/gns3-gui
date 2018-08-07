@@ -62,7 +62,9 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
             text = "{} CPU {}%, RAM {}%".format(text, self._compute.cpuUsagePercent(), self._compute.memoryUsagePercent())
 
         self.setText(0, text)
-        self.setToolTip(0, text + " on " + self._compute.capabilities().get("platform", ""))
+        self.setToolTip(0, "{} version {} running on {}".format(self._compute.name(),
+                                                                self._compute.capabilities().get("version", "n/a"),
+                                                                self._compute.capabilities().get("platform", "")))
 
         if self._compute.connected():
             self._status = "connected"

@@ -121,7 +121,7 @@ class Controller(QtCore.QObject):
 
     def _versionGetSlot(self, result, error=False, **kwargs):
         """
-        Called after the inital version get
+        Called after the initial version get
         """
         if error:
             if self._first_error:
