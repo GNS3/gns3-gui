@@ -539,8 +539,7 @@ It is your responsability to check if you have the right to distribute the image
 
         node = node_module.instantiateNode(node_class, ComputeManager.instance().getCompute(node_data["compute_id"]), self._project)
         node.createNodeCallback(node_data)
-
-        self._main_window.uiGraphicsView.createNodeItem(node, node_data["symbol"], node_data["x"], node_data["y"], node_data.get("z", None))
+        self._main_window.uiGraphicsView.createNodeItem(node, node_data["symbol"], node_data["x"], node_data["y"], node_data.get("z", 1))
 
     def createLink(self, link_data):
         source_port = None
