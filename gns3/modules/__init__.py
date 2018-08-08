@@ -25,4 +25,6 @@ from gns3.modules.qemu import Qemu
 from gns3.modules.vmware import VMware
 from gns3.modules.docker import Docker
 
-MODULES = [Builtin, VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Docker, TraceNG]
+#MODULES = [Builtin, VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Docker, TraceNG]
+#FIXME: deactivate TraceNG module
+MODULES = [Builtin, VPCS, Dynamips, IOU, Qemu, VirtualBox, VMware, Docker]
