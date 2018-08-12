@@ -649,7 +649,10 @@ class HTTPClient(QtCore.QObject):
 
             if error_code < 200 or error_code == 403:
                 if error_code == QtNetwork.QNetworkReply.OperationCanceledError:  # It's legit to cancel do not disconnect
-                    error_message = "Operation timeout"  # It's more clear than cancel, because cancel is trigger by us when we timeout
+                    error_message = "Operation timeout"  # It's clearer than cancel because cancel is triggered by us when we timeout
+                elif error_code == QtNetwork.QNetworkReply.NetworkSessionFailedError:
+                    # ignore the network session failed error to let the network manager recover from it
+                    return
                 elif not ignore_errors:
                     self.disconnect()
                 if callback is not None:
