@@ -270,7 +270,7 @@ class Port:
 
         if self._destination_node and self._destination_port:
             if short:
-                return "<-> {port} {name}".format(port=self._destination_port.shortName(),
+                return "<=> {port} {name}".format(port=self._destination_port.shortName(),
                                                   name=self._destination_node.name())
             return "connected to {name} on port {port}".format(name=self._destination_node.name(),
                                                                port=self._destination_port.name())
