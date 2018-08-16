@@ -29,7 +29,9 @@ from .modules import MODULES
 from .controller import Controller
 from .appliance_manager import ApplianceManager
 from .dialogs.configuration_dialog import ConfigurationDialog
-from .local_config import LocalConfig
+
+import logging
+log = logging.getLogger(__name__)
 
 
 CATEGORY_TO_ID = {
@@ -52,30 +54,19 @@ class NodesView(QtWidgets.QTreeWidget):
     def __init__(self, parent=None):
 
         super().__init__(parent)
+
         self._current_category = None
         self._current_search = ""
-        self._show_installed_appliances = True
-        self._show_builtin_available_appliances = True
-        self._show_my_available_appliances = True
 
         # enables the possibility to drag items.
         self.setDragEnabled(True)
-
         ApplianceManager.instance().appliances_changed_signal.connect(self.refresh)
 
     def setCurrentSearch(self, search):
         self._current_search = search
 
-    def setShowInstalledAppliances(self, value):
-        self._show_installed_appliances = value
-
-    def setShowBuiltinAvailableAppliances(self, value):
-        self._show_builtin_available_appliances = value
-
-    def setShowMyAvailableAppliances(self, value):
-        self._show_my_available_appliances = value
-
     def refresh(self):
+
         self.clear()
         self.populateNodesView(self._current_category, self._current_search)
 
@@ -89,48 +80,28 @@ class NodesView(QtWidgets.QTreeWidget):
         """
 
         if not Controller.instance().connected():
+            log.debug("Could not retrieve templates because there is no connection to the controller")
             return
+
         self.setIconSize(QtCore.QSize(32, 32))
         self._current_category = category
         self._current_search = search
 
         display_appliances = set()
-
-        if self._show_installed_appliances:
-            for appliance in ApplianceManager.instance().appliances():
-                if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
-                    continue
-                if search != "" and search.lower() not in appliance["name"].lower():
-                    continue
-
-                display_appliances.add(appliance["name"])
-                item = QtWidgets.QTreeWidgetItem(self)
-                item.setText(0, appliance["name"])
-                item.setData(0, QtCore.Qt.UserRole, appliance["appliance_id"])
-                item.setData(1, QtCore.Qt.UserRole, "appliance")
-                item.setSizeHint(0, QtCore.QSize(32, 32))
-                Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
-
-        for appliance in ApplianceManager.instance().applianceTemplates():
-            if not appliance["builtin"] and not self._show_my_available_appliances:
-                continue
-            if appliance["builtin"] and not self._show_builtin_available_appliances:
-                continue
-
+        for appliance in ApplianceManager.instance().appliances():
             if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
                 continue
             if search != "" and search.lower() not in appliance["name"].lower():
                 continue
-            if appliance["name"] in display_appliances:
-                continue
 
+            display_appliances.add(appliance["name"])
             item = QtWidgets.QTreeWidgetItem(self)
-            item.setForeground(0, QtGui.QBrush(QtGui.QColor("gray")))
             item.setText(0, appliance["name"])
-            item.setData(0, QtCore.Qt.UserRole, appliance)
-            item.setData(1, QtCore.Qt.UserRole, "appliance_template")
+            item.setData(0, QtCore.Qt.UserRole, appliance["appliance_id"])
+            item.setData(1, QtCore.Qt.UserRole, "appliance")
             item.setSizeHint(0, QtCore.QSize(32, 32))
             Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
+
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def _setItemIcon(self, item, icon):
@@ -211,8 +182,7 @@ class NodesView(QtWidgets.QTreeWidget):
             if node_class:
                 break
 
-        # We can not edit stuff like EthernetSwitch
-        # or without config template like VPCS
+        # We can not edit devices like EthernetSwitch or device without config templates
         if not node["builtin"] and hasattr(module, "configurationPage"):
             vm = None
             for vm_key, vm in module.instance().nodeTemplates().items():
@@ -230,7 +200,6 @@ class NodesView(QtWidgets.QTreeWidget):
             configuration.setIcon(QtGui.QIcon(":/icons/delete.svg"))
             configuration.triggered.connect(qpartial(self._deleteSlot, vm_key, vm, module))
             menu.addAction(configuration)
-
             menu.exec_(QtGui.QCursor.pos())
 
     def _configurationSlot(self, vm, module, source):
@@ -238,15 +207,8 @@ class NodesView(QtWidgets.QTreeWidget):
         dialog = ConfigurationDialog(vm["name"], vm, module.configurationPage()(), parent=self)
         dialog.show()
         if dialog.exec_():
+            # update appliance list, refresh is triggered by appliances_changed_signal
             module.instance().setNodeTemplates(module.instance().nodeTemplates())
-            LocalConfig.instance().writeConfig()
-            #self.refresh()
-
-            # FIXME: temporary fix: close the nodes dock to refresh the node list
-            from .main_window import MainWindow
-            main_window = MainWindow.instance()
-            main_window.uiNodesDockWidget.setVisible(False)
-            main_window.uiNodesDockWidget.setWindowTitle("")
 
     def _deleteSlot(self, vm_key, vm, module, source):
 
@@ -255,12 +217,5 @@ class NodesView(QtWidgets.QTreeWidget):
         if reply == QtWidgets.QMessageBox.Yes:
             vms = module.instance().nodeTemplates()
             vms.pop(vm_key)
+            # update appliance list, refresh is triggered by appliances_changed_signal
             module.instance().setNodeTemplates(vms)
-            LocalConfig.instance().writeConfig()
-            #self.refresh()
-
-            # FIXME: temporary fix: close the nodes dock to refresh the node list
-            from .main_window import MainWindow
-            main_window = MainWindow.instance()
-            main_window.uiNodesDockWidget.setVisible(False)
-            main_window.uiNodesDockWidget.setWindowTitle("")

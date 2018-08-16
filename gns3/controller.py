@@ -18,11 +18,13 @@
 import os
 import hashlib
 import tempfile
+import json
 
-from .qt import QtCore, QtGui, QtWidgets, qpartial, qslot
+from .qt import QtCore, QtNetwork, QtGui, QtWidgets, qpartial, qslot
 from .symbol import Symbol
 from .local_server_config import LocalServerConfig
 from .settings import LOCAL_SERVER_SETTINGS
+from gns3.utils import parse_version
 
 import logging
 log = logging.getLogger(__name__)
@@ -128,6 +130,7 @@ class Controller(QtCore.QObject):
             self._connected = False
             self.disconnected_signal.emit()
             self._connectingToServer()
+            self.stopListenNotifications()
 
     def _versionGetSlot(self, result, error=False, **kwargs):
         """
@@ -161,6 +164,7 @@ class Controller(QtCore.QObject):
             self._connecting = False
             self.connected_signal.emit()
             self.refreshProjectList()
+            self._startListenNotifications()
 
     def post(self, *args, **kwargs):
         return self.createHTTPQuery("POST", *args, **kwargs)
@@ -362,3 +366,77 @@ class Controller(QtCore.QObject):
 
     def projects(self):
         return self._projects
+
+    def _startListenNotifications(self):
+        if not self.connected():
+            return
+
+        # Due to bug in Qt on some version we need a dedicated network manager
+        self._notification_network_manager = QtNetwork.QNetworkAccessManager()
+        self._notification_stream = None
+
+        # Qt websocket before Qt 5.6 doesn't support auth
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
+            self._notification_stream = Controller.instance().createHTTPQuery("GET", "/notifications", self._endListenNotificationCallback,
+                                                                              downloadProgressCallback=self._event_received,
+                                                                              networkManager=self._notification_network_manager,
+                                                                              timeout=None,
+                                                                              showProgress=False,
+                                                                              ignoreErrors=True)
+
+        else:
+            self._notification_stream = Controller.instance().connectWebSocket("/notifications/ws")
+            self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
+            self._notification_stream.error.connect(self._websocket_error)
+
+    def stopListenNotifications(self):
+        if self._notification_stream:
+            log.debug("Stop listening for notifications from controller")
+            stream = self._notification_stream
+            self._notification_stream = None
+            self._notification_network_manager = None
+            stream.abort()
+
+    def _endListenNotificationCallback(self, result, error=False, **kwargs):
+        """
+        If notification stream disconnect we reconnect to it
+        """
+        if self._notification_stream:
+            self._notification_stream = None
+            self._startListenNotifications()
+
+    @qslot
+    def _websocket_error(self, error):
+        if self._notification_stream:
+            log.error(self._notification_stream.errorString())
+            self._notification_stream = None
+            self._startListenNotifications()
+
+    @qslot
+    def _websocket_event_received(self, event):
+        try:
+            self._event_received(json.loads(event))
+        except ValueError as e:
+            log.error("Invalid event received: {}".format(e))
+
+    def _event_received(self, result, *args, **kwargs):
+
+        # Log only relevant events
+        if result["action"] not in ("ping", "compute.updated"):
+            log.debug("Event received from controller stream: {}".format(result))
+        if result["action"] == "settings.updated":
+            from gns3.local_config import LocalConfig
+            from gns3.appliance_manager import ApplianceManager
+            LocalConfig.instance().refreshConfigFromController()
+            ApplianceManager.instance().refresh()
+        elif result["action"] == "compute.created" or result["action"] == "compute.updated":
+            from .compute_manager import ComputeManager
+            ComputeManager.instance().computeDataReceivedCallback(result["event"])
+        elif result["action"] == "log.error":
+            log.error(result["event"]["message"])
+        elif result["action"] == "log.warning":
+            log.warning(result["event"]["message"])
+        elif result["action"] == "log.info":
+            log.info(result["event"]["message"], extra={"show": True})
+        elif result["action"] == "ping":
+            pass

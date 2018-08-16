@@ -29,6 +29,7 @@ class ApplianceManager(QtCore.QObject):
     """
 
     appliances_changed_signal = QtCore.Signal()
+    appliance_templates_changed_signal = QtCore.Signal()
 
     def __init__(self):
 
@@ -38,7 +39,7 @@ class ApplianceManager(QtCore.QObject):
         self._controller = Controller.instance()
         self._controller.connected_signal.connect(self.refresh)
         self._controller.disconnected_signal.connect(self._controllerDisconnectedSlot)
-        self.refresh()
+        #self.refresh()
 
     def refresh(self):
         """
@@ -109,7 +110,7 @@ class ApplianceManager(QtCore.QObject):
             log.error("Error while getting appliance templates list: {}".format(result["message"]))
             return
         self._appliance_templates = result
-        self.appliances_changed_signal.emit()
+        self.appliance_templates_changed_signal.emit()
 
     def createNodeFromApplianceId(self, project, appliance_id, x, y):
         """

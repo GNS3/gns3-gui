@@ -636,8 +636,8 @@ class Project(QtCore.QObject):
     def _event_received(self, result, *args, **kwargs):
 
         # Log only relevant events
-        if result["action"] not in ("ping", "compute.updated"):
-            log.debug("Event received: %s", result)
+        if result["action"] not in ("ping"):
+            log.debug("Event received from project stream: {}".format(result))
         if result["action"] == "node.created":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is None:
@@ -686,11 +686,5 @@ class Project(QtCore.QObject):
             log.warning(result["event"]["message"])
         elif result["action"] == "log.info":
             log.info(result["event"]["message"], extra={"show": True})
-        elif result["action"] == "compute.created" or result["action"] == "compute.updated":
-            cm = ComputeManager.instance()
-            cm.computeDataReceivedCallback(result["event"])
-        elif result["action"] == "settings.updated":
-            LocalConfig.instance().refreshConfigFromController()
-            ApplianceManager.instance().refresh()
         elif result["action"] == "ping":
             pass

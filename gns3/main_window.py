@@ -109,7 +109,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.recent_project_actions = []
         self._start_time = time.time()
         local_config = LocalConfig.instance()
-        local_config.config_changed_signal.connect(self._localConfigChangedSlot)
+        #local_config.config_changed_signal.connect(self._localConfigChangedSlot)
         self._local_config_timer = QtCore.QTimer(self)
         self._local_config_timer.timeout.connect(local_config.checkConfigChanged)
         self._local_config_timer.start(1000)  # milliseconds
@@ -426,7 +426,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         directory = self._appliance_dir
         if not os.path.exists(self._appliance_dir):
             directory = Topology.instance().projectsDirPath()
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Import appliance", directory,
                                                         "All files (*.*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
                                                         "GNS3 Appliance (*.gns3appliance *.gns3a)")
         if path:
@@ -543,8 +543,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # It covers case when project is not set
         # and we need to refresh appliance manager
         project = Topology.instance().project()
-        if project is None:
-            self._appliance_manager.instance().refresh()
+
+        #if project is None:
+        #    self._appliance_manager.instance().refresh()
 
     def _refreshVisibleWidgets(self):
         """

@@ -44,7 +44,7 @@ class LocalConfig(QtCore.QObject):
 
     def __init__(self, config_file=None):
         """
-        :param config_file: Path to the config file (override all other config, usefull for tests)
+        :param config_file: Path to the config file (override all other config, useful for tests)
         """
 
         super().__init__()

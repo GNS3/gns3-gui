@@ -38,16 +38,7 @@ background-none;
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -71,7 +62,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>986</width>
-     <height>27</height>
+     <height>40</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -237,64 +228,15 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>3</number>
+      <widget class="QLineEdit" name="uiNodesFilterLineEdit">
+       <property name="placeholderText">
+        <string>Filter</string>
        </property>
-       <property name="leftMargin">
-        <number>5</number>
-       </property>
-       <property name="rightMargin">
-        <number>5</number>
-       </property>
-       <property name="bottomMargin">
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="QComboBox" name="uiNodesFilterComboBox">
-         <item>
-          <property name="text">
-           <string>Installed &amp; Available appliances</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Installed appliances</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Available appliances</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Custom appliances</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="uiNodesFilterLineEdit">
-         <property name="placeholderText">
-          <string>Filter</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      </widget>
      </item>
      <item>
       <widget class="NodesView" name="uiNodesView">
@@ -430,16 +372,7 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
@@ -505,16 +438,7 @@ background-none;
      </sizepolicy>
     </property>
     <layout class="QGridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -558,16 +482,7 @@ background-none;
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <property name="spacing">
