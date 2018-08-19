@@ -240,7 +240,7 @@
       </attribute>
       <column>
        <property name="text">
-        <string>Version</string>
+        <string>Appliance version</string>
        </property>
        <property name="font">
         <font>
@@ -267,11 +267,6 @@
       <column>
        <property name="text">
         <string>File version</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>MD5</string>
        </property>
       </column>
      </widget>

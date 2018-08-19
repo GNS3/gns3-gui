@@ -41,13 +41,16 @@ class ApplianceManager(QtCore.QObject):
         self._controller.disconnected_signal.connect(self._controllerDisconnectedSlot)
         #self.refresh()
 
-    def refresh(self):
+    def refresh(self, update=False):
         """
         Gets the appliances and appliance templates from the controller.
         """
 
         if self._controller.connected():
-            self._controller.get("/appliances/templates", self._listApplianceTemplateCallback)
+            if update is True:
+                self._controller.get("/appliances/templates?update=yes", self._listApplianceTemplateCallback, progressText="Downloading appliance templates from online registry...")
+            else:
+                self._controller.get("/appliances/templates", self._listApplianceTemplateCallback)
             self._controller.get("/appliances", self._listAppliancesCallback)
 
     def _controllerDisconnectedSlot(self):

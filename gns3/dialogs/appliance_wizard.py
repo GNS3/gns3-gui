@@ -186,6 +186,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if self._appliance['qemu'].get('kvm', 'require') == 'require':
                 self._server_check = False
                 Qemu.instance().getQemuCapabilitiesFromServer(self._compute_id, qpartial(self._qemuServerCapabilitiesCallback))
+            else:
+                self._server_check = True
             Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [self._appliance["qemu"]["arch"]])
 
         elif self.page(page_id) == self.uiUsageWizardPage:
@@ -614,8 +616,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         elif self.currentPage() == self.uiQemuWizardPage:
             # validate the Qemu
 
-            if self._server_check == False:
-                QtWidgets.QMessageBox.info(self, "Checking for KVM support", "Please wait for the server to reply")
+            if self._server_check is False:
+                QtWidgets.QMessageBox.critical(self, "Checking for KVM support", "Please wait for the server to reply...")
+                return False
             if self.uiQemuListComboBox.currentIndex() == -1:
                 QtWidgets.QMessageBox.critical(self, "Qemu binary", "No compatible Qemu binary selected")
                 return False

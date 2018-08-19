@@ -50,7 +50,7 @@ from .progress import Progress
 from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
-from .dialogs.new_appliance_dialog import NewApplianceDialog
+from .dialogs.new_appliance_wizard import NewApplianceWizard
 from .dialogs.notif_dialog import NotifDialog, NotifDialogHandler
 from .status_bar import StatusBarHandler
 from .registry.appliance import ApplianceError
@@ -396,8 +396,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiNodesDockWidget.setWindowTitle("")
 
         if create_new_project:
-            Topology.instance().createLoadProject(
-                self._project_dialog.getProjectSettings())
+            Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
 
         self._project_dialog = None
 
@@ -405,17 +404,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Called when user want to create a new appliance
         """
-        dialog = NewApplianceDialog(self)
+
+        dialog = NewApplianceWizard(self)
         dialog.show()
         dialog.exec_()
-
-        # No projects
-        if Topology.instance().project() is None:
-            if self._open_file_at_startup:
-                self.loadPath(self._open_file_at_startup)
-                self._open_file_at_startup = None
-            else:
-                self._newProjectActionSlot()
 
     @qslot
     def openApplianceActionSlot(self, *args):
