@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Wizard</string>
+   <string>New appliance</string>
   </property>
   <property name="options">
    <set>QWizard::HaveFinishButtonOnEarlyPages</set>

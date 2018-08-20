@@ -46,7 +46,7 @@ class Ui_NewApplianceWizard(object):
 
     def retranslateUi(self, NewApplianceWizard):
         _translate = QtCore.QCoreApplication.translate
-        NewApplianceWizard.setWindowTitle(_translate("NewApplianceWizard", "Wizard"))
+        NewApplianceWizard.setWindowTitle(_translate("NewApplianceWizard", "New appliance"))
         self.uiSelectApplianceSourceWizardPage.setTitle(_translate("NewApplianceWizard", "New appliance"))
         self.uiSelectApplianceSourceWizardPage.setSubTitle(_translate("NewApplianceWizard", "Please choose how you want to add a new appliance."))
         self.uiAddApplianceFromServerRadioButton.setText(_translate("NewApplianceWizard", "&Add an appliance from the GNS3 server (recommended)"))

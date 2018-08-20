@@ -394,8 +394,8 @@ class Controller(QtCore.QObject):
             log.debug("Stop listening for notifications from controller")
             stream = self._notification_stream
             self._notification_stream = None
-            self._notification_network_manager = None
             stream.abort()
+            self._notification_network_manager = None
 
     def _endListenNotificationCallback(self, result, error=False, **kwargs):
         """

@@ -85,20 +85,54 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
         Gets the appliance information to be displayed in the tooltip.
         """
 
-        info = (
-            ("Product", "product_name"),
-            ("Vendor", "vendor_name"),
-            ("Availability", "availability"),
-            ("Status", "status"),
-            ("Maintainer", "maintainer"),
-            ("vCPUs", "qemu/vcpus"),
-            ("RAM", "qemu/ram"),
-            ("Adapters", "qemu/adapters"),
-            ("Adapter type", "qemu/adapter_type"),
-            ("Console type", "qemu/console_type"),
-            ("Architecture", "qemu/arch"),
-            ("KVM", "qemu/kvm")
-        )
+        info = (("Product", "product_name"),
+                ("Vendor", "vendor_name"),
+                ("Availability", "availability"),
+                ("Status", "status"),
+                ("Maintainer", "maintainer"))
+
+        if "qemu" in appliance:
+            qemu_info = (("vCPUs", "qemu/cpus"),
+                         ("RAM", "qemu/ram"),
+                         ("Adapters", "qemu/adapters"),
+                         ("Adapter type", "qemu/adapter_type"),
+                         ("Console type", "qemu/console_type"),
+                         ("Architecture", "qemu/arch"),
+                         ("Console type", "qemu/console_type"),
+                         ("KVM", "qemu/kvm"))
+            info = info + qemu_info
+
+        elif "docker" in appliance:
+            docker_info = (("Image", "docker/image"),
+                           ("Adapters", "docker/adapters"),
+                           ("Console type", "docker/console_type"))
+            info = info + docker_info
+
+        elif "iou" in appliance:
+            iou_info = (("RAM", "iou/ram"),
+                        ("NVRAM", "iou/nvram"),
+                        ("Ethernet adapters", "iou/ethernet_adapters"),
+                        ("Serial adapters", "iou/serial_adapters"))
+            info = info + iou_info
+
+        elif "dynamips" in appliance:
+            dynamips_info = (("Platform", "dynamips/platform"),
+                             ("Chassis", "dynamips/chassis"),
+                             ("Midplane", "dynamips/midplane"),
+                             ("NPE", "dynamips/npe"),
+                             ("RAM", "dynamips/ram"),
+                             ("NVRAM", "dynamips/nvram"),
+                             ("slot0", "dynamips/slot0"),
+                             ("slot1", "dynamips/slot1"),
+                             ("slot2", "dynamips/slot2"),
+                             ("slot3", "dynamips/slot3"),
+                             ("slot4", "dynamips/slot4"),
+                             ("slot5", "dynamips/slot5"),
+                             ("slot6", "dynamips/slot6"),
+                             ("wic0", "dynamips/wic0"),
+                             ("wic1", "dynamips/wic1"),
+                             ("wic2", "dynamips/wic2"))
+            info = info + dynamips_info
 
         text_info = ""
         for (name, key) in info:
@@ -184,9 +218,12 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
         Validates if an appliance can be installed.
         """
 
-        if self.currentPage() == self.uiApplianceFromServerWizardPage:
+        if self.currentPage() == self.uiSelectApplianceSourceWizardPage and not Controller.instance().connected():
+            QtWidgets.QMessageBox.critical(self, "New appliance", "There is no connection to the server")
+            return False
+        elif self.currentPage() == self.uiApplianceFromServerWizardPage:
             if not self.uiApplianceTemplatesTreeWidget.currentItem():
-                QtWidgets.QMessageBox.critical(self, "Appliance", "Please select an appliance to install!")
+                QtWidgets.QMessageBox.critical(self, "New appliance", "Please select an appliance to install!")
                 return False
         return True
 
