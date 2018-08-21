@@ -80,6 +80,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         # appliance object
         self._appliance = Appliance(self._registry, self._path)
+        self.setWindowTitle("Install {} appliance".format(self._appliance["name"]))
 
         # add a custom button to show appliance information
         self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Appliance info")

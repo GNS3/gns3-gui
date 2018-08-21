@@ -55,7 +55,7 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
         self.button(QtWidgets.QWizard.CustomButton1).hide()
 
         self.uiFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
-        ApplianceManager.instance().appliances_changed_signal.connect(self._get_appliance_templates_from_server)
+        ApplianceManager.instance().appliance_templates_changed_signal.connect(self._applianceTemplatesChangedSlot)
 
     def _addApplianceToggledSlot(self, checked):
 
@@ -72,6 +72,14 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
         """
 
         ApplianceManager.instance().refresh(update=True)
+
+    def _applianceTemplatesChangedSlot(self):
+        """
+        Called when the appliance templates have been updated.
+        """
+
+        self._get_appliance_templates_from_server()
+        QtWidgets.QMessageBox.information(self, "Appliance templates", "Appliance templates are up-to-date!")
 
     def _filterTextChangedSlot(self, text):
 
@@ -222,7 +230,7 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
             QtWidgets.QMessageBox.critical(self, "New appliance", "There is no connection to the server")
             return False
         elif self.currentPage() == self.uiApplianceFromServerWizardPage:
-            if not self.uiApplianceTemplatesTreeWidget.currentItem():
+            if not self.uiApplianceTemplatesTreeWidget.selectedItems():
                 QtWidgets.QMessageBox.critical(self, "New appliance", "Please select an appliance to install!")
                 return False
         return True
@@ -237,8 +245,8 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
         super().done(result)
         from gns3.main_window import MainWindow
         if self.currentPage() == self.uiApplianceFromServerWizardPage:
-            item = self.uiApplianceTemplatesTreeWidget.currentItem()
-            if item:
+            items = self.uiApplianceTemplatesTreeWidget.selectedItems()
+            for item in items:
                 f = tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False)
                 json.dump(item.data(0, QtCore.Qt.UserRole), f)
                 f.close()
