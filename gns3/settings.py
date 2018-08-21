@@ -54,6 +54,7 @@ if sys.platform.startswith("win"):
         program_files_x86 = program_files = os.environ["PROGRAMFILES"]
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
+                                             'Solar-Putty (included with GNS3)': 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"',
                                              'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "telnet %h %p"'.format(program_files_x86),
                                              'Royal TS': '{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:%h /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="%p" /p:Name="%d"'.format(program_files),
                                              'SuperPutty': r'SuperPutty.exe -telnet "%h -P %p -wt \"%d\""',
