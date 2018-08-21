@@ -230,31 +230,6 @@ class StatsQtWidgetsQDialog(QtWidgets.QDialog):
 QtWidgets.QDialog = StatsQtWidgetsQDialog
 
 
-class PatchNetworkAccessManager(QNetworkAccessManager):
-    """
-    Patch the network acces manager in order to solve
-    hibernation issues on windows and Linux
-
-    See: https://github.com/GNS3/gns3-gui/issues/2104
-    """
-
-    def __init__(self, *params, **kwargs):
-        super().__init__(*params, **kwargs)
-        self.setNetworkAccessible(self.Accessible)
-        self.networkAccessibleChanged.connect(self.networkAccessibleChangedSlot)
-
-    def networkAccessibleChangedSlot(self, status):
-        """
-        When we lost the network we switch to another available network
-        """
-        if status == self.Accessible:
-            return
-        self.setConfiguration(QtNetwork.QNetworkConfigurationManager().defaultConfiguration())
-
-
-QtNetwork.QNetworkAccessManager = PatchNetworkAccessManager
-
-
 def qpartial(func, *args, **kwargs):
     """
     A functools partial that you can use on qobject. If the targeted qobject is
