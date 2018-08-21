@@ -391,7 +391,7 @@ class HTTPClient(QtCore.QObject):
             return
 
         if params["version"].split("-")[0] != __version__.split("-")[0]:
-            msg = "Client version {} is not the same as server version {}".format(__version__, params["version"])
+            msg = "Client version {} is not the same as server (controller) version {}".format(__version__, params["version"])
             # Stable release
             if __version_info__[3] == 0:
                 log.error(msg)

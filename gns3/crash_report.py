@@ -72,6 +72,7 @@ class CrashReport:
         from .local_server import LocalServer
         from .local_config import LocalConfig
         from .controller import Controller
+        from .compute_manager import ComputeManager
 
         local_server = LocalServer.instance().localServerSettings()
         if local_server["report_errors"]:
@@ -106,6 +107,10 @@ class CrashReport:
                 "python:frozen": "{}".format(hasattr(sys, "frozen")),
                 "controller:version": Controller.instance().version()
             }
+
+            for index, compute in enumerate(ComputeManager.instance().computes()):
+                context["compute{}:version".format(index)] = compute.capabilities().get("version", "n/a")
+                context["compute{}:platform".format(index)] = compute.capabilities().get("platform", "n/a")
 
             context = self._add_qt_information(context)
             client.tags_context(context)
