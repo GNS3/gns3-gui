@@ -1,5 +1,16 @@
 # Change Log
 
+## 2.1.9 13/08/2018
+
+* Fix incorrect short port names in topology summary. Fixes https://github.com/GNS3/gns3-gui/issues/2562
+* Add compute version in server summary tooltip.
+* Fix test for Qemu boot priority. Fixes #2548.
+* Fix boot priority missing when installing an appliance. Fixes #2548.
+* Support PATH with UTF-8 characters in OSX telnet console, fixes #2537
+* Allow users to accept different MD5 hashes for preconfigured appliances. Fixes #2526.
+* Do not try to update drawing if it is being deleted. Ref #2483.
+* Catch exception when loading invalid appliance file.
+
 ## 2.1.8 14/06/2018
 
 * Add error information when cannot access/read IOS/IOU config file. Ref #2501
