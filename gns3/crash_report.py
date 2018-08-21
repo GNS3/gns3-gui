@@ -71,6 +71,7 @@ class CrashReport:
     def captureException(self, exception, value, tb):
         from .local_server import LocalServer
         from .local_config import LocalConfig
+        from .controller import Controller
 
         local_server = LocalServer.instance().localServerSettings()
         if local_server["report_errors"]:
@@ -102,8 +103,10 @@ class CrashReport:
                                                     sys.version_info[2]),
                 "python:bit": struct.calcsize("P") * 8,
                 "python:encoding": sys.getdefaultencoding(),
-                "python:frozen": "{}".format(hasattr(sys, "frozen"))
+                "python:frozen": "{}".format(hasattr(sys, "frozen")),
+                "controller:version": Controller.instance().version()
             }
+
             context = self._add_qt_information(context)
             client.tags_context(context)
             try:
