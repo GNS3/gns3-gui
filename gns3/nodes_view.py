@@ -98,7 +98,7 @@ class NodesView(QtWidgets.QTreeWidget):
 
         if self._show_installed_appliances:
             for appliance in ApplianceManager.instance().appliances():
-                if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
+                if category is not None and category != CATEGORY_TO_ID.get(appliance["category"]):
                     continue
                 if search != "" and search.lower() not in appliance["name"].lower():
                     continue
@@ -117,7 +117,7 @@ class NodesView(QtWidgets.QTreeWidget):
             if appliance["builtin"] and not self._show_builtin_available_appliances:
                 continue
 
-            if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
+            if category is not None and category != CATEGORY_TO_ID.get(appliance["category"]):
                 continue
             if search != "" and search.lower() not in appliance["name"].lower():
                 continue

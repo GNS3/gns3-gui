@@ -22,6 +22,7 @@
       "enum": [
           "router",
           "multilayer_switch",
+          "switch",
           "firewall",
           "guest"
       ],
