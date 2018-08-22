@@ -36,6 +36,7 @@ class Compute:
         self._password = None
         self._cpu_usage_percent = None
         self._memory_usage_percent = None
+        self._last_error = None
         self._capabilities = {
             "node_types": []
         }
@@ -96,6 +97,12 @@ class Compute:
 
     def capabilities(self):
         return self._capabilities
+
+    def setLastError(self, last_error):
+        self._last_error = last_error
+
+    def lastError(self):
+        return self._last_error
 
     def setCapabilities(self, val):
         self._capabilities = val
