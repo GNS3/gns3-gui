@@ -263,7 +263,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
     def _saveSettingsCallback(self, result, error=False, **kwargs):
         if error:
             if "message" in result:
-                QtWidgets.QMessageBox.critical(self, "Save settings", "Error while save settings: {}".format(result["message"]))
+                QtWidgets.QMessageBox.critical(self, "Save settings", "Error while saving settings: {}".format(result["message"]))
             return
 
     def _addSummaryEntry(self, name, value):
