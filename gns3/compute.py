@@ -38,6 +38,7 @@ class Compute:
         self._cpu_usage_percent = None
         self._memory_usage_percent = None
         self._capabilities = {"node_types": []}
+        self._last_error = None
 
     def id(self):
         """
@@ -218,6 +219,12 @@ class Compute:
         """
 
         self._capabilities = value
+
+    def setLastError(self, last_error):
+        self._last_error = last_error
+
+    def lastError(self):
+        return self._last_error
 
     def __str__(self):
 

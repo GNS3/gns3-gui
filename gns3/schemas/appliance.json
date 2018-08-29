@@ -22,6 +22,7 @@
       "enum": [
           "router",
           "multilayer_switch",
+          "switch",
           "firewall",
           "guest"
       ],
@@ -287,8 +288,8 @@
           "title": "Type of console connection for the administration of the appliance"
         },
         "boot_priority": {
-            "enum": ["d", "c", "dc", "cd", "n", "nc", "nd", "cn", "dn"],
-            "title": "Optional define the disk boot priory. Refer to -boot option in qemu manual for more details."
+            "enum": ["c", "d", "n", "cn", "cd", "dn", "dc", "nc", "nd"],
+            "title": "Disk boot priority. Refer to -boot option in qemu manual for more details."
         },
         "kernel_command_line": {
             "type": "string",

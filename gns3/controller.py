@@ -45,6 +45,7 @@ class Controller(QtCore.QObject):
         super().__init__()
         self._connected = False
         self._connecting = False
+        self._version = None
         self._cache_directory = tempfile.mkdtemp()
         self._http_client = None
         self._first_error = True
@@ -58,6 +59,9 @@ class Controller(QtCore.QObject):
     def host(self):
 
         return self._http_client.host()
+
+    def version(self):
+        return self._version
 
     def isRemote(self):
         """
@@ -156,6 +160,7 @@ class Controller(QtCore.QObject):
             if self._error_dialog:
                 self._error_dialog.reject()
                 self._error_dialog = None
+            self._version = result.get("version")
 
     def _httpClientConnectedSlot(self):
 

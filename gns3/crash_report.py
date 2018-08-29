@@ -51,7 +51,7 @@ class CrashReport:
     Report crash to a third party service
     """
 
-    DSN = "sync+https://08a47076d6cf4eebb455e8e79ef1e78d:ee721159025d4e2ea044e119a8789ece@sentry.io/38506"
+    DSN = "sync+https://4d0138fdd3e642628228ed99c08a76d6:f51fa98dfa3c45b29de6637d176a3132@sentry.io/38506"
     if hasattr(sys, "frozen"):
         cacert = get_resource("cacert.pem")
         if cacert is not None and os.path.isfile(cacert):
@@ -71,6 +71,8 @@ class CrashReport:
     def captureException(self, exception, value, tb):
         from .local_server import LocalServer
         from .local_config import LocalConfig
+        from .controller import Controller
+        from .compute_manager import ComputeManager
 
         local_server = LocalServer.instance().localServerSettings()
         if local_server["report_errors"]:
@@ -102,8 +104,14 @@ class CrashReport:
                                                     sys.version_info[2]),
                 "python:bit": struct.calcsize("P") * 8,
                 "python:encoding": sys.getdefaultencoding(),
-                "python:frozen": "{}".format(hasattr(sys, "frozen"))
+                "python:frozen": "{}".format(hasattr(sys, "frozen")),
+                "controller:version": Controller.instance().version()
             }
+
+            for index, compute in enumerate(ComputeManager.instance().computes()):
+                context["compute{}:version".format(index)] = compute.capabilities().get("version", "n/a")
+                context["compute{}:platform".format(index)] = compute.capabilities().get("platform", "n/a")
+
             context = self._add_qt_information(context)
             client.tags_context(context)
             try:

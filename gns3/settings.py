@@ -23,6 +23,7 @@ import os
 import sys
 import uuid
 import platform
+import shutil
 
 # Default projects directory location
 DEFAULT_PROJECTS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
@@ -67,7 +68,11 @@ if sys.platform.startswith("win"):
                                              'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:%h:%p" /TABBED "/TITLE:%d"'.format(program_files_x86)}
 
     # default on Windows
-    DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
+    if shutil.which("Solar-PuTTY.exe"):
+        # Solar-Putty is the default if it is installed.
+        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"]
+    else:
+        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
