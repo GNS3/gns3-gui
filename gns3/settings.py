@@ -42,6 +42,7 @@ DEFAULT_APPLIANCES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/appliances
 
 DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
 DEFAULT_LOCAL_SERVER_PORT = 3080
+DEFAULT_DELAY_CONSOLE_ALL = 500
 
 # Pre-configured Telnet console commands on various OSes
 if sys.platform.startswith("win"):
@@ -71,6 +72,7 @@ if sys.platform.startswith("win"):
     if shutil.which("Solar-PuTTY.exe"):
         # Solar-Putty is the default if it is installed.
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"]
+        DEFAULT_DELAY_CONSOLE_ALL = 1500
     else:
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
 
@@ -273,7 +275,7 @@ GENERAL_SETTINGS = {
     "telnet_console_command": DEFAULT_TELNET_CONSOLE_COMMAND,
     "vnc_console_command": DEFAULT_VNC_CONSOLE_COMMAND,
     "spice_console_command": DEFAULT_SPICE_CONSOLE_COMMAND,
-    "delay_console_all": 500,
+    "delay_console_all": DEFAULT_DELAY_CONSOLE_ALL,
     "hide_getting_started_dialog": False,
     "hide_setup_wizard": False,
     "hide_new_appliance_template_button": False,
