@@ -105,15 +105,23 @@ class CrashReport:
                 "python:bit": struct.calcsize("P") * 8,
                 "python:encoding": sys.getdefaultencoding(),
                 "python:frozen": "{}".format(hasattr(sys, "frozen")),
-                "controller:version": Controller.instance().version()
             }
 
+            # extra controller and compute information
+            extra_context = {"controller:version": Controller.instance().version(),
+                             "controller:host": Controller.instance().host(),
+                             "controller:connected": Controller.instance().connected()}
             for index, compute in enumerate(ComputeManager.instance().computes()):
-                context["compute{}:version".format(index)] = compute.capabilities().get("version", "n/a")
-                context["compute{}:platform".format(index)] = compute.capabilities().get("platform", "n/a")
+                extra_context["compute{}:id".format(index)] = compute.id()
+                extra_context["compute{}:name".format(index)] = compute.name(),
+                extra_context["compute{}:host".format(index)] = compute.host(),
+                extra_context["compute{}:connected".format(index)] = compute.connected()
+                extra_context["compute{}:platform".format(index)] = compute.capabilities().get("platform")
+                extra_context["compute{}:version".format(index)] = compute.capabilities().get("version")
 
             context = self._add_qt_information(context)
             client.tags_context(context)
+            client.extra_context(extra_context)
             try:
                 report = client.captureException((exception, value, tb))
             except Exception as e:
