@@ -623,7 +623,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if node:
                     settings["wic" + str(wic_number)] = node.settings().get("wic" + str(wic_number))
 
-                if settings["wic" + str(wic_number)] and settings["wic" + str(wic_number)] != wic_name:
+                if settings.get("wic" + str(wic_number)) and settings["wic" + str(wic_number)] != wic_name:
                     if node:
                         self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = wic_name

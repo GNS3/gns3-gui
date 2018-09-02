@@ -63,14 +63,14 @@ class ApplianceManager(QtCore.QObject):
 
     def _listAppliancesCallback(self, result, error=False, **kwargs):
         if error is True:
-            log.error("Error while getting appliances list: {}".format(result["message"]))
+            log.error("Error while getting appliances list: {}".format(result.get("message", "unknown")))
             return
         self._appliances = result
         self.appliances_changed_signal.emit()
 
     def _listApplianceTemplateCallback(self, result, error=False, **kwargs):
         if error is True:
-            log.error("Error while getting appliance templates list: {}".format(result["message"]))
+            log.error("Error while getting appliance templates list: {}".format(result.get("message", "unknown")))
             return
         self._appliance_templates = result
         self.appliances_changed_signal.emit()
