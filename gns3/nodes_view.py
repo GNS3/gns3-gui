@@ -174,10 +174,12 @@ class NodesView(QtWidgets.QTreeWidget):
 
             # retrieve the node class from the item data
             if item.data(1, QtCore.Qt.UserRole) == "appliance_template":
-                f = tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False)
-                json.dump(item.data(0, QtCore.Qt.UserRole), f)
-                f.close()
-                self._getMainWindow().loadPath(f.name)
+                try:
+                    with tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False) as f:
+                        json.dump(item.data(0, QtCore.Qt.UserRole), f)
+                    self._getMainWindow().loadPath(f.name)
+                except OSError as e:
+                    QtWidgets.QMessageBox.critical(self, "Appliance", "Cannot install appliance: {}".format(e))
                 return
 
             icon = item.icon(0)

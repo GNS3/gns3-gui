@@ -21,7 +21,7 @@ Link items are graphical representation of a link on the QGraphicsScene
 """
 
 import math
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
+from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot, sip_is_deleted
 
 from ..packet_capture import PacketCapture
 from ..dialogs.filter_dialog import FilterDialog
@@ -286,14 +286,15 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                 QtWidgets.QApplication.sendEvent(MainWindow.instance(), key)
                 return
 
-            # create the contextual menu
-            self.setAcceptHoverEvents(False)
-            menu = QtWidgets.QMenu()
-            self.populateLinkContextualMenu(menu)
-            menu.exec_(QtGui.QCursor.pos())
-            self.setAcceptHoverEvents(True)
-            self._hovered = False
-            self.adjust()
+            if not sip_is_deleted(self):
+                # create the contextual menu
+                self.setAcceptHoverEvents(False)
+                menu = QtWidgets.QMenu()
+                self.populateLinkContextualMenu(menu)
+                menu.exec_(QtGui.QCursor.pos())
+                self.setAcceptHoverEvents(True)
+                self._hovered = False
+                self.adjust()
 
     def keyPressEvent(self, event):
         """

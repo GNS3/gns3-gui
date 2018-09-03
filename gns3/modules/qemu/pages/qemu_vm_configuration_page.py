@@ -27,7 +27,7 @@ from gns3.modules.qemu.dialogs.qemu_image_wizard import QemuImageWizard
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.ports.port_name_factory import StandardPortNameFactory
 from gns3.node import Node
-from gns3.qt import QtCore, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial, sip_is_deleted
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.image_manager import ImageManager
 
@@ -267,6 +267,9 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         :param result: server response
         :param error: indicates an error (boolean)
         """
+
+        if sip_is_deleted(self.uiQemuListComboBox):
+            return
 
         if error:
             QtWidgets.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))

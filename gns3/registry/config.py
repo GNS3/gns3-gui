@@ -46,12 +46,16 @@ class Config:
         :params path: Path of the configuration file, otherwise detect it on the system
         """
 
-        self.path = path
-        if self.path is None:
-            self.path = LocalConfig.instance().configFilePath()
+        self._path = path
+        if self._path is None:
+            self._path = LocalConfig.instance().configFilePath()
 
-        with open(self.path, encoding="utf-8") as f:
+        with open(self._path, encoding="utf-8") as f:
             self._config = json.load(f)
+
+    @property
+    def path(self):
+        return self._path
 
     @property
     def images_dir(self):

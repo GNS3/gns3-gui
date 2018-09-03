@@ -19,7 +19,7 @@
 Topology summary view that list all the nodes, their status and connections.
 """
 
-from .qt import QtGui, QtCore, QtWidgets, qslot
+from .qt import QtGui, QtCore, QtWidgets, qslot, sip_is_deleted
 from .node import Node
 from .topology import Topology
 from .items.node_item import NodeItem
@@ -145,12 +145,13 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         """
 
         tree = self.treeWidget()
-        tree.takeTopLevelItem(tree.indexOfTopLevelItem(self))
-        tree.nodes_id.remove(self._node.id())
+        if not sip_is_deleted(tree):
+            tree.takeTopLevelItem(tree.indexOfTopLevelItem(self))
+            tree.nodes_id.remove(self._node.id())
 
     def __lt__(self, otherItem):
         column = self.treeWidget().sortColumn()
-        return natural_sort_key(self.text(column)) < natural_sort_key(otherItem.text(column))
+        return natural_sort_key(str(self.text(column))) < natural_sort_key(str(otherItem.text(column)))
 
 
 class TopologySummaryView(QtWidgets.QTreeWidget):

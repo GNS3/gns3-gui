@@ -107,6 +107,10 @@ def nodeTelnetConsole(node, port, command=None):
         if not command:
             return
 
+    if len(command.strip(' ')) == 0:
+        log.warning('Telnet console program is not configured')
+        return
+
     log.debug('Starting telnet console in thread "{}"'.format(command))
     console_thread = ConsoleThread(MainWindow.instance(), command, node, port)
     console_thread.consoleError.connect(_consoleErrorSlot)
