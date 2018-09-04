@@ -80,8 +80,15 @@ class ApplianceManager(QtCore.QObject):
             if appliance["appliance_id"] == appliance_id:
                 break
 
-        project_id = project.id()
+        if not self._controller.connected():
+            log.error("Cannot create node: not connected to any controller server")
+            return
 
+        if not project or project.id():
+            log.error("Cannot create node: please create a project first!")
+            return
+
+        project_id = project.id()
         if appliance.get("compute_id") is None:
             from .main_window import MainWindow
             server = server_select(MainWindow.instance(), node_type=appliance["node_type"])
