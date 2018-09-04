@@ -124,9 +124,13 @@ class LocalServer(QtCore.QObject):
         return self._parent
 
     def _checkWindowsService(self, service_name):
-        import pywintypes
-        import win32service
-        import win32serviceutil
+
+        try:
+            import pywintypes
+            import win32service
+            import win32serviceutil
+        except ImportError as e:
+            log.error("Could not check if the {} service is running: {}".format(service_name, e))
 
         try:
             if win32serviceutil.QueryServiceStatus(service_name, None)[1] != win32service.SERVICE_RUNNING:
@@ -136,6 +140,7 @@ class LocalServer(QtCore.QObject):
                 return False
             else:
                 log.error("Could not check if the {} service is running: {}".format(service_name, e.strerror))
+
         return True
 
     def _checkUbridgePermissions(self):
