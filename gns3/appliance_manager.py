@@ -84,7 +84,7 @@ class ApplianceManager(QtCore.QObject):
             log.error("Cannot create node: not connected to any controller server")
             return
 
-        if not project or project.id():
+        if not project or not project.id():
             log.error("Cannot create node: please create a project first!")
             return
 

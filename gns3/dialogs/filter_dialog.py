@@ -30,6 +30,7 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
         super().__init__(parent)
         self.setupUi(self)
         self._link = link
+        self._filters = {}
         self._link.updated_link_signal.connect(self._updateUiSlot)
         self._link.listAvailableFilters(self._listAvailableFiltersCallback)
         self._initialized = False

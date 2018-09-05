@@ -326,14 +326,12 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiNPEComboBox.clear()
             self.uiNPEComboBox.addItems(["npe-100", "npe-150", "npe-175", "npe-200", "npe-225", "npe-300", "npe-400", "npe-g2"])
 
-            if settings["midplane"]:
-                index = self.uiMidplaneComboBox.findText(settings["midplane"])
-                if index != -1:
-                    self.uiMidplaneComboBox.setCurrentIndex(index)
-            if settings["npe"]:
-                index = self.uiNPEComboBox.findText(settings["npe"])
-                if index != -1:
-                    self.uiNPEComboBox.setCurrentIndex(index)
+            index = self.uiMidplaneComboBox.findText(settings.get("midplane", "vxr"))
+            if index != -1:
+                self.uiMidplaneComboBox.setCurrentIndex(index)
+            index = self.uiNPEComboBox.findText(settings.get("npe", "npe-400"))
+            if index != -1:
+                self.uiNPEComboBox.setCurrentIndex(index)
 
             if node:
                 # load the sensor settings

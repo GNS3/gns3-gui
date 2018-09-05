@@ -512,7 +512,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
             try:
                 StandardPortNameFactory(self.uiAdaptersSpinBox.value(), first_port_name, port_name_format, port_segment_size)
-            except (ValueError, KeyError):
+            except (IndexError, ValueError, KeyError):
                 QtWidgets.QMessageBox.critical(self, "Invalid format", "Invalid port name format")
                 raise ConfigurationError()
 
