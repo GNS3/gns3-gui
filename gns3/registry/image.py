@@ -95,12 +95,20 @@ class Image:
                 self._md5sum = from_cache
                 return self._md5sum
 
-            if os.path.exists(self.path + ".md5sum"):
-                with open(self.path + ".md5sum", encoding="utf-8") as f:
-                    self._md5sum = f.read().strip()
-                    return self._md5sum
+            md5_file = self.path + ".md5sum"
+            if os.path.exists(md5_file):
+                try:
+                    with open(md5_file) as f:
+                        self._md5sum = f.read().strip()
+                        return self._md5sum
+                except (OSError, UnicodeDecodeError) as e:
+                    log.debug("Could not read '{}': {}".format(md5_file, e))
 
-            if not os.path.isfile(self.path):
+            try:
+                if not os.path.isfile(self.path):
+                    return None
+            except (OSError, PermissionError) as e:
+                log.debug("Cannot access '{}': {}".format(self.path, e))
                 return None
             m = hashlib.md5()
             with open(self.path, "rb") as f:

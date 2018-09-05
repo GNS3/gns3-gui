@@ -106,6 +106,6 @@ class Registry(QtCore.QObject):
                                             log.debug("Found images %s (%s) in %s", filename, md5sum, image.path)
                                             return image
                         except (OSError, PermissionError) as e:
-                            log.error("Can't scan {}: {}".format(path, str(e)))
+                            log.error("Cannot scan {}: {}".format(path, e))
 
         return None

@@ -341,7 +341,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
     def _refreshDialogWorker(self):
         """
-        Scan local directory in order to found the images on disk
+        Scan local directory in order to find the images on disk
         """
 
         # Docker do not have versions
