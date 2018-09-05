@@ -98,7 +98,17 @@ class Config:
         :param name: Appliance name
         :returns: True if name is not already used
         """
-        for item in self._config["Qemu"].get("vms", []):
+
+        appliance_names = []
+        if "Qemu" in self._config:
+            appliance_names.extend(self._config["Qemu"].get("vms", []))
+        if "IOU" in self._config:
+            appliance_names.extend(self._config["IOU"].get("devices", []))
+        if "Dynamips" in self._config:
+            appliance_names.extend(self._config["Dynamips"].get("routers", []))
+        if "Docker" in self._config:
+            appliance_names.extend(self._config["Docker"].get("containers", []))
+        for item in appliance_names:
             if item["name"] == name:
                 return False
         return True
@@ -168,7 +178,7 @@ class Config:
         if "docker" in appliance_config:
             self._add_docker_config(new_config, appliance_config)
             return
-        raise ConfigException("{} no configuration found for know emulators".format(new_config["name"]))
+        raise ConfigException("{} no configuration found for known emulators".format(new_config["name"]))
 
     def _add_docker_config(self, new_config, appliance_config):
         new_config["adapters"] = appliance_config["docker"]["adapters"]
