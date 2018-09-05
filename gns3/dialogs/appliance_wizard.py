@@ -487,14 +487,14 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
             return False
 
-        if version is None:
-            appliance_configuration = self._appliance.copy()
-        else:
-            try:
-                appliance_configuration = self._appliance.search_images_for_version(version)
-            except ApplianceError as e:
-                QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
-                return False
+        #if version is None:
+        #    appliance_configuration = self._appliance.copy()
+        #else:
+        try:
+            appliance_configuration = self._appliance.search_images_for_version(version)
+        except ApplianceError as e:
+            QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
+            return False
 
         while len(appliance_configuration["name"]) == 0 or not config.is_name_available(appliance_configuration["name"]):
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "The name \"{}\" is already used by another appliance".format(appliance_configuration["name"]))
@@ -586,8 +586,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if current:
                 version = current.data(0, QtCore.Qt.UserRole)
                 return self._install(version["name"])
-            else:
-                return self._install(None)
+            #else:
+            #    return self._install(None)
 
         elif self.currentPage() == self.uiServerWizardPage:
             if self.uiRemoteRadioButton.isChecked():
