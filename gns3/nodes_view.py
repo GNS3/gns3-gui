@@ -250,7 +250,7 @@ class NodesView(QtWidgets.QTreeWidget):
                                                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             vms = module.instance().VMs()
-            vms.pop(vm_key)
+            vms.pop(vm_key, None)
             module.instance().setVMs(vms)
             LocalConfig.instance().writeConfig()
             self.refresh()
