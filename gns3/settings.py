@@ -170,7 +170,7 @@ if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'TightVNC (included with GNS3)': 'tvnviewer.exe %h:%p',
-        'UltraVNC': 'C:\\Program Files\\uvnc bvba\\UltraVNC\\vncviewer.exe %h:%p'
+        'UltraVNC': r'"{}\uvnc bvba\UltraVNC\vncviewer.exe" %h:%p'.format(program_files)
     }
 
     # default Windows VNC console command
@@ -206,11 +206,11 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer (included with GNS3)': '"c:\\Program Files\\VirtViewer v5.0-256\\bin\\remote-viewer.exe" spice://%h:%p',
+        'Remote Viewer': r'"{}\VirtViewer v7.0-256\bin\remote-viewer.exe" spice://%h:%p'.format(program_files),
     }
 
     # default Windows SPICE console command
-    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer (included with GNS3)']
+    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer']
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
@@ -234,8 +234,8 @@ WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
 
 if sys.platform.startswith("win"):
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "{}\Wireshark\wireshark.exe %c".format(os.environ["PROGRAMFILES"]),
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(os.environ["PROGRAMFILES"])}
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "{}\Wireshark\wireshark.exe %c".format(program_files),
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(program_files)}
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
@@ -254,9 +254,9 @@ else:
 DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
 
 DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = ""
-if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ:
+if sys.platform.startswith("win"):
     # Windows 64-bit
-    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'.format(os.environ["PROGRAMFILES(X86)"])
+    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'.format(program_files_x86)
 
 STYLES = ["Charcoal", "Classic", "Legacy"]
 
