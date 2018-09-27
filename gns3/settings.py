@@ -56,7 +56,6 @@ if sys.platform.startswith("win"):
         program_files_x86 = program_files = os.environ["PROGRAMFILES"]
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
-                                             'Solar-Putty (included with GNS3)': 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"',
                                              'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "telnet %h %p"'.format(program_files_x86),
                                              'Royal TS': '{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:%h /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="%p" /p:Name="%d"'.format(program_files),
                                              'SuperPutty': r'SuperPutty.exe -telnet "%h -P %p -wt \"%d\""',
@@ -71,9 +70,11 @@ if sys.platform.startswith("win"):
     # default on Windows
     if shutil.which("Solar-PuTTY.exe"):
         # Solar-Putty is the default if it is installed.
+        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"] = 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"'
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"]
         DEFAULT_DELAY_CONSOLE_ALL = 1500
     else:
+        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3 downloaded from gns3.com)"] = 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"'
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
 
 elif sys.platform.startswith("darwin"):
