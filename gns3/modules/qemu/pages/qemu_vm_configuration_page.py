@@ -268,7 +268,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         :param error: indicates an error (boolean)
         """
 
-        if sip_is_deleted(self.uiQemuListComboBox):
+        if sip_is_deleted(self.uiQemuListComboBox) or sip_is_deleted(self):
             return
 
         if error:

@@ -76,42 +76,47 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
 
     @qslot
     def _getSettingsCallback(self, result, error=False, **kwargs):
+
+        if sip_is_deleted(self.uiRamSpinBox) or sip_is_deleted(self):
+            return
         if error:
             if "message" in result:
                 log.error("Error while getting settings : {}".format(result["message"]))
             return
-        if not sip_is_deleted(self.uiRamSpinBox):
-            self._old_settings = copy.copy(result)
-            self._settings = result
-            self.uiRamSpinBox.setValue(self._settings["ram"])
-            self.uiCpuSpinBox.setValue(self._settings["vcpus"])
-            self.uiEnableVMCheckBox.setChecked(self._settings["enable"])
-            if self._settings["when_exit"] == "keep":
-                self.uiWhenExitKeepRadioButton.setChecked(True)
-            elif self._settings["when_exit"] == "suspend":
-                self.uiWhenExitSuspendRadioButton.setChecked(True)
-            else:
-                self.uiWhenExitStopRadioButton.setChecked(True)
-            self.uiHeadlessCheckBox.setChecked(self._settings["headless"])
-            Controller.instance().get("/gns3vm/engines", self._listEnginesCallback)
+        self._old_settings = copy.copy(result)
+        self._settings = result
+        self.uiRamSpinBox.setValue(self._settings["ram"])
+        self.uiCpuSpinBox.setValue(self._settings["vcpus"])
+        self.uiEnableVMCheckBox.setChecked(self._settings["enable"])
+        if self._settings["when_exit"] == "keep":
+            self.uiWhenExitKeepRadioButton.setChecked(True)
+        elif self._settings["when_exit"] == "suspend":
+            self.uiWhenExitSuspendRadioButton.setChecked(True)
+        else:
+            self.uiWhenExitStopRadioButton.setChecked(True)
+        self.uiHeadlessCheckBox.setChecked(self._settings["headless"])
+        Controller.instance().get("/gns3vm/engines", self._listEnginesCallback)
 
     @qslot
     def _listEnginesCallback(self, result, error=False, ignore_error=False, **kwargs):
+
+        if sip_is_deleted(self.uiGNS3VMEngineComboBox) or sip_is_deleted(self):
+            return
+
         if error:
             if "message" in result:
                 log.error("Error while getting the list of GNS3 VM engines : {}".format(result["message"]))
             return
 
-        if not sip_is_deleted(self.uiGNS3VMEngineComboBox):
-            self.uiGNS3VMEngineComboBox.clear()
-            self._engines = result
-            # We insert first the current engine to avoid triggering unexpected signals
-            for engine in self._engines:
-                if self._settings["engine"] == engine["engine_id"]:
-                    self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
-            for engine in self._engines:
-                if self._settings["engine"] != engine["engine_id"]:
-                    self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
+        self.uiGNS3VMEngineComboBox.clear()
+        self._engines = result
+        # We insert first the current engine to avoid triggering unexpected signals
+        for engine in self._engines:
+            if self._settings["engine"] == engine["engine_id"]:
+                self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
+        for engine in self._engines:
+            if self._settings["engine"] != engine["engine_id"]:
+                self.uiGNS3VMEngineComboBox.addItem(engine["name"], engine["engine_id"])
 
     @qslot
     def _refreshVMSlot(self, ignore_error=False):
