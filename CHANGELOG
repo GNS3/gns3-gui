@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.1.11 28/09/2018
+
+* Handle deleted SIP objects.
+* Update paths for UltraVNC and VirtViewer.
+* Indicate if Solar-PuTTY is included or not. Fixes #2595
+* Fix bad link to installation instructions in README.rst. Fixes #2590
+* Downgrade to Qt 5.9. Fixes #2592.
+
 ## 2.1.10 15/09/2018
 
 * Fix small errors like unhandled exceptions etc.
