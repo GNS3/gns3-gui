@@ -26,7 +26,7 @@ import re
 from gns3.utils import parse_version
 
 from gns3 import version
-from gns3.qt import QtNetwork, QtCore, QtWidgets, QtGui
+from gns3.qt import QtNetwork, QtCore, QtWidgets, QtGui, qslot
 from gns3.local_config import LocalConfig
 
 
@@ -98,8 +98,11 @@ class UpdateManager(QtCore.QObject):
         else:
             self._get('http://update.gns3.net', self._gns3UpdateReplySlot)
 
+    @qslot
     def _gns3UpdateReplySlot(self):
         network_reply = self.sender()
+        if network_reply is None:
+            return
         if network_reply.error() != QtNetwork.QNetworkReply.NoError:
             if not self._silent:
                 QtWidgets.QMessageBox.critical(self._parent, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))

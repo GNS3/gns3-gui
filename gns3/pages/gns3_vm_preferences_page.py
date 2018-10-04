@@ -20,7 +20,7 @@ Configuration page for GNS3 VM
 """
 
 import copy
-from gns3.qt import QtWidgets, QtCore, qpartial, qslot
+from gns3.qt import QtWidgets, QtCore, qpartial, qslot, sip_is_deleted
 from gns3.controller import Controller
 from ..ui.gns3_vm_preferences_page_ui import Ui_GNS3VMPreferencesPageWidget
 
@@ -74,7 +74,11 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         """
         Controller.instance().get("/gns3vm", self._getSettingsCallback)
 
+    @qslot
     def _getSettingsCallback(self, result, error=False, **kwargs):
+
+        if sip_is_deleted(self.uiRamSpinBox) or sip_is_deleted(self):
+            return
         if error:
             if "message" in result:
                 log.error("Error while getting settings : {}".format(result["message"]))
@@ -95,10 +99,15 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
 
     @qslot
     def _listEnginesCallback(self, result, error=False, ignore_error=False, **kwargs):
+
+        if sip_is_deleted(self.uiGNS3VMEngineComboBox) or sip_is_deleted(self):
+            return
+
         if error:
             if "message" in result:
                 log.error("Error while getting the list of GNS3 VM engines : {}".format(result["message"]))
             return
+
         self.uiGNS3VMEngineComboBox.clear()
         self._engines = result
         # We insert first the current engine to avoid triggering unexpected signals
@@ -115,22 +124,24 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         if engine_id:
             Controller.instance().get("/gns3vm/engines/{}/vms".format(engine_id), qpartial(self._listVMsCallback, ignore_error=ignore_error))
 
+    @qslot
     def _listVMsCallback(self, result, ignore_error=False, error=False, **kwargs):
         if error:
             if "message" in result:
                 if not ignore_error:
                     QtWidgets.QMessageBox.critical(self, "List vms", "Error while listing vms: {}".format(result["message"]))
             return
-        self.uiVMListComboBox.clear()
-        for vm in result:
-            self.uiVMListComboBox.addItem(vm["vmname"], vm["vmname"])
-        index = self.uiVMListComboBox.findText(self._settings["vmname"])
-        if index == -1:
-            index = self.uiVMListComboBox.findText("GNS3 VM")
+        if not sip_is_deleted(self.uiVMListComboBox):
+            self.uiVMListComboBox.clear()
+            for vm in result:
+                self.uiVMListComboBox.addItem(vm["vmname"], vm["vmname"])
+            index = self.uiVMListComboBox.findText(self._settings["vmname"])
             if index == -1:
-                index = 0
-        self.uiVMListComboBox.setCurrentIndex(index)
-        self._initialized = True
+                index = self.uiVMListComboBox.findText("GNS3 VM")
+                if index == -1:
+                    index = 0
+            self.uiVMListComboBox.setCurrentIndex(index)
+            self._initialized = True
 
     def savePreferences(self):
         """

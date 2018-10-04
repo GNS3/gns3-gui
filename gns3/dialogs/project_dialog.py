@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from ..qt import QtCore, QtGui, QtWidgets, qslot
+from ..qt import QtCore, QtGui, QtWidgets, qslot, sip_is_deleted
 from ..ui.project_dialog_ui import Ui_ProjectDialog
 from ..controller import Controller
 from ..topology import Topology
@@ -91,6 +91,8 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         projects_to_delete = set()
         for project in self.uiProjectsTreeWidget.selectedItems():
+            if sip_is_deleted(project):
+                continue
             project_id = project.data(0, QtCore.Qt.UserRole)
             project_name = project.data(1, QtCore.Qt.UserRole)
 

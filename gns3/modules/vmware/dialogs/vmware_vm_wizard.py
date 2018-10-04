@@ -90,6 +90,8 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         """
 
         index = self.uiVMListComboBox.currentIndex()
+        if index == -1:
+            return
         vmname = self.uiVMListComboBox.itemText(index)
         vminfo = self.uiVMListComboBox.itemData(index)
 

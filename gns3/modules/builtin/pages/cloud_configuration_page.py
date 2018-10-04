@@ -87,7 +87,10 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         if self._node:
             self._interfaces = self._node.interfaces()
             self._loadNetworkInterfaces(self._interfaces)
-            self._node.updated_signal.disconnect(self._refreshInterfaces)
+            try:
+                self._node.updated_signal.disconnect(self._refreshInterfaces)
+            except (TypeError, RuntimeError):
+                pass  # was not connected
 
     def _EthernetChangedSlot(self):
         """

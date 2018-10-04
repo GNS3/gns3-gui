@@ -406,7 +406,7 @@ class HTTPClient(QtCore.QObject):
                     if callback is not None:
                         callback({"message": msg}, error=True, server=server)
                 return
-            log.warning("{}\nUsing different versions may result in unexpected problems. Please use at your own risk.".format(msg))
+            log.warning("{}\nUsing different versions may result in unexpected problems. Please upgrade or use at your own risk.".format(msg))
 
         self._connected = True
         self._retry = 0

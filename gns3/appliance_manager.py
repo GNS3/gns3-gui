@@ -99,7 +99,7 @@ class ApplianceManager(QtCore.QObject):
         """
 
         if error is True:
-            log.error("Error while getting the appliances list: {}".format(result["message"]))
+            log.error("Error while getting appliances list: {}".format(result.get("message", "unknown")))
             return
         self._appliances = result
         self.appliances_changed_signal.emit()
@@ -110,7 +110,7 @@ class ApplianceManager(QtCore.QObject):
         """
 
         if error is True:
-            log.error("Error while getting appliance templates list: {}".format(result["message"]))
+            log.error("Error while getting appliance templates list: {}".format(result.get("message", "unknown")))
             return
         self._appliance_templates = result
         self.appliance_templates_changed_signal.emit()
@@ -123,6 +123,14 @@ class ApplianceManager(QtCore.QObject):
         for appliance in self._appliances:
             if appliance["appliance_id"] == appliance_id:
                 break
+
+        if not self._controller.connected():
+            log.error("Cannot create node: not connected to any controller server")
+            return
+
+        if not project or not project.id():
+            log.error("Cannot create node: please create a project first!")
+            return
 
         params = {"x": int(x), "y": int(y)}
         if appliance.get("compute_id") is None:
