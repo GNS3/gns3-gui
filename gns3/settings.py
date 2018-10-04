@@ -22,7 +22,7 @@ Default general settings.
 import os
 import sys
 import uuid
-import platform
+import distro
 import shutil
 
 # Default projects directory location
@@ -161,8 +161,8 @@ else:
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]
 
     if sys.platform.startswith("linux"):
-        distro = platform.linux_distribution()[0]
-        if distro == "Debian" or distro == "Ubuntu" or distro == "LinuxMint":
+        distro_name = distro.name()
+        if distro_name == "Debian" or distro_name == "Ubuntu" or distro_name == "LinuxMint":
             DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Gnome Terminal"]
 
 # Pre-configured VNC console commands on various OSes

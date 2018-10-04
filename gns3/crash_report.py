@@ -20,6 +20,7 @@ import psutil
 import os
 import platform
 import struct
+import distro
 
 try:
     import raven
@@ -98,7 +99,7 @@ class CrashReport:
                 "os:release": platform.release(),
                 "os:win_32": " ".join(platform.win32_ver()),
                 "os:mac": "{} {}".format(platform.mac_ver()[0], platform.mac_ver()[2]),
-                "os:linux": " ".join(platform.linux_distribution()),
+                "os:linux": " ".join(distro.linux_distribution()),
                 "python:version": "{}.{}.{}".format(sys.version_info[0],
                                                     sys.version_info[1],
                                                     sys.version_info[2]),
