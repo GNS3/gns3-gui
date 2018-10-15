@@ -29,7 +29,7 @@ import urllib.parse
 
 
 from .version import __version__, __version_info__
-from .qt import QtCore, QtNetwork, qpartial, sip_is_deleted, QtWebSockets
+from .qt import QtCore, QtNetwork, qpartial, sip_is_deleted
 from .utils import parse_version
 
 import logging
@@ -47,7 +47,7 @@ class HTTPClient(QtCore.QObject):
     """
     HTTP client.
 
-    :param settings: Dictionnary with connection information to the server
+    :param settings: Dictionary with connection information to the server
     :param network_manager: A QT network manager
     """
 
@@ -92,8 +92,6 @@ class HTTPClient(QtCore.QObject):
 
         # List of query waiting for the connection
         self._query_waiting_connections = []
-
-        self._websocket = QtWebSockets.QWebSocket()
 
     def setMaxTimeDifferenceBetweenQueries(self, value):
         self._max_time_difference_between_queries = value
@@ -465,16 +463,16 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
-    def connectWebSocket(self, path, prefix="/v2"):
+    def connectWebSocket(self, websocket, path, prefix="/v2"):
         """
         Path of the websocket endpoint
         """
         host = self._getHostForQuery()
-        request = self._websocket.request()
+        request = websocket.request()
         request.setUrl(QtCore.QUrl("ws://{host}:{port}{prefix}{path}".format(host=host, port=self._port, path=path, prefix=prefix)))
         self._addAuth(request)
-        self._websocket.open(request)
-        return self._websocket
+        websocket.open(request)
+        return websocket
 
     def _getHostForQuery(self):
         """

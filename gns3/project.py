@@ -606,7 +606,7 @@ class Project(QtCore.QObject):
 
         else:
             path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
-            self._notification_stream = Controller.instance().connectWebSocket(path)
+            self._notification_stream = Controller.instance().connectProjectWebSocket(path)
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
 
