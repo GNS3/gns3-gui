@@ -88,19 +88,22 @@ class NodesView(QtWidgets.QTreeWidget):
         self._current_search = search
 
         display_appliances = set()
-        for appliance in ApplianceManager.instance().appliances():
-            if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
+        for appliance in ApplianceManager.instance().appliances().values():
+            print(appliance.name(), appliance.category())
+            if category is not None and category != CATEGORY_TO_ID[appliance.category()]:
                 continue
-            if search != "" and search.lower() not in appliance["name"].lower():
+            if search != "" and search.lower() not in appliance.name().lower():
                 continue
 
-            display_appliances.add(appliance["name"])
+            display_appliances.add(appliance.name())
             item = QtWidgets.QTreeWidgetItem(self)
-            item.setText(0, appliance["name"])
-            item.setData(0, QtCore.Qt.UserRole, appliance["appliance_id"])
+            item.setText(0, appliance.name())
+            item.setData(0, QtCore.Qt.UserRole, appliance.id())
             item.setData(1, QtCore.Qt.UserRole, "appliance")
             item.setSizeHint(0, QtCore.QSize(32, 32))
-            Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
+            Controller.instance().getSymbolIcon(appliance.symbol(),
+                                                qpartial(self._setItemIcon, item),
+                                                fallback=":/symbols/{}.svg".format(appliance.category()))
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 

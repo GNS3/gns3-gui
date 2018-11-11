@@ -28,7 +28,6 @@ from gns3.local_server_config import LocalServerConfig
 from ..module import Module
 from .traceng_node import TraceNGNode
 from .settings import TRACENG_SETTINGS
-from .settings import TRACENG_NODES_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -41,7 +40,6 @@ class TraceNG(Module):
 
     def __init__(self):
         super().__init__()
-        self._traceng_nodes = {}
         self._working_dir = ""
         self._loadSettings()
 
@@ -58,8 +56,6 @@ class TraceNG(Module):
             else:
                 self._settings["traceng_path"] = ""
 
-        self._loadTraceNGNodes()
-
     def _saveSettings(self):
         """
         Saves the settings to the persistent settings file.
@@ -75,32 +71,6 @@ class TraceNG(Module):
 
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
-
-    def _loadTraceNGNodes(self):
-        """
-        Load the TraceNG nodes from the persistent settings file.
-        """
-
-        self._traceng_nodes = {}
-        settings = LocalConfig.instance().settings()
-        if "nodes" in settings.get(self.__class__.__name__, {}):
-            for node in settings[self.__class__.__name__]["nodes"]:
-                name = node.get("name")
-                server = node.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._traceng_nodes or not name or not server:
-                    continue
-                node_settings = TRACENG_NODES_SETTINGS.copy()
-                node_settings.update(node)
-                self._traceng_nodes[key] = node_settings
-
-    def _saveTraceNGNodes(self):
-        """
-        Saves the TraceNG nodes to the persistent settings file.
-        """
-
-        self._settings["nodes"] = list(self._traceng_nodes.values())
-        self._saveSettings()
 
     @staticmethod
     def getNodeClass(node_type, platform=None):
@@ -127,23 +97,6 @@ class TraceNG(Module):
 
         from .pages.traceng_node_configuration_page import TraceNGNodeConfigurationPage
         return TraceNGNodeConfigurationPage
-
-    def nodeTemplates(self):
-        """
-        Returns list of TraceNG nodes
-        """
-
-        return self._traceng_nodes
-
-    def setNodeTemplates(self, new_traceng_nodes):
-        """
-        Sets TraceNG list
-
-        :param new_traceng_vms: TraceNG node list
-        """
-
-        self._traceng_nodes = new_traceng_nodes.copy()
-        self._saveTraceNGNodes()
 
     @staticmethod
     def classes():

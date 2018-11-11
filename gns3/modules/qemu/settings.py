@@ -65,5 +65,6 @@ QEMU_VM_SETTINGS = {
     "initrd": "",
     "kernel_command_line": "",
     "linked_clone": True,
-    "server": "local"
+    "compute_id": "local",
+    "node_type": "qemu"
 }

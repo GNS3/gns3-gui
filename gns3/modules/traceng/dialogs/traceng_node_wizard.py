@@ -80,6 +80,6 @@ class TraceNGNodeWizard(VMWizard, Ui_TraceNGNodeWizard):
                     "ip_address": self.uiIPAddressLineEdit.text(),
                     "symbol": ":/symbols/traceng.svg",
                     "category": Node.end_devices,
-                    "server": self._compute_id}
+                    "compute_id": self._compute_id}
 
         return settings

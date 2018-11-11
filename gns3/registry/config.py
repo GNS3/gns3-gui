@@ -126,7 +126,7 @@ class Config:
             controller_symbols = []
 
         new_config = {
-            "server": server,
+            "compute_id": server,
             "name": appliance_config["name"]
         }
 

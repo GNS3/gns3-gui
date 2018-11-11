@@ -1065,6 +1065,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dialog.exec_()
             self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
             self.setSettings(self._settings)
+            #for module in MODULES:
+            #    if hasattr(module, "configurationPage"):
+            #        for appliance in module.instance().nodeTemplates().values():
+            #            print(appliance)
 
     def _editReadmeActionSlot(self):
         """

@@ -23,7 +23,7 @@ from gns3.local_config import LocalConfig
 
 from ..module import Module
 from .docker_vm import DockerVM
-from .settings import DOCKER_SETTINGS, DOCKER_CONTAINER_SETTINGS
+from .settings import DOCKER_SETTINGS
 from ...controller import Controller
 
 import logging
@@ -37,9 +37,6 @@ class Docker(Module):
 
     def __init__(self):
         super().__init__()
-        self._docker_containers = {}
-
-        # load the settings
         self._loadSettings()
 
     def _saveSettings(self):
@@ -56,45 +53,6 @@ class Docker(Module):
 
         local_config = LocalConfig.instance()
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, DOCKER_SETTINGS)
-
-        self._docker_containers = {}
-        if "containers" in self._settings:
-            for image in self._settings["containers"]:
-                name = image.get("name")
-                server = image.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._docker_containers or not name or not server:
-                    continue
-                container_settings = DOCKER_CONTAINER_SETTINGS.copy()
-                container_settings.update(image)
-                self._docker_containers[key] = container_settings
-
-    def _saveDockerContainers(self):
-        """
-        Saves the Docker containers to the persistent settings file.
-        """
-
-        self._settings["containers"] = list(self._docker_containers.values())
-        self._saveSettings()
-
-    def nodeTemplates(self):
-        """
-        Returns Docker containers settings.
-
-        :returns: Docker containers settings
-        """
-
-        return self._docker_containers
-
-    def setNodeTemplates(self, new_docker_containers):
-        """
-        Sets Docker containers settings.
-
-        :param new_iou_images: Docker images settings (dictionary)
-        """
-
-        self._docker_containers = new_docker_containers.copy()
-        self._saveDockerContainers()
 
     @staticmethod
     def configurationPage():

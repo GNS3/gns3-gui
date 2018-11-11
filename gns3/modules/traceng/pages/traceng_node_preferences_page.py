@@ -26,9 +26,10 @@ from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.appliance_manager import ApplianceManager
 from gns3.controller import Controller
+from gns3.appliance import Appliance
 
-from .. import TraceNG
 from ..settings import TRACENG_NODES_SETTINGS
 from ..ui.traceng_node_preferences_page_ui import Ui_TraceNGNodePageWidget
 from ..pages.traceng_node_configuration_page import TraceNGNodeConfigurationPage
@@ -80,7 +81,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["IP address:", traceng_node["ip_address"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", traceng_node["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(traceng_node["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(traceng_node["compute_id"]).name()])
         except KeyError:
             pass
 
@@ -115,7 +116,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         wizard.show()
         if wizard.exec_():
             new_traceng_node_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_traceng_node_settings["server"], name=new_traceng_node_settings["name"])
+            key = "{server}:{name}".format(server=new_traceng_node_settings["compute_id"], name=new_traceng_node_settings["name"])
             self._traceng_nodes[key] = TRACENG_NODES_SETTINGS.copy()
             self._traceng_nodes[key].update(new_traceng_node_settings)
 
@@ -141,10 +142,10 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
                 # update the icon
                 Controller.instance().getSymbolIcon(traceng_node["symbol"], qpartial(self._setItemIcon, item))
                 if traceng_node["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=traceng_node["server"], name=traceng_node["name"])
+                    new_key = "{server}:{name}".format(server=traceng_node["compute_id"], name=traceng_node["name"])
                     if new_key in self._traceng_nodes:
                         QtWidgets.QMessageBox.critical(self, "TraceNG node", "TraceNG node name {} already exists for server {}".format(traceng_node["name"],
-                                                                                                                                  traceng_node["server"]))
+                                                                                                                                  traceng_node["compute_id"]))
                         traceng_node["name"] = item.text(0)
                         return
                     self._traceng_nodes[new_key] = self._traceng_nodes[key]
@@ -169,10 +170,17 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         Loads the TraceNG node preferences.
         """
 
-        traceng_module = TraceNG.instance()
-        self._traceng_nodes = copy.deepcopy(traceng_module.nodeTemplates())
-        self._items.clear()
+        self._traceng_nodes  = {}
+        appliances = ApplianceManager.instance().appliances()
+        for appliance_id, appliance in appliances.items():
+            if appliance.node_type() == "traceng" and not appliance.builtin():
+                name = appliance.name()
+                server = appliance.compute_id()
+                #TODO: use appliance id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._traceng_nodes[key] = copy.deepcopy(appliance.settings())
 
+        self._items.clear()
         for key, node in self._traceng_nodes.items():
             item = QtWidgets.QTreeWidgetItem(self.uiTraceNGTreeWidget)
             item.setText(0, node["name"])
@@ -194,4 +202,8 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         Saves the TraceNG node preferences.
         """
 
-        TraceNG.instance().setNodeTemplates(self._traceng_nodes)
+        appliances = []
+        for appliance_settings in self._traceng_nodes.values():
+            appliances.append(Appliance(appliance_settings))
+        ApplianceManager.instance().updateList(appliances)
+

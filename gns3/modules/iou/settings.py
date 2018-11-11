@@ -44,5 +44,6 @@ IOU_DEVICE_SETTINGS = {
     "nvram": 128,
     "ethernet_adapters": 2,
     "serial_adapters": 2,
-    "server": "local"
+    "compute_id": "local",
+    "node_type": "iou"
 }

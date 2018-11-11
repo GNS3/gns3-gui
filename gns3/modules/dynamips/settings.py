@@ -54,7 +54,8 @@ IOS_ROUTER_SETTINGS = {
     "disk1": 0,
     "auto_delete_disks": False,
     "system_id": "FTX0945W0MY",
-    "server": "local"
+    "compute_id": "local",
+    "node_type": "dynamips"
 }
 
 # supported platforms with the default RAM value

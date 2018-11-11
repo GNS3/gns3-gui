@@ -42,6 +42,7 @@ CLOUD_SETTINGS = {
     "symbol": ":/symbols/cloud.svg",
     "category": Node.end_devices,
     "ports_mapping": [],
+    "node_type": "cloud"
 }
 
 ETHERNET_HUB_SETTINGS = {
@@ -50,6 +51,7 @@ ETHERNET_HUB_SETTINGS = {
     "symbol": ":/symbols/hub.svg",
     "category": Node.switches,
     "ports_mapping": [],
+    "node_type": "ethernet_hub"
 }
 
 ETHERNET_SWITCH_SETTINGS = {
@@ -59,4 +61,5 @@ ETHERNET_SWITCH_SETTINGS = {
     "category": Node.switches,
     "console_type": "telnet",
     "ports_mapping": [],
+    "node_type": "ethernet_switch"
 }

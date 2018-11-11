@@ -15,8 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import copy
+
 from .qt import QtCore
 from .controller import Controller
+from .appliance import Appliance
 from .utils.server_select import server_select
 
 import logging
@@ -31,15 +34,18 @@ class ApplianceManager(QtCore.QObject):
     appliances_changed_signal = QtCore.Signal()
     appliance_templates_changed_signal = QtCore.Signal()
 
+    created_signal = QtCore.Signal(str)
+    updated_signal = QtCore.Signal(str)
+    deleted_signal = QtCore.Signal(str)
+
     def __init__(self):
 
         super().__init__()
         self._appliance_templates = []
-        self._appliances = []
+        self._appliances = {}
         self._controller = Controller.instance()
         self._controller.connected_signal.connect(self.refresh)
         self._controller.disconnected_signal.connect(self._controllerDisconnectedSlot)
-        #self.refresh()
 
     def refresh(self, update=False):
         """
@@ -51,6 +57,7 @@ class ApplianceManager(QtCore.QObject):
                 self._controller.get("/appliances/templates?update=yes", self._listApplianceTemplateCallback, progressText="Downloading appliance templates from online registry...")
             else:
                 self._controller.get("/appliances/templates", self._listApplianceTemplateCallback)
+            #TODO: etag support
             self._controller.get("/appliances", self._listAppliancesCallback)
 
     def _controllerDisconnectedSlot(self):
@@ -59,8 +66,47 @@ class ApplianceManager(QtCore.QObject):
         """
 
         self._appliance_templates = []
-        self._appliances = []
+        self._appliances = {}
         self.appliances_changed_signal.emit()
+
+    def deleteAppliance(self, appliance_id):
+        """
+        Deletes an appliance on the controller.
+
+        :param appliance_id: appliance identifier
+        """
+
+        if appliance_id in self._appliances and not self._appliances[appliance_id].builtin():
+            log.debug("Delete appliance '{}'".format(appliance_id))
+            del self._appliances[appliance_id]
+            self._controller.delete("/appliances/{appliance_id}".format(appliance_id=appliance_id), None)
+            self.deleted_signal.emit(appliance_id)
+
+    def updateList(self, appliances):
+        """
+        Sync an array of appliances with the controller.
+        """
+
+        for appliance_id in copy.copy(self._appliances):
+            # Delete missing appliances
+            if appliance_id not in [appliance.id() for appliance in appliances]:
+                self.deleteAppliance(appliance_id)
+            else:
+                # Update the changed appliances
+                for appliance in appliances:
+                    if appliance.id() == appliance_id and appliance != self._appliances[appliance_id]:
+                        log.debug("Update appliance '{}'".format(appliance_id))
+                        self._controller.put("/appliances/{appliance_id}".format(appliance_id=appliance_id), None, body=appliance.__json__())
+                        self._appliances[appliance_id] = appliance
+                        self.updated_signal.emit(appliance_id)
+
+        # Create the new appliances
+        for appliance in appliances:
+            if appliance.id() not in self._appliances:
+                log.debug("Create appliance {}".format(appliance.id()))
+                self._controller.post("/appliances", None, body=appliance.__json__())
+                self._appliances[appliance.id()] = appliance
+                self.created_signal.emit(appliance.id())
 
     def applianceTemplates(self):
         """
@@ -101,8 +147,32 @@ class ApplianceManager(QtCore.QObject):
         if error is True:
             log.error("Error while getting appliances list: {}".format(result.get("message", "unknown")))
             return
-        self._appliances = result
+        #self._appliances = result
+        #self.appliances_changed_signal.emit()
+
+        for appliance in result:
+            self.applianceDataReceivedCallback(appliance)
+
         self.appliances_changed_signal.emit()
+
+    def applianceDataReceivedCallback(self, appliance):
+        """
+        Called when we received data from an appliance.
+        """
+
+        #self._last_computes_refresh = datetime.datetime.now().timestamp()
+
+        new_appliance = False
+        appliance_id = appliance["appliance_id"]
+        if appliance_id not in self._appliances:
+            new_appliance = True
+            #print(appliance)
+            self._appliances[appliance_id] = Appliance(appliance)
+
+        #if new_appliance:
+        #    self.created_signal.emit(compute_id)
+        #else:
+        #    self.updated_signal.emit(compute_id)
 
     def _listApplianceTemplateCallback(self, result, error=False, **kwargs):
         """
@@ -120,8 +190,8 @@ class ApplianceManager(QtCore.QObject):
         Creates a new node from an appliance.
         """
 
-        for appliance in self._appliances:
-            if appliance["appliance_id"] == appliance_id:
+        for appliance in self._appliances.values():
+            if appliance.id() == appliance_id:
                 break
 
         if not self._controller.connected():
@@ -133,9 +203,9 @@ class ApplianceManager(QtCore.QObject):
             return
 
         params = {"x": int(x), "y": int(y)}
-        if appliance.get("compute_id") is None:
+        if appliance.compute_id() is None:
             from .main_window import MainWindow
-            server = server_select(MainWindow.instance(), node_type=appliance["node_type"])
+            server = server_select(MainWindow.instance(), node_type=appliance.node_type())
             if server is None:
                 return False
             params["compute_id"] = server.id()

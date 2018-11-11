@@ -413,11 +413,11 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self._node = node
             self._settings = settings
         else:
-            self._compute_id = settings["server"]
+            self._compute_id = settings["compute_id"]
             self._node = None
 
         if self._compute_id is None:
-            QtWidgets.QMessageBox.warning(self, "Qemu", "Server {} is not running, cannot retrieve the QEMU binaries list".format(settings["server"]))
+            QtWidgets.QMessageBox.warning(self, "Qemu", "Server {} is not running, cannot retrieve the QEMU binaries list".format(settings["compute_id"]))
         else:
             callback = qpartial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
             Qemu.instance().getQemuBinariesFromServer(self._compute_id, callback)

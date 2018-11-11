@@ -25,9 +25,10 @@ from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.appliance_manager import ApplianceManager
 from gns3.controller import Controller
+from gns3.appliance import Appliance
 
-from .. import Builtin
 from ..settings import CLOUD_SETTINGS
 from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
 from ..pages.cloud_configuration_page import CloudConfigurationPage
@@ -84,7 +85,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", cloud_node["remote_console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", cloud_node["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(cloud_node["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(cloud_node["compute_id"]).name()])
         except KeyError:
             pass
 
@@ -119,7 +120,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         wizard.show()
         if wizard.exec_():
             new_cloud_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_cloud_settings["server"], name=new_cloud_settings["name"])
+            key = "{server}:{name}".format(server=new_cloud_settings["compute_id"], name=new_cloud_settings["name"])
             self._cloud_nodes[key] = CLOUD_SETTINGS.copy()
             self._cloud_nodes[key].update(new_cloud_settings)
 
@@ -146,10 +147,10 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
                 # update the icon
                 Controller.instance().getSymbolIcon(cloud_node["symbol"], qpartial(self._setItemIcon, item))
                 if cloud_node["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=cloud_node["server"], name=cloud_node["name"])
+                    new_key = "{server}:{name}".format(server=cloud_node["compute_id"], name=cloud_node["name"])
                     if new_key in self._cloud_nodes:
                         QtWidgets.QMessageBox.critical(self, "Cloud node", "Cloud node name {} already exists for server {}".format(cloud_node["name"],
-                                                                                                                                    cloud_node["server"]))
+                                                                                                                                    cloud_node["compute_id"]))
                         cloud_node["name"] = item.text(0)
                         return
                     self._cloud_nodes[new_key] = self._cloud_nodes[key]
@@ -174,10 +175,17 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         Loads the cloud node preferences.
         """
 
-        builtin_module = Builtin.instance()
-        self._cloud_nodes = copy.deepcopy(builtin_module.cloudNodes())
-        self._items.clear()
+        self._cloud_nodes = {}
+        appliances = ApplianceManager.instance().appliances()
+        for appliance_id, appliance in appliances.items():
+            if appliance.node_type() == "cloud" and not appliance.builtin():
+                name = appliance.name()
+                server = appliance.compute_id()
+                #TODO: use appliance id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._cloud_nodes[key] = copy.deepcopy(appliance.settings())
 
+        self._items.clear()
         for key, cloud_node in self._cloud_nodes.items():
             item = QtWidgets.QTreeWidgetItem(self.uiCloudNodesTreeWidget)
             item.setText(0, cloud_node["name"])
@@ -203,4 +211,8 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         Saves the cloud node preferences.
         """
 
-        Builtin.instance().setCloudNodes(self._cloud_nodes)
+        appliances = []
+        for appliance_settings in self._cloud_nodes.values():
+            appliances.append(Appliance(appliance_settings))
+        ApplianceManager.instance().updateList(appliances)
+

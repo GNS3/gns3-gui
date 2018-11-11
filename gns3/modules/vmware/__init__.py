@@ -32,7 +32,6 @@ from collections import OrderedDict
 from gns3.modules.module import Module
 from gns3.modules.vmware.vmware_vm import VMwareVM
 from gns3.modules.vmware.settings import VMWARE_SETTINGS
-from gns3.modules.vmware.settings import VMWARE_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -46,7 +45,6 @@ class VMware(Module):
 
     def __init__(self):
         super().__init__()
-        self._vmware_vms = {}
         self._loadSettings()
 
     @staticmethod
@@ -189,7 +187,6 @@ class VMware(Module):
         if not os.path.exists(self._settings["vmrun_path"]):
             self._settings["vmrun_path"] = self.findVmrun()
             self._settings["host_type"] = self._determineHostType()
-        self._loadVMwareVMs()
 
     def _saveSettings(self):
         """
@@ -212,56 +209,6 @@ class VMware(Module):
 
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
-
-    def _loadVMwareVMs(self):
-        """
-        Load the VMware VMs from the client settings file.
-        """
-
-        self._vmware_vms = {}
-        local_config = LocalConfig.instance()
-        settings = local_config.settings()
-        if "vms" in settings.get(self.__class__.__name__, {}):
-            for vm in settings[self.__class__.__name__]["vms"]:
-                name = vm.get("name")
-                server = vm.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._vmware_vms or not name or not server:
-                    continue
-                vm_settings = VMWARE_VM_SETTINGS.copy()
-                vm_settings.update(vm)
-                # for backward compatibility before version 1.4
-                if "symbol" not in vm_settings:
-                    vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
-                    vm_settings["symbol"] = vm_settings["symbol"][:-11] + ".svg" if vm_settings["symbol"].endswith("normal.svg") else vm_settings["symbol"]
-                self._vmware_vms[key] = vm_settings
-
-    def _saveVMwareVMs(self):
-        """
-        Saves the VMware VMs to the client settings file.
-        """
-
-        self._settings["vms"] = list(self._vmware_vms.values())
-        self._saveSettings()
-
-    def nodeTemplates(self):
-        """
-        Returns VMware VMs settings.
-
-        :returns: VMware VMs settings (dictionary)
-        """
-
-        return self._vmware_vms
-
-    def setNodeTemplates(self, new_vmware_vms):
-        """
-        Sets VMware VM settings.
-
-        :param new_vmware_images: VMware VM settings (dictionary)
-        """
-
-        self._vmware_vms = new_vmware_vms.copy()
-        self._saveVMwareVMs()
 
     @staticmethod
     def configurationPage():
