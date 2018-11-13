@@ -24,6 +24,9 @@ import shutil
 
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
+from gns3.controller import Controller
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from ..module import Module
 from .vpcs_node import VPCSNode
@@ -56,14 +59,23 @@ class VPCS(Module):
             else:
                 self._settings["vpcs_path"] = ""
 
-        # # push local appliance settings
-        # controller = Controller.instance()
-        # if self._settings.get("nodes") and controller.connected():
-        #     for node in self._settings.pop("nodes"):
-        #         print(node_settings)
-        #         node_settings = VPCS_NODES_SETTINGS.copy()
-        #         node_settings.update(node)
-        #     self._saveSettings()
+        # migrate node settings to the controller (appliances are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldNodes)
+
+    def _migrateOldNodes(self):
+        """
+        Migrate local node settings to the controller.
+        """
+
+        if self._settings.get("nodes"):
+            appliances = []
+            for node in self._settings.get("nodes"):
+                node_settings = VPCS_NODES_SETTINGS.copy()
+                node_settings.update(node)
+                appliances.append(Appliance(node_settings))
+            ApplianceManager.instance().updateList(appliances)
+            self._settings["nodes"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -71,6 +83,7 @@ class VPCS(Module):
         """
 
         # save the settings
+        print(self._settings)
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
         server_settings = {}

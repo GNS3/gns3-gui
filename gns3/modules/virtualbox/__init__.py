@@ -25,10 +25,13 @@ import shutil
 
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
+from gns3.controller import Controller
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from ..module import Module
 from .virtualbox_vm import VirtualBoxVM
-from .settings import VBOX_SETTINGS
+from .settings import VBOX_SETTINGS, VBOX_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -82,6 +85,24 @@ class VirtualBox(Module):
 
         if not os.path.exists(self._settings["vboxmanage_path"]):
             self._settings["vboxmanage_path"] = self._findVBoxManage(self)
+
+        # migrate VM settings to the controller (appliances are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldVMs)
+
+    def _migrateOldVMs(self):
+        """
+        Migrate local VM settings to the controller.
+        """
+
+        if self._settings.get("vms"):
+            appliances = []
+            for vm in self._settings.get("vms"):
+                vm_settings = VBOX_VM_SETTINGS.copy()
+                vm_settings.update(vm)
+                appliances.append(Appliance(vm_settings))
+            ApplianceManager.instance().updateList(appliances)
+            self._settings["vms"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """

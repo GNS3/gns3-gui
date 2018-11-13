@@ -191,7 +191,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self._vmware_vms = {}
         appliances = ApplianceManager.instance().appliances()
         for appliance_id, appliance in appliances.items():
-            if appliance.node_type() == "vmware" and not appliance.builtin():
+            if appliance.appliance_type() == "vmware" and not appliance.builtin():
                 name = appliance.name()
                 server = appliance.compute_id()
                 #TODO: use appliance id for the key
@@ -218,6 +218,9 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         """
 
         appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "vmware":
+                appliances.append(appliance)
         for appliance_settings in self._vmware_vms.values():
             appliances.append(Appliance(appliance_settings))
         ApplianceManager.instance().updateList(appliances)

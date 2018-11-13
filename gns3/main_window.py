@@ -536,9 +536,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # and we need to refresh appliance manager
         project = Topology.instance().project()
 
-        if project is None:
-            self._appliance_manager.instance().refresh()
-
     def _refreshVisibleWidgets(self):
         """
         Refresh widgets that should be visible or not

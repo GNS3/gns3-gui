@@ -173,7 +173,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         self._ethernet_hubs = {}
         appliances = ApplianceManager.instance().appliances()
         for appliance_id, appliance in appliances.items():
-            if appliance.node_type() == "ethernet_hub" and not appliance.builtin():
+            if appliance.appliance_type() == "ethernet_hub" and not appliance.builtin():
                 name = appliance.name()
                 server = appliance.compute_id()
                 #TODO: use appliance id for the key
@@ -207,6 +207,9 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         """
 
         appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "ethernet_hub":
+                appliances.append(appliance)
         for appliance_settings in self._ethernet_hubs.values():
             appliances.append(Appliance(appliance_settings))
         ApplianceManager.instance().updateList(appliances)

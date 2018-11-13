@@ -176,7 +176,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         self._vpcs_nodes = {}
         appliances = ApplianceManager.instance().appliances()
         for appliance_id, appliance in appliances.items():
-            if appliance.node_type() == "vpcs" and not appliance.builtin():
+            if appliance.appliance_type() == "vpcs" and not appliance.builtin():
                 name = appliance.name()
                 server = appliance.compute_id()
                 #TODO: use appliance id for the key
@@ -206,6 +206,9 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         """
 
         appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "vpcs":
+                appliances.append(appliance)
         for appliance_settings in self._vpcs_nodes.values():
             appliances.append(Appliance(appliance_settings))
         ApplianceManager.instance().updateList(appliances)

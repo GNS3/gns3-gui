@@ -18,6 +18,7 @@
 import copy
 import uuid
 
+
 class Appliance:
     """
     An instance of an appliance
@@ -28,6 +29,10 @@ class Appliance:
         if not settings.get("appliance_id"):
             settings["appliance_id"] = str(uuid.uuid4())
         self._settings = copy.deepcopy(settings)
+
+        # The "node_type" setting has been replaced by "appliance_type" setting in version 2.2
+        if "node_type" in self._settings:
+            self._settings["appliance_type"] = self._settings.pop("node_type")
 
     def id(self):
         """
@@ -65,14 +70,14 @@ class Appliance:
 
         return self._settings["category"]
 
-    def node_type(self):
+    def appliance_type(self):
         """
         Returns the node type
 
         :returns: node type
         """
 
-        return self._settings["node_type"]
+        return self._settings["appliance_type"]
 
     def builtin(self):
         """

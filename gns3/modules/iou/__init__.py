@@ -19,12 +19,14 @@
 IOU module implementation.
 """
 
-from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
+from gns3.controller import Controller
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from ..module import Module
 from .iou_device import IOUDevice
-from .settings import IOU_SETTINGS
+from .settings import IOU_SETTINGS, IOU_DEVICE_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -45,6 +47,24 @@ class IOU(Module):
         """
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, IOU_SETTINGS)
+
+        # migrate devices settings to the controller (appliances are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldDevices)
+
+    def _migrateOldDevices(self):
+        """
+        Migrate local device settings to the controller.
+        """
+
+        if self._settings.get("devices"):
+            appliances = []
+            for device in self._settings.get("devices"):
+                device_settings = IOU_DEVICE_SETTINGS.copy()
+                device_settings.update(device)
+                appliances.append(Appliance(device_settings))
+            ApplianceManager.instance().updateList(appliances)
+            self._settings["devices"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """

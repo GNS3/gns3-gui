@@ -179,7 +179,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         self._ethernet_switches = {}
         appliances = ApplianceManager.instance().appliances()
         for appliance_id, appliance in appliances.items():
-            if appliance.node_type() == "ethernet_switch" and not appliance.builtin():
+            if appliance.appliance_type() == "ethernet_switch" and not appliance.builtin():
                 name = appliance.name()
                 server = appliance.compute_id()
                 #TODO: use appliance id for the key
@@ -213,6 +213,9 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         """
 
         appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "ethernet_switch":
+                appliances.append(appliance)
         for appliance_settings in self._ethernet_switches.values():
             appliances.append(Appliance(appliance_settings))
         ApplianceManager.instance().updateList(appliances)

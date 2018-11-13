@@ -27,6 +27,7 @@ from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
 from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from .. import VirtualBox
 from ..settings import VBOX_VM_SETTINGS
@@ -184,7 +185,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         self._virtualbox_vms = {}
         appliances = ApplianceManager.instance().appliances()
         for appliance_id, appliance in appliances.items():
-            if appliance.node_type() == "virtualbox" and not appliance.builtin():
+            if appliance.appliance_type() == "virtualbox" and not appliance.builtin():
                 vmname = appliance.settings["vmname"]
                 server = appliance.compute_id()
                 #TODO: use appliance id for the key
@@ -210,6 +211,9 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         """
 
         appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "virtualbox":
+                appliances.append(appliance)
         for appliance_settings in self._virtualbox_vms.values():
             appliances.append(Appliance(appliance_settings))
         ApplianceManager.instance().updateList(appliances)
