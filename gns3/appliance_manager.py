@@ -78,8 +78,19 @@ class ApplianceManager(QtCore.QObject):
         if appliance_id in self._appliances and not self._appliances[appliance_id].builtin():
             appliance = self._appliances[appliance_id]
             log.debug("Delete appliance '{}' (ID={})".format(appliance.name(), appliance_id))
-            del self._appliances[appliance_id]
             self._controller.delete("/appliances/{appliance_id}".format(appliance_id=appliance_id), None)
+
+    def deleteApplianceCallback(self, result, error=False, **kwargs):
+        """
+        Callback to delete an appliance
+        """
+
+        if error is True:
+            log.warning("Error while deleting appliance: {}".format(result.get("message", "unknown")))
+
+        appliance_id = result["appliance_id"]
+        if appliance_id in self._appliances and not self._appliances[appliance_id].builtin():
+            del self._appliances[appliance_id]
             self.deleted_signal.emit(appliance_id)
             self.appliances_changed_signal.emit()
 
@@ -91,7 +102,7 @@ class ApplianceManager(QtCore.QObject):
         """
 
         log.debug("Update appliance '{}' (ID={})".format(appliance.name(), appliance.id()))
-        self._controller.put("/appliances/{appliance_id}".format(appliance_id=appliance.id()), self._applianceDataCallback, body=appliance.__json__())
+        self._controller.put("/appliances/{appliance_id}".format(appliance_id=appliance.id()), self.applianceDataReceivedCallback, body=appliance.__json__())
 
     def updateList(self, appliances):
         """
@@ -112,15 +123,15 @@ class ApplianceManager(QtCore.QObject):
         for appliance in appliances:
             if appliance.id() not in self._appliances:
                 log.debug("Create appliance '{}' (ID={})".format(appliance.name(), appliance.id()))
-                self._controller.post("/appliances", self._applianceDataCallback, body=appliance.__json__())
+                self._controller.post("/appliances", self.applianceDataReceivedCallback, body=appliance.__json__())
 
-    def _applianceDataCallback(self, result, error=False, **kwargs):
+    def applianceDataReceivedCallback(self, result, error=False, **kwargs):
         """
         Callback to add or update an appliance
         """
 
         if error is True:
-            log.error("Error while adding appliance: {}".format(result.get("message", "unknown")))
+            log.error("Error while adding/updating appliance: {}".format(result.get("message", "unknown")))
             return
 
         appliance_id = result["appliance_id"]

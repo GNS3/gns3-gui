@@ -23,10 +23,9 @@ import copy
 
 import psutil
 
-from .qt import QtCore, QtWidgets, qslot
+from .qt import QtCore, QtWidgets
 from .version import __version__
 from .utils import parse_version
-from .controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
@@ -39,8 +38,6 @@ class LocalConfig(QtCore.QObject):
     """
 
     config_changed_signal = QtCore.Signal()
-    # When this signal is emit the config is saved on controller
-    save_on_controller_signal = QtCore.Signal()
 
     def __init__(self, config_file=None):
         """
@@ -50,27 +47,8 @@ class LocalConfig(QtCore.QObject):
         super().__init__()
         self._profile = None
         self._config_file = config_file
-        # Security to avoid pushing to the controller settings before
-        # we get the original settings from controller
-        self._settings_retrieved_from_controller = False
         self._migrateOldConfigPath()
         self._resetLoadConfig()
-        self._monitoring_changes = False
-        Controller.instance().connected_signal.connect(self.refreshConfigFromController)
-        self.save_on_controller_signal.connect(self._saveOnController)
-
-    def _monitorChanges(self):
-        """
-        Poll the remote server waiting for settings update
-        """
-        if self._monitoring_changes:
-            return
-        self._monitoring_changes = True
-        self._timer = QtCore.QTimer()
-        self._timer.setInterval(5000)
-        self._refreshingSettings = False
-        self._timer.timeout.connect(self.refreshConfigFromController)
-        self._timer.start()
 
     def _resetLoadConfig(self):
         """
@@ -136,36 +114,6 @@ class LocalConfig(QtCore.QObject):
             self._config_file = None
             self._resetLoadConfig()
 
-    @qslot
-    def refreshConfigFromController(self):
-        """
-        Refresh the configuration from the controller
-        """
-        controller = Controller.instance()
-        if controller.connected():
-            self._refreshingSettings = True
-            controller.get("/settings", self._getSettingsCallback, showProgress=False)
-        self._monitorChanges()
-
-    def _getSettingsCallback(self, result, error=False, **kwargs):
-        self._refreshingSettings = False
-        if error:
-            log.debug("Can't get settings from controller")
-            return
-        if result == {} and self._settings != {}:
-            self._settings_retrieved_from_controller = True
-            self.save_on_controller_signal.emit()
-            return
-
-        # The server return an uuid to keep track of settings version
-        if self._settings.get("modification_uuid") != result.get("modification_uuid"):
-            self._settings.update(result)
-            # Update already loaded section
-            for section in self._settings.keys():
-                if isinstance(self._settings[section], dict):
-                    self.loadSectionSettings(section, self._settings[section])
-            self.config_changed_signal.emit()
-        self._settings_retrieved_from_controller = True
 
     def configDirectory(self):
         """
@@ -309,25 +257,6 @@ class LocalConfig(QtCore.QObject):
             self._last_config_changed = os.stat(self._config_file).st_mtime
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
-        self.save_on_controller_signal.emit()
-
-    @qslot
-    def _saveOnController(self, *args):
-        """
-        Save some settings on controller for the transition from
-        GUI to a central controller. Will be removed later
-        """
-        if Controller.instance().connected() and self._settings_retrieved_from_controller:
-            # We save only non user specific sections
-            section_to_save_on_controller = ["Builtin", "Docker", "IOU", "Qemu", "VMware", "VPCS", "TraceNG", "VirtualBox", "GraphicsView", "Dynamips"]
-            controller_settings = {}
-            for key, val in self._settings.items():
-                if key in section_to_save_on_controller:
-                    controller_settings[key] = val
-                # We want only the VM settings on the server
-                elif key == "Server":
-                    controller_settings["Server"]["vm"] = self._settings["Server"]["vm"]
-            Controller.instance().post("/settings", None, body=controller_settings)
 
     def checkConfigChanged(self):
 
@@ -483,8 +412,7 @@ class LocalConfig(QtCore.QObject):
         """
 
         from gns3.settings import GRAPHICS_VIEW_SETTINGS
-        return self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS) \
-                .get("show_interface_labels_on_new_project", False)
+        return self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS).get("show_interface_labels_on_new_project", False)
 
     def setShowInterfaceLabelsOnNewProject(self, value):
         from gns3.settings import GRAPHICS_VIEW_SETTINGS

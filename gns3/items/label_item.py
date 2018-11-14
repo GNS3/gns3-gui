@@ -183,12 +183,12 @@ class LabelItem(QtWidgets.QGraphicsTextItem):
         else:
             self.setFlag(self.ItemIsMovable, True)
 
-    def setStyle(self, styles):
+    def setStyle(self, new_style):
         """
         Set text style using a SVG style
         """
         font = QtGui.QFont()
-        for style in styles.split(";"):
+        for style in new_style.split(";"):
             if ":" in style:
                 key, val = style.split(":")
                 key = key.strip()
