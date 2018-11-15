@@ -34,7 +34,6 @@ IOU_DEVICE_SETTINGS = {
     "path": "",
     "symbol": ":/symbols/multilayer_switch.svg",
     "category": Node.routers,
-    "image": "",
     "startup_config": "",
     "private_config": "",
     "console_type": "telnet",

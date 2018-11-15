@@ -34,6 +34,10 @@ class Appliance:
         if "node_type" in self._settings:
             self._settings["appliance_type"] = self._settings.pop("node_type")
 
+        # The "server" setting has been replaced by "compute_id" setting in version 2.2
+        if "server" in self._settings:
+            self._settings["compute_id"] = self._settings.pop("server")
+
     def id(self):
         """
         Returns the appliance ID.
