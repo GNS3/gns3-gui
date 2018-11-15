@@ -218,7 +218,7 @@ class ComputeManager(QtCore.QObject):
         if compute_id in self._computes:
             del self._computes[compute_id]
             self._controller.delete("/computes/{compute_id}".format(compute_id=compute_id), None)
-        self.deleted_signal.emit(compute_id)
+            self.deleted_signal.emit(compute_id)
 
     def updateList(self, computes):
         """

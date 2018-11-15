@@ -88,19 +88,21 @@ class NodesView(QtWidgets.QTreeWidget):
         self._current_search = search
 
         display_appliances = set()
-        for appliance in ApplianceManager.instance().appliances():
-            if category is not None and category != CATEGORY_TO_ID[appliance["category"]]:
+        for appliance in ApplianceManager.instance().appliances().values():
+            if category is not None and category != appliance.category():
                 continue
-            if search != "" and search.lower() not in appliance["name"].lower():
+            if search != "" and search.lower() not in appliance.name().lower():
                 continue
 
-            display_appliances.add(appliance["name"])
+            display_appliances.add(appliance.name())
             item = QtWidgets.QTreeWidgetItem(self)
-            item.setText(0, appliance["name"])
-            item.setData(0, QtCore.Qt.UserRole, appliance["appliance_id"])
+            item.setText(0, appliance.name())
+            item.setData(0, QtCore.Qt.UserRole, appliance.id())
             item.setData(1, QtCore.Qt.UserRole, "appliance")
             item.setSizeHint(0, QtCore.QSize(32, 32))
-            Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item), fallback=":/symbols/" + appliance["category"] + ".svg")
+            Controller.instance().getSymbolIcon(appliance.symbol(),
+                                                qpartial(self._setItemIcon, item),
+                                                fallback=":/symbols/{}.svg".format(appliance.category()))
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
@@ -172,52 +174,43 @@ class NodesView(QtWidgets.QTreeWidget):
 
     def _showContextualMenu(self):
         item = self.currentItem()
-        node = ApplianceManager.instance().getAppliance(item.data(0, QtCore.Qt.UserRole))
-        if not node:
+        appliance = ApplianceManager.instance().getAppliance(item.data(0, QtCore.Qt.UserRole))
+        if not appliance:
             return
+
         for module in MODULES:
-            if node["node_type"] == "dynamips":
-                node_class = module.getNodeClass(node["node_type"], node["platform"])
+            if appliance.appliance_type() == "dynamips":
+                node_class = module.getNodeClass(appliance.appliance_type(), appliance.settings()["platform"])
             else:
-                node_class = module.getNodeClass(node["node_type"])
+                node_class = module.getNodeClass(appliance.appliance_type())
 
             if node_class:
                 break
 
-        # We can not edit devices like EthernetSwitch or device without config templates
-        if not node["builtin"] and hasattr(module, "configurationPage"):
-            vm = None
-            for vm_key, vm in module.instance().nodeTemplates().items():
-                if vm["name"] == node["name"]:
-                    break
-            if vm is None:
-                return
+        # We cannot edit devices like EthernetSwitch or device without config templates
+        if not appliance.builtin() and hasattr(module, "configurationPage"):
             menu = QtWidgets.QMenu()
             configuration = QtWidgets.QAction("Configure Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
-            configuration.triggered.connect(qpartial(self._configurationSlot, vm, module))
+            configuration.triggered.connect(qpartial(self._configurationSlot, appliance, module))
             menu.addAction(configuration)
 
             configuration = QtWidgets.QAction("Delete Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/delete.svg"))
-            configuration.triggered.connect(qpartial(self._deleteSlot, vm_key, vm, module))
+            configuration.triggered.connect(qpartial(self._deleteSlot, appliance, module))
             menu.addAction(configuration)
             menu.exec_(QtGui.QCursor.pos())
 
-    def _configurationSlot(self, vm, module, source):
+    def _configurationSlot(self, appliance, module, source):
 
-        dialog = ConfigurationDialog(vm["name"], vm, module.configurationPage()(), parent=self)
+        dialog = ConfigurationDialog(appliance.name(), appliance.settings(), module.configurationPage()(), parent=self)
         dialog.show()
         if dialog.exec_():
-            # update appliance list, refresh is triggered by appliances_changed_signal
-            module.instance().setNodeTemplates(module.instance().nodeTemplates())
+            ApplianceManager.instance().updateAppliance(appliance)
 
-    def _deleteSlot(self, vm_key, vm, module, source):
+    def _deleteSlot(self, appliance, module, source):
 
-        reply = QtWidgets.QMessageBox.question(self, "Template", "Delete {} template?".format(vm["name"]),
+        reply = QtWidgets.QMessageBox.question(self, "Template", "Delete {} template?".format(appliance.name()),
                                                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
-            vms = module.instance().nodeTemplates()
-            vms.pop(vm_key)
-            # update appliance list, refresh is triggered by appliances_changed_signal
-            module.instance().setNodeTemplates(vms)
+            ApplianceManager.instance().deleteAppliance(appliance.id())

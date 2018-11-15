@@ -431,11 +431,12 @@ class Controller(QtCore.QObject):
         # Log only relevant events
         if result["action"] not in ("ping", "compute.updated"):
             log.debug("Event received from controller stream: {}".format(result))
-        if result["action"] == "settings.updated":
-            from gns3.local_config import LocalConfig
+        if result["action"] == "appliance.created" or result["action"] == "appliance.updated":
             from gns3.appliance_manager import ApplianceManager
-            LocalConfig.instance().refreshConfigFromController()
-            ApplianceManager.instance().refresh()
+            ApplianceManager.instance().applianceDataReceivedCallback(result["event"])
+        elif result["action"] == "appliance.deleted":
+            from gns3.appliance_manager import ApplianceManager
+            ApplianceManager.instance().deleteApplianceCallback(result["event"])
         elif result["action"] == "compute.created" or result["action"] == "compute.updated":
             from .compute_manager import ComputeManager
             ComputeManager.instance().computeDataReceivedCallback(result["event"])

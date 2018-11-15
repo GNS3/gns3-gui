@@ -25,11 +25,13 @@ import shutil
 
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
+from gns3.controller import Controller
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from ..module import Module
 from .virtualbox_vm import VirtualBoxVM
-from .settings import VBOX_SETTINGS
-from .settings import VBOX_VM_SETTINGS
+from .settings import VBOX_SETTINGS, VBOX_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -42,7 +44,6 @@ class VirtualBox(Module):
 
     def __init__(self):
         super().__init__()
-        self._virtualbox_vms = {}
         self._loadSettings()
 
     @staticmethod
@@ -85,7 +86,23 @@ class VirtualBox(Module):
         if not os.path.exists(self._settings["vboxmanage_path"]):
             self._settings["vboxmanage_path"] = self._findVBoxManage(self)
 
-        self._loadVirtualBoxVMs()
+        # migrate VM settings to the controller (appliances are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldVMs)
+
+    def _migrateOldVMs(self):
+        """
+        Migrate local VM settings to the controller.
+        """
+
+        if self._settings.get("vms"):
+            appliances = []
+            for vm in self._settings.get("vms"):
+                vm_settings = VBOX_VM_SETTINGS.copy()
+                vm_settings.update(vm)
+                appliances.append(Appliance(vm_settings))
+            ApplianceManager.instance().updateList(appliances)
+            self._settings["vms"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -97,62 +114,8 @@ class VirtualBox(Module):
 
         # save some settings to the local server config file
         if self._settings["vboxmanage_path"]:
-            server_settings = {
-                "vboxmanage_path": os.path.normpath(self._settings["vboxmanage_path"])
-            }
+            server_settings = {"vboxmanage_path": os.path.normpath(self._settings["vboxmanage_path"])}
             LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)
-
-    def _loadVirtualBoxVMs(self):
-        """
-        Load the VirtualBox VMs from the client settings file.
-        """
-
-        self._virtualbox_vms = {}
-        settings = LocalConfig.instance().settings()
-        if "vms" in settings.get(self.__class__.__name__, {}):
-            for vm in settings[self.__class__.__name__]["vms"]:
-                vmname = vm.get("vmname")
-                server = vm.get("server")
-                key = "{server}:{vmname}".format(server=server, vmname=vmname)
-                if key in self._virtualbox_vms or not vmname or not server:
-                    continue
-                vm_settings = VBOX_VM_SETTINGS.copy()
-                vm_settings.update(vm)
-                # For backward compatibility we use vmname
-                if not vm_settings["name"]:
-                    vm_settings["name"] = vmname
-                # for backward compatibility before version 1.4
-                if "symbol" not in vm_settings:
-                    vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
-                    vm_settings["symbol"] = vm_settings["symbol"][:-11] + ".svg" if vm_settings["symbol"].endswith("normal.svg") else vm_settings["symbol"]
-                self._virtualbox_vms[key] = vm_settings
-
-    def _saveVirtualBoxVMs(self):
-        """
-        Saves the VirtualBox VMs to the client settings file.
-        """
-
-        self._settings["vms"] = list(self._virtualbox_vms.values())
-        self._saveSettings()
-
-    def nodeTemplates(self):
-        """
-        Returns VirtualBox VMs settings.
-
-        :returns: VirtualBox VMs settings (dictionary)
-        """
-
-        return self._virtualbox_vms
-
-    def setNodeTemplates(self, new_virtualbox_vms):
-        """
-        Sets VirtualBox VM settings.
-
-        :param new_virtualbox_vms: VirtualBox VM settings (dictionary)
-        """
-
-        self._virtualbox_vms = new_virtualbox_vms.copy()
-        self._saveVirtualBoxVMs()
 
     @staticmethod
     def configurationPage():

@@ -39,14 +39,12 @@ class ImageUploadManager(object):
     def upload(self):
         if self._directFileUpload:
             # first obtain endpoint and know when target request
-            self._controller.getEndpoint(
-                self._getComputePath(), self._compute_id, self._onLoadEndpointCallback, showProgress=False)
+            self._controller.getEndpoint(self._getComputePath(), self._compute_id, self._onLoadEndpointCallback, showProgress=False)
         else:
             self._fileUploadToController()
 
     def _getComputePath(self):
-        return '/{emulator}/images/{filename}'.format(
-            emulator=self._image.emulator, filename=self._image.filename)
+        return '/{emulator}/images/{filename}'.format(emulator=self._image.emulator, filename=self._image.filename)
 
     def _onLoadEndpointCallback(self, result, error=False, **kwargs):
         if error:

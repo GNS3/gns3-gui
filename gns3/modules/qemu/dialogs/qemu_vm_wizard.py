@@ -151,7 +151,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             "name": self.uiNameLineEdit.text(),
             "ram": self.uiRamSpinBox.value(),
             "qemu_path": qemu_path,
-            "server": self._compute_id,
+            "compute_id": self._compute_id,
             "category": Node.end_devices,
             "hda_disk_image": self.uiHdaDiskImageLineEdit.text(),
             "console_type": console_type

@@ -34,7 +34,6 @@ IOU_DEVICE_SETTINGS = {
     "path": "",
     "symbol": ":/symbols/multilayer_switch.svg",
     "category": Node.routers,
-    "image": "",
     "startup_config": "",
     "private_config": "",
     "console_type": "telnet",
@@ -44,5 +43,6 @@ IOU_DEVICE_SETTINGS = {
     "nvram": 128,
     "ethernet_adapters": 2,
     "serial_adapters": 2,
-    "server": "local"
+    "compute_id": "local",
+    "node_type": "iou"
 }

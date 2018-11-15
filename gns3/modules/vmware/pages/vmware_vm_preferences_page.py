@@ -26,8 +26,9 @@ from gns3.controller import Controller
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
-from .. import VMware
 from ..settings import VMWARE_VM_SETTINGS
 from ..ui.vmware_vm_preferences_page_ui import Ui_VMwareVMPreferencesPageWidget
 from ..pages.vmware_vm_configuration_page import VMwareVMConfigurationPage
@@ -80,7 +81,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         if vmware_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["compute_id"]).name()])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])
@@ -132,7 +133,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         if wizard.exec_():
 
             new_vm_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_vm_settings["server"], name=new_vm_settings["name"])
+            key = "{server}:{name}".format(server=new_vm_settings["compute_id"], name=new_vm_settings["name"])
             self._vmware_vms[key] = VMWARE_VM_SETTINGS.copy()
             self._vmware_vms[key].update(new_vm_settings)
 
@@ -159,10 +160,10 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
                 Controller.instance().getSymbolIcon(vmware_vm["symbol"], qpartial(self._setItemIcon, item))
 
                 if vmware_vm["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=vmware_vm["server"], name=vmware_vm["name"])
+                    new_key = "{server}:{name}".format(server=vmware_vm["compute_id"], name=vmware_vm["name"])
                     if new_key in self._vmware_vms:
                         QtWidgets.QMessageBox.critical(self, "VMware VM", "VMware VM name {} already exists for server {}".format(vmware_vm["name"],
-                                                                                                                                  vmware_vm["server"]))
+                                                                                                                                  vmware_vm["compute_id"]))
                         vmware_vm["name"] = item.text(0)
                         return
                     self._vmware_vms[new_key] = self._vmware_vms[key]
@@ -187,10 +188,17 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         Loads the VMware VM preferences.
         """
 
-        vmware_module = VMware.instance()
-        self._vmware_vms = copy.deepcopy(vmware_module.nodeTemplates())
-        self._items.clear()
+        self._vmware_vms = {}
+        appliances = ApplianceManager.instance().appliances()
+        for appliance_id, appliance in appliances.items():
+            if appliance.appliance_type() == "vmware" and not appliance.builtin():
+                name = appliance.name()
+                server = appliance.compute_id()
+                #TODO: use appliance id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._vmware_vms[key] = copy.deepcopy(appliance.settings())
 
+        self._items.clear()
         for key, vmware_vm in self._vmware_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVMwareVMsTreeWidget)
             item.setText(0, vmware_vm["name"])
@@ -209,7 +217,14 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         Saves the VMware VM preferences.
         """
 
-        VMware.instance().setNodeTemplates(self._vmware_vms)
+        appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "vmware":
+                appliances.append(appliance)
+        for appliance_settings in self._vmware_vms.values():
+            appliances.append(Appliance(appliance_settings))
+        ApplianceManager.instance().updateList(appliances)
+
 
     def _setItemIcon(self, item, icon):
 

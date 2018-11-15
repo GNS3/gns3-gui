@@ -96,7 +96,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         vminfo = self.uiVMListComboBox.itemData(index)
 
         settings = {"name": vmname,
-                    "server": self._compute_id,
+                    "compute_id": self._compute_id,
                     "vmx_path": vminfo["vmx_path"],
                     "linked_clone": self.uiBaseVMCheckBox.isChecked()}
 

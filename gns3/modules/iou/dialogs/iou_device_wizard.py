@@ -131,7 +131,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
             "serial_adapters": serial_adapters,
             "symbol": symbol,
             "category": category,
-            "server": self._compute_id,
+            "compute_id": self._compute_id,
         }
 
         return settings

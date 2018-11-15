@@ -474,7 +474,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
 
-            Controller.instance().getCompute("/network/interfaces", settings["server"],
+            Controller.instance().getCompute("/network/interfaces", settings["compute_id"],
                                              self._getInterfacesFromServerCallback,
                                              progressText="Retrieving network interfaces...")
 

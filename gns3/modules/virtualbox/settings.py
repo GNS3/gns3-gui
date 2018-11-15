@@ -44,5 +44,6 @@ VBOX_VM_SETTINGS = {
     "linked_clone": False,
     "console_type": "none",
     "console_auto_start": False,
-    "server": "local"
+    "compute_id": "local",
+    "node_type": "virtualbox"
 }

@@ -110,10 +110,10 @@ class UpdateManager(QtCore.QObject):
         try:
             latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
         except UnicodeDecodeError:
-            log.warning("Invalid answer from the update server")
+            log.debug("Invalid answer from the update server")
             return
         if re.match(r"^[a-z0-9\.]+$", latest_release) is None:
-            log.warning("Invalid answer from the update server")
+            log.debug("Invalid answer from the update server")
             return
         if parse_version(version.__version__) < parse_version(latest_release):
             reply = QtWidgets.QMessageBox.question(self._parent,

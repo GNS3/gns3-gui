@@ -391,7 +391,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
             "idlepc": self.uiIdlepcLineEdit.text(),
             "platform": platform,
             "chassis": self.uiChassisComboBox.currentText(),
-            "server": self._compute_id,
+            "compute_id": self._compute_id,
         }
 
         if self.uiEtherSwitchCheckBox.isChecked():

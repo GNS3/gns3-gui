@@ -252,8 +252,7 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
                 f.close()
                 MainWindow.instance().loadPath(f.name)
         elif self.uiAddApplianceManuallyRadioButton.isChecked():
-            dialog = PreferencesDialog(self.parent())
-            dialog.exec_()
+            MainWindow.instance().preferencesActionSlot()
         elif self.uiAddApplianceFromTemplateFileRadioButton.isChecked():
             from gns3.main_window import MainWindow
             MainWindow.instance().openApplianceActionSlot()

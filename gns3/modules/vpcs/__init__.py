@@ -24,11 +24,13 @@ import shutil
 
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
+from gns3.controller import Controller
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from ..module import Module
 from .vpcs_node import VPCSNode
-from .settings import VPCS_SETTINGS
-from .settings import VPCS_NODES_SETTINGS
+from .settings import VPCS_SETTINGS, VPCS_NODES_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -41,7 +43,6 @@ class VPCS(Module):
 
     def __init__(self):
         super().__init__()
-        self._vpcs_nodes = {}
         self._working_dir = ""
         self._loadSettings()
 
@@ -58,7 +59,23 @@ class VPCS(Module):
             else:
                 self._settings["vpcs_path"] = ""
 
-        self._loadVPCSNodes()
+        # migrate node settings to the controller (appliances are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldNodes)
+
+    def _migrateOldNodes(self):
+        """
+        Migrate local node settings to the controller.
+        """
+
+        if self._settings.get("nodes"):
+            appliances = []
+            for node in self._settings.get("nodes"):
+                node_settings = VPCS_NODES_SETTINGS.copy()
+                node_settings.update(node)
+                appliances.append(Appliance(node_settings))
+            ApplianceManager.instance().updateList(appliances)
+            self._settings["nodes"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -66,6 +83,7 @@ class VPCS(Module):
         """
 
         # save the settings
+        print(self._settings)
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
         server_settings = {}
@@ -74,32 +92,6 @@ class VPCS(Module):
             server_settings["vpcs_path"] = os.path.normpath(self._settings["vpcs_path"])
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
-
-    def _loadVPCSNodes(self):
-        """
-        Load the VPCS nodes from the persistent settings file.
-        """
-
-        self._vpcs_nodes = {}
-        settings = LocalConfig.instance().settings()
-        if "nodes" in settings.get(self.__class__.__name__, {}):
-            for node in settings[self.__class__.__name__]["nodes"]:
-                name = node.get("name")
-                server = node.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._vpcs_nodes or not name or not server:
-                    continue
-                node_settings = VPCS_NODES_SETTINGS.copy()
-                node_settings.update(node)
-                self._vpcs_nodes[key] = node_settings
-
-    def _saveVPCSNodes(self):
-        """
-        Saves the VPCS nodes to the persistent settings file.
-        """
-
-        self._settings["nodes"] = list(self._vpcs_nodes.values())
-        self._saveSettings()
 
     @staticmethod
     def getNodeClass(node_type, platform=None):
@@ -126,23 +118,6 @@ class VPCS(Module):
 
         from .pages.vpcs_node_configuration_page import VPCSNodeConfigurationPage
         return VPCSNodeConfigurationPage
-
-    def nodeTemplates(self):
-        """
-        Returns list of VPCS nodes
-        """
-
-        return self._vpcs_nodes
-
-    def setNodeTemplates(self, new_vpcs_nodes):
-        """
-        Sets VPCS list
-
-        :param new_vpcs_vms: VPCS node list
-        """
-
-        self._vpcs_nodes = new_vpcs_nodes.copy()
-        self._saveVPCSNodes()
 
     @staticmethod
     def classes():

@@ -20,12 +20,16 @@ Configuration page for IOU preferences.
 """
 
 import os
+import copy
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtCore, QtWidgets, qslot, sip_is_deleted
+from gns3.controller import Controller
 
-from .. import IOU
 from ..ui.iou_preferences_page_ui import Ui_IOUPreferencesPageWidget
 from ..settings import IOU_SETTINGS
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
@@ -38,10 +42,12 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
 
         super().__init__()
         self.setupUi(self)
+        self._old_settings = None
 
         # connect signals
         self.uiIOURCPathToolButton.clicked.connect(self._iourcPathBrowserSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
+        Controller.instance().connected_signal.connect(self.loadPreferences)
 
     def _iourcPathBrowserSlot(self):
         """
@@ -100,16 +106,37 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         Loads IOU preferences.
         """
 
-        iou_settings = IOU.instance().settings()
-        self._populateWidgets(iou_settings)
+        Controller.instance().get("/iou_license", self._getSettingsCallback)
+
+    @qslot
+    def _getSettingsCallback(self, result, error=False, **kwargs):
+
+        if sip_is_deleted(self):
+            return
+        if error:
+            if "message" in result:
+                log.error("Error while getting settings : {}".format(result["message"]))
+            return
+        self._old_settings = copy.copy(result)
+        self._populateWidgets(result)
 
     def savePreferences(self):
         """
         Saves IOU preferences.
         """
 
+        if not self._old_settings:
+            return
+
         iourc_content = self.IOULicenceTextEdit.toPlainText().strip().replace("\r\n", "\n")
 
         new_settings = {"iourc_content": iourc_content,
                         "license_check": self.uiLicensecheckBox.isChecked()}
-        IOU.instance().setSettings(new_settings)
+
+        if self._old_settings != new_settings:
+            Controller.instance().put("/iou_license", self._saveSettingsCallback, new_settings, timeout=60)
+            self._old_settings = copy.copy(new_settings)
+
+    def _saveSettingsCallback(self, result, error=False, **kwargs):
+        if error and "message" in result:
+            QtWidgets.QMessageBox.critical(self, "Save settings", "Error while saving settings: {}".format(result["message"]))

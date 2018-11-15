@@ -160,7 +160,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         if node:
             self._compute_id = node.compute().id()
         else:
-            self._compute_id = settings["server"]
+            self._compute_id = settings["compute_id"]
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])

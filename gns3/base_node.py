@@ -54,10 +54,10 @@ class BaseNode(QtCore.QObject):
     suspended = 2
 
     # node categories
-    routers = 0
-    switches = 1
-    end_devices = 2
-    security_devices = 3
+    routers = "router"
+    switches = "switch"
+    end_devices = "guest"
+    security_devices = "firewall"
 
     def __init__(self, module, compute, project):
 

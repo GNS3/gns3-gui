@@ -56,7 +56,7 @@ class EthernetHubWizard(VMWizard, Ui_EthernetHubWizard):
         settings = {"name": self.uiNameLineEdit.text(),
                     "symbol": ":/symbols/hub.svg",
                     "category": Node.switches,
-                    "server": self._compute_id,
+                    "compute_id": self._compute_id,
                     "ports_mapping": ports}
 
         return settings
