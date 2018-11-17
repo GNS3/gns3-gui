@@ -387,7 +387,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 else:
                     base_mac_address = mac
             else:
-                base_mac_address = None
+                base_mac_address = ""
 
         try:
             ports = StandardPortNameFactory(adapters, first_port_name, port_name_format, port_segment_size)

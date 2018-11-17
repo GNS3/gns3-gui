@@ -52,28 +52,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="uiCategoryComboBox">
-         <item>
-          <property name="text">
-           <string>Router</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Switch</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Guest</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Security device</string>
-          </property>
-         </item>
-        </widget>
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="uiSymbolLabel">

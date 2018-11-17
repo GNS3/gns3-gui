@@ -197,7 +197,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
 
         if not node:
             # these are template settings
-            settings["category"] = self.uiCategoryComboBox.currentIndex()
+            settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
             # save the default name format
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
