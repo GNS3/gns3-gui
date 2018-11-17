@@ -186,7 +186,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         appliances = ApplianceManager.instance().appliances()
         for appliance_id, appliance in appliances.items():
             if appliance.appliance_type() == "virtualbox" and not appliance.builtin():
-                vmname = appliance.settings["vmname"]
+                vmname = appliance.settings()["vmname"]
                 server = appliance.compute_id()
                 #TODO: use appliance id for the key
                 key = "{server}:{vmname}".format(server=server, vmname=vmname)

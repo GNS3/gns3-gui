@@ -385,8 +385,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])
-        if ios_router["chassis"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["Chassis:", ios_router["chassis"]])
+        if ios_router.get("chassis"):
+            QtWidgets.QTreeWidgetItem(section_item, ["Chassis:", ios_router.get("chassis")])
         QtWidgets.QTreeWidgetItem(section_item, ["Image:", ios_router["image"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", ios_router["console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(ios_router["console_auto_start"])])

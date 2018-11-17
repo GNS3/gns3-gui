@@ -390,9 +390,12 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
             "nvram": PLATFORMS_DEFAULT_NVRAM[platform],
             "idlepc": self.uiIdlepcLineEdit.text(),
             "platform": platform,
-            "chassis": self.uiChassisComboBox.currentText(),
             "compute_id": self._compute_id,
         }
+
+        chassis = self.uiChassisComboBox.currentText()
+        if chassis:
+            settings["chassis"] = chassis
 
         if self.uiEtherSwitchCheckBox.isChecked():
             settings["default_name_format"] = "ESW{0}"

@@ -40,7 +40,6 @@ IOS_ROUTER_SETTINGS = {
     "console_type": "telnet",
     "console_auto_start": False,
     "platform": "",
-    "chassis": "",
     "idlepc": "",
     "idlemax": 500,
     "idlesleep": 30,

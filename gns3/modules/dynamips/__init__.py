@@ -130,6 +130,8 @@ class Dynamips(Module):
             for router in self._settings.get("routers"):
                 router_settings = IOS_ROUTER_SETTINGS.copy()
                 router_settings.update(router)
+                if not router_settings.get("chassis"):
+                    del router_settings["chassis"]
                 appliances.append(Appliance(router_settings))
             ApplianceManager.instance().updateList(appliances)
             self._settings["routers"] = []
