@@ -143,3 +143,10 @@ class Docker(Module):
         if not hasattr(Docker, "_instance"):
             Docker._instance = Docker()
         return Docker._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "docker"

@@ -25,10 +25,20 @@ import json
 import sip
 
 from .qt import QtCore, QtGui, QtWidgets, qpartial
-from .modules import MODULES
 from .controller import Controller
 from .appliance_manager import ApplianceManager
 from .dialogs.configuration_dialog import ConfigurationDialog
+
+from gns3.modules.builtin import Builtin
+from gns3.modules.dynamips import Dynamips
+from gns3.modules.iou import IOU
+from gns3.modules.vpcs import VPCS
+from gns3.modules.traceng import TraceNG
+from gns3.modules.virtualbox import VirtualBox
+from gns3.modules.qemu import Qemu
+from gns3.modules.vmware import VMware
+from gns3.modules.docker import Docker
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -40,6 +50,19 @@ CATEGORY_TO_ID = {
     "switch": 1,
     "multilayer_switch": 1,
     "router": 0
+}
+
+APPLIANCE_TYPE_TO_CONFIGURATION_PAGE = {
+    "ethernet_switch": Builtin.configurationPage("ethernet_switch"),
+    "ethernet_hub": Builtin.configurationPage("ethernet_hub"),
+    "dynamips": Dynamips.configurationPage(),
+    "iou": IOU.configurationPage(),
+    "vpcs": VPCS.configurationPage(),
+    "traceng": TraceNG.configurationPage(),
+    "virtualbox": VirtualBox.configurationPage(),
+    "qemu": Qemu.configurationPage(),
+    "vmware": VMware.configurationPage(),
+    "docker": Docker.configurationPage()
 }
 
 
@@ -178,37 +201,28 @@ class NodesView(QtWidgets.QTreeWidget):
         if not appliance:
             return
 
-        for module in MODULES:
-            if appliance.appliance_type() == "dynamips":
-                node_class = module.getNodeClass(appliance.appliance_type(), appliance.settings()["platform"])
-            else:
-                node_class = module.getNodeClass(appliance.appliance_type())
-
-            if node_class:
-                break
-
-        # We cannot edit devices like EthernetSwitch or device without config templates
-        if not appliance.builtin() and hasattr(module, "configurationPage"):
+        configuration_page = APPLIANCE_TYPE_TO_CONFIGURATION_PAGE.get(appliance.appliance_type())
+        if not appliance.builtin() and configuration_page:
             menu = QtWidgets.QMenu()
             configuration = QtWidgets.QAction("Configure Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
-            configuration.triggered.connect(qpartial(self._configurationSlot, appliance, module))
+            configuration.triggered.connect(qpartial(self._configurationSlot, appliance, configuration_page))
             menu.addAction(configuration)
 
             configuration = QtWidgets.QAction("Delete Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/delete.svg"))
-            configuration.triggered.connect(qpartial(self._deleteSlot, appliance, module))
+            configuration.triggered.connect(qpartial(self._deleteSlot, appliance))
             menu.addAction(configuration)
             menu.exec_(QtGui.QCursor.pos())
 
-    def _configurationSlot(self, appliance, module, source):
+    def _configurationSlot(self, appliance, configuration_page, source):
 
-        dialog = ConfigurationDialog(appliance.name(), appliance.settings(), module.configurationPage()(), parent=self)
+        dialog = ConfigurationDialog(appliance.name(), appliance.settings(), configuration_page(), parent=self)
         dialog.show()
         if dialog.exec_():
             ApplianceManager.instance().updateAppliance(appliance)
 
-    def _deleteSlot(self, appliance, module, source):
+    def _deleteSlot(self, appliance, source):
 
         reply = QtWidgets.QMessageBox.question(self, "Template", "Delete {} template?".format(appliance.name()),
                                                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)

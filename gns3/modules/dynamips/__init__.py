@@ -232,3 +232,10 @@ class Dynamips(Module):
         if not hasattr(Dynamips, "_instance"):
             Dynamips._instance = Dynamips()
         return Dynamips._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "dynamips"

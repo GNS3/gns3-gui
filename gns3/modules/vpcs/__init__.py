@@ -152,3 +152,10 @@ class VPCS(Module):
         if not hasattr(VPCS, "_instance"):
             VPCS._instance = VPCS()
         return VPCS._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "vpcs"

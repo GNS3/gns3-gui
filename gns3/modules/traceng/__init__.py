@@ -131,3 +131,10 @@ class TraceNG(Module):
         if not hasattr(TraceNG, "_instance"):
             TraceNG._instance = TraceNG()
         return TraceNG._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "traceng"

@@ -133,3 +133,10 @@ class IOU(Module):
         if not hasattr(IOU, "_instance"):
             IOU._instance = IOU()
         return IOU._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "iou"

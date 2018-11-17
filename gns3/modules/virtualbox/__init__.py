@@ -176,3 +176,10 @@ class VirtualBox(Module):
         if not hasattr(VirtualBox, "_instance"):
             VirtualBox._instance = VirtualBox()
         return VirtualBox._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "virtualbox"

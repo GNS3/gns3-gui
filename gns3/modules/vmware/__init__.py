@@ -290,6 +290,12 @@ class VMware(Module):
             VMware._instance = VMware()
         return VMware._instance
 
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "vmware"
 
 if __name__ == '__main__':
     print("vmrun", VMware.findVmrun())

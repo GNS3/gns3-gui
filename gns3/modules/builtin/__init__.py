@@ -71,6 +71,22 @@ class Builtin(Module):
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, BUILTIN_SETTINGS)
 
     @staticmethod
+    def configurationPage(node_type):
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
+        from .pages.ethernet_hub_configuration_page import EthernetHubConfigurationPage
+        from .pages.ethernet_switch_configuration_page import EthernetSwitchConfigurationPage
+        if node_type == "ethernet_hub":
+            return EthernetHubConfigurationPage
+        elif node_type == "ethernet_switch":
+            return EthernetSwitchConfigurationPage
+        return None
+
+    @staticmethod
     def getNodeClass(node_type, platform=None):
         """
         Returns the class corresponding to node type.
@@ -129,3 +145,10 @@ class Builtin(Module):
         if not hasattr(Builtin, "_instance"):
             Builtin._instance = Builtin()
         return Builtin._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "builtin"

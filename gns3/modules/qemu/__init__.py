@@ -193,3 +193,10 @@ class Qemu(Module):
         if not hasattr(Qemu, "_instance"):
             Qemu._instance = Qemu()
         return Qemu._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "qemu"
