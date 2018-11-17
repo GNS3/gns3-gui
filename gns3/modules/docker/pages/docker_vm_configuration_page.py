@@ -20,6 +20,7 @@ Configuration page for Docker images.
 """
 
 from gns3.qt import QtWidgets
+from gns3.node import Node
 from gns3.dialogs.custom_adapters_configuration_dialog import CustomAdaptersConfigurationDialog
 
 from ..ui.docker_vm_configuration_page_ui import Ui_dockerVMConfigPageWidget
@@ -43,6 +44,10 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiNetworkConfigEditButton.released.connect(self._networkConfigEditSlot)
         self.uiCustomAdaptersConfigurationPushButton.clicked.connect(self._customAdaptersConfigurationSlot)
+
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
 
     def _symbolBrowserSlot(self):
         """
@@ -128,7 +133,9 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
             self.uiSymbolLineEdit.setText(settings["symbol"])
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
 
-            self.uiCategoryComboBox.setCurrentIndex(settings["category"])
+            index = self.uiCategoryComboBox.findData(settings["category"])
+            if index != -1:
+                self.uiCategoryComboBox.setCurrentIndex(index)
             self.uiNetworkConfigEditButton.hide()
             self.uiNetworkConfigLabel.hide()
         else:
