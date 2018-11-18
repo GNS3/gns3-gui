@@ -165,16 +165,17 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         item = self.uiIOUDevicesTreeWidget.currentItem()
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
-            copied_iou_device_settings = self._iou_devices[key]
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOU device template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_iou_device_settings["name"]))
+            copied_iou_device_settings = copy.deepcopy(self._iou_devices[key])
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOU appliance", "Appliance name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_iou_device_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_iou_device_settings["compute_id"], name=new_name)
                 if key in self._iou_devices:
-                    QtWidgets.QMessageBox.critical(self, "IOU device", "IOU device name {} already exists".format(new_name))
+                    QtWidgets.QMessageBox.critical(self, "IOU appliance", "IOU appliance name {} already exists".format(new_name))
                     return
                 self._iou_devices[key] = IOU_DEVICE_SETTINGS.copy()
                 self._iou_devices[key].update(copied_iou_device_settings)
                 self._iou_devices[key]["name"] = new_name
+                self._iou_devices[key].pop("appliance_id", None)
 
                 item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
                 item.setText(0, self._iou_devices[key]["name"])

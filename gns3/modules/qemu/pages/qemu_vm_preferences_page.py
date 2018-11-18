@@ -205,16 +205,17 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         item = self.uiQemuVMsTreeWidget.currentItem()
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
-            copied_vm_settings = self._qemu_vms[key]
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Qemu VM template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_vm_settings["name"]))
+            copied_vm_settings = copy.deepcopy(self._qemu_vms[key])
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Qemu appliance", "Appliance name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_vm_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_vm_settings["compute_id"], name=new_name)
                 if key in self._qemu_vms:
-                    QtWidgets.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(new_name))
+                    QtWidgets.QMessageBox.critical(self, "Qemu appliance", "Qemu appliance name {} already exists".format(new_name))
                     return
                 self._qemu_vms[key] = QEMU_VM_SETTINGS.copy()
                 self._qemu_vms[key].update(copied_vm_settings)
                 self._qemu_vms[key]["name"] = new_name
+                self._qemu_vms[key].pop("appliance_id", None)
 
                 item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
                 item.setText(0, self._qemu_vms[key]["name"])

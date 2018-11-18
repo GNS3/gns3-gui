@@ -138,16 +138,17 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         item = self.uiIOSRoutersTreeWidget.currentItem()
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
-            copied_ios_router_settings = self._ios_routers[key]
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOS router template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_ios_router_settings["name"]))
+            copied_ios_router_settings = copy.deepcopy(self._ios_routers[key])
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOS router appliance", "Appliance name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_ios_router_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_ios_router_settings["compute_id"], name=new_name)
                 if key in self._ios_routers:
-                    QtWidgets.QMessageBox.critical(self, "IOS router", "IOS router name {} already exists".format(new_name))
+                    QtWidgets.QMessageBox.critical(self, "IOS router appliance", "IOS router appliance name {} already exists".format(new_name))
                     return
                 self._ios_routers[key] = IOS_ROUTER_SETTINGS.copy()
                 self._ios_routers[key].update(copied_ios_router_settings)
                 self._ios_routers[key]["name"] = new_name
+                self._ios_routers[key].pop("appliance_id", None)
 
                 item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
                 item.setText(0, self._ios_routers[key]["name"])

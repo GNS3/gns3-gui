@@ -144,16 +144,17 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         item = self.uiDockerVMsTreeWidget.currentItem()
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
-            copied_containers_settings = self._docker_containers[key]
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Docker container template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_containers_settings["name"]))
+            copied_containers_settings = copy.deepcopy(self._docker_containers[key])
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Docker appliance", "Appliance name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_containers_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_containers_settings["compute_id"], name=new_name)
                 if key in self._docker_containers:
-                    QtWidgets.QMessageBox.critical(self, "Docker container", "Container name {} already exists".format(new_name))
+                    QtWidgets.QMessageBox.critical(self, "Docker appliance", "Appliance name {} already exists".format(new_name))
                     return
                 self._docker_containers[key] = DOCKER_CONTAINER_SETTINGS.copy()
                 self._docker_containers[key].update(copied_containers_settings)
                 self._docker_containers[key]["name"] = new_name
+                self._docker_containers[key].pop("appliance_id", None)
 
                 item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
                 item.setText(0, self._docker_containers[key]["name"])
