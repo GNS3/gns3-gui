@@ -28,7 +28,6 @@ from gns3.compute_manager import ComputeManager
 from gns3.appliance_manager import ApplianceManager
 from gns3.controller import Controller
 from gns3.appliance import Appliance
-
 from ..settings import DOCKER_CONTAINER_SETTINGS
 from ..ui.docker_vm_preferences_page_ui import Ui_DockerVMPreferencesPageWidget
 from ..pages.docker_vm_configuration_page import DockerVMConfigurationPage
@@ -68,7 +67,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         section_item.setFont(0, font)
         return section_item
 
-    def _refreshInfo(self, docker_image):
+    def _refreshInfo(self, docker_container):
         """
         Refreshes the content of the tree widget.
         """
@@ -77,22 +76,24 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Image name:", docker_image["image"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", docker_container["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", docker_container.get("appliance_id", "none")])
+        QtWidgets.QTreeWidgetItem(section_item, ["Image name:", docker_container["image"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(docker_image["compute_id"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(docker_container["compute_id"]).name()])
         except KeyError:
             pass
-        QtWidgets.QTreeWidgetItem(section_item, ["Console type:", str(docker_image["console_type"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(docker_image["console_auto_start"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_image["default_name_format"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(docker_image["adapters"])])
-        if docker_image["start_command"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["Start command:", str(docker_image["start_command"])])
-        if docker_image["environment"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["Environment:", str(docker_image["environment"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Console type:", str(docker_container["console_type"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(docker_container["console_auto_start"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_container["default_name_format"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(docker_container["adapters"])])
+        if docker_container["start_command"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Start command:", str(docker_container["start_command"])])
+        if docker_container["environment"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Environment:", str(docker_container["environment"])])
 
-        if docker_image["extra_hosts"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["Extra hosts:", str(docker_image["extra_hosts"])])
+        if docker_container["extra_hosts"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Extra hosts:", str(docker_container["extra_hosts"])])
 
         self.uiDockerVMInfoTreeWidget.expandAll()
         self.uiDockerVMInfoTreeWidget.resizeColumnToContents(0)
@@ -112,8 +113,8 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
 
         if single_selected:
             key = selection[0].data(0, QtCore.Qt.UserRole)
-            docker_image = self._docker_containers[key]
-            self._refreshInfo(docker_image)
+            docker_container = self._docker_containers[key]
+            self._refreshInfo(docker_container)
         else:
             self.uiDockerVMInfoTreeWidget.clear()
 
@@ -171,24 +172,24 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         item = self.uiDockerVMsTreeWidget.currentItem()
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
-            docker_image = self._docker_containers[key]
-            dialog = ConfigurationDialog(docker_image["name"], docker_image, DockerVMConfigurationPage(), parent=self)
+            docker_container = self._docker_containers[key]
+            dialog = ConfigurationDialog(docker_container["name"], docker_container, DockerVMConfigurationPage(), parent=self)
             dialog.show()
             if dialog.exec_():
                 # update the icon
-                Controller.instance().getSymbolIcon(docker_image["symbol"], qpartial(self._setItemIcon, item))
-                if docker_image["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=docker_image["compute_id"], name=docker_image["name"])
+                Controller.instance().getSymbolIcon(docker_container["symbol"], qpartial(self._setItemIcon, item))
+                if docker_container["name"] != item.text(0):
+                    new_key = "{server}:{name}".format(server=docker_container["compute_id"], name=docker_container["name"])
                     if new_key in self._docker_containers:
-                        QtWidgets.QMessageBox.critical(self, "Docker container", "Docker container name {} already exists for server {}".format(docker_image["name"],
-                                                                                                                                                docker_image["compute_id"]))
-                        docker_image["name"] = item.text(0)
+                        QtWidgets.QMessageBox.critical(self, "Docker container", "Docker container name {} already exists for server {}".format(docker_container["name"],
+                                                                                                                                                docker_container["compute_id"]))
+                        docker_container["name"] = item.text(0)
                         return
                     self._docker_containers[new_key] = self._docker_containers[key]
                     del self._docker_containers[key]
-                    item.setText(0, docker_image["name"])
+                    item.setText(0, docker_container["name"])
                     item.setData(0, QtCore.Qt.UserRole, new_key)
-                self._refreshInfo(docker_image)
+                self._refreshInfo(docker_container)
 
     def _dockerImageDeleteSlot(self):
         """
@@ -217,10 +218,10 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
                 self._docker_containers[key] = copy.deepcopy(appliance.settings())
 
         self._items.clear()
-        for key, docker_image in self._docker_containers.items():
+        for key, docker_container in self._docker_containers.items():
             item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
-            item.setText(0, docker_image["name"])
-            Controller.instance().getSymbolIcon(docker_image["symbol"], qpartial(self._setItemIcon, item))
+            item.setText(0, docker_container["name"])
+            Controller.instance().getSymbolIcon(docker_container["symbol"], qpartial(self._setItemIcon, item))
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
 

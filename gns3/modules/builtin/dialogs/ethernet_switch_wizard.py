@@ -29,7 +29,7 @@ from ..ui.ethernet_switch_wizard_ui import Ui_EthernetSwitchWizard
 class EthernetSwitchWizard(VMWizard, Ui_EthernetSwitchWizard):
 
     """
-    Wizard to create an Ethernet switch template.
+    Wizard to create an Ethernet switch.
 
     :param parent: parent widget
     """

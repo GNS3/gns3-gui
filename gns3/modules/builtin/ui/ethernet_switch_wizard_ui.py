@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/ethernet_switch_wizard.ui'
 #
-# Created: Fri Jun 10 19:03:51 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -82,7 +81,7 @@ class Ui_EthernetSwitchWizard(object):
 
     def retranslateUi(self, EthernetSwitchWizard):
         _translate = QtCore.QCoreApplication.translate
-        EthernetSwitchWizard.setWindowTitle(_translate("EthernetSwitchWizard", "New Ethernet switch template"))
+        EthernetSwitchWizard.setWindowTitle(_translate("EthernetSwitchWizard", "New Ethernet switch"))
         self.uiServerWizardPage.setTitle(_translate("EthernetSwitchWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("EthernetSwitchWizard", "Please choose a server type to run your new Ethernet switch."))
         self.uiServerTypeGroupBox.setTitle(_translate("EthernetSwitchWizard", "Server type"))

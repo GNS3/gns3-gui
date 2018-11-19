@@ -77,7 +77,8 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", traceng_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", traceng_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", traceng_node.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["IP address:", traceng_node["ip_address"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", traceng_node["default_name_format"]])
         try:
@@ -92,7 +93,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
 
     def _tracengChangedSlot(self):
         """
-        Loads a selected TraceNG node template from the tree widget.
+        Loads a selected TraceNG node from the tree widget.
         """
 
         selection = self.uiTraceNGTreeWidget.selectedItems()
@@ -109,7 +110,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
 
     def _newTraceNGSlot(self):
         """
-        Creates a new TraceNG node template.
+        Creates a new TraceNG node.
         """
 
         wizard = TraceNGNodeWizard(self._traceng_nodes, parent=self)
@@ -129,7 +130,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
 
     def _editTraceNGSlot(self):
         """
-        Edits a TraceNG node template.
+        Edits a TraceNG node.
         """
 
         item = self.uiTraceNGTreeWidget.currentItem()
@@ -156,7 +157,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
 
     def _deleteTraceNGSlot(self):
         """
-        Deletes a TraceNG node template.
+        Deletes a TraceNG node.
         """
 
         for item in self.uiTraceNGTreeWidget.selectedItems():

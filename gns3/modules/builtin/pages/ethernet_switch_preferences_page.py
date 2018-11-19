@@ -77,7 +77,8 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ethernet_switch["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", ethernet_switch["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", ethernet_switch.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ethernet_switch["default_name_format"]])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_switch["compute_id"]).name()])
@@ -98,7 +99,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
     def _ethernetSwitchChangedSlot(self):
         """
-        Loads a selected Ethernet switch template from the tree widget.
+        Loads a selected Ethernet switch from the tree widget.
         """
 
         selection = self.uiEthernetSwitchesTreeWidget.selectedItems()
@@ -115,7 +116,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
     def _newEthernetSwitchSlot(self):
         """
-        Creates a new Ethernet switch template.
+        Creates a new Ethernet switch.
         """
 
         wizard = EthernetSwitchWizard(self._ethernet_switches, parent=self)
@@ -136,7 +137,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
     def _editEthernetSwitchSlot(self):
         """
-        Edits an Ethernet switch template.
+        Edits an Ethernet switch.
         """
 
         item = self.uiEthernetSwitchesTreeWidget.currentItem()
@@ -163,7 +164,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
     def _deleteEthernetSwitchSlot(self):
         """
-        Deletes an Ethernet switch template.
+        Deletes an Ethernet switch.
         """
         for item in self.uiEthernetSwitchesTreeWidget.selectedItems():
             if item:

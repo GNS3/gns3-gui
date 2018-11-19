@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -195,7 +195,7 @@ class Ui_DockerVMWizard(object):
 
     def retranslateUi(self, DockerVMWizard):
         _translate = QtCore.QCoreApplication.translate
-        DockerVMWizard.setWindowTitle(_translate("DockerVMWizard", "New Docker VM template"))
+        DockerVMWizard.setWindowTitle(_translate("DockerVMWizard", "New Docker VM"))
         self.uiServerWizardPage.setTitle(_translate("DockerVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a server type to run your new Docker VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("DockerVMWizard", "Server type"))

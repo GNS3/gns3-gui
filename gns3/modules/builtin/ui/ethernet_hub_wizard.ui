@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New Ethernet hub template</string>
+   <string>New Ethernet hub</string>
   </property>
   <property name="modal">
    <bool>true</bool>

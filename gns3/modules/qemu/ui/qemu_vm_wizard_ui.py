@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -213,7 +213,7 @@ class Ui_QemuVMWizard(object):
 
     def retranslateUi(self, QemuVMWizard):
         _translate = QtCore.QCoreApplication.translate
-        QemuVMWizard.setWindowTitle(_translate("QemuVMWizard", "New QEMU VM template"))
+        QemuVMWizard.setWindowTitle(_translate("QemuVMWizard", "New QEMU VM"))
         self.uiServerWizardPage.setTitle(_translate("QemuVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a server type to run your new QEMU VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("QemuVMWizard", "Server type"))

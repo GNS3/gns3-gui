@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/ethernet_hub_preferences_page.ui'
 #
-# Created: Fri Jun 10 17:15:20 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -76,7 +75,7 @@ class Ui_EthernetHubPreferencesPageWidget(object):
     def retranslateUi(self, EthernetHubPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         EthernetHubPreferencesPageWidget.setWindowTitle(_translate("EthernetHubPreferencesPageWidget", "Ethernet hubs"))
-        EthernetHubPreferencesPageWidget.setAccessibleName(_translate("EthernetHubPreferencesPageWidget", "Ethernet hub templates"))
+        EthernetHubPreferencesPageWidget.setAccessibleName(_translate("EthernetHubPreferencesPageWidget", "Ethernet hubs"))
         self.uiEthernetHubInfoTreeWidget.headerItem().setText(0, _translate("EthernetHubPreferencesPageWidget", "1"))
         self.uiEthernetHubInfoTreeWidget.headerItem().setText(1, _translate("EthernetHubPreferencesPageWidget", "2"))
         self.uiNewEthernetHubPushButton.setText(_translate("EthernetHubPreferencesPageWidget", "&New"))

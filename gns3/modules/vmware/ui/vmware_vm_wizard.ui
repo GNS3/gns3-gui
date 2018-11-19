@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New VMware VM template</string>
+   <string>New VMware VM</string>
   </property>
   <property name="modal">
    <bool>true</bool>

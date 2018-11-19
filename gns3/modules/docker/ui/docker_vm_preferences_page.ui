@@ -11,10 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Docker Containers</string>
+   <string>Docker containers</string>
   </property>
   <property name="accessibleName">
-   <string>Docker VM templates</string>
+   <string>Docker containers</string>
   </property>
   <property name="accessibleDescription">
    <string/>

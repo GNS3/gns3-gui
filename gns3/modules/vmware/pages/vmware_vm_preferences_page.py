@@ -77,7 +77,8 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vmware_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", vmware_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", vmware_vm.get("appliance_id", "none")])
         if vmware_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
         try:

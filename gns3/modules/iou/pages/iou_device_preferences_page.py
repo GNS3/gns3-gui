@@ -83,7 +83,8 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", iou_device["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", iou_device["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", iou_device.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", iou_device["default_name_format"]])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(iou_device["compute_id"]).name()])

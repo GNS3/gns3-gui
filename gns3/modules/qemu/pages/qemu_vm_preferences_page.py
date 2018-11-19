@@ -78,7 +78,8 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", qemu_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", qemu_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", qemu_vm.get("appliance_id", "none")])
         if qemu_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", qemu_vm["default_name_format"]])
         try:

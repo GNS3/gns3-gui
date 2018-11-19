@@ -29,7 +29,7 @@ from ..ui.ethernet_hub_wizard_ui import Ui_EthernetHubWizard
 class EthernetHubWizard(VMWizard, Ui_EthernetHubWizard):
 
     """
-    Wizard to create an Ethernet hub template.
+    Wizard to create an Ethernet hub.
 
     :param parent: parent widget
     """

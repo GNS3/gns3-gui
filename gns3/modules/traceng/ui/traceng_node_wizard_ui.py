@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/traceng/ui/traceng_node_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -77,7 +77,7 @@ class Ui_TraceNGNodeWizard(object):
 
     def retranslateUi(self, TraceNGNodeWizard):
         _translate = QtCore.QCoreApplication.translate
-        TraceNGNodeWizard.setWindowTitle(_translate("TraceNGNodeWizard", "New TraceNG node template"))
+        TraceNGNodeWizard.setWindowTitle(_translate("TraceNGNodeWizard", "New TraceNG device"))
         self.uiServerWizardPage.setTitle(_translate("TraceNGNodeWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("TraceNGNodeWizard", "Please choose a server type to run your new TraceNG node."))
         self.uiServerTypeGroupBox.setTitle(_translate("TraceNGNodeWizard", "Server type"))

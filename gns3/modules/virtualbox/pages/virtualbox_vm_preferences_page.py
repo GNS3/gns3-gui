@@ -78,7 +78,8 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vbox_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", vbox_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", vbox_vm.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["VirtualBox name:", vbox_vm["vmname"]])
         if vbox_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vbox_vm["default_name_format"]])

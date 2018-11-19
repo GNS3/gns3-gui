@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New TraceNG node template</string>
+   <string>New TraceNG device</string>
   </property>
   <property name="modal">
    <bool>true</bool>

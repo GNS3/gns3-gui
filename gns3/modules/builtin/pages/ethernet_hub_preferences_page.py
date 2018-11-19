@@ -77,7 +77,8 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ethernet_hub["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", ethernet_hub["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", ethernet_hub.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ethernet_hub["default_name_format"]])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_hub["compute_id"]).name()])
@@ -92,7 +93,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
     def _ethernetHubChangedSlot(self):
         """
-        Loads a selected Ethernet hub template from the tree widget.
+        Loads a selected Ethernet hub from the tree widget.
         """
 
         selection = self.uiEthernetHubsTreeWidget.selectedItems()
@@ -109,7 +110,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
     def _newEthernetHubSlot(self):
         """
-        Creates a new Ethernet hub template.
+        Creates a new Ethernet hub.
         """
 
         wizard = EthernetHubWizard(self._ethernet_hubs, parent=self)
@@ -129,7 +130,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
     def _editEthernetHubSlot(self):
         """
-        Edits an Ethernet hub template.
+        Edits an Ethernet hub.
         """
 
         item = self.uiEthernetHubsTreeWidget.currentItem()
@@ -156,7 +157,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
     def _deleteEthernetHubSlot(self):
         """
-        Deletes an Ethernet hub template.
+        Deletes an Ethernet hub.
         """
 
         for item in self.uiEthernetHubsTreeWidget.selectedItems():

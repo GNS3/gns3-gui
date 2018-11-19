@@ -29,7 +29,7 @@ from ..ui.vpcs_node_wizard_ui import Ui_VPCSNodeWizard
 
 class VPCSNodeWizard(VMWizard, Ui_VPCSNodeWizard):
     """
-    Wizard to create a VPCS node template.
+    Wizard to create a VPCS node.
 
     :param parent: parent widget
     """

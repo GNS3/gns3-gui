@@ -31,7 +31,7 @@ from ..ui.traceng_node_wizard_ui import Ui_TraceNGNodeWizard
 
 class TraceNGNodeWizard(VMWizard, Ui_TraceNGNodeWizard):
     """
-    Wizard to create a TraceNG node template.
+    Wizard to create a TraceNG node.
 
     :param parent: parent widget
     """

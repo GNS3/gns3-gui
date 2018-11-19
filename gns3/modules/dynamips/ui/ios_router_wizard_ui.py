@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_wizard.ui'
 #
-# Created: Tue Sep 20 17:45:46 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -285,7 +284,7 @@ class Ui_IOSRouterWizard(object):
 
     def retranslateUi(self, IOSRouterWizard):
         _translate = QtCore.QCoreApplication.translate
-        IOSRouterWizard.setWindowTitle(_translate("IOSRouterWizard", "New IOS router template"))
+        IOSRouterWizard.setWindowTitle(_translate("IOSRouterWizard", "New IOS router"))
         self.uiServerWizardPage.setTitle(_translate("IOSRouterWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose a server type to run your new IOS router."))
         self.uiServerTypeGroupBox.setTitle(_translate("IOSRouterWizard", "Server type"))

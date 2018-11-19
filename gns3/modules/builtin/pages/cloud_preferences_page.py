@@ -76,7 +76,8 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", cloud_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", cloud_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", cloud_node.get("appliance_id", "none")])
         if cloud_node["remote_console_type"] != "none":
             QtWidgets.QTreeWidgetItem(section_item, ["Console host:", cloud_node["remote_console_host"]])
             QtWidgets.QTreeWidgetItem(section_item, ["Console port:", "{}".format(cloud_node["remote_console_port"])])
@@ -96,7 +97,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
     def _cloudNodeChangedSlot(self):
         """
-        Loads a selected cloud node template from the tree widget.
+        Loads a selected cloud nodes from the tree widget.
         """
 
         selection = self.uiCloudNodesTreeWidget.selectedItems()
@@ -113,7 +114,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
     def _newCloudNodeSlot(self):
         """
-        Creates a new cloud node template.
+        Creates a new cloud node.
         """
 
         wizard = CloudWizard(self._cloud_nodes, parent=self)
@@ -134,7 +135,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
     def _editCloudNodeSlot(self):
         """
-        Edits a cloud node template.
+        Edits a cloud node.
         """
 
         item = self.uiCloudNodesTreeWidget.currentItem()
@@ -161,7 +162,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
     def _deleteCloudNodeSlot(self):
         """
-        Deletes a cloud node template.
+        Deletes a cloud node.
         """
 
         for item in self.uiCloudNodesTreeWidget.selectedItems():

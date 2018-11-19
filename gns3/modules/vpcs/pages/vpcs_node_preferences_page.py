@@ -77,7 +77,8 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vpcs_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", vpcs_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", vpcs_node.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vpcs_node["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vpcs_node["console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(vpcs_node["console_auto_start"])])
@@ -95,7 +96,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
     def _vpcsChangedSlot(self):
         """
-        Loads a selected VPCS node template from the tree widget.
+        Loads a selected VPCS node from the tree widget.
         """
 
         selection = self.uiVPCSTreeWidget.selectedItems()
@@ -112,7 +113,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
     def _newVPCSSlot(self):
         """
-        Creates a new VPCS node template.
+        Creates a new VPCS node.
         """
 
         wizard = VPCSNodeWizard(self._vpcs_nodes, parent=self)
@@ -132,7 +133,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
     def _editVPCSSlot(self):
         """
-        Edits a VPCS node template.
+        Edits a VPCS node.
         """
 
         item = self.uiVPCSTreeWidget.currentItem()
@@ -159,7 +160,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
     def _deleteVPCSSlot(self):
         """
-        Deletes a VPCS node template.
+        Deletes a VPCS node.
         """
 
         for item in self.uiVPCSTreeWidget.selectedItems():
