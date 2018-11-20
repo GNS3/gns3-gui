@@ -1475,6 +1475,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
                 current_zvalue = item.zValue()
+                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
+                    log.error("Cannot move object to a upper layer because it is locked")
+                    continue
                 item.setZValue(current_zvalue + 1)
                 item.updateNode()
                 item.update()
@@ -1488,6 +1491,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
                 current_zvalue = item.zValue()
+                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
+                    log.error("Cannot move object to a lower layer because it is locked")
+                    continue
                 item.setZValue(current_zvalue - 1)
                 item.updateNode()
                 item.update()
