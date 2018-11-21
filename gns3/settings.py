@@ -308,7 +308,9 @@ GRAPHICS_VIEW_SETTINGS = {
     "zoom": None,
     "show_layers": False,
     "snap_to_grid": False,
+    "snap_to_grid_on_new_project": False,
     "show_grid": False,
+    "show_grid_on_new_project": False,
     "show_interface_labels": False,
     "show_interface_labels_on_new_project": False
 }

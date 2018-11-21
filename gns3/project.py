@@ -73,6 +73,8 @@ class Project(QtCore.QObject):
         self._grid_size = graphic_settings.get("grid_size", 75)
         self._show_interface_labels = graphic_settings.get("show_interface_labels", False)
         self._show_interface_labels_on_new_project = config.showInterfaceLabelsOnNewProject()
+        self._show_grid_on_new_project = config.showGridOnNewProject()
+        self._snap_to_grid_on_new_project = config.snapToGridOnNewProject()
         self._variables = None
         self._supplier = None
 
@@ -426,6 +428,8 @@ class Project(QtCore.QObject):
         body = {
             "name": self._name,
             "path": self.filesDir(),
+            "show_grid": self._show_grid_on_new_project,
+            "snap_to_grid": self._snap_to_grid_on_new_project,
             "show_interface_labels": self._show_interface_labels_on_new_project
         }
         Controller.instance().post("/projects", self._projectCreatedCallback, body=body)
