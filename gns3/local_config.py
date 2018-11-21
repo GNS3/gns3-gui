@@ -492,6 +492,22 @@ class LocalConfig(QtCore.QObject):
         settings["show_interface_labels_on_new_project"] = value
         self.saveSectionSettings("GraphicsView", settings)
 
+    def showGridOnNewProject(self):
+        """
+        :returns: Boolean. True if show_grid_on_new_project is enabled
+        """
+
+        from gns3.settings import GRAPHICS_VIEW_SETTINGS
+        return self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS).get("show_grid_on_new_project", False)
+
+    def snapToGridOnNewProject(self):
+        """
+        :returns: Boolean. True if snap_to_grid_on_new_project is enabled
+        """
+
+        from gns3.settings import GRAPHICS_VIEW_SETTINGS
+        return self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS).get("snap_to_grid_on_new_project", False)
+
     @staticmethod
     def instance():
         """
