@@ -299,6 +299,7 @@ GRAPHICS_VIEW_SETTINGS = {
     "scene_width": 2000,
     "scene_height": 1000,
     "grid_size": 75,
+    "drawing_grid_size": 25,
     "draw_rectangle_selected_item": False,
     "draw_link_status_points": True,
     "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
