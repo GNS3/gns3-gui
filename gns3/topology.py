@@ -142,7 +142,8 @@ class Topology(QtCore.QObject):
         self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
         project_file = os.path.join(self._project.filesDir(), self._project.filename())
         self._main_window.uiGraphicsView.setSceneSize(self._project.sceneWidth(), self._project.sceneHeight())
-        self._main_window.uiGraphicsView.setGridSize(self._project.gridSize())
+        self._main_window.uiGraphicsView.setApplianceGridSize(self._project.applianceGridSize())
+        self._main_window.uiGraphicsView.setDrawingGridSize(self._project.drawingGridSize())
         self._main_window.uiShowGridAction.setChecked(self._project.showGrid())
         self._main_window.showGrid(self._project.showGrid())
         if os.path.exists(project_file):
@@ -158,7 +159,8 @@ class Topology(QtCore.QObject):
             self._main_window.uiShowLayersAction.setChecked(self._project.showLayers())
             self._main_window.showLayers(self._project.showLayers())
 
-            self._main_window.uiGraphicsView.setGridSize(self._project.gridSize())
+            self._main_window.uiGraphicsView.setApplianceGridSize(self._project.applianceGridSize())
+            self._main_window.uiGraphicsView.setDrawingGridSize(self._project.drawingGridSize())
             self._main_window.uiShowGridAction.setChecked(self._project.showGrid())
             self._main_window.showGrid(self._project.showGrid())
 
