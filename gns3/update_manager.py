@@ -122,7 +122,7 @@ class UpdateManager(QtCore.QObject):
                                                    QtWidgets.QMessageBox.Yes,
                                                    QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
-                QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.net/download/"))
+                QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.com/software"))
         elif not self._silent:
             QtWidgets.QMessageBox.information(self._parent, "Check For Update", "GNS3 is up-to-date!")
 
