@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New cloud node template</string>
+   <string>New cloud node</string>
   </property>
   <property name="modal">
    <bool>true</bool>

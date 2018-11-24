@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New Ethernet switch template</string>
+   <string>New Ethernet switch</string>
   </property>
   <property name="modal">
    <bool>true</bool>

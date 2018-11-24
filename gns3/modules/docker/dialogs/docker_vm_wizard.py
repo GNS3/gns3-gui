@@ -133,7 +133,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
 
         settings = {
             "image": image,
-            "server": self._compute_id,
+            "compute_id": self._compute_id,
             "adapters": self.uiAdaptersSpinBox.value(),
             "name": name,
             "environment": self.uiEnvironmentTextEdit.toPlainText(),

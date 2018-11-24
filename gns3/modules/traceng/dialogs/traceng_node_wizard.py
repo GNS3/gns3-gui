@@ -31,7 +31,7 @@ from ..ui.traceng_node_wizard_ui import Ui_TraceNGNodeWizard
 
 class TraceNGNodeWizard(VMWizard, Ui_TraceNGNodeWizard):
     """
-    Wizard to create a TraceNG node template.
+    Wizard to create a TraceNG node.
 
     :param parent: parent widget
     """
@@ -80,6 +80,6 @@ class TraceNGNodeWizard(VMWizard, Ui_TraceNGNodeWizard):
                     "ip_address": self.uiIPAddressLineEdit.text(),
                     "symbol": ":/symbols/traceng.svg",
                     "category": Node.end_devices,
-                    "server": self._compute_id}
+                    "compute_id": self._compute_id}
 
         return settings

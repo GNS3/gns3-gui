@@ -27,8 +27,9 @@ from gns3.controller import Controller
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
-from .. import Builtin
 from ..settings import ETHERNET_SWITCH_SETTINGS
 from ..ui.ethernet_switch_preferences_page_ui import Ui_EthernetSwitchPreferencesPageWidget
 from ..pages.ethernet_switch_configuration_page import EthernetSwitchConfigurationPage
@@ -76,10 +77,11 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ethernet_switch["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", ethernet_switch["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", ethernet_switch.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ethernet_switch["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_switch["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_switch["compute_id"]).name()])
         except KeyError:
             pass
 
@@ -97,7 +99,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
     def _ethernetSwitchChangedSlot(self):
         """
-        Loads a selected Ethernet switch template from the tree widget.
+        Loads a selected Ethernet switch from the tree widget.
         """
 
         selection = self.uiEthernetSwitchesTreeWidget.selectedItems()
@@ -114,14 +116,14 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
     def _newEthernetSwitchSlot(self):
         """
-        Creates a new Ethernet switch template.
+        Creates a new Ethernet switch.
         """
 
         wizard = EthernetSwitchWizard(self._ethernet_switches, parent=self)
         wizard.show()
         if wizard.exec_():
             new_ethernet_switch_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_ethernet_switch_settings["server"], name=new_ethernet_switch_settings["name"])
+            key = "{server}:{name}".format(server=new_ethernet_switch_settings["compute_id"], name=new_ethernet_switch_settings["name"])
             self._ethernet_switches[key] = ETHERNET_SWITCH_SETTINGS.copy()
             self._ethernet_switches[key].update(new_ethernet_switch_settings)
 
@@ -135,7 +137,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
     def _editEthernetSwitchSlot(self):
         """
-        Edits an Ethernet switch template.
+        Edits an Ethernet switch.
         """
 
         item = self.uiEthernetSwitchesTreeWidget.currentItem()
@@ -148,10 +150,10 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
                 # update the icon
                 Controller.instance().getSymbolIcon(ethernet_switch["symbol"], qpartial(self._setItemIcon, item))
                 if ethernet_switch["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=ethernet_switch["server"], name=ethernet_switch["name"])
+                    new_key = "{server}:{name}".format(server=ethernet_switch["compute_id"], name=ethernet_switch["name"])
                     if new_key in self._ethernet_switches:
                         QtWidgets.QMessageBox.critical(self, "Ethernet switch", "Ethernet switch name {} already exists for server {}".format(ethernet_switch["name"],
-                                                                                                                                              ethernet_switch["server"]))
+                                                                                                                                              ethernet_switch["compute_id"]))
                         ethernet_switch["name"] = item.text(0)
                         return
                     self._ethernet_switches[new_key] = self._ethernet_switches[key]
@@ -162,7 +164,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
     def _deleteEthernetSwitchSlot(self):
         """
-        Deletes an Ethernet switch template.
+        Deletes an Ethernet switch.
         """
         for item in self.uiEthernetSwitchesTreeWidget.selectedItems():
             if item:
@@ -175,10 +177,17 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         Loads the ethernet switch preferences.
         """
 
-        builtin_module = Builtin.instance()
-        self._ethernet_switches = copy.deepcopy(builtin_module.ethernetSwitches())
-        self._items.clear()
+        self._ethernet_switches = {}
+        appliances = ApplianceManager.instance().appliances()
+        for appliance_id, appliance in appliances.items():
+            if appliance.appliance_type() == "ethernet_switch" and not appliance.builtin():
+                name = appliance.name()
+                server = appliance.compute_id()
+                #TODO: use appliance id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._ethernet_switches[key] = copy.deepcopy(appliance.settings())
 
+        self._items.clear()
         for key, ethernet_switch in self._ethernet_switches.items():
             item = QtWidgets.QTreeWidgetItem(self.uiEthernetSwitchesTreeWidget)
             item.setText(0, ethernet_switch["name"])
@@ -204,4 +213,11 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         Saves the Ethernet switch preferences.
         """
 
-        Builtin.instance().setEthernetSwitches(self._ethernet_switches)
+        appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "ethernet_switch":
+                appliances.append(appliance)
+        for appliance_settings in self._ethernet_switches.values():
+            appliances.append(Appliance(appliance_settings))
+        ApplianceManager.instance().updateList(appliances)
+

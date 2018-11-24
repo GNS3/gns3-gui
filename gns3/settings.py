@@ -22,7 +22,7 @@ Default general settings.
 import os
 import sys
 import uuid
-import platform
+import distro
 import shutil
 
 # Default projects directory location
@@ -42,6 +42,7 @@ DEFAULT_APPLIANCES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/appliances
 
 DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
 DEFAULT_LOCAL_SERVER_PORT = 3080
+DEFAULT_DELAY_CONSOLE_ALL = 500
 
 # Pre-configured Telnet console commands on various OSes
 if sys.platform.startswith("win"):
@@ -55,7 +56,6 @@ if sys.platform.startswith("win"):
         program_files_x86 = program_files = os.environ["PROGRAMFILES"]
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
-                                             'Solar-Putty (included with GNS3)': 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"',
                                              'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "telnet %h %p"'.format(program_files_x86),
                                              'Royal TS': '{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:%h /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="%p" /p:Name="%d"'.format(program_files),
                                              'SuperPutty': r'SuperPutty.exe -telnet "%h -P %p -wt \"%d\""',
@@ -70,8 +70,11 @@ if sys.platform.startswith("win"):
     # default on Windows
     if shutil.which("Solar-PuTTY.exe"):
         # Solar-Putty is the default if it is installed.
+        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"] = 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"'
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"]
+        DEFAULT_DELAY_CONSOLE_ALL = 1500
     else:
+        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3 downloaded from gns3.com)"] = 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"'
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
 
 elif sys.platform.startswith("darwin"):
@@ -158,8 +161,8 @@ else:
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]
 
     if sys.platform.startswith("linux"):
-        distro = platform.linux_distribution()[0]
-        if distro == "Debian" or distro == "Ubuntu" or distro == "LinuxMint":
+        distro_name = distro.name()
+        if distro_name == "Debian" or distro_name == "Ubuntu" or distro_name == "LinuxMint":
             DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Gnome Terminal"]
 
 # Pre-configured VNC console commands on various OSes
@@ -167,7 +170,7 @@ if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'TightVNC (included with GNS3)': 'tvnviewer.exe %h:%p',
-        'UltraVNC': 'C:\\Program Files\\uvnc bvba\\UltraVNC\\vncviewer.exe %h:%p'
+        'UltraVNC': r'"{}\uvnc bvba\UltraVNC\vncviewer.exe" %h:%p'.format(program_files)
     }
 
     # default Windows VNC console command
@@ -203,11 +206,11 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer (included with GNS3)': '"c:\\Program Files\\VirtViewer v5.0-256\\bin\\remote-viewer.exe" spice://%h:%p',
+        'Remote Viewer': r'"{}\VirtViewer v7.0-256\bin\remote-viewer.exe" spice://%h:%p'.format(program_files),
     }
 
     # default Windows SPICE console command
-    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer (included with GNS3)']
+    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer']
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
@@ -231,8 +234,8 @@ WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
 
 if sys.platform.startswith("win"):
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "{}\Wireshark\wireshark.exe %c".format(os.environ["PROGRAMFILES"]),
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(os.environ["PROGRAMFILES"])}
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "{}\Wireshark\wireshark.exe %c".format(program_files),
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(program_files)}
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
@@ -251,9 +254,9 @@ else:
 DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
 
 DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = ""
-if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ:
+if sys.platform.startswith("win"):
     # Windows 64-bit
-    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'.format(os.environ["PROGRAMFILES(X86)"])
+    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'.format(program_files_x86)
 
 STYLES = ["Charcoal", "Classic", "Legacy"]
 
@@ -273,7 +276,7 @@ GENERAL_SETTINGS = {
     "telnet_console_command": DEFAULT_TELNET_CONSOLE_COMMAND,
     "vnc_console_command": DEFAULT_VNC_CONSOLE_COMMAND,
     "spice_console_command": DEFAULT_SPICE_CONSOLE_COMMAND,
-    "delay_console_all": 500,
+    "delay_console_all": DEFAULT_DELAY_CONSOLE_ALL,
     "hide_getting_started_dialog": False,
     "hide_setup_wizard": False,
     "hide_new_appliance_template_button": False,

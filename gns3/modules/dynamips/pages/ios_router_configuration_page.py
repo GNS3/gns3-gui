@@ -247,7 +247,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         if node:
             self._compute_id = node.compute().id()
         else:
-            self._compute_id = settings["server"]
+            self._compute_id = settings["compute_id"]
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -269,10 +269,9 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiBaseMACLineEdit.hide()
 
         if not node:
-            # these are template settings
+            # these are appliance settings
 
-            # rename the label from "Name" to "Template name"
-            self.uiNameLabel.setText("Template name:")
+            self.uiNameLabel.setText("Appliance name:")
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
@@ -326,14 +325,12 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiNPEComboBox.clear()
             self.uiNPEComboBox.addItems(["npe-100", "npe-150", "npe-175", "npe-200", "npe-225", "npe-300", "npe-400", "npe-g2"])
 
-            if settings["midplane"]:
-                index = self.uiMidplaneComboBox.findText(settings["midplane"])
-                if index != -1:
-                    self.uiMidplaneComboBox.setCurrentIndex(index)
-            if settings["npe"]:
-                index = self.uiNPEComboBox.findText(settings["npe"])
-                if index != -1:
-                    self.uiNPEComboBox.setCurrentIndex(index)
+            index = self.uiMidplaneComboBox.findText(settings.get("midplane", "vxr"))
+            if index != -1:
+                self.uiMidplaneComboBox.setCurrentIndex(index)
+            index = self.uiNPEComboBox.findText(settings.get("npe", "npe-400"))
+            if index != -1:
+                self.uiNPEComboBox.setCurrentIndex(index)
 
             if node:
                 # load the sensor settings
@@ -507,7 +504,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             settings["image"] = self.uiIOSImageLineEdit.text()
 
         if not node:
-            # these are template settings
+            # these are appliance settings
 
             # save the default name format
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
@@ -634,7 +631,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if node:
                     settings["wic" + str(wic_number)] = node.settings().get("wic" + str(wic_number))
 
-                if settings["wic" + str(wic_number)] and settings["wic" + str(wic_number)] != wic_name:
+                if settings.get("wic" + str(wic_number)) and settings["wic" + str(wic_number)] != wic_name:
                     if node:
                         self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = wic_name

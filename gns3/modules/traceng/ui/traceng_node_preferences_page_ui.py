@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/traceng/ui/traceng_node_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -39,6 +39,7 @@ class Ui_TraceNGNodePageWidget(object):
         self.layoutWidget = QtWidgets.QWidget(self.splitter)
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTraceNGInfoTreeWidget = QtWidgets.QTreeWidget(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Expanding)
@@ -74,7 +75,7 @@ class Ui_TraceNGNodePageWidget(object):
     def retranslateUi(self, TraceNGNodePageWidget):
         _translate = QtCore.QCoreApplication.translate
         TraceNGNodePageWidget.setWindowTitle(_translate("TraceNGNodePageWidget", "TraceNG nodes"))
-        TraceNGNodePageWidget.setAccessibleName(_translate("TraceNGNodePageWidget", "TraceNG node templates"))
+        TraceNGNodePageWidget.setAccessibleName(_translate("TraceNGNodePageWidget", "TraceNG nodes"))
         self.uiTraceNGInfoTreeWidget.headerItem().setText(0, _translate("TraceNGNodePageWidget", "1"))
         self.uiTraceNGInfoTreeWidget.headerItem().setText(1, _translate("TraceNGNodePageWidget", "2"))
         self.uiNewTraceNGPushButton.setText(_translate("TraceNGNodePageWidget", "&New"))

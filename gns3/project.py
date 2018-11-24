@@ -508,7 +508,7 @@ class Project(QtCore.QObject):
 
     def _projectOpenCallback(self, result, error=False, **kwargs):
         if error:
-            self.project_creation_error_signal.emit(result["message"])
+            self.project_creation_error_signal.emit(result.get("message", "unknown"))
             return
 
         self._parseResponse(result)
@@ -523,7 +523,7 @@ class Project(QtCore.QObject):
 
     def _listNodesCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while listing project: {}".format(result["message"]))
+            log.error("Error while listing project: {}".format(result.get("message", "unknown")))
             return
         topo = Topology.instance()
         for node in result:
@@ -532,7 +532,7 @@ class Project(QtCore.QObject):
 
     def _listLinksCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while listing links: {}".format(result["message"]))
+            log.error("Error while listing links: {}".format(result.get("message", "unknown")))
             return
         topo = Topology.instance()
         for link in result:
@@ -541,7 +541,7 @@ class Project(QtCore.QObject):
 
     def _listDrawingsCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while listing drawings: {}".format(result["message"]))
+            log.error("Error while listing drawings: {}".format(result.get("message", "unknown")))
             return
         topo = Topology.instance()
         for drawing in result:
@@ -606,7 +606,7 @@ class Project(QtCore.QObject):
 
         else:
             path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
-            self._notification_stream = Controller.instance().connectWebSocket(path)
+            self._notification_stream = Controller.instance().connectProjectWebSocket(path)
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
 

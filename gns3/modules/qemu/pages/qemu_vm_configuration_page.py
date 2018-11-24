@@ -28,7 +28,7 @@ from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.ports.port_name_factory import StandardPortNameFactory
 from gns3.dialogs.custom_adapters_configuration_dialog import CustomAdaptersConfigurationDialog
 from gns3.node import Node
-from gns3.qt import QtCore, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial, sip_is_deleted
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.image_manager import ImageManager
 
@@ -313,6 +313,9 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         :param error: indicates an error (boolean)
         """
 
+        if sip_is_deleted(self.uiQemuListComboBox) or sip_is_deleted(self):
+            return
+
         if error:
             QtWidgets.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
         else:
@@ -384,7 +387,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 else:
                     base_mac_address = mac
             else:
-                base_mac_address = None
+                base_mac_address = ""
 
         try:
             ports = StandardPortNameFactory(adapters, first_port_name, port_name_format, port_segment_size)
@@ -410,11 +413,11 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self._node = node
             self._settings = settings
         else:
-            self._compute_id = settings["server"]
+            self._compute_id = settings["compute_id"]
             self._node = None
 
         if self._compute_id is None:
-            QtWidgets.QMessageBox.warning(self, "Qemu", "Server {} is not running, cannot retrieve the QEMU binaries list".format(settings["server"]))
+            QtWidgets.QMessageBox.warning(self, "Qemu", "Server {} is not running, cannot retrieve the QEMU binaries list".format(settings["compute_id"]))
         else:
             callback = qpartial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
             Qemu.instance().getQemuBinariesFromServer(self._compute_id, callback)
@@ -454,10 +457,9 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiKernelImageToolButton.hide()
 
         if not node:
-            # these are template settings
+            # these are appliance settings
 
-            # rename the label from "Name" to "Template name"
-            self.uiNameLabel.setText("Template name:")
+            self.uiNameLabel.setText("Appliance name:")
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
@@ -588,7 +590,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 settings["mac_address"] = None
 
         if not node:
-            # these are template settings
+            # these are appliance settings
 
             # save the default name format
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
@@ -607,7 +609,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
             try:
                 StandardPortNameFactory(self.uiAdaptersSpinBox.value(), first_port_name, port_name_format, port_segment_size)
-            except (ValueError, KeyError):
+            except (IndexError, ValueError, KeyError):
                 QtWidgets.QMessageBox.critical(self, "Invalid format", "Invalid port name format")
                 raise ConfigurationError()
 

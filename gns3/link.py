@@ -113,15 +113,12 @@ class Link(QtCore.QObject):
                     self._capture_file.open(QtCore.QFile.WriteOnly)
                     self._capture_file.setAutoRemove(True)
                     self._capture_file_path = self._capture_file.fileName()
-                    Controller.instance().get(
-                        "/projects/{project_id}/links/{link_id}/pcap".format(
-                            project_id=self.project().id(),
-                            link_id=self._link_id),
-                        None,
-                        showProgress=False,
-                        downloadProgressCallback=self._downloadPcapProgress,
-                        ignoreErrors=True,  # If something is wrong avoid disconnect us from server
-                        timeout=None)
+                    Controller.instance().get("/projects/{project_id}/links/{link_id}/pcap".format(project_id=self.project().id(),link_id=self._link_id),
+                                              None,
+                                              showProgress=False,
+                                              downloadProgressCallback=self._downloadPcapProgress,
+                                              ignoreErrors=True,  # If something is wrong avoid disconnect us from server
+                                              timeout=None)
             else:
                 self._capture_file_path = result["capture_file_path"]
 
@@ -348,12 +345,9 @@ class Link(QtCore.QObject):
             "capture_file_name": capture_file_name,
             "data_link_type": data_link_type
         }
-        Controller.instance().post(
-            "/projects/{project_id}/links/{link_id}/start_capture".format(
-                project_id=self.project().id(),
-                link_id=self._link_id),
-            self._startCaptureCallback,
-            body=data)
+        Controller.instance().post("/projects/{project_id}/links/{link_id}/start_capture".format(project_id=self.project().id(), link_id=self._link_id),
+                                   self._startCaptureCallback,
+                                   body=data)
 
     def _startCaptureCallback(self, result, error=False, **kwargs):
         if error:
@@ -365,6 +359,7 @@ class Link(QtCore.QObject):
         """
         Called for each part of the file of the PCAP
         """
+
         if not self._capture_file_path:
             return
         self._capture_file.write(content)
@@ -379,13 +374,11 @@ class Link(QtCore.QObject):
                 try:
                     os.remove(self._capture_file_path)
                 except OSError as e:
-                    log.error("Can't remove file {}: {}".format(self._capture_file_path, e))
+                    log.error("Cannot remove file {}: {}".format(self._capture_file_path, e))
         self._capture_file_path = None
-        Controller.instance().post(
-            "/projects/{project_id}/links/{link_id}/stop_capture".format(
-                project_id=self.project().id(),
-                link_id=self._link_id),
-            self._stopCaptureCallback)
+        Controller.instance().post("/projects/{project_id}/links/{link_id}/stop_capture".format(project_id=self.project().id(),
+                                                                                                link_id=self._link_id),
+                                                                                                self._stopCaptureCallback)
 
     def _stopCaptureCallback(self, result, error=False, **kwargs):
         if error:
@@ -397,13 +390,11 @@ class Link(QtCore.QObject):
         """
         HTTP Get from a link
         """
-        Controller.instance().get(
-            "/projects/{project_id}/links/{link_id}{path}".format(
-                project_id=self.project().id(),
-                link_id=self._link_id,
-                path=path),
-            callback,
-            **kwargs)
+        Controller.instance().get("/projects/{project_id}/links/{link_id}{path}".format(project_id=self.project().id(),
+                                                                                        link_id=self._link_id,
+                                                                                        path=path),
+                                  callback,
+                                  **kwargs)
 
     def id(self):
         """

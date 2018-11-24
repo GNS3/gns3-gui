@@ -28,9 +28,10 @@ from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.image_manager import ImageManager
 from gns3.compute_manager import ComputeManager
+from gns3.appliance_manager import ApplianceManager
 from gns3.controller import Controller
+from gns3.appliance import Appliance
 
-from .. import IOU
 from ..settings import IOU_DEVICE_SETTINGS
 from ..ui.iou_device_preferences_page_ui import Ui_IOUDevicePreferencesPageWidget
 from ..pages.iou_device_configuration_page import iouDeviceConfigurationPage
@@ -82,10 +83,11 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", iou_device["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", iou_device["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", iou_device.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", iou_device["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(iou_device["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(iou_device["compute_id"]).name()])
         except KeyError:
             # Compute doesn't exists
             pass
@@ -145,7 +147,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         if wizard.exec_():
 
             new_device_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_device_settings["server"], name=new_device_settings["name"])
+            key = "{server}:{name}".format(server=new_device_settings["compute_id"], name=new_device_settings["name"])
             self._iou_devices[key] = IOU_DEVICE_SETTINGS.copy()
             self._iou_devices[key].update(new_device_settings)
 
@@ -164,16 +166,17 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         item = self.uiIOUDevicesTreeWidget.currentItem()
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
-            copied_iou_device_settings = self._iou_devices[key]
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOU device template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_iou_device_settings["name"]))
+            copied_iou_device_settings = copy.deepcopy(self._iou_devices[key])
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOU appliance", "Appliance name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_iou_device_settings["name"]))
             if ok:
-                key = "{server}:{name}".format(server=copied_iou_device_settings["server"], name=new_name)
+                key = "{server}:{name}".format(server=copied_iou_device_settings["compute_id"], name=new_name)
                 if key in self._iou_devices:
-                    QtWidgets.QMessageBox.critical(self, "IOU device", "IOU device name {} already exists".format(new_name))
+                    QtWidgets.QMessageBox.critical(self, "IOU appliance", "IOU appliance name {} already exists".format(new_name))
                     return
                 self._iou_devices[key] = IOU_DEVICE_SETTINGS.copy()
                 self._iou_devices[key].update(copied_iou_device_settings)
                 self._iou_devices[key]["name"] = new_name
+                self._iou_devices[key].pop("appliance_id", None)
 
                 item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
                 item.setText(0, self._iou_devices[key]["name"])
@@ -197,10 +200,10 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
                 # update the icon
                 Controller.instance().getSymbolIcon(iou_device["symbol"], qpartial(self._setItemIcon, item))
                 if iou_device["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=iou_device["server"], name=iou_device["name"])
+                    new_key = "{server}:{name}".format(server=iou_device["compute_id"], name=iou_device["name"])
                     if new_key in self._iou_devices:
                         QtWidgets.QMessageBox.critical(self, "IOU device", "IOU device name {} already exists for server {}".format(iou_device["name"],
-                                                                                                                                    iou_device["server"]))
+                                                                                                                                    iou_device["compute_id"]))
                         iou_device["name"] = item.text(0)
                         return
                     self._iou_devices[new_key] = self._iou_devices[key]
@@ -225,10 +228,17 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         Loads the IOU devices preferences.
         """
 
-        iou_module = IOU.instance()
-        self._iou_devices = copy.deepcopy(iou_module.nodeTemplates())
-        self._items.clear()
+        self._iou_devices = {}
+        appliances = ApplianceManager.instance().appliances()
+        for appliance_id, appliance in appliances.items():
+            if appliance.appliance_type() == "iou" and not appliance.builtin():
+                name = appliance.name()
+                server = appliance.compute_id()
+                #TODO: use appliance id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._iou_devices[key] = copy.deepcopy(appliance.settings())
 
+        self._items.clear()
         for key, iou_device in self._iou_devices.items():
             item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, iou_device["name"])
@@ -247,8 +257,13 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         Saves the IOU devices preferences.
         """
 
-        # self._iouImageSaveSlot()
-        IOU.instance().setNodeTemplates(self._iou_devices)
+        appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "iou":
+                appliances.append(appliance)
+        for appliance_settings in self._iou_devices.values():
+            appliances.append(Appliance(appliance_settings))
+        ApplianceManager.instance().updateList(appliances)
 
     def _imageUploadComplete(self):
         if self._upload_image_progress_dialog.wasCanceled():

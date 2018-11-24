@@ -377,7 +377,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if self._node_label.toPlainText() != label_data["text"]:
             self._node_label.setPlainText(label_data["text"])
-        self._node_label.setStyle(label_data.get("style", ""))
+
+        style = label_data.get("style")
+        if style:
+            self._node_label.setStyle(style)
         self._node_label.setRotation(label_data.get("rotation", 0))
 
         if self._node.z() < 0:

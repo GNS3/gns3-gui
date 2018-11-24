@@ -22,7 +22,7 @@ Dialog to change node symbols.
 import os
 import pathlib
 
-from ..qt import QtCore, QtGui, QtWidgets, qpartial
+from ..qt import QtCore, QtGui, QtWidgets, qpartial, sip_is_deleted
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from ..ui.symbol_selection_dialog_ui import Ui_SymbolSelectionDialog
 from ..local_server import LocalServer
@@ -91,6 +91,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             item.setIcon(icon)
 
             def render(item, path):
+                if sip_is_deleted(item):
+                    return
                 svg_renderer = QImageSvgRenderer(path)
                 image = QtGui.QImage(64, 64, QtGui.QImage.Format_ARGB32)
                 # Set the ARGB to 0 to prevent rendering artifacts

@@ -30,13 +30,7 @@ from .ethernet_hub import EthernetHub
 from .ethernet_switch import EthernetSwitch
 from .frame_relay_switch import FrameRelaySwitch
 from .atm_switch import ATMSwitch
-
-from .settings import (
-    BUILTIN_SETTINGS,
-    CLOUD_SETTINGS,
-    ETHERNET_HUB_SETTINGS,
-    ETHERNET_SWITCH_SETTINGS
-)
+from .settings import BUILTIN_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -50,12 +44,6 @@ class Builtin(Module):
 
     def __init__(self):
         super().__init__()
-        self._cloud_nodes = {}
-        self._nat_nodes = {}
-        self._ethernet_hubs = {}
-        self._ethernet_switches = {}
-
-        # load the settings
         self._loadSettings()
 
     def _saveSettings(self):
@@ -81,127 +69,22 @@ class Builtin(Module):
 
         local_config = LocalConfig.instance()
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, BUILTIN_SETTINGS)
-        self._loadNodes()
-
-    def _loadBuilinNodesPerType(self, node_dict, node_type, default_settings):
-
-        settings = LocalConfig.instance().settings()
-        if node_type in settings.get(self.__class__.__name__, {}):
-            for device in settings[self.__class__.__name__][node_type]:
-                name = device.get("name")
-                server = device.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in node_dict or not name or not server:
-                    continue
-                node_settings = default_settings.copy()
-                node_settings.update(device)
-                node_dict[key] = node_settings
-
-    def _loadNodes(self):
-        """
-        Load the built-in nodes from the persistent settings file.
-        """
-
-        self._loadBuilinNodesPerType(self._cloud_nodes, "cloud_nodes", CLOUD_SETTINGS)
-        self._loadBuilinNodesPerType(self._ethernet_hubs, "ethernet_hubs", ETHERNET_HUB_SETTINGS)
-        self._loadBuilinNodesPerType(self._ethernet_switches, "ethernet_switches", ETHERNET_SWITCH_SETTINGS)
-
-    def _saveNodes(self):
-        """
-        Saves the built-in nodes to the persistent settings file.
-        """
-
-        self._settings["cloud_nodes"] = list(self._cloud_nodes.values())
-        self._settings["ethernet_hubs"] = list(self._ethernet_hubs.values())
-        self._settings["ethernet_switches"] = list(self._ethernet_switches.values())
-        self._saveSettings()
-
-    def cloudNodes(self):
-        """
-        Returns cloud nodes settings.
-
-        :returns: Cloud nodes settings (dictionary)
-        """
-
-        return self._cloud_nodes
-
-    def setCloudNodes(self, new_cloud_nodes):
-        """
-        Sets cloud nodes settings.
-
-        :param new_cloud_nodes: cloud nodes settings (dictionary)
-        """
-
-        self._cloud_nodes = new_cloud_nodes.copy()
-        self._saveNodes()
-
-    def ethernetHubs(self):
-        """
-        Returns Ethernet hubs settings.
-
-        :returns: Ethernet hubs settings (dictionary)
-        """
-
-        return self._ethernet_hubs
-
-    def setEthernetHubs(self, new_ethernet_hubs):
-        """
-        Sets Ethernet hubs settings.
-
-        :param new_ethernet_hubs: Ethernet hubs settings (dictionary)
-        """
-
-        self._ethernet_hubs = new_ethernet_hubs.copy()
-        self._saveNodes()
-
-    def ethernetSwitches(self):
-        """
-        Returns Ethernet switches settings.
-
-        :returns: Ethernet switches settings (dictionary)
-        """
-
-        return self._ethernet_switches
-
-    def setEthernetSwitches(self, new_ethernet_switches):
-        """
-        Sets Ethernet switches settings.
-
-        :param new_ethernet_switches: Ethernet switches settings (dictionary)
-        """
-
-        self._ethernet_switches = new_ethernet_switches.copy()
-        self._saveNodes()
 
     @staticmethod
-    def findAlternativeInterface(node, missing_interface):
+    def configurationPage(node_type):
         """
-        Select an alternative interface if one does not exist.
+        Returns the configuration page for this module.
 
-        :param node: node with the missing interface
-        :param missing_interface: missing interface name
-
-        :returns: replacement interface
+        :returns: QWidget object
         """
 
-        from gns3.main_window import MainWindow
-        mainwindow = MainWindow.instance()
-
-        available_interfaces = []
-        for interface in node.settings()["interfaces"]:
-            available_interfaces.append(interface["name"])
-
-        if available_interfaces:
-            selection, ok = QtWidgets.QInputDialog.getItem(mainwindow,
-                                                           "Cloud interfaces", "Interface {} could not be found\nPlease select an alternative from your existing interfaces:".format(missing_interface),
-                                                           available_interfaces, 0, False)
-            if ok:
-                return selection
-            QtWidgets.QMessageBox.warning(mainwindow, "Cloud interface", "No alternative interface chosen to replace {} on this host, this may lead to issues".format(missing_interface))
-            return None
-        else:
-            QtWidgets.QMessageBox.critical(mainwindow, "Cloud interface", "Could not find interface {} on this host".format(missing_interface))
-            return missing_interface
+        from .pages.ethernet_hub_configuration_page import EthernetHubConfigurationPage
+        from .pages.ethernet_switch_configuration_page import EthernetSwitchConfigurationPage
+        if node_type == "ethernet_hub":
+            return EthernetHubConfigurationPage
+        elif node_type == "ethernet_switch":
+            return EthernetSwitchConfigurationPage
+        return None
 
     @staticmethod
     def getNodeClass(node_type, platform=None):
@@ -262,3 +145,10 @@ class Builtin(Module):
         if not hasattr(Builtin, "_instance"):
             Builtin._instance = Builtin()
         return Builtin._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "builtin"

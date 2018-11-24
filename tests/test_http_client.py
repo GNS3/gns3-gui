@@ -344,7 +344,8 @@ def test_callbackConnect_non_gns3_server(http_client):
 
 def test_connectWebSocket(http_client):
     with unittest.mock.patch('gns3.qt.QtWebSockets.QWebSocket.open') as open_mock:
-        http_client.connectWebSocket('/test')
+        test = QtWebSockets.QWebSocket()
+        http_client.connectWebSocket(test, '/test')
     assert open_mock.called
     request = open_mock.call_args[0][0]
     assert request.url().toString() == "ws://127.0.0.1:3080/v2/test"

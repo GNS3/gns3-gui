@@ -14,7 +14,7 @@
    <string>VMware VMs</string>
   </property>
   <property name="accessibleName">
-   <string>VMware VM templates</string>
+   <string>VMware VMs</string>
   </property>
   <property name="accessibleDescription">
    <string/>

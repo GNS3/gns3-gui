@@ -1475,6 +1475,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
                 current_zvalue = item.zValue()
+                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
+                    log.error("Cannot move object to a upper layer because it is locked")
+                    continue
                 item.setZValue(current_zvalue + 1)
                 item.updateNode()
                 item.update()
@@ -1488,6 +1491,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
                 current_zvalue = item.zValue()
+                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
+                    log.error("Cannot move object to a lower layer because it is locked")
+                    continue
                 item.setZValue(current_zvalue - 1)
                 item.updateNode()
                 item.update()
@@ -1546,11 +1552,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         from .main_window import MainWindow
         mainwindow = MainWindow.instance()
 
-        if "server" in node_data:
+        if "compute_id" in node_data:
             try:
-                return ComputeManager.instance().getCompute(node_data["server"])
+                return ComputeManager.instance().getCompute(node_data["compute_id"])
             except KeyError:
-                raise ModuleError("Compute {} doesn't exists".format(node_data["server"]))
+                raise ModuleError("Compute {} doesn't exists".format(node_data["compute_id"]))
 
         server = server_select(mainwindow, node_data.get("node_type"))
         if server is None:

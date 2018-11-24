@@ -20,6 +20,7 @@ import psutil
 import os
 import platform
 import struct
+import distro
 
 try:
     import raven
@@ -51,7 +52,7 @@ class CrashReport:
     Report crash to a third party service
     """
 
-    DSN = "sync+https://4d0138fdd3e642628228ed99c08a76d6:f51fa98dfa3c45b29de6637d176a3132@sentry.io/38506"
+    DSN = "https://218782d6946c44e1875fbccc43cc2795:851f8e1b17b745d288e1b01388afcc1b@sentry.io/38506"
     if hasattr(sys, "frozen"):
         cacert = get_resource("cacert.pem")
         if cacert is not None and os.path.isfile(cacert):
@@ -98,22 +99,30 @@ class CrashReport:
                 "os:release": platform.release(),
                 "os:win_32": " ".join(platform.win32_ver()),
                 "os:mac": "{} {}".format(platform.mac_ver()[0], platform.mac_ver()[2]),
-                "os:linux": " ".join(platform.linux_distribution()),
+                "os:linux": " ".join(distro.linux_distribution()),
                 "python:version": "{}.{}.{}".format(sys.version_info[0],
                                                     sys.version_info[1],
                                                     sys.version_info[2]),
                 "python:bit": struct.calcsize("P") * 8,
                 "python:encoding": sys.getdefaultencoding(),
                 "python:frozen": "{}".format(hasattr(sys, "frozen")),
-                "controller:version": Controller.instance().version()
             }
 
+            # extra controller and compute information
+            extra_context = {"controller:version": Controller.instance().version(),
+                             "controller:host": Controller.instance().host(),
+                             "controller:connected": Controller.instance().connected()}
             for index, compute in enumerate(ComputeManager.instance().computes()):
-                context["compute{}:version".format(index)] = compute.capabilities().get("version", "n/a")
-                context["compute{}:platform".format(index)] = compute.capabilities().get("platform", "n/a")
+                extra_context["compute{}:id".format(index)] = compute.id()
+                extra_context["compute{}:name".format(index)] = compute.name(),
+                extra_context["compute{}:host".format(index)] = compute.host(),
+                extra_context["compute{}:connected".format(index)] = compute.connected()
+                extra_context["compute{}:platform".format(index)] = compute.capabilities().get("platform")
+                extra_context["compute{}:version".format(index)] = compute.capabilities().get("version")
 
             context = self._add_qt_information(context)
             client.tags_context(context)
+            client.extra_context(extra_context)
             try:
                 report = client.captureException((exception, value, tb))
             except Exception as e:

@@ -33,4 +33,5 @@ VPCS_NODES_SETTINGS = {
     "console_auto_start": False,
     "symbol": ":/symbols/vpcs_guest.svg",
     "category": Node.end_devices,
+    "node_type": "vpcs"
 }

@@ -113,7 +113,7 @@ class Progress(QtCore.QObject):
 
     @qslot
     def _rejectSlot(self, *args):
-        if self._progress_dialog is not None and not sip.isdeleted(self._progress_dialog) or self._progress_dialog.wasCanceled():
+        if self._progress_dialog is not None and (not sip.isdeleted(self._progress_dialog) or self._progress_dialog.wasCanceled()):
             self._progress_dialog.deleteLater()
             self._progress_dialog = None
         self._cancelSlot()

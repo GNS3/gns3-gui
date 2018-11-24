@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/ethernet_hub_wizard.ui'
 #
-# Created: Fri Jun 10 18:29:44 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -82,7 +81,7 @@ class Ui_EthernetHubWizard(object):
 
     def retranslateUi(self, EthernetHubWizard):
         _translate = QtCore.QCoreApplication.translate
-        EthernetHubWizard.setWindowTitle(_translate("EthernetHubWizard", "New Ethernet hub template"))
+        EthernetHubWizard.setWindowTitle(_translate("EthernetHubWizard", "New Ethernet hub"))
         self.uiServerWizardPage.setTitle(_translate("EthernetHubWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("EthernetHubWizard", "Please choose a server type to run your new Ethernet hub."))
         self.uiServerTypeGroupBox.setTitle(_translate("EthernetHubWizard", "Server type"))

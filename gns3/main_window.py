@@ -535,7 +535,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # It covers case when project is not set
         # and we need to refresh appliance manager
         project = Topology.instance().project()
-
         if project is None:
             self._appliance_manager.instance().refresh()
 

@@ -20,11 +20,13 @@ Docker module implementation.
 """
 
 from gns3.local_config import LocalConfig
+from gns3.controller import Controller
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from ..module import Module
 from .docker_vm import DockerVM
 from .settings import DOCKER_SETTINGS, DOCKER_CONTAINER_SETTINGS
-from ...controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
@@ -37,9 +39,6 @@ class Docker(Module):
 
     def __init__(self):
         super().__init__()
-        self._docker_containers = {}
-
-        # load the settings
         self._loadSettings()
 
     def _saveSettings(self):
@@ -57,44 +56,23 @@ class Docker(Module):
         local_config = LocalConfig.instance()
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, DOCKER_SETTINGS)
 
-        self._docker_containers = {}
-        if "containers" in self._settings:
-            for image in self._settings["containers"]:
-                name = image.get("name")
-                server = image.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._docker_containers or not name or not server:
-                    continue
+        # migrate container settings to the controller (appliances are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldContainers)
+
+    def _migrateOldContainers(self):
+        """
+        Migrate local container settings to the controller.
+        """
+
+        if self._settings.get("containers"):
+            appliances = []
+            for container in self._settings.get("containers"):
                 container_settings = DOCKER_CONTAINER_SETTINGS.copy()
-                container_settings.update(image)
-                self._docker_containers[key] = container_settings
-
-    def _saveDockerContainers(self):
-        """
-        Saves the Docker containers to the persistent settings file.
-        """
-
-        self._settings["containers"] = list(self._docker_containers.values())
-        self._saveSettings()
-
-    def nodeTemplates(self):
-        """
-        Returns Docker containers settings.
-
-        :returns: Docker containers settings
-        """
-
-        return self._docker_containers
-
-    def setNodeTemplates(self, new_docker_containers):
-        """
-        Sets Docker containers settings.
-
-        :param new_iou_images: Docker images settings (dictionary)
-        """
-
-        self._docker_containers = new_docker_containers.copy()
-        self._saveDockerContainers()
+                container_settings.update(container)
+                appliances.append(Appliance(container_settings))
+            ApplianceManager.instance().updateList(appliances)
+            self._settings["containers"] = []
+            self._saveSettings()
 
     @staticmethod
     def configurationPage():
@@ -165,3 +143,10 @@ class Docker(Module):
         if not hasattr(Docker, "_instance"):
             Docker._instance = Docker()
         return Docker._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "docker"

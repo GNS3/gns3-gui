@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_preferences_page.ui'
 #
-# Created: Fri Jun 10 14:39:19 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -76,7 +75,7 @@ class Ui_CloudPreferencesPageWidget(object):
     def retranslateUi(self, CloudPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         CloudPreferencesPageWidget.setWindowTitle(_translate("CloudPreferencesPageWidget", "Cloud nodes"))
-        CloudPreferencesPageWidget.setAccessibleName(_translate("CloudPreferencesPageWidget", "Cloud node templates"))
+        CloudPreferencesPageWidget.setAccessibleName(_translate("CloudPreferencesPageWidget", "Cloud nodes"))
         self.uiCloudNodeInfoTreeWidget.headerItem().setText(0, _translate("CloudPreferencesPageWidget", "1"))
         self.uiCloudNodeInfoTreeWidget.headerItem().setText(1, _translate("CloudPreferencesPageWidget", "2"))
         self.uiNewCloudNodePushButton.setText(_translate("CloudPreferencesPageWidget", "&New"))

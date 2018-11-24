@@ -26,9 +26,10 @@ from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 from gns3.controller import Controller
 
-from .. import VPCS
 from ..settings import VPCS_NODES_SETTINGS
 from ..ui.vpcs_node_preferences_page_ui import Ui_VPCSNodePageWidget
 from ..pages.vpcs_node_configuration_page import VPCSNodeConfigurationPage
@@ -76,12 +77,13 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vpcs_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", vpcs_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", vpcs_node.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vpcs_node["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vpcs_node["console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(vpcs_node["console_auto_start"])])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vpcs_node["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vpcs_node["compute_id"]).name()])
         except KeyError:
             pass
         if vpcs_node["base_script_file"]:
@@ -94,7 +96,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
     def _vpcsChangedSlot(self):
         """
-        Loads a selected VPCS node template from the tree widget.
+        Loads a selected VPCS node from the tree widget.
         """
 
         selection = self.uiVPCSTreeWidget.selectedItems()
@@ -111,14 +113,14 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
     def _newVPCSSlot(self):
         """
-        Creates a new VPCS node template.
+        Creates a new VPCS node.
         """
 
         wizard = VPCSNodeWizard(self._vpcs_nodes, parent=self)
         wizard.show()
         if wizard.exec_():
             new_vpcs_node_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_vpcs_node_settings["server"], name=new_vpcs_node_settings["name"])
+            key = "{server}:{name}".format(server=new_vpcs_node_settings["compute_id"], name=new_vpcs_node_settings["name"])
             self._vpcs_nodes[key] = VPCS_NODES_SETTINGS.copy()
             self._vpcs_nodes[key].update(new_vpcs_node_settings)
 
@@ -131,7 +133,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
     def _editVPCSSlot(self):
         """
-        Edits a VPCS node template.
+        Edits a VPCS node.
         """
 
         item = self.uiVPCSTreeWidget.currentItem()
@@ -144,10 +146,10 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
                 # update the icon
                 Controller.instance().getSymbolIcon(vpcs_node["symbol"], qpartial(self._setItemIcon, item))
                 if vpcs_node["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=vpcs_node["server"], name=vpcs_node["name"])
+                    new_key = "{server}:{name}".format(server=vpcs_node["compute_id"], name=vpcs_node["name"])
                     if new_key in self._vpcs_nodes:
                         QtWidgets.QMessageBox.critical(self, "VPCS node", "VPCS node name {} already exists for server {}".format(vpcs_node["name"],
-                                                                                                                                  vpcs_node["server"]))
+                                                                                                                                  vpcs_node["compute_id"]))
                         vpcs_node["name"] = item.text(0)
                         return
                     self._vpcs_nodes[new_key] = self._vpcs_nodes[key]
@@ -158,7 +160,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
     def _deleteVPCSSlot(self):
         """
-        Deletes a VPCS node template.
+        Deletes a VPCS node.
         """
 
         for item in self.uiVPCSTreeWidget.selectedItems():
@@ -172,10 +174,17 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         Loads the VPCS node preferences.
         """
 
-        vpcs_module = VPCS.instance()
-        self._vpcs_nodes = copy.deepcopy(vpcs_module.nodeTemplates())
-        self._items.clear()
+        self._vpcs_nodes = {}
+        appliances = ApplianceManager.instance().appliances()
+        for appliance_id, appliance in appliances.items():
+            if appliance.appliance_type() == "vpcs" and not appliance.builtin():
+                name = appliance.name()
+                server = appliance.compute_id()
+                #TODO: use appliance id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._vpcs_nodes[key] = copy.deepcopy(appliance.settings())
 
+        self._items.clear()
         for key, node in self._vpcs_nodes.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVPCSTreeWidget)
             item.setText(0, node["name"])
@@ -197,4 +206,10 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         Saves the VPCS node preferences.
         """
 
-        VPCS.instance().setNodeTemplates(self._vpcs_nodes)
+        appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "vpcs":
+                appliances.append(appliance)
+        for appliance_settings in self._vpcs_nodes.values():
+            appliances.append(Appliance(appliance_settings))
+        ApplianceManager.instance().updateList(appliances)

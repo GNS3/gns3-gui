@@ -101,7 +101,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 try:
                     destination = Config().appliances_dir
                 except OSError as e:
-                    QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", "Invalid appliance file: {}".format(e))
+                    QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", "Could not find configuration file: {}".format(e))
+                except ValueError as e:
+                    QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", "Invalid configuration file: {}".format(e))
                 if destination:
                     try:
                         os.makedirs(destination, exist_ok=True)
@@ -525,12 +527,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         try:
             config = Config()
-        except OSError as e:
+        except (OSError, ValueError) as e:
             QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
             return False
 
         if version is None:
             appliance_configuration = self._appliance.copy()
+            if not "docker" in appliance_configuration:
+                # only Docker do not have version
+                return False
         else:
             try:
                 appliance_configuration = self._appliance.search_images_for_version(version)

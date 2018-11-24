@@ -20,7 +20,7 @@ import hashlib
 import tempfile
 import json
 
-from .qt import QtCore, QtNetwork, QtGui, QtWidgets, qpartial, qslot
+from .qt import QtCore, QtNetwork, QtGui, QtWidgets, QtWebSockets, qpartial, qslot
 from .symbol import Symbol
 from .local_server_config import LocalServerConfig
 from .settings import LOCAL_SERVER_SETTINGS
@@ -52,6 +52,8 @@ class Controller(QtCore.QObject):
         self._error_dialog = None
         self._display_error = True
         self._projects = []
+        self._controller_websocket = QtWebSockets.QWebSocket()
+        self._project_websocket = QtWebSockets.QWebSocket()
 
         # If we do multiple call in order to download the same symbol we queue them
         self._static_asset_download_queue = {}
@@ -246,8 +248,8 @@ class Controller(QtCore.QObject):
     def getSynchronous(self, endpoint, timeout=2):
         return self._http_client.getSynchronous(endpoint, timeout)
 
-    def connectWebSocket(self, path, *args):
-        return self._http_client.connectWebSocket(path)
+    def connectProjectWebSocket(self, path, *args):
+        return self._http_client.connectWebSocket(self._project_websocket, path)
 
     @staticmethod
     def instance():
@@ -390,7 +392,7 @@ class Controller(QtCore.QObject):
                                                                               ignoreErrors=True)
 
         else:
-            self._notification_stream = Controller.instance().connectWebSocket("/notifications/ws")
+            self._notification_stream = self._http_client.connectWebSocket(self._controller_websocket, "/notifications/ws")
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
 
@@ -429,11 +431,12 @@ class Controller(QtCore.QObject):
         # Log only relevant events
         if result["action"] not in ("ping", "compute.updated"):
             log.debug("Event received from controller stream: {}".format(result))
-        if result["action"] == "settings.updated":
-            from gns3.local_config import LocalConfig
+        if result["action"] == "appliance.created" or result["action"] == "appliance.updated":
             from gns3.appliance_manager import ApplianceManager
-            LocalConfig.instance().refreshConfigFromController()
-            ApplianceManager.instance().refresh()
+            ApplianceManager.instance().applianceDataReceivedCallback(result["event"])
+        elif result["action"] == "appliance.deleted":
+            from gns3.appliance_manager import ApplianceManager
+            ApplianceManager.instance().deleteApplianceCallback(result["event"])
         elif result["action"] == "compute.created" or result["action"] == "compute.updated":
             from .compute_manager import ComputeManager
             ComputeManager.instance().computeDataReceivedCallback(result["event"])

@@ -21,12 +21,13 @@ QEMU module implementation.
 
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
+from gns3.controller import Controller
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
-from ...controller import Controller
 from ..module import Module
 from .qemu_vm import QemuVM
-from .settings import QEMU_SETTINGS
-from .settings import QEMU_VM_SETTINGS
+from .settings import QEMU_SETTINGS, QEMU_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -39,7 +40,6 @@ class Qemu(Module):
 
     def __init__(self):
         super().__init__()
-        self._qemu_vms = {}
         self._loadSettings()
 
     def _loadSettings(self):
@@ -48,7 +48,24 @@ class Qemu(Module):
         """
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, QEMU_SETTINGS)
-        self._loadQemuVMs()
+
+        # migrate VM settings to the controller (appliances are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldVMs)
+
+    def _migrateOldVMs(self):
+        """
+        Migrate local VM settings to the controller.
+        """
+
+        if self._settings.get("vms"):
+            appliances = []
+            for vm in self._settings.get("vms"):
+                vm_settings = QEMU_VM_SETTINGS.copy()
+                vm_settings.update(vm)
+                appliances.append(Appliance(vm_settings))
+            ApplianceManager.instance().updateList(appliances)
+            self._settings["vms"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -60,55 +77,6 @@ class Qemu(Module):
         server_settings = {"enable_hardware_acceleration": self._settings["enable_hardware_acceleration"],
                            "require_hardware_acceleration": self._settings["require_hardware_acceleration"]}
         LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)
-
-    def _loadQemuVMs(self):
-        """
-        Load the QEMU VMs from the persistent settings file.
-        """
-
-        self._qemu_vms = {}
-        settings = LocalConfig.instance().settings()
-        if "vms" in settings.get(self.__class__.__name__, {}):
-            for vm in settings[self.__class__.__name__]["vms"]:
-                name = vm.get("name")
-                server = vm.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._qemu_vms or not name or not server:
-                    continue
-                vm_settings = QEMU_VM_SETTINGS.copy()
-                vm_settings.update(vm)
-                # for backward compatibility before version 1.4
-                if "symbol" not in vm_settings:
-                    vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
-                    vm_settings["symbol"] = vm_settings["symbol"][:-11] + ".svg" if vm_settings["symbol"].endswith("normal.svg") else vm_settings["symbol"]
-                self._qemu_vms[key] = vm_settings
-
-    def _saveQemuVMs(self):
-        """
-        Saves the QEMU VMs to the persistent settings file.
-        """
-
-        self._settings["vms"] = list(self._qemu_vms.values())
-        self._saveSettings()
-
-    def nodeTemplates(self):
-        """
-        Returns QEMU VMs settings.
-
-        :returns: QEMU VMs settings (dictionary)
-        """
-
-        return self._qemu_vms
-
-    def setNodeTemplates(self, new_qemu_vms):
-        """
-        Sets QEMU VM settings.
-
-        :param new_qemu_vms: Qemu images settings (dictionary)
-        """
-
-        self._qemu_vms = new_qemu_vms.copy()
-        self._saveQemuVMs()
 
     def getQemuBinariesFromServer(self, compute_id, callback, archs=None):
         """
@@ -225,3 +193,10 @@ class Qemu(Module):
         if not hasattr(Qemu, "_instance"):
             Qemu._instance = Qemu()
         return Qemu._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "qemu"

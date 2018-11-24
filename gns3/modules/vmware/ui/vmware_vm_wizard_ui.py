@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -73,7 +73,7 @@ class Ui_VMwareVMWizard(object):
 
     def retranslateUi(self, VMwareVMWizard):
         _translate = QtCore.QCoreApplication.translate
-        VMwareVMWizard.setWindowTitle(_translate("VMwareVMWizard", "New VMware VM template"))
+        VMwareVMWizard.setWindowTitle(_translate("VMwareVMWizard", "New VMware VM"))
         self.uiServerWizardPage.setTitle(_translate("VMwareVMWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a server type to run your new VMware VM (Workstation, Player or Fusion)."))
         self.uiServerTypeGroupBox.setTitle(_translate("VMwareVMWizard", "Server type"))

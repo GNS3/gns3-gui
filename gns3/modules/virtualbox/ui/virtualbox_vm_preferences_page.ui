@@ -14,7 +14,7 @@
    <string>VirtualBox VMs</string>
   </property>
   <property name="accessibleName">
-   <string>VirtualBox VM templates</string>
+   <string>VirtualBox VMs</string>
   </property>
   <property name="accessibleDescription">
    <string/>

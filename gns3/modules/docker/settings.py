@@ -41,5 +41,6 @@ DOCKER_CONTAINER_SETTINGS = {
     "console_resolution": "1024x768",
     "console_http_port": 80,
     "console_http_path": "/",
-    "extra_hosts": ""
+    "extra_hosts": "",
+    "node_type": "docker"
 }

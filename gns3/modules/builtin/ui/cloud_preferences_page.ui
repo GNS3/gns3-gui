@@ -14,7 +14,7 @@
    <string>Cloud nodes</string>
   </property>
   <property name="accessibleName">
-   <string>Cloud node templates</string>
+   <string>Cloud nodes</string>
   </property>
   <property name="accessibleDescription">
    <string/>

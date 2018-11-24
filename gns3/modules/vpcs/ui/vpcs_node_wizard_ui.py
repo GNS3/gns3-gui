@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_node_wizard.ui'
 #
-# Created: Sun Jul 10 16:48:58 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -68,7 +67,7 @@ class Ui_VPCSNodeWizard(object):
 
     def retranslateUi(self, VPCSNodeWizard):
         _translate = QtCore.QCoreApplication.translate
-        VPCSNodeWizard.setWindowTitle(_translate("VPCSNodeWizard", "New VPCS node template"))
+        VPCSNodeWizard.setWindowTitle(_translate("VPCSNodeWizard", "New VPCS device"))
         self.uiServerWizardPage.setTitle(_translate("VPCSNodeWizard", "Server"))
         self.uiServerWizardPage.setSubTitle(_translate("VPCSNodeWizard", "Please choose a server type to run your new VPCS node."))
         self.uiServerTypeGroupBox.setTitle(_translate("VPCSNodeWizard", "Server type"))

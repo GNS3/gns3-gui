@@ -19,13 +19,14 @@
 IOU module implementation.
 """
 
-from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
+from gns3.controller import Controller
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from ..module import Module
 from .iou_device import IOUDevice
-from .settings import IOU_SETTINGS
-from .settings import IOU_DEVICE_SETTINGS
+from .settings import IOU_SETTINGS, IOU_DEVICE_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -38,8 +39,6 @@ class IOU(Module):
 
     def __init__(self):
         super().__init__()
-        self._iou_devices = {}
-        self._iou_images_cache = {}
         self._loadSettings()
 
     def _loadSettings(self):
@@ -48,7 +47,24 @@ class IOU(Module):
         """
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, IOU_SETTINGS)
-        self._loadIOUDevices()
+
+        # migrate devices settings to the controller (appliances are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldDevices)
+
+    def _migrateOldDevices(self):
+        """
+        Migrate local device settings to the controller.
+        """
+
+        if self._settings.get("devices"):
+            appliances = []
+            for device in self._settings.get("devices"):
+                device_settings = IOU_DEVICE_SETTINGS.copy()
+                device_settings.update(device)
+                appliances.append(Appliance(device_settings))
+            ApplianceManager.instance().updateList(appliances)
+            self._settings["devices"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -57,56 +73,6 @@ class IOU(Module):
 
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
-
-    def _loadIOUDevices(self):
-        """
-        Load the IOU devices from the persistent settings file.
-        """
-
-        self._iou_devices = {}
-        settings = LocalConfig.instance().settings()
-        if "devices" in settings.get(self.__class__.__name__, {}):
-            for device in settings[self.__class__.__name__]["devices"]:
-                name = device.get("name")
-                server = device.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._iou_devices or not name or not server:
-                    continue
-                device_settings = IOU_DEVICE_SETTINGS.copy()
-                device_settings.update(device)
-                # for backward compatibility before version 1.4
-                if "symbol" not in device_settings:
-                    device_settings["symbol"] = device_settings["default_symbol"]
-                    device_settings["symbol"] = device_settings["symbol"][:-11] + ".svg" if device_settings["symbol"].endswith("normal.svg") else device_settings["symbol"]
-                device_settings["startup_config"] = device_settings.get("initial_config", device_settings["startup_config"])
-                self._iou_devices[key] = device_settings
-
-    def _saveIOUDevices(self):
-        """
-        Saves the IOU devices to the persistent settings file.
-        """
-
-        self._settings["devices"] = list(self._iou_devices.values())
-        self._saveSettings()
-
-    def nodeTemplates(self):
-        """
-        Returns IOU devices settings.
-
-        :returns: IOU devices settings (dictionary)
-        """
-
-        return self._iou_devices
-
-    def setNodeTemplates(self, new_iou_devices):
-        """
-        Sets IOS devices settings.
-
-        :param new_iou_devices: IOU images settings (dictionary)
-        """
-
-        self._iou_devices = new_iou_devices.copy()
-        self._saveIOUDevices()
 
     @staticmethod
     def configurationPage():
@@ -118,48 +84,6 @@ class IOU(Module):
 
         from .pages.iou_device_configuration_page import iouDeviceConfigurationPage
         return iouDeviceConfigurationPage
-
-    def findAlternativeIOUImage(self, image):
-        """
-        Tries to find an alternative IOU image
-
-        :param image: path to IOU
-
-        :return: IOU image path
-        """
-
-        if image in self._iou_images_cache:
-            return self._iou_images_cache[image]
-
-        from gns3.main_window import MainWindow
-        mainwindow = MainWindow.instance()
-        iou_devices = self.nodeTemplates()
-        candidate_iou_images = {}
-
-        alternative_image = image
-
-        # find all images with the same platform and local server
-        for iou_device in iou_devices.values():
-            if iou_device["server"] == "local":
-                candidate_iou_images[iou_device["image"]] = iou_device["path"]
-
-        if candidate_iou_images:
-            selection, ok = QtWidgets.QInputDialog.getItem(mainwindow,
-                                                           "IOU image", "IOU image {} could not be found\nPlease select an alternative from your existing images:".format(image),
-                                                           list(candidate_iou_images.keys()), 0, False)
-            if ok:
-                iou_image = candidate_iou_images[selection]
-                self._iou_images_cache[image] = iou_image
-                return iou_image
-
-        # no registered IOU image is used, let's just ask for an IOU image path
-        QtWidgets.QMessageBox.critical(mainwindow, "IOU image", "Could not find the {} IOU image \nPlease select a similar IOU image!".format(image))
-        from .pages.iou_device_preferences_page import IOUDevicePreferencesPage
-        path = IOUDevicePreferencesPage.getIOUImage(mainwindow, None)
-        if path:
-            alternative_image = path
-            self._iou_images_cache[image] = alternative_image
-        return alternative_image
 
     @staticmethod
     def getNodeClass(node_type, platform=None):
@@ -209,3 +133,10 @@ class IOU(Module):
         if not hasattr(IOU, "_instance"):
             IOU._instance = IOU()
         return IOU._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "iou"

@@ -33,4 +33,5 @@ TRACENG_NODES_SETTINGS = {
     "console_type": "none",
     "symbol": ":/symbols/traceng.svg",
     "category": Node.end_devices,
+    "node_type": "traceng"
 }

@@ -1,5 +1,39 @@
 # Change Log
 
+## 2.1.11 28/09/2018
+
+* Handle deleted SIP objects.
+* Update paths for UltraVNC and VirtViewer.
+* Indicate if Solar-PuTTY is included or not. Fixes #2595
+* Fix bad link to installation instructions in README.rst. Fixes #2590
+* Downgrade to Qt 5.9. Fixes #2592.
+
+## 2.1.10 15/09/2018
+
+* Fix small errors like unhandled exceptions etc.
+* Fix when appliance version is not available for Dynamips/IOU/Qemu. Fixes #2585.
+* Fix issue when installing appliance with no version selected. Fixes #2585.
+* Check for existing appliance name across all emulator types. Fixes #2584.
+* Improve the invalid port format detection. Fixes https://github.com/GNS3/gns3-gui/issues/2580
+* Catch OSError/PermissionError when checking md5 on remote image. Fixes #2582.
+* Fix UnicodeDecodeError in file editor. Fixes #2581.
+* Catch import error for win32serviceutil. Fixes #2583.
+* Fix bug with empty project ID when creating a new node. Fixes #2366
+* Fix various small errors, mostly about non-existing C/C++ objects.
+* Send extra controller and compute information in crash reports.
+* Update setup.py and fix minor issues.
+* Set the default delay console all value to 1500ms if using Solar-PuTTY.
+* Make Solar-Putty the default if installed. Ref #2519.
+* Fix issue with custom appliance. Fixes https://github.com/GNS3/gns3-registry/issues/361
+* Forbid controller and compute servers to be different versions. Report last compute server error to clients and display in the server summary.
+* Fix issue with appliance categories. Fixes https://github.com/GNS3/gns3-registry/issues/361
+* Add compute information to crash reports.
+* Add controller version in Sentry bug reports.
+* Backport: Fix "Network session error" issues. Fixes #2560.
+* Add SolarPutty command line. Fixes #2519.
+* Add missing Qemu boot priority values. Fixes https://github.com/GNS3/gns3-server/issues/1385
+* Update PyQt5 from version 5.8 to version 5.10. Fixes #2564.
+
 ## 2.1.9 13/08/2018
 
 * Fix incorrect short port names in topology summary. Fixes https://github.com/GNS3/gns3-gui/issues/2562

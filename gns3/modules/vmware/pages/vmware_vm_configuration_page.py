@@ -143,10 +143,9 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
             # self.uiVMListComboBox.hide()
 
         if not node:
-            # these are template settings
+            # these are appliance settings
 
-            # rename the label from "Name" to "Template name"
-            self.uiNameLabel.setText("Template name:")
+            self.uiNameLabel.setText("Appliance name:")
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
@@ -222,7 +221,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
                 settings["linked_clone"] = self.uiBaseVMCheckBox.isChecked()
 
         if not node:
-            # these are template settings
+            # these are appliance settings
 
             # save the default name format
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
@@ -241,7 +240,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
 
             try:
                 StandardPortNameFactory(self.uiAdaptersSpinBox.value(), first_port_name, port_name_format, port_segment_size)
-            except (ValueError, KeyError):
+            except (IndexError, ValueError, KeyError):
                 QtWidgets.QMessageBox.critical(self, "Invalid format", "Invalid port name format")
                 raise ConfigurationError()
 

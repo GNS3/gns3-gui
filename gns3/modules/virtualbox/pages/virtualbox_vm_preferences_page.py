@@ -26,6 +26,8 @@ from gns3.controller import Controller
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from .. import VirtualBox
 from ..settings import VBOX_VM_SETTINGS
@@ -76,13 +78,14 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vbox_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", vbox_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", vbox_vm.get("appliance_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["VirtualBox name:", vbox_vm["vmname"]])
         if vbox_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vbox_vm["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vbox_vm["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vbox_vm["compute_id"]).name()])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
@@ -134,7 +137,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         if wizard.exec_():
 
             new_vm_settings = wizard.getSettings()
-            key = "{server}:{vmname}".format(server=new_vm_settings["server"], vmname=new_vm_settings["vmname"])
+            key = "{server}:{vmname}".format(server=new_vm_settings["compute_id"], vmname=new_vm_settings["vmname"])
             self._virtualbox_vms[key] = VBOX_VM_SETTINGS.copy()
             self._virtualbox_vms[key].update(new_vm_settings)
 
@@ -180,10 +183,17 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         Loads the VirtualBox VM preferences.
         """
 
-        vbox_module = VirtualBox.instance()
-        self._virtualbox_vms = copy.deepcopy(vbox_module.nodeTemplates())
-        self._items.clear()
+        self._virtualbox_vms = {}
+        appliances = ApplianceManager.instance().appliances()
+        for appliance_id, appliance in appliances.items():
+            if appliance.appliance_type() == "virtualbox" and not appliance.builtin():
+                vmname = appliance.settings()["vmname"]
+                server = appliance.compute_id()
+                #TODO: use appliance id for the key
+                key = "{server}:{vmname}".format(server=server, vmname=vmname)
+                self._virtualbox_vms[key] = copy.deepcopy(appliance.settings())
 
+        self._items.clear()
         for key, vbox_vm in self._virtualbox_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, vbox_vm["name"])
@@ -201,7 +211,13 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         Saves the VirtualBox VM preferences.
         """
 
-        VirtualBox.instance().setNodeTemplates(self._virtualbox_vms)
+        appliances = []
+        for appliance in ApplianceManager.instance().appliances().values():
+            if appliance.appliance_type() != "virtualbox":
+                appliances.append(appliance)
+        for appliance_settings in self._virtualbox_vms.values():
+            appliances.append(Appliance(appliance_settings))
+        ApplianceManager.instance().updateList(appliances)
 
     def _setItemIcon(self, item, icon):
 

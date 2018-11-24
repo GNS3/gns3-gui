@@ -87,7 +87,10 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         if self._node:
             self._interfaces = self._node.interfaces()
             self._loadNetworkInterfaces(self._interfaces)
-            self._node.updated_signal.disconnect(self._refreshInterfaces)
+            try:
+                self._node.updated_signal.disconnect(self._refreshInterfaces)
+            except (TypeError, RuntimeError):
+                pass  # was not connected
 
     def _EthernetChangedSlot(self):
         """
@@ -454,10 +457,9 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             self.uiNameLineEdit.setEnabled(False)
 
         if not node:
-            # these are template settings
+            # these are appliance settings
 
-            # rename the label from "Name" to "Template name"
-            self.uiNameLabel.setText("Template name:")
+            self.uiNameLabel.setText("Appliance name:")
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
@@ -471,7 +473,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             if index != -1:
                 self.uiCategoryComboBox.setCurrentIndex(index)
 
-            Controller.instance().getCompute("/network/interfaces", settings["server"],
+            Controller.instance().getCompute("/network/interfaces", settings["compute_id"],
                                              self._getInterfacesFromServerCallback,
                                              progressText="Retrieving network interfaces...")
 
@@ -542,7 +544,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             settings["remote_console_http_path"] = self.uiConsoleHttpPathLineEdit.text().strip()
 
         if not node:
-            # these are template settings
+            # these are appliance settings
 
             # save the default name format
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()

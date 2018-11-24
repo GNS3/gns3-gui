@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -37,10 +37,6 @@ class Ui_dockerVMConfigPageWidget(object):
         self.gridLayout.addWidget(self.uiCategoryLabel, 2, 0, 1, 1)
         self.uiCategoryComboBox = QtWidgets.QComboBox(self.tab)
         self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
-        self.uiCategoryComboBox.addItem("")
-        self.uiCategoryComboBox.addItem("")
-        self.uiCategoryComboBox.addItem("")
-        self.uiCategoryComboBox.addItem("")
         self.gridLayout.addWidget(self.uiCategoryComboBox, 2, 1, 1, 1)
         self.uiSymbolLabel = QtWidgets.QLabel(self.tab)
         self.uiSymbolLabel.setObjectName("uiSymbolLabel")
@@ -165,10 +161,6 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiNameLabel.setText(_translate("dockerVMConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("dockerVMConfigPageWidget", "Default name format"))
         self.uiCategoryLabel.setText(_translate("dockerVMConfigPageWidget", "Category"))
-        self.uiCategoryComboBox.setItemText(0, _translate("dockerVMConfigPageWidget", "Router"))
-        self.uiCategoryComboBox.setItemText(1, _translate("dockerVMConfigPageWidget", "Switch"))
-        self.uiCategoryComboBox.setItemText(2, _translate("dockerVMConfigPageWidget", "Guest"))
-        self.uiCategoryComboBox.setItemText(3, _translate("dockerVMConfigPageWidget", "Security device"))
         self.uiSymbolLabel.setText(_translate("dockerVMConfigPageWidget", "Symbol:"))
         self.uiSymbolToolButton.setText(_translate("dockerVMConfigPageWidget", "&Browse..."))
         self.uiCMDLabel.setText(_translate("dockerVMConfigPageWidget", "Start command:"))

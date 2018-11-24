@@ -23,10 +23,12 @@ import os
 import shutil
 import hashlib
 
-from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
 from gns3.image_manager import ImageManager
 from gns3.local_server_config import LocalServerConfig
+from gns3.controller import Controller
+from gns3.appliance_manager import ApplianceManager
+from gns3.appliance import Appliance
 
 from ..module import Module
 from .nodes.router import Router
@@ -38,8 +40,7 @@ from .nodes.c3725 import C3725
 from .nodes.c3745 import C3745
 from .nodes.c7200 import C7200
 from .nodes.etherswitch_router import EtherSwitchRouter
-from .settings import DYNAMIPS_SETTINGS
-from .settings import IOS_ROUTER_SETTINGS
+from .settings import DYNAMIPS_SETTINGS, IOS_ROUTER_SETTINGS
 from .settings import DEFAULT_IDLEPC
 
 PLATFORM_TO_CLASS = {
@@ -63,8 +64,6 @@ class Dynamips(Module):
 
     def __init__(self):
         super().__init__()
-        self._ios_routers = {}
-        self._ios_images_cache = {}
         self._loadSettings()
 
     @staticmethod
@@ -118,7 +117,25 @@ class Dynamips(Module):
             else:
                 self._settings["dynamips_path"] = ""
 
-        self._loadIOSRouters()
+        # migrate router settings to the controller (appliances are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldRouters)
+
+    def _migrateOldRouters(self):
+        """
+        Migrate local router settings to the controller.
+        """
+
+        if self._settings.get("routers"):
+            appliances = []
+            for router in self._settings.get("routers"):
+                router_settings = IOS_ROUTER_SETTINGS.copy()
+                router_settings.update(router)
+                if not router_settings.get("chassis"):
+                    del router_settings["chassis"]
+                appliances.append(Appliance(router_settings))
+            ApplianceManager.instance().updateList(appliances)
+            self._settings["routers"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -141,56 +158,6 @@ class Dynamips(Module):
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
 
-    def _loadIOSRouters(self):
-        """
-        Load the IOS routers from the persistent settings file.
-        """
-
-        self._ios_routers = {}
-        settings = LocalConfig.instance().settings()
-        if "routers" in settings.get(self.__class__.__name__, {}):
-            for router in settings[self.__class__.__name__]["routers"]:
-                name = router.get("name")
-                server = router.get("server")
-                router["image"] = router.get("path", router["image"])  # for backward compatibility before version 1.3
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._ios_routers or not name or not server:
-                    continue
-                router_settings = IOS_ROUTER_SETTINGS.copy()
-                router_settings.update(router)
-                # for backward compatibility before version 1.4
-                if "symbol" not in router_settings:
-                    router_settings["symbol"] = router_settings["default_symbol"]
-                    router_settings["symbol"] = router_settings["symbol"][:-11] + ".svg" if router_settings["symbol"].endswith("normal.svg") else router_settings["symbol"]
-                self._ios_routers[key] = router_settings
-
-    def _saveIOSRouters(self):
-        """
-        Saves the IOS routers to the persistent settings file.
-        """
-
-        self._settings["routers"] = list(self._ios_routers.values())
-        self._saveSettings()
-
-    def nodeTemplates(self):
-        """
-        Returns IOS routers settings.
-
-        :returns: IOS routers settings (dictionary)
-        """
-
-        return self._ios_routers
-
-    def setNodeTemplates(self, new_ios_routers):
-        """
-        Sets IOS images settings.
-
-        :param new_ios_routers: IOS images settings (dictionary)
-        """
-
-        self._ios_routers = new_ios_routers.copy()
-        self._saveIOSRouters()
-
     def updateImageIdlepc(self, image_path, idlepc):
         """
         Updates the Idle-PC for an IOS image.
@@ -205,58 +172,6 @@ class Dynamips(Module):
                     ios_router["idlepc"] = idlepc
                     log.debug("Idle-PC value {} saved into '{}' template".format(idlepc, ios_router["name"]))
                     self._saveIOSRouters()
-
-    def findAlternativeIOSImage(self, image, node):
-        """
-        Tries to find an alternative IOS image.
-
-        :param image: image name
-        :param node: requesting Node instance
-
-        :return: IOS image (dictionary)
-        """
-
-        if image in self._ios_images_cache:
-            return self._ios_images_cache[image]
-
-        from gns3.main_window import MainWindow
-        mainwindow = MainWindow.instance()
-        ios_routers = self.nodeTemplates()
-        candidate_ios_images = {}
-        alternative_image = {"image": image,
-                             "ram": None,
-                             "idlepc": None}
-
-        # find all images with the same platform and local server
-        for ios_router in ios_routers.values():
-            if ios_router["platform"] == node.settings()["platform"] and ios_router["server"] == "local":
-                if "chassis" in node.settings() and ios_router["chassis"] != node.settings()["chassis"]:
-                    # continue to look if the chassis is not compatible
-                    continue
-                candidate_ios_images[ios_router["image"]] = ios_router
-
-        if candidate_ios_images:
-            selection, ok = QtWidgets.QInputDialog.getItem(mainwindow,
-                                                           "IOS image", "IOS image {} could not be found\nPlease select an alternative from your existing images:".format(image),
-                                                           list(candidate_ios_images.keys()), 0, False)
-            if ok:
-                candidate = candidate_ios_images[selection]
-                alternative_image["image"] = candidate["image"]
-                alternative_image["ram"] = candidate["ram"]
-                alternative_image["idlepc"] = candidate["idlepc"]
-                self._ios_images_cache[image] = alternative_image
-                return alternative_image
-
-        # no registered IOS image is used, let's just ask for an IOS image path
-        msg = "Could not find the {} IOS image \nPlease select a similar IOS image!".format(image)
-        log.error(msg)
-        QtWidgets.QMessageBox.critical(mainwindow, "IOS image", msg)
-        from .pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        image_path = IOSRouterPreferencesPage.getIOSImage(mainwindow, None)
-        if image_path:
-            alternative_image["image"] = image_path
-            self._ios_images_cache[image] = alternative_image
-        return alternative_image
 
     @staticmethod
     def configurationPage():
@@ -317,3 +232,10 @@ class Dynamips(Module):
         if not hasattr(Dynamips, "_instance"):
             Dynamips._instance = Dynamips()
         return Dynamips._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "dynamips"

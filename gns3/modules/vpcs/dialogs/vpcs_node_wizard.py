@@ -29,7 +29,7 @@ from ..ui.vpcs_node_wizard_ui import Ui_VPCSNodeWizard
 
 class VPCSNodeWizard(VMWizard, Ui_VPCSNodeWizard):
     """
-    Wizard to create a VPCS node template.
+    Wizard to create a VPCS node.
 
     :param parent: parent widget
     """
@@ -51,7 +51,6 @@ class VPCSNodeWizard(VMWizard, Ui_VPCSNodeWizard):
         settings = {"name": self.uiNameLineEdit.text(),
                     "base_script_file": "vpcs_base_config.txt",
                     "symbol": ":/symbols/vpcs_guest.svg",
-                    "category": Node.end_devices,
-                    "server": self._compute_id}
+                    "compute_id": self._compute_id}
 
         return settings

@@ -20,6 +20,7 @@ Configuration page for Docker images.
 """
 
 from gns3.qt import QtWidgets
+from gns3.node import Node
 from gns3.dialogs.custom_adapters_configuration_dialog import CustomAdaptersConfigurationDialog
 
 from ..ui.docker_vm_configuration_page_ui import Ui_dockerVMConfigPageWidget
@@ -43,6 +44,10 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiNetworkConfigEditButton.released.connect(self._networkConfigEditSlot)
         self.uiCustomAdaptersConfigurationPushButton.clicked.connect(self._customAdaptersConfigurationSlot)
+
+        # add the categories
+        for name, category in Node.defaultCategories().items():
+            self.uiCategoryComboBox.addItem(name, category)
 
     def _symbolBrowserSlot(self):
         """
@@ -116,10 +121,9 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
             self.uiCustomAdaptersConfigurationPushButton.hide()
 
         if not node:
-            # these are template settings
+            # these are appliance settings
 
-            # rename the label from "Name" to "Template name"
-            self.uiNameLabel.setText("Template name:")
+            self.uiNameLabel.setText("Appliance name:")
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
@@ -128,7 +132,9 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
             self.uiSymbolLineEdit.setText(settings["symbol"])
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(settings["symbol"]))
 
-            self.uiCategoryComboBox.setCurrentIndex(settings["category"])
+            index = self.uiCategoryComboBox.findData(settings["category"])
+            if index != -1:
+                self.uiCategoryComboBox.setCurrentIndex(index)
             self.uiNetworkConfigEditButton.hide()
             self.uiNetworkConfigLabel.hide()
         else:
@@ -189,8 +195,8 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
                 settings["name"] = name
 
         if not node:
-            # these are template settings
-            settings["category"] = self.uiCategoryComboBox.currentIndex()
+            # these are appliance settings
+            settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
             # save the default name format
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()
