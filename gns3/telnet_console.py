@@ -92,7 +92,7 @@ class ConsoleThread(QtCore.QThread):
 
 def nodeTelnetConsole(node, port, command=None):
     """
-    Start a Telnet console program for a topology node.
+    Start a Telnet console program for a node.
 
     :param node: The node
     :param command: Console command

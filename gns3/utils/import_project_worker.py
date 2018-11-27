@@ -25,7 +25,7 @@ from ..qt import QtCore
 
 class ImportProjectWorker(QtCore.QObject):
     """
-    Import topology shipped in the portable format
+    Import project shipped in the portable format
     """
 
     # signals to update the progress dialog.

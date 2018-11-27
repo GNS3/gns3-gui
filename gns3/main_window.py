@@ -563,7 +563,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _importExportConfigsActionSlot(self):
         """
         Slot called when importing and exporting configs
-        for the entire topology.
+        for the entire project.
         """
 
         options = ["Export configs to a directory", "Import configs from a directory"]
