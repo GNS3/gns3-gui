@@ -42,6 +42,10 @@ def test_project_create(tmpdir, controller):
     assert args[1] == "/projects"
     assert kwargs["body"] == {"name": "test",
                               "path": str(tmpdir),
+                              "grid_size": 75,
+                              "drawing_grid_size": 25,
+                              "show_grid": False,
+                              "snap_to_grid": False,
                               "show_interface_labels": False}
 
     args[2]({"project_id": uuid, "name": "test"})

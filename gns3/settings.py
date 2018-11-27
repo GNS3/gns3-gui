@@ -299,6 +299,7 @@ GRAPHICS_VIEW_SETTINGS = {
     "scene_width": 2000,
     "scene_height": 1000,
     "grid_size": 75,
+    "drawing_grid_size": 25,
     "draw_rectangle_selected_item": False,
     "draw_link_status_points": True,
     "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
@@ -308,7 +309,9 @@ GRAPHICS_VIEW_SETTINGS = {
     "zoom": None,
     "show_layers": False,
     "snap_to_grid": False,
+    "snap_to_grid_on_new_project": False,
     "show_grid": False,
+    "show_grid_on_new_project": False,
     "show_interface_labels": False,
     "show_interface_labels_on_new_project": False
 }

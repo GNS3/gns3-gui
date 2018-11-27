@@ -337,10 +337,13 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         self.uiSceneWidthSpinBox.setValue(settings["scene_width"])
         self.uiSceneHeightSpinBox.setValue(settings["scene_height"])
-        self.uiGridSizeSpinBox.setValue(settings["grid_size"])
+        self.uiNodeGridSizeSpinBox.setValue(settings["grid_size"])
+        self.uiDrawingGridSizeSpinBox.setValue(settings["drawing_grid_size"])
         self.uiRectangleSelectedItemCheckBox.setChecked(settings["draw_rectangle_selected_item"])
         self.uiDrawLinkStatusPointsCheckBox.setChecked(settings["draw_link_status_points"])
         self.uiShowInterfaceLabelsOnNewProject.setChecked(settings["show_interface_labels_on_new_project"])
+        self.uiShowGridOnNewProject.setChecked(settings["show_grid_on_new_project"])
+        self.uiSnapToGridOnNewProject.setChecked(settings["snap_to_grid_on_new_project"])
 
         qt_font = QtGui.QFont()
         if qt_font.fromString(settings["default_label_font"]):
@@ -409,10 +412,13 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         new_graphics_view_settings = {"scene_width": self.uiSceneWidthSpinBox.value(),
                                       "scene_height": self.uiSceneHeightSpinBox.value(),
-                                      "grid_size": self.uiGridSizeSpinBox.value(),
+                                      "grid_size": self.uiNodeGridSizeSpinBox.value(),
+                                      "drawing_grid_size": self.uiDrawingGridSizeSpinBox.value(),
                                       "draw_rectangle_selected_item": self.uiRectangleSelectedItemCheckBox.isChecked(),
                                       "draw_link_status_points": self.uiDrawLinkStatusPointsCheckBox.isChecked(),
                                       "show_interface_labels_on_new_project": self.uiShowInterfaceLabelsOnNewProject.isChecked(),
+                                      "show_grid_on_new_project": self.uiShowGridOnNewProject.isChecked(),
+                                      "snap_to_grid_on_new_project": self.uiSnapToGridOnNewProject.isChecked(),
                                       "default_label_font": self.uiDefaultLabelStylePlainTextEdit.font().toString(),
                                       "default_label_color": self._default_label_color.name(),
                                       "default_note_font": self.uiDefaultNoteStylePlainTextEdit.font().toString(),

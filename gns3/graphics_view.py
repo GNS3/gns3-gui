@@ -89,6 +89,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._newlink = None
         self._dragging = False
         self._grid_size = 75
+        self._drawing_grid_size = 25
         self._last_mouse_position = None
         self._topology = Topology.instance()
         self._background_warning_msgbox = QtWidgets.QErrorMessage(self)
@@ -125,23 +126,31 @@ class GraphicsView(QtWidgets.QGraphicsView):
             factor = zoom / 100.
             self.scale(factor, factor)
 
-    def setGridSize(self, grid_size):
+    def setNodeGridSize(self, grid_size):
         """
-        Sets the grid size.
-
-        :param grid_size: integer
+        Sets the grid size for nodes.
         """
-
         self._grid_size = grid_size
 
-    def gridSize(self):
+    def nodeGridSize(self):
         """
-        Returns the grid size
-
-        :returns: integer
+        Returns the grid size for nodes.
+        :return: integer
         """
-
         return self._grid_size
+
+    def setDrawingGridSize(self, grid_size):
+        """
+        Sets the grid size for drawings
+        """
+        self._drawing_grid_size = grid_size
+
+    def drawingGridSize(self):
+        """
+        Returns the grid size for drawings
+        :return: integer
+        """
+        return self._drawing_grid_size
 
     def setEnabled(self, enabled):
 
@@ -1618,21 +1627,23 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)
         if self._main_window.uiShowGridAction.isChecked():
-            grid_size = self.gridSize()
+            grids = [(self.drawingGridSize(),QtGui.QColor(208, 208, 208)),
+                     (self.nodeGridSize(),QtGui.QColor(190, 190, 190))]
             painter.save()
-            painter.setPen(QtGui.QPen(QtGui.QColor(190, 190, 190)))
+            for (grid,colour) in grids:
+                painter.setPen(QtGui.QPen(colour))
 
-            left = int(rect.left()) - (int(rect.left()) % grid_size)
-            top = int(rect.top()) - (int(rect.top()) % grid_size)
+                left = int(rect.left()) - (int(rect.left()) % grid)
+                top = int(rect.top()) - (int(rect.top()) % grid)
 
-            x = left
-            while x < rect.right():
-                painter.drawLine(x, rect.top(), x, rect.bottom())
-                x += grid_size
-            y = top
-            while y < rect.bottom():
-                painter.drawLine(rect.left(), y, rect.right(), y)
-                y += grid_size
+                x = left
+                while x < rect.right():
+                    painter.drawLine(x, rect.top(), x, rect.bottom())
+                    x += grid
+                y = top
+                while y < rect.bottom():
+                    painter.drawLine(rect.left(), y, rect.right(), y)
+                    y += grid
             painter.restore()
 
     def toggleUiDeviceMenu(self):

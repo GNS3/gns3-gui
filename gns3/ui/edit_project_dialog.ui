@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
-    <height>387</height>
+    <width>946</width>
+    <height>502</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,7 +65,36 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QSpinBox" name="uiGridSizeSpinBox"/>
+        <widget class="QSpinBox" name="uiNodeGridSizeSpinBox">
+         <property name="minimum">
+          <number>10</number>
+         </property>
+         <property name="maximum">
+          <number>150</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="value">
+          <number>75</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QSpinBox" name="uiDrawingGridSizeSpinBox">
+         <property name="minimum">
+          <number>10</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="value">
+          <number>25</number>
+         </property>
+        </widget>
        </item>
        <item row="3" column="1">
         <widget class="QSpinBox" name="uiSceneHeightSpinBox">
@@ -91,9 +120,16 @@
         <widget class="QLineEdit" name="uiProjectNameLineEdit"/>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="uiGridSizeLabel">
+        <widget class="QLabel" name="uiNodeGridSizeLabel">
          <property name="text">
-          <string>Grid size:</string>
+          <string>Node grid size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiDrawingGridSizeLabel">
+         <property name="text">
+          <string>Drawing grid size:</string>
          </property>
         </widget>
        </item>
