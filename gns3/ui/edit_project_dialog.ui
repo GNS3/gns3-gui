@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
-    <height>387</height>
+    <width>946</width>
+    <height>502</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,7 +65,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QSpinBox" name="uiApplianceGridSizeSpinBox">
+        <widget class="QSpinBox" name="uiNodeGridSizeSpinBox">
          <property name="minimum">
           <number>10</number>
          </property>
@@ -120,9 +120,9 @@
         <widget class="QLineEdit" name="uiProjectNameLineEdit"/>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="uiApplianceGridSizeLabel">
+        <widget class="QLabel" name="uiNodeGridSizeLabel">
          <property name="text">
-          <string>Appliance grid size:</string>
+          <string>Node grid size:</string>
          </property>
         </widget>
        </item>

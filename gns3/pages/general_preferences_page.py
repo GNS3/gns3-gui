@@ -337,7 +337,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         self.uiSceneWidthSpinBox.setValue(settings["scene_width"])
         self.uiSceneHeightSpinBox.setValue(settings["scene_height"])
-        self.uiApplianceGridSizeSpinBox.setValue(settings["grid_size"])
+        self.uiNodeGridSizeSpinBox.setValue(settings["grid_size"])
         self.uiDrawingGridSizeSpinBox.setValue(settings["drawing_grid_size"])
         self.uiRectangleSelectedItemCheckBox.setChecked(settings["draw_rectangle_selected_item"])
         self.uiDrawLinkStatusPointsCheckBox.setChecked(settings["draw_link_status_points"])
@@ -412,7 +412,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         new_graphics_view_settings = {"scene_width": self.uiSceneWidthSpinBox.value(),
                                       "scene_height": self.uiSceneHeightSpinBox.value(),
-                                      "grid_size": self.uiApplianceGridSizeSpinBox.value(),
+                                      "grid_size": self.uiNodeGridSizeSpinBox.value(),
                                       "drawing_grid_size": self.uiDrawingGridSizeSpinBox.value(),
                                       "draw_rectangle_selected_item": self.uiRectangleSelectedItemCheckBox.isChecked(),
                                       "draw_link_status_points": self.uiDrawLinkStatusPointsCheckBox.isChecked(),

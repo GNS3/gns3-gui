@@ -36,7 +36,7 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         self.uiProjectAutoStartCheckBox.setChecked(self._project.autoStart())
         self.uiSceneWidthSpinBox.setValue(self._project.sceneWidth())
         self.uiSceneHeightSpinBox.setValue(self._project.sceneHeight())
-        self.uiApplianceGridSizeSpinBox.setValue(self._project.applianceGridSize())
+        self.uiNodeGridSizeSpinBox.setValue(self._project.nodeGridSize())
         self.uiDrawingGridSizeSpinBox.setValue(self._project.drawingGridSize())
 
         self.uiGlobalVariablesGrid.setAlignment(QtCore.Qt.AlignTop)
@@ -114,7 +114,7 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
             self._project.setAutoStart(self.uiProjectAutoStartCheckBox.isChecked())
             self._project.setSceneHeight(self.uiSceneHeightSpinBox.value())
             self._project.setSceneWidth(self.uiSceneWidthSpinBox.value())
-            self._project.setApplianceGridSize(self.uiApplianceGridSizeSpinBox.value())
+            self._project.setNodeGridSize(self.uiNodeGridSizeSpinBox.value())
             self._project.setDrawingGridSize(self.uiDrawingGridSizeSpinBox.value())
             self._project.setVariables(self._cleanVariables())
             self._project.update()

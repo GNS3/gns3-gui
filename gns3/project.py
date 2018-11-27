@@ -186,15 +186,15 @@ class Project(QtCore.QObject):
         """
         return self._show_grid
 
-    def setApplianceGridSize(self, grid_size):
+    def setNodeGridSize(self, grid_size):
         """
-        Sets the grid size for appliances
+        Sets the grid size for nodes.
         """
         self._grid_size = grid_size
 
-    def applianceGridSize(self):
+    def nodeGridSize(self):
         """
-        Returns the grid size for appliances
+        Returns the grid size for nodes.
         :return: integer
         """
         return self._grid_size

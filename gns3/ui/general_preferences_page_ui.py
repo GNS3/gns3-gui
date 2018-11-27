@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
         GeneralPreferencesPageWidget.setObjectName("GeneralPreferencesPageWidget")
-        GeneralPreferencesPageWidget.resize(1324, 830)
+        GeneralPreferencesPageWidget.resize(1324, 987)
         self.verticalLayout = QtWidgets.QVBoxLayout(GeneralPreferencesPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiMiscTabWidget = QtWidgets.QTabWidget(GeneralPreferencesPageWidget)
@@ -326,16 +326,16 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSceneHeightSpinBox.setProperty("value", 1000)
         self.uiSceneHeightSpinBox.setObjectName("uiSceneHeightSpinBox")
         self.gridLayout_3.addWidget(self.uiSceneHeightSpinBox, 3, 0, 1, 1)
-        self.uiApplianceGridSizeLabel = QtWidgets.QLabel(self.uiSceneTab)
-        self.uiApplianceGridSizeLabel.setObjectName("uiApplianceGridSizeLabel")
-        self.gridLayout_3.addWidget(self.uiApplianceGridSizeLabel, 4, 0, 1, 1)
-        self.uiApplianceGridSizeSpinBox = QtWidgets.QSpinBox(self.uiSceneTab)
-        self.uiApplianceGridSizeSpinBox.setMinimum(10)
-        self.uiApplianceGridSizeSpinBox.setMaximum(150)
-        self.uiApplianceGridSizeSpinBox.setSingleStep(10)
-        self.uiApplianceGridSizeSpinBox.setProperty("value", 75)
-        self.uiApplianceGridSizeSpinBox.setObjectName("uiApplianceGridSizeSpinBox")
-        self.gridLayout_3.addWidget(self.uiApplianceGridSizeSpinBox, 5, 0, 1, 1)
+        self.uiNodeGridSizeLabel = QtWidgets.QLabel(self.uiSceneTab)
+        self.uiNodeGridSizeLabel.setObjectName("uiNodeGridSizeLabel")
+        self.gridLayout_3.addWidget(self.uiNodeGridSizeLabel, 4, 0, 1, 1)
+        self.uiNodeGridSizeSpinBox = QtWidgets.QSpinBox(self.uiSceneTab)
+        self.uiNodeGridSizeSpinBox.setMinimum(10)
+        self.uiNodeGridSizeSpinBox.setMaximum(150)
+        self.uiNodeGridSizeSpinBox.setSingleStep(10)
+        self.uiNodeGridSizeSpinBox.setProperty("value", 75)
+        self.uiNodeGridSizeSpinBox.setObjectName("uiNodeGridSizeSpinBox")
+        self.gridLayout_3.addWidget(self.uiNodeGridSizeSpinBox, 5, 0, 1, 1)
         self.uiDrawingGridSizeLabel = QtWidgets.QLabel(self.uiSceneTab)
         self.uiDrawingGridSizeLabel.setObjectName("uiDrawingGridSizeLabel")
         self.gridLayout_3.addWidget(self.uiDrawingGridSizeLabel, 6, 0, 1, 1)
@@ -544,7 +544,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSceneWidthSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " pixels"))
         self.uiSceneHeightLabel.setText(_translate("GeneralPreferencesPageWidget", "Default height:"))
         self.uiSceneHeightSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " pixels"))
-        self.uiApplianceGridSizeLabel.setText(_translate("GeneralPreferencesPageWidget", "Default appliance grid size:"))
+        self.uiNodeGridSizeLabel.setText(_translate("GeneralPreferencesPageWidget", "Default node grid size:"))
         self.uiDrawingGridSizeLabel.setText(_translate("GeneralPreferencesPageWidget", "Default drawing (e.g. labels and rectangles) grid size:"))
         self.uiRectangleSelectedItemCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Draw a rectangle when an item is selected"))
         self.uiDrawLinkStatusPointsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Draw link status points"))

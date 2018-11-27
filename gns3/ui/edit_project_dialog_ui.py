@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/ui/edit_project_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/edit_project_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ class Ui_EditProjectDialog(object):
     def setupUi(self, EditProjectDialog):
         EditProjectDialog.setObjectName("EditProjectDialog")
         EditProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
-        EditProjectDialog.resize(955, 387)
+        EditProjectDialog.resize(946, 502)
         EditProjectDialog.setModal(True)
         self.gridLayout = QtWidgets.QGridLayout(EditProjectDialog)
         self.gridLayout.setObjectName("gridLayout")
@@ -36,13 +36,13 @@ class Ui_EditProjectDialog(object):
         self.uiSceneWidthSpinBox.setMaximum(1000000)
         self.uiSceneWidthSpinBox.setObjectName("uiSceneWidthSpinBox")
         self.uiGeneralGrid.addWidget(self.uiSceneWidthSpinBox, 2, 1, 1, 1)
-        self.uiApplianceGridSizeSpinBox = QtWidgets.QSpinBox(self.uiGeneralTab)
-        self.uiApplianceGridSizeSpinBox.setMinimum(10)
-        self.uiApplianceGridSizeSpinBox.setMaximum(150)
-        self.uiApplianceGridSizeSpinBox.setSingleStep(10)
-        self.uiApplianceGridSizeSpinBox.setProperty("value", 75)
-        self.uiApplianceGridSizeSpinBox.setObjectName("uiApplianceGridSizeSpinBox")
-        self.uiGeneralGrid.addWidget(self.uiApplianceGridSizeSpinBox, 4, 1, 1, 1)
+        self.uiNodeGridSizeSpinBox = QtWidgets.QSpinBox(self.uiGeneralTab)
+        self.uiNodeGridSizeSpinBox.setMinimum(10)
+        self.uiNodeGridSizeSpinBox.setMaximum(150)
+        self.uiNodeGridSizeSpinBox.setSingleStep(10)
+        self.uiNodeGridSizeSpinBox.setProperty("value", 75)
+        self.uiNodeGridSizeSpinBox.setObjectName("uiNodeGridSizeSpinBox")
+        self.uiGeneralGrid.addWidget(self.uiNodeGridSizeSpinBox, 4, 1, 1, 1)
         self.uiDrawingGridSizeSpinBox = QtWidgets.QSpinBox(self.uiGeneralTab)
         self.uiDrawingGridSizeSpinBox.setMinimum(10)
         self.uiDrawingGridSizeSpinBox.setMaximum(100)
@@ -61,9 +61,9 @@ class Ui_EditProjectDialog(object):
         self.uiProjectNameLineEdit = QtWidgets.QLineEdit(self.uiGeneralTab)
         self.uiProjectNameLineEdit.setObjectName("uiProjectNameLineEdit")
         self.uiGeneralGrid.addWidget(self.uiProjectNameLineEdit, 1, 1, 1, 1)
-        self.uiApplianceGridSizeLabel = QtWidgets.QLabel(self.uiGeneralTab)
-        self.uiApplianceGridSizeLabel.setObjectName("uiApplianceGridSizeLabel")
-        self.uiGeneralGrid.addWidget(self.uiApplianceGridSizeLabel, 4, 0, 1, 1)
+        self.uiNodeGridSizeLabel = QtWidgets.QLabel(self.uiGeneralTab)
+        self.uiNodeGridSizeLabel.setObjectName("uiNodeGridSizeLabel")
+        self.uiGeneralGrid.addWidget(self.uiNodeGridSizeLabel, 4, 0, 1, 1)
         self.uiDrawingGridSizeLabel = QtWidgets.QLabel(self.uiGeneralTab)
         self.uiDrawingGridSizeLabel.setObjectName("uiDrawingGridSizeLabel")
         self.uiGeneralGrid.addWidget(self.uiDrawingGridSizeLabel, 5, 0, 1, 1)
@@ -102,7 +102,7 @@ class Ui_EditProjectDialog(object):
         self.uiSceneWidthSpinBox.setSuffix(_translate("EditProjectDialog", " px"))
         self.uiSceneHeightSpinBox.setSuffix(_translate("EditProjectDialog", " px"))
         self.uiSceneHeightLabel.setText(_translate("EditProjectDialog", "Scene height:"))
-        self.uiApplianceGridSizeLabel.setText(_translate("EditProjectDialog", "Appliance grid size:"))
+        self.uiNodeGridSizeLabel.setText(_translate("EditProjectDialog", "Node grid size:"))
         self.uiDrawingGridSizeLabel.setText(_translate("EditProjectDialog", "Drawing grid size:"))
         self.uiProjectAutoOpenCheckBox.setText(_translate("EditProjectDialog", "Open this project in the background when GNS3 server starts"))
         self.uiProjectAutoStartCheckBox.setText(_translate("EditProjectDialog", "Start all nodes when this project is opened"))

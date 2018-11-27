@@ -110,7 +110,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
     def _snapToGrid(self):
 
-        grid_size = self._main_window.uiGraphicsView.applianceGridSize()
+        grid_size = self._main_window.uiGraphicsView.nodeGridSize()
         mid_x = self.boundingRect().width() / 2
         x = (grid_size * round((self.x() + mid_x) / grid_size)) - mid_x
         mid_y = self.boundingRect().height() / 2
@@ -468,7 +468,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if change == QtWidgets.QGraphicsItem.ItemPositionChange and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
-            grid_size = self._main_window.uiGraphicsView.applianceGridSize()
+            grid_size = self._main_window.uiGraphicsView.nodeGridSize()
             mid_x = self.boundingRect().width() / 2
             value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)
             mid_y = self.boundingRect().height() / 2

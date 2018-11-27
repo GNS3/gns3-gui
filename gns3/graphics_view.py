@@ -126,15 +126,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
             factor = zoom / 100.
             self.scale(factor, factor)
 
-    def setApplianceGridSize(self, grid_size):
+    def setNodeGridSize(self, grid_size):
         """
-        Sets the grid size for appliances
+        Sets the grid size for nodes.
         """
         self._grid_size = grid_size
 
-    def applianceGridSize(self):
+    def nodeGridSize(self):
         """
-        Returns the grid size for appliances
+        Returns the grid size for nodes.
         :return: integer
         """
         return self._grid_size
@@ -1628,7 +1628,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         super().drawBackground(painter, rect)
         if self._main_window.uiShowGridAction.isChecked():
             grids = [(self.drawingGridSize(),QtGui.QColor(208, 208, 208)),
-                     (self.applianceGridSize(),QtGui.QColor(190, 190, 190))]
+                     (self.nodeGridSize(),QtGui.QColor(190, 190, 190))]
             painter.save()
             for (grid,colour) in grids:
                 painter.setPen(QtGui.QPen(colour))
