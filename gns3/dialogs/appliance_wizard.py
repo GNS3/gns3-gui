@@ -568,7 +568,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
     def _uploadImages(self, version):
         """
-        Upload an image the compute server.
+        Upload an image the compute.
         """
 
         appliance_configuration = self._appliance.search_images_for_version(version)
