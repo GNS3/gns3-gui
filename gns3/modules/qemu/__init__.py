@@ -22,8 +22,8 @@ QEMU module implementation.
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
 from gns3.controller import Controller
-from gns3.appliance_manager import ApplianceManager
-from gns3.appliance import Appliance
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from ..module import Module
 from .qemu_vm import QemuVM
@@ -49,7 +49,7 @@ class Qemu(Module):
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, QEMU_SETTINGS)
 
-        # migrate VM settings to the controller (appliances are managed on server side starting with version 2.0)
+        # migrate VM settings to the controller (templates are managed on server side starting with version 2.0)
         Controller.instance().connected_signal.connect(self._migrateOldVMs)
 
     def _migrateOldVMs(self):
@@ -58,12 +58,12 @@ class Qemu(Module):
         """
 
         if self._settings.get("vms"):
-            appliances = []
+            templates = []
             for vm in self._settings.get("vms"):
                 vm_settings = QEMU_VM_SETTINGS.copy()
                 vm_settings.update(vm)
-                appliances.append(Appliance(vm_settings))
-            ApplianceManager.instance().updateList(appliances)
+                templates.append(Template(vm_settings))
+            TemplateManager.instance().updateList(templates)
             self._settings["vms"] = []
             self._saveSettings()
 

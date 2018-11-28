@@ -26,8 +26,8 @@ from gns3.controller import Controller
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
-from gns3.appliance_manager import ApplianceManager
-from gns3.appliance import Appliance
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from ..settings import VMWARE_VM_SETTINGS
 from ..ui.vmware_vm_preferences_page_ui import Ui_VMwareVMPreferencesPageWidget
@@ -77,8 +77,8 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", vmware_vm["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", vmware_vm.get("appliance_id", "none")])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vmware_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", vmware_vm.get("template_id", "none")])
         if vmware_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
         try:
@@ -190,14 +190,14 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         """
 
         self._vmware_vms = {}
-        appliances = ApplianceManager.instance().appliances()
-        for appliance_id, appliance in appliances.items():
-            if appliance.appliance_type() == "vmware" and not appliance.builtin():
-                name = appliance.name()
-                server = appliance.compute_id()
-                #TODO: use appliance id for the key
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "vmware" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
                 key = "{server}:{name}".format(server=server, name=name)
-                self._vmware_vms[key] = copy.deepcopy(appliance.settings())
+                self._vmware_vms[key] = copy.deepcopy(template.settings())
 
         self._items.clear()
         for key, vmware_vm in self._vmware_vms.items():
@@ -218,13 +218,13 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         Saves the VMware VM preferences.
         """
 
-        appliances = []
-        for appliance in ApplianceManager.instance().appliances().values():
-            if appliance.appliance_type() != "vmware":
-                appliances.append(appliance)
-        for appliance_settings in self._vmware_vms.values():
-            appliances.append(Appliance(appliance_settings))
-        ApplianceManager.instance().updateList(appliances)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "vmware":
+                templates.append(template)
+        for template_settings in self._vmware_vms.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
 
 
     def _setItemIcon(self, item, icon):

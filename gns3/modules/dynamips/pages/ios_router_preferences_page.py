@@ -34,8 +34,8 @@ from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.utils.progress_dialog import ProgressDialog
 from gns3.image_manager import ImageManager
 from gns3.compute_manager import ComputeManager
-from gns3.appliance_manager import ApplianceManager
-from gns3.appliance import Appliance
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from ..settings import IOS_ROUTER_SETTINGS
 from ..utils.decompress_ios import isIOSCompressed
@@ -139,16 +139,16 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
             copied_ios_router_settings = copy.deepcopy(self._ios_routers[key])
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOS router appliance", "Appliance name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_ios_router_settings["name"]))
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOS router template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_ios_router_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_ios_router_settings["compute_id"], name=new_name)
                 if key in self._ios_routers:
-                    QtWidgets.QMessageBox.critical(self, "IOS router appliance", "IOS router appliance name {} already exists".format(new_name))
+                    QtWidgets.QMessageBox.critical(self, "IOS router template", "IOS router template name {} already exists".format(new_name))
                     return
                 self._ios_routers[key] = IOS_ROUTER_SETTINGS.copy()
                 self._ios_routers[key].update(copied_ios_router_settings)
                 self._ios_routers[key]["name"] = new_name
-                self._ios_routers[key].pop("appliance_id", None)
+                self._ios_routers[key].pop("template_id", None)
 
                 item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
                 item.setText(0, self._ios_routers[key]["name"])
@@ -379,8 +379,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", ios_router["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", ios_router.get("appliance_id", "none")])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ios_router["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", ios_router.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ios_router["default_name_format"]])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ios_router["compute_id"]).name()])
@@ -441,14 +441,14 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         """
 
         self._ios_routers = {}
-        appliances = ApplianceManager.instance().appliances()
-        for appliance_id, appliance in appliances.items():
-            if appliance.appliance_type() == "dynamips" and not appliance.builtin():
-                name = appliance.name()
-                server = appliance.compute_id()
-                #TODO: use appliance id for the key
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "dynamips" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
                 key = "{server}:{name}".format(server=server, name=name)
-                self._ios_routers[key] = copy.deepcopy(appliance.settings())
+                self._ios_routers[key] = copy.deepcopy(template.settings())
 
         self._items.clear()
         for key, ios_router in self._ios_routers.items():
@@ -468,13 +468,13 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         Saves the IOS router preferences.
         """
 
-        appliances = []
-        for appliance in ApplianceManager.instance().appliances().values():
-            if appliance.appliance_type() != "dynamips":
-                appliances.append(appliance)
-        for appliance_settings in self._ios_routers.values():
-            appliances.append(Appliance(appliance_settings))
-        ApplianceManager.instance().updateList(appliances)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "dynamips":
+                templates.append(template)
+        for template_settings in self._ios_routers.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
 
     def _setItemIcon(self, item, icon):
         item.setIcon(0, icon)

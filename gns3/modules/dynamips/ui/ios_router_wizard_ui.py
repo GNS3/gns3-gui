@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_IOSRouterWizard(object):
     def setupUi(self, IOSRouterWizard):
         IOSRouterWizard.setObjectName("IOSRouterWizard")
-        IOSRouterWizard.resize(585, 398)
+        IOSRouterWizard.resize(653, 452)
         IOSRouterWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -284,9 +284,9 @@ class Ui_IOSRouterWizard(object):
 
     def retranslateUi(self, IOSRouterWizard):
         _translate = QtCore.QCoreApplication.translate
-        IOSRouterWizard.setWindowTitle(_translate("IOSRouterWizard", "New IOS router"))
+        IOSRouterWizard.setWindowTitle(_translate("IOSRouterWizard", "New IOS router template"))
         self.uiServerWizardPage.setTitle(_translate("IOSRouterWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose a server type to run your new IOS router."))
+        self.uiServerWizardPage.setSubTitle(_translate("IOSRouterWizard", "Please choose a server type to run the IOS router."))
         self.uiServerTypeGroupBox.setTitle(_translate("IOSRouterWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("IOSRouterWizard", "Run this IOS router on a remote computer"))
         self.uiVMRadioButton.setText(_translate("IOSRouterWizard", "Run this IOS router on the GNS3 VM"))

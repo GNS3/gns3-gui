@@ -226,11 +226,5 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         Saves the preferences and closes this dialog.
         """
 
-        # close the nodes dock to refresh the node list
-        from ..main_window import MainWindow
-        main_window = MainWindow.instance()
-        main_window.uiNodesDockWidget.setVisible(False)
-        main_window.uiNodesDockWidget.setWindowTitle("")
-
         if self._applyPreferences():
             QtWidgets.QDialog.accept(self)

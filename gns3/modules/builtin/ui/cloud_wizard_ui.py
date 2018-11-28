@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CloudNodeWizard(object):
     def setupUi(self, CloudNodeWizard):
         CloudNodeWizard.setObjectName("CloudNodeWizard")
-        CloudNodeWizard.resize(585, 423)
+        CloudNodeWizard.resize(670, 452)
         CloudNodeWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -67,9 +67,9 @@ class Ui_CloudNodeWizard(object):
 
     def retranslateUi(self, CloudNodeWizard):
         _translate = QtCore.QCoreApplication.translate
-        CloudNodeWizard.setWindowTitle(_translate("CloudNodeWizard", "New cloud node"))
+        CloudNodeWizard.setWindowTitle(_translate("CloudNodeWizard", "New cloud node template"))
         self.uiServerWizardPage.setTitle(_translate("CloudNodeWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("CloudNodeWizard", "Please choose a server type to run your new cloud node."))
+        self.uiServerWizardPage.setSubTitle(_translate("CloudNodeWizard", "Please choose a server type to run the cloud node."))
         self.uiServerTypeGroupBox.setTitle(_translate("CloudNodeWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("CloudNodeWizard", "Run the cloud node on a remote computers"))
         self.uiVMRadioButton.setText(_translate("CloudNodeWizard", "Run the cloud node on the GNS3 VM"))

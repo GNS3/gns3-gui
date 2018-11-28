@@ -27,8 +27,8 @@ from gns3.local_config import LocalConfig
 from gns3.image_manager import ImageManager
 from gns3.local_server_config import LocalServerConfig
 from gns3.controller import Controller
-from gns3.appliance_manager import ApplianceManager
-from gns3.appliance import Appliance
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from ..module import Module
 from .nodes.router import Router
@@ -117,7 +117,7 @@ class Dynamips(Module):
             else:
                 self._settings["dynamips_path"] = ""
 
-        # migrate router settings to the controller (appliances are managed on server side starting with version 2.0)
+        # migrate router settings to the controller (templates are managed on server side starting with version 2.0)
         Controller.instance().connected_signal.connect(self._migrateOldRouters)
 
     def _migrateOldRouters(self):
@@ -126,14 +126,14 @@ class Dynamips(Module):
         """
 
         if self._settings.get("routers"):
-            appliances = []
+            templates = []
             for router in self._settings.get("routers"):
                 router_settings = IOS_ROUTER_SETTINGS.copy()
                 router_settings.update(router)
                 if not router_settings.get("chassis"):
                     del router_settings["chassis"]
-                appliances.append(Appliance(router_settings))
-            ApplianceManager.instance().updateList(appliances)
+                templates.append(Template(router_settings))
+            TemplateManager.instance().updateList(templates)
             self._settings["routers"] = []
             self._saveSettings()
 

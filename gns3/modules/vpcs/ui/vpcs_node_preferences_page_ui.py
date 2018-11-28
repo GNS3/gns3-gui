@@ -12,7 +12,6 @@ class Ui_VPCSNodePageWidget(object):
     def setupUi(self, VPCSNodePageWidget):
         VPCSNodePageWidget.setObjectName("VPCSNodePageWidget")
         VPCSNodePageWidget.resize(546, 455)
-        VPCSNodePageWidget.setAccessibleDescription("")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VPCSNodePageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(VPCSNodePageWidget)
@@ -75,7 +74,7 @@ class Ui_VPCSNodePageWidget(object):
     def retranslateUi(self, VPCSNodePageWidget):
         _translate = QtCore.QCoreApplication.translate
         VPCSNodePageWidget.setWindowTitle(_translate("VPCSNodePageWidget", "VPCS nodes"))
-        VPCSNodePageWidget.setAccessibleName(_translate("VPCSNodePageWidget", "VPCS nodes"))
+        VPCSNodePageWidget.setAccessibleName(_translate("VPCSNodePageWidget", "VPCS node templates"))
         self.uiVPCSInfoTreeWidget.headerItem().setText(0, _translate("VPCSNodePageWidget", "1"))
         self.uiVPCSInfoTreeWidget.headerItem().setText(1, _translate("VPCSNodePageWidget", "2"))
         self.uiNewVPCSPushButton.setText(_translate("VPCSNodePageWidget", "&New"))

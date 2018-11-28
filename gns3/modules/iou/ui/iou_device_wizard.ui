@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>586</width>
-    <height>411</height>
+    <width>670</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New IOU device</string>
+   <string>New IOU device template</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -21,7 +21,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your new IOU device.</string>
+    <string>Please choose a server type to run the IOU device.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">

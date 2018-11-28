@@ -50,10 +50,11 @@ from .progress import Progress
 from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
-from .dialogs.new_appliance_wizard import NewApplianceWizard
+from .dialogs.new_template_wizard import NewTemplateWizard
 from .dialogs.notif_dialog import NotifDialog, NotifDialogHandler
 from .status_bar import StatusBarHandler
 from .registry.appliance import ApplianceError
+from .template_manager import TemplateManager
 from .appliance_manager import ApplianceManager
 
 log = logging.getLogger(__name__)
@@ -114,7 +115,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._local_config_timer.timeout.connect(local_config.checkConfigChanged)
         self._local_config_timer.start(1000)  # milliseconds
         self._analytics_client = AnalyticsClient()
-        self._appliance_manager = ApplianceManager()
+        self._template_manager = TemplateManager().instance()
+        self._appliance_manager = ApplianceManager().instance()
 
         # restore the geometry and state of the main window.
         self.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["geometry"].encode()))
@@ -169,8 +171,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
-        if self._settings["hide_new_appliance_template_button"]:
-            self.uiNewAppliancePushButton.hide()
+        if self._settings.get("hide_new_template_button"):
+            self.uiNewTemplatePushButton.hide()
 
         self.setWindowTitle("[*] GNS3")
 
@@ -275,8 +277,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiBrowseAllDevicesAction.triggered.connect(self._browseAllDevicesActionSlot)
         self.uiAddLinkAction.triggered.connect(self._addLinkActionSlot)
 
-        # new appliance button
-        self.uiNewAppliancePushButton.clicked.connect(self._newApplianceActionSlot)
+        # new template button
+        self.uiNewTemplatePushButton.clicked.connect(self._newTemplateActionSlot)
 
         # connect the signal to the view
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
@@ -400,12 +402,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self._project_dialog = None
 
-    def _newApplianceActionSlot(self):
+    def _newTemplateActionSlot(self):
         """
-        Called when user want to create a new appliance
+        Called when user want to create a new template.
         """
 
-        dialog = NewApplianceWizard(self)
+        dialog = NewTemplateWizard(self)
         dialog.show()
         dialog.exec_()
 
@@ -533,9 +535,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Called when settings are updated
         """
         # It covers case when project is not set
-        # and we need to refresh appliance manager
+        # and we need to refresh template manager
+        # and appliance manager
         project = Topology.instance().project()
         if project is None:
+            self._template_manager.instance().refresh()
             self._appliance_manager.instance().refresh()
 
     def _refreshVisibleWidgets(self):

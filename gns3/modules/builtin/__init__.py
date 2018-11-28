@@ -80,10 +80,13 @@ class Builtin(Module):
 
         from .pages.ethernet_hub_configuration_page import EthernetHubConfigurationPage
         from .pages.ethernet_switch_configuration_page import EthernetSwitchConfigurationPage
+        from .pages.cloud_configuration_page import CloudConfigurationPage
         if node_type == "ethernet_hub":
             return EthernetHubConfigurationPage
         elif node_type == "ethernet_switch":
             return EthernetSwitchConfigurationPage
+        elif node_type == "cloud":
+            return CloudConfigurationPage
         return None
 
     @staticmethod

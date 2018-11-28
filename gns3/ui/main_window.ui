@@ -218,7 +218,7 @@ background-none;
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>All devices</string>
+    <string>All templates</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -272,9 +272,9 @@ background-none;
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="uiNewAppliancePushButton">
+      <widget class="QPushButton" name="uiNewTemplatePushButton">
        <property name="text">
-        <string>New appliance</string>
+        <string>New template</string>
        </property>
        <property name="icon">
         <iconset resource="../../resources/resources.qrc">

@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DockerVMWizard(object):
     def setupUi(self, DockerVMWizard):
         DockerVMWizard.setObjectName("DockerVMWizard")
-        DockerVMWizard.resize(660, 452)
+        DockerVMWizard.resize(741, 452)
         DockerVMWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -195,13 +195,13 @@ class Ui_DockerVMWizard(object):
 
     def retranslateUi(self, DockerVMWizard):
         _translate = QtCore.QCoreApplication.translate
-        DockerVMWizard.setWindowTitle(_translate("DockerVMWizard", "New Docker VM"))
+        DockerVMWizard.setWindowTitle(_translate("DockerVMWizard", "New Docker container template"))
         self.uiServerWizardPage.setTitle(_translate("DockerVMWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a server type to run your new Docker VM."))
+        self.uiServerWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a server type to run the Docker container."))
         self.uiServerTypeGroupBox.setTitle(_translate("DockerVMWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("DockerVMWizard", "Run this Docker VM on a remote computer"))
-        self.uiVMRadioButton.setText(_translate("DockerVMWizard", "Run this Docker VM on the GNS3 VM"))
-        self.uiLocalRadioButton.setText(_translate("DockerVMWizard", "Run this Docker VM on my local computer"))
+        self.uiRemoteRadioButton.setText(_translate("DockerVMWizard", "Run this Docker container on a remote computer"))
+        self.uiVMRadioButton.setText(_translate("DockerVMWizard", "Run this Docker container on the GNS3 VM"))
+        self.uiLocalRadioButton.setText(_translate("DockerVMWizard", "Run this Docker container on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("DockerVMWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("DockerVMWizard", "Run on:"))
         self.uiImageWizardPage.setTitle(_translate("DockerVMWizard", "Docker Virtual Machine"))

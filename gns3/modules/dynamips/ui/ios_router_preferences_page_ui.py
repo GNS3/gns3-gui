@@ -76,7 +76,7 @@ class Ui_IOSRouterPreferencesPageWidget(object):
     def retranslateUi(self, IOSRouterPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         IOSRouterPreferencesPageWidget.setWindowTitle(_translate("IOSRouterPreferencesPageWidget", "IOS routers"))
-        IOSRouterPreferencesPageWidget.setAccessibleName(_translate("IOSRouterPreferencesPageWidget", "IOS routers"))
+        IOSRouterPreferencesPageWidget.setAccessibleName(_translate("IOSRouterPreferencesPageWidget", "IOS router templates"))
         self.uiIOSRouterInfoTreeWidget.headerItem().setText(0, _translate("IOSRouterPreferencesPageWidget", "1"))
         self.uiIOSRouterInfoTreeWidget.headerItem().setText(1, _translate("IOSRouterPreferencesPageWidget", "2"))
         self.uiNewIOSRouterPushButton.setText(_translate("IOSRouterPreferencesPageWidget", "&New"))

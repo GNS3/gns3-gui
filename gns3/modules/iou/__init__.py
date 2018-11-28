@@ -21,8 +21,8 @@ IOU module implementation.
 
 from gns3.local_config import LocalConfig
 from gns3.controller import Controller
-from gns3.appliance_manager import ApplianceManager
-from gns3.appliance import Appliance
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from ..module import Module
 from .iou_device import IOUDevice
@@ -48,7 +48,7 @@ class IOU(Module):
 
         self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, IOU_SETTINGS)
 
-        # migrate devices settings to the controller (appliances are managed on server side starting with version 2.0)
+        # migrate devices settings to the controller (templates are managed on server side starting with version 2.0)
         Controller.instance().connected_signal.connect(self._migrateOldDevices)
 
     def _migrateOldDevices(self):
@@ -57,12 +57,12 @@ class IOU(Module):
         """
 
         if self._settings.get("devices"):
-            appliances = []
+            templates = []
             for device in self._settings.get("devices"):
                 device_settings = IOU_DEVICE_SETTINGS.copy()
                 device_settings.update(device)
-                appliances.append(Appliance(device_settings))
-            ApplianceManager.instance().updateList(appliances)
+                templates.append(Template(device_settings))
+            TemplateManager.instance().updateList(templates)
             self._settings["devices"] = []
             self._saveSettings()
 

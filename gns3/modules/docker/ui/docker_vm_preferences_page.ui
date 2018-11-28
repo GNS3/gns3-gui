@@ -14,7 +14,7 @@
    <string>Docker containers</string>
   </property>
   <property name="accessibleName">
-   <string>Docker containers</string>
+   <string>Docker container templates</string>
   </property>
   <property name="accessibleDescription">
    <string/>

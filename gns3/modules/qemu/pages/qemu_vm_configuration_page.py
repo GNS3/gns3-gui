@@ -457,9 +457,9 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiKernelImageToolButton.hide()
 
         if not node:
-            # these are appliance settings
+            # these are template settings
 
-            self.uiNameLabel.setText("Appliance name:")
+            self.uiNameLabel.setText("Template name:")
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
@@ -590,7 +590,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 settings["mac_address"] = None
 
         if not node:
-            # these are appliance settings
+            # these are template settings
 
             # save the default name format
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()

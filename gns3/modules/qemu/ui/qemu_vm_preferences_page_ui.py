@@ -12,7 +12,6 @@ class Ui_QemuVMPreferencesPageWidget(object):
     def setupUi(self, QemuVMPreferencesPageWidget):
         QemuVMPreferencesPageWidget.setObjectName("QemuVMPreferencesPageWidget")
         QemuVMPreferencesPageWidget.resize(526, 400)
-        QemuVMPreferencesPageWidget.setAccessibleDescription("")
         self.gridLayout = QtWidgets.QGridLayout(QemuVMPreferencesPageWidget)
         self.gridLayout.setObjectName("gridLayout")
         self.uiQemuVMsTreeWidget = QtWidgets.QTreeWidget(QemuVMPreferencesPageWidget)
@@ -74,7 +73,7 @@ class Ui_QemuVMPreferencesPageWidget(object):
     def retranslateUi(self, QemuVMPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         QemuVMPreferencesPageWidget.setWindowTitle(_translate("QemuVMPreferencesPageWidget", "Qemu VMs"))
-        QemuVMPreferencesPageWidget.setAccessibleName(_translate("QemuVMPreferencesPageWidget", "Qemu VMs"))
+        QemuVMPreferencesPageWidget.setAccessibleName(_translate("QemuVMPreferencesPageWidget", "Qemu VM templates"))
         self.uiQemuVMInfoTreeWidget.headerItem().setText(0, _translate("QemuVMPreferencesPageWidget", "1"))
         self.uiQemuVMInfoTreeWidget.headerItem().setText(1, _translate("QemuVMPreferencesPageWidget", "2"))
         self.uiNewQemuVMPushButton.setText(_translate("QemuVMPreferencesPageWidget", "&New"))

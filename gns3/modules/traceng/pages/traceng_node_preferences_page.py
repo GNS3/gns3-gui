@@ -26,9 +26,9 @@ from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
-from gns3.appliance_manager import ApplianceManager
+from gns3.template_manager import TemplateManager
 from gns3.controller import Controller
-from gns3.appliance import Appliance
+from gns3.template import Template
 
 from ..settings import TRACENG_NODES_SETTINGS
 from ..ui.traceng_node_preferences_page_ui import Ui_TraceNGNodePageWidget
@@ -77,8 +77,8 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", traceng_node["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", traceng_node.get("appliance_id", "none")])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", traceng_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", traceng_node.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["IP address:", traceng_node["ip_address"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", traceng_node["default_name_format"]])
         try:
@@ -172,14 +172,14 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         """
 
         self._traceng_nodes  = {}
-        appliances = ApplianceManager.instance().appliances()
-        for appliance_id, appliance in appliances.items():
-            if appliance.appliance_type() == "traceng" and not appliance.builtin():
-                name = appliance.name()
-                server = appliance.compute_id()
-                #TODO: use appliance id for the key
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "traceng" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
                 key = "{server}:{name}".format(server=server, name=name)
-                self._traceng_nodes[key] = copy.deepcopy(appliance.settings())
+                self._traceng_nodes[key] = copy.deepcopy(template.settings())
 
         self._items.clear()
         for key, node in self._traceng_nodes.items():
@@ -203,11 +203,11 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         Saves the TraceNG node preferences.
         """
 
-        appliances = []
-        for appliance in ApplianceManager.instance().appliances().values():
-            if appliance.appliance_type() != "traceng":
-                appliances.append(appliance)
-        for appliance_settings in self._traceng_nodes.values():
-            appliances.append(Appliance(appliance_settings))
-        ApplianceManager.instance().updateList(appliances)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "traceng":
+                templates.append(template)
+        for template_settings in self._traceng_nodes.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
 

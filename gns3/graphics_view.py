@@ -34,7 +34,7 @@ from .modules.module_error import ModuleError
 from .modules.builtin import Builtin
 from .settings import GRAPHICS_VIEW_SETTINGS
 from .topology import Topology
-from .appliance_manager import ApplianceManager
+from .template_manager import TemplateManager
 from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
@@ -670,7 +670,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # check if what is dragged is handled by this view
         if event.mimeData().hasFormat("text/uri-list") \
-                or event.mimeData().hasFormat("application/x-gns3-appliance"):
+                or event.mimeData().hasFormat("application/x-gns3-template"):
             event.acceptProposedAction()
             event.accept()
         else:
@@ -684,8 +684,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         # check if what has been dropped is handled by this view
-        if event.mimeData().hasFormat("application/x-gns3-appliance"):
-            appliance_id = event.mimeData().data("application/x-gns3-appliance").data().decode()
+        if event.mimeData().hasFormat("application/x-gns3-template"):
+            template_id = event.mimeData().data("application/x-gns3-template").data().decode()
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
@@ -696,11 +696,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     for node_number in range(integer):
                         x = event.pos().x() - (150 / 2) + (node_number % max_nodes_per_line) * offset
                         y = event.pos().y() - (70 / 2) + (node_number // max_nodes_per_line) * offset
-                        if self.createNodeFromApplianceId(appliance_id, QtCore.QPoint(x, y)) is False:
+                        if self.createNodeFromTemplateId(template_id, QtCore.QPoint(x, y)) is False:
                             event.ignore()
                             break
             else:
-                if self.createNodeFromApplianceId(appliance_id, event.pos()) is False:
+                if self.createNodeFromTemplateId(template_id, event.pos()) is False:
                     event.ignore()
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             # This should not arrive but we received bug report with it...
@@ -1572,12 +1572,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
             raise ModuleError("Please select a server")
         return server
 
-    def createNodeFromApplianceId(self, appliance_id, pos):
+    def createNodeFromTemplateId(self, template_id, pos):
         """
-        Ask the server to create a node using this appliance
+        Ask the server to create a node using this template
         """
         pos = self.mapToScene(pos)
-        return ApplianceManager().instance().createNodeFromApplianceId(self._topology.project(), appliance_id, pos.x(), pos.y())
+        return TemplateManager().instance().createNodeFromTemplateId(self._topology.project(), template_id, pos.x(), pos.y())
 
     def createNodeItem(self, node, symbol, x, y, z):
         node.setSymbol(symbol)

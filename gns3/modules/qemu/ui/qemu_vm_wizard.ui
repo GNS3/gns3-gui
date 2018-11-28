@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New QEMU VM</string>
+   <string>New QEMU VM template</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -21,7 +21,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your new QEMU VM.</string>
+    <string>Please choose a server type to run the QEMU VM.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
@@ -43,7 +43,7 @@
        <item>
         <widget class="QRadioButton" name="uiVMRadioButton">
          <property name="text">
-          <string>Run this Qemu VM  on the GNS3 VM</string>
+          <string>Run this Qemu VM on the GNS3 VM</string>
          </property>
         </widget>
        </item>

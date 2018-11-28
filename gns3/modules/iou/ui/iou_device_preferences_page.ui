@@ -14,10 +14,7 @@
    <string>IOU Devices</string>
   </property>
   <property name="accessibleName">
-   <string>IOU devices</string>
-  </property>
-  <property name="accessibleDescription">
-   <string/>
+   <string>IOU device templates</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

@@ -77,9 +77,9 @@ class Ui_TraceNGNodeWizard(object):
 
     def retranslateUi(self, TraceNGNodeWizard):
         _translate = QtCore.QCoreApplication.translate
-        TraceNGNodeWizard.setWindowTitle(_translate("TraceNGNodeWizard", "New TraceNG device"))
+        TraceNGNodeWizard.setWindowTitle(_translate("TraceNGNodeWizard", "New TraceNG node template"))
         self.uiServerWizardPage.setTitle(_translate("TraceNGNodeWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("TraceNGNodeWizard", "Please choose a server type to run your new TraceNG node."))
+        self.uiServerWizardPage.setSubTitle(_translate("TraceNGNodeWizard", "Please choose a server type to run the TraceNG node."))
         self.uiServerTypeGroupBox.setTitle(_translate("TraceNGNodeWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("TraceNGNodeWizard", "Run the TraceNG node on a remote computer"))
         self.uiVMRadioButton.setText(_translate("TraceNGNodeWizard", "Run the TraceNG node on the GNS3 VM"))
