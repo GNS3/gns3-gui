@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>423</height>
+    <width>664</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New VPCS device</string>
+   <string>New VPCS node template</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -21,7 +21,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your new VPCS node.</string>
+    <string>Please choose a server type to run the VPCS node.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">

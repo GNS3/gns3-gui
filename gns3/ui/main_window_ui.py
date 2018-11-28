@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -104,14 +104,14 @@ class Ui_MainWindow(object):
         self.uiNodesView.setObjectName("uiNodesView")
         self.uiNodesView.header().setVisible(False)
         self.vboxlayout.addWidget(self.uiNodesView)
-        self.uiNewAppliancePushButton = QtWidgets.QPushButton(self.uiNodesDockWidgetContents)
+        self.uiNewTemplatePushButton = QtWidgets.QPushButton(self.uiNodesDockWidgetContents)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/plus.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.uiNewAppliancePushButton.setIcon(icon)
-        self.uiNewAppliancePushButton.setAutoDefault(False)
-        self.uiNewAppliancePushButton.setFlat(True)
-        self.uiNewAppliancePushButton.setObjectName("uiNewAppliancePushButton")
-        self.vboxlayout.addWidget(self.uiNewAppliancePushButton)
+        self.uiNewTemplatePushButton.setIcon(icon)
+        self.uiNewTemplatePushButton.setAutoDefault(False)
+        self.uiNewTemplatePushButton.setFlat(True)
+        self.uiNewTemplatePushButton.setObjectName("uiNewTemplatePushButton")
+        self.vboxlayout.addWidget(self.uiNewTemplatePushButton)
         self.uiNodesDockWidget.setWidget(self.uiNodesDockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.uiNodesDockWidget)
         self.uiBrowsersToolBar = QtWidgets.QToolBar(MainWindow)
@@ -378,9 +378,9 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction.setCheckable(True)
         icon28 = QtGui.QIcon()
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon28)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiFitInViewAction = QtWidgets.QAction(MainWindow)
@@ -438,9 +438,9 @@ class Ui_MainWindow(object):
         self.uiLockAllAction.setChecked(False)
         icon34 = QtGui.QIcon()
         icon34.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon34.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon34.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon34.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon34.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.uiLockAllAction.setIcon(icon34)
         self.uiLockAllAction.setObjectName("uiLockAllAction")
         self.uiWebUIAction = QtWidgets.QAction(MainWindow)
@@ -560,11 +560,11 @@ class Ui_MainWindow(object):
         self.uiDeviceMenu.setTitle(_translate("MainWindow", "Node"))
         self.uiToolsMenu.setTitle(_translate("MainWindow", "&Tools"))
         self.uiGeneralToolBar.setWindowTitle(_translate("MainWindow", "General"))
-        self.uiNodesDockWidget.setWindowTitle(_translate("MainWindow", "All devices"))
+        self.uiNodesDockWidget.setWindowTitle(_translate("MainWindow", "All templates"))
         self.uiNodesFilterLineEdit.setPlaceholderText(_translate("MainWindow", "Filter"))
         self.uiNodesView.setToolTip(_translate("MainWindow", "Drag a node to the workspace (Press SHIFT while dragging to add multiple identical nodes)."))
         self.uiNodesView.headerItem().setText(0, _translate("MainWindow", "1"))
-        self.uiNewAppliancePushButton.setText(_translate("MainWindow", "New appliance"))
+        self.uiNewTemplatePushButton.setText(_translate("MainWindow", "New template"))
         self.uiBrowsersToolBar.setWindowTitle(_translate("MainWindow", "Devices"))
         self.uiControlToolBar.setWindowTitle(_translate("MainWindow", "Emulation"))
         self.uiConsoleDockWidget.setWindowTitle(_translate("MainWindow", "Console"))

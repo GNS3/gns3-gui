@@ -12,7 +12,6 @@ class Ui_EthernetSwitchPreferencesPageWidget(object):
     def setupUi(self, EthernetSwitchPreferencesPageWidget):
         EthernetSwitchPreferencesPageWidget.setObjectName("EthernetSwitchPreferencesPageWidget")
         EthernetSwitchPreferencesPageWidget.resize(546, 455)
-        EthernetSwitchPreferencesPageWidget.setAccessibleDescription("")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(EthernetSwitchPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(EthernetSwitchPreferencesPageWidget)
@@ -75,7 +74,7 @@ class Ui_EthernetSwitchPreferencesPageWidget(object):
     def retranslateUi(self, EthernetSwitchPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         EthernetSwitchPreferencesPageWidget.setWindowTitle(_translate("EthernetSwitchPreferencesPageWidget", "Ethernet switches"))
-        EthernetSwitchPreferencesPageWidget.setAccessibleName(_translate("EthernetSwitchPreferencesPageWidget", "Ethernet switches"))
+        EthernetSwitchPreferencesPageWidget.setAccessibleName(_translate("EthernetSwitchPreferencesPageWidget", "Ethernet switch templates"))
         self.uiEthernetSwitchInfoTreeWidget.headerItem().setText(0, _translate("EthernetSwitchPreferencesPageWidget", "1"))
         self.uiEthernetSwitchInfoTreeWidget.headerItem().setText(1, _translate("EthernetSwitchPreferencesPageWidget", "2"))
         self.uiNewEthernetSwitchPushButton.setText(_translate("EthernetSwitchPreferencesPageWidget", "&New"))

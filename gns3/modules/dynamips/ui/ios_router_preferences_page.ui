@@ -14,7 +14,7 @@
    <string>IOS routers</string>
   </property>
   <property name="accessibleName">
-   <string>IOS routers</string>
+   <string>IOS router templates</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

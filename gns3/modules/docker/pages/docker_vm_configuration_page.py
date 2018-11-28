@@ -121,9 +121,9 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
             self.uiCustomAdaptersConfigurationPushButton.hide()
 
         if not node:
-            # these are appliance settings
+            # these are template settings
 
-            self.uiNameLabel.setText("Appliance name:")
+            self.uiNameLabel.setText("Template name:")
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
@@ -195,7 +195,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
                 settings["name"] = name
 
         if not node:
-            # these are appliance settings
+            # these are template settings
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
 
             # save the default name format

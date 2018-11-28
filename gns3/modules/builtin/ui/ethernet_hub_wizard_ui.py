@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_EthernetHubWizard(object):
     def setupUi(self, EthernetHubWizard):
         EthernetHubWizard.setObjectName("EthernetHubWizard")
-        EthernetHubWizard.resize(585, 423)
+        EthernetHubWizard.resize(694, 452)
         EthernetHubWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -81,9 +81,9 @@ class Ui_EthernetHubWizard(object):
 
     def retranslateUi(self, EthernetHubWizard):
         _translate = QtCore.QCoreApplication.translate
-        EthernetHubWizard.setWindowTitle(_translate("EthernetHubWizard", "New Ethernet hub"))
+        EthernetHubWizard.setWindowTitle(_translate("EthernetHubWizard", "New Ethernet hub template"))
         self.uiServerWizardPage.setTitle(_translate("EthernetHubWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("EthernetHubWizard", "Please choose a server type to run your new Ethernet hub."))
+        self.uiServerWizardPage.setSubTitle(_translate("EthernetHubWizard", "Please choose a server type to run the Ethernet hub."))
         self.uiServerTypeGroupBox.setTitle(_translate("EthernetHubWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("EthernetHubWizard", "Run the Ethernet hub on a remote computer"))
         self.uiVMRadioButton.setText(_translate("EthernetHubWizard", "Run the Ethernet hub on the GNS3 VM"))

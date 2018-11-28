@@ -12,7 +12,6 @@ class Ui_TraceNGNodePageWidget(object):
     def setupUi(self, TraceNGNodePageWidget):
         TraceNGNodePageWidget.setObjectName("TraceNGNodePageWidget")
         TraceNGNodePageWidget.resize(546, 455)
-        TraceNGNodePageWidget.setAccessibleDescription("")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(TraceNGNodePageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(TraceNGNodePageWidget)
@@ -75,7 +74,7 @@ class Ui_TraceNGNodePageWidget(object):
     def retranslateUi(self, TraceNGNodePageWidget):
         _translate = QtCore.QCoreApplication.translate
         TraceNGNodePageWidget.setWindowTitle(_translate("TraceNGNodePageWidget", "TraceNG nodes"))
-        TraceNGNodePageWidget.setAccessibleName(_translate("TraceNGNodePageWidget", "TraceNG nodes"))
+        TraceNGNodePageWidget.setAccessibleName(_translate("TraceNGNodePageWidget", "TraceNG node templates"))
         self.uiTraceNGInfoTreeWidget.headerItem().setText(0, _translate("TraceNGNodePageWidget", "1"))
         self.uiTraceNGInfoTreeWidget.headerItem().setText(1, _translate("TraceNGNodePageWidget", "2"))
         self.uiNewTraceNGPushButton.setText(_translate("TraceNGNodePageWidget", "&New"))

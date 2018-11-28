@@ -20,7 +20,7 @@ import uuid
 
 class Compute:
     """
-    An instance of a compute server.
+    An instance of a compute.
     """
 
     def __init__(self, compute_id=None):
@@ -42,7 +42,7 @@ class Compute:
 
     def id(self):
         """
-        Returns the compute server ID.
+        Returns the compute ID.
 
         :returns: compute identifier
         """
@@ -51,7 +51,7 @@ class Compute:
 
     def name(self):
         """
-        Returns the compute server name.
+        Returns the compute name.
 
         :returns: compute name
         """
@@ -60,7 +60,7 @@ class Compute:
 
     def setName(self, name):
         """
-        Sets the compute server name.
+        Sets the compute name.
 
         :param name: compute name
         """
@@ -69,7 +69,7 @@ class Compute:
 
     def connected(self):
         """
-        Returns whether or not there is a connection to the compute server.
+        Returns whether or not there is a connection to the compute.
 
         :returns: boolean
         """
@@ -78,7 +78,7 @@ class Compute:
 
     def setConnected(self, value):
         """
-        Sets whether or not there is a connection to the compute server.
+        Sets whether or not there is a connection to the compute.
 
         :param value: boolean
         """
@@ -87,7 +87,7 @@ class Compute:
 
     def host(self):
         """
-        Returns the compute server host.
+        Returns the compute host.
 
         :returns: host (string)
         """
@@ -96,7 +96,7 @@ class Compute:
 
     def setHost(self, host):
         """
-        Sets the compute server host.
+        Sets the compute host.
 
         :param host: host (string)
         """
@@ -105,7 +105,7 @@ class Compute:
 
     def port(self):
         """
-        Returns the compute server port number.
+        Returns the compute port number.
 
         :returns: port number (integer)
         """
@@ -114,7 +114,7 @@ class Compute:
 
     def setPort(self, port):
         """
-        Sets the compute server port number.
+        Sets the compute port number.
 
         :param port: port number (integer)
         """
@@ -123,7 +123,7 @@ class Compute:
 
     def user(self):
         """
-        Returns the compute server user for HTTP authentication.
+        Returns the compute user for HTTP authentication.
 
         :returns: user (string)
         """
@@ -132,7 +132,7 @@ class Compute:
 
     def setUser(self, user):
         """
-        Sets the compute server user for HTTP authentication.
+        Sets the compute user for HTTP authentication.
 
         :param user: user (string)
         """
@@ -141,7 +141,7 @@ class Compute:
 
     def setPassword(self, password):
         """
-        Returns the compute server password for HTTP authentication.
+        Returns the compute password for HTTP authentication.
 
         :returns: password (string)
         """
@@ -150,7 +150,7 @@ class Compute:
 
     def protocol(self):
         """
-        Returns the compute server protocol.
+        Returns the compute protocol.
 
         :returns: protocol (string)
         """
@@ -159,7 +159,7 @@ class Compute:
 
     def setProtocol(self, protocol):
         """
-        Sets the compute server protocol.
+        Sets the compute protocol.
 
         :param protocol: protocol (string)
         """
@@ -168,7 +168,7 @@ class Compute:
 
     def cpuUsagePercent(self):
         """
-        Returns the compute server CPU usage.
+        Returns the compute CPU usage.
 
         :returns: CPU usage (integer)
         """
@@ -177,7 +177,7 @@ class Compute:
 
     def setCpuUsagePercent(self, usage):
         """
-        Sets the compute server CPU usage.
+        Sets the compute CPU usage.
 
         :param usage: CPU usage (integer)
         """
@@ -186,7 +186,7 @@ class Compute:
 
     def setMemoryUsagePercent(self, usage):
         """
-        Returns the compute server memory usage.
+        Returns the compute memory usage.
 
         :returns: memory usage (integer)
         """
@@ -195,7 +195,7 @@ class Compute:
 
     def memoryUsagePercent(self):
         """
-        Sets the compute server memory usage.
+        Sets the compute memory usage.
 
         :param usage: memory usage (integer)
         """
@@ -204,7 +204,7 @@ class Compute:
 
     def capabilities(self):
         """
-        Returns the compute server capabilities
+        Returns the compute capabilities
 
         :returns: capabilities (dictionary)
         """
@@ -213,7 +213,7 @@ class Compute:
 
     def setCapabilities(self, value):
         """
-        Sets the compute server capabilities
+        Sets the compute capabilities
 
         :param value: capabilities (dictionary)
         """

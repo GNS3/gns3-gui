@@ -279,7 +279,7 @@ GENERAL_SETTINGS = {
     "delay_console_all": DEFAULT_DELAY_CONSOLE_ALL,
     "hide_getting_started_dialog": False,
     "hide_setup_wizard": False,
-    "hide_new_appliance_template_button": False,
+    "hide_new_template_button": False,
     "recent_files": [],
     "recent_projects": [],
     "geometry": "",

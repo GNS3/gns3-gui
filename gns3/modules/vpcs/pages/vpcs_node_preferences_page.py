@@ -26,8 +26,8 @@ from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
-from gns3.appliance_manager import ApplianceManager
-from gns3.appliance import Appliance
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 from gns3.controller import Controller
 
 from ..settings import VPCS_NODES_SETTINGS
@@ -77,8 +77,8 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", vpcs_node["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", vpcs_node.get("appliance_id", "none")])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vpcs_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", vpcs_node.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vpcs_node["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vpcs_node["console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(vpcs_node["console_auto_start"])])
@@ -175,14 +175,14 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         """
 
         self._vpcs_nodes = {}
-        appliances = ApplianceManager.instance().appliances()
-        for appliance_id, appliance in appliances.items():
-            if appliance.appliance_type() == "vpcs" and not appliance.builtin():
-                name = appliance.name()
-                server = appliance.compute_id()
-                #TODO: use appliance id for the key
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "vpcs" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
                 key = "{server}:{name}".format(server=server, name=name)
-                self._vpcs_nodes[key] = copy.deepcopy(appliance.settings())
+                self._vpcs_nodes[key] = copy.deepcopy(template.settings())
 
         self._items.clear()
         for key, node in self._vpcs_nodes.items():
@@ -206,10 +206,10 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         Saves the VPCS node preferences.
         """
 
-        appliances = []
-        for appliance in ApplianceManager.instance().appliances().values():
-            if appliance.appliance_type() != "vpcs":
-                appliances.append(appliance)
-        for appliance_settings in self._vpcs_nodes.values():
-            appliances.append(Appliance(appliance_settings))
-        ApplianceManager.instance().updateList(appliances)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "vpcs":
+                templates.append(template)
+        for template_settings in self._vpcs_nodes.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)

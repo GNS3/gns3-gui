@@ -75,7 +75,7 @@ class Ui_EthernetHubPreferencesPageWidget(object):
     def retranslateUi(self, EthernetHubPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         EthernetHubPreferencesPageWidget.setWindowTitle(_translate("EthernetHubPreferencesPageWidget", "Ethernet hubs"))
-        EthernetHubPreferencesPageWidget.setAccessibleName(_translate("EthernetHubPreferencesPageWidget", "Ethernet hubs"))
+        EthernetHubPreferencesPageWidget.setAccessibleName(_translate("EthernetHubPreferencesPageWidget", "Ethernet hub templates"))
         self.uiEthernetHubInfoTreeWidget.headerItem().setText(0, _translate("EthernetHubPreferencesPageWidget", "1"))
         self.uiEthernetHubInfoTreeWidget.headerItem().setText(1, _translate("EthernetHubPreferencesPageWidget", "2"))
         self.uiNewEthernetHubPushButton.setText(_translate("EthernetHubPreferencesPageWidget", "&New"))

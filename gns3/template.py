@@ -19,20 +19,20 @@ import copy
 import uuid
 
 
-class Appliance:
+class Template:
     """
-    An instance of an appliance
+    An instance of an template
     """
 
     def __init__(self, settings):
 
-        if not settings.get("appliance_id"):
-            settings["appliance_id"] = str(uuid.uuid4())
+        if not settings.get("template_id"):
+            settings["template_id"] = str(uuid.uuid4())
         self._settings = copy.deepcopy(settings)
 
-        # The "node_type" setting has been replaced by "appliance_type" setting in version 2.2
+        # The "node_type" setting has been replaced by "template_type" setting in version 2.2
         if "node_type" in self._settings:
-            self._settings["appliance_type"] = self._settings.pop("node_type")
+            self._settings["template_type"] = self._settings.pop("node_type")
 
         # The "server" setting has been replaced by "compute_id" setting in version 2.2
         if "server" in self._settings:
@@ -40,48 +40,48 @@ class Appliance:
 
     def id(self):
         """
-        Returns the appliance ID.
+        Returns the template ID.
 
-        :returns: appliance identifier
+        :returns: template identifier
         """
 
-        return self._settings["appliance_id"]
+        return self._settings["template_id"]
 
     def compute_id(self):
         """
         Returns the compute ID
 
-        :returns: appliance compute identifier
+        :returns: template compute identifier
         """
 
         return self._settings.get("compute_id")
 
     def name(self):
         """
-        Returns the appliance name.
+        Returns the template name.
 
-        :returns: appliance name
+        :returns: template name
         """
 
         return self._settings["name"]
 
     def category(self):
         """
-        Returns the appliance category.
+        Returns the template category.
 
-        :returns: appliance category.
+        :returns: template category.
         """
 
         return self._settings["category"]
 
-    def appliance_type(self):
+    def template_type(self):
         """
-        Returns the node type
+        Returns the template type
 
-        :returns: node type
+        :returns: template type
         """
 
-        return self._settings["appliance_type"]
+        return self._settings["template_type"]
 
     def builtin(self):
         """
@@ -94,27 +94,27 @@ class Appliance:
 
     def symbol(self):
         """
-        Returns the appliance symbol
+        Returns the template symbol
 
-        :returns: appliance symbol
+        :returns: template symbol
         """
 
         return self._settings["symbol"]
 
     def settings(self):
         """
-        Returns the appliance settings
+        Returns the template settings
 
-        :returns: appliance settings
+        :returns: template settings
         """
 
         return self._settings
 
     def setSettings(self, settings):
         """
-        Updates appliance settings.
+        Updates template settings.
 
-        :param settings: appliance settings
+        :param settings: template settings
         """
 
         self._settings = copy.deepcopy(settings)
@@ -129,6 +129,6 @@ class Appliance:
 
     def __eq__(self, v):
 
-        if isinstance(v, Appliance):
+        if isinstance(v, Template):
             return self.__json__() == v.__json__()
         return False

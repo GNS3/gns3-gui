@@ -20,7 +20,7 @@ from ..qt import QtCore
 
 class ExportProjectWorker(QtCore.QObject):
     """
-    Export the current topology to a portable format
+    Export the current project to a portable format
     """
 
     # signals to update the progress dialog.

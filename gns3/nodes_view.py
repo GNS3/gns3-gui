@@ -20,13 +20,11 @@ Nodes view that list all the available nodes to be dragged and dropped
 on the QGraphics scene.
 """
 
-import tempfile
-import json
 import sip
 
 from .qt import QtCore, QtGui, QtWidgets, qpartial
 from .controller import Controller
-from .appliance_manager import ApplianceManager
+from .template_manager import TemplateManager
 from .dialogs.configuration_dialog import ConfigurationDialog
 
 from gns3.modules.builtin import Builtin
@@ -52,9 +50,10 @@ CATEGORY_TO_ID = {
     "router": 0
 }
 
-APPLIANCE_TYPE_TO_CONFIGURATION_PAGE = {
+TEMPLATE_TYPE_TO_CONFIGURATION_PAGE = {
     "ethernet_switch": Builtin.configurationPage("ethernet_switch"),
     "ethernet_hub": Builtin.configurationPage("ethernet_hub"),
+    "cloud": Builtin.configurationPage("cloud"),
     "dynamips": Dynamips.configurationPage(),
     "iou": IOU.configurationPage(),
     "vpcs": VPCS.configurationPage(),
@@ -83,7 +82,7 @@ class NodesView(QtWidgets.QTreeWidget):
 
         # enables the possibility to drag items.
         self.setDragEnabled(True)
-        ApplianceManager.instance().appliances_changed_signal.connect(self.refresh)
+        TemplateManager.instance().templates_changed_signal.connect(self.refresh)
 
     def setCurrentSearch(self, search):
         self._current_search = search
@@ -110,22 +109,22 @@ class NodesView(QtWidgets.QTreeWidget):
         self._current_category = category
         self._current_search = search
 
-        display_appliances = set()
-        for appliance in ApplianceManager.instance().appliances().values():
-            if category is not None and category != appliance.category():
+        display_templates = set()
+        for template in TemplateManager.instance().templates().values():
+            if category is not None and category != template.category():
                 continue
-            if search != "" and search.lower() not in appliance.name().lower():
+            if search != "" and search.lower() not in template.name().lower():
                 continue
 
-            display_appliances.add(appliance.name())
+            display_templates.add(template.name())
             item = QtWidgets.QTreeWidgetItem(self)
-            item.setText(0, appliance.name())
-            item.setData(0, QtCore.Qt.UserRole, appliance.id())
-            item.setData(1, QtCore.Qt.UserRole, "appliance")
+            item.setText(0, template.name())
+            item.setData(0, QtCore.Qt.UserRole, template.id())
+            item.setData(1, QtCore.Qt.UserRole, "template")
             item.setSizeHint(0, QtCore.QSize(32, 32))
-            Controller.instance().getSymbolIcon(appliance.symbol(),
+            Controller.instance().getSymbolIcon(template.symbol(),
                                                 qpartial(self._setItemIcon, item),
-                                                fallback=":/symbols/{}.svg".format(appliance.category()))
+                                                fallback=":/symbols/{}.svg".format(template.category()))
 
         self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
@@ -159,7 +158,7 @@ class NodesView(QtWidgets.QTreeWidget):
     def mouseMoveEvent(self, event):
         """
         Handles all mouse move events.
-        This is the starting point to drag & drop a node on the scene.
+        This is the starting point to drag & drop a template on the scene.
 
         :param: QMouseEvent instance
         """
@@ -167,27 +166,13 @@ class NodesView(QtWidgets.QTreeWidget):
         # Check that an item has been selected and left button clicked
         if self.currentItem() is not None and event.buttons() == QtCore.Qt.LeftButton:
             item = self.currentItem()
-
-            # retrieve the node class from the item data
-            if item.data(1, QtCore.Qt.UserRole) == "appliance_template":
-                try:
-                    with tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False) as f:
-                        json.dump(item.data(0, QtCore.Qt.UserRole), f)
-                    self._getMainWindow().loadPath(f.name)
-                except OSError as e:
-                    QtWidgets.QMessageBox.critical(self, "Appliance", "Cannot install appliance: {}".format(e))
-                return
-
             icon = item.icon(0)
             mimedata = QtCore.QMimeData()
 
-            if item.data(1, QtCore.Qt.UserRole) == "appliance":
-                appliance_id = item.data(0, QtCore.Qt.UserRole)
-                mimedata.setData("application/x-gns3-appliance", appliance_id.encode())
-            elif item.data(1, QtCore.Qt.UserRole) == "node":
-                appliance_id = item.data(0, QtCore.Qt.UserRole)
-                mimedata.setData("application/x-gns3-appliance", appliance_id.encode())
+            assert item.data(1, QtCore.Qt.UserRole) == "template"
+            template_id = item.data(0, QtCore.Qt.UserRole)
 
+            mimedata.setData("application/x-gns3-template", template_id.encode())
             drag = QtGui.QDrag(self)
             drag.setMimeData(mimedata)
             drag.setPixmap(icon.pixmap(self.iconSize()))
@@ -197,34 +182,34 @@ class NodesView(QtWidgets.QTreeWidget):
 
     def _showContextualMenu(self):
         item = self.currentItem()
-        appliance = ApplianceManager.instance().getAppliance(item.data(0, QtCore.Qt.UserRole))
-        if not appliance:
+        template = TemplateManager.instance().getTemplate(item.data(0, QtCore.Qt.UserRole))
+        if not template:
             return
 
-        configuration_page = APPLIANCE_TYPE_TO_CONFIGURATION_PAGE.get(appliance.appliance_type())
-        if not appliance.builtin() and configuration_page:
+        configuration_page = TEMPLATE_TYPE_TO_CONFIGURATION_PAGE.get(template.template_type())
+        if not template.builtin() and configuration_page:
             menu = QtWidgets.QMenu()
             configuration = QtWidgets.QAction("Configure Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
-            configuration.triggered.connect(qpartial(self._configurationSlot, appliance, configuration_page))
+            configuration.triggered.connect(qpartial(self._configurationSlot, template, configuration_page))
             menu.addAction(configuration)
 
             configuration = QtWidgets.QAction("Delete Template", menu)
             configuration.setIcon(QtGui.QIcon(":/icons/delete.svg"))
-            configuration.triggered.connect(qpartial(self._deleteSlot, appliance))
+            configuration.triggered.connect(qpartial(self._deleteSlot, template))
             menu.addAction(configuration)
             menu.exec_(QtGui.QCursor.pos())
 
-    def _configurationSlot(self, appliance, configuration_page, source):
+    def _configurationSlot(self, template, configuration_page, source):
 
-        dialog = ConfigurationDialog(appliance.name(), appliance.settings(), configuration_page(), parent=self)
+        dialog = ConfigurationDialog(template.name(), template.settings(), configuration_page(), parent=self)
         dialog.show()
         if dialog.exec_():
-            ApplianceManager.instance().updateAppliance(appliance)
+            TemplateManager.instance().updateTemplate(template)
 
-    def _deleteSlot(self, appliance, source):
+    def _deleteSlot(self, template, source):
 
-        reply = QtWidgets.QMessageBox.question(self, "Template", "Delete {} template?".format(appliance.name()),
+        reply = QtWidgets.QMessageBox.question(self, "Template", "Delete {} template?".format(template.name()),
                                                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
-            ApplianceManager.instance().deleteAppliance(appliance.id())
+            TemplateManager.instance().deleteTemplate(template.id())

@@ -86,9 +86,9 @@ class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWi
             self.uiNameLineEdit.hide()
 
         if not node:
-            # these are appliance settings
+            # these are template settings
 
-            self.uiNameLabel.setText("Appliance name:")
+            self.uiNameLabel.setText("Template name:")
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])

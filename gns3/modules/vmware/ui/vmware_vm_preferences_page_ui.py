@@ -12,7 +12,6 @@ class Ui_VMwareVMPreferencesPageWidget(object):
     def setupUi(self, VMwareVMPreferencesPageWidget):
         VMwareVMPreferencesPageWidget.setObjectName("VMwareVMPreferencesPageWidget")
         VMwareVMPreferencesPageWidget.resize(567, 488)
-        VMwareVMPreferencesPageWidget.setAccessibleDescription("")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VMwareVMPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(VMwareVMPreferencesPageWidget)
@@ -75,7 +74,7 @@ class Ui_VMwareVMPreferencesPageWidget(object):
     def retranslateUi(self, VMwareVMPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         VMwareVMPreferencesPageWidget.setWindowTitle(_translate("VMwareVMPreferencesPageWidget", "VMware VMs"))
-        VMwareVMPreferencesPageWidget.setAccessibleName(_translate("VMwareVMPreferencesPageWidget", "VMware VMs"))
+        VMwareVMPreferencesPageWidget.setAccessibleName(_translate("VMwareVMPreferencesPageWidget", "VMware VM templates"))
         self.uiVMwareVMInfoTreeWidget.headerItem().setText(0, _translate("VMwareVMPreferencesPageWidget", "1"))
         self.uiVMwareVMInfoTreeWidget.headerItem().setText(1, _translate("VMwareVMPreferencesPageWidget", "2"))
         self.uiNewVMwareVMPushButton.setText(_translate("VMwareVMPreferencesPageWidget", "&New"))

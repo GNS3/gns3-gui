@@ -25,9 +25,9 @@ from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
-from gns3.appliance_manager import ApplianceManager
+from gns3.template_manager import TemplateManager
 from gns3.controller import Controller
-from gns3.appliance import Appliance
+from gns3.template import Template
 from ..settings import DOCKER_CONTAINER_SETTINGS
 from ..ui.docker_vm_preferences_page_ui import Ui_DockerVMPreferencesPageWidget
 from ..pages.docker_vm_configuration_page import DockerVMConfigurationPage
@@ -76,8 +76,8 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", docker_container["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", docker_container.get("appliance_id", "none")])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", docker_container["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", docker_container.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Image name:", docker_container["image"]])
         try:
             QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(docker_container["compute_id"]).name()])
@@ -146,16 +146,16 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
             copied_containers_settings = copy.deepcopy(self._docker_containers[key])
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Docker appliance", "Appliance name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_containers_settings["name"]))
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Docker template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_containers_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_containers_settings["compute_id"], name=new_name)
                 if key in self._docker_containers:
-                    QtWidgets.QMessageBox.critical(self, "Docker appliance", "Appliance name {} already exists".format(new_name))
+                    QtWidgets.QMessageBox.critical(self, "Docker template", "Template name {} already exists".format(new_name))
                     return
                 self._docker_containers[key] = DOCKER_CONTAINER_SETTINGS.copy()
                 self._docker_containers[key].update(copied_containers_settings)
                 self._docker_containers[key]["name"] = new_name
-                self._docker_containers[key].pop("appliance_id", None)
+                self._docker_containers[key].pop("template_id", None)
 
                 item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
                 item.setText(0, self._docker_containers[key]["name"])
@@ -208,14 +208,14 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         """
 
         self._docker_containers = {}
-        appliances = ApplianceManager.instance().appliances()
-        for appliance_id, appliance in appliances.items():
-            if appliance.appliance_type() == "docker" and not appliance.builtin():
-                name = appliance.name()
-                server = appliance.compute_id()
-                #TODO: use appliance id for the key
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "docker" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
                 key = "{server}:{name}".format(server=server, name=name)
-                self._docker_containers[key] = copy.deepcopy(appliance.settings())
+                self._docker_containers[key] = copy.deepcopy(template.settings())
 
         self._items.clear()
         for key, docker_container in self._docker_containers.items():
@@ -235,13 +235,13 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         Saves the Docker image preferences.
         """
 
-        appliances = []
-        for appliance in ApplianceManager.instance().appliances().values():
-            if appliance.appliance_type() != "docker":
-                appliances.append(appliance)
-        for appliance_settings in self._docker_containers.values():
-            appliances.append(Appliance(appliance_settings))
-        ApplianceManager.instance().updateList(appliances)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "docker":
+                templates.append(template)
+        for template_settings in self._docker_containers.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
 
     def _setItemIcon(self, item, icon):
         item.setIcon(0, icon)

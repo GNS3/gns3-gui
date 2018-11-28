@@ -73,9 +73,9 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
             self.uiNameLabel.hide()
 
         if not node:
-            # these are appliance settings
+            # these are template settings
 
-            self.uiNameLabel.setText("Appliance name:")
+            self.uiNameLabel.setText("Template name:")
 
             # load the default name format
             self.uiDefaultNameFormatLineEdit.setText(settings["default_name_format"])
@@ -130,7 +130,7 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
                     raise ConfigurationError()
 
         else:
-            # these are appliance settings
+            # these are template settings
 
             # save the default name format
             default_name_format = self.uiDefaultNameFormatLineEdit.text().strip()

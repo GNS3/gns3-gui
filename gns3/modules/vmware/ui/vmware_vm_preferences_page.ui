@@ -14,10 +14,7 @@
    <string>VMware VMs</string>
   </property>
   <property name="accessibleName">
-   <string>VMware VMs</string>
-  </property>
-  <property name="accessibleDescription">
-   <string/>
+   <string>VMware VM templates</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

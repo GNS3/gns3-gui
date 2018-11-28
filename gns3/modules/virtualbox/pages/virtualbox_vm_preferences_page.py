@@ -26,8 +26,8 @@ from gns3.controller import Controller
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
-from gns3.appliance_manager import ApplianceManager
-from gns3.appliance import Appliance
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from .. import VirtualBox
 from ..settings import VBOX_VM_SETTINGS
@@ -78,8 +78,8 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", vbox_vm["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", vbox_vm.get("appliance_id", "none")])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vbox_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", vbox_vm.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["VirtualBox name:", vbox_vm["vmname"]])
         if vbox_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vbox_vm["default_name_format"]])
@@ -184,14 +184,14 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         """
 
         self._virtualbox_vms = {}
-        appliances = ApplianceManager.instance().appliances()
-        for appliance_id, appliance in appliances.items():
-            if appliance.appliance_type() == "virtualbox" and not appliance.builtin():
-                vmname = appliance.settings()["vmname"]
-                server = appliance.compute_id()
-                #TODO: use appliance id for the key
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "virtualbox" and not template.builtin():
+                vmname = template.settings()["vmname"]
+                server = template.compute_id()
+                #TODO: use template id for the key
                 key = "{server}:{vmname}".format(server=server, vmname=vmname)
-                self._virtualbox_vms[key] = copy.deepcopy(appliance.settings())
+                self._virtualbox_vms[key] = copy.deepcopy(template.settings())
 
         self._items.clear()
         for key, vbox_vm in self._virtualbox_vms.items():
@@ -211,13 +211,13 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         Saves the VirtualBox VM preferences.
         """
 
-        appliances = []
-        for appliance in ApplianceManager.instance().appliances().values():
-            if appliance.appliance_type() != "virtualbox":
-                appliances.append(appliance)
-        for appliance_settings in self._virtualbox_vms.values():
-            appliances.append(Appliance(appliance_settings))
-        ApplianceManager.instance().updateList(appliances)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "virtualbox":
+                templates.append(template)
+        for template_settings in self._virtualbox_vms.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
 
     def _setItemIcon(self, item, icon):
 

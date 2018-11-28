@@ -26,9 +26,9 @@ from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
-from gns3.appliance_manager import ApplianceManager
+from gns3.template_manager import TemplateManager
 from gns3.controller import Controller
-from gns3.appliance import Appliance
+from gns3.template import Template
 
 from ..settings import QEMU_VM_SETTINGS
 from ..ui.qemu_vm_preferences_page_ui import Ui_QemuVMPreferencesPageWidget
@@ -78,8 +78,8 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         # fill out the General section
         section_item = self._createSectionItem("General")
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance name:", qemu_vm["name"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["Appliance ID:", qemu_vm.get("appliance_id", "none")])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template name:", qemu_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", qemu_vm.get("template_id", "none")])
         if qemu_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", qemu_vm["default_name_format"]])
         try:
@@ -207,16 +207,16 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         if item:
             key = item.data(0, QtCore.Qt.UserRole)
             copied_vm_settings = copy.deepcopy(self._qemu_vms[key])
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Qemu appliance", "Appliance name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_vm_settings["name"]))
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Qemu template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_vm_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_vm_settings["compute_id"], name=new_name)
                 if key in self._qemu_vms:
-                    QtWidgets.QMessageBox.critical(self, "Qemu appliance", "Qemu appliance name {} already exists".format(new_name))
+                    QtWidgets.QMessageBox.critical(self, "Qemu template", "Qemu template name {} already exists".format(new_name))
                     return
                 self._qemu_vms[key] = QEMU_VM_SETTINGS.copy()
                 self._qemu_vms[key].update(copied_vm_settings)
                 self._qemu_vms[key]["name"] = new_name
-                self._qemu_vms[key].pop("appliance_id", None)
+                self._qemu_vms[key].pop("template_id", None)
 
                 item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
                 item.setText(0, self._qemu_vms[key]["name"])
@@ -271,14 +271,14 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         """
 
         self._qemu_vms  = {}
-        appliances = ApplianceManager.instance().appliances()
-        for appliance_id, appliance in appliances.items():
-            if appliance.appliance_type() == "qemu" and not appliance.builtin():
-                name = appliance.name()
-                server = appliance.compute_id()
-                #TODO: use appliance id for the key
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "qemu" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
                 key = "{server}:{name}".format(server=server, name=name)
-                self._qemu_vms[key] = copy.deepcopy(appliance.settings())
+                self._qemu_vms[key] = copy.deepcopy(template.settings())
 
         self._items.clear()
         for key, qemu_vm in self._qemu_vms.items():
@@ -302,11 +302,11 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         Saves the QEMU VM preferences.
         """
 
-        appliances = []
-        for appliance in ApplianceManager.instance().appliances().values():
-            if appliance.appliance_type() != "qemu":
-                appliances.append(appliance)
-        for appliance_settings in self._qemu_vms.values():
-            appliances.append(Appliance(appliance_settings))
-        ApplianceManager.instance().updateList(appliances)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "qemu":
+                templates.append(template)
+        for template_settings in self._qemu_vms.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
 

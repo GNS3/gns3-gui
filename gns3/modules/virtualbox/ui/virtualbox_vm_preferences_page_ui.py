@@ -12,7 +12,6 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
     def setupUi(self, VirtualBoxVMPreferencesPageWidget):
         VirtualBoxVMPreferencesPageWidget.setObjectName("VirtualBoxVMPreferencesPageWidget")
         VirtualBoxVMPreferencesPageWidget.resize(572, 486)
-        VirtualBoxVMPreferencesPageWidget.setAccessibleDescription("")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VirtualBoxVMPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(VirtualBoxVMPreferencesPageWidget)
@@ -75,7 +74,7 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
     def retranslateUi(self, VirtualBoxVMPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         VirtualBoxVMPreferencesPageWidget.setWindowTitle(_translate("VirtualBoxVMPreferencesPageWidget", "VirtualBox VMs"))
-        VirtualBoxVMPreferencesPageWidget.setAccessibleName(_translate("VirtualBoxVMPreferencesPageWidget", "VirtualBox VMs"))
+        VirtualBoxVMPreferencesPageWidget.setAccessibleName(_translate("VirtualBoxVMPreferencesPageWidget", "VirtualBox VM templates"))
         self.uiVirtualBoxVMInfoTreeWidget.headerItem().setText(0, _translate("VirtualBoxVMPreferencesPageWidget", "1"))
         self.uiVirtualBoxVMInfoTreeWidget.headerItem().setText(1, _translate("VirtualBoxVMPreferencesPageWidget", "2"))
         self.uiNewVirtualBoxVMPushButton.setText(_translate("VirtualBoxVMPreferencesPageWidget", "&New"))

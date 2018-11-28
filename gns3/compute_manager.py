@@ -31,7 +31,7 @@ log = logging.getLogger(__name__)
 
 class ComputeManager(QtCore.QObject):
     """
-    Manager for compute servers.
+    Manager for computes.
     """
 
     created_signal = QtCore.Signal(str)
@@ -58,7 +58,7 @@ class ComputeManager(QtCore.QObject):
 
     def _refreshComputesSlot(self):
         """
-        Called when compute servers are refreshed.
+        Called when computes are refreshed.
         """
 
         if self._refreshingComputes:
@@ -70,7 +70,7 @@ class ComputeManager(QtCore.QObject):
 
     def _controllerConnectedSlot(self):
         """
-        Called when connected to a compute server.
+        Called when connected to a compute.
         """
 
         if self._controller.connected():
@@ -79,7 +79,7 @@ class ComputeManager(QtCore.QObject):
 
     def _controllerDisconnectedSlot(self):
         """
-        Called when disconnected from a compute server.
+        Called when disconnected from a compute.
         """
 
         for compute_id in list(self._computes):
@@ -88,7 +88,7 @@ class ComputeManager(QtCore.QObject):
 
     def _listComputesCallback(self, result, error=False, **kwargs):
         """
-        Callback to list compute servers.
+        Callback to list computes.
         """
 
         self._refreshingComputes = False
@@ -191,10 +191,10 @@ class ComputeManager(QtCore.QObject):
 
     def getCompute(self, compute_id):
         """
-        Gets a compute server by ID
+        Gets a compute by ID
 
-        :param compute_id: compute server identifier
-        :returns: compute server
+        :param compute_id: compute identifier
+        :returns: compute
         """
 
         if compute_id.startswith("http:") or compute_id.startswith("https:"):
@@ -210,9 +210,9 @@ class ComputeManager(QtCore.QObject):
 
     def deleteCompute(self, compute_id):
         """
-        Deletes a compute server by ID
+        Deletes a compute by ID
 
-        :param compute_id: compute server identifier
+        :param compute_id: compute identifier
         """
 
         if compute_id in self._computes:
@@ -222,7 +222,7 @@ class ComputeManager(QtCore.QObject):
 
     def updateList(self, computes):
         """
-        Sync an array of compute server with remote
+        Sync an array of compute with remote
         """
 
         for compute_id in copy.copy(self._computes):

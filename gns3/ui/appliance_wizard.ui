@@ -39,7 +39,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your new Appliance. The grayed out server types are not supported or configured.</string>
+    <string>Please choose a server type to run the appliance. The grayed out server types are not supported or configured.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>

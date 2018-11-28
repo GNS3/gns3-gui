@@ -24,7 +24,7 @@ from gns3.compute_manager import ComputeManager
 from gns3.topology import Topology
 from gns3.local_config import LocalConfig
 from gns3.settings import GRAPHICS_VIEW_SETTINGS
-from gns3.appliance_manager import ApplianceManager
+from gns3.template_manager import TemplateManager
 from gns3.utils import parse_version
 
 import logging

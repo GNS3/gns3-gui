@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewApplianceWizard</class>
- <widget class="QWizard" name="NewApplianceWizard">
+ <class>NewTemplateWizard</class>
+ <widget class="QWizard" name="NewTemplateWizard">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -14,23 +14,23 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New appliance</string>
+   <string>New template</string>
   </property>
   <property name="options">
    <set>QWizard::HaveFinishButtonOnEarlyPages</set>
   </property>
-  <widget class="QWizardPage" name="uiSelectApplianceSourceWizardPage">
+  <widget class="QWizardPage" name="uiSelectTemplateSourceWizardPage">
    <property name="title">
-    <string>New appliance</string>
+    <string>New template</string>
    </property>
    <property name="subTitle">
-    <string>Please choose how you want to add a new appliance.</string>
+    <string>Please choose how you want to create a new template</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QRadioButton" name="uiAddApplianceFromServerRadioButton">
+     <widget class="QRadioButton" name="uiImportApplianceFromServerRadioButton">
       <property name="text">
-       <string>&amp;Add appliances from the GNS3 server (recommended)</string>
+       <string>&amp;Import appliances from the GNS3 server (recommended)</string>
       </property>
       <property name="checked">
        <bool>true</bool>
@@ -38,16 +38,16 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="uiAddApplianceFromTemplateFileRadioButton">
+     <widget class="QRadioButton" name="uiImportApplianceFromFileRadioButton">
       <property name="text">
-       <string>&amp;Add an appliance using a template file (.gns3a)</string>
+       <string>&amp;Import a GNS3 appliance file (.gns3a)</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="uiAddApplianceManuallyRadioButton">
+     <widget class="QRadioButton" name="uiCreateTemplateManuallyRadioButton">
       <property name="text">
-       <string>&amp;Add an appliance manually</string>
+       <string>&amp;Create a template manually</string>
       </property>
      </widget>
     </item>
@@ -55,10 +55,10 @@
   </widget>
   <widget class="QWizardPage" name="uiApplianceFromServerWizardPage">
    <property name="title">
-    <string>Appliance templates from server</string>
+    <string>Appliances from server</string>
    </property>
    <property name="subTitle">
-    <string>Please select the appliances to install. Update will request the server to download appliance templates from our online registry.</string>
+    <string>Please select the appliances to install. Update will request the server to download appliances from our online registry.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -69,7 +69,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QTreeWidget" name="uiApplianceTemplatesTreeWidget">
+     <widget class="QTreeWidget" name="uiAppliancesTreeWidget">
       <property name="selectionMode">
        <enum>QAbstractItemView::ExtendedSelection</enum>
       </property>

@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_VirtualBoxVMWizard(object):
     def setupUi(self, VirtualBoxVMWizard):
         VirtualBoxVMWizard.setObjectName("VirtualBoxVMWizard")
-        VirtualBoxVMWizard.resize(615, 408)
+        VirtualBoxVMWizard.resize(706, 409)
         VirtualBoxVMWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -73,9 +73,9 @@ class Ui_VirtualBoxVMWizard(object):
 
     def retranslateUi(self, VirtualBoxVMWizard):
         _translate = QtCore.QCoreApplication.translate
-        VirtualBoxVMWizard.setWindowTitle(_translate("VirtualBoxVMWizard", "New VirtualBox VM"))
+        VirtualBoxVMWizard.setWindowTitle(_translate("VirtualBoxVMWizard", "New VirtualBox VM template"))
         self.uiServerWizardPage.setTitle(_translate("VirtualBoxVMWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a server type to run your new VirtualBox VM."))
+        self.uiServerWizardPage.setSubTitle(_translate("VirtualBoxVMWizard", "Please choose a server type to run the VirtualBox VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("VirtualBoxVMWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("VirtualBoxVMWizard", "Run this VirtualBox VM on a remote computer"))
         self.uiLocalRadioButton.setText(_translate("VirtualBoxVMWizard", "Run this VirtualBox VM on my local computer"))

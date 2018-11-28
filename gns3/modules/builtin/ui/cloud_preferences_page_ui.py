@@ -75,7 +75,7 @@ class Ui_CloudPreferencesPageWidget(object):
     def retranslateUi(self, CloudPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         CloudPreferencesPageWidget.setWindowTitle(_translate("CloudPreferencesPageWidget", "Cloud nodes"))
-        CloudPreferencesPageWidget.setAccessibleName(_translate("CloudPreferencesPageWidget", "Cloud nodes"))
+        CloudPreferencesPageWidget.setAccessibleName(_translate("CloudPreferencesPageWidget", "Cloud node templates"))
         self.uiCloudNodeInfoTreeWidget.headerItem().setText(0, _translate("CloudPreferencesPageWidget", "1"))
         self.uiCloudNodeInfoTreeWidget.headerItem().setText(1, _translate("CloudPreferencesPageWidget", "2"))
         self.uiNewCloudNodePushButton.setText(_translate("CloudPreferencesPageWidget", "&New"))

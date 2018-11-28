@@ -73,9 +73,9 @@ class Ui_VMwareVMWizard(object):
 
     def retranslateUi(self, VMwareVMWizard):
         _translate = QtCore.QCoreApplication.translate
-        VMwareVMWizard.setWindowTitle(_translate("VMwareVMWizard", "New VMware VM"))
+        VMwareVMWizard.setWindowTitle(_translate("VMwareVMWizard", "New VMware VM template"))
         self.uiServerWizardPage.setTitle(_translate("VMwareVMWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a server type to run your new VMware VM (Workstation, Player or Fusion)."))
+        self.uiServerWizardPage.setSubTitle(_translate("VMwareVMWizard", "Please choose a server type to run the VMware VM (Workstation, Player or Fusion)."))
         self.uiServerTypeGroupBox.setTitle(_translate("VMwareVMWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("VMwareVMWizard", "Run this VMware VM on a remote GNS3 computer"))
         self.uiLocalRadioButton.setText(_translate("VMwareVMWizard", "Run this VMware VM on my local computer"))

@@ -207,10 +207,10 @@ class Controller(QtCore.QObject):
         """
         Support for remote server <= 1.5
         This fix should be not require after the 2.1
-        when all the appliance template will be managed
-        on server
+        when all the templates will be managed on server
         """
 
+        #FIXME: remove this?
         if compute_id.startswith("http:") or compute_id.startswith("https:"):
             from .compute_manager import ComputeManager
             try:
@@ -431,12 +431,12 @@ class Controller(QtCore.QObject):
         # Log only relevant events
         if result["action"] not in ("ping", "compute.updated"):
             log.debug("Event received from controller stream: {}".format(result))
-        if result["action"] == "appliance.created" or result["action"] == "appliance.updated":
-            from gns3.appliance_manager import ApplianceManager
-            ApplianceManager.instance().applianceDataReceivedCallback(result["event"])
-        elif result["action"] == "appliance.deleted":
-            from gns3.appliance_manager import ApplianceManager
-            ApplianceManager.instance().deleteApplianceCallback(result["event"])
+        if result["action"] == "template.created" or result["action"] == "template.updated":
+            from gns3.template_manager import TemplateManager
+            TemplateManager.instance().templateDataReceivedCallback(result["event"])
+        elif result["action"] == "template.deleted":
+            from gns3.template_manager import TemplateManager
+            TemplateManager.instance().deleteTemplateCallback(result["event"])
         elif result["action"] == "compute.created" or result["action"] == "compute.updated":
             from .compute_manager import ComputeManager
             ComputeManager.instance().computeDataReceivedCallback(result["event"])

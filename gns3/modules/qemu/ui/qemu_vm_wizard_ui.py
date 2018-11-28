@@ -213,12 +213,12 @@ class Ui_QemuVMWizard(object):
 
     def retranslateUi(self, QemuVMWizard):
         _translate = QtCore.QCoreApplication.translate
-        QemuVMWizard.setWindowTitle(_translate("QemuVMWizard", "New QEMU VM"))
+        QemuVMWizard.setWindowTitle(_translate("QemuVMWizard", "New QEMU VM template"))
         self.uiServerWizardPage.setTitle(_translate("QemuVMWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a server type to run your new QEMU VM."))
+        self.uiServerWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a server type to run the QEMU VM."))
         self.uiServerTypeGroupBox.setTitle(_translate("QemuVMWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("QemuVMWizard", "Run this Qemu VM on a remote computer"))
-        self.uiVMRadioButton.setText(_translate("QemuVMWizard", "Run this Qemu VM  on the GNS3 VM"))
+        self.uiVMRadioButton.setText(_translate("QemuVMWizard", "Run this Qemu VM on the GNS3 VM"))
         self.uiLocalRadioButton.setText(_translate("QemuVMWizard", "Run this Qemu VM on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("QemuVMWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("QemuVMWizard", "Run on:"))

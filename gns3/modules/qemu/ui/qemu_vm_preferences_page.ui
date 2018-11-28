@@ -14,10 +14,7 @@
    <string>Qemu VMs</string>
   </property>
   <property name="accessibleName">
-   <string>Qemu VMs</string>
-  </property>
-  <property name="accessibleDescription">
-   <string/>
+   <string>Qemu VM templates</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

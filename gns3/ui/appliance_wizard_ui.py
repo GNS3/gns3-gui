@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/appliance_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -164,7 +164,7 @@ class Ui_ApplianceWizard(object):
         _translate = QtCore.QCoreApplication.translate
         ApplianceWizard.setWindowTitle(_translate("ApplianceWizard", "Add appliance"))
         self.uiServerWizardPage.setTitle(_translate("ApplianceWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("ApplianceWizard", "Please choose a server type to run your new Appliance. The grayed out server types are not supported or configured."))
+        self.uiServerWizardPage.setSubTitle(_translate("ApplianceWizard", "Please choose a server type to run the appliance. The grayed out server types are not supported or configured."))
         self.uiServerTypeGroupBox.setTitle(_translate("ApplianceWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("ApplianceWizard", "Run the appliance on a remote server"))
         self.uiVMRadioButton.setText(_translate("ApplianceWizard", "Run the appliance on the GNS3 VM (recommended)"))

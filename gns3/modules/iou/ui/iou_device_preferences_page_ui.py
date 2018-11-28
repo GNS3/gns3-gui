@@ -12,7 +12,6 @@ class Ui_IOUDevicePreferencesPageWidget(object):
     def setupUi(self, IOUDevicePreferencesPageWidget):
         IOUDevicePreferencesPageWidget.setObjectName("IOUDevicePreferencesPageWidget")
         IOUDevicePreferencesPageWidget.resize(542, 449)
-        IOUDevicePreferencesPageWidget.setAccessibleDescription("")
         self.gridLayout = QtWidgets.QGridLayout(IOUDevicePreferencesPageWidget)
         self.gridLayout.setObjectName("gridLayout")
         self.uiIOUDevicesTreeWidget = QtWidgets.QTreeWidget(IOUDevicePreferencesPageWidget)
@@ -74,7 +73,7 @@ class Ui_IOUDevicePreferencesPageWidget(object):
     def retranslateUi(self, IOUDevicePreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         IOUDevicePreferencesPageWidget.setWindowTitle(_translate("IOUDevicePreferencesPageWidget", "IOU Devices"))
-        IOUDevicePreferencesPageWidget.setAccessibleName(_translate("IOUDevicePreferencesPageWidget", "IOU devices"))
+        IOUDevicePreferencesPageWidget.setAccessibleName(_translate("IOUDevicePreferencesPageWidget", "IOU device templates"))
         self.uiIOUDeviceInfoTreeWidget.headerItem().setText(0, _translate("IOUDevicePreferencesPageWidget", "1"))
         self.uiIOUDeviceInfoTreeWidget.headerItem().setText(1, _translate("IOUDevicePreferencesPageWidget", "2"))
         self.uiNewIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&New"))

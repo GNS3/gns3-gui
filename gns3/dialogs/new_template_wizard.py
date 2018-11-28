@@ -22,17 +22,16 @@ import json
 from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.controller import Controller
 from gns3.appliance_manager import ApplianceManager
-from gns3.dialogs.preferences_dialog import PreferencesDialog
 
-from ..ui.new_appliance_wizard_ui import Ui_NewApplianceWizard
+from ..ui.new_template_wizard_ui import Ui_NewTemplateWizard
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
+class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
     """
-    New appliance wizard.
+    New template wizard.
     """
 
     def __init__(self, parent):
@@ -45,19 +44,19 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
             # we want to see the cancel button on OSX
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
-        self.uiAddApplianceManuallyRadioButton.toggled.connect(self._addApplianceToggledSlot)
-        self.uiAddApplianceFromTemplateFileRadioButton.toggled.connect(self._addApplianceToggledSlot)
+        self.uiCreateTemplateManuallyRadioButton.toggled.connect(self._addTemplateToggledSlot)
+        self.uiImportApplianceFromFileRadioButton.toggled.connect(self._addTemplateToggledSlot)
 
         # add a custom button to show appliance information
         self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Update from online registry")
         self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
-        self.customButtonClicked.connect(self._downloadApplianceTemplatesSlot)
+        self.customButtonClicked.connect(self._downloadAppliancesSlot)
         self.button(QtWidgets.QWizard.CustomButton1).hide()
 
         self.uiFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
-        ApplianceManager.instance().appliance_templates_changed_signal.connect(self._applianceTemplatesChangedSlot)
+        ApplianceManager.instance().appliances_changed_signal.connect(self._appliancesChangedSlot)
 
-    def _addApplianceToggledSlot(self, checked):
+    def _addTemplateToggledSlot(self, checked):
 
         if checked:
             self.button(QtWidgets.QWizard.FinishButton).setEnabled(True)
@@ -66,24 +65,24 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
             self.button(QtWidgets.QWizard.FinishButton).setEnabled(False)
             self.button(QtWidgets.QWizard.NextButton).setEnabled(True)
 
-    def _downloadApplianceTemplatesSlot(self):
+    def _downloadAppliancesSlot(self):
         """
-        Request server to update appliance templates from online registry.
+        Request server to update appliances from online registry.
         """
 
         ApplianceManager.instance().refresh(update=True)
 
-    def _applianceTemplatesChangedSlot(self):
+    def _appliancesChangedSlot(self):
         """
-        Called when the appliance templates have been updated.
+        Called when the appliances have been updated.
         """
 
-        self._get_appliance_templates_from_server()
-        QtWidgets.QMessageBox.information(self, "Appliance templates", "Appliance templates are up-to-date!")
+        self._get_appliances_from_server()
+        QtWidgets.QMessageBox.information(self, "Appliances", "Appliances are up-to-date!")
 
     def _filterTextChangedSlot(self, text):
 
-        self._get_appliance_templates_from_server(appliance_filter=text)
+        self._get_appliances_from_server(appliance_filter=text)
 
     def _setItemIcon(self, item, icon):
             item.setIcon(0, icon)
@@ -155,19 +154,18 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
 
         return text_info
 
-    def _get_appliance_templates_from_server(self, appliance_filter=None):
+    def _get_appliances_from_server(self, appliance_filter=None):
         """
-        Gets the appliance templates from the server and display them.
+        Gets the appliances from the server and display them.
         """
 
-        self.uiApplianceTemplatesTreeWidget.clear()
-        for appliance in ApplianceManager.instance().applianceTemplates():
+        for appliance in ApplianceManager.instance().appliances():
             if appliance_filter is None:
                 appliance_filter = self.uiFilterLineEdit.text().strip()
             if appliance_filter and appliance_filter.lower() not in appliance["name"].lower():
                 continue
 
-            item = QtWidgets.QTreeWidgetItem(self.uiApplianceTemplatesTreeWidget)
+            item = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
             if appliance["builtin"]:
                 appliance_name = appliance["name"]
             else:
@@ -194,8 +192,8 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
             Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item),
                                                 fallback=":/symbols/" + appliance["category"] + ".svg")
 
-        self.uiApplianceTemplatesTreeWidget.resizeColumnToContents(0)
-        self.uiApplianceTemplatesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.uiAppliancesTreeWidget.resizeColumnToContents(0)
+        self.uiAppliancesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def initializePage(self, page_id):
         """
@@ -208,7 +206,7 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
         if self.page(page_id) == self.uiApplianceFromServerWizardPage:
             self.button(QtWidgets.QWizard.CustomButton1).show()
             self.setButtonText(QtWidgets.QWizard.FinishButton, "&Install")
-            self._get_appliance_templates_from_server()
+            self._get_appliances_from_server()
         else:
             self.button(QtWidgets.QWizard.CustomButton1).hide()
 
@@ -226,12 +224,12 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
         Validates if an appliance can be installed.
         """
 
-        if self.currentPage() == self.uiSelectApplianceSourceWizardPage and not Controller.instance().connected():
-            QtWidgets.QMessageBox.critical(self, "New appliance", "There is no connection to the server")
+        if self.currentPage() == self.uiSelectTemplateSourceWizardPage and not Controller.instance().connected():
+            QtWidgets.QMessageBox.critical(self, "New template", "There is no connection to the server")
             return False
         elif self.currentPage() == self.uiApplianceFromServerWizardPage:
-            if not self.uiApplianceTemplatesTreeWidget.selectedItems():
-                QtWidgets.QMessageBox.critical(self, "New appliance", "Please select an appliance to install!")
+            if not self.uiAppliancesTreeWidget.selectedItems():
+                QtWidgets.QMessageBox.critical(self, "New template", "Please select an appliance to install!")
                 return False
         return True
 
@@ -245,14 +243,14 @@ class NewApplianceWizard(QtWidgets.QWizard, Ui_NewApplianceWizard):
         super().done(result)
         from gns3.main_window import MainWindow
         if self.currentPage() == self.uiApplianceFromServerWizardPage:
-            items = self.uiApplianceTemplatesTreeWidget.selectedItems()
+            items = self.uiAppliancesTreeWidget.selectedItems()
             for item in items:
                 f = tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False)
                 json.dump(item.data(0, QtCore.Qt.UserRole), f)
                 f.close()
                 MainWindow.instance().loadPath(f.name)
-        elif self.uiAddApplianceManuallyRadioButton.isChecked():
+        elif self.uiCreateTemplateManuallyRadioButton.isChecked():
             MainWindow.instance().preferencesActionSlot()
-        elif self.uiAddApplianceFromTemplateFileRadioButton.isChecked():
+        elif self.uiImportApplianceFromFileRadioButton.isChecked():
             from gns3.main_window import MainWindow
             MainWindow.instance().openApplianceActionSlot()
