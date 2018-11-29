@@ -941,7 +941,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # start and connect to the local server if needed
             LocalServer.instance().localServerAutoStartIfRequire()
             if res:
-                self._newApplianceActionSlot()
+                self._newTemplateActionSlot()
 
     def _aboutQtActionSlot(self):
         """
