@@ -294,6 +294,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             key = item.data(0, QtCore.Qt.UserRole)
             ios_router = self._ios_routers[key]
             path = ios_router["image"]
+            if not os.path.isabs(path):
+                path = os.path.join(self.getImageDirectory(), path)
             if not os.path.isfile(path):
                 QtWidgets.QMessageBox.critical(self, "IOS image", "IOS image file {} is does not exist".format(path))
                 return
