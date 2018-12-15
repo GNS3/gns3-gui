@@ -159,6 +159,7 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         Gets the appliances from the server and display them.
         """
 
+        self.uiAppliancesTreeWidget.clear()
         for appliance in ApplianceManager.instance().appliances():
             if appliance_filter is None:
                 appliance_filter = self.uiFilterLineEdit.text().strip()
