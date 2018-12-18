@@ -154,7 +154,7 @@ class NodesView(QtWidgets.QTreeWidget):
         """
 
         # Check that an item has been selected and right click
-        if self.currentItem() is not None and event.button() == QtCore.Qt.RightButton:
+        if event.button() == QtCore.Qt.RightButton:
             self._showContextualMenu()
             event.accept()
             return
@@ -200,40 +200,46 @@ class NodesView(QtWidgets.QTreeWidget):
             event.accept()
 
     def _showContextualMenu(self):
+
+        menu = QtWidgets.QMenu()
+        refresh_action = QtWidgets.QAction("Refresh templates", menu)
+        refresh_action.setIcon(QtGui.QIcon(":/icons/reload.svg"))
+        refresh_action.triggered.connect(self.refresh)
+        menu.addAction(refresh_action)
+
         item = self.currentItem()
-        node = ApplianceManager.instance().getAppliance(item.data(0, QtCore.Qt.UserRole))
-        if not node:
-            return
-        for module in MODULES:
-            if node["node_type"] == "dynamips":
-                node_class = module.getNodeType(node["node_type"], node["platform"])
-            else:
-                node_class = module.getNodeType(node["node_type"])
-
-            if node_class:
-                break
-
-        # We can not edit stuff like EthernetSwitch
-        # or without config template like VPCS
-        if not node["builtin"] and hasattr(module, "vmConfigurationPage"):
-            vm = None
-            for vm_key, vm in module.instance().VMs().items():
-                if vm["name"] == node["name"]:
-                    break
-            if vm is None:
+        if item:
+            node = ApplianceManager.instance().getAppliance(item.data(0, QtCore.Qt.UserRole))
+            if not node:
                 return
-            menu = QtWidgets.QMenu()
-            configuration = QtWidgets.QAction("Configure Template", menu)
-            configuration.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
-            configuration.triggered.connect(qpartial(self._configurationSlot, vm, module))
-            menu.addAction(configuration)
+            for module in MODULES:
+                if node["node_type"] == "dynamips":
+                    node_class = module.getNodeType(node["node_type"], node["platform"])
+                else:
+                    node_class = module.getNodeType(node["node_type"])
 
-            configuration = QtWidgets.QAction("Delete Template", menu)
-            configuration.setIcon(QtGui.QIcon(":/icons/delete.svg"))
-            configuration.triggered.connect(qpartial(self._deleteSlot, vm_key, vm, module))
-            menu.addAction(configuration)
+                if node_class:
+                    break
 
-            menu.exec_(QtGui.QCursor.pos())
+            # We can not edit stuff like EthernetSwitch
+            # or without config template like VPCS
+            if not node["builtin"] and hasattr(module, "vmConfigurationPage"):
+                vm = None
+                for vm_key, vm in module.instance().VMs().items():
+                    if vm["name"] == node["name"]:
+                        break
+                if vm is not None:
+                    configure_action = QtWidgets.QAction("Configure template", menu)
+                    configure_action.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
+                    configure_action.triggered.connect(qpartial(self._configurationSlot, vm, module))
+                    menu.addAction(configure_action)
+
+                    delete_action = QtWidgets.QAction("Delete template", menu)
+                    delete_action.setIcon(QtGui.QIcon(":/icons/delete.svg"))
+                    delete_action.triggered.connect(qpartial(self._deleteSlot, vm_key, vm, module))
+                    menu.addAction(delete_action)
+
+        menu.exec_(QtGui.QCursor.pos())
 
     def _configurationSlot(self, vm, module, source):
 
