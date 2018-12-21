@@ -149,7 +149,7 @@ class NodesView(QtWidgets.QTreeWidget):
         """
 
         # Check that an item has been selected and right click
-        if self.currentItem() is not None and event.button() == QtCore.Qt.RightButton:
+        if event.button() == QtCore.Qt.RightButton:
             self._showContextualMenu()
             event.accept()
             return
@@ -181,24 +181,32 @@ class NodesView(QtWidgets.QTreeWidget):
             event.accept()
 
     def _showContextualMenu(self):
+
+        menu = QtWidgets.QMenu()
+        refresh_action = QtWidgets.QAction("Refresh templates", menu)
+        refresh_action.setIcon(QtGui.QIcon(":/icons/reload.svg"))
+        refresh_action.triggered.connect(self.refresh)
+        menu.addAction(refresh_action)
+
         item = self.currentItem()
-        template = TemplateManager.instance().getTemplate(item.data(0, QtCore.Qt.UserRole))
-        if not template:
-            return
+        if item:
+            template = TemplateManager.instance().getTemplate(item.data(0, QtCore.Qt.UserRole))
+            if not template:
+                return
 
-        configuration_page = TEMPLATE_TYPE_TO_CONFIGURATION_PAGE.get(template.template_type())
-        if not template.builtin() and configuration_page:
-            menu = QtWidgets.QMenu()
-            configuration = QtWidgets.QAction("Configure Template", menu)
-            configuration.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
-            configuration.triggered.connect(qpartial(self._configurationSlot, template, configuration_page))
-            menu.addAction(configuration)
+            configuration_page = TEMPLATE_TYPE_TO_CONFIGURATION_PAGE.get(template.template_type())
+            if not template.builtin() and configuration_page:
+                configure_action = QtWidgets.QAction("Configure Template", menu)
+                configure_action.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
+                configure_action.triggered.connect(qpartial(self._configurationSlot, template, configuration_page))
+                menu.addAction(configure_action)
 
-            configuration = QtWidgets.QAction("Delete Template", menu)
-            configuration.setIcon(QtGui.QIcon(":/icons/delete.svg"))
-            configuration.triggered.connect(qpartial(self._deleteSlot, template))
-            menu.addAction(configuration)
-            menu.exec_(QtGui.QCursor.pos())
+                delete_action = QtWidgets.QAction("Delete Template", menu)
+                delete_action.setIcon(QtGui.QIcon(":/icons/delete.svg"))
+                delete_action.triggered.connect(qpartial(self._deleteSlot, template))
+                menu.addAction(delete_action)
+
+        menu.exec_(QtGui.QCursor.pos())
 
     def _configurationSlot(self, template, configuration_page, source):
 
