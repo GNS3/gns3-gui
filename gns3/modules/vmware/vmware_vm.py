@@ -46,6 +46,7 @@ class VMwareVM(Node):
         self._linked_clone = False
 
         vmware_vm_settings = {"vmx_path": "",
+                              "usage": "",
                               "adapters": VMWARE_VM_SETTINGS["adapters"],
                               "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
                               "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
@@ -87,6 +88,10 @@ class VMwareVM(Node):
             else:
                 port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
                                                                             port_description=port.description())
+
+        if self._settings["usage"]:
+            info += "  Usage: {}\n".format(self._settings["usage"])
+
         return info + port_info
 
     def allocateVMnetInterface(self, port_id):

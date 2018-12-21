@@ -40,6 +40,7 @@ class DockerVM(Node):
         super().__init__(module, server, project)
 
         docker_vm_settings = {"image": "",
+                              "usage": "",
                               "adapters": DOCKER_CONTAINER_SETTINGS["adapters"],
                               "custom_adapters": DOCKER_CONTAINER_SETTINGS["custom_adapters"],
                               "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
@@ -85,6 +86,9 @@ class DockerVM(Node):
                 port_info += "     {port_name} {port_description}\n".format(
                     port_name=port.name(),
                     port_description=port.description())
+
+        if self._settings["usage"]:
+            info += "  Usage: {}\n".format(self._settings["usage"])
 
         return info + port_info
 

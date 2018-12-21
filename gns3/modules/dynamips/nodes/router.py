@@ -49,6 +49,7 @@ class Router(Node):
         self._dynamips_id = None
 
         router_settings = {"platform": platform,
+                           "usage": "",
                            "chassis": "",
                            "image": "",
                            "image_md5sum": "",
@@ -266,6 +267,10 @@ class Router(Node):
 
         # gather information about PA, their interfaces and connections
         slot_info = self._slot_info()
+
+        if self._settings["usage"]:
+            info += "  Usage: {}\n".format(self._settings["usage"])
+
         return info + slot_info
 
     def configFiles(self):

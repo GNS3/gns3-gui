@@ -44,6 +44,7 @@ class VirtualBoxVM(Node):
         self._linked_clone = False
 
         virtualbox_vm_settings = {"vmname": "",
+                                  "usage": "",
                                   "adapters": VBOX_VM_SETTINGS["adapters"],
                                   "use_any_adapter": VBOX_VM_SETTINGS["use_any_adapter"],
                                   "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
@@ -90,6 +91,9 @@ class VirtualBoxVM(Node):
             else:
                 port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
                                                                             port_description=port.description())
+
+        if self._settings["usage"]:
+            info += "  Usage: {}\n".format(self._settings["usage"])
 
         return info + port_info
 
