@@ -196,12 +196,12 @@ class NodesView(QtWidgets.QTreeWidget):
 
             configuration_page = TEMPLATE_TYPE_TO_CONFIGURATION_PAGE.get(template.template_type())
             if not template.builtin() and configuration_page:
-                configure_action = QtWidgets.QAction("Configure Template", menu)
+                configure_action = QtWidgets.QAction("Configure template", menu)
                 configure_action.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
                 configure_action.triggered.connect(qpartial(self._configurationSlot, template, configuration_page))
                 menu.addAction(configure_action)
 
-                delete_action = QtWidgets.QAction("Delete Template", menu)
+                delete_action = QtWidgets.QAction("Delete template", menu)
                 delete_action.setIcon(QtGui.QIcon(":/icons/delete.svg"))
                 delete_action.triggered.connect(qpartial(self._deleteSlot, template))
                 menu.addAction(delete_action)

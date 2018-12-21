@@ -89,6 +89,7 @@ background-none;
     <addaction name="uiImportProjectAction"/>
     <addaction name="separator"/>
     <addaction name="uiOpenApplianceAction"/>
+    <addaction name="uiNewTemplateAction"/>
     <addaction name="separator"/>
     <addaction name="uiQuitAction"/>
    </widget>
@@ -1237,6 +1238,15 @@ background-none;
   <action name="uiWebUIAction">
    <property name="text">
     <string>WebUI - topology preview</string>
+   </property>
+  </action>
+  <action name="uiNewTemplateAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/plus.svg</normaloff>:/icons/plus.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New template</string>
    </property>
   </action>
  </widget>

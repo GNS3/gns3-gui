@@ -209,6 +209,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiNewProjectAction.triggered.connect(self._newProjectActionSlot)
         self.uiOpenProjectAction.triggered.connect(self.openProjectActionSlot)
         self.uiOpenApplianceAction.triggered.connect(self.openApplianceActionSlot)
+        self.uiNewTemplateAction.triggered.connect(self._newTemplateActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
         self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
