@@ -399,6 +399,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Usage</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPlainTextEdit" name="uiUsageTextEdit"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

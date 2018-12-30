@@ -41,6 +41,7 @@ from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from .dialogs.idlepc_dialog import IdlePCDialog
 from .dialogs.console_command_dialog import ConsoleCommandDialog
 from .dialogs.file_editor_dialog import FileEditorDialog
+from .dialogs.node_info_dialog import NodeInfoDialog
 from .local_config import LocalConfig
 from .progress import Progress
 from .utils.server_select import server_select
@@ -755,7 +756,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             style_dir = ":/icons/"
 
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "info"), items)):
+            # Action: Show node information
+            show_node_info_action = QtWidgets.QAction("Show node information", menu)
+            show_node_info_action.setIcon(self._getIcon(style_dir, "help.svg"))
+            show_node_info_action.triggered.connect(self.showNodeInfoSlot)
+            menu.addAction(show_node_info_action)
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configPage"), items)):
+            # Action: Configure node
             configure_action = QtWidgets.QAction("Configure", menu)
             configure_action.setIcon(self._getIcon(style_dir, "configuration.svg"))
             configure_action.triggered.connect(self.configureActionSlot)
@@ -884,13 +893,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
             style_action.setIcon(self._getIcon(style_dir, "node_conception.svg"))
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "commandLine"), items)):
-            # Action: Get command line
-            show_in_file_manager_action = QtWidgets.QAction("Command line", menu)
-            show_in_file_manager_action.setIcon(self._getIcon(style_dir, "command_line.svg"))
-            show_in_file_manager_action.triggered.connect(self.getCommandLineSlot)
-            menu.addAction(show_in_file_manager_action)
 
         if True in list(map(lambda item: isinstance(item, LabelItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
             # action only for port labels
@@ -1271,30 +1273,21 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 self._export_config_directory = os.path.dirname(path)
                 item.node().exportFile(config_file, path)
 
-    def getCommandLineSlot(self):
+    def showNodeInfoSlot(self):
         """
-        Slot to receive events from the get command line action in the
+        Slot to receive events from the show node info action in the
         contextual menu.
         """
 
         items = self.scene().selectedItems()
         if len(items) != 1:
-            QtWidgets.QMessageBox.critical(self, "Command line", "Please select only one router")
+            QtWidgets.QMessageBox.critical(self, "Show node information", "Please select only one node")
             return
         item = items[0]
-        if isinstance(item, NodeItem) and hasattr(item.node(), "commandLine"):
-            router = item.node()
-            if router.commandLine() is None:
-                QtWidgets.QMessageBox.warning(self, "Command line", "Get command line is not supported for this type of node.")
-            elif router.commandLine() == '':
-                QtWidgets.QMessageBox.warning(self, "Command line", "Please start the node in order to get the command line.")
-            else:
-                dialog = QtWidgets.QInputDialog(self)
-                dialog.setOptions(QtWidgets.QInputDialog.NoButtons)
-                dialog.setLabelText("Command used to start the VM:")
-                dialog.setTextValue(router.commandLine())
-                dialog.show()
-                dialog.exec_()
+        if isinstance(item, NodeItem):
+            dialog = NodeInfoDialog(item.node(), parent=self)
+            dialog.show()
+            dialog.exec_()
 
     def bringToFrontSlot(self):
         """

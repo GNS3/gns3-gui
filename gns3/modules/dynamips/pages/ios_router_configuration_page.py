@@ -422,6 +422,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         else:
             self.uiSparseMemoryCheckBox.hide()
 
+        self.uiUsageTextEdit.setPlainText(settings["usage"])
+
     def _checkForLinkConnectedToAdapter(self, slot_number, settings, node):
         """
         Checks if links are connected to an adapter.
@@ -639,6 +641,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if node:
                     self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = ""
+
+        settings["usage"] = self.uiUsageTextEdit.toPlainText()
         return settings
 
     def _configFileValid(self, path):

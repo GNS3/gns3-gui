@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -138,6 +138,14 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiAdaptersSpinBox.setObjectName("uiAdaptersSpinBox")
         self.gridLayout_2.addWidget(self.uiAdaptersSpinBox, 0, 2, 1, 1)
         self.uiTabWidget.addTab(self.tab_2, "")
+        self.tab_3 = QtWidgets.QWidget()
+        self.tab_3.setObjectName("tab_3")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tab_3)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.uiUsageTextEdit = QtWidgets.QPlainTextEdit(self.tab_3)
+        self.uiUsageTextEdit.setObjectName("uiUsageTextEdit")
+        self.verticalLayout_2.addWidget(self.uiUsageTextEdit)
+        self.uiTabWidget.addTab(self.tab_3, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
 
         self.retranslateUi(VMwareVMConfigPageWidget)
@@ -171,4 +179,5 @@ class Ui_VMwareVMConfigPageWidget(object):
         self.uiUseAnyAdapterCheckBox.setToolTip(_translate("VMwareVMConfigPageWidget", "<html><head/><body><p>This option will allow GNS3 to replace all adapters of the VM. This allow you to use any interface of the VM in GNS3.</p></body></html>"))
         self.uiUseAnyAdapterCheckBox.setText(_translate("VMwareVMConfigPageWidget", "Allow GNS3 to override non custom VMware adapter"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("VMwareVMConfigPageWidget", "Network"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_3), _translate("VMwareVMConfigPageWidget", "Usage"))
 

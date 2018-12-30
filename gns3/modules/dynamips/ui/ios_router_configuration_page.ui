@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
-    <height>727</height>
+    <width>980</width>
+    <height>734</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1013,6 +1013,16 @@
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="uiUsageTab">
+      <attribute name="title">
+       <string>Usage</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPlainTextEdit" name="uiUsageTextEdit"/>
        </item>
       </layout>
      </widget>

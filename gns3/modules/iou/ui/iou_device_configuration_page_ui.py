@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -199,6 +199,14 @@ class Ui_iouDeviceConfigPageWidget(object):
         spacerItem1 = QtWidgets.QSpacerItem(20, 347, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_5.addItem(spacerItem1, 1, 0, 1, 1)
         self.uiTabWidget.addTab(self.tab_2, "")
+        self.tab_3 = QtWidgets.QWidget()
+        self.tab_3.setObjectName("tab_3")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.tab_3)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.uiUsageTextEdit = QtWidgets.QPlainTextEdit(self.tab_3)
+        self.uiUsageTextEdit.setObjectName("uiUsageTextEdit")
+        self.verticalLayout_3.addWidget(self.uiUsageTextEdit)
+        self.uiTabWidget.addTab(self.tab_3, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
 
         self.retranslateUi(iouDeviceConfigPageWidget)
@@ -238,4 +246,5 @@ class Ui_iouDeviceConfigPageWidget(object):
         self.uiSerialAdaptersLabel.setText(_translate("iouDeviceConfigPageWidget", "Serial adapters:"))
         self.uiSerialAdaptersSpinBox.setToolTip(_translate("iouDeviceConfigPageWidget", "1 adapter equals 4 serial interfaces"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("iouDeviceConfigPageWidget", "Network"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_3), _translate("iouDeviceConfigPageWidget", "Usage"))
 

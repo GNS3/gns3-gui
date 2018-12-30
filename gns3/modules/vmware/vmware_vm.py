@@ -89,9 +89,6 @@ class VMwareVM(Node):
                 port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
                                                                             port_description=port.description())
 
-        if self._settings["usage"]:
-            info += "  Usage: {}\n".format(self._settings["usage"])
-
         return info + port_info
 
     def allocateVMnetInterface(self, port_id):

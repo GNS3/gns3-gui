@@ -198,6 +198,8 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
         if index != -1:
             self.uiOnCloseComboBox.setCurrentIndex(index)
 
+        self.uiUsageTextEdit.setPlainText(settings["usage"])
+
     def saveSettings(self, settings, node=None, group=False):
         """
         Saves the VirtualBox VM settings.
@@ -268,4 +270,5 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
                         raise ConfigurationError()
         settings["adapters"] = adapters
         settings["custom_adapters"] = self._custom_adapters.copy()
+        settings["usage"] = self.uiUsageTextEdit.toPlainText()
         return settings

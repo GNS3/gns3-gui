@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_iosRouterConfigPageWidget(object):
     def setupUi(self, iosRouterConfigPageWidget):
         iosRouterConfigPageWidget.setObjectName("iosRouterConfigPageWidget")
-        iosRouterConfigPageWidget.resize(795, 727)
+        iosRouterConfigPageWidget.resize(980, 734)
         self.vboxlayout = QtWidgets.QVBoxLayout(iosRouterConfigPageWidget)
         self.vboxlayout.setObjectName("vboxlayout")
         self.uiTabWidget = QtWidgets.QTabWidget(iosRouterConfigPageWidget)
@@ -531,6 +531,14 @@ class Ui_iosRouterConfigPageWidget(object):
         spacerItem4 = QtWidgets.QSpacerItem(20, 194, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem4)
         self.uiTabWidget.addTab(self.uiEnvironmentPageWidget, "")
+        self.uiUsageTab = QtWidgets.QWidget()
+        self.uiUsageTab.setObjectName("uiUsageTab")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.uiUsageTab)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.uiUsageTextEdit = QtWidgets.QPlainTextEdit(self.uiUsageTab)
+        self.uiUsageTextEdit.setObjectName("uiUsageTextEdit")
+        self.verticalLayout_2.addWidget(self.uiUsageTextEdit)
+        self.uiTabWidget.addTab(self.uiUsageTab, "")
         self.vboxlayout.addWidget(self.uiTabWidget)
 
         self.retranslateUi(iosRouterConfigPageWidget)
@@ -630,4 +638,5 @@ class Ui_iosRouterConfigPageWidget(object):
         self.uiSensor4Label.setText(_translate("iosRouterConfigPageWidget", "NPE outlet:"))
         self.uiSensor4SpinBox.setSuffix(_translate("iosRouterConfigPageWidget", " C"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiEnvironmentPageWidget), _translate("iosRouterConfigPageWidget", "Environment"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.uiUsageTab), _translate("iosRouterConfigPageWidget", "Usage"))
 

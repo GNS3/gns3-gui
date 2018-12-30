@@ -149,6 +149,8 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
             self.uiSymbolLineEdit.hide()
             self.uiSymbolToolButton.hide()
 
+        self.uiUsageTextEdit.setPlainText(settings["usage"])
+
     def _networkConfigEditSlot(self):
 
         dialog = FileEditorDialog(self._node, self._node.configFiles()[0])
@@ -207,4 +209,6 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
 
             symbol_path = self.uiSymbolLineEdit.text()
             settings["symbol"] = symbol_path
+
+        settings["usage"] = self.uiUsageTextEdit.toPlainText()
         return settings

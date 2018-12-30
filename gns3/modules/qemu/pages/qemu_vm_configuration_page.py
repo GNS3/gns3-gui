@@ -541,6 +541,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if index != -1:
             self.uiProcessPriorityComboBox.setCurrentIndex(index)
         self.uiQemuOptionsLineEdit.setText(settings["options"])
+        self.uiUsageTextEdit.setPlainText(settings["usage"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -651,4 +652,5 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             settings["cpu_throttling"] = 0
         settings["process_priority"] = self.uiProcessPriorityComboBox.currentText().lower()
         settings["options"] = self.uiQemuOptionsLineEdit.text()
+        settings["usage"] = self.uiUsageTextEdit.toPlainText()
         return settings

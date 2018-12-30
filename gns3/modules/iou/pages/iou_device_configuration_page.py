@@ -226,6 +226,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         # load the number of adapters
         self.uiEthernetAdaptersSpinBox.setValue(settings["ethernet_adapters"])
         self.uiSerialAdaptersSpinBox.setValue(settings["serial_adapters"])
+        self.uiUsageTextEdit.setPlainText(settings["usage"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -312,6 +313,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         # save console type
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
         settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
+        settings["usage"] = self.uiUsageTextEdit.toPlainText()
         return settings
 
     def _configFileValid(self, path):

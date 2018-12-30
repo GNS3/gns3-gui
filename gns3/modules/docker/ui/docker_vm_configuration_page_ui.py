@@ -149,6 +149,14 @@ class Ui_dockerVMConfigPageWidget(object):
         spacerItem = QtWidgets.QSpacerItem(20, 388, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem, 1, 1, 1, 1)
         self.uiTabWidget.addTab(self.tab_2, "")
+        self.tab_3 = QtWidgets.QWidget()
+        self.tab_3.setObjectName("tab_3")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tab_3)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.uiUsageTextEdit = QtWidgets.QPlainTextEdit(self.tab_3)
+        self.uiUsageTextEdit.setObjectName("uiUsageTextEdit")
+        self.verticalLayout_2.addWidget(self.uiUsageTextEdit)
+        self.uiTabWidget.addTab(self.tab_3, "")
         self.verticalLayout.addWidget(self.uiTabWidget)
 
         self.retranslateUi(dockerVMConfigPageWidget)
@@ -194,4 +202,5 @@ class Ui_dockerVMConfigPageWidget(object):
 "(hostname:IP\n"
 "one per line)"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("dockerVMConfigPageWidget", "Advanced"))
+        self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_3), _translate("dockerVMConfigPageWidget", "Usage"))
 

@@ -87,9 +87,6 @@ class DockerVM(Node):
                     port_name=port.name(),
                     port_description=port.description())
 
-        if self._settings["usage"]:
-            info += "  Usage: {}\n".format(self._settings["usage"])
-
         return info + port_info
 
     def consoleHttpPath(self):

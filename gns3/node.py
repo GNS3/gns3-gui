@@ -94,6 +94,15 @@ class Node(BaseNode):
 
         return self._settings["name"]
 
+    def usage(self):
+        """
+        Returns the usage info for this node.
+
+        :returns: usage (string)
+        """
+
+        return self._settings.get("usage")
+
     def nodeDir(self):
         """
         Return the working directory of this node

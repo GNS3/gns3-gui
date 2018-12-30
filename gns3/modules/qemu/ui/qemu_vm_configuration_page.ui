@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>888</width>
-    <height>882</height>
+    <width>941</width>
+    <height>877</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -658,7 +658,7 @@
      </widget>
      <widget class="QWidget" name="uiAdvancedSettingsTab">
       <attribute name="title">
-       <string>Advanced settings</string>
+       <string>Advanced</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -893,6 +893,16 @@
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="uiUsageTab">
+      <attribute name="title">
+       <string>Usage</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPlainTextEdit" name="uiUsageTextEdit"/>
        </item>
       </layout>
      </widget>

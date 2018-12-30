@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_QemuVMConfigPageWidget(object):
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
-        QemuVMConfigPageWidget.resize(888, 882)
+        QemuVMConfigPageWidget.resize(941, 877)
         self.verticalLayout = QtWidgets.QVBoxLayout(QemuVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiQemutabWidget = QtWidgets.QTabWidget(QemuVMConfigPageWidget)
@@ -436,6 +436,14 @@ class Ui_QemuVMConfigPageWidget(object):
         spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem4)
         self.uiQemutabWidget.addTab(self.uiAdvancedSettingsTab, "")
+        self.uiUsageTab = QtWidgets.QWidget()
+        self.uiUsageTab.setObjectName("uiUsageTab")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.uiUsageTab)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.uiUsageTextEdit = QtWidgets.QPlainTextEdit(self.uiUsageTab)
+        self.uiUsageTextEdit.setObjectName("uiUsageTextEdit")
+        self.verticalLayout_3.addWidget(self.uiUsageTextEdit)
+        self.uiQemutabWidget.addTab(self.uiUsageTab, "")
         self.verticalLayout.addWidget(self.uiQemutabWidget)
 
         self.retranslateUi(QemuVMConfigPageWidget)
@@ -536,5 +544,6 @@ class Ui_QemuVMConfigPageWidget(object):
 "</ul>\n"
 "</body></html>"))
         self.uiBaseVMCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use as a linked base VM"))
-        self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiAdvancedSettingsTab), _translate("QemuVMConfigPageWidget", "Advanced settings"))
+        self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiAdvancedSettingsTab), _translate("QemuVMConfigPageWidget", "Advanced"))
+        self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiUsageTab), _translate("QemuVMConfigPageWidget", "Usage"))
 

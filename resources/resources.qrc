@@ -155,6 +155,8 @@
         <file>classic_icons/pause-hover.svg</file>
         <file>classic_icons/pc.svg</file>
         <file>classic_icons/pc-hover.svg</file>
+        <file>classic_icons/reset.svg</file>
+        <file>classic_icons/reset-hover.svg</file>
         <file>classic_icons/minus.svg</file>
         <file>classic_icons/minus-hover.svg</file>
         <file>classic_icons/plus.svg</file>
@@ -256,6 +258,8 @@
         <file>charcoal_icons/minus-hover.svg</file>
         <file>charcoal_icons/plus.svg</file>
         <file>charcoal_icons/plus-hover.svg</file>
+        <file>charcoal_icons/reset.svg</file>
+        <file>charcoal_icons/reset-hover.svg</file>
         <file>charcoal_icons/rectangle.svg</file>
         <file>charcoal_icons/rectangle-hover.svg</file>
         <file>charcoal_icons/line.svg</file>
