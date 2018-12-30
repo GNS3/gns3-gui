@@ -2,15 +2,12 @@
 <ui version="4.0">
  <class>NodeInfoDialog</class>
  <widget class="QDialog" name="NodeInfoDialog">
-  <property name="windowModality">
-   <enum>Qt::WindowModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1243</width>
-    <height>872</height>
+    <width>772</width>
+    <height>628</height>
    </rect>
   </property>
   <property name="windowTitle">

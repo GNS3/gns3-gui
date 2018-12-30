@@ -11,8 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_NodeInfoDialog(object):
     def setupUi(self, NodeInfoDialog):
         NodeInfoDialog.setObjectName("NodeInfoDialog")
-        NodeInfoDialog.setWindowModality(QtCore.Qt.WindowModal)
-        NodeInfoDialog.resize(1243, 872)
+        NodeInfoDialog.resize(772, 628)
         self.verticalLayout = QtWidgets.QVBoxLayout(NodeInfoDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(NodeInfoDialog)
