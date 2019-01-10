@@ -99,7 +99,8 @@ class IOUDevice(Node):
                 port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
                                                                             port_description=port.description())
 
-        return info + port_info
+        usage = "\n" + self._settings.get("usage")
+        return info + port_info + usage
 
     def configFiles(self):
         """

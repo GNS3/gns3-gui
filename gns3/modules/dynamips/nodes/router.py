@@ -268,7 +268,8 @@ class Router(Node):
         # gather information about PA, their interfaces and connections
         slot_info = self._slot_info()
 
-        return info + slot_info
+        usage = "\n" + self._settings.get("usage")
+        return info + slot_info + usage
 
     def configFiles(self):
         """

@@ -130,7 +130,8 @@ class QemuVM(Node):
             if port.macAddress():
                 port_info += "       MAC address is {mac_address}\n".format(mac_address=port.macAddress())
 
-        return info + port_info
+        usage = "\n" + self._settings.get("usage")
+        return info + port_info + usage
 
     def configPage(self):
         """
