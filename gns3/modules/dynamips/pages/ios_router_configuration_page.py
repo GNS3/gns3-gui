@@ -348,7 +348,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                     self.uiPowerSupply2ComboBox.setCurrentIndex(0)
                 else:
                     self.uiPowerSupply2ComboBox.setCurrentIndex(1)
-            else:
+            elif self.uiTabWidget.count() == 6:
                 self.uiTabWidget.removeTab(4)  # environment tab
 
             # all platforms but c7200 have the iomem feature
@@ -361,7 +361,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiMidplaneComboBox.hide()
             self.uiNPELabel.hide()
             self.uiNPEComboBox.hide()
-            self.uiTabWidget.removeTab(4)  # environment tab
+            if self.uiTabWidget.count() == 6:
+                self.uiTabWidget.removeTab(4)  # environment tab
 
             # load the I/O memory setting
             self.uiIomemSpinBox.setValue(settings["iomem"])
