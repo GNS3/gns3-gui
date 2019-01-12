@@ -173,7 +173,7 @@ class Node(BaseNode):
         :returns: port number
         """
 
-        return self.settings()["console"]
+        return self.settings().get("console")
 
     def isStarted(self):
         """
@@ -683,6 +683,9 @@ class Node(BaseNode):
             console_type = "telnet"
         else:
             console_port = self.console()
+            if console_port is None:
+                log.debug("No console port allocated for {}".format(self.name()))
+                return
             if "console_type" in self.settings():
                 console_type = self.consoleType()
 
