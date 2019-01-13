@@ -17,10 +17,14 @@
 
 import os
 import sip
+import urllib
 import shutil
+from ssl import CertificateError
 
 from ..qt import QtWidgets, QtCore, QtGui, qpartial, qslot
 from ..ui.appliance_wizard_ui import Ui_ApplianceWizard
+from ..template_manager import TemplateManager
+from ..template import Template
 from ..modules import Qemu
 from ..registry.appliance import Appliance, ApplianceError
 from ..registry.registry import Registry
@@ -525,12 +529,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         :params version: appliance version name
         """
 
-        try:
-            config = Config()
-        except (OSError, ValueError) as e:
-            QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
-            return False
-
         if version is None:
             appliance_configuration = self._appliance.copy()
             if not "docker" in appliance_configuration:
@@ -543,9 +541,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
                 return False
 
-        while len(appliance_configuration["name"]) == 0 or not config.is_name_available(appliance_configuration["name"]):
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "The name \"{}\" is already used by another appliance".format(appliance_configuration["name"]))
-            appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add appliance", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
+        template_manager = TemplateManager().instance()
+        while len(appliance_configuration["name"]) == 0 or not template_manager.is_name_available(appliance_configuration["name"]):
+            QtWidgets.QMessageBox.warning(self.parent(), "Add template", "The name \"{}\" is already used by another template".format(appliance_configuration["name"]))
+            appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add template", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
             if not ok:
                 return False
             appliance_configuration["name"] = appliance_configuration["name"].strip()
@@ -553,18 +552,194 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, self._compute_id, self._symbols), allowed_exceptions=[ConfigException, OSError])
-        progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
-        progress_dialog.show()
-        if not progress_dialog.exec_():
-            return False
+        self._create_template(appliance_configuration, self._compute_id)
+        return True
 
-        worker = WaitForLambdaWorker(lambda: config.save(), allowed_exceptions=[ConfigException, OSError])
-        progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
-        progress_dialog.show()
-        if progress_dialog.exec_():
-            QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
-            return True
+        #worker = WaitForLambdaWorker(lambda: self._create_template(appliance_configuration, self._compute_id), allowed_exceptions=[ConfigException, OSError])
+        #progress_dialog = ProgressDialog(worker, "Add template", "Installing a new template...", None, busy=True, parent=self)
+        #progress_dialog.show()
+        #if progress_dialog.exec_():
+        #    QtWidgets.QMessageBox.information(self.parent(), "Add template", "{} template has been installed!".format(appliance_configuration["name"]))
+        #    return True
+        #return False
+
+        # worker = WaitForLambdaWorker(lambda: config.save(), allowed_exceptions=[ConfigException, OSError])
+        # progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
+        # progress_dialog.show()
+        # if progress_dialog.exec_():
+        #     QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
+        #     return True
+
+    def _create_template(self, appliance_config, server):
+        """
+        Creates a new template from an appliance.
+
+        :param appliance_config: Dictionary with appliance configuration
+        :param server
+        """
+
+        new_template = {
+            "compute_id": server,
+            "name": appliance_config["name"]
+        }
+
+        if "usage" in appliance_config:
+            new_template["usage"] = appliance_config["usage"]
+
+        if appliance_config["category"] == "multilayer_switch":
+            new_template["category"] = "switch"
+        else:
+            new_template["category"] = appliance_config["category"]
+
+        if "symbol" in appliance_config:
+            new_template["symbol"] = self._set_symbol(appliance_config["symbol"], self._symbols)
+
+        if new_template.get("symbol") is None:
+            if appliance_config["category"] == "guest":
+                if "docker" in appliance_config:
+                    new_template["symbol"] = ":/symbols/docker_guest.svg"
+                else:
+                    new_template["symbol"] = ":/symbols/qemu_guest.svg"
+            elif appliance_config["category"] == "router":
+                new_template["symbol"] = ":/symbols/router.svg"
+            elif appliance_config["category"] == "switch":
+                new_template["symbol"] = ":/symbols/ethernet_switch.svg"
+            elif appliance_config["category"] == "multilayer_switch":
+                new_template["symbol"] = ":/symbols/multilayer_switch.svg"
+            elif appliance_config["category"] == "firewall":
+                new_template["symbol"] = ":/symbols/firewall.svg"
+
+        if "qemu" in appliance_config:
+            new_template["template_type"] = "qemu"
+            self._add_qemu_config(new_template, appliance_config)
+        elif "iou" in appliance_config:
+            new_template["template_type"] = "iou"
+            self._add_iou_config(new_template, appliance_config)
+        elif "dynamips" in appliance_config:
+            new_template["template_type"] = "dynamips"
+            self._add_dynamips_config(new_template, appliance_config)
+        elif "docker" in appliance_config:
+            new_template["template_type"] = "docker"
+            self._add_docker_config(new_template, appliance_config)
+        else:
+            raise ConfigException("{} no configuration found for known emulators".format(new_template["name"]))
+
+        TemplateManager.instance().createTemplate(Template(new_template))
+
+    def _add_qemu_config(self, new_config, appliance_config):
+
+        new_config.update(appliance_config["qemu"])
+
+        # the following properties are not valid for a template
+        new_config.pop("kvm")
+        new_config.pop("path")
+        new_config.pop("arch")
+
+        options = appliance_config["qemu"].get("options", "")
+        if "-nographic" not in options:
+            options += " -nographic"
+        if appliance_config["qemu"].get("kvm", "allow") == "disable" and "-no-kvm" not in options:
+            options += " -no-kvm"
+        new_config["options"] = options.strip()
+
+        for image in appliance_config["images"]:
+            if image.get("path"):
+                new_config[image["type"]] = self._relative_image_path("QEMU", image["path"])
+
+        if "path" in appliance_config["qemu"]:
+            new_config["qemu_path"] = appliance_config["qemu"]["path"]
+        else:
+            new_config["qemu_path"] = "qemu-system-{}".format(appliance_config["qemu"]["arch"])
+
+        if "first_port_name" in appliance_config:
+            new_config["first_port_name"] = appliance_config["first_port_name"]
+
+        if "port_name_format" in appliance_config:
+            new_config["port_name_format"] = appliance_config["port_name_format"]
+
+        if "port_segment_size" in appliance_config:
+            new_config["port_segment_size"] = appliance_config["port_segment_size"]
+
+        if "custom_adapters" in appliance_config:
+            new_config["custom_adapters"] = appliance_config["custom_adapters"]
+
+        if "linked_clone" in appliance_config:
+            new_config["linked_clone"] = appliance_config["linked_clone"]
+
+    def _add_docker_config(self, new_config, appliance_config):
+
+        new_config.update(appliance_config["docker"])
+
+        if "custom_adapters" in appliance_config:
+            new_config["custom_adapters"] = appliance_config["custom_adapters"]
+
+    def _add_dynamips_config(self, new_config, appliance_config):
+
+        new_config.update(appliance_config["dynamips"])
+
+        for image in appliance_config["images"]:
+            new_config[image["type"]] = self._relative_image_path("IOS", image["path"])
+            new_config["idlepc"] = image.get("idlepc", "")
+
+    def _add_iou_config(self, new_config, appliance_config):
+
+        new_config.update(appliance_config["iou"])
+        for image in appliance_config["images"]:
+            if "path" not in image:
+                raise ConfigException("Disk image is missing")
+            new_config[image["type"]] = self._relative_image_path("IOU", image["path"])
+        new_config["path"] = new_config["image"]
+
+    def _relative_image_path(self, image_dir_type, path):
+        """
+
+        :param image_dir_type: Type of image directory
+        :param filename: Filename at the end of the process
+        :param path: Full path to the file
+        :returns: Path relative to image directory.
+        Copy the image to the directory if not already in the directory
+        """
+
+        images_dir = os.path.join(Config().images_dir, image_dir_type)
+        path = os.path.abspath(path)
+        if os.path.commonprefix([images_dir, path]) == images_dir:
+            return path.replace(images_dir, '').strip('/\\')
+
+        return os.path.basename(path)
+
+    def _set_symbol(self, symbol, controller_symbols):
+        """
+        Check if exists on controller or download symbol from the web if needed
+        """
+
+        # GNS3 builtin symbol
+        if symbol.startswith(":/symbols/"):
+            return symbol
+
+        path = os.path.join(self.symbols_dir, symbol)
+        if os.path.exists(path):
+            return os.path.basename(path)
+
+        is_symbol_on_controller = len([s for s in controller_symbols
+                                       if s['symbol_id'] == symbol]) > 0
+
+        if is_symbol_on_controller:
+            cached = Controller.instance().getStaticCachedPath(symbol)
+            if os.path.exists(cached):
+                try:
+                    shutil.copy(cached, path)
+                except IOError as e:
+                    log.warning("Cannot copy cached symbol from `{}` to `{}` due `{}`".format(
+                        cached, path, str(e)
+                    ))
+            return symbol
+
+        url = "https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/{}".format(symbol)
+        try:
+            urllib.request.urlretrieve(url, path)
+            return os.path.basename(path)
+        except (OSError, CertificateError):
+            return None
 
     def _uploadImages(self, version):
         """
@@ -711,8 +886,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             reply = QtWidgets.QMessageBox.question(self, "Custom files",
                 "This option allows files with different MD5 checksums. This feature is only for advanced users and can lead "
                 "to unexpected problems. Are you sure you would like to enable it?",
-                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
-            )
+                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
 
             if reply == QtWidgets.QMessageBox.No:
                 self.allowCustomFiles.setChecked(False)

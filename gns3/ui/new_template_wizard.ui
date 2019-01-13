@@ -79,6 +79,9 @@
       <property name="sortingEnabled">
        <bool>true</bool>
       </property>
+      <attribute name="headerShowSortIndicator" stdset="0">
+       <bool>true</bool>
+      </attribute>
       <column>
        <property name="text">
         <string>Appliance name</string>

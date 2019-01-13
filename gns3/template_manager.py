@@ -60,6 +60,16 @@ class TemplateManager(QtCore.QObject):
         self._templates = {}
         self.templates_changed_signal.emit()
 
+    def createTemplate(self, template):
+        """
+        Creates a template on the controller.
+
+        :param template: template object.
+        """
+
+        log.debug("Create template '{}' (ID={})".format(template.name(), template.id()))
+        self._controller.post("/templates", self.templateDataReceivedCallback, body=template.__json__())
+
     def deleteTemplate(self, template_id):
         """
         Deletes a template on the controller.
@@ -114,8 +124,7 @@ class TemplateManager(QtCore.QObject):
         # Create the new templates
         for template in templates:
             if template.id() not in self._templates:
-                log.debug("Create template '{}' (ID={})".format(template.name(), template.id()))
-                self._controller.post("/templates", self.templateDataReceivedCallback, body=template.__json__())
+                self.createTemplate(template)
 
     def templateDataReceivedCallback(self, result, error=False, **kwargs):
         """
@@ -214,6 +223,17 @@ class TemplateManager(QtCore.QObject):
         if error and "message" in result:
             log.error("Error while creating node from template: {}".format(result["message"]))
             return
+
+    def is_name_available(self, name):
+        """
+        :param name: Template name
+        :returns: True if name is not already used
+        """
+
+        for template in self._templates.values():
+            if template.name() == name:
+                return False
+        return True
 
     @staticmethod
     def instance():

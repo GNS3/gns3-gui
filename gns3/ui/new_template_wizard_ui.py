@@ -40,6 +40,7 @@ class Ui_NewTemplateWizard(object):
         self.uiAppliancesTreeWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.uiAppliancesTreeWidget.setRootIsDecorated(False)
         self.uiAppliancesTreeWidget.setObjectName("uiAppliancesTreeWidget")
+        self.uiAppliancesTreeWidget.header().setSortIndicatorShown(True)
         self.verticalLayout_2.addWidget(self.uiAppliancesTreeWidget)
         NewTemplateWizard.addPage(self.uiApplianceFromServerWizardPage)
 

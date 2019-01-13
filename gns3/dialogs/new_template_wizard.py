@@ -52,7 +52,6 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
         self.customButtonClicked.connect(self._downloadAppliancesSlot)
         self.button(QtWidgets.QWizard.CustomButton1).hide()
-
         self.uiFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
         ApplianceManager.instance().appliances_changed_signal.connect(self._appliancesChangedSlot)
 
@@ -81,11 +80,10 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         QtWidgets.QMessageBox.information(self, "Appliances", "Appliances are up-to-date!")
 
     def _filterTextChangedSlot(self, text):
-
         self._get_appliances_from_server(appliance_filter=text)
 
     def _setItemIcon(self, item, icon):
-            item.setIcon(0, icon)
+        item.setIcon(0, icon)
 
     def _get_tooltip_text(self, appliance):
         """
@@ -188,13 +186,14 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
 
             item.setText(3, appliance["vendor_name"])
             item.setData(0, QtCore.Qt.UserRole, appliance)
-            item.setSizeHint(0, QtCore.QSize(32, 32))
+
+            #item.setSizeHint(0, QtCore.QSize(32, 32))
             item.setToolTip(0, self._get_tooltip_text(appliance))
             Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item),
                                                 fallback=":/symbols/" + appliance["category"] + ".svg")
 
-        self.uiAppliancesTreeWidget.resizeColumnToContents(0)
         self.uiAppliancesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.uiAppliancesTreeWidget.resizeColumnToContents(0)
 
     def initializePage(self, page_id):
         """
