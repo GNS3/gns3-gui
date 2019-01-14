@@ -60,15 +60,16 @@ class TemplateManager(QtCore.QObject):
         self._templates = {}
         self.templates_changed_signal.emit()
 
-    def createTemplate(self, template):
+    def createTemplate(self, template, callback=None):
         """
         Creates a template on the controller.
 
         :param template: template object.
+        :param callback: callback to receive response from the controller.
         """
 
         log.debug("Create template '{}' (ID={})".format(template.name(), template.id()))
-        self._controller.post("/templates", self.templateDataReceivedCallback, body=template.__json__())
+        self._controller.post("/templates", callback, body=template.__json__())
 
     def deleteTemplate(self, template_id):
         """
@@ -104,7 +105,7 @@ class TemplateManager(QtCore.QObject):
         """
 
         log.debug("Update template '{}' (ID={})".format(template.name(), template.id()))
-        self._controller.put("/templates/{template_id}".format(template_id=template.id()), self.templateDataReceivedCallback, body=template.__json__())
+        self._controller.put("/templates/{template_id}".format(template_id=template.id()), None, body=template.__json__())
 
     def updateList(self, templates):
         """

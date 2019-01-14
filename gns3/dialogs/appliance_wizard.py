@@ -52,6 +52,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.setupUi(self)
         self._refreshing = False
         self._server_check = False
+        self._template_created = False
         self._path = path
 
         # count how many images are being uploaded
@@ -553,10 +554,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        #TODO: check for errors if template could not be created
         new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, self._symbols)
-        TemplateManager.instance().createTemplate(Template(new_template))
-        return True
+        TemplateManager.instance().createTemplate(Template(new_template), callback=self._templateCreatedCallback)
+        return False
 
         #worker = WaitForLambdaWorker(lambda: self._create_template(appliance_configuration, self._compute_id), allowed_exceptions=[ConfigException, OSError])
         #progress_dialog = ProgressDialog(worker, "Add template", "Installing a new template...", None, busy=True, parent=self)
@@ -572,6 +572,16 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         # if progress_dialog.exec_():
         #     QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
         #     return True
+
+    def _templateCreatedCallback(self, result, error=False, **kwargs):
+
+        if error is True:
+            QtWidgets.QMessageBox.critical(self.parent(), "Add template", "Template cannot be created: {}".format(result.get("message", "unknown")))
+            return
+
+        QtWidgets.QMessageBox.information(self.parent(), "Add template", "Template '{}' has been successfully created!".format(result["name"]))
+        self._template_created = True
+        self.done(True)
 
     def _uploadImages(self, version):
         """
@@ -631,6 +641,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         elif self.currentPage() == self.uiUsageWizardPage:
             # validate the usage page
 
+            if self._template_created:
+                return True
             if self._image_uploading_count > 0:
                 QtWidgets.QMessageBox.critical(self, "Add appliance", "Please wait for appliance files to be uploaded")
                 return False
