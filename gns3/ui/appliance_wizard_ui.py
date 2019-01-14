@@ -162,17 +162,17 @@ class Ui_ApplianceWizard(object):
 
     def retranslateUi(self, ApplianceWizard):
         _translate = QtCore.QCoreApplication.translate
-        ApplianceWizard.setWindowTitle(_translate("ApplianceWizard", "Add appliance"))
+        ApplianceWizard.setWindowTitle(_translate("ApplianceWizard", "Install appliance"))
         self.uiServerWizardPage.setTitle(_translate("ApplianceWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("ApplianceWizard", "Please choose a server type to run the appliance. The grayed out server types are not supported or configured."))
+        self.uiServerWizardPage.setSubTitle(_translate("ApplianceWizard", "Please choose a server type to install the appliance. The grayed out server types are not supported or configured."))
         self.uiServerTypeGroupBox.setTitle(_translate("ApplianceWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("ApplianceWizard", "Run the appliance on a remote server"))
-        self.uiVMRadioButton.setText(_translate("ApplianceWizard", "Run the appliance on the GNS3 VM (recommended)"))
-        self.uiLocalRadioButton.setText(_translate("ApplianceWizard", "Run the appliance on your local computer"))
+        self.uiRemoteRadioButton.setText(_translate("ApplianceWizard", "Install the appliance on a remote server"))
+        self.uiVMRadioButton.setText(_translate("ApplianceWizard", "Install the appliance on the GNS3 VM (recommended)"))
+        self.uiLocalRadioButton.setText(_translate("ApplianceWizard", "Install the appliance on your local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("ApplianceWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("ApplianceWizard", "Run on:"))
         self.uiQemuWizardPage.setTitle(_translate("ApplianceWizard", "Qemu settings"))
-        self.uiQemuWizardPage.setSubTitle(_translate("ApplianceWizard", "Please choose the qemu binary that we will use for running this appliance."))
+        self.uiQemuWizardPage.setSubTitle(_translate("ApplianceWizard", "Please choose the qemu binary that will be used to run this appliance."))
         self.uiQemuListLabel.setText(_translate("ApplianceWizard", "Qemu binary:"))
         self.uiFilesWizardPage.setTitle(_translate("ApplianceWizard", "Required files"))
         self.uiFilesWizardPage.setSubTitle(_translate("ApplianceWizard", "The following files are required to install the appliance"))

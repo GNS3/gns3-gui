@@ -24,13 +24,13 @@
     <string>New template</string>
    </property>
    <property name="subTitle">
-    <string>Please choose how you want to create a new template</string>
+    <string>Please select how you want to create a new template</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QRadioButton" name="uiImportApplianceFromServerRadioButton">
       <property name="text">
-       <string>&amp;Import appliances from the GNS3 server (recommended)</string>
+       <string>&amp;Install an appliance from the GNS3 server (recommended)</string>
       </property>
       <property name="checked">
        <bool>true</bool>
@@ -40,14 +40,14 @@
     <item>
      <widget class="QRadioButton" name="uiImportApplianceFromFileRadioButton">
       <property name="text">
-       <string>&amp;Import a GNS3 appliance file (.gns3a)</string>
+       <string>&amp;Import an appliance file (.gns3a extension)</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QRadioButton" name="uiCreateTemplateManuallyRadioButton">
       <property name="text">
-       <string>&amp;Create a template manually</string>
+       <string>&amp;Manually create a new template</string>
       </property>
      </widget>
     </item>
@@ -58,7 +58,7 @@
     <string>Appliances from server</string>
    </property>
    <property name="subTitle">
-    <string>Please select the appliances to install. Update will request the server to download appliances from our online registry.</string>
+    <string>Select one or more appliances to install. Update will request the server to download appliances from our online registry.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>

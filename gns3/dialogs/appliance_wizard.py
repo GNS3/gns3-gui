@@ -198,7 +198,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [self._appliance["qemu"]["arch"]])
 
         elif self.page(page_id) == self.uiUsageWizardPage:
-            self.uiUsageTextEdit.setText("The appliance is available in the {} category.\n\n{}".format(self._appliance["category"].replace("_", " "), self._appliance.get("usage", "")))
+            self.uiUsageTextEdit.setText("The template will be available in the {} category.\n\n{}".format(self._appliance["category"].replace("_", " "), self._appliance.get("usage", "")))
 
     def _qemuServerCapabilitiesCallback(self, result, error=None, *args, **kwargs):
         """
@@ -576,10 +576,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
     def _templateCreatedCallback(self, result, error=False, **kwargs):
 
         if error is True:
-            QtWidgets.QMessageBox.critical(self.parent(), "Add template", "Template cannot be created: {}".format(result.get("message", "unknown")))
+            QtWidgets.QMessageBox.critical(self.parent(), "Add template", "The template cannot be created: {}".format(result.get("message", "unknown")))
             return
 
-        QtWidgets.QMessageBox.information(self.parent(), "Add template", "Template '{}' has been successfully created!".format(result["name"]))
+        QtWidgets.QMessageBox.information(self.parent(), "Add template", "The appliance has been installed and a template named '{}' has been successfully created!".format(result["name"]))
         self._template_created = True
         self.done(True)
 
