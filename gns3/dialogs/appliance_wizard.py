@@ -21,10 +21,13 @@ import shutil
 
 from ..qt import QtWidgets, QtCore, QtGui, qpartial, qslot
 from ..ui.appliance_wizard_ui import Ui_ApplianceWizard
+from ..template_manager import TemplateManager
+from ..template import Template
 from ..modules import Qemu
 from ..registry.appliance import Appliance, ApplianceError
 from ..registry.registry import Registry
-from ..registry.config import Config, ConfigException
+from ..registry.config import Config
+from ..registry.appliance_to_template import ApplianceToTemplate
 from ..registry.image import Image
 from ..utils import human_filesize
 from ..utils.wait_for_lambda_worker import WaitForLambdaWorker
@@ -49,6 +52,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.setupUi(self)
         self._refreshing = False
         self._server_check = False
+        self._template_created = False
         self._path = path
 
         # count how many images are being uploaded
@@ -194,7 +198,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [self._appliance["qemu"]["arch"]])
 
         elif self.page(page_id) == self.uiUsageWizardPage:
-            self.uiUsageTextEdit.setText("The appliance is available in the {} category.\n\n{}".format(self._appliance["category"].replace("_", " "), self._appliance.get("usage", "")))
+            self.uiUsageTextEdit.setText("The template will be available in the {} category.\n\n{}".format(self._appliance["category"].replace("_", " "), self._appliance.get("usage", "")))
 
     def _qemuServerCapabilitiesCallback(self, result, error=None, *args, **kwargs):
         """
@@ -388,9 +392,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         for version in self._appliance["versions"]:
             for image in version["images"].values():
-                img = self._registry.search_image_file(
-                    self._appliance.emulator(), image["filename"], image.get("md5sum"), image.get("filesize"),
-                    strict_md5_check=not self.allowCustomFiles.isChecked())
+                img = self._registry.search_image_file(self._appliance.emulator(),
+                                                       image["filename"],
+                                                       image.get("md5sum"),
+                                                       image.get("filesize"),
+                                                       strict_md5_check=not self.allowCustomFiles.isChecked())
                 if img:
                     image["status"] = "Found"
                     image["md5sum"] = img.md5sum
@@ -525,12 +531,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         :params version: appliance version name
         """
 
-        try:
-            config = Config()
-        except (OSError, ValueError) as e:
-            QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
-            return False
-
         if version is None:
             appliance_configuration = self._appliance.copy()
             if not "docker" in appliance_configuration:
@@ -543,9 +543,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 QtWidgets.QMessageBox.critical(self.parent(), "Add appliance", str(e))
                 return False
 
-        while len(appliance_configuration["name"]) == 0 or not config.is_name_available(appliance_configuration["name"]):
-            QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "The name \"{}\" is already used by another appliance".format(appliance_configuration["name"]))
-            appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add appliance", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
+        template_manager = TemplateManager().instance()
+        while len(appliance_configuration["name"]) == 0 or not template_manager.is_name_available(appliance_configuration["name"]):
+            QtWidgets.QMessageBox.warning(self.parent(), "Add template", "The name \"{}\" is already used by another template".format(appliance_configuration["name"]))
+            appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add template", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
             if not ok:
                 return False
             appliance_configuration["name"] = appliance_configuration["name"].strip()
@@ -553,18 +554,34 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        worker = WaitForLambdaWorker(lambda: config.add_appliance(appliance_configuration, self._compute_id, self._symbols), allowed_exceptions=[ConfigException, OSError])
-        progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
-        progress_dialog.show()
-        if not progress_dialog.exec_():
-            return False
+        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, self._symbols)
+        TemplateManager.instance().createTemplate(Template(new_template), callback=self._templateCreatedCallback)
+        return False
 
-        worker = WaitForLambdaWorker(lambda: config.save(), allowed_exceptions=[ConfigException, OSError])
-        progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
-        progress_dialog.show()
-        if progress_dialog.exec_():
-            QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
-            return True
+        #worker = WaitForLambdaWorker(lambda: self._create_template(appliance_configuration, self._compute_id), allowed_exceptions=[ConfigException, OSError])
+        #progress_dialog = ProgressDialog(worker, "Add template", "Installing a new template...", None, busy=True, parent=self)
+        #progress_dialog.show()
+        #if progress_dialog.exec_():
+        #    QtWidgets.QMessageBox.information(self.parent(), "Add template", "{} template has been installed!".format(appliance_configuration["name"]))
+        #    return True
+        #return False
+
+        # worker = WaitForLambdaWorker(lambda: config.save(), allowed_exceptions=[ConfigException, OSError])
+        # progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
+        # progress_dialog.show()
+        # if progress_dialog.exec_():
+        #     QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
+        #     return True
+
+    def _templateCreatedCallback(self, result, error=False, **kwargs):
+
+        if error is True:
+            QtWidgets.QMessageBox.critical(self.parent(), "Add template", "The template cannot be created: {}".format(result.get("message", "unknown")))
+            return
+
+        QtWidgets.QMessageBox.information(self.parent(), "Add template", "The appliance has been installed and a template named '{}' has been successfully created!".format(result["name"]))
+        self._template_created = True
+        self.done(True)
 
     def _uploadImages(self, version):
         """
@@ -624,6 +641,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         elif self.currentPage() == self.uiUsageWizardPage:
             # validate the usage page
 
+            if self._template_created:
+                return True
             if self._image_uploading_count > 0:
                 QtWidgets.QMessageBox.critical(self, "Add appliance", "Please wait for appliance files to be uploaded")
                 return False
@@ -711,8 +730,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             reply = QtWidgets.QMessageBox.question(self, "Custom files",
                 "This option allows files with different MD5 checksums. This feature is only for advanced users and can lead "
                 "to unexpected problems. Are you sure you would like to enable it?",
-                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
-            )
+                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
 
             if reply == QtWidgets.QMessageBox.No:
                 self.allowCustomFiles.setChecked(False)
