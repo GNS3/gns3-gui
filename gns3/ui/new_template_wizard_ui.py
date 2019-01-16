@@ -12,7 +12,7 @@ class Ui_NewTemplateWizard(object):
     def setupUi(self, NewTemplateWizard):
         NewTemplateWizard.setObjectName("NewTemplateWizard")
         NewTemplateWizard.setWindowModality(QtCore.Qt.ApplicationModal)
-        NewTemplateWizard.resize(1399, 919)
+        NewTemplateWizard.resize(932, 391)
         NewTemplateWizard.setOptions(QtWidgets.QWizard.HaveFinishButtonOnEarlyPages)
         self.uiSelectTemplateSourceWizardPage = QtWidgets.QWizardPage()
         self.uiSelectTemplateSourceWizardPage.setObjectName("uiSelectTemplateSourceWizardPage")
@@ -54,7 +54,7 @@ class Ui_NewTemplateWizard(object):
         self.uiSelectTemplateSourceWizardPage.setSubTitle(_translate("NewTemplateWizard", "Please select how you want to create a new template"))
         self.uiImportApplianceFromServerRadioButton.setText(_translate("NewTemplateWizard", "&Install an appliance from the GNS3 server (recommended)"))
         self.uiImportApplianceFromFileRadioButton.setText(_translate("NewTemplateWizard", "&Import an appliance file (.gns3a extension)"))
-        self.uiCreateTemplateManuallyRadioButton.setText(_translate("NewTemplateWizard", "&Create a template manually"))
+        self.uiCreateTemplateManuallyRadioButton.setText(_translate("NewTemplateWizard", "&Manually create a new template"))
         self.uiApplianceFromServerWizardPage.setTitle(_translate("NewTemplateWizard", "Appliances from server"))
         self.uiApplianceFromServerWizardPage.setSubTitle(_translate("NewTemplateWizard", "Select one or more appliances to install. Update will request the server to download appliances from our online registry."))
         self.uiFilterLineEdit.setPlaceholderText(_translate("NewTemplateWizard", "Filter"))
