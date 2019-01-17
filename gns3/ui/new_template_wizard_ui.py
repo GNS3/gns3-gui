@@ -12,7 +12,7 @@ class Ui_NewTemplateWizard(object):
     def setupUi(self, NewTemplateWizard):
         NewTemplateWizard.setObjectName("NewTemplateWizard")
         NewTemplateWizard.setWindowModality(QtCore.Qt.ApplicationModal)
-        NewTemplateWizard.resize(932, 391)
+        NewTemplateWizard.resize(1255, 559)
         NewTemplateWizard.setOptions(QtWidgets.QWizard.HaveFinishButtonOnEarlyPages)
         self.uiSelectTemplateSourceWizardPage = QtWidgets.QWizardPage()
         self.uiSelectTemplateSourceWizardPage.setObjectName("uiSelectTemplateSourceWizardPage")
