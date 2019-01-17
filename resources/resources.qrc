@@ -187,6 +187,8 @@
         <file>classic_icons/zoom-in-hover.svg</file>
         <file>classic_icons/zoom-out.svg</file>
         <file>classic_icons/zoom-out-hover.svg</file>
+        <file>classic_icons/inspect.svg</file>
+        <file>classic_icons/inspect-hover.svg</file>
         <file>classic_icons/show-hostname.svg</file>
         <file>classic_icons/show-hostname-hover.svg</file>
         <file>classic_icons/help.svg</file>
@@ -207,6 +209,14 @@
         <file>classic_icons/raise_z_value-hover.svg</file>
         <file>classic_icons/lower_z_value.svg</file>
         <file>classic_icons/lower_z_value-hover.svg</file>
+        <file>classic_icons/capture-start.svg</file>
+        <file>classic_icons/capture-start-hover.svg</file>
+        <file>classic_icons/capture-stop.svg</file>
+        <file>classic_icons/capture-stop-hover.svg</file>
+        <file>classic_icons/filter.svg</file>
+        <file>classic_icons/filter-hover.svg</file>
+        <file>classic_icons/filter-reset.svg</file>
+        <file>classic_icons/filter-reset-hover.svg</file>
         <file>charcoal_icons/add-link-1.svg</file>
         <file>charcoal_icons/add-link-1-hover.svg</file>
         <file>charcoal_icons/add-link-1-cancel.svg</file>
@@ -286,6 +296,8 @@
         <file>charcoal_icons/zoom-in-hover.svg</file>
         <file>charcoal_icons/zoom-out.svg</file>
         <file>charcoal_icons/zoom-out-hover.svg</file>
+        <file>charcoal_icons/inspect.svg</file>
+        <file>charcoal_icons/inspect-hover.svg</file>
         <file>charcoal_icons/show-hostname.svg</file>
         <file>charcoal_icons/show-hostname-hover.svg</file>
         <file>charcoal_icons/help.svg</file>
@@ -306,6 +318,14 @@
         <file>charcoal_icons/raise_z_value-hover.svg</file>
         <file>charcoal_icons/lower_z_value.svg</file>
         <file>charcoal_icons/lower_z_value-hover.svg</file>
+        <file>charcoal_icons/capture-start.svg</file>
+        <file>charcoal_icons/capture-start-hover.svg</file>
+        <file>charcoal_icons/capture-stop.svg</file>
+        <file>charcoal_icons/capture-stop-hover.svg</file>
+        <file>charcoal_icons/filter.svg</file>
+        <file>charcoal_icons/filter-hover.svg</file>
+        <file>charcoal_icons/filter-reset.svg</file>
+        <file>charcoal_icons/filter-reset-hover.svg</file>
         <file>images/vmware_fusion_banner.png</file>
         <file>images/vmware_workstation_banner.png</file>
         <file>styles/charcoal.css</file>

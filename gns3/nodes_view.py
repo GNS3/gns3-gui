@@ -26,6 +26,7 @@ from .qt import QtCore, QtGui, QtWidgets, qpartial
 from .controller import Controller
 from .template_manager import TemplateManager
 from .dialogs.configuration_dialog import ConfigurationDialog
+from .utils.get_icon import get_icon
 
 from gns3.modules.builtin import Builtin
 from gns3.modules.dynamips import Dynamips
@@ -184,7 +185,7 @@ class NodesView(QtWidgets.QTreeWidget):
 
         menu = QtWidgets.QMenu()
         refresh_action = QtWidgets.QAction("Refresh templates", menu)
-        refresh_action.setIcon(QtGui.QIcon(":/icons/reload.svg"))
+        refresh_action.setIcon(get_icon("reload.svg"))
         refresh_action.triggered.connect(self.refresh)
         menu.addAction(refresh_action)
 
@@ -197,12 +198,12 @@ class NodesView(QtWidgets.QTreeWidget):
             configuration_page = TEMPLATE_TYPE_TO_CONFIGURATION_PAGE.get(template.template_type())
             if not template.builtin() and configuration_page:
                 configure_action = QtWidgets.QAction("Configure template", menu)
-                configure_action.setIcon(QtGui.QIcon(":/icons/configuration.svg"))
+                configure_action.setIcon(get_icon("configuration.svg"))
                 configure_action.triggered.connect(qpartial(self._configurationSlot, template, configuration_page))
                 menu.addAction(configure_action)
 
                 delete_action = QtWidgets.QAction("Delete template", menu)
-                delete_action.setIcon(QtGui.QIcon(":/icons/delete.svg"))
+                delete_action.setIcon(get_icon("delete.svg"))
                 delete_action.triggered.connect(qpartial(self._deleteSlot, template))
                 menu.addAction(delete_action)
 
