@@ -123,7 +123,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
 
         # try to guess the platform
         image = os.path.basename(self.uiIOSImageLineEdit.text())
-        match = re.match("^(c[0-9]+)p?\\-\w+", image.lower())
+        match = re.match(r"^(c[0-9]+)p?\\-\w+", image.lower())
         if not match:
             QtWidgets.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
             return

@@ -33,5 +33,5 @@ def normalize_filename(filename):
     """
 
     filename = unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore').decode('ascii')
-    filename = re.sub('[^\w\s-]', '', filename).strip()
-    return re.sub('[-\s]+', '-', filename)
+    filename = re.sub(r'[^\w\s-]', '', filename).strip()
+    return re.sub(r'[-\s]+', '-', filename)

@@ -111,7 +111,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
 
         # try to guess the platform
         image = os.path.basename(path)
-        match = re.match("^(c[0-9]+)\\-\w+", image)
+        match = re.match(r"^(c[0-9]+)\\-\w+", image)
         if not match:
             QtWidgets.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
             return

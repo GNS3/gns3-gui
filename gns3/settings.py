@@ -57,7 +57,7 @@ if sys.platform.startswith("win"):
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
                                              'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "telnet %h %p"'.format(program_files_x86),
-                                             'Royal TS': '{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:%h /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="%p" /p:Name="%d"'.format(program_files),
+                                             'Royal TS': r'{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:%h /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="%p" /p:Name="%d"'.format(program_files),
                                              'SuperPutty': r'SuperPutty.exe -telnet "%h -P %p -wt \"%d\""',
                                              'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /N "%d" /T /TELNET %h %p'.format(program_files),
                                              'SecureCRT (personal profile)': r'"{}\AppData\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "%d" /TELNET %h %p'.format(userprofile),
@@ -185,7 +185,7 @@ elif sys.platform.startswith("darwin"):
         " -e '  open location \"vnc://%h:%p\"'"
         " -e 'end tell'",
         'Chicken of the VNC': "/Applications/Chicken.app/Contents/MacOS/Chicken %h:%p",
-        'Chicken of the VNC < 2.2': "/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p",
+        'Chicken of the VNC < 2.2': r"/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p",
         'Royal TSX': "open 'rtsx://vnc%3A%2F%2F%h:%p'",
     }
 
@@ -234,8 +234,8 @@ WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
 
 if sys.platform.startswith("win"):
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "{}\Wireshark\wireshark.exe %c".format(program_files),
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(program_files)}
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: r"{}\Wireshark\wireshark.exe %c".format(program_files),
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: r'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(program_files)}
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X

@@ -302,7 +302,7 @@ class Link(QtCore.QObject):
             self._source_port.name(),
             self._destination_node.name(),
             self._destination_port.name())
-        return re.sub("[^0-9A-Za-z_-]", "", capture_file_name)
+        return re.sub(r"[^0-9A-Za-z_-]", "", capture_file_name)
 
     def deleteLink(self, skip_controller=False):
         """
