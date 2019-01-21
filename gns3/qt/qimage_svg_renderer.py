@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import re
 import xml.etree.ElementTree as ET
 
 from . import QtCore
@@ -35,12 +36,14 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
     """
 
     def __init__(self, path_or_data=None, fallback=None):
+
         super().__init__()
         self._fallback = fallback
         self._svg = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}"></svg>"""
         self.load(path_or_data)
 
     def load(self, path_or_data):
+
         try:
             path_exists = os.path.exists(path_or_data)
         except ValueError:  # On windows we can get an error because the path is too long (it's the svg data)
@@ -91,6 +94,43 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
                            </svg>"""
             res = super().load(self._svg.encode())
         return res
+
+    def resize(self, new_height, new_width=None):
+
+        if not self.isValid():
+            log.error("QSvgRenderer is not valid")
+            return
+
+        size = self.defaultSize()
+        data = self._svg.encode()
+        height = size.height()
+        width = size.width()
+
+        if not new_width:
+            new_width = round(width / height * new_height)
+
+        add_attr = []
+        svg_header, svg_tag, svg_data = re.split(b'(<svg[^>]*>)', data, maxsplit=1)
+
+        attr = 'height="{}"'.format(new_height).encode()
+        svg_tag, count = re.subn(b'height="[^"]*"', attr, svg_tag, count=1)
+        if not count:
+            add_attr.append(attr)
+
+        attr = 'width="{}"'.format(new_width).encode()
+        svg_tag, count = re.subn(b'width="[^"]*"', attr, svg_tag, count=1)
+        if not count:
+            add_attr.append(attr)
+
+        if b'viewBox="' not in svg_tag:
+            add_attr.append('viewBox="0 0 {} {}"'.format(width, height).encode())
+
+        if add_attr:
+            svg_tag = svg_tag.replace(b'<svg', b'<svg ' + b' '.join(add_attr), 1)
+
+        res = super().load(svg_header + svg_tag + svg_data)
+        if res is False:
+            log.error("Could not resize QSvgRenderer")
 
     def svg(self):
         """

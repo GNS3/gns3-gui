@@ -186,7 +186,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
 
     def _finishSymbolUpload(self, path, result, error=False, **kwargs):
         if error:
-            log.error("Error while uploading symbol: {}".format(path))
+            log.error("Error while uploading symbol: {}: {}".format(path, result.get("message", "unknown")))
             return
         self.uiSymbolLineEdit.clear()
         self.uiSymbolLineEdit.setText(path)
