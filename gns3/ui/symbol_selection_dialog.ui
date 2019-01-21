@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>521</width>
-    <height>655</height>
+    <width>776</width>
+    <height>672</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -115,7 +115,7 @@
         <item>
          <widget class="QLabel" name="uiSearchLabel">
           <property name="text">
-           <string>Search:</string>
+           <string>Filter:</string>
           </property>
          </widget>
         </item>
