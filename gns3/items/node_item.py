@@ -151,7 +151,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         renderer = QImageSvgRenderer(path, fallback=":/icons/cancel.svg")
         renderer.setObjectName(path)
         self.setSharedRenderer(renderer)
-        if renderer.defaultSize().height() > 80:
+        if self._settings["limit_size_node_symbols"] is True and renderer.defaultSize().height() > 80:
             # resize the SVG
             renderer.resize(80)
             self.setSharedRenderer(renderer)
