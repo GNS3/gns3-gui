@@ -102,7 +102,6 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
             return
 
         size = self.defaultSize()
-        data = self._svg.encode()
         height = size.height()
         width = size.width()
 
@@ -110,25 +109,26 @@ class QImageSvgRenderer(QtSvg.QSvgRenderer):
             new_width = round(width / height * new_height)
 
         add_attr = []
-        svg_header, svg_tag, svg_data = re.split(b'(<svg[^>]*>)', data, maxsplit=1)
+        svg_header, svg_tag, svg_data = re.split(r'(<svg[^>]*>)', self._svg, maxsplit=1)
 
-        attr = 'height="{}"'.format(new_height).encode()
-        svg_tag, count = re.subn(b'height="[^"]*"', attr, svg_tag, count=1)
+        attr = 'height="{}"'.format(new_height)
+        svg_tag, count = re.subn(r'height="[^"]*"', attr, svg_tag, count=1)
         if not count:
             add_attr.append(attr)
 
-        attr = 'width="{}"'.format(new_width).encode()
-        svg_tag, count = re.subn(b'width="[^"]*"', attr, svg_tag, count=1)
+        attr = 'width="{}"'.format(new_width)
+        svg_tag, count = re.subn(r'width="[^"]*"', attr, svg_tag, count=1)
         if not count:
             add_attr.append(attr)
 
-        if b'viewBox="' not in svg_tag:
-            add_attr.append('viewBox="0 0 {} {}"'.format(width, height).encode())
+        if 'viewBox="' not in svg_tag:
+            add_attr.append('viewBox="0 0 {} {}"'.format(width, height))
 
         if add_attr:
-            svg_tag = svg_tag.replace(b'<svg', b'<svg ' + b' '.join(add_attr), 1)
+            svg_tag = svg_tag.replace('<svg', '<svg ' + ' '.join(add_attr), 1)
 
-        res = super().load(svg_header + svg_tag + svg_data)
+        svg_image = svg_header + svg_tag + svg_data
+        res = super().load(svg_image.encode())
         if res is False:
             log.error("Could not resize QSvgRenderer")
 
