@@ -308,7 +308,8 @@ GRAPHICS_VIEW_SETTINGS = {
     "snap_to_grid": False,
     "show_grid": False,
     "show_interface_labels": False,
-    "show_interface_labels_on_new_project": False
+    "show_interface_labels_on_new_project": False,
+    "limit_size_node_symbols": True
 }
 
 LOCAL_SERVER_SETTINGS = {

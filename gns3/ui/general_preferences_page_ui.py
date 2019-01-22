@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -324,7 +324,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.horizontalLayout_5.addWidget(self.uiDefaultLabelColorPushButton)
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem6)
-        self.gridLayout_8.addLayout(self.horizontalLayout_5, 11, 0, 1, 2)
+        self.gridLayout_8.addLayout(self.horizontalLayout_5, 12, 0, 1, 2)
         self.uiSceneHeightLabel = QtWidgets.QLabel(self.uiSceneTab)
         self.uiSceneHeightLabel.setObjectName("uiSceneHeightLabel")
         self.gridLayout_8.addWidget(self.uiSceneHeightLabel, 2, 0, 1, 1)
@@ -337,7 +337,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.gridLayout_8.addWidget(self.uiSceneHeightSpinBox, 3, 0, 1, 2)
         self.uiLabelPreviewLabel = QtWidgets.QLabel(self.uiSceneTab)
         self.uiLabelPreviewLabel.setObjectName("uiLabelPreviewLabel")
-        self.gridLayout_8.addWidget(self.uiLabelPreviewLabel, 9, 0, 1, 1)
+        self.gridLayout_8.addWidget(self.uiLabelPreviewLabel, 10, 0, 1, 1)
         self.uiDrawLinkStatusPointsCheckBox = QtWidgets.QCheckBox(self.uiSceneTab)
         self.uiDrawLinkStatusPointsCheckBox.setChecked(True)
         self.uiDrawLinkStatusPointsCheckBox.setObjectName("uiDrawLinkStatusPointsCheckBox")
@@ -351,9 +351,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDefaultLabelStylePlainTextEdit.setMaximumSize(QtCore.QSize(16777215, 50))
         self.uiDefaultLabelStylePlainTextEdit.setReadOnly(True)
         self.uiDefaultLabelStylePlainTextEdit.setObjectName("uiDefaultLabelStylePlainTextEdit")
-        self.gridLayout_8.addWidget(self.uiDefaultLabelStylePlainTextEdit, 10, 0, 1, 2)
+        self.gridLayout_8.addWidget(self.uiDefaultLabelStylePlainTextEdit, 11, 0, 1, 2)
         spacerItem7 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_8.addItem(spacerItem7, 12, 0, 1, 1)
+        self.gridLayout_8.addItem(spacerItem7, 13, 0, 1, 1)
         self.uiSceneWidthSpinBox = QtWidgets.QSpinBox(self.uiSceneTab)
         self.uiSceneWidthSpinBox.setMinimum(500)
         self.uiSceneWidthSpinBox.setMaximum(1000000)
@@ -374,6 +374,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiGridSizeSpinBox.setProperty("value", 75)
         self.uiGridSizeSpinBox.setObjectName("uiGridSizeSpinBox")
         self.gridLayout_8.addWidget(self.uiGridSizeSpinBox, 5, 0, 1, 2)
+        self.uiLimitSizeNodeSymbolCheckBox = QtWidgets.QCheckBox(self.uiSceneTab)
+        self.uiLimitSizeNodeSymbolCheckBox.setObjectName("uiLimitSizeNodeSymbolCheckBox")
+        self.gridLayout_8.addWidget(self.uiLimitSizeNodeSymbolCheckBox, 9, 0, 1, 1)
         self.uiMiscTabWidget.addTab(self.uiSceneTab, "")
         self.uiMiscTab = QtWidgets.QWidget()
         self.uiMiscTab.setObjectName("uiMiscTab")
@@ -513,6 +516,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiSceneWidthSpinBox.setSuffix(_translate("GeneralPreferencesPageWidget", " pixels"))
         self.uiShowInterfaceLabelsOnNewProject.setText(_translate("GeneralPreferencesPageWidget", "Show interface labels on new project"))
         self.uiGridSizeLabel.setText(_translate("GeneralPreferencesPageWidget", "Grid size:"))
+        self.uiLimitSizeNodeSymbolCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Limit the size of node symbols"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiSceneTab), _translate("GeneralPreferencesPageWidget", "Topology view"))
         self.uiCheckForUpdateCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically check for update"))
         self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send anonymous crash reports"))

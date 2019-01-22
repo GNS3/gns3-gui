@@ -144,9 +144,14 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
     @qslot
     def _symbolLoadedCallback(self, path, *args):
+
         renderer = QImageSvgRenderer(path, fallback=":/icons/cancel.svg")
         renderer.setObjectName(path)
         self.setSharedRenderer(renderer)
+        if self._settings["limit_size_node_symbols"] is True and renderer.defaultSize().height() > 80:
+            # resize the SVG
+            renderer.resize(80)
+            self.setSharedRenderer(renderer)
         if self._node.settings().get("symbol") != self._symbol:
             self.updateNode()
         if not self._initialized:
