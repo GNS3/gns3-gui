@@ -35,8 +35,22 @@ class NoEditDelegate(QtWidgets.QStyledItemDelegate):
         return None
 
 
-class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConfigurationDialog):
+class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
 
+    def __lt__(self, other):
+        column = self.treeWidget().sortColumn()
+        key1 = self.text(column)
+        key2 = other.text(column)
+        return self.natural_sort_key(key1) < self.natural_sort_key(key2)
+
+    @staticmethod
+    def natural_sort_key(key):
+        regex = r'(\d*\.\d+|\d+)'
+        parts = re.split(regex, key)
+        return tuple((e if i % 2 == 0 else float(e)) for i, e in enumerate(parts))
+
+
+class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConfigurationDialog):
     """
     Custom adapters configuration dialog.
 
@@ -100,7 +114,7 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
 
         adapter_number = 0
         for port_name in self._ports:
-            item = QtWidgets.QTreeWidgetItem(self.uiAdaptersTreeWidget)
+            item = TreeWidgetItem(self.uiAdaptersTreeWidget)
             item.setFlags(item.flags() | QtCore.Qt.ItemIsEditable)
             item.setText(0, "Adapter {}".format(adapter_number))
             item.setData(0, QtCore.Qt.UserRole, adapter_number)
