@@ -741,19 +741,54 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             return
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "info"), items)):
-            # Action: Show node information
-            show_node_info_action = QtWidgets.QAction("Show node information", menu)
-            show_node_info_action.setIcon(get_icon("help.svg"))
-            show_node_info_action.triggered.connect(self.showNodeInfoSlot)
-            menu.addAction(show_node_info_action)
-
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configPage"), items)):
             # Action: Configure node
             configure_action = QtWidgets.QAction("Configure", menu)
             configure_action.setIcon(get_icon("configuration.svg"))
             configure_action.triggered.connect(self.configureActionSlot)
             menu.addAction(configure_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
+            console_action = QtWidgets.QAction("Console", menu)
+            console_action.setIcon(get_icon("console.svg"))
+            console_action.triggered.connect(self.consoleActionSlot)
+            menu.addAction(console_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole"), items)):
+            aux_console_action = QtWidgets.QAction("Auxiliary console", menu)
+            aux_console_action.setIcon(get_icon("aux-console.svg"))
+            aux_console_action.triggered.connect(self.auxConsoleActionSlot)
+            menu.addAction(aux_console_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
+            start_action = QtWidgets.QAction("Start", menu)
+            start_action.setIcon(get_icon("start.svg"))
+            start_action.triggered.connect(self.startActionSlot)
+            menu.addAction(start_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
+            suspend_action = QtWidgets.QAction("Suspend", menu)
+            suspend_action.setIcon(get_icon("pause.svg"))
+            suspend_action.triggered.connect(self.suspendActionSlot)
+            menu.addAction(suspend_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
+            stop_action = QtWidgets.QAction("Stop", menu)
+            stop_action.setIcon(get_icon("stop.svg"))
+            stop_action.triggered.connect(self.stopActionSlot)
+            menu.addAction(stop_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
+            reload_action = QtWidgets.QAction("Reload", menu)
+            reload_action.setIcon(get_icon("reload.svg"))
+            reload_action.triggered.connect(self.reloadActionSlot)
+            menu.addAction(reload_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
+            console_edit_action = QtWidgets.QAction("Custom console", menu)
+            console_edit_action.setIcon(get_icon("console_edit.svg"))
+            console_edit_action.triggered.connect(self.customConsoleActionSlot)
+            menu.addAction(console_edit_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem), items)):
             # Action: Change hostname
@@ -775,30 +810,19 @@ class GraphicsView(QtWidgets.QGraphicsView):
             duplicate_action.triggered.connect(self.duplicateActionSlot)
             menu.addAction(duplicate_action)
 
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "info"), items)):
+            # Action: Show node information
+            show_node_info_action = QtWidgets.QAction("Show node information", menu)
+            show_node_info_action.setIcon(get_icon("help.svg"))
+            show_node_info_action.triggered.connect(self.showNodeInfoSlot)
+            menu.addAction(show_node_info_action)
+
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "nodeDir"), items)):
             # Action: Show in file manager
             show_in_file_manager_action = QtWidgets.QAction("Show in file manager", menu)
             show_in_file_manager_action.setIcon(get_icon("open.svg"))
             show_in_file_manager_action.triggered.connect(self.showInFileManagerSlot)
             menu.addAction(show_in_file_manager_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
-            console_action = QtWidgets.QAction("Console", menu)
-            console_action.setIcon(get_icon("console.svg"))
-            console_action.triggered.connect(self.consoleActionSlot)
-            menu.addAction(console_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
-            console_edit_action = QtWidgets.QAction("Custom console", menu)
-            console_edit_action.setIcon(get_icon("console_edit.svg"))
-            console_edit_action.triggered.connect(self.customConsoleActionSlot)
-            menu.addAction(console_edit_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole"), items)):
-            aux_console_action = QtWidgets.QAction("Auxiliary console", menu)
-            aux_console_action.setIcon(get_icon("aux-console.svg"))
-            aux_console_action.triggered.connect(self.auxConsoleActionSlot)
-            menu.addAction(aux_console_action)
 
         if sys.platform.startswith("win") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
             # Action: bring console or window to front (Windows only)
@@ -836,30 +860,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
             auto_idlepc_action.setIcon(get_icon("calculate.svg"))
             auto_idlepc_action.triggered.connect(self.autoIdlepcActionSlot)
             menu.addAction(auto_idlepc_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            start_action = QtWidgets.QAction("Start", menu)
-            start_action.setIcon(get_icon("start.svg"))
-            start_action.triggered.connect(self.startActionSlot)
-            menu.addAction(start_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            suspend_action = QtWidgets.QAction("Suspend", menu)
-            suspend_action.setIcon(get_icon("pause.svg"))
-            suspend_action.triggered.connect(self.suspendActionSlot)
-            menu.addAction(suspend_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            stop_action = QtWidgets.QAction("Stop", menu)
-            stop_action.setIcon(get_icon("stop.svg"))
-            stop_action.triggered.connect(self.stopActionSlot)
-            menu.addAction(stop_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            reload_action = QtWidgets.QAction("Reload", menu)
-            reload_action.setIcon(get_icon("reload.svg"))
-            reload_action.triggered.connect(self.reloadActionSlot)
-            menu.addAction(reload_action)
 
         if True in list(map(lambda item: isinstance(item, LabelItem), items)):
             text_edit_action = QtWidgets.QAction("Text edit", menu)
