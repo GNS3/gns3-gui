@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -165,7 +165,7 @@ class Ui_dockerVMConfigPageWidget(object):
 
     def retranslateUi(self, dockerVMConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        dockerVMConfigPageWidget.setWindowTitle(_translate("dockerVMConfigPageWidget", "Docker image configuration"))
+        dockerVMConfigPageWidget.setWindowTitle(_translate("dockerVMConfigPageWidget", "Docker container template configuration"))
         self.uiNameLabel.setText(_translate("dockerVMConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("dockerVMConfigPageWidget", "Default name format"))
         self.uiCategoryLabel.setText(_translate("dockerVMConfigPageWidget", "Category"))

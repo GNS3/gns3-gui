@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dynamips IOS Router configuration</string>
+   <string>Dynamips IOS router template configuration</string>
   </property>
   <layout class="QVBoxLayout">
    <item>

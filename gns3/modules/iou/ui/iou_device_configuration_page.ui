@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>IOU device configuration</string>
+   <string>IOU device template configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

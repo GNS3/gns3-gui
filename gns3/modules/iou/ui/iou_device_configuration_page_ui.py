@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -215,7 +215,7 @@ class Ui_iouDeviceConfigPageWidget(object):
 
     def retranslateUi(self, iouDeviceConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        iouDeviceConfigPageWidget.setWindowTitle(_translate("iouDeviceConfigPageWidget", "IOU device configuration"))
+        iouDeviceConfigPageWidget.setWindowTitle(_translate("iouDeviceConfigPageWidget", "IOU device template configuration"))
         self.uiGeneralgroupBox.setTitle(_translate("iouDeviceConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("iouDeviceConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("iouDeviceConfigPageWidget", "Default name format:"))

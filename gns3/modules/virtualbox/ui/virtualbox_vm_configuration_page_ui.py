@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -177,7 +177,7 @@ class Ui_virtualBoxVMConfigPageWidget(object):
 
     def retranslateUi(self, virtualBoxVMConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        virtualBoxVMConfigPageWidget.setWindowTitle(_translate("virtualBoxVMConfigPageWidget", "VirtualBox VM configuration"))
+        virtualBoxVMConfigPageWidget.setWindowTitle(_translate("virtualBoxVMConfigPageWidget", "VirtualBox VM template configuration"))
         self.uiNameLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Default name format:"))
         self.uiSymbolLabel.setText(_translate("virtualBoxVMConfigPageWidget", "Symbol:"))

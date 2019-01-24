@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -453,7 +453,7 @@ class Ui_QemuVMConfigPageWidget(object):
 
     def retranslateUi(self, QemuVMConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        QemuVMConfigPageWidget.setWindowTitle(_translate("QemuVMConfigPageWidget", "QEMU VM configuration"))
+        QemuVMConfigPageWidget.setWindowTitle(_translate("QemuVMConfigPageWidget", "QEMU VM template configuration"))
         self.uiNameLabel.setText(_translate("QemuVMConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("QemuVMConfigPageWidget", "Default name format:"))
         self.uiSymbolLabel.setText(_translate("QemuVMConfigPageWidget", "Symbol:"))

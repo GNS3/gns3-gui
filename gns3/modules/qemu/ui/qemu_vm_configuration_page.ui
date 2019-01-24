@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QEMU VM configuration</string>
+   <string>QEMU VM template configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/traceng/ui/traceng_node_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -76,7 +76,7 @@ class Ui_TraceNGNodeConfigPageWidget(object):
 
     def retranslateUi(self, TraceNGNodeConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        TraceNGNodeConfigPageWidget.setWindowTitle(_translate("TraceNGNodeConfigPageWidget", "TraceNG node configuration"))
+        TraceNGNodeConfigPageWidget.setWindowTitle(_translate("TraceNGNodeConfigPageWidget", "TraceNG node template configuration"))
         self.uiNameLabel.setText(_translate("TraceNGNodeConfigPageWidget", "Name:"))
         self.uiIPAddressLabel.setText(_translate("TraceNGNodeConfigPageWidget", "IP address:"))
         self.uiDefaultDestinationLabel.setText(_translate("TraceNGNodeConfigPageWidget", "Default destination:"))

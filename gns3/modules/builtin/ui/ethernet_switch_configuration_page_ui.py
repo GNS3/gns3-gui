@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/ethernet_switch_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -155,7 +155,7 @@ class Ui_ethernetSwitchConfigPageWidget(object):
 
     def retranslateUi(self, ethernetSwitchConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        ethernetSwitchConfigPageWidget.setWindowTitle(_translate("ethernetSwitchConfigPageWidget", "Ethernet switch configuration"))
+        ethernetSwitchConfigPageWidget.setWindowTitle(_translate("ethernetSwitchConfigPageWidget", "Ethernet switch template configuration"))
         self.uiGeneralGroupBox.setTitle(_translate("ethernetSwitchConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("ethernetSwitchConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("ethernetSwitchConfigPageWidget", "Default name format:"))

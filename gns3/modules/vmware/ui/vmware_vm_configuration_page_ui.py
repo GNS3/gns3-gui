@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vmware/ui/vmware_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -154,7 +154,7 @@ class Ui_VMwareVMConfigPageWidget(object):
 
     def retranslateUi(self, VMwareVMConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        VMwareVMConfigPageWidget.setWindowTitle(_translate("VMwareVMConfigPageWidget", "VMware VM configuration"))
+        VMwareVMConfigPageWidget.setWindowTitle(_translate("VMwareVMConfigPageWidget", "VMware VM template configuration"))
         self.uiNameLabel.setText(_translate("VMwareVMConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("VMwareVMConfigPageWidget", "Default name format:"))
         self.uiSymbolLabel.setText(_translate("VMwareVMConfigPageWidget", "Symbol:"))

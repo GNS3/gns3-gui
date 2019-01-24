@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Cloud configuration</string>
+   <string>Cloud template configuration</string>
   </property>
   <property name="whatsThis">
    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A cloud node allows you to connect your project to the &amp;quot;real world&amp;quot; (a network or host) using either an Ethernet interface, a TAP interface (Linux only) or even an UDP tunnel. &lt;span style=&quot; font-weight:600;&quot;&gt;Please be aware that Wifi interfaces may not work properly.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

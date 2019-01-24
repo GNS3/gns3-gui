@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_node_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -85,7 +85,7 @@ class Ui_VPCSNodeConfigPageWidget(object):
 
     def retranslateUi(self, VPCSNodeConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        VPCSNodeConfigPageWidget.setWindowTitle(_translate("VPCSNodeConfigPageWidget", "VPCS device configuration"))
+        VPCSNodeConfigPageWidget.setWindowTitle(_translate("VPCSNodeConfigPageWidget", "VPCS node template configuration"))
         self.uiNameLabel.setText(_translate("VPCSNodeConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("VPCSNodeConfigPageWidget", "Default name format:"))
         self.uiScriptFileLabel.setText(_translate("VPCSNodeConfigPageWidget", "Base script file:"))

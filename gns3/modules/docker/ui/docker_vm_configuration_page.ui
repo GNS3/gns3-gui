@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Docker image configuration</string>
+   <string>Docker container template configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/dynamips/ui/ios_router_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -562,7 +562,7 @@ class Ui_iosRouterConfigPageWidget(object):
 
     def retranslateUi(self, iosRouterConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        iosRouterConfigPageWidget.setWindowTitle(_translate("iosRouterConfigPageWidget", "Dynamips IOS Router configuration"))
+        iosRouterConfigPageWidget.setWindowTitle(_translate("iosRouterConfigPageWidget", "Dynamips IOS router template configuration"))
         self.uiNameLabel.setText(_translate("iosRouterConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("iosRouterConfigPageWidget", "Default name format:"))
         self.uiPlatformLabel.setText(_translate("iosRouterConfigPageWidget", "Platform:"))

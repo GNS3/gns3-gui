@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/cloud_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -289,7 +289,7 @@ class Ui_cloudConfigPageWidget(object):
 
     def retranslateUi(self, cloudConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        cloudConfigPageWidget.setWindowTitle(_translate("cloudConfigPageWidget", "Cloud configuration"))
+        cloudConfigPageWidget.setWindowTitle(_translate("cloudConfigPageWidget", "Cloud template configuration"))
         cloudConfigPageWidget.setWhatsThis(_translate("cloudConfigPageWidget", "<html><head/><body><p>A cloud node allows you to connect your project to the &quot;real world&quot; (a network or host) using either an Ethernet interface, a TAP interface (Linux only) or even an UDP tunnel. <span style=\" font-weight:600;\">Please be aware that Wifi interfaces may not work properly.</span></p></body></html>"))
         self.uiAddEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add"))
         self.uiAddAllEthernetPushButton.setText(_translate("cloudConfigPageWidget", "&Add all"))
