@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/appliance_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -176,11 +176,9 @@ class Ui_ApplianceWizard(object):
         self.uiQemuListLabel.setText(_translate("ApplianceWizard", "Qemu binary:"))
         self.uiFilesWizardPage.setTitle(_translate("ApplianceWizard", "Required files"))
         self.uiFilesWizardPage.setSubTitle(_translate("ApplianceWizard", "The following files are required to install the appliance"))
-        self.uiApplianceVersionTreeWidget.headerItem().setText(0, _translate("ApplianceWizard", "Appliance version"))
-        self.uiApplianceVersionTreeWidget.headerItem().setText(1, _translate("ApplianceWizard", "Filename"))
-        self.uiApplianceVersionTreeWidget.headerItem().setText(2, _translate("ApplianceWizard", "Size"))
-        self.uiApplianceVersionTreeWidget.headerItem().setText(3, _translate("ApplianceWizard", "Status"))
-        self.uiApplianceVersionTreeWidget.headerItem().setText(4, _translate("ApplianceWizard", "File version"))
+        self.uiApplianceVersionTreeWidget.headerItem().setText(0, _translate("ApplianceWizard", "Appliance version and files"))
+        self.uiApplianceVersionTreeWidget.headerItem().setText(1, _translate("ApplianceWizard", "Size"))
+        self.uiApplianceVersionTreeWidget.headerItem().setText(2, _translate("ApplianceWizard", "Status"))
         self.uiImportPushButton.setText(_translate("ApplianceWizard", "&Import"))
         self.uiDownloadPushButton.setText(_translate("ApplianceWizard", "&Download"))
         self.allowCustomFiles.setText(_translate("ApplianceWizard", "Allow custom files"))

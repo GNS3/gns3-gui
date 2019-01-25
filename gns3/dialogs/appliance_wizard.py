@@ -71,6 +71,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.uiCreateVersionPushButton.clicked.connect(self._createVersionPushButtonClickedSlot)
         self.allowCustomFiles.clicked.connect(self._allowCustomFilesChangedSlot)
 
+        #FIXME: deactivate the create version feature (confusing and maybe not necessary, TBD)
+        self.uiCreateVersionPushButton.hide()
+
         # directories where to search for images
         images_directories = list()
         images_directories.append(os.path.dirname(self._path))
@@ -321,7 +324,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.uiApplianceVersionTreeWidget.clear()
 
         for version in self._appliance["versions"]:
-            top = QtWidgets.QTreeWidgetItem(self.uiApplianceVersionTreeWidget, ["{} {}".format(self._appliance["product_name"], version["name"])])
+            top = QtWidgets.QTreeWidgetItem(self.uiApplianceVersionTreeWidget, ["{} version {}".format(self._appliance["product_name"], version["name"])])
             size = 0
             status = "Ready to install"
             for image in version["images"].values():
@@ -329,16 +332,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     status = "Missing files"
 
                 size += image.get("filesize", 0)
-                image_widget = QtWidgets.QTreeWidgetItem(["",
-                                                          image["filename"],
+                image_widget = QtWidgets.QTreeWidgetItem([image["filename"],
                                                           human_filesize(image.get("filesize", 0)),
-                                                          image["status"],
-                                                          image["version"],
-                                                          image.get("md5sum", "")])
+                                                          image["status"]])
                 if image["status"] == "Missing":
-                    image_widget.setForeground(3, QtGui.QBrush(QtGui.QColor("red")))
+                    image_widget.setForeground(2, QtGui.QBrush(QtGui.QColor("red")))
                 else:
-                    image_widget.setForeground(3, QtGui.QBrush(QtGui.QColor("green")))
+                    image_widget.setForeground(2, QtGui.QBrush(QtGui.QColor("green")))
 
                 # Associated data stored are col 0: version, col 1: image
                 image_widget.setData(0, QtCore.Qt.UserRole, version)
@@ -352,15 +352,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
             expand = True
             if status == "Missing files":
-                top.setForeground(3, QtGui.QBrush(QtGui.QColor("red")))
+                top.setForeground(2, QtGui.QBrush(QtGui.QColor("red")))
             else:
                 expand = False
-                top.setForeground(3, QtGui.QBrush(QtGui.QColor("green")))
+                top.setForeground(2, QtGui.QBrush(QtGui.QColor("green")))
 
-            top.setData(2, QtCore.Qt.DisplayRole, human_filesize(size))
-            top.setData(3, QtCore.Qt.DisplayRole, status)
-            top.setData(2, QtCore.Qt.UserRole, self._appliance)
+            top.setData(1, QtCore.Qt.DisplayRole, human_filesize(size))
+            top.setData(2, QtCore.Qt.DisplayRole, status)
             top.setData(0, QtCore.Qt.UserRole, version)
+            top.setData(2, QtCore.Qt.UserRole, self._appliance)
             self.uiApplianceVersionTreeWidget.addTopLevelItem(top)
             if expand:
                 top.setExpanded(True)
@@ -630,7 +630,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 return False
             appliance = current.data(2, QtCore.Qt.UserRole)
             if not self._appliance.is_version_installable(version["name"]):
-                QtWidgets.QMessageBox.warning(self, "Appliance", "Sorry, you cannot install the '{}' appliance with missing files".format(appliance["name"]))
+                QtWidgets.QMessageBox.warning(self, "Appliance", "Sorry, you cannot install the '{}' appliance (version {}) with missing files".format(appliance["name"], version["name"]))
                 return False
             reply = QtWidgets.QMessageBox.question(self, "Appliance", "Would you like to install {} version {}?".format(appliance["name"], version["name"]),
                                                    QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
@@ -729,7 +729,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if checked:
             reply = QtWidgets.QMessageBox.question(self, "Custom files",
                 "This option allows files with different MD5 checksums. This feature is only for advanced users and can lead "
-                "to unexpected problems. Are you sure you would like to enable it?",
+                "to unexpected problems. Do you want to proceed?",
                 QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
 
             if reply == QtWidgets.QMessageBox.No:
