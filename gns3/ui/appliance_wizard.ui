@@ -240,7 +240,7 @@
       </attribute>
       <column>
        <property name="text">
-        <string>Appliance version</string>
+        <string>Appliance version and files</string>
        </property>
        <property name="font">
         <font>
@@ -251,22 +251,12 @@
       </column>
       <column>
        <property name="text">
-        <string>Filename</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>Size</string>
        </property>
       </column>
       <column>
        <property name="text">
         <string>Status</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>File version</string>
        </property>
       </column>
      </widget>
