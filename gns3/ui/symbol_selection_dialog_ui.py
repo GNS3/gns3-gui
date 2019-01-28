@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/symbol_selection_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SymbolSelectionDialog(object):
     def setupUi(self, SymbolSelectionDialog):
         SymbolSelectionDialog.setObjectName("SymbolSelectionDialog")
-        SymbolSelectionDialog.resize(776, 672)
+        SymbolSelectionDialog.resize(718, 626)
         SymbolSelectionDialog.setModal(True)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(SymbolSelectionDialog)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -31,21 +31,16 @@ class Ui_SymbolSelectionDialog(object):
         self.uiCustomSymbolGroupBox.setObjectName("uiCustomSymbolGroupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.uiCustomSymbolGroupBox)
         self.gridLayout.setObjectName("gridLayout")
-        self.uiSymbolLabel = QtWidgets.QLabel(self.uiCustomSymbolGroupBox)
-        self.uiSymbolLabel.setObjectName("uiSymbolLabel")
-        self.gridLayout.addWidget(self.uiSymbolLabel, 0, 0, 1, 1)
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.uiSymbolLineEdit = QtWidgets.QLineEdit(self.uiCustomSymbolGroupBox)
-        self.uiSymbolLineEdit.setObjectName("uiSymbolLineEdit")
-        self.horizontalLayout_7.addWidget(self.uiSymbolLineEdit)
         self.uiSymbolToolButton = QtWidgets.QToolButton(self.uiCustomSymbolGroupBox)
         self.uiSymbolToolButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
         self.uiSymbolToolButton.setObjectName("uiSymbolToolButton")
-        self.horizontalLayout_7.addWidget(self.uiSymbolToolButton)
-        self.gridLayout.addLayout(self.horizontalLayout_7, 0, 1, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem1, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.uiSymbolToolButton, 0, 2, 1, 1)
+        self.uiSymbolLineEdit = QtWidgets.QLineEdit(self.uiCustomSymbolGroupBox)
+        self.uiSymbolLineEdit.setObjectName("uiSymbolLineEdit")
+        self.gridLayout.addWidget(self.uiSymbolLineEdit, 0, 1, 1, 1)
+        self.uiSymbolLabel = QtWidgets.QLabel(self.uiCustomSymbolGroupBox)
+        self.uiSymbolLabel.setObjectName("uiSymbolLabel")
+        self.gridLayout.addWidget(self.uiSymbolLabel, 0, 0, 1, 1)
         self.verticalLayout_2.addWidget(self.uiCustomSymbolGroupBox)
         self.uiBuiltInGroupBox = QtWidgets.QGroupBox(SymbolSelectionDialog)
         self.uiBuiltInGroupBox.setObjectName("uiBuiltInGroupBox")
@@ -67,14 +62,11 @@ class Ui_SymbolSelectionDialog(object):
         self.uiSymbolListWidget.setMinimumSize(QtCore.QSize(0, 300))
         self.uiSymbolListWidget.setObjectName("uiSymbolListWidget")
         self.verticalLayout.addWidget(self.uiSymbolListWidget)
-        self.label = QtWidgets.QLabel(self.uiBuiltInGroupBox)
-        self.label.setObjectName("label")
-        self.verticalLayout.addWidget(self.label)
         self.verticalLayout_2.addWidget(self.uiBuiltInGroupBox)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem2)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(SymbolSelectionDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
         self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
@@ -95,11 +87,10 @@ class Ui_SymbolSelectionDialog(object):
         self.uiCustomSymbolRadioButton.setText(_translate("SymbolSelectionDialog", "Use a custom symbol"))
         self.uiBuiltInSymbolRadioButton.setText(_translate("SymbolSelectionDialog", "Symbols library"))
         self.uiCustomSymbolGroupBox.setTitle(_translate("SymbolSelectionDialog", "Custom symbol"))
-        self.uiSymbolLabel.setText(_translate("SymbolSelectionDialog", "Path:"))
         self.uiSymbolToolButton.setText(_translate("SymbolSelectionDialog", "&Browse..."))
+        self.uiSymbolLabel.setText(_translate("SymbolSelectionDialog", "Path:"))
         self.uiBuiltInGroupBox.setTitle(_translate("SymbolSelectionDialog", "Symbols"))
         self.uiBuiltinSymbolOnlyCheckBox.setText(_translate("SymbolSelectionDialog", "Show only built-in symbols"))
         self.uiSearchLabel.setText(_translate("SymbolSelectionDialog", "Filter:"))
-        self.label.setText(_translate("SymbolSelectionDialog", "You can add your own symbols in the symbols directory."))
 
 from . import resources_rc

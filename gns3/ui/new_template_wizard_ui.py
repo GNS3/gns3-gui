@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/new_template_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ class Ui_NewTemplateWizard(object):
     def setupUi(self, NewTemplateWizard):
         NewTemplateWizard.setObjectName("NewTemplateWizard")
         NewTemplateWizard.setWindowModality(QtCore.Qt.ApplicationModal)
-        NewTemplateWizard.resize(1147, 600)
+        NewTemplateWizard.resize(900, 600)
         NewTemplateWizard.setOptions(QtWidgets.QWizard.HaveFinishButtonOnEarlyPages)
         self.uiSelectTemplateSourceWizardPage = QtWidgets.QWizardPage()
         self.uiSelectTemplateSourceWizardPage.setObjectName("uiSelectTemplateSourceWizardPage")

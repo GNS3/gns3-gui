@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
-    <height>672</height>
+    <width>718</width>
+    <height>626</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,42 +57,25 @@
       <string>Custom symbol</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="2">
+       <widget class="QToolButton" name="uiSymbolToolButton">
+        <property name="text">
+         <string>&amp;Browse...</string>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextOnly</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="uiSymbolLineEdit"/>
+      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="uiSymbolLabel">
         <property name="text">
          <string>Path:</string>
         </property>
        </widget>
-      </item>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <item>
-         <widget class="QLineEdit" name="uiSymbolLineEdit"/>
-        </item>
-        <item>
-         <widget class="QToolButton" name="uiSymbolToolButton">
-          <property name="text">
-           <string>&amp;Browse...</string>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextOnly</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="1">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>
@@ -131,13 +114,6 @@
           <width>0</width>
           <height>300</height>
          </size>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>You can add your own symbols in the symbols directory.</string>
         </property>
        </widget>
       </item>

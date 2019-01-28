@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SetupWizard(object):
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName("SetupWizard")
-        SetupWizard.resize(1230, 608)
+        SetupWizard.resize(1069, 615)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -243,7 +243,7 @@ class Ui_SetupWizard(object):
         _translate = QtCore.QCoreApplication.translate
         SetupWizard.setWindowTitle(_translate("SetupWizard", "Setup Wizard"))
         self.uiServerWizardPage.setTitle(_translate("SetupWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("SetupWizard", "Please choose how would like to run your GNS3 network simulations. The GNS3 VM method is strongly recommended on Windows and Mac OS X."))
+        self.uiServerWizardPage.setSubTitle(_translate("SetupWizard", "Please choose how would like to run your GNS3 network simulations. The GNS3 VM option is strongly recommended on Windows and Mac OS X."))
         self.uiVMRadioButton.setToolTip(_translate("SetupWizard", "Dynamips, IOU, VPCS and Qemu will use this virtual machine."))
         self.uiVMRadioButton.setText(_translate("SetupWizard", "Run appliances in a virtual machine"))
         self.label.setText(_translate("SetupWizard", "Requires to download and install the GNS3 VM (available for free) "))

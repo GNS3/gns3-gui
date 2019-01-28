@@ -18,6 +18,7 @@
 import sys
 import tempfile
 import json
+import sip
 
 from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.controller import Controller
@@ -83,6 +84,9 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         self._get_appliances_from_server(appliance_filter=text)
 
     def _setItemIcon(self, item, icon):
+
+        if item is None or sip.isdeleted(item):
+            return
         item.setIcon(0, icon)
 
     def _get_tooltip_text(self, appliance):
