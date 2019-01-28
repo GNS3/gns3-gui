@@ -79,6 +79,6 @@ class BuiltinPreferencesPage(QtWidgets.QWidget, Ui_BuiltinPreferencesPageWidget)
         new_settings = {}
 
         # save the default NAT interface
-        default_nat_interface = self.uiNATInterfaceComboBox.currentText().lower()
+        default_nat_interface = self.uiNATInterfaceComboBox.currentText()
         new_settings["default_nat_interface"] = default_nat_interface
         Builtin.instance().setSettings(new_settings)
