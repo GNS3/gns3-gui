@@ -342,9 +342,9 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiRectangleSelectedItemCheckBox.setChecked(settings["draw_rectangle_selected_item"])
         self.uiDrawLinkStatusPointsCheckBox.setChecked(settings["draw_link_status_points"])
         self.uiShowInterfaceLabelsOnNewProject.setChecked(settings["show_interface_labels_on_new_project"])
+        self.uiLimitSizeNodeSymbolCheckBox.setChecked(settings["limit_size_node_symbols"])
         self.uiShowGridOnNewProject.setChecked(settings["show_grid_on_new_project"])
         self.uiSnapToGridOnNewProject.setChecked(settings["snap_to_grid_on_new_project"])
-        self.uiLimitSizeNodeSymbolCheckBox.setChecked(settings["limit_size_node_symbols"])
 
         qt_font = QtGui.QFont()
         if qt_font.fromString(settings["default_label_font"]):

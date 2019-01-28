@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>754</width>
-    <height>526</height>
+    <width>1233</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,12 +15,6 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>775</width>
-    <height>563</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Setup Wizard</string>
@@ -39,7 +33,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your GNS3 network simulations. The GNS3 VM is strongly recommended on Windows and Mac OS X.</string>
+    <string>Please choose how would like to run your GNS3 network simulations. The GNS3 VM option is strongly recommended on Windows and Mac OS X.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
@@ -60,7 +54,7 @@
        <string>Dynamips, IOU, VPCS and Qemu will use this virtual machine.</string>
       </property>
       <property name="text">
-       <string>Run modern IOS (IOSv or IOU), ASA and appliances from non Cisco manufacturers. </string>
+       <string>Run appliances in a virtual machine</string>
       </property>
       <property name="checked">
        <bool>true</bool>
@@ -70,7 +64,7 @@
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>This will require an additional VM (the GNS3 VM is available for free) .</string>
+       <string>Requires to download and install the GNS3 VM (available for free) </string>
       </property>
       <property name="margin">
        <number>0</number>
@@ -92,14 +86,14 @@
        <string>Eveything that is supported by your system will run on your computer.</string>
       </property>
       <property name="text">
-       <string>Run only legacy IOS on my computer</string>
+       <string>Run appliances on my local computer</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QLabel" name="uiLocalLabel">
       <property name="text">
-       <string>Requires IOS images &lt;= C7200</string>
+       <string>A limited number of appliances like the Cisco IOS routers &lt;= C7200 can be run</string>
       </property>
       <property name="indent">
        <number>17</number>
@@ -115,14 +109,14 @@
        </font>
       </property>
       <property name="text">
-       <string>Run everything on a remote server (advanced usage)</string>
+       <string>Run appliances on a remote server (advanced usage)</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>The server will be on a remote computer and can be shared with multiple users.</string>
+       <string>The server will be on a remote computer and can be shared with multiple users</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -226,15 +220,12 @@
     <string>Local server status</string>
    </property>
    <property name="subTitle">
-    <string>Validation of the configuration of the local server</string>
+    <string>Validation of the configuration for the local server</string>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_7">
-    <item>
-     <widget class="QLabel" name="uiLocalServerStatusLabel">
-      <property name="text">
-       <string>Local server status</string>
-      </property>
-      <property name="wordWrap">
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
+     <widget class="QTextEdit" name="uiLocalServerTextEdit">
+      <property name="readOnly">
        <bool>true</bool>
       </property>
      </widget>
@@ -248,97 +239,102 @@
    <property name="subTitle">
     <string>In order to run the GNS3 VM you must first have VMware or VirtualBox installed and the GNS3 VM.ova imported with one of these software.</string>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
-          <property name="text">
-           <string>Virtualization software:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="uiVmwareRadioButton">
-          <property name="toolTip">
-           <string>VMware is recommended to run Qemu based appliances (required for KVM).</string>
-          </property>
-          <property name="text">
-           <string>VMware (recommended)</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
-          <property name="toolTip">
-           <string>Use VirtualBox if you intend to only use Dynamips, IOU or VPCS.</string>
-          </property>
-          <property name="text">
-           <string>VirtualBox</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QPushButton" name="uiVMwareBannerButton">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normalon>:/images/vmware_fusion_banner.png</normalon>
-         </iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>454</width>
-          <height>150</height>
-         </size>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QLabel" name="uiGNS3VMDownloadLinkUrlLabel">
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The GNS3 VM can be &lt;a href=&quot;https://github.com/GNS3/gns3-gui/releases/download/v1.4.1/GNS3.VM.VMware.Workstation.1.4.1.zip&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloaded here&lt;/span&gt;&lt;/a&gt;. Import the VM in your virtualization software and hit refresh.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>Virtualization software:</string>
       </property>
-      <property name="openExternalLinks">
+     </widget>
+    </item>
+    <item row="0" column="2" rowspan="4">
+     <widget class="QPushButton" name="uiVMwareBannerButton">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../../resources/resources.qrc">
+        <normaloff>:/images/vmware_fusion_banner.png</normaloff>:/images/vmware_fusion_banner.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>300</width>
+        <height>150</height>
+       </size>
+      </property>
+      <property name="flat">
        <bool>true</bool>
       </property>
      </widget>
     </item>
-    <item>
+    <item row="1" column="0">
+     <widget class="QRadioButton" name="uiVmwareRadioButton">
+      <property name="toolTip">
+       <string>VMware is recommended to run Qemu based appliances (required for KVM).</string>
+      </property>
+      <property name="text">
+       <string>VMware (recommended)</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>317</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="0">
+     <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
+      <property name="toolTip">
+       <string>Use VirtualBox if you intend to only use Dynamips, IOU or VPCS.</string>
+      </property>
+      <property name="text">
+       <string>VirtualBox</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
      <widget class="QLabel" name="uiVMNameLabel">
       <property name="text">
        <string>VM name:</string>
       </property>
      </widget>
     </item>
-    <item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="uiCPULabel">
+      <property name="text">
+       <string>vCPU cores:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="uiRAMLabel">
+      <property name="text">
+       <string>RAM size:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="uiGNS3VMDownloadLinkUrlLabel">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The GNS3 VM can be &lt;a href=&quot;https://github.com/GNS3/gns3-gui/releases/download/v1.4.1/GNS3.VM.VMware.Workstation.1.4.1.zip&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloaded here&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="openExternalLinks">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="3">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QComboBox" name="uiVMListComboBox">
@@ -359,14 +355,7 @@
       </item>
      </layout>
     </item>
-    <item>
-     <widget class="QLabel" name="uiCPULabel">
-      <property name="text">
-       <string>vCPU cores:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
+    <item row="8" column="0" colspan="3">
      <widget class="QSpinBox" name="uiCPUSpinBox">
       <property name="minimum">
        <number>1</number>
@@ -379,14 +368,7 @@
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QLabel" name="uiRAMLabel">
-      <property name="text">
-       <string>RAM size:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
+    <item row="10" column="0" colspan="3">
      <widget class="QSpinBox" name="uiRAMSpinBox">
       <property name="enabled">
        <bool>true</bool>

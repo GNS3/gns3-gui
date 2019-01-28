@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.1.12 23/01/2019
+
+* Option to resize SVG symbols that are too big (height above 80px, activated by default). Ref #2674.
+* Update VMware banners and links.
+* Allow users to refresh the template list in the nodes view panel.
+* Fix Dynamips decompress doesn't work with relative images. Fixes #2648.
+* Update download URL for "Check For Update".
+
 ## 2.1.11 28/09/2018
 
 * Handle deleted SIP objects.

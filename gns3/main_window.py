@@ -940,9 +940,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             setup_wizard.show()
             res = setup_wizard.exec_()
             # start and connect to the local server if needed
-            LocalServer.instance().localServerAutoStartIfRequire()
-            if res:
-                self._newTemplateActionSlot()
+            LocalServer.instance().localServerAutoStartIfRequired()
 
     def _aboutQtActionSlot(self):
         """
@@ -1210,7 +1208,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._setupWizardActionSlot()
         else:
             # start and connect to the local server if needed
-            LocalServer.instance().localServerAutoStartIfRequire()
+            LocalServer.instance().localServerAutoStartIfRequired()
             if self._open_file_at_startup:
                 self.loadPath(self._open_file_at_startup)
                 self._open_file_at_startup = None

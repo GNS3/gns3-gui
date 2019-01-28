@@ -267,7 +267,7 @@ class LocalServer(QtCore.QObject):
                 if need_restart:
                     self.stopLocalServer(wait=True)
 
-                self.localServerAutoStartIfRequire()
+                self.localServerAutoStartIfRequired()
             # If the controller is remote:
             else:
                 self.stopLocalServer(wait=True)
@@ -313,9 +313,9 @@ class LocalServer(QtCore.QObject):
             # Permission issue, or process no longer exists, or file is empty
             return
 
-    def localServerAutoStartIfRequire(self):
+    def localServerAutoStartIfRequired(self):
         """
-        Try to start the embed gns3 server.
+        Try to start the embedded gns3 server.
         """
 
         if not self.shouldLocalServerAutoStart():
@@ -360,7 +360,6 @@ class LocalServer(QtCore.QObject):
         self._server_started_by_me = True
         self._http_client = HTTPClient(self._settings)
         Controller.instance().setHttpClient(self._http_client)
-
         return True
 
     def initLocalServer(self):

@@ -115,6 +115,7 @@ def get_windows_interfaces():
 
     return interfaces
 
+
 def interfaces():
     """
     Gets the network interfaces on this server.
