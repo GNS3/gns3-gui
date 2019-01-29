@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/node_info_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_NodeInfoDialog(object):
     def setupUi(self, NodeInfoDialog):
         NodeInfoDialog.setObjectName("NodeInfoDialog")
-        NodeInfoDialog.resize(1157, 600)
+        NodeInfoDialog.resize(850, 600)
         self.verticalLayout = QtWidgets.QVBoxLayout(NodeInfoDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiTabWidget = QtWidgets.QTabWidget(NodeInfoDialog)
