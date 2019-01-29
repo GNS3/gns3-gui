@@ -1,5 +1,104 @@
 # Change Log
 
+## 2.2.0a1 29/01/2019
+
+* Fix default NAT interface not restored on Windows. Fixes #2681
+* Merge and improvements to the setup wizard. Fixes #2676.
+* Adjust the setup wizard (VMware image size, layouts).
+* Refactor appliance wizard.
+* Natural sorting support for custom adapters tree widget.
+* Add the word "template" to configuration dialog titles.
+* Reorder node contextual menu.
+* Option to limit the size of node symbols (activated by default). Ref #2674.
+* Resize SVG node symbol only when height is above 80px. Ref #2674 Work on str instead of binary when resizing SVG symbol.
+* Automatically resize SVG symbols that are too big. Ref #2674.
+* Bigger new template wizard.
+* Fix DeprecationWarning: invalid escape sequence. Fixes https://github.com/GNS3/gns3-gui/issues/2670
+* Use theme icons in other contextual menus. Fixes #2669
+* Change some text regarding appliance installation.
+* Handle errors when creating template from appliance.
+* Template creation from an appliance.
+* Basic support to create new template from appliance.
+* Fix race condition when trying to automatically open a console and the project is already running. Fixes #1493.
+* Fix issue with IOS c7200 templates and usage variable.
+* Add usage instructions to node tooltip. Ref #2662.
+* Smaller node info dialog.
+* New node information dialog to display general, usage and command line information. Ref https://github.com/GNS3/gns3-gui/issues/2662 https://github.com/GNS3/gns3-gui/issues/2656
+* Support "usage" field for Dynamips, IOU, VirtualBox and VMware. Fixes https://github.com/GNS3/gns3-gui/issues/2657
+* Add "new template" entry to File menu. Fixes #2658
+* Fix bug with filter in add template. Fixes #2651.
+* Fix missing method '_newApplianceActionSlot'. Fixes #2643.
+* Use "template" to name what we use to create new nodes.
+* Use project instead of topology where appropriate.
+* Make sure nothing is named "compute server".
+* Use "node" instead of "appliance" for grid support.
+* Support for differing grid sizes for appliances and drawings. Requires corresponding commit on gns3-server.
+* New projects can be created with show grid/snap to grid.
+* Disallow changing layer of a locked object. Ref #2513.
+* Cosmetic changes regarding appliances.
+* Fix issue when duplicating an appliance on GUI side.
+* Fix issue to access configuration pages for Ethernet switch and hub appliances.
+* Fix small bugs when using the new appliance management API.
+* Fix bug with custom adapters and categories for Docker VM. Fixes https://github.com/GNS3/gns3-gui/issues/2613
+* Fix bug with categories with Docker appliances.
+* Schema validation for appliance API. Ref #1427.
+* Remove generic controller settings API endpoint.
+* Fix conflict between the two websocket streams (project & controller).
+* Fix platform.linux_distribution() is deprecated. Fixes https://github.com/GNS3/gns3-gui/issues/2578
+* Allow multiple appliances to be installed. Ref #2490
+* Add more information about appliance templates.
+* New appliance wizard to install an appliance from different sources. Ref #2490
+* Redesign appliance handling part 1. Ref #2490  - Removed appliance templates from device dock  - Use new controller notification stream  - Fixed device update and remove from device dock
+* Fix "Network session error" issues. Fixes #2560.
+* Set default layer for newly created nodes to 1 and 2 for all other drawings. Ref #2513.
+* Deactivate TraceNG module
+* Main menu actions to WebUI and Light Web Interface
+* Enable TraceNG module
+* Add Solar-Putty command line. Ref #2519.
+* Fix issues when locking/unlocking items. Ref #2513.
+* Fix tests for default note font/color.
+* Console support for clouds (to connect to external devices or services). Fixes #2500.
+* Fix LabelItem tests.
+* Separate appliance font from note font. Fixes #2477.
+* Do not include spaces in link description (%d replacement) for packet analyzer command. Ref #2485.
+* Fix error when trying to open project. Fixes #2508
+* Launch packet capture analyzer command without creating pipe.
+* Streamline appliance wizard. Fixes #2224.
+* Fix "Node list view not updated when renaming or deleting appliance template". Fixes #2356.
+* Automatically resize the Custom adapters configuration dialog. Fixes #2467.
+* Change size of custom adapters configuration dialog. Ref #2467.
+* Improve node tooltips. Fixes #2462.
+* Do not activate "console auto start" by default. Ref #1910.
+* Support for console auto start. Fixes #1910
+* Add custom_adapters setting support for appliance files. Ref #2361.
+* Possibility to customize port names and adapter types for Qemu, VirtualBox, VMware and Docker. Fixes #2361. MAC addresses can customized for Qemu as well.
+* Allow to have the projects with the same name in different locations. Fixes #2380.
+* Save state feature for VirtualBox and VMware. New "On close" setting to select the action to execute when closing/stopping a Qemu/VirtualBox/VMware VM.
+* Support for suspend to disk / resume (Qemu). Ref #725.
+* Fix bug with 'none' console type for Ethernet switch. Fix some tests related to traceng.
+* Allow to resize a Qemu VM disk (extend only). Ref #2382.
+* Allow to select the default NAT interface in preferences for local server.
+* Fix missing lock and unlock icons in resources.
+* Consistent icon styles for contextual menu. Fixes #1272.
+* Spice with agent support for Qemu VMs. Fixes #2355.
+* Fix zoom-in zoom-out step values. Ref #2457.
+* Support for console type "none" for all VMs. Fixes #2452.
+* Allow to copy Dynamips, IOU, Qemu and Docker templates in preferences. Fixes #2451.
+* Support for none console type (Qemu & Docker only)
+* Support Qemu with HAXM acceleration.
+* Use PyQt 5.10 and change AV build to use MSVS2017
+* PyQt5.10 support, Ref. #2434
+* Allow to accept a different md5 hash than the one in the appliance file. Ref. server#1246
+* Critical information during upload file with different md5, Ref. #1246
+* Restore locked item state.
+* Bump to version 2.2.0dev1 & refresh resources/ui files.
+* Have the contextual menu use icons from the active style. Ref #1272.
+* Individually lock or unlock an item on the scene. Fixes #1228.
+* Improve lock and unlock all items so some actions can still be performed on objects. Fixes #1134.
+* Lock or unlock all items button. Fixes #1134.
+* Move console to all devices icon after the separation bar. Ref #1272
+* Lock icons. Ref #1134.
+
 ## 2.1.12 23/01/2019
 
 * Option to resize SVG symbols that are too big (height above 80px, activated by default). Ref #2674.
