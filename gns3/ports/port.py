@@ -19,7 +19,7 @@
 Base class for port objects.
 """
 
-import sip
+from ..qt import sip
 
 from ..qt import qslot
 

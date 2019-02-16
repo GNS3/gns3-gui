@@ -22,7 +22,7 @@ Handles commands typed in the GNS3 console.
 import sys
 import cmd
 import struct
-import sip
+from .qt import sip
 import json
 
 from .node import Node

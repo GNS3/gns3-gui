@@ -19,7 +19,7 @@
 Thread showing a progress dialog and running the code from a lambda
 """
 
-import sip
+from ..qt import sip
 
 from ..qt import QtCore
 

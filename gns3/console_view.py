@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import sip
+from .qt import sip
 import struct
 import inspect
 import datetime

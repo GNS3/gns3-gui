@@ -24,7 +24,6 @@ Compatibility layer for Qt bindings, so it is easier to switch to PySide if need
 
 
 import sys
-import sip
 import os
 import re
 import inspect
@@ -33,12 +32,18 @@ import functools
 import logging
 log = logging.getLogger("qt/__init__.py")
 
+try:
+    from PyQt5 import sip
+except ImportError:
+    import sip
+
 from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
 sys.modules[__name__ + '.QtCore'] = QtCore
 sys.modules[__name__ + '.QtGui'] = QtGui
 sys.modules[__name__ + '.QtNetwork'] = QtNetwork
 sys.modules[__name__ + '.QtWidgets'] = QtWidgets
 sys.modules[__name__ + '.Qt'] = Qt
+sys.modules[__name__ + '.sip'] = sip
 
 try:
     from PyQt5 import QtSvg

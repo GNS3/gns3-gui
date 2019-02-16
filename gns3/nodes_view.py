@@ -22,7 +22,7 @@ on the QGraphics scene.
 
 import tempfile
 import json
-import sip
+from .qt import sip
 
 from .qt import QtCore, QtGui, QtWidgets, qpartial
 from .modules import MODULES

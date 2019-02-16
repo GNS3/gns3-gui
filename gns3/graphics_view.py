@@ -21,7 +21,7 @@ Graphical view on the scene where items are drawn.
 
 import logging
 import os
-import sip
+from .qt import sip
 import sys
 
 from .qt import QtCore, QtGui, QtNetwork, QtWidgets, qpartial, qslot

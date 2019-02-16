@@ -132,7 +132,7 @@ class CrashReport:
     def _add_qt_information(self, context):
         try:
             from .qt import QtCore
-            import sip
+            from .qt import sip
         except ImportError:
             return context
         context["psutil:version"] = psutil.__version__

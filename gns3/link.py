@@ -21,7 +21,7 @@ Manages and stores everything needed for a connection between 2 devices.
 
 import os
 import re
-import sip
+from .qt import sip
 import uuid
 
 from .qt import QtCore, QtWidgets

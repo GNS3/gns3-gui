@@ -19,7 +19,7 @@
 Graphical representation of a node on the QGraphicsScene.
 """
 
-import sip
+from ..qt import sip
 
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
 from ..qt.qimage_svg_renderer import QImageSvgRenderer

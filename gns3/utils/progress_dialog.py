@@ -19,7 +19,7 @@
 Progress dialog that blocking tasks (file operations, network connections etc.)
 """
 
-import sip
+from ..qt import sip
 from gns3.version import __version__
 from ..qt import QtWidgets, QtCore, qslot
 
