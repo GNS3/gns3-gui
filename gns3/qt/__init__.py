@@ -37,12 +37,11 @@ try:
 except ImportError:
     import sip
 
-from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
+from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets
 sys.modules[__name__ + '.QtCore'] = QtCore
 sys.modules[__name__ + '.QtGui'] = QtGui
 sys.modules[__name__ + '.QtNetwork'] = QtNetwork
 sys.modules[__name__ + '.QtWidgets'] = QtWidgets
-sys.modules[__name__ + '.Qt'] = Qt
 sys.modules[__name__ + '.sip'] = sip
 
 try:

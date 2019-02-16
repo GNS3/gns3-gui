@@ -22,7 +22,7 @@ import inspect
 import datetime
 import platform
 
-from .qt import QtCore, Qt
+from .qt import QtCore
 from .topology import Topology
 from .version import __version__
 from .console_cmd import ConsoleCmd
@@ -75,7 +75,7 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         self.intro = "GNS3 management console.\nRunning GNS3 version {} on {} ({}-bit) with Python {} Qt {} and PyQt {}.\n" \
                      "Copyright (c) 2006-{} GNS3 Technologies.\n" \
                      "Use Help -> GNS3 Doctor to detect common issues." \
-                     "".format(__version__, platform.system(), bitness, platform.python_version(), QtCore.QT_VERSION_STR, Qt.PYQT_VERSION_STR, current_year)
+                     "".format(__version__, platform.system(), bitness, platform.python_version(), QtCore.QT_VERSION_STR, QtCore.PYQT_VERSION_STR, current_year)
 
         # Parent class initialization
         try:
