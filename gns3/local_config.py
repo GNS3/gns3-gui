@@ -222,7 +222,7 @@ class LocalConfig(QtCore.QObject):
                 # Exit immediately not clean but we want to avoid any side effect that could corrupt the file
                 QtCore.QTimer.singleShot(0, app.quit)
                 app.exec_()
-                sys.exit(error_message)
+                sys.exit(1)
 
         if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0alpha1"):
 

@@ -272,9 +272,8 @@ def main():
             QtWidgets.QMessageBox.critical(False, "Loading error", error_message)
             QtCore.QTimer.singleShot(0, app.quit)
             app.exec_()
-            sys.exit(error_message)
+            sys.exit(1)
 
-    # start the main window if no loading error
     global mainwindow
     startup_file = app.open_file_at_startup
     if not startup_file:
