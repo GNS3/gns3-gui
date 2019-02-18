@@ -268,9 +268,13 @@ def main():
     # issue when people run GNS3 from the .dmg
     if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
         if not os.path.realpath(sys.executable).startswith("/Applications"):
-            QtWidgets.QMessageBox.critical(None, "Error", "You need to copy GNS3 in your /Applications folder before using it.")
-            sys.exit(1)
+            error_message = "GNS3.app must be moved to the '/Applications' folder before it can be used"
+            QtWidgets.QMessageBox.critical(False, "Loading error", error_message)
+            QtCore.QTimer.singleShot(0, app.quit)
+            app.exec_()
+            sys.exit(error_message)
 
+    # start the main window if no loading error
     global mainwindow
     startup_file = app.open_file_at_startup
     if not startup_file:
@@ -292,7 +296,6 @@ def main():
     mainwindow.show()
 
     exit_code = app.exec_()
-
     signal.signal(signal.SIGINT, orig_sigint)
     signal.signal(signal.SIGTERM, orig_sigterm)
 
@@ -301,7 +304,7 @@ def main():
     # We force deleting the app object otherwise it's segfault on Fedora
     del app
     # We force a full garbage collect before exit
-    # for unknow reason otherwise Qt Segfault on OSX in some
+    # for unknown reason otherwise Qt Segfault on OSX in some
     # conditions
     import gc
     gc.collect()

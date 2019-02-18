@@ -216,10 +216,13 @@ class LocalConfig(QtCore.QObject):
         # settings from 1.6.1 with 1.5.1 you will have an error
         if "version" in self._settings:
             if parse_version(self._settings["version"])[:2] > parse_version(__version__)[:2]:
-                QtWidgets.QApplication(sys.argv)  # We need to create an application because settings are loaded before Qt init
-                QtWidgets.QMessageBox.critical(None, "Version error", "Your settings are for version {} of GNS3. You cannot use a previous version of GNS3 without risking losing data. If you want to reset delete the settings in {}".format(self._settings["version"], self.configDirectory()))
+                app = QtWidgets.QApplication(sys.argv)  # We need to create an application because settings are loaded before Qt init
+                error_message = "Your settings are for version {} of GNS3. You cannot use a previous version of GNS3 without risking losing data. If you want to reset delete the settings in {}".format(self._settings["version"], self.configDirectory())
+                QtWidgets.QMessageBox.critical(False, "Version error", error_message)
                 # Exit immediately not clean but we want to avoid any side effect that could corrupt the file
-                sys.exit(1)
+                QtCore.QTimer.singleShot(0, app.quit)
+                app.exec_()
+                sys.exit(error_message)
 
         if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0alpha1"):
 
