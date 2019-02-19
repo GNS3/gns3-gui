@@ -99,8 +99,6 @@ class ApplianceToTemplate:
         new_config.pop("arch", None)
 
         options = appliance_config["qemu"].get("options", "")
-        if "-nographic" not in options:
-            options += " -nographic"
         if appliance_config["qemu"].get("kvm", "allow") == "disable" and "-no-kvm" not in options:
             options += " -no-kvm"
         new_config["options"] = options.strip()
