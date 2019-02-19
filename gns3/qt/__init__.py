@@ -119,14 +119,20 @@ class LogQMessageBox(QtWidgets.QMessageBox):
         if message.startswith("QXcbConnection"):  # Qt noise not relevant
             return
         LogQMessageBox._get_logger().critical(re.sub(r"<[^<]+?>", "", message), stack_info=LogQMessageBox.stack_info())
-        if sip_is_deleted(parent):
+        if parent is False:
+            # special case to display a QMessageBox before the main window is created.
+            parent = None
+        elif sip_is_deleted(parent):
             return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).critical(parent, title, message, *args)
 
     @staticmethod
     def warning(parent, title, message, *args):
         LogQMessageBox._get_logger().warning(re.sub(r"<[^<]+?>", "", message))
-        if sip_is_deleted(parent):
+        if parent is False:
+            # special case to display a QMessageBox before the main window is created.
+            parent = None
+        elif sip_is_deleted(parent):
             return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).warning(parent, title, message, *args)
 
@@ -134,7 +140,7 @@ class LogQMessageBox(QtWidgets.QMessageBox):
     def _get_logger():
         """
         Return a logger in the context of the caller
-        in order to have the correct informations in the log
+        in order to have the correct information in the log
         """
         if sys.version_info < (3, 5):
             return logging.getLogger('qt')
