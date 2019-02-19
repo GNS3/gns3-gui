@@ -322,7 +322,7 @@ class Project(QtCore.QObject):
     def _duplicateCallback(self, callback, result, error=False, **kwargs):
         if error:
             if "message" in result:
-                QtWidgets.QMessageBox.critical(None, "Duplicate project", "Error while duplicating: {}".format(result["message"]))
+                log.error("Error while duplicating project: {}".format(result["message"]))
             return
         if callback:
             callback(result["project_id"])
