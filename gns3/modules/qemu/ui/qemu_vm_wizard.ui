@@ -106,13 +106,6 @@
     <item row="0" column="1">
      <widget class="QLineEdit" name="uiNameLineEdit"/>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QCheckBox" name="uiLegacyASACheckBox">
-      <property name="text">
-       <string>This is a legacy ASA VM</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QWizardPage" name="uiBinaryMemoryWizardPage">
@@ -305,114 +298,6 @@
        <widget class="QToolButton" name="uiHdaDiskImageCreateToolButton">
         <property name="text">
          <string>&amp;Create</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWizardPage" name="uiInitrdKernelImageWizardPage">
-   <property name="title">
-    <string>Linux boot specific settings</string>
-   </property>
-   <property name="subTitle">
-    <string>Please choose a initrd and a kernel image.</string>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
-      <item>
-       <widget class="QRadioButton" name="uiLinuxExistingImageRadioButton">
-        <property name="text">
-         <string>Existing image</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="uiNewImageRadioButton_4">
-        <property name="text">
-         <string>New Image</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0">
-     <layout class="QFormLayout" name="formLayout_2">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_11">
-        <item>
-         <widget class="QComboBox" name="uiInitrdImageListComboBox"/>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="uiInitrdImageLineEdit"/>
-        </item>
-        <item>
-         <widget class="QToolButton" name="uiInitrdImageToolButton">
-          <property name="text">
-           <string>&amp;Browse...</string>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextOnly</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="uiKernelImageLabel">
-        <property name="text">
-         <string>Kernel image (vmlinuz):</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_14">
-        <item>
-         <widget class="QComboBox" name="uiKernelImageListComboBox"/>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="uiKernelImageLineEdit"/>
-        </item>
-        <item>
-         <widget class="QToolButton" name="uiKernelImageToolButton">
-          <property name="text">
-           <string>&amp;Browse...</string>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextOnly</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="uiInitrdLabel">
-        <property name="text">
-         <string>Initial RAM disk (initrd):</string>
         </property>
        </widget>
       </item>
