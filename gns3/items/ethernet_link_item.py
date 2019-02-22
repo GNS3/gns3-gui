@@ -106,7 +106,7 @@ class EthernetLinkItem(LinkItem):
         """
 
         QtWidgets.QGraphicsPathItem.paint(self, painter, option, widget)
-        if not self._adding_flag and self._settings["draw_link_status_points"]:
+        if not self._adding_flag:
 
             # points disappears if nodes are too close to each others.
             if self.length < 100:
@@ -151,7 +151,8 @@ class EthernetLinkItem(LinkItem):
             else:
                 source_port_label.hide()
 
-            painter.drawPoint(point1)
+            if self._settings["draw_link_status_points"]:
+                painter.drawPoint(point1)
 
             if self._link.suspended() or self._destination_port.status() == Port.suspended:
                 # link or port is suspended
@@ -192,6 +193,7 @@ class EthernetLinkItem(LinkItem):
             else:
                 destination_port_label.hide()
 
-            painter.drawPoint(point2)
+            if self._settings["draw_link_status_points"]:
+                painter.drawPoint(point2)
 
         self._drawSymbol()

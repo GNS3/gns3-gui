@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sip
+from ..qt import sip
 import shutil
 
 from ..qt import QtWidgets, QtCore, QtGui, qpartial, qslot

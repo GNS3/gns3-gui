@@ -21,10 +21,10 @@ Manages and stores everything needed for a connection between 2 devices.
 
 import os
 import re
-import sip
+from .qt import sip
 import uuid
 
-from .qt import QtCore, QtWidgets
+from .qt import QtCore
 from .controller import Controller
 
 
@@ -169,7 +169,7 @@ class Link(QtCore.QObject):
 
     def updateLinkCallback(self, result, error=False, *args, **kwargs):
         if error:
-            QtWidgets.QMessageBox.warning(None, "Update link", "Error while updating link: {}".format(result["message"]))
+            log.warning("Error while updating link: {}".format(result["message"]))
             return
         self._parseResponse(result)
 
@@ -219,7 +219,7 @@ class Link(QtCore.QObject):
 
     def _linkCreatedCallback(self, result, error=False, **kwargs):
         if error:
-            QtWidgets.QMessageBox.warning(None, "Create link", "Error while creating link: {}".format(result["message"]))
+            log.warning("Error while creating link: {}".format(result["message"]))
             self.deleteLink(skip_controller=True)
             return
 

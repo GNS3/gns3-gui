@@ -107,7 +107,7 @@ class SerialLinkItem(LinkItem):
 
         QtWidgets.QGraphicsPathItem.paint(self, painter, option, widget)
 
-        if not self._adding_flag and self._settings["draw_link_status_points"]:
+        if not self._adding_flag:
 
             # points disappears if nodes are too close to each others.
             if self.length < 80:
@@ -140,7 +140,8 @@ class SerialLinkItem(LinkItem):
             else:
                 source_port_label.hide()
 
-            painter.drawPoint(self.source_point)
+            if self._settings["draw_link_status_points"]:
+                painter.drawPoint(self.source_point)
 
             # destination point color
             if self._link.suspended() or self._destination_port.status() == Port.suspended:
@@ -170,6 +171,7 @@ class SerialLinkItem(LinkItem):
             else:
                 destination_port_label.hide()
 
-            painter.drawPoint(self.destination_point)
+            if self._settings["draw_link_status_points"]:
+                painter.drawPoint(self.destination_point)
 
         self._drawSymbol()

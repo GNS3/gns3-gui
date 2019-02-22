@@ -20,7 +20,7 @@ Nodes view that list all the available nodes to be dragged and dropped
 on the QGraphics scene.
 """
 
-import sip
+from .qt import sip
 
 from .qt import QtCore, QtGui, QtWidgets, qpartial
 from .controller import Controller
