@@ -166,12 +166,16 @@ class Dynamips(Module):
         :param idlepc: Idle-PC value
         """
 
-        for ios_router in self._ios_routers.values():
-            if os.path.basename(ios_router["image"]) == image_path:
-                if ios_router["idlepc"] != idlepc:
-                    ios_router["idlepc"] = idlepc
-                    log.debug("Idle-PC value {} saved into '{}' template".format(idlepc, ios_router["name"]))
-                    self._saveIOSRouters()
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() == "dynamips":
+                template_settings = template.settings()
+                router_image = template_settings.get("image")
+                old_idlepc = template_settings.get("idlepc")
+                if os.path.basename(router_image) == image_path and old_idlepc != idlepc:
+                    template_settings["idlepc"] = idlepc
+                    template.setSettings(template_settings)
+                    log.debug("Idle-PC value {} saved into '{}' template".format(idlepc, template.name()))
+                    TemplateManager.instance().updateTemplate(template)
 
     @staticmethod
     def configurationPage():

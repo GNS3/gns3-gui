@@ -1351,9 +1351,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     node.setIdlepc(idlepc)
             # apply the idle-pc to templates with the same IOS image
             router.module().updateImageIdlepc(ios_image, idlepc)
-            QtWidgets.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {} and all routers with IOS image {}".format(idlepc,
-                                                                                                                                                       router.name(),
-                                                                                                                                                       ios_image))
+            QtWidgets.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {} and all templates with IOS image {}".format(idlepc,
+                                                                                                                                                         router.name(),
+                                                                                                                                                         ios_image))
 
     def duplicateActionSlot(self):
         """

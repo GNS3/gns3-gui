@@ -62,7 +62,7 @@ Select each value that appears in the list and click Apply, and note the CPU usa
 """
         QtWidgets.QMessageBox.information(self, "Hints for Idle-PC", help_text)
 
-    def _applySlot(self):
+    def _applySlot(self, update_template=False):
         """
         Applies an Idle-PC value.
         """
@@ -78,8 +78,9 @@ Select each value that appears in the list and click Apply, and note the CPU usa
             if hasattr(node, "idlepc") and node.settings()["image"] == ios_image:
                 node.setIdlepc(idlepc)
 
-        # apply the idle-pc to templates with the same IOS image
-        self._router.module().updateImageIdlepc(ios_image, idlepc)
+        if update_template:
+            # apply the idle-pc to templates with the same IOS image
+            self._router.module().updateImageIdlepc(ios_image, idlepc)
 
     def done(self, result):
         """
@@ -89,5 +90,5 @@ Select each value that appears in the list and click Apply, and note the CPU usa
         """
 
         if result:
-            self._applySlot()
+            self._applySlot(update_template=True)
         super().done(result)
