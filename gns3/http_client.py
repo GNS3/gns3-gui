@@ -303,16 +303,17 @@ class HTTPClient(QtCore.QObject):
         if self._shutdown:
             return
 
+        # TODO: clean this
         # We try to detect computer hibernation
         # if time between two query is too long we trigger a disconnect
-        if self._max_time_difference_between_queries:
-            now = datetime.datetime.now().timestamp()
-            if self._last_query_timestamp is not None and now > self._last_query_timestamp + self._max_time_difference_between_queries:
-                log.warning("Synchronisation lost with the server.")
-                self.disconnect()
-                self._last_query_timestamp = None
-                return
-            self._last_query_timestamp = now
+        # if self._max_time_difference_between_queries:
+        #     now = datetime.datetime.now().timestamp()
+        #     if self._last_query_timestamp is not None and now > self._last_query_timestamp + self._max_time_difference_between_queries:
+        #         log.warning("Synchronisation lost with the server.")
+        #         self.disconnect()
+        #         self._last_query_timestamp = None
+        #         return
+        #     self._last_query_timestamp = now
 
         request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context,
                            downloadProgressCallback=downloadProgressCallback,
@@ -639,7 +640,7 @@ class HTTPClient(QtCore.QObject):
 
     def _processError(self, response, server, callback, context, request_body, ignore_errors, error_code):
         if error_code != QtNetwork.QNetworkReply.NoError:
-            error_message = response.errorString()
+            error_message = "{} ({}:{})".format(response.errorString(), self._host, self._port)
 
             if not ignore_errors:
                 log.debug("Response error: %s for %s (error: %d)", error_message, response.url().toString(), error_code)
