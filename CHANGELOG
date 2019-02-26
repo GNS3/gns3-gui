@@ -1,5 +1,17 @@
 # Change Log
 
+## 2.1.13 26/02/2019
+
+* Disable computer hibernation detection mechanism. Ref #2678
+* Add some advice for request timeout message. Fixes #2652
+* Show/Hide interface labels when status points are not shown. Fixes #2690
+* Do not print critical message twice on stderr. Replace QMessageBox calls with no parent by log.error()/log.warning().
+* Show critical messages before the main window runs.
+* Avoid using PyQt5.Qt, which imports unneeded stuff. Fixes #2592
+* Fix SIP import error with recent PyQt versions. Fixes #2709
+* Upgrade to Qt 5.12. Fixes #2636
+* Adjust the setup wizard (VMware image size, layouts).
+
 ## 2.1.12 23/01/2019
 
 * Option to resize SVG symbols that are too big (height above 80px, activated by default). Ref #2674.

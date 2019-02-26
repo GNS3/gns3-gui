@@ -51,7 +51,7 @@ class CrashReport:
     Report crash to a third party service
     """
 
-    DSN = "https://b4bdc4b7e46f4820a5d4d18b29acd67c:0af433313e464920b31e2c618ab9580d@sentry.io/38506"
+    DSN = "https://167c7646347a4d80a4c8dcc69903b5c4:2e0958a062bc4fe79f8f38741726ec4e@sentry.io/38506"
     if hasattr(sys, "frozen"):
         cacert = get_resource("cacert.pem")
         if cacert is not None and os.path.isfile(cacert):
