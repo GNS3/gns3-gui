@@ -571,8 +571,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if version is None:
                 return False
             appliance = current.data(2, QtCore.Qt.UserRole)
-            if not self._appliance.is_version_installable(version["name"]):
-                QtWidgets.QMessageBox.warning(self, "Appliance", "Sorry, you cannot install {} with missing files".format(appliance["name"]))
+            try:
+                self._appliance.search_images_for_version(version["name"])
+            except ApplianceError as e:
+                QtWidgets.QMessageBox.critical(self, "Appliance", "Cannot install {} version {}: {}".format(appliance["name"], version["name"], e))
                 return False
             reply = QtWidgets.QMessageBox.question(self, "Appliance", "Would you like to install {} version {}?".format(appliance["name"], version["name"]),
                                                    QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
@@ -582,7 +584,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.currentPage() == self.uiUsageWizardPage:
             if self._image_uploading_count > 0:
-                QtWidgets.QMessageBox.critical(self, "Add appliance", "Please wait for image uploading")
+                QtWidgets.QMessageBox.critical(self, "Add appliance", "Please wait for all images to be uploaded...")
                 return False
 
             current = self.uiApplianceVersionTreeWidget.currentItem()
