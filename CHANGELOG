@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.1.14 27/02/2019
+
+* Better description to why an appliance cannot be installed.
+
 ## 2.1.13 26/02/2019
 
 * Disable computer hibernation detection mechanism. Ref #2678
