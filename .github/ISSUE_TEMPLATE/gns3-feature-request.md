@@ -1,13 +1,13 @@
 ---
 name: GNS3 feature request
 about: Suggest an idea for GNS3
-title: ''
+title: 'Short description of the feature request'
 labels: Enhancement
 assignees: ''
 
 ---
 
-** Before you start**
+**Before you start**
 Please check if a similar feature request has already been submitted.
 
 You may also post this issue directly on the GNS3 server repository if you know the feature request only applies to the server: https://github.com/GNS3/gns3-server/issues/new
