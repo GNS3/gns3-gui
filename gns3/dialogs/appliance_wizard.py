@@ -629,8 +629,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if version is None:
                 return False
             appliance = current.data(2, QtCore.Qt.UserRole)
-            if not self._appliance.is_version_installable(version["name"]):
-                QtWidgets.QMessageBox.warning(self, "Appliance", "Sorry, you cannot install the '{}' appliance (version {}) with missing files".format(appliance["name"], version["name"]))
+            try:
+                self._appliance.search_images_for_version(version["name"])
+            except ApplianceError as e:
+                QtWidgets.QMessageBox.critical(self, "Appliance", "Cannot install {} version {}: {}".format(appliance["name"], version["name"], e))
                 return False
             reply = QtWidgets.QMessageBox.question(self, "Appliance", "Would you like to install {} version {}?".format(appliance["name"], version["name"]),
                                                    QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
