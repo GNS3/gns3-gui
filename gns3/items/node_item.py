@@ -50,6 +50,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # link items connected to this node item.
         self._links = []
         self._symbol = None
+        self._locked = False
 
         # says if the attached node has been initialized
         # by the server.
@@ -78,7 +79,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
 
-        # update z value and set proper flags - not movable in case z < 0
+        # update z value and locked state
+        self.setLocked(self._node.locked())
         self.setZValue(self._node.z())
 
         # connect signals to know about some events
@@ -272,7 +274,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setSymbol(self._node.settings().get("symbol"))
         self.setPos(self._node.settings().get("x", 0), self._node.settings().get("y", 0))
         self.setZValue(self._node.settings().get("z", 0))
-
+        self.setLocked(self._node.settings().get("locked", False))
         self._updateLabel()
 
         # update the link tooltips in case the
@@ -388,7 +390,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             self._node_label.setStyle(style)
         self._node_label.setRotation(label_data.get("rotation", 0))
 
-        if self._node.z() < 0:
+        if self._node.locked():
             self._node_label.setFlag(self.ItemIsMovable, False)
 
         if label_data["x"] is None:
@@ -531,7 +533,21 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         super().setZValue(value)
-        if self.zValue() < 0:
+        for link in self._links:
+            link.adjust()
+
+    def locked(self):
+
+        return self._locked
+
+    def setLocked(self, locked):
+        """
+        Sets the locked value.
+
+        :param value: Z value
+        """
+
+        if locked is True:
             self.setFlag(self.ItemIsMovable, False)
             if self._node_label:
                 self._node_label.setFlag(self.ItemIsMovable, False)
@@ -541,6 +557,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 self._node_label.setFlag(self.ItemIsMovable, True)
         for link in self._links:
             link.adjust()
+        self._locked = locked
 
     def hoverEnterEvent(self, event):
         """

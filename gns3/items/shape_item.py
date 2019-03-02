@@ -147,8 +147,8 @@ class ShapeItem(DrawingItem):
         :param event: QGraphicsSceneHoverEvent instance
         """
 
-        # objects on the background layer don't need cursors
-        if self.zValue() >= 0:
+        # locked objects don't need cursors
+        if not self.locked():
             if event.pos().x() > (self.rect().right() - self._border):
                 self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
             elif event.pos().x() < (self.rect().left() + self._border):
@@ -167,8 +167,8 @@ class ShapeItem(DrawingItem):
         :param event: QGraphicsSceneHoverEvent instance
         """
 
-        # objects on the background layer don't need cursors
-        if self.zValue() >= 0:
+        # locked objects don't need cursors
+        if not self.locked():
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
 
     def fromSvg(self, svg):

@@ -541,7 +541,7 @@ It is your responsability to check if you have the right to distribute the image
 
         node = node_module.instantiateNode(node_class, ComputeManager.instance().getCompute(node_data["compute_id"]), self._project)
         node.createNodeCallback(node_data)
-        self._main_window.uiGraphicsView.createNodeItem(node, node_data["symbol"], node_data["x"], node_data["y"], node_data.get("z", 1))
+        self._main_window.uiGraphicsView.createNodeItem(node, node_data["symbol"], node_data["x"], node_data["y"])
 
     def createLink(self, link_data):
         source_port = None
@@ -597,7 +597,7 @@ It is your responsability to check if you have the right to distribute the image
         except IndexError:
             # If unknow we render it as a raw SVG image
             type = "image"
-        self._main_window.uiGraphicsView.createDrawingItem(type, drawing_data["x"], drawing_data["y"], drawing_data["z"], rotation=drawing_data["rotation"], drawing_id=drawing_data["drawing_id"], svg=drawing_data["svg"])
+        self._main_window.uiGraphicsView.createDrawingItem(type, drawing_data["x"], drawing_data["y"], drawing_data["z"], locked=drawing_data["locked"], rotation=drawing_data["rotation"], drawing_id=drawing_data["drawing_id"], svg=drawing_data["svg"])
 
     @staticmethod
     def instance():

@@ -158,6 +158,9 @@ def test_node_setGraphics(vpcs_device):
         zValue=MagicMock(
             return_value=2
         ),
+        locked=MagicMock(
+            return_value=False
+        ),
         symbol=MagicMock(
             return_value="symbol.svg"
         )
@@ -172,6 +175,7 @@ def test_node_setGraphics(vpcs_device):
         vpcs_device.setSettingValue('x', 10)
         vpcs_device.setSettingValue('y', 20)
         vpcs_device.setSettingValue('z', 2)
+        vpcs_device.setSettingValue('locked', False)
         vpcs_device.setSettingValue('symbol', "symbol.svg")
         vpcs_device.setSettingValue('label', node.label().dump())
 
