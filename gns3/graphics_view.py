@@ -466,13 +466,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     if not event.modifiers() & QtCore.Qt.ControlModifier:
                         for it in self.scene().items():
                             it.setSelected(False)
-                    if item.zValue() < 0:
-                        item.setFlag(item.ItemIsSelectable, True)
                     item.setSelected(True)
                     self._showDeviceContextualMenu(QtGui.QCursor.pos())
-                    if not sip.isdeleted(item) and item.zValue() < 0:
-                        item.setFlag(item.ItemIsSelectable, False)
-
                 else:
                     self._showDeviceContextualMenu(QtGui.QCursor.pos())
             # when more than one item is selected display the contextual menu even if mouse is not above an item
@@ -1461,11 +1456,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
-                current_zvalue = item.zValue()
-                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
-                    log.error("Cannot move object to a upper layer because it is locked")
-                    continue
-                item.setZValue(current_zvalue + 1)
+                item.setZValue(item.zValue() + 1)
                 item.updateNode()
                 item.update()
 
@@ -1477,16 +1468,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
-                current_zvalue = item.zValue()
-                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
-                    log.error("Cannot move object to a lower layer because it is locked")
-                    continue
-                item.setZValue(current_zvalue - 1)
+                item.setZValue(item.zValue() - 1)
                 item.updateNode()
                 item.update()
-
-                if item.zValue() == -1:
-                    self._background_warning_msgbox.showMessage("Object moved to a background layer. You will now have to use the right-click action to select this object in the future and raise it to layer 0 to be able to move it")
 
     def lockActionSlot(self):
         """
@@ -1495,8 +1479,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if not isinstance(item, LinkItem):
-                item.setZValue(-(item.zValue() + 1))
+            if not isinstance(item, LinkItem) and not isinstance(item, LabelItem):
+                if item.locked() is True:
+                    item.setLocked(False)
+                else:
+                    item.setLocked(True)
                 if item.parentItem() is None:
                     item.updateNode()
                 item.update()
@@ -1557,9 +1544,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         pos = self.mapToScene(pos)
         return TemplateManager().instance().createNodeFromTemplateId(self._topology.project(), template_id, pos.x(), pos.y())
 
-    def createNodeItem(self, node, symbol, x, y, z):
+    def createNodeItem(self, node, symbol, x, y):
         node.setSymbol(symbol)
-        node.setPos(x, y, z)
+        node.setPos(x, y)
         node_item = NodeItem(node)
 
         self.scene().addItem(node_item)
@@ -1582,18 +1569,18 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if self._main_window and not sip.isdeleted(self._main_window):
             QtWidgets.QMessageBox.critical(self._main_window, name, message.strip())
 
-    def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, drawing_id=None):
+    def createDrawingItem(self, type, x, y, z, locked=False, rotation=0, svg=None, drawing_id=None):
 
         if type == "ellipse":
-            item = EllipseItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = EllipseItem(pos=QtCore.QPoint(x, y), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "rect":
-            item = RectangleItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = RectangleItem(pos=QtCore.QPoint(x, y), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "line":
-            item = LineItem(pos=QtCore.QPoint(x, y), dst=QtCore.QPoint(200, 0), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = LineItem(pos=QtCore.QPoint(x, y), dst=QtCore.QPoint(200, 0), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
-            item = ImageItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = ImageItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, locked=locked, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "text":
-            item = TextItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = TextItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, locked=locked, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
 
         if drawing_id is None:
             item.create()

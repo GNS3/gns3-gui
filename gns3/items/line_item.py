@@ -63,13 +63,6 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
         super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
 
-    def setZValue(self, value):
-        """
-        Sets Z value of the item
-        :param value: z layer
-        """
-        return DrawingItem.setZValue(self, value)
-
     def toSvg(self):
         """
         Return an SVG version of the shape
@@ -126,8 +119,8 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
         :param event: QGraphicsSceneHoverEvent instance
         """
 
-        # objects on the background layer don't need cursors
-        if self.zValue() >= 0:
+        # locked objects don't need cursors
+        if not self.locked():
 
             if self._isHorizontalLine():
                 if event.pos().x() > (self.line().x2() - self._border):
@@ -218,6 +211,6 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
         :param event: QGraphicsSceneHoverEvent instance
         """
 
-        # objects on the background layer don't need cursors
-        if self.zValue() >= 0:
+        # locked objects don't need cursors
+        if not self.locked():
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)

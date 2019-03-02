@@ -75,6 +75,7 @@ def test_create(project, controller):
             "x": 0,
             "y": 0,
             "z": 0,
+            "locked": rect.locked(),
             "svg": rect.toSvg(),
             "rotation": int(rect.rotation())
         }

@@ -170,19 +170,6 @@ class LabelItem(QtWidgets.QGraphicsTextItem):
         zval = str(int(self.zValue()))
         painter.drawText(QtCore.QPointF(center.x(), center.y()), zval)
 
-    def setZValue(self, value):
-        """
-        Sets a new Z value.
-
-        :param value: Z value
-        """
-
-        super().setZValue(value)
-        if self.zValue() < 0:
-            self.setFlag(self.ItemIsMovable, False)
-        else:
-            self.setFlag(self.ItemIsMovable, True)
-
     def setStyle(self, new_style):
         """
         Set text style using a SVG style

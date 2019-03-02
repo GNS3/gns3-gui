@@ -46,7 +46,8 @@ class Node(BaseNode):
         self._settings = {"name": "",
                           "x": None,
                           "y": None,
-                          "z": 1}
+                          "z": 1,
+                          "locked": False}
 
     def settings(self):
         """
@@ -147,6 +148,13 @@ class Node(BaseNode):
         """
 
         return self._settings["z"]
+
+    def locked(self):
+        """
+        Is the node locked
+        """
+
+        return self._settings["locked"]
 
     def setSymbol(self, symbol):
         """
@@ -373,6 +381,7 @@ class Node(BaseNode):
                                    "x",
                                    "y",
                                    "z",
+                                   "locked",
                                    "symbol",
                                    "label",
                                    "port_name_format",
@@ -529,7 +538,7 @@ class Node(BaseNode):
             del result["properties"]
 
         # Update common element of all nodes
-        for key in ["x", "y", "z", "symbol", "label", "console_host", "console", "console_type", "console_auto_start", "custom_adapters"]:
+        for key in ["x", "y", "z", "locked", "symbol", "label", "console_host", "console", "console_type", "console_auto_start", "custom_adapters"]:
             if key in result:
                 self._settings[key] = result[key]
 
@@ -578,7 +587,8 @@ class Node(BaseNode):
         data = {"x": int(node_item.pos().x()),
                 "y": int(node_item.pos().y()),
                 "z": int(node_item.zValue()),
-                "symbol": node_item.symbol()}
+                "symbol": node_item.symbol(),
+                "locked": node_item.locked()}
 
         if node_item.label() is not None:
             data["label"] = node_item.label().dump()

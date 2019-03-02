@@ -41,9 +41,10 @@ class DrawingItem:
     Base class for non emulation item
     """
 
-    def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, rotation=0, **kws):
+    def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, locked=False, rotation=0, **kws):
         self._id = drawing_id
         self._deleting = False
+        self._locked = locked
         if self._id is None:
             self._id = str(uuid.uuid4())
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable | QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
@@ -64,6 +65,8 @@ class DrawingItem:
             self.setZValue(z)
         if rotation:
             self.setRotation(rotation)
+
+        self.setLocked(locked)
 
     def drawing_id(self):
         return self._id
@@ -106,6 +109,7 @@ class DrawingItem:
             return False
         self.setPos(QtCore.QPoint(result["x"], result["y"]))
         self.setZValue(result["z"])
+        self.setLocked(result["locked"])
         self.setRotation(result["rotation"])
         if "svg" in result:
             self.fromSvg(result["svg"])
@@ -149,6 +153,7 @@ class DrawingItem:
             "x": int(self.pos().x()),
             "y": int(self.pos().y()),
             "z": int(self.zValue()),
+            "locked": self._locked,
             "rotation": int(self.rotation())
         }
         svg = self.toSvg()
@@ -158,23 +163,29 @@ class DrawingItem:
             self._hash_svg = hash_svg
         return data
 
-    def setZValue(self, value):
+    def locked(self):
         """
-        Sets a new Z value.
+        Is the drawing locked
+        """
+
+        return self._locked
+
+    def setLocked(self, locked):
+        """
+        Sets the locked value.
 
         :param value: Z value
         """
 
-        QtWidgets.QGraphicsItem.setZValue(self, value)
-
-        if self.zValue() < 0:
+        if locked is True:
             self.setFlag(self.ItemIsMovable, False)
         else:
             self.setFlag(self.ItemIsMovable, True)
+        self._locked = locked
 
     def deleting(self):
         """
-        Is the link being deleted
+        Is the drawing being deleted
         """
 
         return self._deleting

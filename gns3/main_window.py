@@ -44,6 +44,7 @@ from .settings import GENERAL_SETTINGS
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .items.shape_item import ShapeItem
+from .items.label_item import LabelItem
 from .topology import Topology
 from .http_client import HTTPClient
 from .progress import Progress
@@ -363,17 +364,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.items():
-            if not isinstance(item, LinkItem):
-                if self.uiLockAllAction.isChecked() and item.zValue() >= 0:
-                    item.setZValue(-(item.zValue() + 1))
-                    if item.parentItem() is None:
-                        item.updateNode()
-                    item.update()
-                elif not self.uiLockAllAction.isChecked() and item.zValue() < 0:
-                    item.setZValue(-(item.zValue() + 1))
-                    if item.parentItem() is None:
-                        item.updateNode()
-                    item.update()
+            if not isinstance(item, LinkItem) and not isinstance(item, LabelItem):
+                if self.uiLockAllAction.isChecked() and not item.locked():
+                    item.setLocked(True)
+                elif not self.uiLockAllAction.isChecked() and item.locked():
+                    item.setLocked(False)
+                if item.parentItem() is None:
+                    item.updateNode()
+                item.update()
 
     def analyticsClient(self):
         """

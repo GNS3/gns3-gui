@@ -40,13 +40,14 @@ def test_createDrawing_ellipse():
         "x": 42,
         "y": 12,
         "z": 0,
+        "locked": False,
         "rotation": 0,
         "drawing_id": str(uuid.uuid4()),
         "svg": "<svg height=\"105.0\" width=\"158.0\"><ellipse cx=\"79\" cy=\"52\" rx=\"79\" ry=\"53\" style=\"stroke-width:2;stroke:#000000;fill:#ffffff;\" /></svg>",
     }
     topology._main_window = MagicMock()
     topology.createDrawing(shape_data)
-    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("ellipse", 42, 12, 0, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("ellipse", 42, 12, 0, locked=False, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
 
 
 def test_createDrawing_rect():
@@ -55,13 +56,14 @@ def test_createDrawing_rect():
         "x": 42,
         "y": 12,
         "z": 0,
+        "locked": False,
         "rotation": 0,
         "drawing_id": str(uuid.uuid4()),
         "svg": "<svg height=\"105.0\" width=\"158.0\"><rect/></svg>",
     }
     topology._main_window = MagicMock()
     topology.createDrawing(shape_data)
-    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("rect", 42, 12, 0, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("rect", 42, 12, 0, locked=False, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
 
 
 def test_createDrawing_text():
@@ -70,13 +72,14 @@ def test_createDrawing_text():
         "x": 42,
         "y": 12,
         "z": 0,
+        "locked": False,
         "rotation": 0,
         "drawing_id": str(uuid.uuid4()),
         "svg": "<svg height=\"105.0\" width=\"158.0\"><text/></svg>",
     }
     topology._main_window = MagicMock()
     topology.createDrawing(shape_data)
-    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("text", 42, 12, 0, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("text", 42, 12, 0, locked=False, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
 
 
 def test_createDrawing_svg():
@@ -88,11 +91,12 @@ def test_createDrawing_svg():
         "x": 42,
         "y": 12,
         "z": 0,
+        "locked": False,
         "rotation": 0,
         "drawing_id": str(uuid.uuid4()),
         "svg": "<svg height=\"105.0\" width=\"158.0\"><rect><line/></rect></svg>",
     }
     topology._main_window = MagicMock()
     topology.createDrawing(shape_data)
-    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("image", 42, 12, 0, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
+    topology._main_window.uiGraphicsView.createDrawingItem.assert_called_with("image", 42, 12, 0, locked=False, rotation=0, svg=shape_data["svg"], drawing_id=shape_data["drawing_id"])
 

@@ -22,7 +22,7 @@ Graphical representation of an ellipse on the QGraphicsScene.
 import math
 import xml.etree.ElementTree as ET
 
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtWidgets
 from .shape_item import ShapeItem
 
 
@@ -47,13 +47,6 @@ class EllipseItem(QtWidgets.QGraphicsEllipseItem, ShapeItem):
 
         super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
-
-    def setZValue(self, value):
-        """
-        Sets Z value of the item
-        :param value: z layer
-        """
-        return ShapeItem.setZValue(self, value)
 
     def toSvg(self):
         """
