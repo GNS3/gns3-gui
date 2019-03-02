@@ -162,33 +162,54 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         """
 
         self.uiAppliancesTreeWidget.clear()
+        parent_guests = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
+        parent_guests.setText(0, "Guests")
+        parent_guests.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemIsSelectable)
+        parent_firewalls = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
+        parent_firewalls.setText(0, "Firewalls")
+        parent_firewalls.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemIsSelectable)
+        parent_switches = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
+        parent_switches.setText(0, "Switches")
+        parent_switches.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemIsSelectable)
+        parent_routers = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
+        parent_routers.setText(0, "Routers")
+        parent_routers.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemIsSelectable)
+        self.uiAppliancesTreeWidget.expandAll()
+
         for appliance in ApplianceManager.instance().appliances():
             if appliance_filter is None:
                 appliance_filter = self.uiFilterLineEdit.text().strip()
             if appliance_filter and appliance_filter.lower() not in appliance["name"].lower():
                 continue
 
-            item = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
+            if appliance["category"] == "router":
+                item = QtWidgets.QTreeWidgetItem(parent_routers)
+            elif appliance["category"].endswith("switch"):
+                item = QtWidgets.QTreeWidgetItem(parent_switches)
+            elif appliance["category"] == "firewall":
+                item = QtWidgets.QTreeWidgetItem(parent_firewalls)
+            elif appliance["category"] == "guest":
+                item = QtWidgets.QTreeWidgetItem(parent_guests)
             if appliance["builtin"]:
                 appliance_name = appliance["name"]
             else:
                 appliance_name = "{} (custom)".format(appliance["name"])
 
             item.setText(0, appliance_name)
-            item.setText(1, appliance["category"].capitalize().replace("_", " "))
+            #item.setText(1, appliance["category"].capitalize().replace("_", " "))
 
             if "qemu" in appliance:
-                item.setText(2, "Qemu")
+                item.setText(1, "Qemu")
             elif "iou" in appliance:
-                item.setText(2, "IOU")
+                item.setText(1, "IOU")
             elif "dynamips" in appliance:
-                item.setText(2, "Dynamips")
+                item.setText(1, "Dynamips")
             elif "docker" in appliance:
-                item.setText(2, "Docker")
+                item.setText(1, "Docker")
             else:
-                item.setText(2, "N/A")
+                item.setText(1, "N/A")
 
-            item.setText(3, appliance["vendor_name"])
+            item.setText(2, appliance["vendor_name"])
             item.setData(0, QtCore.Qt.UserRole, appliance)
 
             #item.setSizeHint(0, QtCore.QSize(32, 32))
@@ -198,6 +219,8 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
 
         self.uiAppliancesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
         self.uiAppliancesTreeWidget.resizeColumnToContents(0)
+        if not appliance_filter:
+            self.uiAppliancesTreeWidget.collapseAll()
 
     def initializePage(self, page_id):
         """

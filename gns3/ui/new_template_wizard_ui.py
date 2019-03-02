@@ -38,7 +38,6 @@ class Ui_NewTemplateWizard(object):
         self.verticalLayout_2.addWidget(self.uiFilterLineEdit)
         self.uiAppliancesTreeWidget = QtWidgets.QTreeWidget(self.uiApplianceFromServerWizardPage)
         self.uiAppliancesTreeWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.uiAppliancesTreeWidget.setRootIsDecorated(False)
         self.uiAppliancesTreeWidget.setObjectName("uiAppliancesTreeWidget")
         self.uiAppliancesTreeWidget.header().setSortIndicatorShown(True)
         self.verticalLayout_2.addWidget(self.uiAppliancesTreeWidget)
@@ -60,7 +59,6 @@ class Ui_NewTemplateWizard(object):
         self.uiFilterLineEdit.setPlaceholderText(_translate("NewTemplateWizard", "Filter"))
         self.uiAppliancesTreeWidget.setSortingEnabled(True)
         self.uiAppliancesTreeWidget.headerItem().setText(0, _translate("NewTemplateWizard", "Appliance name"))
-        self.uiAppliancesTreeWidget.headerItem().setText(1, _translate("NewTemplateWizard", "Type"))
-        self.uiAppliancesTreeWidget.headerItem().setText(2, _translate("NewTemplateWizard", "Emulator"))
-        self.uiAppliancesTreeWidget.headerItem().setText(3, _translate("NewTemplateWizard", "Vendor"))
+        self.uiAppliancesTreeWidget.headerItem().setText(1, _translate("NewTemplateWizard", "Emulator"))
+        self.uiAppliancesTreeWidget.headerItem().setText(2, _translate("NewTemplateWizard", "Vendor"))
 
