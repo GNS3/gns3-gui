@@ -36,7 +36,7 @@ def empty_config(tmpdir, images_dir, symbols_dir, local_server_config):
         },
         "Dynamips": {
             "allocate_aux_console_ports": False,
-            "dynamips_path": "/Applications/GNS3.app/Contents/Resources/dynamips",
+            "dynamips_path": "/Applications/GNS3.app/Contents/MacOS/dynamips",
             "ghost_ios_support": True,
             "mmap_support": True,
             "routers": [

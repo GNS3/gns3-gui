@@ -116,7 +116,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
                     # default is qemu-system-i386w.exe on Windows 32-bit with a remote server
                     search_string = "i386w.exe"
             elif ComputeManager.instance().localPlatform().startswith("darwin") and hasattr(sys, "frozen") and self.uiLocalRadioButton.isChecked():
-                search_string = "GNS3.app/Contents/Resources/qemu/bin/qemu-system-x86_64"
+                search_string = "GNS3.app/Contents/MacOS/qemu/bin/qemu-system-x86_64"
             elif is_64bit:
                 # default is qemu-system-x86_64 on other 64-bit platforms
                 search_string = "x86_64"

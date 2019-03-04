@@ -137,10 +137,7 @@ def main():
         # packaged binary
         frozen_dir = os.path.dirname(os.path.abspath(sys.executable))
         if sys.platform.startswith("darwin"):
-            frozen_dirs = [
-                frozen_dir,
-                os.path.normpath(os.path.join(frozen_dir, '..', 'Resources'))
-            ]
+            frozen_dirs = [frozen_dir]
         elif sys.platform.startswith("win"):
             frozen_dirs = [
                 frozen_dir,
