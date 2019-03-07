@@ -83,7 +83,6 @@ class VPCS(Module):
         """
 
         # save the settings
-        print(self._settings)
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
         server_settings = {}

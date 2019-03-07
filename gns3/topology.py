@@ -27,9 +27,8 @@ from .local_server import LocalServer
 from .qt import QtCore, QtWidgets
 
 from .utils.progress_dialog import ProgressDialog
-from .utils.export_project_worker import ExportProjectWorker
 from .utils.import_project_worker import ImportProjectWorker
-from .dialogs.file_editor_dialog import FileEditorDialog
+from .dialogs.project_export_wizard import ExportProjectWizard
 from .dialogs.project_welcome_dialog import ProjectWelcomeDialog
 
 from .modules import MODULES
@@ -233,13 +232,6 @@ class Topology(QtCore.QObject):
         self._main_window.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         return True
 
-    def editReadme(self):
-        if self.project() is None:
-            return
-        dialog = FileEditorDialog(self.project(), "/README.txt", parent=self._main_window, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
-        dialog.show()
-        dialog.exec_()
-
     def _projectCreationErrorSlot(self, message):
         if self._project:
             self._project.project_creation_error_signal.disconnect(self._projectCreationErrorSlot)
@@ -247,41 +239,12 @@ class Topology(QtCore.QObject):
             QtWidgets.QMessageBox.critical(self._main_window, "New project", message)
 
     def exportProject(self):
-        include_image_question = """Would you like to include any base image?
-The project will not require additional images to run on another host, however the resulting file will be much bigger.
-It is your responsability to check if you have the right to distribute the image(s) as part of the project.
-        """
-
-        reply = QtWidgets.QMessageBox.question(self._main_window, "Export project", include_image_question,
-                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-                                               QtWidgets.QMessageBox.No)
-        include_images = int(reply == QtWidgets.QMessageBox.Yes)
-
-        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-        if len(directory) == 0:
-            directory = self.projectsDirPath()
-
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(self._main_window, "Export portable project", directory,
-                                                        "GNS3 Portable Project (*.gns3project *.gns3p)",
-                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
-        if path is None or len(path) == 0:
+        if self._project is None:
+            QtWidgets.QMessageBox.critical(self._main_window, "Export project", "No project has been opened")
             return
-
-        if not path.endswith(".gns3project") and not path.endswith(".gns3p"):
-            path += ".gns3project"
-
-        try:
-            open(path, 'wb+').close()
-        except OSError as e:
-            QtWidgets.QMessageBox.critical(self._main_window, "Export project", "Could not write {}: {}".format(path, e))
-            return
-
-        self.editReadme()
-
-        export_worker = ExportProjectWorker(self._project, path, include_images)
-        progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self._main_window, create_thread=False)
-        progress_dialog.show()
-        progress_dialog.exec_()
+        export_wizard = ExportProjectWizard(self.project(), parent=self._main_window)
+        export_wizard.show()
+        export_wizard.exec_()
 
     def importProject(self, project_file):
         from .dialogs.project_dialog import ProjectDialog

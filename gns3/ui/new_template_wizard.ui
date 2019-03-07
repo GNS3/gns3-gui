@@ -16,9 +16,6 @@
   <property name="windowTitle">
    <string>New template</string>
   </property>
-  <property name="options">
-   <set>QWizard::HaveFinishButtonOnEarlyPages</set>
-  </property>
   <widget class="QWizardPage" name="uiSelectTemplateSourceWizardPage">
    <property name="title">
     <string>New template</string>

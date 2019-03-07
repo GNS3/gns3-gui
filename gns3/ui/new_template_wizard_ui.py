@@ -13,7 +13,6 @@ class Ui_NewTemplateWizard(object):
         NewTemplateWizard.setObjectName("NewTemplateWizard")
         NewTemplateWizard.setWindowModality(QtCore.Qt.ApplicationModal)
         NewTemplateWizard.resize(900, 600)
-        NewTemplateWizard.setOptions(QtWidgets.QWizard.HaveFinishButtonOnEarlyPages)
         self.uiSelectTemplateSourceWizardPage = QtWidgets.QWizardPage()
         self.uiSelectTemplateSourceWizardPage.setObjectName("uiSelectTemplateSourceWizardPage")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.uiSelectTemplateSourceWizardPage)

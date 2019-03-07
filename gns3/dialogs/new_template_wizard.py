@@ -45,9 +45,6 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
             # we want to see the cancel button on OSX
             self.setOptions(QtWidgets.QWizard.NoDefaultButton)
 
-        self.uiCreateTemplateManuallyRadioButton.toggled.connect(self._addTemplateToggledSlot)
-        self.uiImportApplianceFromFileRadioButton.toggled.connect(self._addTemplateToggledSlot)
-
         # add a custom button to show appliance information
         self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Update from online registry")
         self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
@@ -55,15 +52,6 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         self.button(QtWidgets.QWizard.CustomButton1).hide()
         self.uiFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
         ApplianceManager.instance().appliances_changed_signal.connect(self._appliancesChangedSlot)
-
-    def _addTemplateToggledSlot(self, checked):
-
-        if checked:
-            self.button(QtWidgets.QWizard.FinishButton).setEnabled(True)
-            self.button(QtWidgets.QWizard.NextButton).setEnabled(False)
-        else:
-            self.button(QtWidgets.QWizard.FinishButton).setEnabled(False)
-            self.button(QtWidgets.QWizard.NextButton).setEnabled(True)
 
     def _downloadAppliancesSlot(self):
         """
@@ -237,24 +225,34 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
                 return False
         return True
 
+    def nextId(self):
+        """
+        Wizard rules!
+        """
+
+        current_id = self.currentId()
+        if self.page(current_id) == self.uiSelectTemplateSourceWizardPage and \
+                (self.uiImportApplianceFromFileRadioButton.isChecked() or self.uiCreateTemplateManuallyRadioButton.isChecked()):
+            self.done(True)
+        return super().nextId()
+
     def done(self, result):
         """
         This dialog is closed.
-
-        :param result: ignored
         """
 
         super().done(result)
-        from gns3.main_window import MainWindow
-        if self.currentPage() == self.uiApplianceFromServerWizardPage:
-            items = self.uiAppliancesTreeWidget.selectedItems()
-            for item in items:
-                f = tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False)
-                json.dump(item.data(0, QtCore.Qt.UserRole), f)
-                f.close()
-                MainWindow.instance().loadPath(f.name)
-        elif self.uiCreateTemplateManuallyRadioButton.isChecked():
-            MainWindow.instance().preferencesActionSlot()
-        elif self.uiImportApplianceFromFileRadioButton.isChecked():
+        if result:
             from gns3.main_window import MainWindow
-            MainWindow.instance().openApplianceActionSlot()
+            if self.currentPage() == self.uiApplianceFromServerWizardPage:
+                items = self.uiAppliancesTreeWidget.selectedItems()
+                for item in items:
+                    f = tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False)
+                    json.dump(item.data(0, QtCore.Qt.UserRole), f)
+                    f.close()
+                    MainWindow.instance().loadPath(f.name)
+            elif self.uiCreateTemplateManuallyRadioButton.isChecked():
+                MainWindow.instance().preferencesActionSlot()
+            elif self.uiImportApplianceFromFileRadioButton.isChecked():
+                from gns3.main_window import MainWindow
+                MainWindow.instance().openApplianceActionSlot()
