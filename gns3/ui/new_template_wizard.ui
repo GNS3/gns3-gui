@@ -70,9 +70,6 @@
       <property name="selectionMode">
        <enum>QAbstractItemView::ExtendedSelection</enum>
       </property>
-      <property name="rootIsDecorated">
-       <bool>false</bool>
-      </property>
       <property name="sortingEnabled">
        <bool>true</bool>
       </property>
@@ -82,11 +79,6 @@
       <column>
        <property name="text">
         <string>Appliance name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Type</string>
        </property>
       </column>
       <column>
