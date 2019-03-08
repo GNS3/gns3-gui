@@ -6,28 +6,44 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
-    <height>321</height>
+    <width>839</width>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Packet capture</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
     <widget class="QGroupBox" name="uiSettingsGroupBox">
      <property name="title">
       <string>Settings</string>
      </property>
-     <layout class="QGridLayout">
-      <item row="5" column="0">
-       <widget class="QLabel" name="uiCaptureAnalyzerCommandLabel">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="uiPreconfiguredCaptureReaderCommandLabel">
         <property name="text">
-         <string>Packet capture analyzer command:</string>
+         <string>Preconfigured packet capture reader commands:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="1" column="0">
+       <widget class="QComboBox" name="uiPreconfiguredCaptureReaderCommandComboBox"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="uiPreconfiguredCaptureReaderCommandPushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>&amp;Set</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
        <widget class="QLabel" name="uiCaptureReaderCommandLabel">
         <property name="enabled">
          <bool>true</bool>
@@ -37,7 +53,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
+      <item row="3" column="0">
        <widget class="QLineEdit" name="uiCaptureReaderCommandLineEdit">
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Command line replacements:&lt;/p&gt;&lt;p&gt;%c = capture file (PCAP format)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -57,56 +73,44 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0" colspan="2">
-       <widget class="QLabel" name="uiPreconfiguredCaptureReaderCommandLabel">
+      <item row="5" column="0">
+       <widget class="QLabel" name="uiCaptureAnalyzerCommandLabel">
         <property name="text">
-         <string>Preconfigured packet capture reader commands:</string>
+         <string>Packet capture analyzer command:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="uiPreconfiguredCaptureReaderCommandPushButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>&amp;Set</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QComboBox" name="uiPreconfiguredCaptureReaderCommandComboBox"/>
-      </item>
-      <item row="6" column="0" colspan="2">
+      <item row="6" column="0">
        <widget class="QLineEdit" name="uiCaptureAnalyzerCommandLineEdit"/>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>253</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>250</width>
+         <height>17</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
+       <property name="text">
+        <string>Restore defaults</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="uiRestoreDefaultsPushButton">
-     <property name="text">
-      <string>Restore defaults</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
+   <item>
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

@@ -184,7 +184,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             self.uiTitleLabel.setText("{} preferences".format(name))
         index = self.uiStackedWidget.indexOf(preferences_page)
         widget = self.uiStackedWidget.widget(index)
-        # self.uiStackedWidget.setMinimumSize(widget.size())
+        self.uiStackedWidget.setMinimumSize(widget.size())
         self.uiStackedWidget.resize(widget.size())
         self.uiStackedWidget.setCurrentIndex(index)
 

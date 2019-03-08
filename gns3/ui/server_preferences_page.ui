@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>659</width>
-    <height>834</height>
+    <width>1273</width>
+    <height>1097</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,18 +28,6 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="uiServerPreferenceTabWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -53,19 +41,7 @@
       <attribute name="title">
        <string>Main server</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
-        <number>10</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QCheckBox" name="uiLocalServerAutoStartCheckBox">
          <property name="sizePolicy">
@@ -94,17 +70,14 @@
           <string>General settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <item row="1" column="0">
+          <item row="0" column="0">
            <widget class="QLabel" name="uiLocalServerPathLabel">
             <property name="text">
              <string>Server path:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="1" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QLineEdit" name="uiLocalServerPathLineEdit"/>
@@ -121,14 +94,14 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="uiUbridgePathLabel">
             <property name="text">
              <string>Ubridge path:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="3" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QLineEdit" name="uiUbridgePathLineEdit"/>
@@ -145,24 +118,24 @@
             </item>
            </layout>
           </item>
-          <item row="5" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="uiLocalServerHostLabel">
             <property name="text">
              <string>Host binding:</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
+          <item row="5" column="0">
            <widget class="QComboBox" name="uiLocalServerHostComboBox"/>
           </item>
-          <item row="7" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="uiLocalServerPortLabel">
             <property name="text">
              <string>Port:</string>
             </property>
            </widget>
           </item>
-          <item row="8" column="0">
+          <item row="7" column="0">
            <widget class="QSpinBox" name="uiLocalServerPortSpinBox">
             <property name="suffix">
              <string notr="true"> TCP</string>
@@ -175,17 +148,17 @@
             </property>
            </widget>
           </item>
-          <item row="10" column="0">
-           <widget class="QCheckBox" name="uiConsoleConnectionsToAnyIPCheckBox">
+          <item row="8" column="0">
+           <widget class="QCheckBox" name="uiLocalServerAuthCheckBox">
             <property name="text">
-             <string>Allow console connections to any local IP address</string>
+             <string>Protect server with password (recommended)</string>
             </property>
            </widget>
           </item>
           <item row="9" column="0">
-           <widget class="QCheckBox" name="uiLocalServerAuthCheckBox">
+           <widget class="QCheckBox" name="uiConsoleConnectionsToAnyIPCheckBox">
             <property name="text">
-             <string>Protect server with password (recommended)</string>
+             <string>Allow console connections to any local IP address</string>
             </property>
            </widget>
           </item>
@@ -197,52 +170,59 @@
          <property name="title">
           <string>Console port range (5900 =&gt; 6000 is shared with VNC)</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
+         <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
-           <widget class="QSpinBox" name="uiConsoleStartPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> TCP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>2000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="uiConsolePortRangeLabel">
-            <property name="text">
-             <string>to</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QSpinBox" name="uiConsoleEndPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> TCP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>5000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>225</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QSpinBox" name="uiConsoleStartPortSpinBox">
+              <property name="suffix">
+               <string notr="true"> TCP</string>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+              <property name="value">
+               <number>2000</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="uiConsolePortRangeLabel">
+              <property name="text">
+               <string>to</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="uiConsoleEndPortSpinBox">
+              <property name="suffix">
+               <string notr="true"> TCP</string>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+              <property name="value">
+               <number>5000</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::MinimumExpanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>225</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -252,52 +232,59 @@
          <property name="title">
           <string>UDP tunneling port range</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <item>
-           <widget class="QSpinBox" name="uiUDPStartPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> UDP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>10000</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="uiUDPPortRangeLabel">
-            <property name="text">
-             <string>to</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="uiUDPEndPortSpinBox">
-            <property name="suffix">
-             <string notr="true"> UDP</string>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>20000</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QSpinBox" name="uiUDPStartPortSpinBox">
+              <property name="suffix">
+               <string notr="true"> UDP</string>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+              <property name="value">
+               <number>10000</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="uiUDPPortRangeLabel">
+              <property name="text">
+               <string>to</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="uiUDPEndPortSpinBox">
+              <property name="suffix">
+               <string notr="true"> UDP</string>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+              <property name="value">
+               <number>20000</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::MinimumExpanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -307,10 +294,7 @@
          <property name="title">
           <string>Remote main server</string>
          </property>
-         <layout class="QFormLayout" name="formLayout">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::ExpandingFieldsGrow</enum>
-          </property>
+         <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
@@ -318,7 +302,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="0" column="1" colspan="2">
            <widget class="QLineEdit" name="uiRemoteMainServerHostLineEdit"/>
           </item>
           <item row="1" column="0">
@@ -328,7 +312,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="1" column="1" colspan="2">
            <widget class="QSpinBox" name="uiRemoteMainServerPortSpinBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -347,38 +331,38 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
              <string>Auth:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="2" column="2">
            <widget class="QCheckBox" name="uiRemoteMainServerAuthCheckBox">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>User:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="3" column="2">
            <widget class="QLineEdit" name="uiRemoteMainServerUserLineEdit"/>
           </item>
-          <item row="5" column="0">
+          <item row="4" column="0" colspan="2">
            <widget class="QLabel" name="label_5">
             <property name="text">
              <string>Password:</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="4" column="2">
            <widget class="QLineEdit" name="uiRemoteMainServerPasswordLineEdit">
             <property name="echoMode">
              <enum>QLineEdit::Password</enum>
@@ -395,8 +379,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>5</height>
+           <width>10</width>
+           <height>10</height>
           </size>
          </property>
         </spacer>
@@ -406,8 +390,8 @@
       <zorder>uiConsolePortRangeGroupBox</zorder>
       <zorder>uiUDPPortRangeGroupBox</zorder>
       <zorder>uiLocalServerAutoStartCheckBox</zorder>
-      <zorder>verticalSpacer</zorder>
       <zorder>uiRemoteMainServerGroupBox</zorder>
+      <zorder>verticalSpacer</zorder>
      </widget>
      <widget class="QWidget" name="uiRemoteTabWidget">
       <property name="sizePolicy">
@@ -420,16 +404,7 @@
        <string>Remote servers</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item row="0" column="0" colspan="2">
@@ -582,7 +557,6 @@
   <tabstop>uiConsoleEndPortSpinBox</tabstop>
   <tabstop>uiUDPStartPortSpinBox</tabstop>
   <tabstop>uiUDPEndPortSpinBox</tabstop>
-  <tabstop>uiRestoreDefaultsPushButton</tabstop>
   <tabstop>uiRemoteServersTreeWidget</tabstop>
   <tabstop>uiAddRemoteServerPushButton</tabstop>
   <tabstop>uiDeleteRemoteServerPushButton</tabstop>

@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/gns3_vm_preferences_page.ui'
 #
-# Created: Sat Oct  8 14:06:27 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_GNS3VMPreferencesPageWidget(object):
     def setupUi(self, GNS3VMPreferencesPageWidget):
         GNS3VMPreferencesPageWidget.setObjectName("GNS3VMPreferencesPageWidget")
-        GNS3VMPreferencesPageWidget.resize(476, 450)
+        GNS3VMPreferencesPageWidget.resize(494, 585)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -104,7 +103,7 @@ class Ui_GNS3VMPreferencesPageWidget(object):
         self.uiCpuLabel.setObjectName("uiCpuLabel")
         self.gridLayout.addWidget(self.uiCpuLabel, 5, 0, 1, 1)
         self.verticalLayout.addWidget(self.uiGNS3VMSettingsGroupBox)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
 
         self.retranslateUi(GNS3VMPreferencesPageWidget)
