@@ -37,6 +37,7 @@ class Ui_NewTemplateWizard(object):
         self.verticalLayout_2.addWidget(self.uiFilterLineEdit)
         self.uiAppliancesTreeWidget = QtWidgets.QTreeWidget(self.uiApplianceFromServerWizardPage)
         self.uiAppliancesTreeWidget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.uiAppliancesTreeWidget.setIndentation(10)
         self.uiAppliancesTreeWidget.setObjectName("uiAppliancesTreeWidget")
         self.uiAppliancesTreeWidget.header().setSortIndicatorShown(True)
         self.verticalLayout_2.addWidget(self.uiAppliancesTreeWidget)

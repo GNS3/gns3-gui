@@ -36,7 +36,8 @@ class SvgIconItem(QtSvg.QGraphicsSvgItem):
 
     def mousePressEvent(self, event):
 
-        self.parentItem().mousePressEvent(event)
+        if self.parentItem():
+            self.parentItem().mousePressEvent(event)
         event.accept()
 
 

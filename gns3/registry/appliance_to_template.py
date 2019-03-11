@@ -168,37 +168,38 @@ class ApplianceToTemplate:
 
         return os.path.basename(path)
 
-    def _set_symbol(self, symbol, controller_symbols):
+    def _set_symbol(self, symbol_id, controller_symbols):
         """
         Check if exists on controller or download symbol from the web if needed
         """
 
         # GNS3 builtin symbol
-        if symbol.startswith(":/symbols/"):
-            return symbol
+        if symbol_id.startswith(":/symbols/"):
+            return symbol_id
 
-        path = os.path.join(Config().symbols_dir, symbol)
+        path = os.path.join(Config().symbols_dir, symbol_id)
         if os.path.exists(path):
             return os.path.basename(path)
 
         if controller_symbols:
-            is_symbol_on_controller = len([s for s in controller_symbols
-                                           if s['symbol_id'] == symbol]) > 0
+            is_symbol_on_controller = len([s for s in controller_symbols if s['symbol_id'] == symbol_id]) > 0
 
             if is_symbol_on_controller:
-                cached = Controller.instance().getStaticCachedPath(symbol)
+                cached = Controller.instance().getStaticCachedPath(symbol_id)
                 if os.path.exists(cached):
                     try:
                         shutil.copy(cached, path)
                     except IOError as e:
-                        log.warning("Cannot copy cached symbol from `{}` to `{}` due `{}`".format(
-                            cached, path, str(e)
-                        ))
-                return symbol
+                        log.warning("Cannot copy cached symbol from `{}` to `{}` due `{}`".format(cached, path, e))
+                return symbol_id
 
-        url = "https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/{}".format(symbol)
+        url = "https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/{}".format(symbol_id)
         try:
             urllib.request.urlretrieve(url, path)
+            controller = Controller.instance()
+            controller.clearStaticCache()
+            if controller.isRemote():
+                controller.uploadSymbol(symbol_id, path)
             return os.path.basename(path)
         except (OSError, CertificateError):
             return None
