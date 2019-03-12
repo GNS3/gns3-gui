@@ -19,10 +19,11 @@ import urllib.parse
 
 
 class Symbol:
-    def __init__(self, symbol_id=None, builtin=False, filename=None):
+    def __init__(self, symbol_id=None, builtin=False, filename=None, theme=None):
         self._id = symbol_id
         self._builtin = builtin
         self._filename = filename
+        self._theme = theme
 
     def id(self):
         return self._id
@@ -32,6 +33,9 @@ class Symbol:
 
     def builtin(self):
         return self._builtin
+
+    def theme(self):
+        return self._theme
 
     def url(self):
         return urllib.parse.quote("/symbols/" + self._id + "/raw")

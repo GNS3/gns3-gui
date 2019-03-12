@@ -19,6 +19,7 @@ import sys
 import tempfile
 import json
 import sip
+import os
 
 from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.controller import Controller
@@ -59,6 +60,7 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         """
 
         ApplianceManager.instance().refresh(update=True)
+        Controller.instance().clearStaticCache()
 
     def _appliancesChangedSlot(self):
         """
@@ -266,6 +268,7 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
 
         super().done(result)
         if result:
+            ApplianceManager.instance().appliances_changed_signal.disconnect(self._appliancesChangedSlot)
             from gns3.main_window import MainWindow
             if self.currentPage() == self.uiApplianceFromServerWizardPage:
                 items = self.uiAppliancesTreeWidget.selectedItems()
@@ -274,6 +277,10 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
                     json.dump(item.data(0, QtCore.Qt.UserRole), f)
                     f.close()
                     MainWindow.instance().loadPath(f.name)
+                    try:
+                        os.remove(f.name)
+                    except OSError:
+                        pass
             elif self.uiCreateTemplateManuallyRadioButton.isChecked():
                 MainWindow.instance().preferencesActionSlot()
             elif self.uiImportApplianceFromFileRadioButton.isChecked():

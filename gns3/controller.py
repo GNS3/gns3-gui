@@ -19,6 +19,7 @@ import os
 import hashlib
 import tempfile
 import json
+import pathlib
 
 from .qt import QtCore, QtNetwork, QtGui, QtWidgets, QtWebSockets, qpartial, qslot
 from .symbol import Symbol
@@ -46,7 +47,7 @@ class Controller(QtCore.QObject):
         self._connected = False
         self._connecting = False
         self._version = None
-        self._cache_directory = tempfile.mkdtemp()
+        self._cache_directory = tempfile.TemporaryDirectory(suffix="-gns3")
         self._http_client = None
         self._first_error = True
         self._error_dialog = None
@@ -274,7 +275,6 @@ class Controller(QtCore.QObject):
         if not self._http_client:
             return
 
-
         path = self.getStaticCachedPath(url)
 
         if os.path.exists(path):
@@ -313,8 +313,8 @@ class Controller(QtCore.QObject):
     def getStaticCachedPath(self, url):
         """
         Returns static cached (hashed) path
+
         :param url:
-        :return:
         """
         m = hashlib.md5()
         m.update(url.encode())
@@ -322,8 +322,21 @@ class Controller(QtCore.QObject):
             extension = ".svg"
         else:
             extension = ".png"
-        path = os.path.join(self._cache_directory, m.hexdigest() + extension)
+        path = os.path.join(self._cache_directory.name, m.hexdigest() + extension)
         return path
+
+    def clearStaticCache(self):
+        """
+        Clear the cache directory.
+        """
+
+        for filename in os.listdir(self._cache_directory.name):
+            if filename.endswith(".svg") or filename.endswith(".png"):
+                try:
+                    os.remove(os.path.join(self._cache_directory.name, filename))
+                except OSError as e:
+                    log.debug("Error deleting cached symbol '{}':{}".format(filename, e))
+                    continue
 
     def getSymbolIcon(self, symbol_id, callback, fallback=None):
         """
@@ -341,9 +354,30 @@ class Controller(QtCore.QObject):
             self.getStatic(Symbol(symbol_id).url(), qpartial(self._getIconCallback, callback), fallback=fallback)
 
     def _getIconCallback(self, callback, path):
+
+        pixmap = QtGui.QPixmap(path)
+        if pixmap.isNull():
+            log.debug("Invalid symbol {}".format(path))
+            path = ":/icons/cancel.svg"
         icon = QtGui.QIcon()
         icon.addFile(path)
         callback(icon)
+
+    def uploadSymbol(self, symbol_id, path):
+
+        self.post("/symbols/" + symbol_id + "/raw",
+                  qpartial(self._finishSymbolUpload, path),
+                  body=pathlib.Path(path), progressText="Uploading {}".format(symbol_id), timeout=None)
+
+    def _finishSymbolUpload(self, path, result, error=False, **kwargs):
+
+        if error:
+            log.error("Error while uploading symbol: {}: {}".format(path, result.get("message", "unknown")))
+            return
+
+        # Refresh the templates list
+        from .template_manager import TemplateManager
+        TemplateManager.instance().templates_changed_signal.emit()
 
     def getSymbols(self, callback):
         self.get('/symbols', callback=callback)

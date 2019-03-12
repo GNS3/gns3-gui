@@ -27,7 +27,7 @@ from gns3.qt import QtGui, QtCore, QtWidgets
 from gns3.local_config import LocalConfig
 from ..ui.general_preferences_page_ui import Ui_GeneralPreferencesPageWidget
 from gns3.local_server import LocalServer
-from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, STYLES
+from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, STYLES, SYMBOL_THEMES
 from ..dialogs.console_command_dialog import ConsoleCommandDialog
 
 
@@ -66,6 +66,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiBrowseConfigurationPushButton.clicked.connect(self._browseConfigurationDirectorySlot)
         self._default_label_color = QtGui.QColor(QtCore.Qt.black)
         self.uiStyleComboBox.addItems(STYLES)
+        self.uiSymbolThemeComboBox.addItems(SYMBOL_THEMES)
         self.uiImageDirectoriesAddPushButton.clicked.connect(self._imageDirectoriesAddPushButtonSlot)
         self.uiImageDirectoriesDeletePushButton.clicked.connect(self._imageDirectoriesDeletePushButtonSlot)
 
@@ -308,9 +309,15 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiHdpiCheckBox.setChecked(settings["hdpi"])
         self.uiTelnetConsoleCommandLineEdit.setText(settings["telnet_console_command"])
         self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
+
         index = self.uiStyleComboBox.findText(settings["style"])
         if index != -1:
             self.uiStyleComboBox.setCurrentIndex(index)
+
+        index = self.uiSymbolThemeComboBox.findText(settings["symbol_theme"])
+        if index != -1:
+            self.uiSymbolThemeComboBox.setCurrentIndex(index)
+
         self.uiDelayConsoleAllSpinBox.setValue(settings["delay_console_all"])
 
         self.uiVNCConsoleCommandLineEdit.setText(settings["vnc_console_command"])
@@ -395,6 +402,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         new_general_settings = {
             "style": self.uiStyleComboBox.currentText(),
+            "symbol_theme": self.uiSymbolThemeComboBox.currentText(),
             "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
             "hdpi": self.uiHdpiCheckBox.isChecked(),
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
