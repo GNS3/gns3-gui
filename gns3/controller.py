@@ -279,7 +279,7 @@ class Controller(QtCore.QObject):
 
         if os.path.exists(path):
             callback(path)
-        if path in self._static_asset_download_queue:
+        elif path in self._static_asset_download_queue:
             self._static_asset_download_queue[path].append((callback, fallback, ))
         else:
             self._static_asset_download_queue[path] = [(callback, fallback, )]

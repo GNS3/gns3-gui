@@ -260,6 +260,14 @@ if sys.platform.startswith("win"):
 
 STYLES = ["Charcoal", "Classic", "Legacy"]
 
+SYMBOL_THEMES = ["Classic",
+                 "Affinity-square-blue",
+                 "Affinity-square-gray",
+                 "Affinity-square-red",
+                 "Affinity-circle-blue",
+                 "Affinity-circle-gray",
+                 "Affinity-circle-red"]
+
 if sys.platform.startswith("win"):
     DEFAULT_STYLE = "Classic"
 else:
@@ -288,7 +296,8 @@ GENERAL_SETTINGS = {
     "debug_level": 0,
     "multi_profiles": False,
     "hdpi": not sys.platform.startswith("linux"),
-    "direct_file_upload": False
+    "direct_file_upload": False,
+    "symbol_theme": "Classic"
 }
 
 NODES_VIEW_SETTINGS = {

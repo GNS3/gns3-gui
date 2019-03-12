@@ -62,8 +62,7 @@ class Project(QtCore.QObject):
         self._auto_close = False
 
         config = LocalConfig.instance()
-
-        graphic_settings = LocalConfig.instance().loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS)
+        graphic_settings = config.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS)
         self._scene_width = graphic_settings["scene_width"]
         self._scene_height = graphic_settings["scene_height"]
         self._zoom = graphic_settings.get("zoom", None)
