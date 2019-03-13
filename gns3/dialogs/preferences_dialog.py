@@ -184,9 +184,16 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             self.uiTitleLabel.setText("{} preferences".format(name))
         index = self.uiStackedWidget.indexOf(preferences_page)
         widget = self.uiStackedWidget.widget(index)
-        self.uiStackedWidget.setMinimumSize(widget.size())
-        self.uiStackedWidget.resize(widget.size())
+        #self.uiStackedWidget.setMinimumSize(widget.size())  # FIXME: this seems to not work on Windows and OSX
+        #self.uiStackedWidget.resize(widget.size())
         self.uiStackedWidget.setCurrentIndex(index)
+
+        for index in range(0, self.uiStackedWidget.count()):
+            page = self.uiStackedWidget.widget(index)
+            if self.uiStackedWidget.currentIndex() == index:
+                page.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+            else:
+                page.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
 
     def _applyPreferences(self):
         """
