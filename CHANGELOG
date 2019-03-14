@@ -1,5 +1,19 @@
 # Change Log
 
+## 2.2.0a2 14/03/2019
+
+* Try to handle stacked widget layout differently. Ref #2605
+* Early support for symbol themes.
+* Download custom appliance symbols from GitHub Fix symbol cache issue. Ref https://github.com/GNS3/gns3-gui/issues/2671 Fix temporary directory for symbols was not deleted Fix temporary appliance file was not deleted
+* New export project wizard.
+* Update paths for binaries moved to the MacOS directory in GNS3.app
+* Prevent to change layer position for locked items. Ref #2679
+* Display available appliances in a hierarchical folder structure. Fixes #2702
+* Handle locking/unlocking items independently from the layer position.
+* Better description to why an appliance cannot be installed.
+* Force jsonschema dependency to 2.6.0
+* Fix broken idle-pc support. Fixes #1515
+
 ## 2.2.0a1 29/01/2019
 
 * Fix default NAT interface not restored on Windows. Fixes #2681
