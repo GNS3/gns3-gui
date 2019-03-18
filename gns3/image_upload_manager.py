@@ -38,6 +38,9 @@ class ImageUploadManager(object):
         self._controller = controller
 
     def upload(self):
+        if not os.path.exists(self._image.path):
+            log.error("Image '{}' could not be found".format(self._image.path))
+            return
         if self._directFileUpload:
             # first obtain endpoint and know when target request
             self._controller.getEndpoint(self._getComputePath(), self._compute_id, self._onLoadEndpointCallback, showProgress=False)
@@ -72,10 +75,7 @@ class ImageUploadManager(object):
         self._callback(result, error, **kwargs)
 
     def _fileUploadToCompute(self, endpoint):
-        log.info("Uploading image '{}' to compute".format(self._image.path))
-        if not os.path.exists(self._image.path):
-            log.error("Image '{}' could not be found".format(self._image.path))
-            return
+        log.debug("Uploading image '{}' to compute".format(self._image.path))
         parse_results = urllib.parse.urlparse(endpoint)
         network_manager = self._controller.getHttpClient().getNetworkManager()
         client = HTTPClient.fromUrl(endpoint, network_manager=network_manager)
@@ -85,9 +85,6 @@ class ImageUploadManager(object):
                                context={"image_path": self._image.path}, progressText="Uploading {}".format(self._image.filename), timeout=None, prefix="")
 
     def _fileUploadToController(self):
-        log.info("Uploading image '{}' to controller".format(self._image.path))
-        if not os.path.exists(self._image.path):
-            log.error("Image '{}' could not be found".format(self._image.path))
-            return
+        log.debug("Uploading image '{}' to controller".format(self._image.path))
         self._controller.postCompute(self._getComputePath(), self._compute_id, self._callback, body=pathlib.Path(self._image.path),
                                      context={"image_path": self._image.path}, progressText="Uploading {}".format(self._image.filename), timeout=None)
