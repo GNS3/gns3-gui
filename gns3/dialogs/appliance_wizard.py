@@ -36,6 +36,7 @@ from ..compute_manager import ComputeManager
 from ..controller import Controller
 from ..local_config import LocalConfig
 from ..image_upload_manager import ImageUploadManager
+from ..image_manager import ImageManager
 
 import logging
 log = logging.getLogger(__name__)
@@ -80,6 +81,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         download_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
         if download_directory != "" and download_directory != os.path.dirname(self._path):
             images_directories.append(download_directory)
+
+        for emulator in ("QEMU", "IOU", "DYNAMIPS"):
+            emulator_images_dir = ImageManager.instance().getDirectoryForType(emulator)
+            if os.path.exists(emulator_images_dir):
+                images_directories.append(emulator_images_dir)
 
         # registry to search for images
         self._registry = Registry(images_directories)
@@ -190,7 +196,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     QtWidgets.QMessageBox.warning(self, "GNS3 VM", "The GNS3 VM is not available, please configure the GNS3 VM before adding a new appliance.")
 
         elif self.page(page_id) == self.uiFilesWizardPage:
-            self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+            if self._compute_id != "local":
+                self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
 
         elif self.page(page_id) == self.uiQemuWizardPage:
             if self._appliance['qemu'].get('kvm', 'require') == 'require':
@@ -221,8 +228,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
     def _uiServerWizardPage_isComplete(self):
         return self.uiRemoteRadioButton.isEnabled() or self.uiVMRadioButton.isEnabled() or self.uiLocalRadioButton.isEnabled()
 
-    def _imageUploadedCallback(self, result, error=False, **kwargs):
-        self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+    def _imageUploadedCallback(self, result, error=False, context=None, **kwargs):
+        if context is None:
+            context = {}
+        image_path = context.get("image_path", "unknown")
+        if error:
+            log.error("Error while uploading image '{}': {}".format(image_path, result["message"]))
+        else:
+            log.info("Image '{}' has been successfully uploaded".format(image_path))
+            self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
 
     def _showApplianceInfoSlot(self):
         """
@@ -339,6 +353,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     image_widget.setForeground(2, QtGui.QBrush(QtGui.QColor("red")))
                 else:
                     image_widget.setForeground(2, QtGui.QBrush(QtGui.QColor("green")))
+                    image_widget.setToolTip(2, image["path"])
 
                 # Associated data stored are col 0: version, col 1: image
                 image_widget.setData(0, QtCore.Qt.UserRole, version)
@@ -398,9 +413,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                                                        image.get("filesize"),
                                                        strict_md5_check=not self.allowCustomFiles.isChecked())
                 if img:
-                    image["status"] = "Found"
+                    if img.location == "local":
+                        image["status"] = "Found locally"
+                    else:
+                        image["status"] = "Found on {}".format(self._compute_id)
                     image["md5sum"] = img.md5sum
                     image["filesize"] = img.filesize
+                    image["path"] = img.path
                 else:
                     image["status"] = "Missing"
         self._refreshing = False
@@ -495,9 +514,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Can't access to the image file {}: {}.".format(path, str(e)))
             return
 
-        image_upload_manger = ImageUploadManager(
-            image, Controller.instance(), self._compute_id,
-            self._imageUploadedCallback, LocalConfig.instance().directFileUpload())
+        image_upload_manger = ImageUploadManager(image, Controller.instance(), self._compute_id, self._imageUploadedCallback, LocalConfig.instance().directFileUpload())
         image_upload_manger.upload()
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
@@ -533,7 +550,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         if version is None:
             appliance_configuration = self._appliance.copy()
-            if not "docker" in appliance_configuration:
+            if "docker" not in appliance_configuration:
                 # only Docker do not have version
                 return False
         else:
@@ -583,24 +600,32 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self._template_created = True
         self.done(True)
 
-    def _uploadImages(self, version):
+    def _uploadImages(self, name, version):
         """
         Upload an image the compute.
         """
 
-        appliance_configuration = self._appliance.search_images_for_version(version)
+        try:
+            appliance_configuration = self._appliance.search_images_for_version(version)
+        except ApplianceError as e:
+            QtWidgets.QMessageBox.critical(self, "Appliance","Cannot install {} version {}: {}".format(name, version, e))
+            return
         for image in appliance_configuration["images"]:
             if image["location"] == "local":
                 image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
-
-                image_upload_manger = ImageUploadManager(
-                    image, Controller.instance(), self._compute_id,
-                    self._applianceImageUploadedCallback, LocalConfig.instance().directFileUpload())
+                image_upload_manger = ImageUploadManager(image, Controller.instance(), self._compute_id, self._applianceImageUploadedCallback, LocalConfig.instance().directFileUpload())
                 image_upload_manger.upload()
                 self._image_uploading_count += 1
 
-    def _applianceImageUploadedCallback(self, result, error=False, **kwargs):
-        self._image_uploading_count -= 1
+    def _applianceImageUploadedCallback(self, result, error=False, context=None, **kwargs):
+        if context is None:
+            context = {}
+        image_path = context.get("image_path", "unknown")
+        if error:
+            log.error("Error while uploading image '{}': {}".format(image_path, result["message"]))
+        else:
+            log.info("Image '{}' has been successfully uploaded".format(image_path))
+            self._image_uploading_count -= 1
 
     def nextId(self):
         if self.currentPage() == self.uiServerWizardPage:
@@ -638,7 +663,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                                                    QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
                 return False
-            self._uploadImages(version["name"])
+
+            self._uploadImages(appliance["name"], version["name"])
 
         elif self.currentPage() == self.uiUsageWizardPage:
             # validate the usage page

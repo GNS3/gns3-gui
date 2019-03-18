@@ -152,18 +152,18 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         """
 
         self.uiAppliancesTreeWidget.clear()
+        parent_routers = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
+        parent_routers.setText(0, "Routers")
+        parent_routers.setFlags(parent_routers.flags() & ~QtCore.Qt.ItemIsSelectable)
+        parent_switches = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
+        parent_switches.setText(0, "Switches")
+        parent_switches.setFlags(parent_switches.flags() & ~QtCore.Qt.ItemIsSelectable)
         parent_guests = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
         parent_guests.setText(0, "Guests")
         parent_guests.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemIsSelectable)
         parent_firewalls = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
         parent_firewalls.setText(0, "Firewalls")
-        parent_firewalls.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemIsSelectable)
-        parent_switches = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
-        parent_switches.setText(0, "Switches")
-        parent_switches.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemIsSelectable)
-        parent_routers = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
-        parent_routers.setText(0, "Routers")
-        parent_routers.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemIsSelectable)
+        parent_firewalls.setFlags(parent_firewalls.flags() & ~QtCore.Qt.ItemIsSelectable)
         self.uiAppliancesTreeWidget.expandAll()
 
         for appliance in ApplianceManager.instance().appliances():

@@ -87,7 +87,7 @@ class Registry(QtCore.QObject):
                     return remote_image
 
         for directory in self._images_dirs:
-            log.debug("Search images %s (%s) in %s", filename, md5sum, directory)
+            log.debug("Search image {} (MD5={} SIZE={}) in '{}'".format(filename, md5sum, size, directory))
             if os.path.exists(directory):
                 for file in os.listdir(directory):
                     if not file.endswith(".md5sum") and not file.startswith("."):
@@ -104,7 +104,7 @@ class Registry(QtCore.QObject):
                                     if size is None or (file_size - 10 < size and file_size + 10 > size):
                                         image = Image(emulator, path)
                                         if image.md5sum == md5sum:
-                                            log.debug("Found images %s (%s) in %s", filename, md5sum, image.path)
+                                            log.debug("Found image {} (MD5={}) in {}".format(filename, md5sum, image.path))
                                             return image
                         except (OSError, PermissionError) as e:
                             log.error("Cannot scan {}: {}".format(path, e))

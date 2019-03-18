@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import pathlib
 import urllib.parse
 
@@ -71,19 +72,22 @@ class ImageUploadManager(object):
         self._callback(result, error, **kwargs)
 
     def _fileUploadToCompute(self, endpoint):
-        log.info("Uploading file to compute: {}".format(endpoint))
-
+        log.info("Uploading image '{}' to compute".format(self._image.path))
+        if not os.path.exists(self._image.path):
+            log.error("Image '{}' could not be found".format(self._image.path))
+            return
         parse_results = urllib.parse.urlparse(endpoint)
         network_manager = self._controller.getHttpClient().getNetworkManager()
         client = HTTPClient.fromUrl(endpoint, network_manager=network_manager)
         # We don't retry connection as in case of fail we try direct file upload
         client.setMaxRetryConnection(0)
-        client.createHTTPQuery(
-            'POST', parse_results.path, self._checkIfSuccessfulCallback, body=pathlib.Path(self._image.path),
-            progressText="Uploading {}".format(self._image.filename), timeout=None, prefix="")
+        client.createHTTPQuery('POST', parse_results.path, self._checkIfSuccessfulCallback, body=pathlib.Path(self._image.path),
+                               context={"image_path": self._image.path}, progressText="Uploading {}".format(self._image.filename), timeout=None, prefix="")
 
     def _fileUploadToController(self):
-        log.info("Uploading file to controller: {}".format(self._getComputePath()))
-        self._controller.postCompute(
-            self._getComputePath(), self._compute_id, self._callback, body=pathlib.Path(self._image.path),
-            progressText="Uploading {}".format(self._image.filename), timeout=None)
+        log.info("Uploading image '{}' to controller".format(self._image.path))
+        if not os.path.exists(self._image.path):
+            log.error("Image '{}' could not be found".format(self._image.path))
+            return
+        self._controller.postCompute(self._getComputePath(), self._compute_id, self._callback, body=pathlib.Path(self._image.path),
+                                     context={"image_path": self._image.path}, progressText="Uploading {}".format(self._image.filename), timeout=None)
