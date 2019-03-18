@@ -61,7 +61,6 @@ def test_direct_file_upload(image, controller, callback):
 
     manager._checkIfSuccessfulCallback({})
     callback.assert_called_with({}, False)
-    os.remove(image.path)
 
 
 def test_direct_file_upload_fallback_to_controller(image, controller, callback):
@@ -76,7 +75,6 @@ def test_direct_file_upload_fallback_to_controller(image, controller, callback):
         progressText='Uploading {}'.format(image.filename),
         timeout=None
     )
-    os.remove(image.path)
 
 
 def test_upload_via_controller(image, controller, callback):
@@ -91,4 +89,4 @@ def test_upload_via_controller(image, controller, callback):
         progressText='Uploading {}'.format(image.filename),
         timeout=None
     )
-    os.remove(image.path)
+
