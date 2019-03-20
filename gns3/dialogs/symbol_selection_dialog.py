@@ -161,6 +161,8 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         """
 
         symbol_path = self.getSymbol()
+        if not symbol_path:
+            return False
         for item in self._items:
             item.setSymbol(symbol_path)
         return True
@@ -169,7 +171,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
 
         if self.uiSymbolTreeWidget.isEnabled():
             current = self.uiSymbolTreeWidget.currentItem()
-            if current:
+            if current and current.parent():
                 return current.data(0, QtCore.Qt.UserRole).id()
         else:
             return os.path.basename(self.uiSymbolLineEdit.text())

@@ -268,7 +268,7 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
 
         super().done(result)
         if result:
-            ApplianceManager.instance().appliances_changed_signal.disconnect(self._appliancesChangedSlot)
+            #ApplianceManager.instance().appliances_changed_signal.disconnect(self._appliancesChangedSlot)
             from gns3.main_window import MainWindow
             if self.currentPage() == self.uiApplianceFromServerWizardPage:
                 items = self.uiAppliancesTreeWidget.selectedItems()
