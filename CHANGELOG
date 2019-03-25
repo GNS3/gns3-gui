@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.0a3 25/03/2019
+
+* Fix bug when changing symbol. Fixes #2740
+* Fix issue when images are not uploaded from appliance wizard. Ref https://github.com/GNS3/gns3-gui/issues/2738
+
 ## 2.2.0a2 14/03/2019
 
 * Try to handle stacked widget layout differently. Ref #2605
