@@ -329,7 +329,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _openWebInterfaceActionSlot(self):
         if Controller.instance().connected():
             base_url = Controller.instance().httpClient().fullUrl()
-            webui_url = "{}/static/web-ui/local".format(base_url)
+            webui_url = "{}/static/web-ui/bundled".format(base_url)
             QtGui.QDesktopServices.openUrl(QtCore.QUrl(webui_url))
 
     def _showGridActionSlot(self):
