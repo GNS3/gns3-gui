@@ -198,6 +198,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         elif self.page(page_id) == self.uiFilesWizardPage:
             if self._compute_id != "local":
                 self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+            else:
+                self.images_changed_signal.emit()
 
         elif self.page(page_id) == self.uiQemuWizardPage:
             if self._appliance['qemu'].get('kvm', 'require') == 'require':
