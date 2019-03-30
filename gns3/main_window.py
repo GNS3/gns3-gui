@@ -1130,6 +1130,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings["state"] = bytes(self.saveState().toBase64()).decode()
         self.setSettings(self._settings)
 
+        Controller.instance().stopListenNotifications()
         server = LocalServer.instance()
         server.stopLocalServer(wait=True)
 
