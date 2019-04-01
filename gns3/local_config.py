@@ -186,6 +186,58 @@ class LocalConfig(QtCore.QObject):
                 app.exec_()
                 sys.exit(1)
 
+        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0alpha1"):
+
+             servers = self._settings.get("Servers", {})
+
+             if "LocalServer" in self._settings:
+                servers["local_server"] = copy.copy(self._settings["LocalServer"])
+
+                 # We migrate the server binary for OSX due to the change from py2app to CX freeze
+                if servers["local_server"]["path"] == "/Applications/GNS3.app/Contents/Resources/server/Contents/MacOS/gns3server":
+                    servers["local_server"]["path"] = "gns3server"
+
+             if "RemoteServers" in self._settings:
+                servers["remote_servers"] = copy.copy(self._settings["RemoteServers"])
+
+             self._settings["Servers"] = servers
+
+             if "GUI" in self._settings:
+                main_window = self._settings.get("MainWindow", {})
+                main_window["hide_getting_started_dialog"] = self._settings["GUI"].get("hide_getting_started_dialog", False)
+                self._settings["MainWindow"] = main_window
+
+        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.1dev2"):
+            if sys.platform.startswith("darwin"):
+                from .settings import PRECONFIGURED_TELNET_CONSOLE_COMMANDS, DEFAULT_TELNET_CONSOLE_COMMAND
+
+                if "MainWindow" in self._settings:
+                    if self._settings["MainWindow"].get("telnet_console_command") not in PRECONFIGURED_TELNET_CONSOLE_COMMANDS.values():
+                        self._settings["MainWindow"]["telnet_console_command"] = DEFAULT_TELNET_CONSOLE_COMMAND
+
+         # Migrate 1.X to 2.0
+        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("2.0.0"):
+            if "Qemu" in self._settings:
+                # The internet VM is replaced by the nat Node
+                # we remove it from the list of available VM
+                vms = []
+                for vm in self._settings["Qemu"].get("vms", []):
+                    if vm.get("hda_disk_image") != "core-linux-6.4-internet-0.1.img":
+                        vms.append(vm)
+                self._settings["Qemu"]["vms"] = vms
+
+         # Starting with 2.0.0dev5 IOU licence is stored in the settings
+        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("2.0.0"):
+            if "IOU" in self._settings and "iourc_path" in self._settings["IOU"] and "iourc_content" not in self._settings["IOU"]:
+                try:
+                    with open(self._settings["IOU"]["iourc_path"], "r", encoding="utf-8") as f:
+                        self._settings["IOU"]["iourc_content"] = f.read().replace("\r\n", "\n")
+                        del self._settings["IOU"]["iourc_path"]
+                except OSError as e:
+                    log.warning("Can't import IOU licence {}: {}".format(self._settings["IOU"]["iourc_path"], str(e)))
+                except UnicodeDecodeError as e:
+                    log.warning("Non ascii characters in iourc file {}, please remove them: {}".format(self._settings["IOU"]["iourc_path"], str(e)))
+
     def _readConfig(self, config_path):
         """
         Read the configuration file.
