@@ -79,6 +79,7 @@ class Link(QtCore.QObject):
         self._deleting = False
         self._capture_file_path = None
         self._capture_file = None
+        self._capture_compute_id = None
         self._initialized = False
         self._filters = {}
         self._suspend = False
@@ -103,24 +104,28 @@ class Link(QtCore.QObject):
             Controller.instance().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
 
     def _parseResponse(self, result):
-        self._capturing = result.get("capturing", False)
 
-        # If the controller is remote the capture path should be rewrite to something local
+        self._capturing = result.get("capturing", False)
         if self._capturing:
-            if Controller.instance().isRemote():
-                if self._capture_file_path is None and result.get("capture_file_path", None) is not None:
+            self._capture_compute_id = result.get("capture_compute_id", None)
+            self._capture_file_path = result.get("capture_file_path", None)
+            if self._capture_compute_id and self._capture_compute_id != "local":
+                # We need to stream the pcap file content if the compute is remote
+                if self._capture_file_path is None:
                     self._capture_file = QtCore.QTemporaryFile()
                     self._capture_file.open(QtCore.QFile.WriteOnly)
                     self._capture_file.setAutoRemove(True)
                     self._capture_file_path = self._capture_file.fileName()
-                    Controller.instance().get("/projects/{project_id}/links/{link_id}/pcap".format(project_id=self.project().id(),link_id=self._link_id),
-                                              None,
-                                              showProgress=False,
-                                              downloadProgressCallback=self._downloadPcapProgress,
-                                              ignoreErrors=True,  # If something is wrong avoid disconnect us from server
-                                              timeout=None)
-            else:
-                self._capture_file_path = result["capture_file_path"]
+                else:
+                    self._capture_file = QtCore.QFile(self._capture_file_path)
+                    self._capture_file.open(QtCore.QFile.WriteOnly)
+                Controller.instance().get("/projects/{project_id}/links/{link_id}/pcap".format(project_id=self.project().id(), link_id=self._link_id),
+                                          None,
+                                          showProgress=False,
+                                          downloadProgressCallback=self._downloadPcapProgress,
+                                          ignoreErrors=True,  # If something is wrong avoid disconnect us from server
+                                          timeout=None)
+            log.debug("Capturing packets to '{}'".format(self._capture_file_path))
 
         if "nodes" in result:
             self._nodes = result["nodes"]
@@ -353,7 +358,7 @@ class Link(QtCore.QObject):
         if error:
             log.error("Error while starting capture on link: {}".format(result["message"]))
             return
-        self._parseResponse(result)
+        #self._parseResponse(result)
 
     def _downloadPcapProgress(self, content, server=None, context={}, **kwargs):
         """
@@ -366,15 +371,16 @@ class Link(QtCore.QObject):
         self._capture_file.flush()
 
     def stopCapture(self):
-        if Controller.instance().isRemote():
+
+        if self._capture_compute_id and self._capture_compute_id != "local":
             if self._capture_file:
                 self._capture_file.close()
                 self._capture_file = None
-            if self._capture_file_path and os.path.exists(self._capture_file_path):
-                try:
-                    os.remove(self._capture_file_path)
-                except OSError as e:
-                    log.error("Cannot remove file {}: {}".format(self._capture_file_path, e))
+            # if self._capture_file_path and os.path.exists(self._capture_file_path):
+            #     try:
+            #         os.remove(self._capture_file_path)
+            #     except OSError as e:
+            #         log.error("Cannot remove file {}: {}".format(self._capture_file_path, e))
         self._capture_file_path = None
         Controller.instance().post("/projects/{project_id}/links/{link_id}/stop_capture".format(project_id=self.project().id(),
                                                                                                 link_id=self._link_id),
@@ -384,7 +390,7 @@ class Link(QtCore.QObject):
         if error:
             log.error("Error while stopping capture on link: {}".format(result["message"]))
             return
-        self._parseResponse(result)
+        #self._parseResponse(result)
 
     def get(self, path, callback, **kwargs):
         """
