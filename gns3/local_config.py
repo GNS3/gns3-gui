@@ -24,7 +24,7 @@ import copy
 import psutil
 
 from .qt import QtCore, QtWidgets
-from .version import __version__
+from .version import __version__, __version_info__
 from .utils import parse_version
 
 import logging
@@ -87,8 +87,20 @@ class LocalConfig(QtCore.QObject):
             try:
                 # create the config file if it doesn't exist
                 os.makedirs(os.path.dirname(self._config_file), exist_ok=True)
-                with open(self._config_file, "w", encoding="utf-8") as f:
-                    json.dump({"version": __version__, "type": "settings"}, f)
+
+                if sys.platform.startswith("win"):
+                    old_config_path = os.path.join(os.path.expandvars("%APPDATA%"), "GNS3", filename)
+                else:
+                    old_config_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", filename)
+
+                # TODO: migrate versioned config file from a previous version of GNS3 (for instance 2.2 -> 2.3)
+                if os.path.exists(old_config_path):
+                    # migrate post version 2.2 configuration file
+                    shutil.copyfile(old_config_path, self._config_file)
+                else:
+                    # create a new config
+                    with open(self._config_file, "w", encoding="utf-8") as f:
+                        json.dump({"version": __version__, "type": "settings"}, f)
             except OSError as e:
                 log.error("Could not create the config file {}: {}".format(self._config_file, e))
 
@@ -114,17 +126,18 @@ class LocalConfig(QtCore.QObject):
             self._config_file = None
             self._resetLoadConfig()
 
-
     def configDirectory(self):
         """
         Get the configuration directory
         """
+
+        main_version = "{}.{}".format(__version_info__[0], __version_info__[1])
         if sys.platform.startswith("win"):
             appdata = os.path.expandvars("%APPDATA%")
-            path = os.path.join(appdata, "GNS3")
+            path = os.path.join(appdata, "GNS3", main_version)
         else:
             home = os.path.expanduser("~")
-            path = os.path.join(home, ".config", "GNS3")
+            path = os.path.join(home, ".config", "GNS3", main_version)
 
         if self._profile is not None:
             path = os.path.join(path, "profiles", self._profile)
@@ -146,8 +159,9 @@ class LocalConfig(QtCore.QObject):
         # In < 1.4 on Mac the config was in a gns3.net directory
         # We have move to same location as Linux
         if sys.platform.startswith("darwin"):
+            main_version = "{}.{}".format(__version_info__[0], __version_info__[1])
             old_path = os.path.join(os.path.expanduser("~"), ".config", "gns3.net")
-            new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3")
+            new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", main_version)
             if os.path.exists(old_path) and not os.path.exists(new_path):
                 try:
                     shutil.copytree(old_path, new_path)
@@ -156,7 +170,7 @@ class LocalConfig(QtCore.QObject):
 
     def _migrateOldConfig(self):
         """
-        Migrate pre 1.4 config
+        Migrate config from a previous version.
         """
 
         # Display an error if settings come from a more recent version of GNS3
@@ -165,64 +179,12 @@ class LocalConfig(QtCore.QObject):
         if "version" in self._settings:
             if parse_version(self._settings["version"])[:2] > parse_version(__version__)[:2]:
                 app = QtWidgets.QApplication(sys.argv)  # We need to create an application because settings are loaded before Qt init
-                error_message = "Your settings are for version {} of GNS3. You cannot use a previous version of GNS3 without risking losing data. If you want to reset delete the settings in {}".format(self._settings["version"], self.configDirectory())
+                error_message = "Settings are for version {} of GNS3. It is not possible to use a previous version of GNS3 without risking losing data. Delete the settings in '{}' to start GNS3".format(self._settings["version"], self.configDirectory())
                 QtWidgets.QMessageBox.critical(False, "Version error", error_message)
                 # Exit immediately not clean but we want to avoid any side effect that could corrupt the file
                 QtCore.QTimer.singleShot(0, app.quit)
                 app.exec_()
                 sys.exit(1)
-
-        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0alpha1"):
-
-            servers = self._settings.get("Servers", {})
-
-            if "LocalServer" in self._settings:
-                servers["local_server"] = copy.copy(self._settings["LocalServer"])
-
-                # We migrate the server binary for OSX due to the change from py2app to CX freeze
-                if servers["local_server"]["path"] == "/Applications/GNS3.app/Contents/Resources/server/Contents/MacOS/gns3server":
-                    servers["local_server"]["path"] = "gns3server"
-
-            if "RemoteServers" in self._settings:
-                servers["remote_servers"] = copy.copy(self._settings["RemoteServers"])
-
-            self._settings["Servers"] = servers
-
-            if "GUI" in self._settings:
-                main_window = self._settings.get("MainWindow", {})
-                main_window["hide_getting_started_dialog"] = self._settings["GUI"].get("hide_getting_started_dialog", False)
-                self._settings["MainWindow"] = main_window
-
-        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.1dev2"):
-            if sys.platform.startswith("darwin"):
-                from .settings import PRECONFIGURED_TELNET_CONSOLE_COMMANDS, DEFAULT_TELNET_CONSOLE_COMMAND
-
-                if "MainWindow" in self._settings:
-                    if self._settings["MainWindow"].get("telnet_console_command") not in PRECONFIGURED_TELNET_CONSOLE_COMMANDS.values():
-                        self._settings["MainWindow"]["telnet_console_command"] = DEFAULT_TELNET_CONSOLE_COMMAND
-
-        # Migrate 1.X to 2.0
-        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("2.0.0"):
-            if "Qemu" in self._settings:
-                # The internet VM is replaced by the nat Node
-                # we remove it from the list of available VM
-                vms = []
-                for vm in self._settings["Qemu"].get("vms", []):
-                    if vm.get("hda_disk_image") != "core-linux-6.4-internet-0.1.img":
-                        vms.append(vm)
-                self._settings["Qemu"]["vms"] = vms
-
-        # Starting with 2.0.0dev5 IOU licence is stored in the settings
-        if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("2.0.0"):
-            if "IOU" in self._settings and "iourc_path" in self._settings["IOU"] and "iourc_content" not in self._settings["IOU"]:
-                try:
-                    with open(self._settings["IOU"]["iourc_path"], "r", encoding="utf-8") as f:
-                        self._settings["IOU"]["iourc_content"] = f.read().replace("\r\n", "\n")
-                        del self._settings["IOU"]["iourc_path"]
-                except OSError as e:
-                    log.warning("Can't import IOU licence {}: {}".format(self._settings["IOU"]["iourc_path"], str(e)))
-                except UnicodeDecodeError as e:
-                    log.warning("Non ascii characters in iourc file {}, please remove them: {}".format(self._settings["IOU"]["iourc_path"], str(e)))
 
     def _readConfig(self, config_path):
         """
