@@ -46,6 +46,7 @@ class Controller(QtCore.QObject):
         super().__init__()
         self._connected = False
         self._connecting = False
+        self._notification_stream = None
         self._version = None
         self._cache_directory = tempfile.TemporaryDirectory(suffix="-gns3")
         self._http_client = None
