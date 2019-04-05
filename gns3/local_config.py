@@ -93,9 +93,9 @@ class LocalConfig(QtCore.QObject):
                 else:
                     old_config_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", filename)
 
-                # TODO: migrate versioned config file from a previous version of GNS3 (for instance 2.2 -> 2.3)
+                # TODO: migrate versioned config file from a previous version of GNS3 (for instance 2.2.0 -> 2.2.1)
                 if os.path.exists(old_config_path):
-                    # migrate post version 2.2 configuration file
+                    # migrate post version 2.2.0 configuration file
                     shutil.copyfile(old_config_path, self._config_file)
                 else:
                     # create a new config
@@ -131,13 +131,13 @@ class LocalConfig(QtCore.QObject):
         Get the configuration directory
         """
 
-        main_version = "{}.{}".format(__version_info__[0], __version_info__[1])
+        version = "{}.{}.{}".format(__version_info__[0], __version_info__[1], __version_info__[2])
         if sys.platform.startswith("win"):
             appdata = os.path.expandvars("%APPDATA%")
-            path = os.path.join(appdata, "GNS3", main_version)
+            path = os.path.join(appdata, "GNS3", version)
         else:
             home = os.path.expanduser("~")
-            path = os.path.join(home, ".config", "GNS3", main_version)
+            path = os.path.join(home, ".config", "GNS3", version)
 
         if self._profile is not None:
             path = os.path.join(path, "profiles", self._profile)
@@ -159,9 +159,9 @@ class LocalConfig(QtCore.QObject):
         # In < 1.4 on Mac the config was in a gns3.net directory
         # We have move to same location as Linux
         if sys.platform.startswith("darwin"):
-            main_version = "{}.{}".format(__version_info__[0], __version_info__[1])
+            version = "{}.{}.{}".format(__version_info__[0], __version_info__[1], __version_info__[2])
             old_path = os.path.join(os.path.expanduser("~"), ".config", "gns3.net")
-            new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", main_version)
+            new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", version)
             if os.path.exists(old_path) and not os.path.exists(new_path):
                 try:
                     shutil.copytree(old_path, new_path)
