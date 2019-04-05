@@ -1,5 +1,16 @@
 # Change Log
 
+## 2.2.0a4 05/04/2019
+
+* Use the full version number for path to config files. Ref https://github.com/GNS3/gns3-gui/issues/2756
+* Fix error message when shutting down GUI without a started server.
+* Fix remote packet capture and make sure packet capture is stopped when deleting an NIO. Fixes https://github.com/GNS3/gns3-gui/issues/2753
+* Store config files in version specific location
+* Update pytest from 4.3.1 to 4.4.0
+* Fix error messages on closing GNS3 application. Fixes https://github.com/GNS3/gns3-gui/issues/2750
+* Fix bug when list of files for an appliance is not displayed.
+* Update 'local' to 'bundled' in server & gui, Fixes: #1561
+
 ## 2.2.0a3 25/03/2019
 
 * Fix bug when changing symbol. Fixes #2740
