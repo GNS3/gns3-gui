@@ -76,7 +76,7 @@ if sys.platform.startswith("win"):
         DEFAULT_DELAY_CONSOLE_ALL = 1500
     else:
         PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3 downloaded from gns3.com)"] = 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"'
-        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
+        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (normal standalone version)"]
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
