@@ -1503,7 +1503,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         selected_nodes = []
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem):
-                selected_nodes.append(item.node())
+                node = item.node()
+                if node.locked():
+                    QtWidgets.QMessageBox.critical(self, "Delete", "Cannot delete node '{}' because it is locked".format(node.name()))
+                    return
+                selected_nodes.append(node)
         if selected_nodes:
             if len(selected_nodes) > 1:
                 question = "Do you want to permanently delete these {} nodes?".format(len(selected_nodes))
