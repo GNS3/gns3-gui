@@ -336,12 +336,15 @@ class BaseNode(QtCore.QObject):
         """
 
         if not hasattr(self, "configFiles"):
-            return
+            return False
+
         for file in self.configFiles():
             self.controllerHttpGet("/nodes/{node_id}/files/{file}".format(node_id=self._node_id, file=file),
                                    self._exportConfigToDirectoryCallback,
                                    context={"directory": directory, "file": file},
                                    raw=True)
+
+        return True
 
     def _exportConfigToDirectoryCallback(self, result, error=False, raw_body=None, context={}, **kwargs):
         """
@@ -352,8 +355,7 @@ class BaseNode(QtCore.QObject):
         """
 
         if error:
-            # The file could be missing if you have not private config for
-            # exemple
+            # The file could be missing if you have not private config for example
             return
         export_directory = context["directory"]
 
