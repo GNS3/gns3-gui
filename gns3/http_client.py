@@ -209,16 +209,16 @@ class HTTPClient(QtCore.QObject):
         Called when a query upload progress
         """
         if not sip_is_deleted(HTTPClient._progress_callback):
-            HTTPClient._progress_callback.progress_signal.emit(query_id, str(sent), str(total))
+            HTTPClient._progress_callback.progress_signal.emit(query_id, str(abs(sent)), str(abs(total)))
 
     def _notify_progress_download(self, query_id, sent, total):
         """
         Called when a query download progress
         """
         if not sip_is_deleted(HTTPClient._progress_callback):
-            # abs() for maxium because sometimes the system send negative
+            # abs() for maximum because sometimes the system send negative
             # values
-            HTTPClient._progress_callback.progress_signal.emit(query_id, str(sent), str(abs(total)))
+            HTTPClient._progress_callback.progress_signal.emit(query_id, str(abs(sent)), str(abs(total)))
 
     @classmethod
     def setProgressCallback(cls, progress_callback):
