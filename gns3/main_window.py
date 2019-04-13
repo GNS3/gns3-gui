@@ -42,7 +42,7 @@ from .dialogs.edit_project_dialog import EditProjectDialog
 from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .items.node_item import NodeItem
-from .items.link_item import LinkItem
+from .items.link_item import LinkItem, SvgIconItem
 from .items.shape_item import ShapeItem
 from .items.label_item import LabelItem
 from .topology import Topology
@@ -364,7 +364,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         for item in self.uiGraphicsView.items():
-            if not isinstance(item, LinkItem) and not isinstance(item, LabelItem):
+            if not isinstance(item, LinkItem) and not isinstance(item, LabelItem) and not isinstance(item, SvgIconItem):
                 if self.uiLockAllAction.isChecked() and not item.locked():
                     item.setLocked(True)
                 elif not self.uiLockAllAction.isChecked() and item.locked():

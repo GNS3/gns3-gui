@@ -49,7 +49,7 @@ from .compute_manager import ComputeManager
 from .utils.get_icon import get_icon
 
 # link items
-from .items.link_item import LinkItem
+from .items.link_item import LinkItem, SvgIconItem
 from .items.ethernet_link_item import EthernetLinkItem
 from .items.serial_link_item import SerialLinkItem
 
@@ -1485,7 +1485,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if not isinstance(item, LinkItem) and not isinstance(item, LabelItem):
+            if not isinstance(item, LinkItem) and not isinstance(item, LabelItem) and not isinstance(item, SvgIconItem):
                 if item.locked() is True:
                     item.setLocked(False)
                 else:
