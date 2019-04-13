@@ -189,7 +189,10 @@ class Progress(QtCore.QObject):
                     # Due to Qt limitations for large numbers (above 32bit int) we calculate "progress" ourselves
                     current, maximum = self._normalize(query['current'], query['maximum'])
                     progress_dialog.setMaximum(maximum)
-                    progress_dialog.setValue(current)
+                    try:
+                        progress_dialog.setValue(current)
+                    except OverflowError:
+                        progress_dialog.setValue(100)
 
                 if text and query["maximum"] > 1000:
                     text += "\n{} / {}".format(human_filesize(query["current"]), human_filesize(query["maximum"]))

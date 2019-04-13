@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.1.15 21/03/2019
+
+* No changes on the GUI.
+
 ## 2.2.0a4 05/04/2019
 
 * Use the full version number for path to config files. Ref https://github.com/GNS3/gns3-gui/issues/2756

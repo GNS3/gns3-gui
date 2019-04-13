@@ -223,7 +223,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self.post("/start", self._startCallback, timeout=None, progressText="{} is starting".format(self.name()))
+        self.post("/start", self._startCallback, timeout=None, showProgress=False)
 
     def _startCallback(self, result, error=False, **kwargs):
         """
@@ -249,7 +249,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self.post("/stop", self._stopCallback, timeout=None, progressText="{} is stopping".format(self.name()))
+        self.post("/stop", self._stopCallback, timeout=None, showProgress=False)
 
     def _stopCallback(self, result, error=False, **kwargs):
         """
@@ -279,7 +279,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is being suspended".format(self.name()))
-        self.post("/suspend", self._suspendCallback, timeout=None, progressText="{} is suspending".format(self.name()))
+        self.post("/suspend", self._suspendCallback, timeout=None, showProgress=False)
 
     def _suspendCallback(self, result, error=False, **kwargs):
         """
@@ -301,7 +301,7 @@ class Node(BaseNode):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self.post("/reload", self._reloadCallback, timeout=None, progressText="{} is reloading".format(self.name()))
+        self.post("/reload", self._reloadCallback, timeout=None, showProgress=False)
 
     def _reloadCallback(self, result, error=False, **kwargs):
         """
@@ -455,7 +455,7 @@ class Node(BaseNode):
         if not skip_controller:
             for link in self.links():
                 link.setDeleting()
-            self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback)
+            self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback, showProgress=False)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
@@ -485,7 +485,7 @@ class Node(BaseNode):
                   "y": int(y),
                   "z": int(z)}
 
-        self.post("/duplicate", self._duplicateCallback, body=params, timeout=None, progressText="{} is being duplicated".format(self.name()))
+        self.post("/duplicate", self._duplicateCallback, body=params, timeout=None, showProgress=False)
 
     def _duplicateCallback(self, result, error=False, **kwargs):
         """
@@ -775,12 +775,13 @@ class Node(BaseNode):
         """
 
         if not hasattr(self, "configFiles"):
-            return
+            return False
         for file in self.configFiles():
             self.get("/files/{file}".format(file=file),
                      self._exportConfigsToDirectoryCallback,
                      context={"directory": directory, "file": file},
                      raw=True)
+        return True
 
     def _exportConfigsToDirectoryCallback(self, result, error=False, raw_body=None, context={}, **kwargs):
         """

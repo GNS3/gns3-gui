@@ -152,9 +152,14 @@ class Module(QtCore.QObject):
         :param directory: destination directory path
         """
 
+        node_names_cannot_export = []
         for node in self._nodes:
             if hasattr(node, "initialized") and node.initialized():
-                node.exportConfigsToDirectory(directory)
+                if not node.exportConfigsToDirectory(directory):
+                    node_names_cannot_export.append(node.name())
+
+        if node_names_cannot_export:
+            log.warning("Config export is not supported by the following nodes: {}".format(" ".join(node_names_cannot_export)))
 
     def importConfigs(self, directory):
         """
