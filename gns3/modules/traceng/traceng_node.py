@@ -88,7 +88,7 @@ class TraceNGNode(Node):
             self._last_destination = destination
             params = {"destination": destination}
             log.debug("{} is starting".format(self.name()))
-            self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, body=params, timeout=None, progressText="{} is starting".format(self.name()))
+            self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, body=params, timeout=None, showProgress=False)
 
     def info(self):
         """

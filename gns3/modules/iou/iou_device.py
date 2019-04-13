@@ -77,7 +77,7 @@ class IOUDevice(Node):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, progressText="{} is starting".format(self.name()))
+        self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, showProgress=False)
 
     def update(self, new_settings):
         """

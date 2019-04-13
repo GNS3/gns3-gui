@@ -419,7 +419,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, timeout=None, progressText="{} is starting".format(self.name()))
+        self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, timeout=None, showProgress=False)
 
     def _startCallback(self, result, error=False, **kwargs):
         """
@@ -445,7 +445,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self.controllerHttpPost("/nodes/{node_id}/stop".format(node_id=self._node_id), self._stopCallback, progressText="{} is stopping".format(self.name()), timeout=None)
+        self.controllerHttpPost("/nodes/{node_id}/stop".format(node_id=self._node_id), self._stopCallback, showProgress=False, timeout=None)
 
     def _stopCallback(self, result, error=False, **kwargs):
         """
