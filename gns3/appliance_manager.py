@@ -99,12 +99,14 @@ class ApplianceManager(QtCore.QObject):
                 "x": int(x),
                 "y": int(y)
             },
+                showProgress=False,
                 timeout=None)
         else:
             self._controller.post("/projects/" + project_id + "/appliances/" + appliance_id, self._createNodeFromApplianceCallback, {
                 "x": int(x),
                 "y": int(y)
             },
+                showProgress=False,
                 timeout=None)
         return True
 
