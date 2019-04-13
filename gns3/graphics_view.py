@@ -1199,12 +1199,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                             "Import {}".format(os.path.basename(config_file)),
-                                                            self._import_config_dir,
+                                                            self._import_config_directory,
                                                             "All files (*.*);;Config files (*.cfg)",
                                                             "Config files (*.cfg)")
             if not path:
                 continue
-            self._import_config_dir = os.path.dirname(path)
+            self._import_config_directory = os.path.dirname(path)
             item.node().importFile(config_file, path)
 
     def editConfigActionSlot(self):
