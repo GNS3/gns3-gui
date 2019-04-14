@@ -26,6 +26,8 @@ import psutil
 from .qt import QtCore, QtWidgets
 from .version import __version__, __version_info__
 from .utils import parse_version
+from .local_server_config import LocalServerConfig
+from .settings import LOCAL_SERVER_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -97,6 +99,11 @@ class LocalConfig(QtCore.QObject):
                 if os.path.exists(old_config_path):
                     # migrate post version 2.2.0 configuration file
                     shutil.copyfile(old_config_path, self._config_file)
+                    # reset the local server path and ubridge path
+                    settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
+                    settings["path"] = ""
+                    settings["ubridge_path"] = ""
+                    LocalServerConfig.instance().saveSettings("Server", settings)
                 else:
                     # create a new config
                     with open(self._config_file, "w", encoding="utf-8") as f:
@@ -131,7 +138,7 @@ class LocalConfig(QtCore.QObject):
         Get the configuration directory
         """
 
-        version = "{}.{}.{}".format(__version_info__[0], __version_info__[1], __version_info__[2])
+        version = "{}.{}".format(__version_info__[0], __version_info__[1])
         if sys.platform.startswith("win"):
             appdata = os.path.expandvars("%APPDATA%")
             path = os.path.join(appdata, "GNS3", version)
@@ -159,7 +166,7 @@ class LocalConfig(QtCore.QObject):
         # In < 1.4 on Mac the config was in a gns3.net directory
         # We have move to same location as Linux
         if sys.platform.startswith("darwin"):
-            version = "{}.{}.{}".format(__version_info__[0], __version_info__[1], __version_info__[2])
+            version = "{}.{}".format(__version_info__[0], __version_info__[1])
             old_path = os.path.join(os.path.expanduser("~"), ".config", "gns3.net")
             new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", version)
             if os.path.exists(old_path) and not os.path.exists(new_path):
