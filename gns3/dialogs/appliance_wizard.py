@@ -77,15 +77,16 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         # directories where to search for images
         images_directories = list()
-        images_directories.append(os.path.dirname(self._path))
-        download_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-        if download_directory != "" and download_directory != os.path.dirname(self._path):
-            images_directories.append(download_directory)
 
         for emulator in ("QEMU", "IOU", "DYNAMIPS"):
             emulator_images_dir = ImageManager.instance().getDirectoryForType(emulator)
             if os.path.exists(emulator_images_dir):
                 images_directories.append(emulator_images_dir)
+
+        images_directories.append(os.path.dirname(self._path))
+        download_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        if download_directory != "" and download_directory != os.path.dirname(self._path):
+            images_directories.append(download_directory)
 
         # registry to search for images
         self._registry = Registry(images_directories)
@@ -614,9 +615,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return
         for image in appliance_configuration["images"]:
             if image["location"] == "local":
+                if self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
+                    log.debug("{} is already on the local server".format(image["path"]))
+                    return
                 image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
-                image_upload_manger = ImageUploadManager(image, Controller.instance(), self._compute_id, self._applianceImageUploadedCallback, LocalConfig.instance().directFileUpload())
-                image_upload_manger.upload()
+                image_upload_manager = ImageUploadManager(image, Controller.instance(), self._compute_id, self._applianceImageUploadedCallback, LocalConfig.instance().directFileUpload())
+                image_upload_manager.upload()
                 self._image_uploading_count += 1
 
     def _applianceImageUploadedCallback(self, result, error=False, context=None, **kwargs):
