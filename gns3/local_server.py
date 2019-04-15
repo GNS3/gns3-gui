@@ -371,11 +371,9 @@ class LocalServer(QtCore.QObject):
 
         if sys.platform.startswith('win'):
             if not self._checkWindowsService("npf") and not self._checkWindowsService("npcap"):
-                QtWidgets.QMessageBox.critical(self.parent(), "Error", "The NPF or NPCAP service is not installed, please install Winpcap or Npcap and reboot.")
-                return False
+                log.warning("The NPF or NPCAP service is not installed, please install Winpcap or Npcap and reboot.")
 
         self._port = self._settings["port"]
-
         # check the local server path
         local_server_path = self.localServerPath()
         if not local_server_path:
