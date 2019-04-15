@@ -48,9 +48,13 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         # Mandatory fields
         self.uiNameWizardPage.registerField("vm_name*", self.uiNameLineEdit)
         self.uiDiskWizardPage.registerField("hda_disk_image*", self.uiHdaDiskImageLineEdit)
+        self.uiInitrdKernelImageWizardPage.registerField("initrd*", self.uiInitrdImageLineEdit)
+        self.uiInitrdKernelImageWizardPage.registerField("kernel_image*", self.uiKernelImageLineEdit)
 
         # Fill image combo boxes
         self.addImageSelector(self.uiHdaDiskExistingImageRadioButton, self.uiHdaDiskImageListComboBox, self.uiHdaDiskImageLineEdit, self.uiHdaDiskImageToolButton, QemuVMConfigurationPage.getDiskImage, create_image_wizard=QemuImageWizard, create_button=self.uiHdaDiskImageCreateToolButton, image_suffix="-hda")
+        self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiInitrdImageListComboBox, self.uiInitrdImageLineEdit, self.uiInitrdImageToolButton, QemuVMConfigurationPage.getDiskImage)
+        self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiKernelImageListComboBox, self.uiKernelImageLineEdit, self.uiKernelImageToolButton, QemuVMConfigurationPage.getDiskImage)
 
     def validateCurrentPage(self):
         """
@@ -61,7 +65,11 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             return False
 
         if self.currentPage() == self.uiNameWizardPage:
-            self.uiRamSpinBox.setValue(512)
+            if self.uiLegacyASACheckBox.isChecked():
+                QtWidgets.QMessageBox.warning(self, "Legacy ASA VM", "Running ASA (with initrd/kernel) is not recommended and will not work on Windows 10, please use ASAv instead")
+                self.uiRamSpinBox.setValue(1024)
+            else:
+                self.uiRamSpinBox.setValue(256)
 
         if self.currentPage() == self.uiBinaryMemoryWizardPage:
             if not self.uiQemuListComboBox.count():
@@ -81,7 +89,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             if self.uiLocalRadioButton.isChecked() and not ComputeManager.instance().localPlatform().startswith("linux"):
                 QtWidgets.QMessageBox.warning(self, "QEMU on Windows or Mac", "The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM")
 
-        if self.page(page_id) == self.uiDiskWizardPage:
+        if self.page(page_id) in [self.uiDiskWizardPage, self.uiInitrdKernelImageWizardPage]:
             self.loadImagesList("/qemu/images")
         elif self.page(page_id) == self.uiBinaryMemoryWizardPage:
             try:
@@ -109,7 +117,9 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
             is_64bit = sys.maxsize > 2 ** 32
             if ComputeManager.instance().localPlatform().startswith("win") and self.uiLocalRadioButton.isChecked():
-                if is_64bit:
+                if self.uiLegacyASACheckBox.isChecked():
+                    search_string = r"qemu-0.13.0\qemu-system-i386w.exe"
+                elif is_64bit:
                     # default is qemu-system-x86_64w.exe on Windows 64-bit with a remote server
                     search_string = "x86_64w.exe"
                 else:
@@ -144,8 +154,44 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             "compute_id": self._compute_id,
             "category": Node.end_devices,
             "hda_disk_image": self.uiHdaDiskImageLineEdit.text(),
-            "console_type": console_type,
-            "options": ""
+            "console_type": console_type
         }
 
+        if self.uiLegacyASACheckBox.isChecked():
+            # special settings for legacy ASA VM
+            settings["adapters"] = 4
+            settings["initrd"] = self.uiInitrdImageLineEdit.text()
+            settings["kernel_image"] = self.uiKernelImageLineEdit.text()
+            settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt -net nic"
+            settings["options"] = "-no-kvm -icount auto -hdachs 980,16,32"
+            if not sys.platform.startswith("darwin"):
+                settings["cpu_throttling"] = 80  # limit to 80% CPU usage
+            settings["process_priority"] = "low"
+            settings["symbol"] = ":/symbols/asa.svg"
+            settings["category"] = Node.security_devices
+
+        if "options" not in settings:
+            settings["options"] = ""
+        if self._compute_id == "local" and (sys.platform.startswith("win") and qemu_path.endswith(r"qemu-0.11.0\qemu.exe")) or \
+                (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
+            settings["options"] += " -vga none -vnc none"
+            settings["legacy_networking"] = True
+        else:
+            settings["options"] += " -nographic"
+        settings["options"] = settings["options"].strip()
+
         return settings
+
+    def nextId(self):
+        """
+        Wizard rules!
+        """
+
+        current_id = self.currentId()
+        if self.page(current_id) == self.uiDiskWizardPage:
+            if self.uiLegacyASACheckBox.isChecked():
+                return self.uiDiskWizardPage.nextId()
+            return -1
+        elif self.page(current_id) == self.uiInitrdKernelImageWizardPage:
+            return -1
+        return QtWidgets.QWizard.nextId(self)
