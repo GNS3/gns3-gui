@@ -1,5 +1,18 @@
 # Change Log
 
+## 2.2.0a5 15/04/2019
+
+* Revert "Drop old Qemu support (Windows and macOS) and legacy ASA support." Ref https://github.com/GNS3/gns3-server/issues/1579
+* Do not make NPF or NPCAP service mandatory to start the local server on Windows.
+* Do not try to upload a local image that is already installed on the local server.
+* Back to the major.minor version for config files. Ref https://github.com/GNS3/gns3-gui/issues/2756
+* Some adjustments with compute WebSocket handling. Ref https://github.com/GNS3/gns3-server/issues/1564
+* Fix AttributeError: 'GraphicsView' object has no attribute '_import_config_dir'. Fixes #2768
+* Do not try to lock a SvgIconItem. Fixes #2766
+* Prevent locked nodes to be deleted. Fixes https://github.com/GNS3/gns3-gui/issues/2764
+* Add PuTTY 0.71 and mark GNS3 PuTTY as deprecated. Fixes #2758
+* Fix bug with IOS platform detection. Fixes #2760
+
 ## 2.1.16 15/04/2019
 
 * Do not make NPF or NPCAP service mandatory to start the local server on Windows.
