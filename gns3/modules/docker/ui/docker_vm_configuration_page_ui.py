@@ -146,8 +146,15 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiExtraHostsTextEdit = QtWidgets.QTextEdit(self.tab_2)
         self.uiExtraHostsTextEdit.setObjectName("uiExtraHostsTextEdit")
         self.gridLayout_2.addWidget(self.uiExtraHostsTextEdit, 0, 1, 1, 1)
+        self.uiExtraVolumeLabel = QtWidgets.QLabel(self.tab_2)
+        self.uiExtraVolumeLabel.setObjectName("uiExtraVolumeLabel")
+        self.gridLayout_2.addWidget(self.uiExtraVolumeLabel, 1, 0, 1, 1)
+        self.uiExtraVolumeTextEdit = QtWidgets.QPlainTextEdit(self.tab_2)
+        self.uiExtraVolumeTextEdit.setPlainText("")
+        self.uiExtraVolumeTextEdit.setObjectName("uiExtraVolumeTextEdit")
+        self.gridLayout_2.addWidget(self.uiExtraVolumeTextEdit, 1, 1, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(20, 388, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem, 1, 1, 1, 1)
+        self.gridLayout_2.addItem(spacerItem, 2, 1, 1, 1)
         self.uiTabWidget.addTab(self.tab_2, "")
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -201,6 +208,12 @@ class Ui_dockerVMConfigPageWidget(object):
 "to the /etc/hosts file.\n"
 "(hostname:IP\n"
 "one per line)"))
+        self.uiExtraVolumeLabel.setText(_translate("dockerVMConfigPageWidget", "Additional directories to\n"
+"make persistent that are\n"
+"not included in the image\n"
+"VOLUMES config. One\n"
+"directory per line."))
+        self.uiExtraVolumeTextEdit.setPlaceholderText(_translate("dockerVMConfigPageWidget", "e.g. /etc/sysctl.d"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("dockerVMConfigPageWidget", "Advanced"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_3), _translate("dockerVMConfigPageWidget", "Usage"))
 

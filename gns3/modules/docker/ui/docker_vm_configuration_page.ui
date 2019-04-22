@@ -299,7 +299,28 @@ one per line)</string>
        <item row="0" column="1">
         <widget class="QTextEdit" name="uiExtraHostsTextEdit"/>
        </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiExtraVolumeLabel">
+         <property name="text">
+          <string>Additional directories to
+make persistent that are
+not included in the image
+VOLUMES config. One
+directory per line.</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="1">
+        <widget class="QPlainTextEdit" name="uiExtraVolumeTextEdit">
+         <property name="plainText">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>e.g. /etc/sysctl.d</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

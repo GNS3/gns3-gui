@@ -104,6 +104,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         self.uiConsoleHttpPortSpinBox.setValue(settings["console_http_port"])
         self.uiHttpConsolePathLineEdit.setText(settings["console_http_path"])
         self.uiExtraHostsTextEdit.setText(settings["extra_hosts"])
+        self.uiExtraVolumeTextEdit.setPlainText("\n".join(settings["extra_volumes"]))
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -175,6 +176,8 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         settings["console_http_port"] = self.uiConsoleHttpPortSpinBox.value()
         settings["console_http_path"] = self.uiHttpConsolePathLineEdit.text()
         settings["extra_hosts"] = self.uiExtraHostsTextEdit.toPlainText()
+        # only tidy input here, validation is performed server side
+        settings["extra_volumes"] = [ y for x in self.uiExtraVolumeTextEdit.toPlainText().split("\n") for y in [ x.strip() ] if y ]
 
         if not group:
             adapters = self.uiAdapterSpinBox.value()

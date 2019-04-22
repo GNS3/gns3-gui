@@ -43,5 +43,6 @@ DOCKER_CONTAINER_SETTINGS = {
     "console_http_port": 80,
     "console_http_path": "/",
     "extra_hosts": "",
+    "extra_volumes": [],
     "node_type": "docker"
 }
