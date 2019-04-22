@@ -103,7 +103,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         self.uiConsoleResolutionComboBox.setCurrentIndex(self.uiConsoleResolutionComboBox.findText(settings["console_resolution"]))
         self.uiConsoleHttpPortSpinBox.setValue(settings["console_http_port"])
         self.uiHttpConsolePathLineEdit.setText(settings["console_http_path"])
-        self.uiExtraHostsTextEdit.setText(settings["extra_hosts"])
+        self.uiExtraHostsTextEdit.setPlainText(settings["extra_hosts"])
         self.uiExtraVolumeTextEdit.setPlainText("\n".join(settings["extra_volumes"]))
 
         if not group:

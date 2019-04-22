@@ -143,7 +143,7 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiExtraHostsLabel.setWordWrap(True)
         self.uiExtraHostsLabel.setObjectName("uiExtraHostsLabel")
         self.gridLayout_2.addWidget(self.uiExtraHostsLabel, 0, 0, 1, 1)
-        self.uiExtraHostsTextEdit = QtWidgets.QTextEdit(self.tab_2)
+        self.uiExtraHostsTextEdit = QtWidgets.QPlainTextEdit(self.tab_2)
         self.uiExtraHostsTextEdit.setObjectName("uiExtraHostsTextEdit")
         self.gridLayout_2.addWidget(self.uiExtraHostsTextEdit, 0, 1, 1, 1)
         self.uiExtraVolumeLabel = QtWidgets.QLabel(self.tab_2)
@@ -208,6 +208,7 @@ class Ui_dockerVMConfigPageWidget(object):
 "to the /etc/hosts file.\n"
 "(hostname:IP\n"
 "one per line)"))
+        self.uiExtraHostsTextEdit.setPlaceholderText(_translate("dockerVMConfigPageWidget", "e.g. router:192.168.0.1"))
         self.uiExtraVolumeLabel.setText(_translate("dockerVMConfigPageWidget", "Additional directories to\n"
 "make persistent that are\n"
 "not included in the image\n"
