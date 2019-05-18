@@ -38,7 +38,7 @@ class EthernetSwitch(Node):
         # this is an always-on node
         self.setStatus(Node.started)
         self._always_on = True
-        self.settings().update({"ports_mapping": [], "console_type": "telnet"})
+        self.settings().update({"ports_mapping": [], "console_type": "none"})
 
     def info(self):
         """
