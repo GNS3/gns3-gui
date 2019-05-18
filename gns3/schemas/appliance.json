@@ -166,6 +166,13 @@
             "extra_hosts": {
                 "description": "Hosts which will be written to /etc/hosts into container" ,
                 "type": "string"
+            },
+            "extra_volumes": {
+                "description": "Additional directories to make persistent that are not included in the images VOLUME directive" ,
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
             }
         },
         "required": [
