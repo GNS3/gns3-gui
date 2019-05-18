@@ -109,9 +109,9 @@ class Link(QtCore.QObject):
         if self._capturing:
             self._capture_compute_id = result.get("capture_compute_id", None)
             self._capture_file_path = result.get("capture_file_path", None)
-            if self._capture_compute_id and self._capture_compute_id != "local":
-                # We need to stream the pcap file content if the compute is remote
-                if self._capture_file_path is None:
+            if Controller.instance().isRemote() or (self._capture_compute_id and self._capture_compute_id != "local"):
+                # We need to stream the pcap file content if the controller or compute is remote
+                if Controller.instance().isRemote() or self._capture_file_path is None:
                     self._capture_file = QtCore.QTemporaryFile()
                     self._capture_file.open(QtCore.QFile.WriteOnly)
                     self._capture_file.setAutoRemove(True)
@@ -372,7 +372,7 @@ class Link(QtCore.QObject):
 
     def stopCapture(self):
 
-        if self._capture_compute_id and self._capture_compute_id != "local":
+        if Controller.instance().isRemote() or (self._capture_compute_id and self._capture_compute_id != "local"):
             if self._capture_file:
                 self._capture_file.close()
                 self._capture_file = None
