@@ -136,11 +136,15 @@
        <item>
         <widget class="QGroupBox" name="uiSymbolThemeGroupBox">
          <property name="title">
-          <string>Symbol theme</string>
+          <string>Symbol theme for new templates</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_15">
           <item>
-           <widget class="QComboBox" name="uiSymbolThemeComboBox"/>
+           <widget class="QComboBox" name="uiSymbolThemeComboBox">
+            <property name="toolTip">
+             <string>Symbol theme support only works when adding a new template using the recommended method in the template wizard.</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
