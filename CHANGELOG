@@ -13,6 +13,10 @@
 * Add PuTTY 0.71 and mark GNS3 PuTTY as deprecated. Fixes #2758
 * Fix bug with IOS platform detection. Fixes #2760
 
+## 2.1.17 17/05/2019
+
+* No changes.
+
 ## 2.1.16 15/04/2019
 
 * Do not make NPF or NPCAP service mandatory to start the local server on Windows.
