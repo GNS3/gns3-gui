@@ -95,7 +95,7 @@ class LocalConfig(QtCore.QObject):
                 else:
                     old_config_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", filename)
 
-                # TODO: migrate versioned config file from a previous version of GNS3 (for instance 2.2.0 -> 2.2.1)
+                # TODO: migrate versioned config file from a previous version of GNS3 (for instance 2.2 -> 2.3) + support profiles
                 if os.path.exists(old_config_path):
                     # migrate post version 2.2.0 configuration file
                     shutil.copyfile(old_config_path, self._config_file)
