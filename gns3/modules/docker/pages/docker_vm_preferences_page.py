@@ -95,8 +95,8 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         if docker_container["extra_hosts"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Extra hosts:", str(docker_container["extra_hosts"])])
 
-        if docker_image["extra_volumes"]:
-            QtWidgets.QTreeWidgetItem(section_item, ["Extra volumes:", "\n".join(docker_image["extra_volumes"])])
+        if docker_container["extra_volumes"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Extra volumes:", "\n".join(docker_container["extra_volumes"])])
 
         self.uiDockerVMInfoTreeWidget.expandAll()
         self.uiDockerVMInfoTreeWidget.resizeColumnToContents(0)
