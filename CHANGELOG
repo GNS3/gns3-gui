@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.2.0b1 21/05/2019
+
+* Change behavior when an IOU license is verified. Fixes https://github.com/GNS3/gns3-server/issues/1555
+* Fix cannot load new profile. Fixes #2784
+* Fix remote packet capture when controller is also remote. Fixes #2785
+* Set console type to "none" by default for Ethernet switches and add a warning if trying to use "telnet". Fixes https://github.com/GNS3/gns3-gui/issues/2776
+* Add tooltip for symbol theme support in general preferences. Fixes #2770
+* Support for persistent docker volumes
+
 ## 2.2.0a5 15/04/2019
 
 * Revert "Drop old Qemu support (Windows and macOS) and legacy ASA support." Ref https://github.com/GNS3/gns3-server/issues/1579
