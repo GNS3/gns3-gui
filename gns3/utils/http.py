@@ -26,21 +26,22 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def getSynchronous(protocol, host, port, endpoint, timeout=2, user=None, password=None):
+# Accept the kwargs but don't use them, this is to fix an issue in Python 3.6: https://github.com/GNS3/gns3-gui/issues/2793
+def getSynchronous(protocol, host, port, endpoint, timeout=2, user=None, password=None, *args, **kwargs):
     """
     :returns: Tuple (Status code, json of anwser). Status 0 is a non HTTP error
     """
     try:
         url = "{protocol}://{host}:{port}/v2/{endpoint}".format(protocol=protocol, host=host, port=port, endpoint=endpoint)
-        request = urllib.request.Request(url)
-
+        headers = {}
         if user is not None and len(user) > 0:
             log.debug("Synchronous get {} with user '{}'".format(url, user))
             base64string = base64.encodebytes('{}:{}'.format(user, password).encode()).replace(b'\n', b'')
-            request.add_header("Authorization", "Basic {}".format(base64string.decode()))
+            headers["Authorization"] = "Basic {}".format(base64string.decode())
         else:
             log.debug("Synchronous get {} (no authentication)".format(url))
 
+        request = urllib.request.Request(url, headers=headers)
         if sys.version_info >= (3, 5):
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
