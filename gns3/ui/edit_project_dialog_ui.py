@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/ui/edit_project_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/edit_project_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -37,6 +37,10 @@ class Ui_EditProjectDialog(object):
         self.uiSceneWidthSpinBox.setObjectName("uiSceneWidthSpinBox")
         self.uiGeneralGrid.addWidget(self.uiSceneWidthSpinBox, 2, 1, 1, 1)
         self.uiGridSizeSpinBox = QtWidgets.QSpinBox(self.uiGeneralTab)
+        self.uiGridSizeSpinBox.setMinimum(10)
+        self.uiGridSizeSpinBox.setMaximum(100)
+        self.uiGridSizeSpinBox.setSingleStep(10)
+        self.uiGridSizeSpinBox.setProperty("value", 75)
         self.uiGridSizeSpinBox.setObjectName("uiGridSizeSpinBox")
         self.uiGeneralGrid.addWidget(self.uiGridSizeSpinBox, 4, 1, 1, 1)
         self.uiSceneHeightSpinBox = QtWidgets.QSpinBox(self.uiGeneralTab)
