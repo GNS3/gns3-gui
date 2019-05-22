@@ -107,16 +107,16 @@ class Image:
             try:
                 if not os.path.isfile(self.path):
                     return None
+                m = hashlib.md5()
+                with open(self.path, "rb") as f:
+                    while True:
+                        buf = f.read(4096)
+                        if not buf:
+                            break
+                        m.update(buf)
             except (OSError, PermissionError) as e:
                 log.debug("Cannot access '{}': {}".format(self.path, e))
                 return None
-            m = hashlib.md5()
-            with open(self.path, "rb") as f:
-                while True:
-                    buf = f.read(4096)
-                    if not buf:
-                        break
-                    m.update(buf)
             self._md5sum = m.hexdigest()
         Image._cache[self.path] = self._md5sum
         return self._md5sum
