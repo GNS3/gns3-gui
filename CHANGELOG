@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.1.18 22/05/2019
+
+* Fix error in HTTPConnection.request for Python3.6. Fixes #2793
+* Catch more OSError/PermissionError when checking md5 on remote images. Fixes #2582
+* Fix exception when grid size is 0. Fixes #2790
+* Catch PermissionError when scanning local image directories. Fixes #2791
+* Revert "Make sure the latest PyQt5 version 5.12.x is used on Windows." Ref #2778
+
 ## 2.1.17 17/05/2019
 
 * No changes.
