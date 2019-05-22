@@ -87,11 +87,11 @@ class Registry(QtCore.QObject):
 
         for directory in self._images_dirs:
             log.debug("Search images %s (%s) in %s", filename, md5sum, directory)
-            if os.path.exists(directory):
-                for file in os.listdir(directory):
-                    if not file.endswith(".md5sum") and not file.startswith("."):
-                        path = os.path.join(directory, file)
-                        try:
+            try:
+                if os.path.exists(directory):
+                    for file in os.listdir(directory):
+                        if not file.endswith(".md5sum") and not file.startswith("."):
+                            path = os.path.join(directory, file)
                             if os.path.isfile(path):
                                 if md5sum is None:
                                     if filename == os.path.basename(path):
@@ -105,7 +105,6 @@ class Registry(QtCore.QObject):
                                         if image.md5sum == md5sum:
                                             log.debug("Found images %s (%s) in %s", filename, md5sum, image.path)
                                             return image
-                        except (OSError, PermissionError) as e:
-                            log.error("Cannot scan {}: {}".format(path, e))
-
+            except (OSError, PermissionError) as e:
+                log.error("Cannot scan {}: {}".format(path, e))
         return None
