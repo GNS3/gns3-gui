@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.1.18 22/05/2019
+
+* Fix error in HTTPConnection.request for Python3.6. Fixes #2793
+* Catch more OSError/PermissionError when checking md5 on remote images. Fixes #2582
+* Fix exception when grid size is 0. Fixes #2790
+* Catch PermissionError when scanning local image directories. Fixes #2791
+* Revert "Make sure the latest PyQt5 version 5.12.x is used on Windows." Ref #2778
+
 ## 2.2.0b1 21/05/2019
 
 * Change behavior when an IOU license is verified. Fixes https://github.com/GNS3/gns3-server/issues/1555
@@ -8,6 +16,10 @@
 * Set console type to "none" by default for Ethernet switches and add a warning if trying to use "telnet". Fixes https://github.com/GNS3/gns3-gui/issues/2776
 * Add tooltip for symbol theme support in general preferences. Fixes #2770
 * Support for persistent docker volumes
+
+## 2.1.17 17/05/2019
+
+* No changes.
 
 ## 2.2.0a5 15/04/2019
 
@@ -21,10 +33,6 @@
 * Prevent locked nodes to be deleted. Fixes https://github.com/GNS3/gns3-gui/issues/2764
 * Add PuTTY 0.71 and mark GNS3 PuTTY as deprecated. Fixes #2758
 * Fix bug with IOS platform detection. Fixes #2760
-
-## 2.1.17 17/05/2019
-
-* No changes.
 
 ## 2.1.16 15/04/2019
 

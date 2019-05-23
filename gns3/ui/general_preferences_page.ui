@@ -880,13 +880,13 @@
           </sizepolicy>
          </property>
          <property name="minimum">
-          <number>10</number>
+          <number>5</number>
          </property>
          <property name="maximum">
           <number>100</number>
          </property>
          <property name="singleStep">
-          <number>10</number>
+          <number>5</number>
          </property>
          <property name="value">
           <number>25</number>
@@ -902,13 +902,13 @@
           </sizepolicy>
          </property>
          <property name="minimum">
-          <number>10</number>
+          <number>5</number>
          </property>
          <property name="maximum">
           <number>150</number>
          </property>
          <property name="singleStep">
-          <number>10</number>
+          <number>5</number>
          </property>
          <property name="value">
           <number>75</number>

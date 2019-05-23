@@ -1602,10 +1602,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)
         if self._main_window.uiShowGridAction.isChecked():
-            grids = [(self.drawingGridSize(),QtGui.QColor(208, 208, 208)),
-                     (self.nodeGridSize(),QtGui.QColor(190, 190, 190))]
+            grids = [(self.drawingGridSize(), QtGui.QColor(208, 208, 208)),
+                     (self.nodeGridSize(), QtGui.QColor(190, 190, 190))]
             painter.save()
-            for (grid,colour) in grids:
+            for (grid, colour) in grids:
+                if not grid:
+                    continue
                 painter.setPen(QtGui.QPen(colour))
 
                 left = int(rect.left()) - (int(rect.left()) % grid)
