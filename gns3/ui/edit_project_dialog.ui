@@ -67,13 +67,13 @@
        <item row="4" column="1">
         <widget class="QSpinBox" name="uiGridSizeSpinBox">
          <property name="minimum">
-          <number>10</number>
+          <number>5</number>
          </property>
          <property name="maximum">
           <number>100</number>
          </property>
          <property name="singleStep">
-          <number>10</number>
+          <number>5</number>
          </property>
          <property name="value">
           <number>75</number>

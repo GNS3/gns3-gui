@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -368,9 +368,9 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiGridSizeLabel.setObjectName("uiGridSizeLabel")
         self.gridLayout_8.addWidget(self.uiGridSizeLabel, 4, 0, 1, 1)
         self.uiGridSizeSpinBox = QtWidgets.QSpinBox(self.uiSceneTab)
-        self.uiGridSizeSpinBox.setMinimum(10)
+        self.uiGridSizeSpinBox.setMinimum(5)
         self.uiGridSizeSpinBox.setMaximum(100)
-        self.uiGridSizeSpinBox.setSingleStep(10)
+        self.uiGridSizeSpinBox.setSingleStep(5)
         self.uiGridSizeSpinBox.setProperty("value", 75)
         self.uiGridSizeSpinBox.setObjectName("uiGridSizeSpinBox")
         self.gridLayout_8.addWidget(self.uiGridSizeSpinBox, 5, 0, 1, 2)
