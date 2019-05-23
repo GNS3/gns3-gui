@@ -147,6 +147,7 @@ class EthernetLinkItem(LinkItem):
                 self._source_port.setLabel(source_port_label)
 
             if self._draw_port_labels:
+                source_port_label.setFlag(source_port_label.ItemIsMovable, not self._source_item.locked())
                 source_port_label.show()
             else:
                 source_port_label.hide()
@@ -189,6 +190,7 @@ class EthernetLinkItem(LinkItem):
                 self._destination_port.setLabel(destination_port_label)
 
             if self._draw_port_labels:
+                destination_port_label.setFlag(destination_port_label.ItemIsMovable, not self._destination_item.locked())
                 destination_port_label.show()
             else:
                 destination_port_label.hide()
