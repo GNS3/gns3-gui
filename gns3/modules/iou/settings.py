@@ -19,7 +19,6 @@
 Default IOU settings.
 """
 
-import sys
 from gns3.node import Node
 
 
@@ -31,16 +30,19 @@ IOU_SETTINGS = {
 IOU_DEVICE_SETTINGS = {
     "name": "",
     "default_name_format": "IOU{0}",
+    "usage": "",
     "path": "",
     "symbol": ":/symbols/multilayer_switch.svg",
     "category": Node.routers,
-    "image": "",
     "startup_config": "",
     "private_config": "",
+    "console_type": "telnet",
+    "console_auto_start": False,
     "use_default_iou_values": True,
     "ram": 256,
     "nvram": 128,
     "ethernet_adapters": 2,
     "serial_adapters": 2,
-    "server": "local"
+    "compute_id": "local",
+    "node_type": "iou"
 }

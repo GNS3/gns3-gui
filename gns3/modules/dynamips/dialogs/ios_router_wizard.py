@@ -55,7 +55,6 @@ log = logging.getLogger(__name__)
 
 
 class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
-
     """
     Wizard to create an IOS router.
 
@@ -121,9 +120,10 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         """
         Try to guess the platform based on image name
         """
+
         # try to guess the platform
         image = os.path.basename(self.uiIOSImageLineEdit.text())
-        match = re.match("^(c[0-9]+)p?\\-\w+", image.lower())
+        match = re.match(r"^(c[0-9]+)p?-\w+", image.lower())
         if not match:
             QtWidgets.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
             return
@@ -225,8 +225,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
                                           body={
                                               "image": image,
                                               "platform": platform,
-                                              "ram": ram
-                                          })
+                                              "ram": ram})
         self.uiIdlePCFinderPushButton.setEnabled(False)
 
     def _etherSwitchSlot(self, state):
@@ -391,9 +390,12 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
             "nvram": PLATFORMS_DEFAULT_NVRAM[platform],
             "idlepc": self.uiIdlepcLineEdit.text(),
             "platform": platform,
-            "chassis": self.uiChassisComboBox.currentText(),
-            "server": self._compute_id,
+            "compute_id": self._compute_id,
         }
+
+        chassis = self.uiChassisComboBox.currentText()
+        if chassis:
+            settings["chassis"] = chassis
 
         if self.uiEtherSwitchCheckBox.isChecked():
             settings["default_name_format"] = "ESW{0}"

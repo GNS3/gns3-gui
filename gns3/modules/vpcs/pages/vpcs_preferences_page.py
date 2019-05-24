@@ -31,7 +31,6 @@ from ..settings import VPCS_SETTINGS
 
 
 class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
-
     """
     QWidget preference page for VPCS
     """

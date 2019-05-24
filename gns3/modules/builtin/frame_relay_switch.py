@@ -41,36 +41,6 @@ class FrameRelaySwitch(Node):
         self._always_on = True
         self.settings().update({"mappings": {}})
 
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        self.settings()["mappings"] = result["mappings"]
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this Frame Relay switch.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
-
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-        self.settings()["mappings"] = result["mappings"]
-
     def info(self):
         """
         Returns information about this Frame Relay switch.
@@ -79,14 +49,14 @@ class FrameRelaySwitch(Node):
         """
 
         info = """Frame relay switch {name} is always-on
-  Local node ID is {id}
-  Server's Node ID is {node_id}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
   Hardware is Dynamips emulated simple Frame relay switch
-  Switch's server runs on {host}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self._compute.name())
+           host=self._compute.name(),
+           port=self._compute.port())
 
         port_info = ""
         for port in self._ports:
@@ -135,11 +105,6 @@ class FrameRelaySwitch(Node):
         """
 
         return ":/symbols/frame_relay_switch.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "Frame Relay switch"
 
     @staticmethod
     def categories():

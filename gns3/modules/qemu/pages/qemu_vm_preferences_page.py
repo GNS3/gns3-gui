@@ -22,13 +22,14 @@ Configuration page for QEMU VM preferences.
 import os
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.template_manager import TemplateManager
 from gns3.controller import Controller
+from gns3.template import Template
 
-from .. import Qemu
 from ..settings import QEMU_VM_SETTINGS
 from ..ui.qemu_vm_preferences_page_ui import Ui_QemuVMPreferencesPageWidget
 from ..pages.qemu_vm_configuration_page import QemuVMConfigurationPage
@@ -36,7 +37,6 @@ from ..dialogs.qemu_vm_wizard import QemuVMWizard
 
 
 class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
-
     """
     QWidget preference page for QEMU VM preferences.
     """
@@ -50,11 +50,17 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self._items = []
 
         self.uiNewQemuVMPushButton.clicked.connect(self._qemuVMNewSlot)
+        self.uiCopyQemuVMPushButton.clicked.connect(self._qemuVMCopySlot)
         self.uiEditQemuVMPushButton.clicked.connect(self._qemuVMEditSlot)
         self.uiDeleteQemuVMPushButton.clicked.connect(self._qemuVMDeleteSlot)
         self.uiQemuVMsTreeWidget.itemSelectionChanged.connect(self._qemuVMChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiQemuVMInfoTreeWidget)
         section_item.setText(0, name)
@@ -64,19 +70,24 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         return section_item
 
     def _refreshInfo(self, qemu_vm):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiQemuVMInfoTreeWidget.clear()
 
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", qemu_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", qemu_vm.get("template_id", "none")])
         if qemu_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", qemu_vm["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(qemu_vm["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(qemu_vm["compute_id"]).name()])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", qemu_vm["console_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(qemu_vm["console_auto_start"])])
         QtWidgets.QTreeWidgetItem(section_item, ["CPUs:", str(qemu_vm["cpus"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Memory:", "{} MB".format(qemu_vm["ram"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(qemu_vm["linked_clone"])])
@@ -138,7 +149,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         section_item = self._createSectionItem("Additional options")
         if qemu_vm["options"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Options:", qemu_vm["options"]])
-        QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown:", "{}".format(qemu_vm["acpi_shutdown"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["On close:", "{}".format(qemu_vm["on_close"])])
 
         self.uiQemuVMInfoTreeWidget.expandAll()
         self.uiQemuVMInfoTreeWidget.resizeColumnToContents(0)
@@ -154,6 +165,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiDeleteQemuVMPushButton.setEnabled(len(selection) != 0)
         single_selected = len(selection) == 1
         self.uiEditQemuVMPushButton.setEnabled(single_selected)
+        self.uiCopyQemuVMPushButton.setEnabled(single_selected)
 
         if single_selected:
             key = selection[0].data(0, QtCore.Qt.UserRole)
@@ -172,7 +184,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         if wizard.exec_():
 
             new_vm_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_vm_settings["server"], name=new_vm_settings["name"])
+            key = "{server}:{name}".format(server=new_vm_settings["compute_id"], name=new_vm_settings["name"])
             if key in self._qemu_vms:
                 QtWidgets.QMessageBox.critical(self, "New QEMU VM", "VM name {} already exists".format(new_vm_settings["name"]))
                 return
@@ -185,6 +197,33 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             item.setData(0, QtCore.Qt.UserRole, key)
             self._items.append(item)
             self.uiQemuVMsTreeWidget.setCurrentItem(item)
+
+    def _qemuVMCopySlot(self):
+        """
+        Copies a QEMU VM.
+        """
+
+        item = self.uiQemuVMsTreeWidget.currentItem()
+        if item:
+            key = item.data(0, QtCore.Qt.UserRole)
+            copied_vm_settings = copy.deepcopy(self._qemu_vms[key])
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Qemu template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_vm_settings["name"]))
+            if ok:
+                key = "{server}:{name}".format(server=copied_vm_settings["compute_id"], name=new_name)
+                if key in self._qemu_vms:
+                    QtWidgets.QMessageBox.critical(self, "Qemu template", "Qemu template name {} already exists".format(new_name))
+                    return
+                self._qemu_vms[key] = QEMU_VM_SETTINGS.copy()
+                self._qemu_vms[key].update(copied_vm_settings)
+                self._qemu_vms[key]["name"] = new_name
+                self._qemu_vms[key].pop("template_id", None)
+
+                item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
+                item.setText(0, self._qemu_vms[key]["name"])
+                Controller.instance().getSymbolIcon(self._qemu_vms[key]["symbol"], qpartial(self._setItemIcon, item))
+                item.setData(0, QtCore.Qt.UserRole, key)
+                self._items.append(item)
+                self.uiQemuVMsTreeWidget.setCurrentItem(item)
 
     def _qemuVMEditSlot(self):
         """
@@ -202,10 +241,10 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
                 Controller.instance().getSymbolIcon(qemu_vm["symbol"], qpartial(self._setItemIcon, item))
 
                 if qemu_vm["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=qemu_vm["server"], name=qemu_vm["name"])
+                    new_key = "{server}:{name}".format(server=qemu_vm["compute_id"], name=qemu_vm["name"])
                     if new_key in self._qemu_vms:
                         QtWidgets.QMessageBox.critical(self, "QEMU VM", "QEMU VM name {} already exists for server {}".format(qemu_vm["name"],
-                                                                                                                              qemu_vm["server"]))
+                                                                                                                              qemu_vm["compute_id"]))
                         qemu_vm["name"] = item.text(0)
                         return
                     self._qemu_vms[new_key] = self._qemu_vms[key]
@@ -231,10 +270,17 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         Loads the QEMU VM preferences.
         """
 
-        qemu_module = Qemu.instance()
-        self._qemu_vms = copy.deepcopy(qemu_module.VMs())
-        self._items.clear()
+        self._qemu_vms  = {}
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "qemu" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._qemu_vms[key] = copy.deepcopy(template.settings())
 
+        self._items.clear()
         for key, qemu_vm in self._qemu_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, qemu_vm["name"])
@@ -256,4 +302,11 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         Saves the QEMU VM preferences.
         """
 
-        Qemu.instance().setVMs(self._qemu_vms)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "qemu":
+                templates.append(template)
+        for template_settings in self._qemu_vms.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
+

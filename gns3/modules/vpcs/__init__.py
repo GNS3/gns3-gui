@@ -20,38 +20,30 @@ VPCS module implementation.
 """
 
 import os
-import copy
 import shutil
 
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
+from gns3.controller import Controller
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from ..module import Module
 from .vpcs_node import VPCSNode
-from .settings import VPCS_SETTINGS
-from .settings import VPCS_NODES_SETTINGS
+from .settings import VPCS_SETTINGS, VPCS_NODES_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
 
 
 class VPCS(Module):
-
     """
     VPCS module.
     """
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
-        self._nodes = []
-        self._vpcs_nodes = {}
         self._working_dir = ""
-        self._loadSettings()
-
-    def configChangedSlot(self):
-        # load the settings
         self._loadSettings()
 
     def _loadSettings(self):
@@ -67,7 +59,23 @@ class VPCS(Module):
             else:
                 self._settings["vpcs_path"] = ""
 
-        self._loadVPCSNodes()
+        # migrate node settings to the controller (templates are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldNodes)
+
+    def _migrateOldNodes(self):
+        """
+        Migrate local node settings to the controller.
+        """
+
+        if self._settings.get("nodes"):
+            templates = []
+            for node in self._settings.get("nodes"):
+                node_settings = VPCS_NODES_SETTINGS.copy()
+                node_settings.update(node)
+                templates.append(Template(node_settings))
+            TemplateManager.instance().updateList(templates)
+            self._settings["nodes"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -77,123 +85,38 @@ class VPCS(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        server_settings = copy.copy(self._settings)
-        if server_settings["vpcs_path"]:
+        server_settings = {}
+        if self._settings["vpcs_path"]:
             # save some settings to the server config file
-            server_settings["vpcs_path"] = os.path.normpath(server_settings["vpcs_path"])
+            server_settings["vpcs_path"] = os.path.normpath(self._settings["vpcs_path"])
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
 
-    def _loadVPCSNodes(self):
-        """
-        Load the VPCS nodes from the persistent settings file.
-        """
-
-        self._vpcs_nodes = {}
-        settings = LocalConfig.instance().settings()
-        if "nodes" in settings.get(self.__class__.__name__, {}):
-            for node in settings[self.__class__.__name__]["nodes"]:
-                name = node.get("name")
-                server = node.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._vpcs_nodes or not name or not server:
-                    continue
-                node_settings = VPCS_NODES_SETTINGS.copy()
-                node_settings.update(node)
-                self._vpcs_nodes[key] = node_settings
-
-    def _saveVPCSNodes(self):
-        """
-        Saves the VPCS nodes to the persistent settings file.
-        """
-
-        self._settings["nodes"] = list(self._vpcs_nodes.values())
-        self._saveSettings()
-
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
-
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
-
     @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "vpcs":
+    def getNodeClass(node_type, platform=None):
+        """
+        Returns the class corresponding to node type.
+
+        :param node_type: name of the node
+        :param platform: not used
+
+        :returns: class or None
+        """
+
+        if node_type == "vpcs":
             return VPCSNode
         return None
 
     @staticmethod
-    def vmConfigurationPage():
+    def configurationPage():
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
         from .pages.vpcs_node_configuration_page import VPCSNodeConfigurationPage
         return VPCSNodeConfigurationPage
-
-    def VMs(self):
-        """
-        Returns list of VPCS nodes
-        """
-
-        return self._vpcs_nodes
-
-    def setVMs(self, new_vpcs_nodes):
-        """
-        Sets VPCS list
-
-        :param new_vpcs_vms: VPCS node list
-        """
-
-        self._vpcs_nodes = new_vpcs_nodes.copy()
-        self._saveVPCSNodes()
 
     @staticmethod
     def classes():
@@ -205,29 +128,11 @@ class VPCS(Module):
 
         return [VPCSNode]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-
-        # Add a default VPCS not linked to a specific server
-        nodes.append(
-            {
-                "class": VPCSNode.__name__,
-                "name": "VPCS",
-                "categories": [VPCSNode.end_devices],
-                "symbol": VPCSNode.defaultSymbol(),
-                "builtin": True
-            }
-        )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 
@@ -246,3 +151,10 @@ class VPCS(Module):
         if not hasattr(VPCS, "_instance"):
             VPCS._instance = VPCS()
         return VPCS._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "vpcs"

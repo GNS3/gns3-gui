@@ -13,7 +13,7 @@ GNS3 GUI repository.
 Installation
 ------------
 
-https://gns3.com/support/docs
+Please see https://docs.gns3.com/
 
 Development
 -------------

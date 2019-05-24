@@ -42,6 +42,10 @@ def test_project_create(tmpdir, controller):
     assert args[1] == "/projects"
     assert kwargs["body"] == {"name": "test",
                               "path": str(tmpdir),
+                              "grid_size": 75,
+                              "drawing_grid_size": 25,
+                              "show_grid": False,
+                              "snap_to_grid": False,
                               "show_interface_labels": False}
 
     args[2]({"project_id": uuid, "name": "test"})
@@ -128,8 +132,6 @@ def test_project_delete_on_created_project(controller):
 
 
 def test_project_destroy(controller):
-
-
     project = Project()
     project.setId(str(uuid4()))
     project.destroy()
@@ -140,3 +142,49 @@ def test_project_destroy(controller):
 
     assert args[0] == "DELETE"
     assert args[1] == "/projects/{project_id}".format(project_id=project.id())
+
+
+def test_project_variables():
+    project = Project()
+    project.setVariables([{'name': 'TEST'}])
+
+    variables = project.variables()
+    assert variables == [{'name': 'TEST'}]
+
+
+def test_project_supplier():
+    project = Project()
+    project.setSupplier({'logo': 'test.png', 'url':  'http://domain'})
+
+    supplier = project.supplier()
+    assert supplier == {'logo': 'test.png', 'url':  'http://domain'}
+
+
+def test_project_parse_response():
+    result = {
+        'project_id': 'projectid',
+        'name': 'projectname',
+        'filename': 'filename.gns3',
+        'variables': [{'name': 'TEST'}],
+        'supplier': {'logo': 'test.png', 'url':  'http://domain'}
+    }
+    project = Project()
+    project._parseResponse(result)
+    assert project.id() == 'projectid'
+    assert project.name() == 'projectname'
+    assert project.filename() == 'filename.gns3'
+    assert project.variables() == [{'name': 'TEST'}]
+    assert project.supplier() == {'logo': 'test.png', 'url':  'http://domain'}
+
+
+def test_project_update(controller):
+    project = Project()
+    project.setVariables([{'name': 'TEST'}])
+    project.setSupplier({'logo': 'test.png', 'url':  'http://domain'})
+    project.update()
+    mock = controller._http_client.createHTTPQuery
+    args, kwargs = mock.call_args
+    body = kwargs['body']
+    assert body['variables'] == [{'name': 'TEST'}]
+    assert body['supplier'] == {'logo': 'test.png', 'url':  'http://domain'}
+

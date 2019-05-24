@@ -29,7 +29,6 @@ log = logging.getLogger(__name__)
 
 
 class VMwareVM(Node):
-
     """
     VirtualBox VM.
 
@@ -47,40 +46,20 @@ class VMwareVM(Node):
         self._linked_clone = False
 
         vmware_vm_settings = {"vmx_path": "",
-                              "console": None,
-                              "console_host": None,
+                              "usage": "",
                               "adapters": VMWARE_VM_SETTINGS["adapters"],
                               "adapter_type": VMWARE_VM_SETTINGS["adapter_type"],
                               "use_any_adapter": VMWARE_VM_SETTINGS["use_any_adapter"],
                               "headless": VMWARE_VM_SETTINGS["headless"],
-                              "acpi_shutdown": VMWARE_VM_SETTINGS["acpi_shutdown"],
+                              "on_close": VMWARE_VM_SETTINGS["on_close"],
+                              "console_type": VMWARE_VM_SETTINGS["console_type"],
+                              "console_auto_start": VMWARE_VM_SETTINGS["console_auto_start"],
+                              "custom_adapters": VMWARE_VM_SETTINGS["custom_adapters"],
                               "port_name_format": "Ethernet{0}",
                               "port_segment_size": 0,
                               "first_port_name": None}
 
         self.settings().update(vmware_vm_settings)
-
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        pass
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this VMware VM.
-
-        :param new_settings: settings (dict)
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
 
     def info(self):
         """
@@ -89,21 +68,18 @@ class VMwareVM(Node):
         :returns: formatted string
         """
 
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
         info = """VMware VM {name} is {state}
-  Local node ID is {id}
-  Server's node ID is {node_id}
-  VMware VM's server runs on {host}, console is on port {console}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            host=self.compute().name(),
-           console=self._settings["console"])
+           port=self.compute().port(),
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:
@@ -112,7 +88,9 @@ class VMwareVM(Node):
             else:
                 port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
                                                                             port_description=port.description())
-        return info + port_info
+
+        usage = "\n" + self._settings.get("usage")
+        return info + port_info + usage
 
     def allocateVMnetInterface(self, port_id):
         """
@@ -140,15 +118,6 @@ class VMwareVM(Node):
             vmnet = result["vmnet"]
             log.debug("{} has allocated VMnet interface {}".format(self.name(), vmnet))
             self.allocate_vmnet_nio_signal.emit(self.id(), port_id, vmnet)
-
-    def console(self):
-        """
-        Returns the console port for this VMware VM instance.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
 
     def bringToFront(self):
         """
@@ -189,11 +158,6 @@ class VMwareVM(Node):
         """
 
         return ":/symbols/vmware_guest.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "VMware VM"
 
     @staticmethod
     def categories():

@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/modules/builtin/ui/ethernet_switch_configuration_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/ethernet_switch_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_ethernetSwitchConfigPageWidget(object):
-
     def setupUi(self, ethernetSwitchConfigPageWidget):
         ethernetSwitchConfigPageWidget.setObjectName("ethernetSwitchConfigPageWidget")
-        ethernetSwitchConfigPageWidget.resize(545, 435)
+        ethernetSwitchConfigPageWidget.resize(708, 653)
         self.gridLayout_2 = QtWidgets.QGridLayout(ethernetSwitchConfigPageWidget)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.uiGeneralGroupBox = QtWidgets.QGroupBox(ethernetSwitchConfigPageWidget)
@@ -51,6 +49,14 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         self.uiCategoryComboBox = QtWidgets.QComboBox(self.uiGeneralGroupBox)
         self.uiCategoryComboBox.setObjectName("uiCategoryComboBox")
         self.gridLayout.addWidget(self.uiCategoryComboBox, 3, 1, 1, 1)
+        self.uiConsoleTypeLabel = QtWidgets.QLabel(self.uiGeneralGroupBox)
+        self.uiConsoleTypeLabel.setObjectName("uiConsoleTypeLabel")
+        self.gridLayout.addWidget(self.uiConsoleTypeLabel, 4, 0, 1, 1)
+        self.uiConsoleTypeComboBox = QtWidgets.QComboBox(self.uiGeneralGroupBox)
+        self.uiConsoleTypeComboBox.setObjectName("uiConsoleTypeComboBox")
+        self.uiConsoleTypeComboBox.addItem("")
+        self.uiConsoleTypeComboBox.addItem("")
+        self.gridLayout.addWidget(self.uiConsoleTypeComboBox, 4, 1, 1, 1)
         self.gridLayout_2.addWidget(self.uiGeneralGroupBox, 0, 0, 1, 2)
         self.uiEthernetSwitchSettingsGroupBox = QtWidgets.QGroupBox(ethernetSwitchConfigPageWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -149,13 +155,16 @@ class Ui_ethernetSwitchConfigPageWidget(object):
 
     def retranslateUi(self, ethernetSwitchConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        ethernetSwitchConfigPageWidget.setWindowTitle(_translate("ethernetSwitchConfigPageWidget", "Ethernet switch configuration"))
+        ethernetSwitchConfigPageWidget.setWindowTitle(_translate("ethernetSwitchConfigPageWidget", "Ethernet switch template configuration"))
         self.uiGeneralGroupBox.setTitle(_translate("ethernetSwitchConfigPageWidget", "General"))
         self.uiNameLabel.setText(_translate("ethernetSwitchConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("ethernetSwitchConfigPageWidget", "Default name format:"))
         self.uiSymbolLabel.setText(_translate("ethernetSwitchConfigPageWidget", "Symbol:"))
         self.uiSymbolToolButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Browse..."))
         self.uiCategoryLabel.setText(_translate("ethernetSwitchConfigPageWidget", "Category:"))
+        self.uiConsoleTypeLabel.setText(_translate("ethernetSwitchConfigPageWidget", "Console type:"))
+        self.uiConsoleTypeComboBox.setItemText(0, _translate("ethernetSwitchConfigPageWidget", "telnet"))
+        self.uiConsoleTypeComboBox.setItemText(1, _translate("ethernetSwitchConfigPageWidget", "none"))
         self.uiEthernetSwitchSettingsGroupBox.setTitle(_translate("ethernetSwitchConfigPageWidget", "Settings"))
         self.label.setText(_translate("ethernetSwitchConfigPageWidget", "Port:"))
         self.label_3.setText(_translate("ethernetSwitchConfigPageWidget", "VLAN:"))
@@ -175,3 +184,4 @@ class Ui_ethernetSwitchConfigPageWidget(object):
         self.uiPortsTreeWidget.headerItem().setText(3, _translate("ethernetSwitchConfigPageWidget", "EtherType"))
         self.uiAddPushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Add"))
         self.uiDeletePushButton.setText(_translate("ethernetSwitchConfigPageWidget", "&Delete"))
+

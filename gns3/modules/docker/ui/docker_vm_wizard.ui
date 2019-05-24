@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>638</width>
-    <height>437</height>
+    <width>741</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New Docker VM template</string>
+   <string>New Docker container template</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -21,7 +21,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your new Docker VM.</string>
+    <string>Please choose a server type to run the Docker container.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -33,7 +33,7 @@
        <item>
         <widget class="QRadioButton" name="uiRemoteRadioButton">
          <property name="text">
-          <string>Run this Docker VM on a remote computer</string>
+          <string>Run this Docker container on a remote computer</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -43,14 +43,14 @@
        <item>
         <widget class="QRadioButton" name="uiVMRadioButton">
          <property name="text">
-          <string>Run this Docker VM on the GNS3 VM</string>
+          <string>Run this Docker container on the GNS3 VM</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QRadioButton" name="uiLocalRadioButton">
          <property name="text">
-          <string>Run this Docker VM on my local computer</string>
+          <string>Run this Docker container on my local computer</string>
          </property>
         </widget>
        </item>
@@ -309,6 +309,11 @@
       <item>
        <property name="text">
         <string>https</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>none</string>
        </property>
       </item>
      </widget>

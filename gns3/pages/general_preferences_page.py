@@ -27,7 +27,7 @@ from gns3.qt import QtGui, QtCore, QtWidgets
 from gns3.local_config import LocalConfig
 from ..ui.general_preferences_page_ui import Ui_GeneralPreferencesPageWidget
 from gns3.local_server import LocalServer
-from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, STYLES
+from ..settings import GRAPHICS_VIEW_SETTINGS, GENERAL_SETTINGS, STYLES, SYMBOL_THEMES
 from ..dialogs.console_command_dialog import ConsoleCommandDialog
 
 
@@ -61,9 +61,12 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiSPICEConsolePreconfiguredCommandPushButton.clicked.connect(self._spiceConsolePreconfiguredCommandSlot)
         self.uiDefaultLabelFontPushButton.clicked.connect(self._setDefaultLabelFontSlot)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
+        self.uiDefaultNoteFontPushButton.clicked.connect(self._setDefaultNoteFontSlot)
+        self.uiDefaultNoteColorPushButton.clicked.connect(self._setDefaultNoteColorSlot)
         self.uiBrowseConfigurationPushButton.clicked.connect(self._browseConfigurationDirectorySlot)
         self._default_label_color = QtGui.QColor(QtCore.Qt.black)
         self.uiStyleComboBox.addItems(STYLES)
+        self.uiSymbolThemeComboBox.addItems(SYMBOL_THEMES)
         self.uiImageDirectoriesAddPushButton.clicked.connect(self._imageDirectoriesAddPushButtonSlot)
         self.uiImageDirectoriesDeletePushButton.clicked.connect(self._imageDirectoriesDeletePushButtonSlot)
 
@@ -266,6 +269,25 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             self._default_label_color = color
             self.uiDefaultLabelStylePlainTextEdit.setStyleSheet("color : {}".format(color.name()))
 
+    def _setDefaultNoteFontSlot(self):
+        """
+        Slot to select the default note font.
+        """
+
+        selected_font, ok = QtWidgets.QFontDialog.getFont(self.uiDefaultNoteStylePlainTextEdit.font(), self)
+        if ok:
+            self.uiDefaultNoteStylePlainTextEdit.setFont(selected_font)
+
+    def _setDefaultNoteColorSlot(self):
+        """
+        Slot to select the default note color.
+        """
+
+        color = QtWidgets.QColorDialog.getColor(self._default_note_color, self)
+        if color.isValid():
+            self._default_note_color = color
+            self.uiDefaultNoteStylePlainTextEdit.setStyleSheet("color : {}".format(color.name()))
+
     def _populateGeneralSettingWidgets(self, settings):
         """
         Populates the widgets with the settings.
@@ -287,9 +309,15 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiHdpiCheckBox.setChecked(settings["hdpi"])
         self.uiTelnetConsoleCommandLineEdit.setText(settings["telnet_console_command"])
         self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
+
         index = self.uiStyleComboBox.findText(settings["style"])
         if index != -1:
             self.uiStyleComboBox.setCurrentIndex(index)
+
+        index = self.uiSymbolThemeComboBox.findText(settings["symbol_theme"])
+        if index != -1:
+            self.uiSymbolThemeComboBox.setCurrentIndex(index)
+
         self.uiDelayConsoleAllSpinBox.setValue(settings["delay_console_all"])
 
         self.uiVNCConsoleCommandLineEdit.setText(settings["vnc_console_command"])
@@ -316,9 +344,14 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         self.uiSceneWidthSpinBox.setValue(settings["scene_width"])
         self.uiSceneHeightSpinBox.setValue(settings["scene_height"])
+        self.uiNodeGridSizeSpinBox.setValue(settings["grid_size"])
+        self.uiDrawingGridSizeSpinBox.setValue(settings["drawing_grid_size"])
         self.uiRectangleSelectedItemCheckBox.setChecked(settings["draw_rectangle_selected_item"])
         self.uiDrawLinkStatusPointsCheckBox.setChecked(settings["draw_link_status_points"])
         self.uiShowInterfaceLabelsOnNewProject.setChecked(settings["show_interface_labels_on_new_project"])
+        self.uiLimitSizeNodeSymbolCheckBox.setChecked(settings["limit_size_node_symbols"])
+        self.uiShowGridOnNewProject.setChecked(settings["show_grid_on_new_project"])
+        self.uiSnapToGridOnNewProject.setChecked(settings["snap_to_grid_on_new_project"])
 
         qt_font = QtGui.QFont()
         if qt_font.fromString(settings["default_label_font"]):
@@ -327,6 +360,14 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         if qt_color.isValid():
             self._default_label_color = qt_color
             self.uiDefaultLabelStylePlainTextEdit.setStyleSheet("color : {}".format(qt_color.name()))
+
+        qt_font = QtGui.QFont()
+        if qt_font.fromString(settings["default_note_font"]):
+            self.uiDefaultNoteStylePlainTextEdit.setFont(qt_font)
+        qt_color = QtGui.QColor(settings["default_note_color"])
+        if qt_color.isValid():
+            self._default_note_color = qt_color
+            self.uiDefaultNoteStylePlainTextEdit.setStyleSheet("color : {}".format(qt_color.name()))
 
     def loadPreferences(self):
         """
@@ -361,6 +402,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         new_general_settings = {
             "style": self.uiStyleComboBox.currentText(),
+            "symbol_theme": self.uiSymbolThemeComboBox.currentText(),
             "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
             "hdpi": self.uiHdpiCheckBox.isChecked(),
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
@@ -379,9 +421,16 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         new_graphics_view_settings = {"scene_width": self.uiSceneWidthSpinBox.value(),
                                       "scene_height": self.uiSceneHeightSpinBox.value(),
+                                      "grid_size": self.uiNodeGridSizeSpinBox.value(),
+                                      "drawing_grid_size": self.uiDrawingGridSizeSpinBox.value(),
                                       "draw_rectangle_selected_item": self.uiRectangleSelectedItemCheckBox.isChecked(),
                                       "draw_link_status_points": self.uiDrawLinkStatusPointsCheckBox.isChecked(),
                                       "show_interface_labels_on_new_project": self.uiShowInterfaceLabelsOnNewProject.isChecked(),
+                                      "limit_size_node_symbols": self.uiLimitSizeNodeSymbolCheckBox.isChecked(),
+                                      "show_grid_on_new_project": self.uiShowGridOnNewProject.isChecked(),
+                                      "snap_to_grid_on_new_project": self.uiSnapToGridOnNewProject.isChecked(),
                                       "default_label_font": self.uiDefaultLabelStylePlainTextEdit.font().toString(),
-                                      "default_label_color": self._default_label_color.name()}
+                                      "default_label_color": self._default_label_color.name(),
+                                      "default_note_font": self.uiDefaultNoteStylePlainTextEdit.font().toString(),
+                                      "default_note_color": self._default_note_color.name()}
         MainWindow.instance().uiGraphicsView.setSettings(new_graphics_view_settings)

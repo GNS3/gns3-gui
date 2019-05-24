@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
-    <height>519</height>
+    <width>938</width>
+    <height>872</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Docker image configuration</string>
+   <string>Docker container template configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -24,43 +24,40 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <property name="margin">
-        <number>10</number>
-       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiNameLabel">
+         <property name="text">
+          <string>Name:</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="uiNameLineEdit"/>
        </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiConsoleTypeLabel">
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiDefaultNameFormatLabel">
          <property name="text">
-          <string>Console type:</string>
+          <string>Default name format</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiAdapterLabel">
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
-          <string>Adapters:</string>
+          <string>Category</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="uiCMDLineEdit"/>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
        </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label">
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
          <property name="text">
-          <string>HTTP port in the container:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QSpinBox" name="uiConsoleHttpPortSpinBox">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
+          <string>Symbol:</string>
          </property>
         </widget>
        </item>
@@ -81,72 +78,20 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiDefaultNameFormatLabel">
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiCMDLabel">
          <property name="text">
-          <string>Default name format</string>
+          <string>Start command:</string>
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="uiEnvironmentLabel">
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="uiCMDLineEdit"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiAdapterLabel">
          <property name="text">
-          <string>Environment variables:
-(KEY=VALUE, one per line)</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="1">
-        <widget class="QPushButton" name="uiNetworkConfigEditButton">
-         <property name="text">
-          <string>Edit</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QComboBox" name="uiConsoleTypeComboBox">
-         <item>
-          <property name="text">
-           <string>telnet</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>vnc</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>http</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>https</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="11" column="0">
-        <widget class="QLabel" name="uiNetworkConfigLabel">
-         <property name="text">
-          <string>Network configuration</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiNameLabel">
-         <property name="text">
-          <string>Name:</string>
+          <string>Adapters:</string>
          </property>
         </widget>
        </item>
@@ -157,48 +102,78 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="1">
-        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
-       </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="uiCategoryComboBox">
-         <item>
-          <property name="text">
-           <string>Router</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Switch</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Guest</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Security device</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiCategoryLabel">
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiCustomAdaptersLabel">
          <property name="text">
-          <string>Category</string>
+          <string>Custom adapters:</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiCMDLabel">
+       <item row="6" column="1">
+        <widget class="QPushButton" name="uiCustomAdaptersConfigurationPushButton">
          <property name="text">
-          <string>Start command:</string>
+          <string>&amp;Configure custom adapters</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
          </property>
         </widget>
        </item>
        <item row="7" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetNoConstraint</enum>
+         </property>
+         <item>
+          <widget class="QComboBox" name="uiConsoleTypeComboBox">
+           <item>
+            <property name="text">
+             <string>telnet</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>vnc</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>http</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>https</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>none</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="uiConsoleAutoStartCheckBox">
+           <property name="text">
+            <string>Auto start console</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="uiConsoleResolutionLabel">
+         <property name="text">
+          <string>VNC console resolution:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
         <widget class="QComboBox" name="uiConsoleResolutionComboBox">
          <item>
           <property name="text">
@@ -237,46 +212,144 @@
          </item>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiSymbolLabel">
-         <property name="text">
-          <string>Symbol:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="uiConsoleResolutionLabel">
-         <property name="text">
-          <string>VNC console resolution:</string>
-         </property>
-        </widget>
-       </item>
        <item row="9" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>HTTP port in the container:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QSpinBox" name="uiConsoleHttpPortSpinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>HTTP path:</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
+       <item row="10" column="1">
         <widget class="QLineEdit" name="uiHttpConsolePathLineEdit"/>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="uiEnvironmentLabel">
+         <property name="text">
+          <string>Environment variables:
+(KEY=VALUE, one per line)</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
+       </item>
+       <item row="12" column="0">
+        <widget class="QLabel" name="uiNetworkConfigLabel">
+         <property name="text">
+          <string>Network configuration</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="1">
+        <widget class="QPushButton" name="uiNetworkConfigEditButton">
+         <property name="text">
+          <string>Edit</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Advanced</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiExtraHostsLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Extra hosts added
+to the /etc/hosts file.
+(hostname:IP
+one per line)</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPlainTextEdit" name="uiExtraHostsTextEdit">
+         <property name="placeholderText">
+          <string>e.g. router:192.168.0.1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiExtraVolumeLabel">
+         <property name="text">
+          <string>Additional directories to
+make persistent that are
+not included in the image
+VOLUMES config. One
+directory per line.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPlainTextEdit" name="uiExtraVolumeTextEdit">
+         <property name="plainText">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>e.g. /etc/sysctl.d</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>388</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Usage</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPlainTextEdit" name="uiUsageTextEdit"/>
        </item>
       </layout>
      </widget>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

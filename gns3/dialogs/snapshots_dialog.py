@@ -22,8 +22,6 @@ Dialog to manage the snapshots.
 from ..qt import QtCore, QtWidgets
 from ..ui.snapshots_dialog_ui import Ui_SnapshotsDialog
 from ..controller import Controller
-from ..utils.progress_dialog import ProgressDialog
-from ..utils.create_snapshot_worker import CreateSnapshotWorker
 
 from datetime import datetime
 
@@ -87,20 +85,20 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
         snapshot_name, ok = QtWidgets.QInputDialog.getText(self, "Snapshot", "Snapshot name:", QtWidgets.QLineEdit.Normal, "Unnamed")
         if ok and snapshot_name and self._project:
-            snapshot_worker = CreateSnapshotWorker(self._project, snapshot_name)
-            snapshot_worker.finished.connect(self._createSnapshotsCallback)
+            Controller.instance().post("/projects/{}/snapshots".format(self._project.id()),
+                                       self._createSnapshotsCallback,
+                                       {"name": snapshot_name},
+                                       progressText="Creation of snapshot '{}' in progress...".format(snapshot_name),
+                                       timeout=None)
 
-            progress_dialog = ProgressDialog(snapshot_worker, "Snapshot progress", "Creation of snapshot in progress...",
-                                             "Cancel", busy=True, parent=self, create_thread=False, cancelable=True)
-            progress_dialog.show()
-            progress_dialog.exec_()
-
-
-    def _createSnapshotsCallback(self):
+    def _createSnapshotsCallback(self, result, error=False, server=None, context={}, **kwargs):
+        if error:
+            if result:
+                log.error(result["message"])
+            else:
+                log.error("Cannot create snapshot of project")
+            return
         self._listSnapshots()
-
-    def _createSnapshotsErrorCallback(self, message, error):
-        log.error(message)
 
     def _deleteSnapshotSlot(self):
         """
@@ -113,6 +111,7 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
             Controller.instance().delete("/projects/{}/snapshots/{}".format(self._project.id(), snapshot_id), self._deleteSnapshotsCallback)
 
     def _deleteSnapshotsCallback(self, result, error=False, server=None, context={}, **kwargs):
+
         if error:
             if result:
                 log.error(result["message"])
@@ -135,13 +134,16 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
         :param snapshot_id: id of the snapshot
         """
-        reply = QtWidgets.QMessageBox.question(self, "Snapshots", "This will discard any changes made to your project since the snapshot was taken?", QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel)
+
+        reply = QtWidgets.QMessageBox.question(self, "Snapshots", "This will discard any changes made to your project since the snapshot was taken, would you like to proceed?", QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel)
         if reply == QtWidgets.QMessageBox.Cancel:
             return
 
-        Controller.instance().post("/projects/{}/snapshots/{}/restore".format(self._project.id(), snapshot_id), self._restoreSnapshotsCallback, timeout=300)
+        Controller.instance().post("/projects/{}/snapshots/{}/restore".format(self._project.id(), snapshot_id),
+                                   self._restoreSnapshotsCallback, progressText="Restoring snapshot...", timeout=None)
 
     def _restoreSnapshotsCallback(self, result, error=False, server=None, context={}, **kwargs):
+
         if error:
             if result:
                 log.error(result["message"])

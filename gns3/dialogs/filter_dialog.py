@@ -18,6 +18,9 @@
 from ..qt import QtGui, QtWidgets, qslot
 from ..ui.filter_dialog_ui import Ui_FilterDialog
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
 
@@ -30,6 +33,7 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
         super().__init__(parent)
         self.setupUi(self)
         self._link = link
+        self._filters = {}
         self._link.updated_link_signal.connect(self._updateUiSlot)
         self._link.listAvailableFilters(self._listAvailableFiltersCallback)
         self._initialized = False
@@ -40,7 +44,7 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
 
     def _listAvailableFiltersCallback(self, result, error=False, *args, **kwargs):
         if error:
-            QtWidgets.QMessageBox.warning(None, "Link", "Error while listing information about the link: {}".format(result["message"]))
+            log.warning("Error while listing information about the link: {}".format(result["message"]))
             return
         self._filters = result
         self._initialized = True

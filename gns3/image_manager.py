@@ -176,7 +176,7 @@ class ImageManager:
         if node_type == 'DYNAMIPS':
             return os.path.join(self.getDirectory(), 'IOS')
         else:
-            return os.path.join(self.getDirectory(), node_type)
+            return os.path.join(self.getDirectory(), node_type.upper())
 
     @staticmethod
     def instance():

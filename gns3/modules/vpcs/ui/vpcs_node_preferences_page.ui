@@ -16,9 +16,6 @@
   <property name="accessibleName">
    <string>VPCS node templates</string>
   </property>
-  <property name="accessibleDescription">
-   <string/>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QSplitter" name="splitter">

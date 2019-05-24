@@ -30,6 +30,9 @@ from gns3.controller import Controller
 from gns3.utils.get_resource import get_resource
 from ..ui.iou_device_configuration_page_ui import Ui_iouDeviceConfigPageWidget
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget):
 
@@ -157,7 +160,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         if node:
             self._compute_id = node.compute().id()
         else:
-            self._compute_id = settings["server"]
+            self._compute_id = settings["compute_id"]
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -171,7 +174,6 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         if not node:
             # these are template settings
 
-            # rename the label from "Name" to "Template name"
             self.uiNameLabel.setText("Template name:")
 
             # load the default name format
@@ -205,6 +207,13 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             self.uiCategoryLabel.hide()
             self.uiCategoryComboBox.hide()
 
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
+        self.uiConsoleAutoStartCheckBox.setChecked(settings["console_auto_start"])
+
         # load advanced settings
         if "l1_keepalives" in settings:
             self.uiL1KeepalivesCheckBox.setChecked(settings["l1_keepalives"])
@@ -217,6 +226,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         # load the number of adapters
         self.uiEthernetAdaptersSpinBox.setValue(settings["ethernet_adapters"])
         self.uiSerialAdaptersSpinBox.setValue(settings["serial_adapters"])
+        self.uiUsageTextEdit.setPlainText(settings["usage"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -262,7 +272,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
                 if self._configFileValid(startup_config):
                     settings["startup_config"] = startup_config
                 else:
-                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot access or read the startup-config file")
 
             # save the private-config
             private_config = self.uiPrivateConfigLineEdit.text().strip()
@@ -272,7 +282,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
                 if self._configFileValid(private_config):
                     settings["private_config"] = private_config
                 else:
-                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
+                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot access or read the private-config file")
 
             settings["symbol"] = self.uiSymbolLineEdit.text()
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
@@ -300,12 +310,23 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
 
         settings["ethernet_adapters"] = ethernet_adapters
         settings["serial_adapters"] = serial_adapters
+        # save console type
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
+        settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
+        settings["usage"] = self.uiUsageTextEdit.toPlainText()
         return settings
 
     def _configFileValid(self, path):
         """
-        Return true if it's a valid configuration file
+        Return true if it is a valid configuration file
         """
+
         if not os.path.isabs(path):
             path = os.path.join(LocalServer.instance().localServerSettings()["configs_path"], path)
-        return os.access(path, os.R_OK)
+        result = os.access(path, os.R_OK)
+        if not result:
+            if not os.path.exists(path):
+                log.error("Cannot access config file '{}'".format(path))
+            else:
+                log.error("Cannot read config file '{}'".format(path))
+        return result

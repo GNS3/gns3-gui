@@ -28,13 +28,13 @@ log = logging.getLogger(__name__)
 
 
 class QemuVM(Node):
-
     """
     QEMU VM.
 
     :param module: parent module for this node
     :param server: GNS3 server instance
     """
+
     URL_PREFIX = "qemu"
 
     def __init__(self, module, server, project):
@@ -64,15 +64,15 @@ class QemuVM(Node):
                             "options": "",
                             "ram": QEMU_VM_SETTINGS["ram"],
                             "cpus": QEMU_VM_SETTINGS["cpus"],
-                            "console": None,
-                            "console_host": None,
                             "console_type": QEMU_VM_SETTINGS["console_type"],
+                            "console_auto_start": QEMU_VM_SETTINGS["console_auto_start"],
                             "adapters": QEMU_VM_SETTINGS["adapters"],
+                            "custom_adapters": QEMU_VM_SETTINGS["custom_adapters"],
                             "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                             "mac_address": QEMU_VM_SETTINGS["mac_address"],
                             "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
                             "platform": QEMU_VM_SETTINGS["platform"],
-                            "acpi_shutdown": QEMU_VM_SETTINGS["acpi_shutdown"],
+                            "on_close": QEMU_VM_SETTINGS["on_close"],
                             "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],
                             "process_priority": QEMU_VM_SETTINGS["process_priority"],
                             "initrd": "",
@@ -86,49 +86,37 @@ class QemuVM(Node):
 
         self.settings().update(qemu_vm_settings)
 
-    def _createCallback(self, result):
+    def resizeDiskImage(self, drive_name, size, callback):
         """
-        Callback for create.
+        Resize a disk image allocated to the VM.
 
-        :param result: server response
-        """
-        pass
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this QEMU VM.
-
-        :param new_settings: settings dictionary
+        :param callback: callback for the reply from the server
         """
 
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
+        params = {"drive_name": drive_name,
+                  "extend": size}
+        self.post("/resize_disk", callback, body=params)
 
     def info(self):
         """
         Returns information about this QEMU VM instance.
 
-        :returns: formated string
+        :returns: formatted string
         """
 
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
         info = """QEMU VM {name} is {state}
-  Node ID is {id}, server's node ID is {node_id}
-  QEMU VM's server runs on {host}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  Number of processors is {cpus} and amount of memory is {ram}MB
   Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            host=self.compute().name(),
+           port=self.compute().port(),
+           cpus=self._settings["cpus"],
+           ram=self._settings["ram"],
            console=self._settings["console"],
            console_type=self._settings["console_type"])
 
@@ -139,20 +127,11 @@ class QemuVM(Node):
             else:
                 port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
                                                                             port_description=port.description())
+            if port.macAddress():
+                port_info += "       MAC address is {mac_address}\n".format(mac_address=port.macAddress())
 
-        if "usage" in self._settings and len(self._settings["usage"]) > 0:
-            info += "  Usage: {}\n".format(self._settings["usage"])
-
-        return info + port_info
-
-    def console(self):
-        """
-        Returns the console port for this QEMU VM instance.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
+        usage = "\n" + self._settings.get("usage")
+        return info + port_info + usage
 
     def configPage(self):
         """
@@ -173,11 +152,6 @@ class QemuVM(Node):
         """
 
         return ":/symbols/qemu_guest.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "QEMU VM"
 
     @staticmethod
     def categories():

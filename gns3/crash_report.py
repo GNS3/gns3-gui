@@ -20,6 +20,7 @@ import psutil
 import os
 import platform
 import struct
+import distro
 
 try:
     import raven
@@ -51,7 +52,7 @@ class CrashReport:
     Report crash to a third party service
     """
 
-    DSN = "sync+https://b892f3e4a56e4443ad16cfe3d4c6d602:ca3ad57e613441ab95ea15a45e9e5435@sentry.io/38506"
+    DSN = "https://01c9d795e546405f9bbc665bc3c3646d:c09e171479024df491d3f330d7a2b392@sentry.io/38506"
     if hasattr(sys, "frozen"):
         cacert = get_resource("cacert.pem")
         if cacert is not None and os.path.isfile(cacert):
@@ -71,6 +72,8 @@ class CrashReport:
     def captureException(self, exception, value, tb):
         from .local_server import LocalServer
         from .local_config import LocalConfig
+        from .controller import Controller
+        from .compute_manager import ComputeManager
 
         local_server = LocalServer.instance().localServerSettings()
         if local_server["report_errors"]:
@@ -96,16 +99,30 @@ class CrashReport:
                 "os:release": platform.release(),
                 "os:win_32": " ".join(platform.win32_ver()),
                 "os:mac": "{} {}".format(platform.mac_ver()[0], platform.mac_ver()[2]),
-                "os:linux": " ".join(platform.linux_distribution()),
+                "os:linux": " ".join(distro.linux_distribution()),
                 "python:version": "{}.{}.{}".format(sys.version_info[0],
                                                     sys.version_info[1],
                                                     sys.version_info[2]),
                 "python:bit": struct.calcsize("P") * 8,
                 "python:encoding": sys.getdefaultencoding(),
-                "python:frozen": "{}".format(hasattr(sys, "frozen"))
+                "python:frozen": "{}".format(hasattr(sys, "frozen")),
             }
+
+            # extra controller and compute information
+            extra_context = {"controller:version": Controller.instance().version(),
+                             "controller:host": Controller.instance().host(),
+                             "controller:connected": Controller.instance().connected()}
+            for index, compute in enumerate(ComputeManager.instance().computes()):
+                extra_context["compute{}:id".format(index)] = compute.id()
+                extra_context["compute{}:name".format(index)] = compute.name(),
+                extra_context["compute{}:host".format(index)] = compute.host(),
+                extra_context["compute{}:connected".format(index)] = compute.connected()
+                extra_context["compute{}:platform".format(index)] = compute.capabilities().get("platform")
+                extra_context["compute{}:version".format(index)] = compute.capabilities().get("version")
+
             context = self._add_qt_information(context)
             client.tags_context(context)
+            client.extra_context(extra_context)
             try:
                 report = client.captureException((exception, value, tb))
             except Exception as e:
@@ -116,7 +133,7 @@ class CrashReport:
     def _add_qt_information(self, context):
         try:
             from .qt import QtCore
-            import sip
+            from .qt import sip
         except ImportError:
             return context
         context["psutil:version"] = psutil.__version__

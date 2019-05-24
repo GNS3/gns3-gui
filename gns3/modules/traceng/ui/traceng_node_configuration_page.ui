@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TraceNGNodeConfigPageWidget</class>
+ <widget class="QWidget" name="TraceNGNodeConfigPageWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>846</width>
+    <height>340</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>TraceNG node template configuration</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="uiNameLabel">
+     <property name="text">
+      <string>Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="uiIPAddressLabel">
+     <property name="text">
+      <string>IP address:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="uiDefaultDestinationLabel">
+     <property name="text">
+      <string>Default destination:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="3">
+    <widget class="QLabel" name="uiDefaultNameFormatLabel">
+     <property name="text">
+      <string>Default name format:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="uiSymbolLabel">
+     <property name="text">
+      <string>Symbol:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLineEdit" name="uiSymbolLineEdit"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="uiSymbolToolButton">
+       <property name="text">
+        <string>&amp;Browse...</string>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextOnly</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="QLabel" name="uiCategoryLabel">
+     <property name="text">
+      <string>Category:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="3">
+    <widget class="QComboBox" name="uiCategoryComboBox"/>
+   </item>
+   <item row="6" column="1" colspan="3">
+    <spacer name="spacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>263</width>
+       <height>212</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="3">
+    <widget class="QLineEdit" name="uiDefaultDestinationLineEdit"/>
+   </item>
+   <item row="1" column="3">
+    <widget class="QLineEdit" name="uiIPAddressLineEdit"/>
+   </item>
+   <item row="0" column="3">
+    <widget class="QLineEdit" name="uiNameLineEdit"/>
+   </item>
+  </layout>
+  <zorder>uiNameLabel</zorder>
+  <zorder>uiNameLineEdit</zorder>
+  <zorder>uiDefaultNameFormatLabel</zorder>
+  <zorder>uiDefaultNameFormatLineEdit</zorder>
+  <zorder>uiSymbolLabel</zorder>
+  <zorder>uiCategoryLabel</zorder>
+  <zorder>uiCategoryComboBox</zorder>
+  <zorder>uiIPAddressLabel</zorder>
+  <zorder>uiIPAddressLineEdit</zorder>
+  <zorder>uiDefaultDestinationLabel</zorder>
+  <zorder>uiDefaultDestinationLineEdit</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

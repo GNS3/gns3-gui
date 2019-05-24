@@ -30,33 +30,8 @@ class NodesDockWidget(QtWidgets.QDockWidget):
         self.parent().uiNodesView.setCurrentSearch(text)
         self.parent().uiNodesView.refresh()
 
-    def _filterIndexChangedSlot(self, index):
-        self._settings["nodes_view_filter"] = index
-        LocalConfig.instance().saveSectionSettings("NodesView", self._settings)
-
-        if index == 0:
-            self.parent().uiNodesView.setShowInstalledAppliances(True)
-            self.parent().uiNodesView.setShowBuiltinAvailableAppliances(True)
-            self.parent().uiNodesView.setShowMyAvailableAppliances(True)
-        elif index == 1:
-            self.parent().uiNodesView.setShowInstalledAppliances(True)
-            self.parent().uiNodesView.setShowBuiltinAvailableAppliances(False)
-            self.parent().uiNodesView.setShowMyAvailableAppliances(False)
-        elif index == 2:
-            self.parent().uiNodesView.setShowInstalledAppliances(False)
-            self.parent().uiNodesView.setShowBuiltinAvailableAppliances(True)
-            self.parent().uiNodesView.setShowMyAvailableAppliances(True)
-        else:
-            self.parent().uiNodesView.setShowInstalledAppliances(False)
-            self.parent().uiNodesView.setShowBuiltinAvailableAppliances(False)
-            self.parent().uiNodesView.setShowMyAvailableAppliances(True)
-        self.parent().uiNodesView.refresh()
-
     def populateNodesView(self, category):
-        if self.parent().uiNodesFilterComboBox.currentIndex() != self._settings["nodes_view_filter"]:
-            self.parent().uiNodesFilterComboBox.setCurrentIndex(self._settings["nodes_view_filter"])
-            self._filterIndexChangedSlot(self._settings["nodes_view_filter"])
-        self.parent().uiNodesFilterComboBox.activated.connect(self._filterIndexChangedSlot)
+
         self.parent().uiNodesFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
         self.parent().uiNodesView.clear()
         text = self.parent().uiNodesFilterLineEdit.text().strip().lower()

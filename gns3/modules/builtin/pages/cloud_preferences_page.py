@@ -21,13 +21,14 @@ Configuration page for cloud node preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.template_manager import TemplateManager
 from gns3.controller import Controller
+from gns3.template import Template
 
-from .. import Builtin
 from ..settings import CLOUD_SETTINGS
 from ..ui.cloud_preferences_page_ui import Ui_CloudPreferencesPageWidget
 from ..pages.cloud_configuration_page import CloudConfigurationPage
@@ -53,6 +54,11 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         self.uiCloudNodesTreeWidget.itemSelectionChanged.connect(self._cloudNodeChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiCloudNodeInfoTreeWidget)
         section_item.setText(0, name)
@@ -62,15 +68,25 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         return section_item
 
     def _refreshInfo(self, cloud_node):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiCloudNodeInfoTreeWidget.clear()
 
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", cloud_node["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", cloud_node.get("template_id", "none")])
+        if cloud_node["remote_console_type"] != "none":
+            QtWidgets.QTreeWidgetItem(section_item, ["Console host:", cloud_node["remote_console_host"]])
+            QtWidgets.QTreeWidgetItem(section_item, ["Console port:", "{}".format(cloud_node["remote_console_port"])])
+            if cloud_node["remote_console_type"] in ("http", "https"):
+                QtWidgets.QTreeWidgetItem(section_item, ["Console HTTP path:", cloud_node["remote_console_http_path"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Console type:", cloud_node["remote_console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", cloud_node["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(cloud_node["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(cloud_node["compute_id"]).name()])
         except KeyError:
             pass
 
@@ -81,7 +97,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
     def _cloudNodeChangedSlot(self):
         """
-        Loads a selected cloud node template from the tree widget.
+        Loads a selected cloud nodes from the tree widget.
         """
 
         selection = self.uiCloudNodesTreeWidget.selectedItems()
@@ -98,14 +114,14 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
     def _newCloudNodeSlot(self):
         """
-        Creates a new cloud node template.
+        Creates a new cloud node.
         """
 
         wizard = CloudWizard(self._cloud_nodes, parent=self)
         wizard.show()
         if wizard.exec_():
             new_cloud_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_cloud_settings["server"], name=new_cloud_settings["name"])
+            key = "{server}:{name}".format(server=new_cloud_settings["compute_id"], name=new_cloud_settings["name"])
             self._cloud_nodes[key] = CLOUD_SETTINGS.copy()
             self._cloud_nodes[key].update(new_cloud_settings)
 
@@ -119,7 +135,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
     def _editCloudNodeSlot(self):
         """
-        Edits a cloud node template.
+        Edits a cloud node.
         """
 
         item = self.uiCloudNodesTreeWidget.currentItem()
@@ -132,10 +148,10 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
                 # update the icon
                 Controller.instance().getSymbolIcon(cloud_node["symbol"], qpartial(self._setItemIcon, item))
                 if cloud_node["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=cloud_node["server"], name=cloud_node["name"])
+                    new_key = "{server}:{name}".format(server=cloud_node["compute_id"], name=cloud_node["name"])
                     if new_key in self._cloud_nodes:
                         QtWidgets.QMessageBox.critical(self, "Cloud node", "Cloud node name {} already exists for server {}".format(cloud_node["name"],
-                                                                                                                                    cloud_node["server"]))
+                                                                                                                                    cloud_node["compute_id"]))
                         cloud_node["name"] = item.text(0)
                         return
                     self._cloud_nodes[new_key] = self._cloud_nodes[key]
@@ -146,7 +162,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
     def _deleteCloudNodeSlot(self):
         """
-        Deletes a cloud node template.
+        Deletes a cloud node.
         """
 
         for item in self.uiCloudNodesTreeWidget.selectedItems():
@@ -160,10 +176,17 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         Loads the cloud node preferences.
         """
 
-        builtin_module = Builtin.instance()
-        self._cloud_nodes = copy.deepcopy(builtin_module.cloudNodes())
-        self._items.clear()
+        self._cloud_nodes = {}
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "cloud" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._cloud_nodes[key] = copy.deepcopy(template.settings())
 
+        self._items.clear()
         for key, cloud_node in self._cloud_nodes.items():
             item = QtWidgets.QTreeWidgetItem(self.uiCloudNodesTreeWidget)
             item.setText(0, cloud_node["name"])
@@ -177,6 +200,10 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
             self.uiCloudNodesTreeWidget.setMaximumWidth(self.uiCloudNodesTreeWidget.sizeHintForColumn(0) + 20)
 
     def _setItemIcon(self, item, icon):
+        """
+        Sets an item icon.
+        """
+
         item.setIcon(0, icon)
         self.uiCloudNodesTreeWidget.setMaximumWidth(self.uiCloudNodesTreeWidget.sizeHintForColumn(0) + 20)
 
@@ -185,4 +212,11 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         Saves the cloud node preferences.
         """
 
-        Builtin.instance().setCloudNodes(self._cloud_nodes)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "cloud":
+                templates.append(template)
+        for template_settings in self._cloud_nodes.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
+

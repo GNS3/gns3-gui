@@ -19,8 +19,8 @@
 Default Docker settings.
 """
 
-import sys
 from gns3.node import Node
+
 
 DOCKER_SETTINGS = {
     "containers": []
@@ -28,15 +28,21 @@ DOCKER_SETTINGS = {
 
 DOCKER_CONTAINER_SETTINGS = {
     "default_name_format": "{name}-{0}",
+    "usage": "",
     "symbol": ":/symbols/docker_guest.svg",
     "category": Node.end_devices,
     "start_command": "",
     "name": "",
     "image": "",
     "adapters": 1,
+    "custom_adapters": [],
     "environment": "",
     "console_type": "telnet",
+    "console_auto_start": False,
     "console_resolution": "1024x768",
     "console_http_port": 80,
-    "console_http_path": "/"
+    "console_http_path": "/",
+    "extra_hosts": "",
+    "extra_volumes": [],
+    "node_type": "docker"
 }

@@ -26,8 +26,9 @@ from gns3.controller import Controller
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
-from .. import VMware
 from ..settings import VMWARE_VM_SETTINGS
 from ..ui.vmware_vm_preferences_page_ui import Ui_VMwareVMPreferencesPageWidget
 from ..pages.vmware_vm_configuration_page import VMwareVMConfigurationPage
@@ -54,6 +55,11 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiVMwareVMsTreeWidget.itemSelectionChanged.connect(self._vmwareVMChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiVMwareVMInfoTreeWidget)
         section_item.setText(0, name)
@@ -63,21 +69,27 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         return section_item
 
     def _refreshInfo(self, vmware_vm):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiVMwareVMInfoTreeWidget.clear()
 
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vmware_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", vmware_vm.get("template_id", "none")])
         if vmware_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["compute_id"]).name()])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vmware_vm["acpi_shutdown"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["On close:", "{}".format(vmware_vm["on_close"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vmware_vm["linked_clone"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vmware_vm["console_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(vmware_vm["console_auto_start"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")
@@ -122,7 +134,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         if wizard.exec_():
 
             new_vm_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_vm_settings["server"], name=new_vm_settings["name"])
+            key = "{server}:{name}".format(server=new_vm_settings["compute_id"], name=new_vm_settings["name"])
             self._vmware_vms[key] = VMWARE_VM_SETTINGS.copy()
             self._vmware_vms[key].update(new_vm_settings)
 
@@ -149,10 +161,10 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
                 Controller.instance().getSymbolIcon(vmware_vm["symbol"], qpartial(self._setItemIcon, item))
 
                 if vmware_vm["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=vmware_vm["server"], name=vmware_vm["name"])
+                    new_key = "{server}:{name}".format(server=vmware_vm["compute_id"], name=vmware_vm["name"])
                     if new_key in self._vmware_vms:
                         QtWidgets.QMessageBox.critical(self, "VMware VM", "VMware VM name {} already exists for server {}".format(vmware_vm["name"],
-                                                                                                                                  vmware_vm["server"]))
+                                                                                                                                  vmware_vm["compute_id"]))
                         vmware_vm["name"] = item.text(0)
                         return
                     self._vmware_vms[new_key] = self._vmware_vms[key]
@@ -177,10 +189,17 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         Loads the VMware VM preferences.
         """
 
-        vmware_module = VMware.instance()
-        self._vmware_vms = copy.deepcopy(vmware_module.VMs())
-        self._items.clear()
+        self._vmware_vms = {}
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "vmware" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._vmware_vms[key] = copy.deepcopy(template.settings())
 
+        self._items.clear()
         for key, vmware_vm in self._vmware_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVMwareVMsTreeWidget)
             item.setText(0, vmware_vm["name"])
@@ -199,8 +218,16 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         Saves the VMware VM preferences.
         """
 
-        VMware.instance().setVMs(self._vmware_vms)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "vmware":
+                templates.append(template)
+        for template_settings in self._vmware_vms.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
+
 
     def _setItemIcon(self, item, icon):
+
         item.setIcon(0, icon)
         self.uiVMwareVMsTreeWidget.setMaximumWidth(self.uiVMwareVMsTreeWidget.sizeHintForColumn(0) + 10)

@@ -20,17 +20,15 @@ Wizard for cloud nodes.
 """
 
 from gns3.qt import QtGui, QtWidgets
-from gns3.node import Node
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.cloud_wizard_ui import Ui_CloudNodeWizard
-from .. import Builtin
 
 
 class CloudWizard(VMWizard, Ui_CloudNodeWizard):
 
     """
-    Wizard to create a cloud node template.
+    Wizard to create a cloud node.
 
     :param parent: parent widget
     """
@@ -51,7 +49,6 @@ class CloudWizard(VMWizard, Ui_CloudNodeWizard):
 
         settings = {"name": self.uiNameLineEdit.text(),
                     "symbol": ":/symbols/cloud.svg",
-                    "category": Node.end_devices,
-                    "server": self._compute_id}
+                    "compute_id": self._compute_id}
 
         return settings

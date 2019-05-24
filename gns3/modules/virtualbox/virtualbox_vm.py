@@ -28,7 +28,6 @@ log = logging.getLogger(__name__)
 
 
 class VirtualBoxVM(Node):
-
     """
     VirtualBox VM.
 
@@ -45,69 +44,45 @@ class VirtualBoxVM(Node):
         self._linked_clone = False
 
         virtualbox_vm_settings = {"vmname": "",
-                                  "console": None,
-                                  "console_host": None,
+                                  "usage": "",
                                   "adapters": VBOX_VM_SETTINGS["adapters"],
                                   "use_any_adapter": VBOX_VM_SETTINGS["use_any_adapter"],
                                   "adapter_type": VBOX_VM_SETTINGS["adapter_type"],
                                   "ram": VBOX_VM_SETTINGS["ram"],
                                   "headless": VBOX_VM_SETTINGS["headless"],
-                                  "acpi_shutdown": VBOX_VM_SETTINGS["acpi_shutdown"],
+                                  "on_close": VBOX_VM_SETTINGS["on_close"],
+                                  "console_type": VBOX_VM_SETTINGS["console_type"],
+                                  "console_auto_start": VBOX_VM_SETTINGS["console_auto_start"],
+                                  "custom_adapters": VBOX_VM_SETTINGS["custom_adapters"],
                                   "port_name_format": "Ethernet0",
                                   "port_segment_size": 0,
                                   "first_port_name": None}
 
         self.settings().update(virtualbox_vm_settings)
 
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        pass
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this VirtualBox VM.
-
-        :param new_settings: settings (dict)
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
-        if params:
-            self._update(params)
-
     def info(self):
         """
         Returns information about this VirtualBox VM instance.
 
-        :returns: formated string
+        :returns: formatted string
         """
 
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
         info = """VirtualBox VM {name} is {state}
-  Local node ID is {id}
-  Server's node ID is {node_id}
-  VirtualBox name is "{vmname}"
-  RAM is {ram} MB
-  VirtualBox VM's server runs on {host}, console is on port {console}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  VirtualBox's name is "{vmname}"
+  Amount of memory is {ram}MB
+  Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            vmname=self._settings["vmname"],
            ram=self._settings["ram"],
            host=self.compute().name(),
-           console=self._settings["console"])
+           port=self.compute().port(),
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:
@@ -117,15 +92,8 @@ class VirtualBoxVM(Node):
                 port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
                                                                             port_description=port.description())
 
-        return info + port_info
-
-    def console(self):
-        """
-        Returns the console port for this VirtualBox VM instance.
-
-        :returns: port (integer)
-        """
-        return self._settings["console"]
+        usage = "\n" + self._settings.get("usage")
+        return info + port_info + usage
 
     def bringToFront(self):
         """
@@ -159,11 +127,6 @@ class VirtualBoxVM(Node):
         """
 
         return ":/symbols/vbox_guest.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "VirtualBox VM"
 
     @staticmethod
     def categories():

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>575</width>
-    <height>508</height>
+    <width>715</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <property name="accessibleName">
    <string>IOS router templates</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
@@ -63,7 +63,7 @@
        </property>
       </column>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QTreeWidget" name="uiIOSRouterInfoTreeWidget">
@@ -95,7 +95,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QPushButton" name="uiNewIOSRouterPushButton">
            <property name="text">
@@ -110,6 +110,16 @@
            </property>
            <property name="text">
             <string>&amp;Decompress</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiCopyIOSRouterPushButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Copy</string>
            </property>
           </widget>
          </item>

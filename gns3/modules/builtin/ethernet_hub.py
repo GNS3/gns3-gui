@@ -29,6 +29,7 @@ class EthernetHub(Node):
     :param server: GNS3 server instance
     :param project: Project instance
     """
+
     URL_PREFIX = "ethernet_hub"
 
     def __init__(self, module, server, project):
@@ -39,37 +40,6 @@ class EthernetHub(Node):
         self._always_on = True
         self.settings().update({"ports_mapping": []})
 
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        self.settings()["ports_mapping"] = result["ports_mapping"]
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this Ethernet hub.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        if "name" in new_settings:
-            params["name"] = new_settings["name"]
-        if "ports_mapping" in new_settings:
-            params["ports_mapping"] = new_settings["ports_mapping"]
-        if params:
-            self._update(params)
-
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-        self.settings()["ports_mapping"] = result["ports_mapping"]
-
     def info(self):
         """
         Returns information about this Ethernet hub.
@@ -78,13 +48,13 @@ class EthernetHub(Node):
         """
 
         info = """Ethernet hub {name} is always-on
-  Local node ID is {id}
-  Server's node ID is {node_id}
-  Hub's server runs on {host}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self.compute().name())
+           host=self.compute().name(),
+           port=self.compute().port())
 
         port_info = ""
         for port in self._ports:
@@ -115,11 +85,6 @@ class EthernetHub(Node):
         """
 
         return ":/symbols/hub.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "Ethernet hub"
 
     @staticmethod
     def categories():

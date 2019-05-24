@@ -22,6 +22,7 @@ import shutil
 from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
 from gns3.ui.profile_select_dialog_ui import Ui_ProfileSelectDialog
+from gns3.version import __version_info__
 
 import logging
 log = logging.getLogger(__name__)
@@ -39,8 +40,8 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
             self._main.hide()
             parent = self._main
         super().__init__(parent)
-        self.setupUi(self)
 
+        self.setupUi(self)
         self.uiNewPushButton.clicked.connect(self._newPushButtonSlot)
         self.uiDeletePushButton.clicked.connect(self._deletePushButtonSlot)
 
@@ -48,12 +49,13 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
         screen = QtWidgets.QApplication.desktop().screenGeometry()
         self.move(screen.center() - self.rect().center())
 
+        version = "{}.{}".format(__version_info__[0], __version_info__[1])
         if sys.platform.startswith("win"):
             appdata = os.path.expandvars("%APPDATA%")
-            path = os.path.join(appdata, "GNS3")
+            path = os.path.join(appdata, "GNS3", version)
         else:
             home = os.path.expanduser("~")
-            path = os.path.join(home, ".config", "GNS3")
+            path = os.path.join(home, ".config", "GNS3", version)
         self.profiles_path = os.path.join(path, "profiles")
 
         self.uiShowAtStartupCheckBox.setChecked(LocalConfig.instance().multiProfiles())
@@ -65,9 +67,9 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
 
         try:
             if os.path.exists(self.profiles_path):
-                for profil in sorted(os.listdir(self.profiles_path)):
-                    if not profil.startswith("."):
-                        self.uiProfileSelectComboBox.addItem(profil)
+                for profile in sorted(os.listdir(self.profiles_path)):
+                    if not profile.startswith("."):
+                        self.uiProfileSelectComboBox.addItem(profile)
         except OSError:
             pass
 
@@ -79,7 +81,7 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
         super().accept()
 
     def _newPushButtonSlot(self):
-        profile, ok = QtWidgets.QInputDialog.getText(self.parent(), "New profile", "Profile name:")
+        profile, ok = QtWidgets.QInputDialog.getText(self, "New profile", "Profile name:")
         if ok:
             self.uiProfileSelectComboBox.addItem(profile)
             self.uiProfileSelectComboBox.setCurrentText(profile)
@@ -88,13 +90,13 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
     def _deletePushButtonSlot(self):
         profile = self.uiProfileSelectComboBox.currentText()
         if profile == "default":
-            QtWidgets.QMessageBox.critical(self.parentWidget(), "Delete profile", "You can't delete the default profile")
+            QtWidgets.QMessageBox.critical(self, "Delete profile", "The default profile cannot be deleted")
         else:
             try:
                 shutil.rmtree(os.path.join(self.profiles_path, profile))
                 self._refresh()
             except (OSError, PermissionError) as e:
-                QtWidgets.QMessageBox.critical(self.parentWidget(), "Delete profile", str(e))
+                QtWidgets.QMessageBox.critical(self, "Cannot delete profile", str(e))
 
 
 if __name__ == '__main__':

@@ -19,8 +19,6 @@
 Configuration page for QEMU preferences.
 """
 
-import sys
-
 from gns3.qt import QtWidgets
 from .. import Qemu
 from ..ui.qemu_preferences_page_ui import Ui_QemuPreferencesPageWidget
@@ -28,7 +26,6 @@ from ..settings import QEMU_SETTINGS
 
 
 class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
-
     """
     QWidget preference page for QEMU.
     """
@@ -40,23 +37,19 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
 
         # connect signals
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
-        self.uiKVMAccelerationCheckBox.stateChanged.connect(self._kvmAccelerationSlot)
+        self.uiEnableHardwareAccelerationCheckBox.stateChanged.connect(self._hardwareAccelerationSlot)
 
-        if not sys.platform.startswith("linux"):
-            # KVM can only run on Linux
-            self.uiKVMAccelerationCheckBox.hide()
-
-    def _kvmAccelerationSlot(self, state):
+    def _hardwareAccelerationSlot(self, state):
         """
         Slot to enable or not the require KVM acceleration check box.
         """
 
         if state:
-            self.uiRequireKVMAccelerationCheckBox.setEnabled(True)
-            self.uiRequireKVMAccelerationCheckBox.setChecked(True)
+            self.uiRequireHardwareAccelerationCheckBox.setEnabled(True)
+            self.uiRequireHardwareAccelerationCheckBox.setChecked(True)
         else:
-            self.uiRequireKVMAccelerationCheckBox.setEnabled(False)
-            self.uiRequireKVMAccelerationCheckBox.setChecked(False)
+            self.uiRequireHardwareAccelerationCheckBox.setEnabled(False)
+            self.uiRequireHardwareAccelerationCheckBox.setChecked(False)
 
     def _restoreDefaultsSlot(self):
         """
@@ -72,8 +65,8 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
         :param settings: QEMU settings
         """
 
-        self.uiKVMAccelerationCheckBox.setChecked(settings["enable_kvm"])
-        self.uiRequireKVMAccelerationCheckBox.setChecked(settings["require_kvm"])
+        self.uiEnableHardwareAccelerationCheckBox.setChecked(settings["enable_hardware_acceleration"])
+        self.uiRequireHardwareAccelerationCheckBox.setChecked(settings["require_hardware_acceleration"])
 
     def loadPreferences(self):
         """
@@ -88,6 +81,6 @@ class QemuPreferencesPage(QtWidgets.QWidget, Ui_QemuPreferencesPageWidget):
         Saves QEMU preferences.
         """
 
-        new_settings = {"enable_kvm": self.uiKVMAccelerationCheckBox.isChecked(),
-                        "require_kvm": self.uiRequireKVMAccelerationCheckBox.isChecked()}
+        new_settings = {"enable_hardware_acceleration": self.uiEnableHardwareAccelerationCheckBox.isChecked(),
+                        "require_hardware_acceleration": self.uiRequireHardwareAccelerationCheckBox.isChecked()}
         Qemu.instance().setSettings(new_settings)

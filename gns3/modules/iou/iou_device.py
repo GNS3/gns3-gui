@@ -22,7 +22,6 @@ IOU device implementation.
 import os
 import re
 from gns3.node import Node
-from gns3.utils.normalize_filename import normalize_filename
 from .settings import IOU_DEVICE_SETTINGS
 
 import logging
@@ -30,7 +29,6 @@ log = logging.getLogger(__name__)
 
 
 class IOUDevice(Node):
-
     """
     IOU device.
 
@@ -45,86 +43,50 @@ class IOUDevice(Node):
         super().__init__(module, server, project)
 
         iou_device_settings = {"path": "",
+                               "usage": "",
                                "md5sum": "",
                                "startup_config": "",
                                "private_config": "",
+                               "console_type": IOU_DEVICE_SETTINGS["console_type"],
+                               "console_auto_start": IOU_DEVICE_SETTINGS["console_auto_start"],
                                "l1_keepalives": False,
                                "use_default_iou_values": IOU_DEVICE_SETTINGS["use_default_iou_values"],
                                "ram": IOU_DEVICE_SETTINGS["ram"],
                                "nvram": IOU_DEVICE_SETTINGS["nvram"],
                                "ethernet_adapters": IOU_DEVICE_SETTINGS["ethernet_adapters"],
-                               "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"],
-                               "console": None,
-                               "console_host": None}
+                               "serial_adapters": IOU_DEVICE_SETTINGS["serial_adapters"]}
 
         self.settings().update(iou_device_settings)
-
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response
-        """
-        pass
-
-    def start(self):
-        """
-        Starts this VM instance.
-        """
-
-        if self.status() == Node.started:
-            log.debug("{} is already running".format(self.name()))
-            return
-
-        log.debug("{} is starting".format(self.name()))
-        self.controllerHttpPost("/nodes/{node_id}/start".format(node_id=self._node_id), self._startCallback, progressText="{} is starting".format(self.name()))
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this IOU device.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
-        if params:
-            self._update(params)
 
     def info(self):
         """
         Returns information about this IOU device.
 
-        :returns: formated string
+        :returns: formatted string
         """
 
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
         if self._settings["use_default_iou_values"]:
-            memories_info = "default RAM and NVRAM IOU values"
+            memories_info = "default RAM and NVRAM values"
         else:
-            memories_info = "{ram} MB RAM and {nvram} KB NVRAM".format(ram=self._settings["ram"],
-                                                                       nvram=self._settings["nvram"])
+            memories_info = "{ram}MB RAM and {nvram}KB NVRAM".format(ram=self._settings["ram"],
+                                                                     nvram=self._settings["nvram"])
 
         info = """Device {name} is {state}
-  Node ID is {id}, server's IOU device ID is {node_id}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
   Hardware is Cisco IOU generic device with {memories_info}
-  Device's server runs on {host}, console is on port {console}
-  Image is {image_name}
+  Console is on port {console} and type is {console_type}
+  IOU image is "{image_name}"
   {nb_ethernet} Ethernet adapters and {nb_serial} serial adapters installed
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            memories_info=memories_info,
            host=self.compute().name(),
+           port=self.compute().port(),
            console=self._settings["console"],
+           console_type=self._settings["console_type"],
            image_name=os.path.basename(self._settings["path"]),
            nb_ethernet=self._settings["ethernet_adapters"],
            nb_serial=self._settings["serial_adapters"])
@@ -137,22 +99,15 @@ class IOUDevice(Node):
                 port_info += "     {port_name} {port_description}\n".format(port_name=port.name(),
                                                                             port_description=port.description())
 
-        return info + port_info
+        usage = "\n" + self._settings.get("usage")
+        return info + port_info + usage
 
     def configFiles(self):
         """
         Name of the configuration files
         """
+
         return ["startup-config.cfg", "private-config.cfg"]
-
-    def console(self):
-        """
-        Returns the console port for this IOU device.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
 
     def configPage(self):
         """
@@ -190,11 +145,6 @@ class IOUDevice(Node):
         """
 
         return ":/symbols/multilayer_switch.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "IOU device"
 
     @staticmethod
     def categories():

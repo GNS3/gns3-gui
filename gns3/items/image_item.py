@@ -52,6 +52,9 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
         if svg:
             svg = self.fromSvg(svg)
 
+        if 'z' in kws.keys():
+            self.setZValue(kws['z'])
+
     def paint(self, painter, option, widget=None):
         """
         Paints the contents of an item in local coordinates.
@@ -63,13 +66,6 @@ class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
 
         super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
-
-    def setZValue(self, value):
-        """
-        Sets Z value of the item
-        :param value: z layer
-        """
-        return DrawingItem.setZValue(self, value)
 
     def fromSvg(self, svg):
         renderer = QImageSvgRenderer(svg)

@@ -15,188 +15,118 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Docker module implementation."""
+"""
+Docker module implementation.
+"""
 
-from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
+from gns3.controller import Controller
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from ..module import Module
-from ..module_error import ModuleError
 from .docker_vm import DockerVM
 from .settings import DOCKER_SETTINGS, DOCKER_CONTAINER_SETTINGS
-from ...controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
 
 
 class Docker(Module):
-    """Docker module."""
+    """
+    Docker module.
+    """
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
-        self._docker_containers = {}
-        self._nodes = []
-
-        # load the settings
-        self._loadSettings()
-
-    def configChangedSlot(self):
-        # load the settings
         self._loadSettings()
 
     def _saveSettings(self):
-        """Saves the settings to the persistent settings file."""
-        LocalConfig.instance().saveSectionSettings(
-            self.__class__.__name__, self._settings)
+        """
+        Saves the settings to the persistent settings file.
+        """
+
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
     def _loadSettings(self):
-        """Loads the settings from the persistent settings file."""
+        """
+        Loads the settings from the persistent settings file.
+        """
+
         local_config = LocalConfig.instance()
-        self._settings = local_config.loadSectionSettings(
-            self.__class__.__name__, DOCKER_SETTINGS)
+        self._settings = local_config.loadSectionSettings(self.__class__.__name__, DOCKER_SETTINGS)
 
-        self._docker_containers = {}
-        if "containers" in self._settings:
-            for image in self._settings["containers"]:
-                name = image.get("name")
-                server = image.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._docker_containers or not name or not server:
-                    continue
+        # migrate container settings to the controller (templates are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldContainers)
+
+    def _migrateOldContainers(self):
+        """
+        Migrate local container settings to the controller.
+        """
+
+        if self._settings.get("containers"):
+            templates = []
+            for container in self._settings.get("containers"):
                 container_settings = DOCKER_CONTAINER_SETTINGS.copy()
-                container_settings.update(image)
-                self._docker_containers[key] = container_settings
-
-    def _saveDockerImages(self):
-        """Saves the Docker containers to the persistent settings file."""
-
-        self._settings["containers"] = list(self._docker_containers.values())
-        self._saveSettings()
-
-    def VMs(self):
-        """
-        Returns Docker images settings.
-
-        :returns: Docker images settings
-        :rtype: dict
-        """
-
-        return self._docker_containers
-
-    def setVMs(self, new_docker_containers):
-        """Sets Docker image settings.
-
-        :param new_iou_images: Docker images settings (dictionary)
-        """
-        self._docker_containers = new_docker_containers.copy()
-        self._saveDockerImages()
+                container_settings.update(container)
+                templates.append(Template(container_settings))
+            TemplateManager.instance().updateList(templates)
+            self._settings["containers"] = []
+            self._saveSettings()
 
     @staticmethod
-    def vmConfigurationPage():
+    def configurationPage():
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
         from .pages.docker_vm_configuration_page import DockerVMConfigurationPage
         return DockerVMConfigurationPage
 
-    def addNode(self, node):
-        """Adds a node to this module.
-
-        :param node: Node instance
-        """
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """Removes a node from this module.
-
-        :param node: Node instance
-        """
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-        return self._settings
-
-    def setSettings(self, settings):
-        """Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        """
-        # create an instance of the node class
-        return node_class(self, server, project)
-
-    def reset(self):
-        """Resets the servers."""
-        self._nodes.clear()
-
     def getDockerImagesFromServer(self, compute_id, callback):
-        """Gets the Docker images list from a server.
+        """
+        Gets the Docker images list from a server.
 
         :param server: server to send the request to
         :param callback: callback for the reply from the server
         """
+
         Controller.instance().getCompute("/docker/images", compute_id, callback)
 
     @staticmethod
-    def getNodeClass(name):
+    def getNodeClass(node_type, platform=None):
         """
-        Returns the object with the corresponding name.
+        Returns the class corresponding to node type.
 
-        :param name: object name
+        :param node_type: node type (string)
+        :param platform: not used
+
+        :returns: class or None
         """
-        if name in globals():
-            return globals()[name]
 
-    @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "docker":
+        if node_type == "docker":
             return DockerVM
         return None
 
     @staticmethod
     def classes():
-        """Returns all the node classes supported by this module.
+        """
+        Returns all the node classes supported by this module.
 
         :returns: list of classes
         """
         return [DockerVM]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-        nodes = []
-        for docker_image in self._docker_containers.values():
-            nodes.append({
-                "class": DockerVM.__name__,
-                "name": docker_image["name"],
-                "server": docker_image["server"],
-                "symbol": docker_image["symbol"],
-                "categories": [docker_image["category"]]
-            })
-        return nodes
-
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
+
         from .pages.docker_preferences_page import DockerPreferencesPage
         from .pages.docker_vm_preferences_page import DockerVMPreferencesPage
 
@@ -204,9 +134,19 @@ class Docker(Module):
 
     @staticmethod
     def instance():
-        """Singleton to return only one instance of Docker module.
+        """
+        Singleton to return only one instance of Docker module.
 
-        :returns: instance of Docker"""
+        :returns: instance of Docker
+        """
+
         if not hasattr(Docker, "_instance"):
             Docker._instance = Docker()
         return Docker._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "docker"

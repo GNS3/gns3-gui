@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>507</width>
+    <width>591</width>
     <height>352</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Ethernet hub</string>
+   <string>Ethernet hub template configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

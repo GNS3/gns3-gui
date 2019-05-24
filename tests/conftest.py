@@ -193,7 +193,9 @@ def main_window():
     uiGraphicsView = MagicMock()
     uiGraphicsView.settings.return_value = {
         "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
-        "default_label_color": "#000000"
+        "default_label_color": "#000000",
+        "default_note_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+        "default_note_color": "#000000"
     }
 
     window.uiGraphicsView = uiGraphicsView

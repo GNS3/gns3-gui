@@ -19,13 +19,14 @@
 Topology summary view that list all the nodes, their status and connections.
 """
 
-from .qt import QtGui, QtCore, QtWidgets, qslot
+from .qt import QtGui, QtCore, QtWidgets, qslot, sip_is_deleted
 from .node import Node
 from .topology import Topology
 from .items.node_item import NodeItem
 from .items.link_item import LinkItem
 from .packet_capture import PacketCapture
 from .utils import natural_sort_key
+from .utils.get_icon import get_icon
 
 import logging
 log = logging.getLogger(__name__)
@@ -96,10 +97,16 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
             # refresh all the other item if the node name has changed
             self._parent.refreshAllLinks(source_child=self)
         self.setText(0, self._node.name())
-        if self._node.consoleType() and self._node.console():
+        if self._node.consoleType() in ("http", "https") and self._node.consoleType() and self._node.console():
+            http_path = "{console_type}://{host}:{port}{path}".format(console_type=self._node.consoleType(),
+                                                                      host=self._node.consoleHost(),
+                                                                      port=self._node.console(),
+                                                                      path=self._node.consoleHttpPath())
+            self.setText(1, "{}".format(http_path))
+        elif self._node.consoleType() != "none" and self._node.consoleType() and self._node.console():
             self.setText(1, "{} {}:{}".format(self._node.consoleType(), self._node.consoleHost(), self._node.console()))
         else:
-            self.setText(1, "not supported")
+            self.setText(1, "none")
         self.refreshLinks()
         self._parent.invisibleRootItem().sortChildren(0, QtCore.Qt.AscendingOrder)
 
@@ -145,12 +152,13 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         """
 
         tree = self.treeWidget()
-        tree.takeTopLevelItem(tree.indexOfTopLevelItem(self))
-        tree.nodes_id.remove(self._node.id())
+        if not sip_is_deleted(tree):
+            tree.takeTopLevelItem(tree.indexOfTopLevelItem(self))
+            tree.nodes_id.remove(self._node.id())
 
     def __lt__(self, otherItem):
         column = self.treeWidget().sortColumn()
-        return natural_sort_key(self.text(column)) < natural_sort_key(otherItem.text(column))
+        return natural_sort_key(str(self.text(column))) < natural_sort_key(str(otherItem.text(column)))
 
 
 class TopologySummaryView(QtWidgets.QTreeWidget):
@@ -278,23 +286,23 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
 
         menu = QtWidgets.QMenu()
         expand_all = QtWidgets.QAction("Expand all", menu)
-        expand_all.setIcon(QtGui.QIcon(":/icons/plus.svg"))
+        expand_all.setIcon(get_icon("plus.svg"))
         expand_all.triggered.connect(self._expandAllSlot)
         menu.addAction(expand_all)
 
         collapse_all = QtWidgets.QAction("Collapse all", menu)
-        collapse_all.setIcon(QtGui.QIcon(":/icons/minus.svg"))
+        collapse_all.setIcon(get_icon("minus.svg"))
         collapse_all.triggered.connect(self._collapseAllSlot)
         menu.addAction(collapse_all)
 
         if self.show_only_devices_with_capture is False and self.show_only_devices_with_filters is False:
             devices_with_capture = QtWidgets.QAction("Show devices with capture(s)", menu)
-            devices_with_capture.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
+            devices_with_capture.setIcon(get_icon("inspect.svg"))
             devices_with_capture.triggered.connect(self._devicesWithCaptureSlot)
             menu.addAction(devices_with_capture)
 
             devices_with_filters = QtWidgets.QAction("Show devices with packet filter(s)", menu)
-            devices_with_filters.setIcon(QtGui.QIcon(":/icons/filter.svg"))
+            devices_with_filters.setIcon(get_icon("filter.svg"))
             devices_with_filters.triggered.connect(self._devicesWithFiltersSlot)
             menu.addAction(devices_with_filters)
 
@@ -305,12 +313,12 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             menu.addAction(show_all_devices)
 
         stop_all_captures = QtWidgets.QAction("Stop all captures", menu)
-        stop_all_captures.setIcon(QtGui.QIcon(":/icons/capture-stop.svg"))
+        stop_all_captures.setIcon(get_icon("capture-stop.svg"))
         stop_all_captures.triggered.connect(self._stopAllCapturesSlot)
         menu.addAction(stop_all_captures)
 
         reset_all_filters = QtWidgets.QAction("Reset all packet filters", menu)
-        reset_all_filters.setIcon(QtGui.QIcon(":/icons/filter-reset.svg"))
+        reset_all_filters.setIcon(get_icon("filter-reset.svg"))
         reset_all_filters.triggered.connect(self._resetAllFiltersSlot)
         menu.addAction(reset_all_filters)
 

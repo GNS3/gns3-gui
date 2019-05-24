@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ExportProjectWizard</class>
+ <widget class="QWizard" name="ExportProjectWizard">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Export project</string>
+  </property>
+  <property name="options">
+   <set>QWizard::HaveHelpButton</set>
+  </property>
+  <widget class="QWizardPage" name="uiExportOptionsWizardPage">
+   <property name="title">
+    <string>Export project</string>
+   </property>
+   <property name="subTitle">
+    <string>Please select the location, whether to include base images or not and the compression type.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiPathLabel">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Path:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLineEdit" name="uiPathLineEdit"/>
+      </item>
+      <item>
+       <widget class="QToolButton" name="uiPathBrowserToolButton">
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiCompressionLabel">
+      <property name="text">
+       <string>Compression:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QCheckBox" name="uiIncludeImagesCheckBox">
+      <property name="text">
+       <string>Include base images</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>247</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="1" colspan="2">
+     <widget class="QComboBox" name="uiCompressionComboBox"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiProjectReadmeWizardPage">
+   <property name="title">
+    <string>Readme file</string>
+   </property>
+   <property name="subTitle">
+    <string>Write a summary of the project.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QTextEdit" name="uiReadmeTextEdit">
+      <property name="html">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.SF NS Text'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/ethernet_hub_configuration_page.ui'
 #
-# Created: Fri Jun 10 18:55:02 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ethernetHubConfigPageWidget(object):
     def setupUi(self, ethernetHubConfigPageWidget):
         ethernetHubConfigPageWidget.setObjectName("ethernetHubConfigPageWidget")
-        ethernetHubConfigPageWidget.resize(507, 352)
+        ethernetHubConfigPageWidget.resize(591, 352)
         self.verticalLayout = QtWidgets.QVBoxLayout(ethernetHubConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiSettingsGroupBox = QtWidgets.QGroupBox(ethernetHubConfigPageWidget)
@@ -78,7 +77,7 @@ class Ui_ethernetHubConfigPageWidget(object):
 
     def retranslateUi(self, ethernetHubConfigPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        ethernetHubConfigPageWidget.setWindowTitle(_translate("ethernetHubConfigPageWidget", "Ethernet hub"))
+        ethernetHubConfigPageWidget.setWindowTitle(_translate("ethernetHubConfigPageWidget", "Ethernet hub template configuration"))
         self.uiSettingsGroupBox.setTitle(_translate("ethernetHubConfigPageWidget", "Settings"))
         self.uiNameLabel.setText(_translate("ethernetHubConfigPageWidget", "Name:"))
         self.uiDefaultNameFormatLabel.setText(_translate("ethernetHubConfigPageWidget", "Default name format:"))

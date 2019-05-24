@@ -26,6 +26,8 @@ from gns3.controller import Controller
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from .. import VirtualBox
 from ..settings import VBOX_VM_SETTINGS
@@ -54,6 +56,11 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         self.uiVirtualBoxVMsTreeWidget.itemSelectionChanged.connect(self._vboxVMChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMInfoTreeWidget)
         section_item.setText(0, name)
@@ -63,23 +70,29 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         return section_item
 
     def _refreshInfo(self, vbox_vm):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiVirtualBoxVMInfoTreeWidget.clear()
 
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", vbox_vm["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", vbox_vm.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["VirtualBox name:", vbox_vm["vmname"]])
         if vbox_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vbox_vm["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vbox_vm["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vbox_vm["compute_id"]).name()])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])
-        QtWidgets.QTreeWidgetItem(section_item, ["ACPI shutdown enabled:", "{}".format(vbox_vm["acpi_shutdown"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["On close:", "{}".format(vbox_vm["on_close"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Linked base VM:", "{}".format(vbox_vm["linked_clone"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Console type:", vbox_vm["console_type"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(vbox_vm["console_auto_start"])])
 
         # fill out the Network section
         section_item = self._createSectionItem("Network")
@@ -124,7 +137,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         if wizard.exec_():
 
             new_vm_settings = wizard.getSettings()
-            key = "{server}:{vmname}".format(server=new_vm_settings["server"], vmname=new_vm_settings["vmname"])
+            key = "{server}:{vmname}".format(server=new_vm_settings["compute_id"], vmname=new_vm_settings["vmname"])
             self._virtualbox_vms[key] = VBOX_VM_SETTINGS.copy()
             self._virtualbox_vms[key].update(new_vm_settings)
 
@@ -170,10 +183,17 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         Loads the VirtualBox VM preferences.
         """
 
-        vbox_module = VirtualBox.instance()
-        self._virtualbox_vms = copy.deepcopy(vbox_module.VMs())
-        self._items.clear()
+        self._virtualbox_vms = {}
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "virtualbox" and not template.builtin():
+                vmname = template.settings()["vmname"]
+                server = template.compute_id()
+                #TODO: use template id for the key
+                key = "{server}:{vmname}".format(server=server, vmname=vmname)
+                self._virtualbox_vms[key] = copy.deepcopy(template.settings())
 
+        self._items.clear()
         for key, vbox_vm in self._virtualbox_vms.items():
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, vbox_vm["name"])
@@ -191,9 +211,15 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         Saves the VirtualBox VM preferences.
         """
 
-        # self._vboxVMSaveSlot()
-        VirtualBox.instance().setVMs(self._virtualbox_vms)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "virtualbox":
+                templates.append(template)
+        for template_settings in self._virtualbox_vms.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
 
     def _setItemIcon(self, item, icon):
+
         item.setIcon(0, icon)
         self.uiVirtualBoxVMsTreeWidget.setMaximumWidth(self.uiVirtualBoxVMsTreeWidget.sizeHintForColumn(0) + 10)

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TraceNGNodePageWidget</class>
+ <widget class="QWidget" name="TraceNGNodePageWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>546</width>
+    <height>455</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>TraceNG nodes</string>
+  </property>
+  <property name="accessibleName">
+   <string>TraceNG node templates</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QTreeWidget" name="uiTraceNGTreeWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>160</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ExtendedSelection</enum>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="rootIsDecorated">
+       <bool>false</bool>
+      </property>
+      <attribute name="headerVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string notr="true">1</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTreeWidget" name="uiTraceNGInfoTreeWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="indentation">
+          <number>10</number>
+         </property>
+         <property name="allColumnsShowFocus">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>1</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>2</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QPushButton" name="uiNewTraceNGPushButton">
+           <property name="text">
+            <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiEditTraceNGPushButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiDeleteTraceNGPushButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Delete</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>uiNewTraceNGPushButton</tabstop>
+  <tabstop>uiDeleteTraceNGPushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+ <designerdata>
+  <property name="gridDeltaX">
+   <number>10</number>
+  </property>
+  <property name="gridDeltaY">
+   <number>10</number>
+  </property>
+  <property name="gridSnapX">
+   <bool>true</bool>
+  </property>
+  <property name="gridSnapY">
+   <bool>true</bool>
+  </property>
+  <property name="gridVisible">
+   <bool>true</bool>
+  </property>
+ </designerdata>
+</ui>

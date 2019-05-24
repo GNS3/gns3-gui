@@ -306,7 +306,7 @@ def test_callbackConnect_major_version_invalid(http_client):
     http_client._query_waiting_connections.append((None, mock))
     http_client._callbackConnect(params)
     assert http_client._connected is False
-    mock.assert_called_with({"message": "Client version {} is not the same as server version 1.2.3".format(__version__)}, error=True, server=None)
+    mock.assert_called_with({"message": "Client version {} is not the same as server (controller) version 1.2.3".format(__version__)}, error=True, server=None)
 
 
 def test_callbackConnect_minor_version_invalid(http_client):
@@ -323,7 +323,7 @@ def test_callbackConnect_minor_version_invalid(http_client):
     if __version_info__[3] == 0:
         http_client._callbackConnect(params)
         assert http_client._connected is False
-        mock.assert_called_with({"message": "Client version {} is not the same as server version {}".format(__version__, new_version)}, error=True, server=None)
+        mock.assert_called_with({"message": "Client version {} is not the same as server (controller) version {}".format(__version__, new_version)}, error=True, server=None)
     else:
         http_client._callbackConnect(params)
         assert http_client._connected is True
@@ -344,7 +344,8 @@ def test_callbackConnect_non_gns3_server(http_client):
 
 def test_connectWebSocket(http_client):
     with unittest.mock.patch('gns3.qt.QtWebSockets.QWebSocket.open') as open_mock:
-        http_client.connectWebSocket('/test')
+        test = QtWebSockets.QWebSocket()
+        http_client.connectWebSocket(test, '/test')
     assert open_mock.called
     request = open_mock.call_args[0][0]
     assert request.url().toString() == "ws://127.0.0.1:3080/v2/test"

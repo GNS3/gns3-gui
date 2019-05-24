@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
-    <height>514</height>
+    <width>535</width>
+    <height>355</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,9 +15,6 @@
   </property>
   <property name="accessibleName">
    <string>Qemu VM templates</string>
-  </property>
-  <property name="accessibleDescription">
-   <string/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -66,7 +63,7 @@
        </property>
       </column>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QTreeWidget" name="uiQemuVMInfoTreeWidget">
@@ -98,11 +95,21 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QPushButton" name="uiNewQemuVMPushButton">
            <property name="text">
             <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiCopyQemuVMPushButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Copy</string>
            </property>
           </widget>
          </item>

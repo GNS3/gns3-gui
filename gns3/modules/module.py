@@ -27,7 +27,6 @@ log = logging.getLogger(__name__)
 
 
 class Module(QtCore.QObject):
-
     """
     Module interface.
     """
@@ -37,25 +36,100 @@ class Module(QtCore.QObject):
     def __init__(self):
 
         super().__init__()
-        LocalConfig.instance().config_changed_signal.connect(self.configChangedSlot)
+        self._settings = {}
+        self._nodes = []
+        LocalConfig.instance().config_changed_signal.connect(self._configChangedSlot)
 
-    def configChangedSlot(self):
+    def settings(self):
         """
-        Call when the configuration file has changed
+        Returns the module settings
+
+        :returns: module settings (dictionary)
         """
 
-        raise NotImplementedError("Missing configChangedSlot in {}".format(self.__class__.__name__))
+        return self._settings
 
-    def getNodeType(self, type, platform=None):
-        raise NotImplementedError("Missing getNodeType in {}".format(self.__class__.__name__))
+    def setSettings(self, settings):
+        """
+        Sets the module settings
+
+        :param settings: module settings (dictionary)
+        """
+
+        self._settings.update(settings)
+        self._saveSettings()
+
+    def addNode(self, node):
+        """
+        Adds a node to this module.
+
+        :param node: Node instance
+        """
+
+        self._nodes.append(node)
+
+    def removeNode(self, node):
+        """
+        Removes a node from this module.
+
+        :param node: Node instance
+        """
+
+        if node in self._nodes:
+            self._nodes.remove(node)
+
+    def reset(self):
+        """
+        Resets the module.
+        """
+
+        self._nodes.clear()
+
+    def instantiateNode(self, node_class, server, project):
+        """
+        Instantiate a new node.
+
+        :param node_class: Node object
+        :param server: HTTPClient instance
+        :param project: Project instance
+        """
+
+        # create an instance of the node class
+        return node_class(self, server, project)
+
+    def _configChangedSlot(self):
+        """
+        Called when the configuration file has changed.
+        """
+
+        self._loadSettings()
+
+    def _saveSettings(self):
+        """
+        Saves the settings to the persistent settings file.
+        Must be overloaded.
+        """
+
+        raise NotImplementedError()
+
+    def _loadSettings(self):
+        """
+        Loads the settings from the persistent settings file.
+        Must be overloaded.
+        """
+
+        raise NotImplementedError()
 
     @staticmethod
-    def nodes(self):
+    def getNodeClass(node_type, platform=None):
         """
-        Returns all nodes supported by this module.
+        Returns the class corresponding to node type.
         Must be overloaded.
 
-        :returns: list of node classes
+        :param node_type: name of the node
+        :param platform: platform (for Dynamips only)
+
+        :returns: class or None
         """
 
         raise NotImplementedError()
@@ -78,9 +152,14 @@ class Module(QtCore.QObject):
         :param directory: destination directory path
         """
 
+        node_names_cannot_export = []
         for node in self._nodes:
             if hasattr(node, "initialized") and node.initialized():
-                node.exportConfigToDirectory(directory)
+                if not node.exportConfigsToDirectory(directory):
+                    node_names_cannot_export.append(node.name())
+
+        if node_names_cannot_export:
+            log.warning("Config export is not supported by the following nodes: {}".format(" ".join(node_names_cannot_export)))
 
     def importConfigs(self, directory):
         """
@@ -91,4 +170,4 @@ class Module(QtCore.QObject):
 
         for node in self._nodes:
             if hasattr(node, "initialized") and node.initialized():
-                node.importConfigFromDirectory(directory)
+                node.importConfigsFromDirectory(directory)

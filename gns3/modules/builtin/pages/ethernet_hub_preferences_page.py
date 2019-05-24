@@ -21,14 +21,15 @@ Configuration page for Ethernet hub preferences.
 
 import copy
 
-from gns3.qt import QtCore, QtGui, QtWidgets, qpartial
+from gns3.qt import QtCore, QtWidgets, qpartial
 
 from gns3.main_window import MainWindow
 from gns3.dialogs.configuration_dialog import ConfigurationDialog
 from gns3.compute_manager import ComputeManager
+from gns3.template_manager import TemplateManager
 from gns3.controller import Controller
+from gns3.template import Template
 
-from .. import Builtin
 from ..settings import ETHERNET_HUB_SETTINGS
 from ..ui.ethernet_hub_preferences_page_ui import Ui_EthernetHubPreferencesPageWidget
 from ..pages.ethernet_hub_configuration_page import EthernetHubConfigurationPage
@@ -54,6 +55,11 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         self.uiEthernetHubsTreeWidget.itemSelectionChanged.connect(self._ethernetHubChangedSlot)
 
     def _createSectionItem(self, name):
+        """
+        Adds a new section to the tree widget.
+
+        :param name: section name
+        """
 
         section_item = QtWidgets.QTreeWidgetItem(self.uiEthernetHubInfoTreeWidget)
         section_item.setText(0, name)
@@ -63,15 +69,19 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         return section_item
 
     def _refreshInfo(self, ethernet_hub):
+        """
+        Refreshes the content of the tree widget.
+        """
 
         self.uiEthernetHubInfoTreeWidget.clear()
 
         # fill out the General section
         section_item = self._createSectionItem("General")
         QtWidgets.QTreeWidgetItem(section_item, ["Template name:", ethernet_hub["name"]])
+        QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", ethernet_hub.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ethernet_hub["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_hub["server"]).name()])
+            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_hub["compute_id"]).name()])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Number of ports:", str(len(ethernet_hub["ports_mapping"]))])
@@ -83,7 +93,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
     def _ethernetHubChangedSlot(self):
         """
-        Loads a selected Ethernet hub template from the tree widget.
+        Loads a selected Ethernet hub from the tree widget.
         """
 
         selection = self.uiEthernetHubsTreeWidget.selectedItems()
@@ -100,14 +110,14 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
     def _newEthernetHubSlot(self):
         """
-        Creates a new Ethernet hub template.
+        Creates a new Ethernet hub.
         """
 
         wizard = EthernetHubWizard(self._ethernet_hubs, parent=self)
         wizard.show()
         if wizard.exec_():
             new_ethernet_hub_settings = wizard.getSettings()
-            key = "{server}:{name}".format(server=new_ethernet_hub_settings["server"], name=new_ethernet_hub_settings["name"])
+            key = "{server}:{name}".format(server=new_ethernet_hub_settings["compute_id"], name=new_ethernet_hub_settings["name"])
             self._ethernet_hubs[key] = ETHERNET_HUB_SETTINGS.copy()
             self._ethernet_hubs[key].update(new_ethernet_hub_settings)
 
@@ -120,7 +130,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
     def _editEthernetHubSlot(self):
         """
-        Edits an Ethernet hub template.
+        Edits an Ethernet hub.
         """
 
         item = self.uiEthernetHubsTreeWidget.currentItem()
@@ -133,10 +143,10 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
                 # update the icon
                 Controller.instance().getSymbolIcon(ethernet_hub["symbol"], qpartial(self._setItemIcon, item))
                 if ethernet_hub["name"] != item.text(0):
-                    new_key = "{server}:{name}".format(server=ethernet_hub["server"], name=ethernet_hub["name"])
+                    new_key = "{server}:{name}".format(server=ethernet_hub["compute_id"], name=ethernet_hub["name"])
                     if new_key in self._ethernet_hubs:
                         QtWidgets.QMessageBox.critical(self, "Ethernet hub", "Ethernet hub name {} already exists for server {}".format(ethernet_hub["name"],
-                                                                                                                                        ethernet_hub["server"]))
+                                                                                                                                        ethernet_hub["compute_id"]))
                         ethernet_hub["name"] = item.text(0)
                         return
                     self._ethernet_hubs[new_key] = self._ethernet_hubs[key]
@@ -147,7 +157,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
     def _deleteEthernetHubSlot(self):
         """
-        Deletes an Ethernet hub template.
+        Deletes an Ethernet hub.
         """
 
         for item in self.uiEthernetHubsTreeWidget.selectedItems():
@@ -161,10 +171,17 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         Loads the ethernet hub preferences.
         """
 
-        builtin_module = Builtin.instance()
-        self._ethernet_hubs = copy.deepcopy(builtin_module.ethernetHubs())
-        self._items.clear()
+        self._ethernet_hubs = {}
+        templates = TemplateManager.instance().templates()
+        for template_id, template in templates.items():
+            if template.template_type() == "ethernet_hub" and not template.builtin():
+                name = template.name()
+                server = template.compute_id()
+                #TODO: use template id for the key
+                key = "{server}:{name}".format(server=server, name=name)
+                self._ethernet_hubs[key] = copy.deepcopy(template.settings())
 
+        self._items.clear()
         for key, ethernet_hub in self._ethernet_hubs.items():
             item = QtWidgets.QTreeWidgetItem(self.uiEthernetHubsTreeWidget)
             item.setText(0, ethernet_hub["name"])
@@ -178,6 +195,10 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
             self.uiEthernetHubsTreeWidget.setMaximumWidth(self.uiEthernetHubsTreeWidget.sizeHintForColumn(0) + 20)
 
     def _setItemIcon(self, item, icon):
+        """
+        Sets an item icon.
+        """
+
         item.setIcon(0, icon)
         self.uiEthernetHubsTreeWidget.setMaximumWidth(self.uiEthernetHubsTreeWidget.sizeHintForColumn(0) + 20)
 
@@ -186,4 +207,11 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         Saves the Ethernet hub preferences.
         """
 
-        Builtin.instance().setEthernetHubs(self._ethernet_hubs)
+        templates = []
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() != "ethernet_hub":
+                templates.append(template)
+        for template_settings in self._ethernet_hubs.values():
+            templates.append(Template(template_settings))
+        TemplateManager.instance().updateList(templates)
+

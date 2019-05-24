@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/ethernet_switch_wizard.ui'
 #
-# Created: Fri Jun 10 19:03:51 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_EthernetSwitchWizard(object):
     def setupUi(self, EthernetSwitchWizard):
         EthernetSwitchWizard.setObjectName("EthernetSwitchWizard")
-        EthernetSwitchWizard.resize(585, 423)
+        EthernetSwitchWizard.resize(728, 452)
         EthernetSwitchWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -84,7 +83,7 @@ class Ui_EthernetSwitchWizard(object):
         _translate = QtCore.QCoreApplication.translate
         EthernetSwitchWizard.setWindowTitle(_translate("EthernetSwitchWizard", "New Ethernet switch template"))
         self.uiServerWizardPage.setTitle(_translate("EthernetSwitchWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("EthernetSwitchWizard", "Please choose a server type to run your new Ethernet switch."))
+        self.uiServerWizardPage.setSubTitle(_translate("EthernetSwitchWizard", "Please choose a server type to run the Ethernet switch."))
         self.uiServerTypeGroupBox.setTitle(_translate("EthernetSwitchWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("EthernetSwitchWizard", "Run the Ethernet switch on a remote computer"))
         self.uiVMRadioButton.setText(_translate("EthernetSwitchWizard", "Run the Ethernet switch on the GNS3 VM"))

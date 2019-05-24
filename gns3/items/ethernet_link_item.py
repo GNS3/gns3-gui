@@ -21,7 +21,7 @@ Graphical representation of an Ethernet link for QGraphicsScene.
 
 from ..qt import QtCore, QtGui, QtWidgets
 from .link_item import LinkItem
-from .note_item import NoteItem
+from .label_item import LabelItem
 from ..ports.port import Port
 
 
@@ -106,7 +106,7 @@ class EthernetLinkItem(LinkItem):
         """
 
         QtWidgets.QGraphicsPathItem.paint(self, painter, option, widget)
-        if not self._adding_flag and self._settings["draw_link_status_points"]:
+        if not self._adding_flag:
 
             # points disappears if nodes are too close to each others.
             if self.length < 100:
@@ -141,17 +141,19 @@ class EthernetLinkItem(LinkItem):
             source_port_label = self._source_port.label()
 
             if source_port_label is None:
-                source_port_label = NoteItem(self._source_item)
+                source_port_label = LabelItem(self._source_item)
                 source_port_label.setPlainText(self._source_port.shortName())
                 source_port_label.setPos(self.mapToItem(self._source_item, point1))
                 self._source_port.setLabel(source_port_label)
 
             if self._draw_port_labels:
+                source_port_label.setFlag(source_port_label.ItemIsMovable, not self._source_item.locked())
                 source_port_label.show()
             else:
                 source_port_label.hide()
 
-            painter.drawPoint(point1)
+            if self._settings["draw_link_status_points"]:
+                painter.drawPoint(point1)
 
             if self._link.suspended() or self._destination_port.status() == Port.suspended:
                 # link or port is suspended
@@ -182,16 +184,18 @@ class EthernetLinkItem(LinkItem):
             destination_port_label = self._destination_port.label()
 
             if destination_port_label is None:
-                destination_port_label = NoteItem(self._destination_item)
+                destination_port_label = LabelItem(self._destination_item)
                 destination_port_label.setPlainText(self._destination_port.shortName())
                 destination_port_label.setPos(self.mapToItem(self._destination_item, point2))
                 self._destination_port.setLabel(destination_port_label)
 
             if self._draw_port_labels:
+                destination_port_label.setFlag(destination_port_label.ItemIsMovable, not self._destination_item.locked())
                 destination_port_label.show()
             else:
                 destination_port_label.hide()
 
-            painter.drawPoint(point2)
+            if self._settings["draw_link_status_points"]:
+                painter.drawPoint(point2)
 
         self._drawSymbol()

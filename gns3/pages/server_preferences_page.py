@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 from gns3.qt import QtNetwork, QtWidgets
 from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
 from ..topology import Topology
-from ..settings import LOCAL_SERVER_SETTINGS
+from ..settings import LOCAL_SERVER_SETTINGS, DEFAULT_LOCAL_SERVER_HOST
 from ..dialogs.edit_compute_dialog import EditComputeDialog
 from ..local_server import LocalServer
 from ..compute_manager import ComputeManager
@@ -63,12 +63,15 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         for address in QtNetwork.QNetworkInterface.allAddresses():
             if address.protocol() in [QtNetwork.QAbstractSocket.IPv4Protocol, QtNetwork.QAbstractSocket.IPv6Protocol]:
                 address_string = address.toString()
+                if address_string.startswith("169.254") or address_string.startswith("fe80"):
+                    # ignore link-local addresses
+                    continue
                 self.uiLocalServerHostComboBox.addItem(address_string, address_string)
-        self.uiLocalServerHostComboBox.addItem("::", "::") # all IPv6 addresses
+        self.uiLocalServerHostComboBox.addItem("::", "::")  # all IPv6 addresses
         self.uiLocalServerHostComboBox.addItem("0.0.0.0", "0.0.0.0")  # all IPv4 addresses
 
         # default is 127.0.0.1
-        index = self.uiLocalServerHostComboBox.findText("127.0.0.1")
+        index = self.uiLocalServerHostComboBox.findText(DEFAULT_LOCAL_SERVER_HOST)
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
 

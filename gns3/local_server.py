@@ -124,9 +124,13 @@ class LocalServer(QtCore.QObject):
         return self._parent
 
     def _checkWindowsService(self, service_name):
-        import pywintypes
-        import win32service
-        import win32serviceutil
+
+        try:
+            import pywintypes
+            import win32service
+            import win32serviceutil
+        except ImportError as e:
+            log.error("Could not check if the {} service is running: {}".format(service_name, e))
 
         try:
             if win32serviceutil.QueryServiceStatus(service_name, None)[1] != win32service.SERVICE_RUNNING:
@@ -136,6 +140,7 @@ class LocalServer(QtCore.QObject):
                 return False
             else:
                 log.error("Could not check if the {} service is running: {}".format(service_name, e.strerror))
+
         return True
 
     def _checkUbridgePermissions(self):
@@ -262,7 +267,7 @@ class LocalServer(QtCore.QObject):
                 if need_restart:
                     self.stopLocalServer(wait=True)
 
-                self.localServerAutoStartIfRequire()
+                self.localServerAutoStartIfRequired()
             # If the controller is remote:
             else:
                 self.stopLocalServer(wait=True)
@@ -308,9 +313,9 @@ class LocalServer(QtCore.QObject):
             # Permission issue, or process no longer exists, or file is empty
             return
 
-    def localServerAutoStartIfRequire(self):
+    def localServerAutoStartIfRequired(self):
         """
-        Try to start the embed gns3 server.
+        Try to start the embedded gns3 server.
         """
 
         if not self.shouldLocalServerAutoStart():
@@ -355,7 +360,6 @@ class LocalServer(QtCore.QObject):
         self._server_started_by_me = True
         self._http_client = HTTPClient(self._settings)
         Controller.instance().setHttpClient(self._http_client)
-
         return True
 
     def initLocalServer(self):
@@ -367,15 +371,13 @@ class LocalServer(QtCore.QObject):
 
         if sys.platform.startswith('win'):
             if not self._checkWindowsService("npf") and not self._checkWindowsService("npcap"):
-                QtWidgets.QMessageBox.critical(self.parent(), "Error", "The NPF or NPCAP service is not installed, please install Winpcap or Npcap and reboot.")
-                return False
+                log.warning("The NPF or NPCAP service is not installed, please install Winpcap or Npcap and reboot.")
 
         self._port = self._settings["port"]
-
         # check the local server path
         local_server_path = self.localServerPath()
         if not local_server_path:
-            log.warn("No local server is configured")
+            log.warning("No local server is configured")
             return False
         if not os.path.isfile(local_server_path):
             QtWidgets.QMessageBox.critical(self.parent(), "Local server", "Could not find local server {}".format(local_server_path))
@@ -462,7 +464,7 @@ class LocalServer(QtCore.QObject):
                 except FileNotFoundError:
                     pass
                 except OSError as e:
-                    log.warn("could not delete server log file {}: {}".format(logpath, e))
+                    log.warning("could not delete server log file {}: {}".format(logpath, e))
             command += ' --log="{}" --pid="{}"'.format(logpath, self._pid_path())
 
         log.debug("Starting local server process with {}".format(command))

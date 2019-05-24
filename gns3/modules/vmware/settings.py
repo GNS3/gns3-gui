@@ -38,16 +38,21 @@ VMWARE_SETTINGS = {
 VMWARE_VM_SETTINGS = {
     "vmx_path": "",
     "default_name_format": "{name}-{0}",
+    "usage": "",
     "symbol": ":/symbols/vmware_guest.svg",
     "category": Node.end_devices,
     "port_name_format": "Ethernet{0}",
     "port_segment_size": 0,
     "first_port_name": "",
+    "custom_adapters": [],
     "adapters": 1,
     "adapter_type": "e1000",
     "use_any_adapter": False,
     "headless": False,
-    "acpi_shutdown": False,
+    "on_close": "power_off",
     "linked_clone": False,
-    "server": "local"
+    "console_type": "none",
+    "console_auto_start": False,
+    "compute_id": "local",
+    "node_type": "vmware"
 }

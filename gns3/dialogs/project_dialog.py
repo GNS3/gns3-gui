@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from ..qt import QtCore, QtGui, QtWidgets, qslot
+from ..qt import QtCore, QtGui, QtWidgets, qslot, sip_is_deleted
 from ..ui.project_dialog_ui import Ui_ProjectDialog
 from ..controller import Controller
 from ..topology import Topology
@@ -91,6 +91,8 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         projects_to_delete = set()
         for project in self.uiProjectsTreeWidget.selectedItems():
+            if sip_is_deleted(project):
+                continue
             project_id = project.data(0, QtCore.Qt.UserRole)
             project_name = project.data(1, QtCore.Qt.UserRole)
 
@@ -106,6 +108,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             Controller.instance().deleteProject(project_id)
 
     def _duplicateProjectSlot(self):
+
         if len(self.uiProjectsTreeWidget.selectedItems()) == 0:
             QtWidgets.QMessageBox.critical(self, "Duplicate project", "No project selected")
             return
@@ -135,12 +138,16 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 if Controller.instance().isRemote():
                     Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
                                                self._duplicateCallback,
-                                               body={"name": name})
+                                               body={"name": name},
+                                               progressText="Duplicating project '{}'...".format(name),
+                                               timeout=None)
                 else:
                     project_location = os.path.join(Topology.instance().projectsDirPath(), name)
                     Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
                                                self._duplicateCallback,
-                                               body={"name": name, "path": project_location})
+                                               body={"name": name, "path": project_location},
+                                               progressText="Duplicating project '{}'...".format(name),
+                                               timeout=None)
 
     def _duplicateCallback(self, result, error=False, **kwargs):
         if error:
@@ -268,17 +275,17 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
 
         for existing_project in Controller.instance().projects():
             if self._project_settings["project_name"] == existing_project["name"] \
-               or ("project_files_dir" in self._project_settings and self._project_settings["project_files_dir"] == existing_project["path"]):
+               and ("project_files_dir" in self._project_settings and self._project_settings["project_files_dir"] == existing_project["path"]):
 
                 if existing_project["status"] == "opened":
                     QtWidgets.QMessageBox.critical(self,
                                                    "New project",
-                                                   "Project {} is open you can not overwrite it".format(self._project_settings["project_name"]))
+                                                   'Project "{}" is opened, it cannot be overwritten'.format(self._project_settings["project_name"]))
                     return False
 
                 reply = QtWidgets.QMessageBox.warning(self,
                                                       "New project",
-                                                      "Project {} already exists, overwrite it?".format(existing_project["name"]),
+                                                      'Project "{}" already exists in location "{}", overwrite it?'.format(existing_project["name"], existing_project["path"]),
                                                       QtWidgets.QMessageBox.Yes,
                                                       QtWidgets.QMessageBox.No)
 

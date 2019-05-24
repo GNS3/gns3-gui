@@ -19,18 +19,30 @@
 Default Built-in settings.
 """
 
+import sys
+
 from gns3.node import Node
 
-BUILTIN_SETTINGS = {
-}
+if sys.platform.startswith("linux"):
+    DEFAULT_NAT_INTERFACE = "virbr0"
+else:
+    DEFAULT_NAT_INTERFACE = "vmnet8"
 
+BUILTIN_SETTINGS = {
+    "default_nat_interface": DEFAULT_NAT_INTERFACE
+}
 
 CLOUD_SETTINGS = {
     "name": "",
+    "remote_console_host": "127.0.0.1",
+    "remote_console_port": 23,
+    "remote_console_type": "none",
+    "remote_console_http_path": "/",
     "default_name_format": "Cloud{0}",
     "symbol": ":/symbols/cloud.svg",
     "category": Node.end_devices,
     "ports_mapping": [],
+    "node_type": "cloud"
 }
 
 ETHERNET_HUB_SETTINGS = {
@@ -39,6 +51,7 @@ ETHERNET_HUB_SETTINGS = {
     "symbol": ":/symbols/hub.svg",
     "category": Node.switches,
     "ports_mapping": [],
+    "node_type": "ethernet_hub"
 }
 
 ETHERNET_SWITCH_SETTINGS = {
@@ -46,5 +59,7 @@ ETHERNET_SWITCH_SETTINGS = {
     "default_name_format": "Switch{0}",
     "symbol": ":/symbols/ethernet_switch.svg",
     "category": Node.switches,
+    "console_type": "none",
     "ports_mapping": [],
+    "node_type": "ethernet_switch"
 }

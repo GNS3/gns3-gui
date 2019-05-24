@@ -15,20 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Graphical representation of a note on the QGraphicsScene.
-"""
-
 from ..qt import QtCore, QtWidgets, QtGui
 from .utils import colorFromSvg
 
 
-class NoteItem(QtWidgets.QGraphicsTextItem):
+class LabelItem(QtWidgets.QGraphicsTextItem):
     """
-    Text note for the QGraphicsView.
+    Label for links and nodes.
 
     :param parent: optional parent
     """
+
     item_unselected_signal = QtCore.Signal()
 
     show_layer = False
@@ -45,8 +42,7 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
         qt_font.fromString(view_settings["default_label_font"])
         self.setDefaultTextColor(QtGui.QColor(view_settings["default_label_color"]))
         self.setFont(qt_font)
-        self.setFlag(self.ItemIsMovable)
-        self.setFlag(self.ItemIsSelectable)
+        self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsSelectable)
         self.setZValue(2)
         self._editable = True
 
@@ -174,27 +170,12 @@ class NoteItem(QtWidgets.QGraphicsTextItem):
         zval = str(int(self.zValue()))
         painter.drawText(QtCore.QPointF(center.x(), center.y()), zval)
 
-    def setZValue(self, value):
-        """
-        Sets a new Z value.
-
-        :param value: Z value
-        """
-
-        super().setZValue(value)
-        if self.zValue() < 0:
-            self.setFlag(self.ItemIsSelectable, False)
-            self.setFlag(self.ItemIsMovable, False)
-        else:
-            self.setFlag(self.ItemIsSelectable, True)
-            self.setFlag(self.ItemIsMovable, True)
-
-    def setStyle(self, styles):
+    def setStyle(self, new_style):
         """
         Set text style using a SVG style
         """
         font = QtGui.QFont()
-        for style in styles.split(";"):
+        for style in new_style.split(";"):
             if ":" in style:
                 key, val = style.split(":")
                 key = key.strip()

@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_preferences_page.ui'
 #
-# Created: Sun Mar 27 11:39:22 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,8 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_IOUDevicePreferencesPageWidget(object):
     def setupUi(self, IOUDevicePreferencesPageWidget):
         IOUDevicePreferencesPageWidget.setObjectName("IOUDevicePreferencesPageWidget")
-        IOUDevicePreferencesPageWidget.resize(559, 515)
-        IOUDevicePreferencesPageWidget.setAccessibleDescription("")
+        IOUDevicePreferencesPageWidget.resize(542, 449)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(IOUDevicePreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(IOUDevicePreferencesPageWidget)
@@ -53,20 +51,24 @@ class Ui_IOUDevicePreferencesPageWidget(object):
         self.uiIOUDeviceInfoTreeWidget.setObjectName("uiIOUDeviceInfoTreeWidget")
         self.uiIOUDeviceInfoTreeWidget.header().setVisible(False)
         self.verticalLayout.addWidget(self.uiIOUDeviceInfoTreeWidget)
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.uiNewIOUDevicePushButton = QtWidgets.QPushButton(self.widget)
         self.uiNewIOUDevicePushButton.setObjectName("uiNewIOUDevicePushButton")
-        self.horizontalLayout_5.addWidget(self.uiNewIOUDevicePushButton)
+        self.horizontalLayout.addWidget(self.uiNewIOUDevicePushButton)
+        self.uiCopyIOUDevicePushButton = QtWidgets.QPushButton(self.widget)
+        self.uiCopyIOUDevicePushButton.setEnabled(False)
+        self.uiCopyIOUDevicePushButton.setObjectName("uiCopyIOUDevicePushButton")
+        self.horizontalLayout.addWidget(self.uiCopyIOUDevicePushButton)
         self.uiEditIOUDevicePushButton = QtWidgets.QPushButton(self.widget)
         self.uiEditIOUDevicePushButton.setEnabled(False)
         self.uiEditIOUDevicePushButton.setObjectName("uiEditIOUDevicePushButton")
-        self.horizontalLayout_5.addWidget(self.uiEditIOUDevicePushButton)
+        self.horizontalLayout.addWidget(self.uiEditIOUDevicePushButton)
         self.uiDeleteIOUDevicePushButton = QtWidgets.QPushButton(self.widget)
         self.uiDeleteIOUDevicePushButton.setEnabled(False)
         self.uiDeleteIOUDevicePushButton.setObjectName("uiDeleteIOUDevicePushButton")
-        self.horizontalLayout_5.addWidget(self.uiDeleteIOUDevicePushButton)
-        self.verticalLayout.addLayout(self.horizontalLayout_5)
+        self.horizontalLayout.addWidget(self.uiDeleteIOUDevicePushButton)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         self.verticalLayout_2.addWidget(self.splitter)
 
         self.retranslateUi(IOUDevicePreferencesPageWidget)
@@ -76,10 +78,11 @@ class Ui_IOUDevicePreferencesPageWidget(object):
     def retranslateUi(self, IOUDevicePreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
         IOUDevicePreferencesPageWidget.setWindowTitle(_translate("IOUDevicePreferencesPageWidget", "IOU Devices"))
-        IOUDevicePreferencesPageWidget.setAccessibleName(_translate("IOUDevicePreferencesPageWidget", "IOU Device templates"))
+        IOUDevicePreferencesPageWidget.setAccessibleName(_translate("IOUDevicePreferencesPageWidget", "IOU device templates"))
         self.uiIOUDeviceInfoTreeWidget.headerItem().setText(0, _translate("IOUDevicePreferencesPageWidget", "1"))
         self.uiIOUDeviceInfoTreeWidget.headerItem().setText(1, _translate("IOUDevicePreferencesPageWidget", "2"))
         self.uiNewIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&New"))
+        self.uiCopyIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&Copy"))
         self.uiEditIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&Edit"))
         self.uiDeleteIOUDevicePushButton.setText(_translate("IOUDevicePreferencesPageWidget", "&Delete"))
 

@@ -24,7 +24,6 @@ Compatibility layer for Qt bindings, so it is easier to switch to PySide if need
 
 
 import sys
-import sip
 import os
 import re
 import inspect
@@ -33,12 +32,17 @@ import functools
 import logging
 log = logging.getLogger("qt/__init__.py")
 
-from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets, Qt
+try:
+    from PyQt5 import sip
+except ImportError:
+    import sip
+
+from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets
 sys.modules[__name__ + '.QtCore'] = QtCore
 sys.modules[__name__ + '.QtGui'] = QtGui
 sys.modules[__name__ + '.QtNetwork'] = QtNetwork
 sys.modules[__name__ + '.QtWidgets'] = QtWidgets
-sys.modules[__name__ + '.Qt'] = Qt
+sys.modules[__name__ + '.sip'] = sip
 
 try:
     from PyQt5 import QtSvg
@@ -115,14 +119,20 @@ class LogQMessageBox(QtWidgets.QMessageBox):
         if message.startswith("QXcbConnection"):  # Qt noise not relevant
             return
         LogQMessageBox._get_logger().critical(re.sub(r"<[^<]+?>", "", message), stack_info=LogQMessageBox.stack_info())
-        if sip_is_deleted(parent):
+        if parent is False:
+            # special case to display a QMessageBox before the main window is created.
+            parent = None
+        elif sip_is_deleted(parent):
             return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).critical(parent, title, message, *args)
 
     @staticmethod
     def warning(parent, title, message, *args):
         LogQMessageBox._get_logger().warning(re.sub(r"<[^<]+?>", "", message))
-        if sip_is_deleted(parent):
+        if parent is False:
+            # special case to display a QMessageBox before the main window is created.
+            parent = None
+        elif sip_is_deleted(parent):
             return
         return super(QtWidgets.QMessageBox, QtWidgets.QMessageBox).warning(parent, title, message, *args)
 
@@ -130,7 +140,7 @@ class LogQMessageBox(QtWidgets.QMessageBox):
     def _get_logger():
         """
         Return a logger in the context of the caller
-        in order to have the correct informations in the log
+        in order to have the correct information in the log
         """
         if sys.version_info < (3, 5):
             return logging.getLogger('qt')
@@ -228,31 +238,6 @@ class StatsQtWidgetsQDialog(QtWidgets.QDialog):
         AnalyticsClient.instance().sendScreenView(name)
 
 QtWidgets.QDialog = StatsQtWidgetsQDialog
-
-
-class PatchNetworkAccessManager(QNetworkAccessManager):
-    """
-    Patch the network acces manager in order to solve
-    hibernation issues on windows and Linux
-
-    See: https://github.com/GNS3/gns3-gui/issues/2104
-    """
-
-    def __init__(self, *params, **kwargs):
-        super().__init__(*params, **kwargs)
-        self.setNetworkAccessible(self.Accessible)
-        self.networkAccessibleChanged.connect(self.networkAccessibleChangedSlot)
-
-    def networkAccessibleChangedSlot(self, status):
-        """
-        When we lost the network we switch to another available network
-        """
-        if status == self.Accessible:
-            return
-        self.setConfiguration(QtNetwork.QNetworkConfigurationManager().defaultConfiguration())
-
-
-QtNetwork.QNetworkAccessManager = PatchNetworkAccessManager
 
 
 def qpartial(func, *args, **kwargs):

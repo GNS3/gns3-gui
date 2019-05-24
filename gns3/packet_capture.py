@@ -31,8 +31,9 @@ log = logging.getLogger(__name__)
 
 
 class PacketCapture:
-
-    """This class manage packet capture, it's a singleton"""
+    """
+    This class manage packet capture, it's a singleton
+    """
 
     def __init__(self):
         self._tail_process = {}
@@ -91,7 +92,7 @@ class PacketCapture:
 
         if link:
             if link.capturing():
-                if self._autostart[link] and link not in self._tail_process:
+                if self._autostart.get(link) and link not in self._tail_process:
                     self.startPacketCaptureReader(link)
                 log.debug("Has successfully started capturing packets on {} to {}".format(link.id(), link.capture_file_path()))
             else:
@@ -126,9 +127,41 @@ class PacketCapture:
         """
         Starts the packet capture analyzer
         """
-        self._startPacketCommand(link, self.settings()["packet_capture_analyzer_command"])
+
+        if link.capture_file_path() is None:
+            QtWidgets.QMessageBox.critical(self.parent(), "Packet Capture Analyzer", "A packet capture is not running")
+            return
+
+        capture_file_path = link.capture_file_path()
+        if not os.path.isfile(capture_file_path):
+            QtWidgets.QMessageBox.critical(self.parent(), "Packet Capture Analyzer", "No packet capture file found at '{}'".format(capture_file_path))
+            return
+
+        command = self.settings()["packet_capture_analyzer_command"]
+
+        # PCAP capture file path
+        command = command.replace("%c", '"' + capture_file_path + '"')
+
+        # Add description
+        description = "{}[{}]->{}[{}]".format(link.sourceNode().name(),
+                                              link.sourcePort().name(),
+                                              link.destinationNode().name(),
+                                              link.destinationPort().name())
+        command = command.replace("%d", description)
+
+        if not sys.platform.startswith("win"):
+            command = shlex.split(command)
+        if len(command) == 0:
+            QtWidgets.QMessageBox.critical(self.parent(), "Packet Capture Analyzer", "No packet capture analyzer program configured")
+            return
+        try:
+            subprocess.Popen(command)
+        except OSError as e:
+            QtWidgets.QMessageBox.critical(self.parent(), "Packet Capture Analyzer", "Can't start packet capture analyzer program {}".format(str(e)))
+            return
 
     def packetAnalyzerAvailable(self):
+
         command = self.settings()["packet_capture_analyzer_command"]
         return command is not None and len(command) > 0
 
@@ -136,8 +169,9 @@ class PacketCapture:
         """
         Start a command for analyzing the packets
         """
+
         if link.capture_file_path() is None:
-            QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "A capture is not running")
+            QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "A packet capture is not running")
             return
 
         capture_file_path = link.capture_file_path()
@@ -146,7 +180,7 @@ class PacketCapture:
             try:
                 open(capture_file_path, 'w+').close()
             except OSError as e:
-                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't create capture file {}: {}".format(capture_file_path, str(e)))
+                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't create packet capture file {}: {}".format(capture_file_path, str(e)))
                 return
 
         if link in self._tail_process and self._tail_process[link].poll() is None:
@@ -167,11 +201,10 @@ class PacketCapture:
         command = command.replace("%c", '"' + capture_file_path + '"')
 
         # Add description
-        description = "{} {} to {} {}".format(
-            link.sourceNode().name(),
-            link.sourcePort().name(),
-            link.destinationNode().name(),
-            link.destinationPort().name())
+        description = "{} {} to {} {}".format(link.sourceNode().name(),
+                                              link.sourcePort().name(),
+                                              link.destinationNode().name(),
+                                              link.destinationPort().name())
         command = command.replace("%d", description)
 
         if "|" in command:
@@ -206,7 +239,7 @@ class PacketCapture:
                     stdout=subprocess.PIPE)
                 self._tail_process[link].stdout.close()
             except OSError as e:
-                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't start capture program {}".format(str(e)))
+                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't start packet capture program {}".format(str(e)))
                 return
         else:
             # normal traffic capture
@@ -218,7 +251,7 @@ class PacketCapture:
             try:
                 self._capture_reader_process[link] = subprocess.Popen(command)
             except OSError as e:
-                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't start capture program {}".format(str(e)))
+                QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't start packet capture program {}".format(str(e)))
                 return
 
     @staticmethod

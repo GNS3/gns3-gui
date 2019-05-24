@@ -42,45 +42,6 @@ class Nat(Node):
         self._nat_settings = {}
         self.settings().update(self._nat_settings)
 
-    def interfaces(self):
-
-        return self._interfaces
-
-    def _createCallback(self, result, error=False, **kwargs):
-        """
-        Callback for create.
-
-        :param result: server response
-        """
-
-        if error:
-            log.error("Error while creating nat: {}".format(result["message"]))
-            return
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this nat.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
-
-    def _updateCallback(self, result, error=False, **kwargs):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-        if error:
-            log.error("Error while creating nat: {}".format(result["message"]))
-            return
-
     def info(self):
         """
         Returns information about this nat.
@@ -88,11 +49,11 @@ class Nat(Node):
         :returns: formatted string
         """
 
-        info = """Nat device {name} is always-on
-This is a node for external connections
-Device run on {host}
+        info = """NAT node {name} is always-on
+  Running on server {host} with port {port}
 """.format(name=self.name(),
-           host=self.compute().name())
+           host=self.compute().name(),
+           port=self.compute().port())
 
         port_info = ""
         for port in self._ports:
@@ -113,11 +74,6 @@ Device run on {host}
         """
 
         return ":/symbols/cloud.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "Nat"
 
     @staticmethod
     def categories():

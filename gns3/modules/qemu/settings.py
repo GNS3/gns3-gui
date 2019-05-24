@@ -22,8 +22,8 @@ Default QEMU settings.
 from gns3.node import Node
 
 QEMU_SETTINGS = {
-    "enable_kvm": True,
-    "require_kvm": True,
+    "enable_hardware_acceleration": True,
+    "require_hardware_acceleration": True,
 }
 
 QEMU_VM_SETTINGS = {
@@ -35,6 +35,7 @@ QEMU_VM_SETTINGS = {
     "port_name_format": "Ethernet{0}",
     "port_segment_size": 0,
     "first_port_name": "",
+    "custom_adapters": [],
     "qemu_path": "",
     "hda_disk_image": "",
     "hdb_disk_image": "",
@@ -48,13 +49,14 @@ QEMU_VM_SETTINGS = {
     "bios_image": "",
     "boot_priority": "c",
     "console_type": "telnet",
+    "console_auto_start": False,
     "ram": 256,
     "cpus": 1,
     "adapters": 1,
     "adapter_type": "e1000",
     "mac_address": "",
     "legacy_networking": False,
-    "acpi_shutdown": False,
+    "on_close": "power_off",
     "platform": "",
     "cpu_throttling": 0,
     "process_priority": "normal",
@@ -63,5 +65,6 @@ QEMU_VM_SETTINGS = {
     "initrd": "",
     "kernel_command_line": "",
     "linked_clone": True,
-    "server": "local"
+    "compute_id": "local",
+    "node_type": "qemu"
 }

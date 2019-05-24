@@ -92,7 +92,7 @@ class ConsoleThread(QtCore.QThread):
 
 def nodeTelnetConsole(node, port, command=None):
     """
-    Start a Telnet console program for a topology node.
+    Start a Telnet console program for a node.
 
     :param node: The node
     :param command: Console command
@@ -106,6 +106,10 @@ def nodeTelnetConsole(node, port, command=None):
         command = general_settings["telnet_console_command"]
         if not command:
             return
+
+    if len(command.strip(' ')) == 0:
+        log.warning('Telnet console program is not configured')
+        return
 
     log.debug('Starting telnet console in thread "{}"'.format(command))
     console_thread = ConsoleThread(MainWindow.instance(), command, node, port)

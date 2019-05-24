@@ -23,7 +23,6 @@ from .router import Router
 
 
 class C2691(Router):
-
     """
     Dynamips c2691 router.
 
@@ -47,10 +46,5 @@ class C2691(Router):
         self.settings().update(c2691_settings)
 
     def __str__(self):
-
-        return "Router c2691"
-
-    @staticmethod
-    def symbolName():
 
         return "Router c2691"

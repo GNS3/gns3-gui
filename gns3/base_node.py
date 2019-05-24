@@ -19,20 +19,14 @@
 Base class for node classes.
 """
 
-import os
-import pathlib
-
 from .qt import QtCore
 from .ports.port import Port
-from .utils.normalize_filename import normalize_filename
-
 
 import logging
 log = logging.getLogger(__name__)
 
 
 class BaseNode(QtCore.QObject):
-
     """
     BaseNode implementation.
 
@@ -53,7 +47,6 @@ class BaseNode(QtCore.QObject):
     server_error_signal = QtCore.Signal(int, str)
 
     _instance_count = 1
-    _allocated_names = set()
 
     # node statuses
     stopped = 0
@@ -61,14 +54,15 @@ class BaseNode(QtCore.QObject):
     suspended = 2
 
     # node categories
-    routers = 0
-    switches = 1
-    end_devices = 2
-    security_devices = 3
+    routers = "router"
+    switches = "switch"
+    end_devices = "guest"
+    security_devices = "firewall"
 
     def __init__(self, module, compute, project):
 
         super().__init__()
+
         # create an unique ID
         self._id = BaseNode._instance_count
         BaseNode._instance_count += 1
@@ -85,18 +79,47 @@ class BaseNode(QtCore.QObject):
 
     def links(self):
         """
-        Links connected to the node
+        Links connected to this node
         """
+
         return self._links
 
     def addLink(self, link):
+        """
+        Add a link connected to this node
+
+        :param link: link object
+        """
+
         self._links.add(link)
 
     def deleteLink(self, link):
+        """
+        Delete a link connected to this node
+
+        :param link: link object
+        """
+
         try:
             self._links.remove(link)
         except KeyError:
             pass
+
+    def state(self):
+        """
+        Returns a human readable status of this node.
+
+        :returns: string
+        """
+
+        status = self.status()
+        if status == self.started:
+            return "started"
+        elif status == self.stopped:
+            return "stopped"
+        elif status == self.suspended:
+            return "suspended"
+        return "unknown"
 
     @classmethod
     def reset(cls):
@@ -228,59 +251,6 @@ class BaseNode(QtCore.QObject):
 
         return self._ports
 
-    @staticmethod
-    def defaultCategories():
-        """
-        Returns the default categories.
-
-        :returns: dict
-        """
-
-        categories = {"Routers": BaseNode.routers,
-                      "Switches": BaseNode.switches,
-                      "End devices": BaseNode.end_devices,
-                      "Security devices": BaseNode.security_devices}
-
-        return categories
-
-    @staticmethod
-    def defaultSymbol():
-        """
-        Returns the default symbol path for this node.
-        Must be overloaded.
-
-        :returns: symbol path (or resource).
-        """
-
-        raise NotImplementedError()
-
-    @staticmethod
-    def symbolName():
-        """
-        Returns the symbol name (for the nodes view).
-
-        :returns: name (string)
-        """
-
-        raise NotImplementedError()
-
-    @staticmethod
-    def categories(self):
-        """
-        Returns the node categories the node is part of (used by the device panel).
-
-        :returns: list of node category (integer)
-        """
-
-        raise NotImplementedError()
-
-    def __str__(self):
-        """
-        Must be overloaded.
-        """
-
-        raise NotImplementedError()
-
     def controllerHttpPost(self, path, callback, body={}, context={}, **kwargs):
         """
         POST on current server / project
@@ -328,72 +298,45 @@ class BaseNode(QtCore.QObject):
 
         self._project.delete(path, callback, context=context, **kwargs)
 
-    def exportConfigToDirectory(self, directory):
+    @staticmethod
+    def defaultCategories():
         """
-        Exports the initial-config to a directory.
+        Returns the default categories.
 
-        :param directory: destination directory path
-        """
-
-        if not hasattr(self, "configFiles"):
-            return
-        for file in self.configFiles():
-            self.controllerHttpGet("/nodes/{node_id}/files/{file}".format(node_id=self._node_id, file=file),
-                                   self._exportConfigToDirectoryCallback,
-                                   context={"directory": directory, "file": file},
-                                   raw=True)
-
-    def _exportConfigToDirectoryCallback(self, result, error=False, raw_body=None, context={}, **kwargs):
-        """
-        Callback for exportConfigToDirectory.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
+        :returns: dict
         """
 
-        if error:
-            # The file could be missing if you have not private config for
-            # exemple
-            return
-        export_directory = context["directory"]
+        categories = {"Routers": BaseNode.routers,
+                      "Switches": BaseNode.switches,
+                      "End devices": BaseNode.end_devices,
+                      "Security devices": BaseNode.security_devices}
 
-        filename = normalize_filename(self.name()) + "_{}".format(context["file"].replace("/", "_"))  # We can have / in the case of Docker
-        config_path = os.path.join(export_directory, filename)
-        try:
-            with open(config_path, "wb") as f:
-                log.debug("saving {} config to {}".format(self.name(), config_path))
-                f.write(raw_body)
-        except OSError as e:
-            self.error_signal.emit(self.id(), "could not export config to {}: {}".format(config_path, e))
+        return categories
 
-    def importConfigFromDirectory(self, directory):
+    @staticmethod
+    def defaultSymbol():
         """
-        Imports an initial-config from a directory.
+        Returns the default symbol path for this node.
+        Must be overloaded.
 
-        :param directory: source directory path
+        :returns: symbol path (or resource).
         """
 
-        if not hasattr(self, "configFiles"):
-            return
+        raise NotImplementedError()
 
-        try:
-            contents = os.listdir(directory)
-        except OSError as e:
-            self.error_signal.emit(self.id(), "Can't list file in {}: {}".format(directory, str(e)))
-            return
+    @staticmethod
+    def categories(self):
+        """
+        Returns the node categories the node is part of (used by the device panel).
 
-        for file in self.configFiles():
-            filename = normalize_filename(self.name()) + "_{}".format(file.replace("/", "_"))  # We can have / in the case of Docker
-            if filename in contents:
-                self.controllerHttpPost("/nodes/{node_id}/files/{file}".format(
-                    node_id=self._node_id,
-                    file=file), self._importConfigCallback,
-                    pathlib.Path(os.path.join(directory, filename)))
-            else:
-                log.warning("{}: config file '{}' not found".format(self.name(), filename))
+        :returns: list of node category (integer)
+        """
 
-    def _importConfigCallback(self, result, error=False, **kwargs):
-        if error:
-            if "message" in result:
-                log.error("Error while import config: {}".format(result["message"]))
-            return
+        raise NotImplementedError()
+
+    def __str__(self):
+        """
+        Must be overloaded.
+        """
+
+        raise NotImplementedError()

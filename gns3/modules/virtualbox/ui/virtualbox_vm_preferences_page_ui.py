@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/virtualbox/ui/virtualbox_vm_preferences_page.ui'
 #
-# Created: Sun Mar 27 12:02:29 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +12,6 @@ class Ui_VirtualBoxVMPreferencesPageWidget(object):
     def setupUi(self, VirtualBoxVMPreferencesPageWidget):
         VirtualBoxVMPreferencesPageWidget.setObjectName("VirtualBoxVMPreferencesPageWidget")
         VirtualBoxVMPreferencesPageWidget.resize(572, 486)
-        VirtualBoxVMPreferencesPageWidget.setAccessibleDescription("")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VirtualBoxVMPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(VirtualBoxVMPreferencesPageWidget)

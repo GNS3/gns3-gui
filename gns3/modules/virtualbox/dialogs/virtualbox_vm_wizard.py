@@ -24,11 +24,9 @@ from gns3.controller import Controller
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.virtualbox_vm_wizard_ui import Ui_VirtualBoxVMWizard
-from .. import VirtualBox
 
 
 class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
-
     """
     Wizard to create a VirtualBox VM.
 
@@ -95,12 +93,9 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
         vmname = self.uiVMListComboBox.itemText(index)
         vminfo = self.uiVMListComboBox.itemData(index)
 
-        settings = {
-            "name": vmname,
-            "vmname": vmname,
-            "server": self._compute_id,
-            "ram": vminfo["ram"],
-            "linked_clone": self.uiBaseVMCheckBox.isChecked()
-        }
-
+        settings = {"name": vmname,
+                    "vmname": vmname,
+                    "compute_id": self._compute_id,
+                    "ram": vminfo["ram"],
+                    "linked_clone": self.uiBaseVMCheckBox.isChecked()}
         return settings

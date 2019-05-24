@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>398</height>
+    <width>653</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your new IOS router.</string>
+    <string>Please choose a server type to run the IOS router.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>623</width>
-    <height>417</height>
+    <width>647</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your new QEMU VM.</string>
+    <string>Please choose a server type to run the QEMU VM.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
@@ -43,7 +43,7 @@
        <item>
         <widget class="QRadioButton" name="uiVMRadioButton">
          <property name="text">
-          <string>Run this Qemu VM  on the GNS3 VM</string>
+          <string>Run this Qemu VM on the GNS3 VM</string>
          </property>
         </widget>
        </item>
@@ -188,6 +188,16 @@
       <item>
        <property name="text">
         <string>spice</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>spice+agent</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>none</string>
        </property>
       </item>
      </widget>

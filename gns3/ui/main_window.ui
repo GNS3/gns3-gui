@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>984</width>
-    <height>715</height>
+    <width>986</width>
+    <height>716</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -61,7 +61,7 @@ background-none;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>984</width>
+     <width>986</width>
      <height>40</height>
     </rect>
    </property>
@@ -89,6 +89,7 @@ background-none;
     <addaction name="uiImportProjectAction"/>
     <addaction name="separator"/>
     <addaction name="uiOpenApplianceAction"/>
+    <addaction name="uiNewTemplateAction"/>
     <addaction name="separator"/>
     <addaction name="uiQuitAction"/>
    </widget>
@@ -126,6 +127,7 @@ background-none;
     <addaction name="uiShowGridAction"/>
     <addaction name="uiResetPortLabelsAction"/>
     <addaction name="uiShowPortNamesAction"/>
+    <addaction name="uiLockAllAction"/>
     <addaction name="separator"/>
     <addaction name="uiDocksMenu"/>
    </widget>
@@ -163,6 +165,7 @@ background-none;
     <addaction name="uiScreenshotAction"/>
     <addaction name="uiImportExportConfigsAction"/>
     <addaction name="uiWebInterfaceAction"/>
+    <addaction name="uiWebUIAction"/>
    </widget>
    <addaction name="uiFileMenu"/>
    <addaction name="uiEditMenu"/>
@@ -216,7 +219,7 @@ background-none;
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>All devices</string>
+    <string>All templates</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -230,51 +233,11 @@ background-none;
       <number>0</number>
      </property>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>3</number>
+      <widget class="QLineEdit" name="uiNodesFilterLineEdit">
+       <property name="placeholderText">
+        <string>Filter</string>
        </property>
-       <property name="leftMargin">
-        <number>5</number>
-       </property>
-       <property name="rightMargin">
-        <number>5</number>
-       </property>
-       <property name="bottomMargin">
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="QComboBox" name="uiNodesFilterComboBox">
-         <item>
-          <property name="text">
-           <string>Installed &amp; Available appliances</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Installed appliances</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Available appliances</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Custom appliances</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="uiNodesFilterLineEdit">
-         <property name="placeholderText">
-          <string>Filter</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      </widget>
      </item>
      <item>
       <widget class="NodesView" name="uiNodesView">
@@ -310,9 +273,9 @@ background-none;
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="uiNewAppliancePushButton">
+      <widget class="QPushButton" name="uiNewTemplatePushButton">
        <property name="text">
-        <string>New appliance template</string>
+        <string>New template</string>
        </property>
        <property name="icon">
         <iconset resource="../../resources/resources.qrc">
@@ -382,8 +345,8 @@ background-none;
    </attribute>
    <addaction name="uiSnapshotAction"/>
    <addaction name="uiShowPortNamesAction"/>
-   <addaction name="uiConsoleAllAction"/>
    <addaction name="separator"/>
+   <addaction name="uiConsoleAllAction"/>
    <addaction name="uiStartAllAction"/>
    <addaction name="uiSuspendAllAction"/>
    <addaction name="uiStopAllAction"/>
@@ -447,6 +410,7 @@ background-none;
    <addaction name="uiDrawRectangleAction"/>
    <addaction name="uiDrawEllipseAction"/>
    <addaction name="uiDrawLineAction"/>
+   <addaction name="uiLockAllAction"/>
    <addaction name="uiZoomInAction"/>
    <addaction name="uiZoomOutAction"/>
    <addaction name="uiScreenshotAction"/>
@@ -1178,7 +1142,7 @@ background-none;
   <action name="uiExportProjectAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/export_config.svg</normaloff>:/icons/export_config.svg</iconset>
+     <normaloff>:/icons/export.svg</normaloff>:/icons/export.svg</iconset>
    </property>
    <property name="text">
     <string>Export portable project</string>
@@ -1187,7 +1151,7 @@ background-none;
   <action name="uiImportProjectAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
-     <normaloff>:/icons/import_config.svg</normaloff>:/icons/import_config.svg</iconset>
+     <normaloff>:/icons/import.svg</normaloff>:/icons/import.svg</iconset>
    </property>
    <property name="text">
     <string>Import portable project</string>
@@ -1235,7 +1199,7 @@ background-none;
   </action>
   <action name="uiWebInterfaceAction">
    <property name="text">
-    <string>Web interface</string>
+    <string>Light Web interface</string>
    </property>
   </action>
   <action name="uiDrawLineAction">
@@ -1248,6 +1212,41 @@ background-none;
    </property>
    <property name="text">
     <string>Drawn line</string>
+   </property>
+  </action>
+  <action name="uiLockAllAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/unlock.svg</normaloff>
+     <normalon>:/icons/lock.svg</normalon>
+     <activeoff>:/icons/unlock.svg</activeoff>
+     <activeon>:/icons/lock.svg</activeon>:/icons/unlock.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Lock or unlock all items</string>
+   </property>
+   <property name="toolTip">
+    <string>Lock or unlock all items</string>
+   </property>
+  </action>
+  <action name="uiWebUIAction">
+   <property name="text">
+    <string>WebUI - topology preview</string>
+   </property>
+  </action>
+  <action name="uiNewTemplateAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/plus.svg</normaloff>:/icons/plus.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New template</string>
    </property>
   </action>
  </widget>

@@ -5,11 +5,41 @@
 
   "definitions": {
     "dynamips_slot": {
-        "enum": ["C2600-MB-2FE", "C2600-MB-1E", "PA-A1", "PA-8E", "C1700-MB-1FE", "PA-8T", "PA-2FE-TX", "PA-FE-TX", "PA-GE", "C2600-MB-2E", "C7200-IO-FE", "NM-4T", "C2600-MB-1FE", "C7200-IO-2FE", "PA-POS-OC3", "PA-4T+", "C1700-MB-WIC1", "NM-16ESW", "C7200-IO-GE-E", "NM-4E", "GT96100-FE", "NM-1FE-TX", "Leopard-2FE", "NM-1E", "PA-4E", ""]
+        "enum": [
+          "C7200-IO-2FE",
+          "C7200-IO-FE",
+          "C7200-IO-GE-E",
+          "NM-16ESW",
+          "NM-1E",
+          "NM-1FE-TX",
+          "NM-4E",
+          "NM-4T",
+          "PA-2FE-TX",
+          "PA-4E",
+          "PA-4T+",
+          "PA-8E",
+          "PA-8T",
+          "PA-A1",
+          "PA-FE-TX",
+          "PA-GE",
+          "PA-POS-OC3",
+          "C2600-MB-2FE",
+          "C2600-MB-1E",
+          "C1700-MB-1FE",
+          "C2600-MB-2E",
+          "C2600-MB-1FE",
+          "C1700-MB-WIC1",
+          "GT96100-FE",
+          "Leopard-2FE",
+          ""]
     },
 
     "dynamips_wic": {
-        "enum": ["WIC-1ENET", "WIC-1T", "WIC-2T", ""]
+        "enum": [
+          "WIC-1ENET",
+          "WIC-1T",
+          "WIC-2T",
+          ""]
     }
   },
 
@@ -22,6 +52,7 @@
       "enum": [
           "router",
           "multilayer_switch",
+          "switch",
           "firewall",
           "guest"
       ],
@@ -55,7 +86,7 @@
       "title": "An optional product url on vendor website"
     },
     "registry_version": {
-      "enum": [1, 2, 3, 4, 5],
+      "enum": [1, 2, 3, 4, 5, 6],
       "title": "Version of the registry compatible with this appliance"
     },
     "status": {
@@ -121,7 +152,7 @@
                 "title": "One KEY=VAR environment by line"
             },
             "console_type": {
-              "enum": ["telnet", "vnc", "http", "https"],
+              "enum": ["telnet", "vnc", "http", "https", "none"],
               "title": "Type of console connection for the administration of the appliance"
             },
             "console_http_port": {
@@ -131,6 +162,17 @@
             "console_http_path": {
                 "description": "Path of the web interface",
                 "type": "string"
+            },
+            "extra_hosts": {
+                "description": "Hosts which will be written to /etc/hosts into container" ,
+                "type": "string"
+            },
+            "extra_volumes": {
+                "description": "Additional directories to make persistent that are not included in the images VOLUME directive" ,
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
             }
         },
         "required": [
@@ -279,12 +321,12 @@
           "title": "Architecture emulated"
         },
         "console_type": {
-          "enum": ["telnet", "vnc", "spice"],
+          "enum": ["telnet", "vnc", "spice", "spice+agent", "none"],
           "title": "Type of console connection for the administration of the appliance"
         },
         "boot_priority": {
-            "enum": ["d", "c", "dc", "cd", "n", "nc", "nd", "cn", "dn"],
-            "title": "Optional define the disk boot priory. Refer to -boot option in qemu manual for more details."
+            "enum": ["c", "d", "n", "cn", "cd", "dn", "dc", "nc", "nd"],
+            "title": "Disk boot priority. Refer to -boot option in qemu manual for more details."
         },
         "kernel_command_line": {
             "type": "string",

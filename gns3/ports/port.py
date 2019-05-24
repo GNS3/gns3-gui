@@ -19,7 +19,7 @@
 Base class for port objects.
 """
 
-import sip
+from ..qt import sip
 
 from ..qt import qslot
 
@@ -45,7 +45,9 @@ class Port:
         self._short_name = None
         self._port_number = None
         self._adapter_number = None
+        self._adapter_type = None
         self._port_label = None
+        self._mac_address = None
         self._status = Port.stopped
         self._destination_node = None
         self._destination_port = None
@@ -189,6 +191,42 @@ class Port:
 
         self._destination_port = port
 
+    def adapterType(self):
+        """
+        Returns the adapter type of this port.
+
+        :returns: current adapter type (string)
+        """
+
+        return self._adapter_type
+
+    def setAdapterType(self, adapter_type):
+        """
+        Sets a new adapter type for this port.
+
+        :param adapter_type: adapter type (string)
+        """
+
+        self._adapter_type = adapter_type
+
+    def macAddress(self):
+        """
+        Returns the port MAC address
+
+        :returns: MAC address (string)
+        """
+
+        return self._mac_address
+
+    def setMacAddress(self, mac_address):
+        """
+        Sets a new MAC address for this port.
+
+        :param mac_address: MAC address (string)
+        """
+
+        self._mac_address = mac_address
+
     def link(self):
         return self._link
 
@@ -232,7 +270,7 @@ class Port:
 
         if self._destination_node and self._destination_port:
             if short:
-                return "<-> {port} {name}".format(port=self._destination_port.shortName(),
+                return "<=> {port} {name}".format(port=self._destination_port.shortName(),
                                                   name=self._destination_node.name())
             return "connected to {name} on port {port}".format(name=self._destination_node.name(),
                                                                port=self._destination_port.name())

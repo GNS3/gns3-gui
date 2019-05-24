@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sip
+from .qt import sip
 import time
 from contextlib import contextmanager
 
@@ -113,7 +113,7 @@ class Progress(QtCore.QObject):
 
     @qslot
     def _rejectSlot(self, *args):
-        if self._progress_dialog is not None and not sip.isdeleted(self._progress_dialog) or self._progress_dialog.wasCanceled():
+        if self._progress_dialog is not None and (not sip.isdeleted(self._progress_dialog) or self._progress_dialog.wasCanceled()):
             self._progress_dialog.deleteLater()
             self._progress_dialog = None
         self._cancelSlot()
@@ -189,7 +189,10 @@ class Progress(QtCore.QObject):
                     # Due to Qt limitations for large numbers (above 32bit int) we calculate "progress" ourselves
                     current, maximum = self._normalize(query['current'], query['maximum'])
                     progress_dialog.setMaximum(maximum)
-                    progress_dialog.setValue(current)
+                    try:
+                        progress_dialog.setValue(current)
+                    except OverflowError:
+                        progress_dialog.setValue(100)
 
                 if text and query["maximum"] > 1000:
                     text += "\n{} / {}".format(human_filesize(query["current"]), human_filesize(query["maximum"]))

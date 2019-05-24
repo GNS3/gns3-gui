@@ -28,11 +28,12 @@ import codecs
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 from collections import OrderedDict
-
+from gns3.controller import Controller
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 from gns3.modules.module import Module
 from gns3.modules.vmware.vmware_vm import VMwareVM
-from gns3.modules.vmware.settings import VMWARE_SETTINGS
-from gns3.modules.vmware.settings import VMWARE_VM_SETTINGS
+from gns3.modules.vmware.settings import VMWARE_SETTINGS, VMWARE_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -46,15 +47,6 @@ class VMware(Module):
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
-        self._vmware_vms = {}
-        self._nodes = []
-
-        self.configChangedSlot()
-
-    def configChangedSlot(self):
-        # load the settings
         self._loadSettings()
 
     @staticmethod
@@ -197,7 +189,24 @@ class VMware(Module):
         if not os.path.exists(self._settings["vmrun_path"]):
             self._settings["vmrun_path"] = self.findVmrun()
             self._settings["host_type"] = self._determineHostType()
-        self._loadVMwareVMs()
+
+        # migrate VM settings to the controller (templates are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldVMs)
+
+    def _migrateOldVMs(self):
+        """
+        Migrate local VM settings to the controller.
+        """
+
+        if self._settings.get("vms"):
+            templates = []
+            for vm in self._settings.get("vms"):
+                vm_settings = VMWARE_VM_SETTINGS.copy()
+                vm_settings.update(vm)
+                templates.append(Template(vm_settings))
+            TemplateManager.instance().updateList(templates)
+            self._settings["vms"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -221,133 +230,29 @@ class VMware(Module):
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
 
-    def _loadVMwareVMs(self):
-        """
-        Load the VMware VMs from the client settings file.
-        """
-
-        self._vmware_vms = {}
-        local_config = LocalConfig.instance()
-        settings = local_config.settings()
-        if "vms" in settings.get(self.__class__.__name__, {}):
-            for vm in settings[self.__class__.__name__]["vms"]:
-                name = vm.get("name")
-                server = vm.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._vmware_vms or not name or not server:
-                    continue
-                vm_settings = VMWARE_VM_SETTINGS.copy()
-                vm_settings.update(vm)
-                # for backward compatibility before version 1.4
-                if "symbol" not in vm_settings:
-                    vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
-                    vm_settings["symbol"] = vm_settings["symbol"][:-11] + ".svg" if vm_settings["symbol"].endswith("normal.svg") else vm_settings["symbol"]
-                self._vmware_vms[key] = vm_settings
-
-    def _saveVMwareVMs(self):
-        """
-        Saves the VMware VMs to the client settings file.
-        """
-
-        self._settings["vms"] = list(self._vmware_vms.values())
-        self._saveSettings()
-
-    def VMs(self):
-        """
-        Returns VMware VMs settings.
-
-        :returns: VMware VMs settings (dictionary)
-        """
-
-        return self._vmware_vms
-
-    def setVMs(self, new_vmware_vms):
-        """
-        Sets VMware VM settings.
-
-        :param new_vmware_images: VMware VM settings (dictionary)
-        """
-
-        self._vmware_vms = new_vmware_vms.copy()
-        self._saveVMwareVMs()
-
     @staticmethod
-    def vmConfigurationPage():
+    def configurationPage():
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
         from .pages.vmware_vm_configuration_page import VMwareVMConfigurationPage
         return VMwareVMConfigurationPage
 
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
-
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
-
     @staticmethod
-    def getNodeClass(name):
+    def getNodeClass(node_type, platform=None):
         """
-        Returns the object with the corresponding name.
+        Returns the class corresponding to node type.
 
-        :param name: object name
+        :param node_type: name of the node
+        :param platform: not used
+
+        :returns: class or None
         """
 
-        if name in globals():
-            return globals()[name]
-        return None
-
-    @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "vmware":
+        if node_type == "vmware":
             return VMwareVM
         return None
 
@@ -361,26 +266,11 @@ class VMware(Module):
 
         return [VMwareVM]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        for vmware_vm in self._vmware_vms.values():
-            nodes.append(
-                {"class": VMwareVM.__name__,
-                 "name": vmware_vm["name"],
-                 "server": vmware_vm["server"],
-                 "symbol": vmware_vm["symbol"],
-                 "categories": [vmware_vm["category"]]}
-            )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 
@@ -400,6 +290,12 @@ class VMware(Module):
             VMware._instance = VMware()
         return VMware._instance
 
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "vmware"
 
 if __name__ == '__main__':
     print("vmrun", VMware.findVmrun())

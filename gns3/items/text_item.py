@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Graphical representation of a note on the QGraphicsScene.
-"""
-
 import xml.etree.ElementTree as ET
 
 from ..qt import QtCore, QtWidgets, QtGui
@@ -44,8 +40,8 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         main_window = MainWindow.instance()
         view_settings = main_window.uiGraphicsView.settings()
         qt_font = QtGui.QFont()
-        qt_font.fromString(view_settings["default_label_font"])
-        self.setDefaultTextColor(QtGui.QColor(view_settings["default_label_color"]))
+        qt_font.fromString(view_settings["default_note_font"])
+        self.setDefaultTextColor(QtGui.QColor(view_settings["default_note_color"]))
         self.setFont(qt_font)
 
         if svg:
@@ -53,6 +49,10 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
                 svg = self.fromSvg(svg)
             except ET.ParseError as e:
                 log.warning(str(e))
+
+        # re-evaluate `z` position after creation
+        if 'z' in kws.keys():
+            self.setZValue(kws['z'])
 
         if self._id is None:
             self.create()
@@ -110,13 +110,6 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
 
         super().paint(painter, option, widget)
         self.drawLayerInfo(painter)
-
-    def setZValue(self, value):
-        """
-        Sets Z value of the item
-        :param value: z layer
-        """
-        return DrawingItem.setZValue(self, value)
 
     def toSvg(self):
         """

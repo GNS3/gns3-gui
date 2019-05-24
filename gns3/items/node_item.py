@@ -19,11 +19,11 @@
 Graphical representation of a node on the QGraphicsScene.
 """
 
-import sip
+from ..qt import sip
 
 from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
-from .note_item import NoteItem
+from .label_item import LabelItem
 from ..symbol import Symbol
 from ..controller import Controller
 
@@ -41,7 +41,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
     """
 
     show_layer = False
-    GRID_SIZE = 75
 
     def __init__(self, node):
         super().__init__()
@@ -51,6 +50,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # link items connected to this node item.
         self._links = []
         self._symbol = None
+        self._locked = False
 
         # says if the attached node has been initialized
         # by the server.
@@ -60,7 +60,6 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self._node_label = None
 
         self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
-        self.setZValue(self._node.z())
 
         # Temporary symbol during loading
         renderer = QImageSvgRenderer(":/icons/reload.svg")
@@ -79,6 +78,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable)
         self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
+
+        # update z value and locked state
+        self.setLocked(self._node.locked())
+        self.setZValue(self._node.z())
 
         # connect signals to know about some events
         # e.g. when the node has been started, stopped or suspended etc.
@@ -108,16 +111,19 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             self.createdSlot(node.id())
 
     def _snapToGrid(self):
+
+        grid_size = self._main_window.uiGraphicsView.nodeGridSize()
         mid_x = self.boundingRect().width() / 2
-        x = (self.GRID_SIZE * round((self.x() + mid_x) / self.GRID_SIZE)) - mid_x
+        x = (grid_size * round((self.x() + mid_x) / grid_size)) - mid_x
         mid_y = self.boundingRect().height() / 2
-        y = (self.GRID_SIZE * round((self.y() + mid_y) / self.GRID_SIZE)) - mid_y
+        y = (grid_size * round((self.y() + mid_y) / grid_size)) - mid_y
         self.setPos(x, y)
 
     def updateNode(self):
         """
         Sync change to the node
         """
+
         self._node.setGraphics(self)
 
     @qslot
@@ -143,9 +149,14 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
     @qslot
     def _symbolLoadedCallback(self, path, *args):
+
         renderer = QImageSvgRenderer(path, fallback=":/icons/cancel.svg")
         renderer.setObjectName(path)
         self.setSharedRenderer(renderer)
+        if self._settings["limit_size_node_symbols"] is True and renderer.defaultSize().height() > 80:
+            # resize the SVG
+            renderer.resize(80)
+            self.setSharedRenderer(renderer)
         if self._node.settings().get("symbol") != self._symbol:
             self.updateNode()
         if not self._initialized:
@@ -263,7 +274,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.setSymbol(self._node.settings().get("symbol"))
         self.setPos(self._node.settings().get("x", 0), self._node.settings().get("y", 0))
         self.setZValue(self._node.settings().get("z", 0))
-
+        self.setLocked(self._node.settings().get("locked", False))
         self._updateLabel()
 
         # update the link tooltips in case the
@@ -356,7 +367,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if not self._node_label:
-            self._node_label = NoteItem(self)
+            self._node_label = LabelItem(self)
             self._node_label.item_unselected_signal.connect(self._labelUnselectedSlot)
             self._node_label.setEditable(False)
             self._updateLabel()
@@ -364,7 +375,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
     def _updateLabel(self):
         """
-        Update the label using the informations stored in the node
+        Update the label using the information stored in the node
         """
         if not self._node_label:
             return
@@ -373,8 +384,15 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         if self._node_label.toPlainText() != label_data["text"]:
             self._node_label.setPlainText(label_data["text"])
-        self._node_label.setStyle(label_data.get("style", ""))
+
+        style = label_data.get("style")
+        if style:
+            self._node_label.setStyle(style)
         self._node_label.setRotation(label_data.get("rotation", 0))
+
+        if self._node.locked():
+            self._node_label.setFlag(self.ItemIsMovable, False)
+
         if label_data["x"] is None:
             self._centerLabel()
             self.updateNode()
@@ -457,10 +475,11 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if change == QtWidgets.QGraphicsItem.ItemPositionChange and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
+            grid_size = self._main_window.uiGraphicsView.nodeGridSize()
             mid_x = self.boundingRect().width() / 2
-            value.setX((self.GRID_SIZE * round((value.x() + mid_x) / self.GRID_SIZE)) - mid_x)
+            value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)
             mid_y = self.boundingRect().height() / 2
-            value.setY((self.GRID_SIZE * round((value.y() + mid_y) / self.GRID_SIZE)) - mid_y)
+            value.setY((grid_size * round((value.y() + mid_y) / grid_size)) - mid_y)
 
         # dynamically change the renderer when this node item is selected/unselected.
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
@@ -514,20 +533,31 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         super().setZValue(value)
-        if self.zValue() < 0:
-            self.setFlag(self.ItemIsSelectable, False)
+        for link in self._links:
+            link.adjust()
+
+    def locked(self):
+
+        return self._locked
+
+    def setLocked(self, locked):
+        """
+        Sets the locked value.
+
+        :param value: Z value
+        """
+
+        if locked is True:
             self.setFlag(self.ItemIsMovable, False)
             if self._node_label:
-                self._node_label.setFlag(self.ItemIsSelectable, False)
                 self._node_label.setFlag(self.ItemIsMovable, False)
         else:
-            self.setFlag(self.ItemIsSelectable, True)
             self.setFlag(self.ItemIsMovable, True)
             if self._node_label:
-                self._node_label.setFlag(self.ItemIsSelectable, True)
                 self._node_label.setFlag(self.ItemIsMovable, True)
         for link in self._links:
             link.adjust()
+        self._locked = locked
 
     def hoverEnterEvent(self, event):
         """

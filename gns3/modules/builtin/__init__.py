@@ -21,6 +21,7 @@ Built-in module implementation.
 
 from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
+from gns3.local_server_config import LocalServerConfig
 
 from ..module import Module
 from .cloud import Cloud
@@ -29,13 +30,7 @@ from .ethernet_hub import EthernetHub
 from .ethernet_switch import EthernetSwitch
 from .frame_relay_switch import FrameRelaySwitch
 from .atm_switch import ATMSwitch
-
-from .settings import (
-    BUILTIN_SETTINGS,
-    CLOUD_SETTINGS,
-    ETHERNET_HUB_SETTINGS,
-    ETHERNET_SWITCH_SETTINGS
-)
+from .settings import BUILTIN_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -49,38 +44,7 @@ class Builtin(Module):
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
-        self._nodes = []
-        self._cloud_nodes = {}
-        self._nat_nodes = {}
-        self._ethernet_hubs = {}
-        self._ethernet_switches = {}
-
-        # load the settings
         self._loadSettings()
-
-    def configChangedSlot(self):
-
-        pass
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -89,6 +53,15 @@ class Builtin(Module):
 
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
+        server_settings = {}
+        config = LocalServerConfig.instance()
+        if self._settings["default_nat_interface"]:
+            # save some settings to the local server config file
+            server_settings["default_nat_interface"] = self._settings["default_nat_interface"]
+            config.saveSettings(self.__class__.__name__, server_settings)
+        else:
+            config.deleteSetting(self.__class__.__name__, "default_nat_interface")
+
     def _loadSettings(self):
         """
         Loads the settings from the persistent settings file.
@@ -96,183 +69,48 @@ class Builtin(Module):
 
         local_config = LocalConfig.instance()
         self._settings = local_config.loadSectionSettings(self.__class__.__name__, BUILTIN_SETTINGS)
-        self._loadNodes()
-
-    def _loadBuilinNodesPerType(self, node_dict, node_type, default_settings):
-
-        settings = LocalConfig.instance().settings()
-        if node_type in settings.get(self.__class__.__name__, {}):
-            for device in settings[self.__class__.__name__][node_type]:
-                name = device.get("name")
-                server = device.get("server")
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in node_dict or not name or not server:
-                    continue
-                node_settings = default_settings.copy()
-                node_settings.update(device)
-                node_dict[key] = node_settings
-
-    def _loadNodes(self):
-        """
-        Load the built-in nodes from the persistent settings file.
-        """
-
-        self._loadBuilinNodesPerType(self._cloud_nodes, "cloud_nodes", CLOUD_SETTINGS)
-        self._loadBuilinNodesPerType(self._ethernet_hubs, "ethernet_hubs", ETHERNET_HUB_SETTINGS)
-        self._loadBuilinNodesPerType(self._ethernet_switches, "ethernet_switches", ETHERNET_SWITCH_SETTINGS)
-
-    def _saveNodes(self):
-        """
-        Saves the built-in nodes to the persistent settings file.
-        """
-
-        self._settings["cloud_nodes"] = list(self._cloud_nodes.values())
-        self._settings["ethernet_hubs"] = list(self._ethernet_hubs.values())
-        self._settings["ethernet_switches"] = list(self._ethernet_switches.values())
-        self._saveSettings()
-
-    def cloudNodes(self):
-        """
-        Returns cloud nodes settings.
-
-        :returns: Cloud nodes settings (dictionary)
-        """
-
-        return self._cloud_nodes
-
-    def setCloudNodes(self, new_cloud_nodes):
-        """
-        Sets cloud nodes settings.
-
-        :param new_cloud_nodes: cloud nodes settings (dictionary)
-        """
-
-        self._cloud_nodes = new_cloud_nodes.copy()
-        self._saveNodes()
-
-    def ethernetHubs(self):
-        """
-        Returns Ethernet hubs settings.
-
-        :returns: Ethernet hubs settings (dictionary)
-        """
-
-        return self._ethernet_hubs
-
-    def setEthernetHubs(self, new_ethernet_hubs):
-        """
-        Sets Ethernet hubs settings.
-
-        :param new_ethernet_hubs: Ethernet hubs settings (dictionary)
-        """
-
-        self._ethernet_hubs = new_ethernet_hubs.copy()
-        self._saveNodes()
-
-    def ethernetSwitches(self):
-        """
-        Returns Ethernet switches settings.
-
-        :returns: Ethernet switches settings (dictionary)
-        """
-
-        return self._ethernet_switches
-
-    def setEthernetSwitches(self, new_ethernet_switches):
-        """
-        Sets Ethernet switches settings.
-
-        :param new_ethernet_switches: Ethernet switches settings (dictionary)
-        """
-
-        self._ethernet_switches = new_ethernet_switches.copy()
-        self._saveNodes()
-
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
 
     @staticmethod
-    def findAlternativeInterface(node, missing_interface):
-
-        from gns3.main_window import MainWindow
-        mainwindow = MainWindow.instance()
-
-        available_interfaces = []
-        for interface in node.settings()["interfaces"]:
-            available_interfaces.append(interface["name"])
-
-        if available_interfaces:
-            selection, ok = QtWidgets.QInputDialog.getItem(mainwindow,
-                                                           "Cloud interfaces", "Interface {} could not be found\nPlease select an alternative from your existing interfaces:".format(missing_interface),
-                                                           available_interfaces, 0, False)
-            if ok:
-                return selection
-            QtWidgets.QMessageBox.warning(mainwindow, "Cloud interface", "No alternative interface chosen to replace {} on this host, this may lead to issues".format(missing_interface))
-            return None
-        else:
-            QtWidgets.QMessageBox.critical(mainwindow, "Cloud interface", "Could not find interface {} on this host".format(missing_interface))
-            return missing_interface
-
-    @staticmethod
-    def getNodeClass(name):
+    def configurationPage(node_type):
         """
-        Returns the object with the corresponding name.
+        Returns the configuration page for this module.
 
-        :param name: object name
+        :returns: QWidget object
         """
 
-        if name in globals():
-            return globals()[name]
+        from .pages.ethernet_hub_configuration_page import EthernetHubConfigurationPage
+        from .pages.ethernet_switch_configuration_page import EthernetSwitchConfigurationPage
+        from .pages.cloud_configuration_page import CloudConfigurationPage
+        if node_type == "ethernet_hub":
+            return EthernetHubConfigurationPage
+        elif node_type == "ethernet_switch":
+            return EthernetSwitchConfigurationPage
+        elif node_type == "cloud":
+            return CloudConfigurationPage
         return None
 
     @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "cloud":
+    def getNodeClass(node_type, platform=None):
+        """
+        Returns the class corresponding to node type.
+
+        :param node_type: node type (string)
+        :param platform: not used
+
+        :returns: class or None
+        """
+
+        if node_type == "cloud":
             return Cloud
-        elif name == "nat":
+        elif node_type == "nat":
             return Nat
-        elif name == "ethernet_hub":
+        elif node_type == "ethernet_hub":
             return EthernetHub
-        elif name == "ethernet_switch":
+        elif node_type == "ethernet_switch":
             return EthernetSwitch
-        elif name == "frame_relay_switch":
+        elif node_type == "frame_relay_switch":
             return FrameRelaySwitch
-        elif name == "atm_switch":
+        elif node_type == "atm_switch":
             return ATMSwitch
         return None
 
@@ -285,47 +123,6 @@ class Builtin(Module):
         """
 
         return [Nat, Cloud, EthernetHub, EthernetSwitch, FrameRelaySwitch, ATMSwitch]
-
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        # add custom cloud node templates
-        for cloud_node in self._cloud_nodes.values():
-            nodes.append(
-                {"class": Cloud.__name__,
-                 "name": cloud_node["name"],
-                 "server": cloud_node["server"],
-                 "symbol": cloud_node["symbol"],
-                 "categories": [cloud_node["category"]]
-                 }
-            )
-
-        # add custom Ethernet hub templates
-        for hub in self._ethernet_hubs.values():
-            nodes.append(
-                {"class": EthernetHub.__name__,
-                 "name": hub["name"],
-                 "server": hub["server"],
-                 "symbol": hub["symbol"],
-                 "categories": [hub["category"]]
-                 }
-            )
-
-        # add custom Ethernet switch templates
-        for switch in self._ethernet_switches.values():
-            nodes.append(
-                {"class": EthernetSwitch.__name__,
-                 "name": switch["name"],
-                 "server": switch["server"],
-                 "symbol": switch["symbol"],
-                 "categories": [switch["category"]]
-                }
-            )
-        return nodes
 
     @staticmethod
     def preferencePages():
@@ -351,3 +148,10 @@ class Builtin(Module):
         if not hasattr(Builtin, "_instance"):
             Builtin._instance = Builtin()
         return Builtin._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "builtin"

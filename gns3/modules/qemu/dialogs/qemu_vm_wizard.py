@@ -34,7 +34,6 @@ from .qemu_image_wizard import QemuImageWizard
 
 
 class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
-
     """
     Wizard to create a Qemu VM.
 
@@ -127,7 +126,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
                     # default is qemu-system-i386w.exe on Windows 32-bit with a remote server
                     search_string = "i386w.exe"
             elif ComputeManager.instance().localPlatform().startswith("darwin") and hasattr(sys, "frozen") and self.uiLocalRadioButton.isChecked():
-                search_string = "GNS3.app/Contents/Resources/qemu/bin/qemu-system-x86_64"
+                search_string = "GNS3.app/Contents/MacOS/qemu/bin/qemu-system-x86_64"
             elif is_64bit:
                 # default is qemu-system-x86_64 on other 64-bit platforms
                 search_string = "x86_64"
@@ -152,7 +151,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             "name": self.uiNameLineEdit.text(),
             "ram": self.uiRamSpinBox.value(),
             "qemu_path": qemu_path,
-            "server": self._compute_id,
+            "compute_id": self._compute_id,
             "category": Node.end_devices,
             "hda_disk_image": self.uiHdaDiskImageLineEdit.text(),
             "console_type": console_type

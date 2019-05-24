@@ -23,7 +23,6 @@ import os
 import re
 
 from gns3.node import Node
-from gns3.utils.normalize_filename import normalize_filename
 
 from ..adapters import ADAPTER_MATRIX
 from ..wics import WIC_MATRIX
@@ -33,7 +32,6 @@ log = logging.getLogger(__name__)
 
 
 class Router(Node):
-
     """
     Dynamips router (client implementation).
 
@@ -51,6 +49,7 @@ class Router(Node):
         self._dynamips_id = None
 
         router_settings = {"platform": platform,
+                           "usage": "",
                            "chassis": "",
                            "image": "",
                            "image_md5sum": "",
@@ -69,8 +68,8 @@ class Router(Node):
                            "disk0": 0,
                            "disk1": 0,
                            "auto_delete_disks": False,
-                           "console": None,
-                           "console_host": None,
+                           "console_type": "telnet",
+                           "console_auto_start": False,
                            "aux": None,
                            "mac_addr": None,
                            "system_id": "FTX0945W0MY",
@@ -96,55 +95,17 @@ class Router(Node):
 
         self._dynamips_id = result.get("dynamips_id")
 
-    def update(self, new_settings):
-        """
-        Updates the settings for this router.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-
-        for name, value in new_settings.items():
-            if name in self._settings:
-                if self._settings[name] != value:
-                    params[name] = value
-            else:
-                # All key should be known
-                raise ValueError(name)
-
-        if params:
-            self._update(params)
-
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-
-        for name, value in result.items():
-            if name in self._settings:
-                if self._settings[name] != value:
-                    log.debug("{}: updating {} from '{}' to '{}'".format(self.name(), name, self._settings[name], value))
-                    self._settings[name] = value
-            elif name not in ("project_id", "port_name_format", "port_segment_size", "first_port_name", "node_directory", "status", "node_id", "width", "height", "compute_id", "node_type", "dynamips_id", "command_line"):
-                # All key should be known, but we raise error only in debug
-                if logging.getLogger().isEnabledFor(logging.DEBUG):
-                    raise ValueError(name)
-
     def computeIdlepcs(self, callback):
         """
         Get idle-PC proposals.
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.controllerHttpGet("/nodes/{node_id}/dynamips/idlepc_proposals".format(
-            node_id=self._node_id),
-            callback,
-            timeout=240,
-            context={"router": self},
-            progressText="Computing Idle-PC values, please wait...")
+        self.controllerHttpGet("/nodes/{node_id}/dynamips/idlepc_proposals".format(node_id=self._node_id),
+                               callback,
+                               timeout=240,
+                               context={"router": self},
+                               progressText="Computing Idle-PC values, please wait...")
 
     def computeAutoIdlepc(self, callback):
         """
@@ -152,12 +113,11 @@ class Router(Node):
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.controllerHttpGet("/nodes/{node_id}/dynamips/auto_idlepc".format(
-            node_id=self._node_id),
-            callback,
-            timeout=240,
-            context={"router": self},
-            progressText="Computing Idle-PC values, please wait...")
+        self.controllerHttpGet("/nodes/{node_id}/dynamips/auto_idlepc".format(node_id=self._node_id),
+                               callback,
+                               timeout=240,
+                               context={"router": self},
+                               progressText="Computing Idle-PC values, please wait...")
 
     def idlepc(self):
         """
@@ -199,7 +159,7 @@ class Router(Node):
             else:
                 port_string = "ports"
 
-            slot_info = slot_info + "   slot {slot_number} hardware is {adapter} with {nb_ports} {port_string}\n".format(slot_number=str(slot_number),
+            slot_info = slot_info + "    slot {slot_number} hardware is {adapter} with {nb_ports} {port_string}\n".format(slot_number=str(slot_number),
                                                                                                                          adapter=adapter_name,
                                                                                                                          nb_ports=nb_ports,
                                                                                                                          port_string=port_string)
@@ -213,10 +173,10 @@ class Router(Node):
             for port_name in sorted_ports:
                 port_info = port_names[port_name]
                 if port_info.isFree():
-                    slot_info += "     {} is empty\n".format(port_name)
+                    slot_info += "      {} is empty\n".format(port_name)
                 else:
-                    slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
-                                                                                port_description=port_info.description())
+                    slot_info += "      {port_name} {port_description}\n".format(port_name=port_name,
+                                                                                 port_description=port_info.description())
 
         wic_slots = {}
         for name, value in self._settings.items():
@@ -232,7 +192,7 @@ class Router(Node):
             else:
                 port_string = "ports"
 
-            slot_info = slot_info + "   {wic_name} installed in WIC slot {wic_slot_number} with {nb_ports} {port_string}\n".format(wic_name=wic_name,
+            slot_info = slot_info + "    {wic_name} installed in WIC slot {wic_slot_number} with {nb_ports} {port_string}\n".format(wic_name=wic_name,
                                                                                                                                    wic_slot_number=wic_slot_number,
                                                                                                                                    nb_ports=nb_ports,
                                                                                                                                    port_string=port_string)
@@ -248,10 +208,10 @@ class Router(Node):
             for port_name in sorted_ports:
                 port_info = port_names[port_name]
                 if port_info.isFree():
-                    slot_info += "     {} is empty\n".format(port_name)
+                    slot_info += "      {} is empty\n".format(port_name)
                 else:
-                    slot_info += "     {port_name} {port_description}\n".format(port_name=port_name,
-                                                                                port_description=port_info.description())
+                    slot_info += "      {port_name} {port_description}\n".format(port_name=port_name,
+                                                                                 port_description=port_info.description())
 
         return slot_info
 
@@ -261,13 +221,6 @@ class Router(Node):
 
         :returns: formated string
         """
-
-        if self.status() == Node.started:
-            state = "started"
-        elif self.status() == Node.suspended:
-            state = "suspended"
-        else:
-            state = "stopped"
 
         platform = self._settings["platform"]
         router_specific_info = ""
@@ -285,25 +238,27 @@ class Router(Node):
                                                                                                                        idlesleep=self._settings["idlesleep"])
 
         info = """Router {name} is {state}
-  Local node ID is {id}
-  Server's node ID is {node_id}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
   Dynamips ID is {dynamips_id}
-  Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram} MB RAM and {nvram} KB NVRAM
-  Router's server runs on {host}, console is on port {console}, aux is on port {aux}
-  Image is {image_name}
+  Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram}MB RAM and {nvram}KB NVRAM
+  Console is on port {console} and type is {console_type}, AUX console is on port {aux}
+  IOS image is "{image_name}"
   {idlepc_info}
-  {disk0} MB disk0 size, {disk1} MB disk1 size
+  PCMCIA disks: disk0 is {disk0}MB and disk1 is {disk1}MB
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
            dynamips_id=self._dynamips_id,
-           state=state,
+           state=self.state(),
            platform=platform,
            specific_info=router_specific_info,
            ram=self._settings["ram"],
            nvram=self._settings["nvram"],
            host=self.compute().name(),
+           port=self.compute().port(),
            console=self._settings["console"],
+           console_type=self._settings["console_type"],
            aux=self._settings["aux"],
            image_name=os.path.basename(self._settings["image"]),
            idlepc_info=idlepc_info,
@@ -312,25 +267,17 @@ class Router(Node):
 
         # gather information about PA, their interfaces and connections
         slot_info = self._slot_info()
-        return info + slot_info
+
+        usage = "\n" + self._settings.get("usage")
+        return info + slot_info + usage
 
     def configFiles(self):
         """
         Name of the configuration files
         """
-        return [
-            "configs/i{}_startup-config.cfg".format(self._dynamips_id),
-            "configs/i{}_private-config.cfg".format(self._dynamips_id)
-        ]
 
-    def console(self):
-        """
-        Returns the console port for this router.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
+        return ["configs/i{}_startup-config.cfg".format(self._dynamips_id),
+                "configs/i{}_private-config.cfg".format(self._dynamips_id)]
 
     def auxConsole(self):
         """

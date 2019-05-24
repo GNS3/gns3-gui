@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>655</width>
-    <height>696</height>
+    <width>941</width>
+    <height>877</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QEMU VM configuration</string>
+   <string>QEMU VM template configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -24,13 +24,30 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
-       <property name="margin">
-        <number>10</number>
-       </property>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiRamLabel">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiNameLabel">
          <property name="text">
-          <string>RAM:</string>
+          <string>Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="uiNameLineEdit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiDefaultNameFormatLabel">
+         <property name="text">
+          <string>Default name format:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
+         <property name="text">
+          <string>Symbol:</string>
          </property>
         </widget>
        </item>
@@ -51,8 +68,22 @@
          </item>
         </layout>
        </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
+         <property name="text">
+          <string>Category:</string>
+         </property>
+        </widget>
+       </item>
        <item row="3" column="1">
         <widget class="QComboBox" name="uiCategoryComboBox"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiRamLabel">
+         <property name="text">
+          <string>RAM:</string>
+         </property>
+        </widget>
        </item>
        <item row="4" column="1">
         <widget class="QSpinBox" name="uiRamSpinBox">
@@ -70,60 +101,10 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiSymbolLabel">
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiCPULabel">
          <property name="text">
-          <string>Symbol:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="8" column="1">
-        <widget class="QComboBox" name="uiConsoleTypeComboBox">
-         <item>
-          <property name="text">
-           <string>telnet</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>vnc</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>spice</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="uiConsoleTypeLabel">
-         <property name="text">
-          <string>Console type:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="uiBootPriorityLabel">
-         <property name="text">
-          <string>Boot priority:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiQemuListLabel">
-         <property name="text">
-          <string>Qemu binary:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiCategoryLabel">
-         <property name="text">
-          <string>Category:</string>
+          <string>vCPUs:</string>
          </property>
         </widget>
        </item>
@@ -137,17 +118,91 @@
          </property>
         </widget>
        </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiQemuListLabel">
+         <property name="text">
+          <string>Qemu binary:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QComboBox" name="uiQemuListComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="uiBootPriorityLabel">
+         <property name="text">
+          <string>Boot priority:</string>
+         </property>
+        </widget>
+       </item>
        <item row="7" column="1">
         <widget class="QComboBox" name="uiBootPriorityComboBox"/>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiNameLabel">
+       <item row="8" column="0">
+        <widget class="QLabel" name="uiOnCloseLabel">
          <property name="text">
-          <string>Name:</string>
+          <string>On close:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QComboBox" name="uiOnCloseComboBox"/>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
          </property>
         </widget>
        </item>
        <item row="9" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QComboBox" name="uiConsoleTypeComboBox">
+           <item>
+            <property name="text">
+             <string>telnet</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>vnc</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>spice</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>spice+agent</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>none</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="uiConsoleAutoStartCheckBox">
+           <property name="text">
+            <string>Auto start console</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="10" column="1">
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -160,44 +215,14 @@
          </property>
         </spacer>
        </item>
-       <item row="6" column="1">
-        <widget class="QComboBox" name="uiQemuListComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiCPULabel">
-         <property name="text">
-          <string>vCPUs:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiDefaultNameFormatLabel">
-         <property name="text">
-          <string>Default name format:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="uiHddTab">
       <attribute name="title">
        <string>HDD</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="margin">
-        <number>10</number>
-       </property>
-       <item>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="0" column="0">
         <widget class="QGroupBox" name="uiHdaGroupBox">
          <property name="title">
           <string>HDA (Primary Master)</string>
@@ -232,6 +257,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="uiHdaDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="0">
@@ -247,7 +279,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
         <widget class="QGroupBox" name="uiHdbgroupBox">
          <property name="title">
           <string>HDB (Primary Slave)</string>
@@ -282,6 +314,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="uiHdbDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="0">
@@ -297,7 +336,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="2" column="0">
         <widget class="QGroupBox" name="uiHdcGroupBox">
          <property name="title">
           <string>HDC (Secondary Master)</string>
@@ -332,6 +371,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="uiHdcDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="0">
@@ -347,7 +393,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="3" column="0">
         <widget class="QGroupBox" name="uiHddGroupBox">
          <property name="title">
           <string>HDD (Secondary Slave)</string>
@@ -382,6 +428,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="uiHddDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="0" rowspan="2">
@@ -397,7 +450,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="4" column="0">
         <spacer name="spacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -473,53 +526,6 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <property name="margin">
-        <number>10</number>
-       </property>
-       <item row="6" column="1">
-        <widget class="QComboBox" name="uiAdapterTypesComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiLegacyNetworkingCheckBox">
-         <property name="text">
-          <string>Use the legacy networking mode</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="uiMacAddrLineEdit"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiPortSegmentSizeLabel">
-         <property name="text">
-          <string>Segment size:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiAdapterTypesLabel">
-         <property name="text">
-          <string>Type:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
-         <property name="maximum">
-          <number>128</number>
-         </property>
-         <property name="singleStep">
-          <number>4</number>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="uiAdaptersLabel">
          <property name="text">
@@ -527,12 +533,15 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiMacAddrLabel">
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiFirstPortNameLabel">
          <property name="text">
-          <string>Base MAC:</string>
+          <string>First port name:</string>
          </property>
         </widget>
+       </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QLineEdit" name="uiFirstPortNameLineEdit"/>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="uiPortNameFormatLabel">
@@ -544,7 +553,92 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="2" column="1" colspan="2">
+        <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiPortSegmentSizeLabel">
+         <property name="text">
+          <string>Segment size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiMacAddrLabel">
+         <property name="text">
+          <string>Base MAC:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" colspan="2">
+        <widget class="QLineEdit" name="uiMacAddrLineEdit"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiAdapterTypesLabel">
+         <property name="text">
+          <string>Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiCustomAdaptersLabel">
+         <property name="text">
+          <string>Custom adapters:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" colspan="2">
+        <widget class="QPushButton" name="uiCustomAdaptersConfigurationPushButton">
+         <property name="text">
+          <string>&amp;Configure custom adapters</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="3">
+        <widget class="QCheckBox" name="uiLegacyNetworkingCheckBox">
+         <property name="text">
+          <string>Use the legacy networking mode</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>261</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="1" colspan="2">
+        <widget class="QComboBox" name="uiAdapterTypesComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
+         <property name="maximum">
+          <number>128</number>
+         </property>
+         <property name="singleStep">
+          <number>4</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2">
         <widget class="QSpinBox" name="uiAdaptersSpinBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -560,46 +654,13 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>261</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiFirstPortNameLabel">
-         <property name="text">
-          <string>First port name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiFirstPortNameLineEdit"/>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="uiAdvancedSettingsTab">
       <attribute name="title">
-       <string>Advanced settings</string>
+       <string>Advanced</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="margin">
-        <number>10</number>
-       </property>
        <item>
         <widget class="QGroupBox" name="uiLinuxBootGroupBox">
          <property name="title">
@@ -814,17 +875,9 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
-            <property name="text">
-             <string>Enable ACPI shutdown (experimental)</string>
-            </property>
-           </widget>
-          </item>
          </layout>
          <zorder>uiQemuOptionsLineEdit</zorder>
          <zorder>uiQemuOptionsLabel</zorder>
-         <zorder>uiACPIShutdownCheckBox</zorder>
          <zorder>uiBaseVMCheckBox</zorder>
         </widget>
        </item>
@@ -840,6 +893,16 @@
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="uiUsageTab">
+      <attribute name="title">
+       <string>Usage</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPlainTextEdit" name="uiUsageTextEdit"/>
        </item>
       </layout>
      </widget>

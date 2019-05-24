@@ -25,7 +25,6 @@ from gns3.node import Node
 
 
 class EtherSwitchRouter(Router):
-
     """
     EtherSwitch router.
 
@@ -69,10 +68,5 @@ class EtherSwitchRouter(Router):
         return [Node.switches]
 
     def __str__(self):
-
-        return "EtherSwitch router"
-
-    @staticmethod
-    def symbolName():
 
         return "EtherSwitch router"

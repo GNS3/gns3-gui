@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_preferences_page.ui'
 #
-# Created: Sun Mar 27 12:03:40 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DockerVMPreferencesPageWidget(object):
     def setupUi(self, DockerVMPreferencesPageWidget):
         DockerVMPreferencesPageWidget.setObjectName("DockerVMPreferencesPageWidget")
-        DockerVMPreferencesPageWidget.resize(546, 455)
+        DockerVMPreferencesPageWidget.resize(575, 435)
         DockerVMPreferencesPageWidget.setAccessibleDescription("")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(DockerVMPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -53,20 +52,24 @@ class Ui_DockerVMPreferencesPageWidget(object):
         self.uiDockerVMInfoTreeWidget.setObjectName("uiDockerVMInfoTreeWidget")
         self.uiDockerVMInfoTreeWidget.header().setVisible(False)
         self.verticalLayout.addWidget(self.uiDockerVMInfoTreeWidget)
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.uiNewDockerVMPushButton = QtWidgets.QPushButton(self.widget)
         self.uiNewDockerVMPushButton.setObjectName("uiNewDockerVMPushButton")
-        self.horizontalLayout_5.addWidget(self.uiNewDockerVMPushButton)
+        self.horizontalLayout.addWidget(self.uiNewDockerVMPushButton)
+        self.uiCopyDockerVMPushButton = QtWidgets.QPushButton(self.widget)
+        self.uiCopyDockerVMPushButton.setEnabled(False)
+        self.uiCopyDockerVMPushButton.setObjectName("uiCopyDockerVMPushButton")
+        self.horizontalLayout.addWidget(self.uiCopyDockerVMPushButton)
         self.uiEditDockerVMPushButton = QtWidgets.QPushButton(self.widget)
         self.uiEditDockerVMPushButton.setEnabled(False)
         self.uiEditDockerVMPushButton.setObjectName("uiEditDockerVMPushButton")
-        self.horizontalLayout_5.addWidget(self.uiEditDockerVMPushButton)
+        self.horizontalLayout.addWidget(self.uiEditDockerVMPushButton)
         self.uiDeleteDockerVMPushButton = QtWidgets.QPushButton(self.widget)
         self.uiDeleteDockerVMPushButton.setEnabled(False)
         self.uiDeleteDockerVMPushButton.setObjectName("uiDeleteDockerVMPushButton")
-        self.horizontalLayout_5.addWidget(self.uiDeleteDockerVMPushButton)
-        self.verticalLayout.addLayout(self.horizontalLayout_5)
+        self.horizontalLayout.addWidget(self.uiDeleteDockerVMPushButton)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         self.verticalLayout_2.addWidget(self.splitter)
 
         self.retranslateUi(DockerVMPreferencesPageWidget)
@@ -75,11 +78,12 @@ class Ui_DockerVMPreferencesPageWidget(object):
 
     def retranslateUi(self, DockerVMPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
-        DockerVMPreferencesPageWidget.setWindowTitle(_translate("DockerVMPreferencesPageWidget", "Docker Containers"))
-        DockerVMPreferencesPageWidget.setAccessibleName(_translate("DockerVMPreferencesPageWidget", "Docker VM templates"))
+        DockerVMPreferencesPageWidget.setWindowTitle(_translate("DockerVMPreferencesPageWidget", "Docker containers"))
+        DockerVMPreferencesPageWidget.setAccessibleName(_translate("DockerVMPreferencesPageWidget", "Docker container templates"))
         self.uiDockerVMInfoTreeWidget.headerItem().setText(0, _translate("DockerVMPreferencesPageWidget", "1"))
         self.uiDockerVMInfoTreeWidget.headerItem().setText(1, _translate("DockerVMPreferencesPageWidget", "2"))
         self.uiNewDockerVMPushButton.setText(_translate("DockerVMPreferencesPageWidget", "&New"))
+        self.uiCopyDockerVMPushButton.setText(_translate("DockerVMPreferencesPageWidget", "&Copy"))
         self.uiEditDockerVMPushButton.setText(_translate("DockerVMPreferencesPageWidget", "&Edit"))
         self.uiDeleteDockerVMPushButton.setText(_translate("DockerVMPreferencesPageWidget", "&Delete"))
 

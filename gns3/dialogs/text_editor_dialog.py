@@ -19,7 +19,7 @@
 Text editor to edit Note items.
 """
 
-from ..qt import QtCore, QtWidgets, qslot
+from ..qt import QtCore, QtWidgets, qslot, sip_is_deleted
 from ..ui.text_editor_dialog_ui import Ui_TextEditorDialog
 
 
@@ -98,6 +98,8 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         """
 
         for item in self._items:
+            if sip_is_deleted(item):
+                continue
             item.setFont(self.uiPlainTextEdit.font())
             if self.uiApplyColorToAllItemsCheckBox.isChecked():
                 item.setDefaultTextColor(self._color)

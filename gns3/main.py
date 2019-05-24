@@ -90,13 +90,13 @@ def locale_check():
         log.error("could not determine the current locale: {}".format(e))
     if not language and not encoding:
         try:
-            log.warn("could not find a default locale, switching to C.UTF-8...")
+            log.warning("could not find a default locale, switching to C.UTF-8...")
             locale.setlocale(locale.LC_ALL, ("C", "UTF-8"))
         except locale.Error as e:
             log.error("could not switch to the C.UTF-8 locale: {}".format(e))
             raise SystemExit
     elif encoding != "UTF-8":
-        log.warn("your locale {}.{} encoding is not UTF-8, switching to the UTF-8 version...".format(language, encoding))
+        log.warning("your locale {}.{} encoding is not UTF-8, switching to the UTF-8 version...".format(language, encoding))
         try:
             locale.setlocale(locale.LC_ALL, (language, "UTF-8"))
         except locale.Error as e:
@@ -137,15 +137,13 @@ def main():
         # packaged binary
         frozen_dir = os.path.dirname(os.path.abspath(sys.executable))
         if sys.platform.startswith("darwin"):
-            frozen_dirs = [
-                frozen_dir,
-                os.path.normpath(os.path.join(frozen_dir, '..', 'Resources'))
-            ]
+            frozen_dirs = [frozen_dir]
         elif sys.platform.startswith("win"):
             frozen_dirs = [
                 frozen_dir,
                 os.path.normpath(os.path.join(frozen_dir, 'dynamips')),
-                os.path.normpath(os.path.join(frozen_dir, 'vpcs'))
+                os.path.normpath(os.path.join(frozen_dir, 'vpcs')),
+                os.path.normpath(os.path.join(frozen_dir, 'traceng'))
             ]
 
         os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
@@ -267,7 +265,10 @@ def main():
     # issue when people run GNS3 from the .dmg
     if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
         if not os.path.realpath(sys.executable).startswith("/Applications"):
-            QtWidgets.QMessageBox.critical(None, "Error", "You need to copy GNS3 in your /Applications folder before using it.")
+            error_message = "GNS3.app must be moved to the '/Applications' folder before it can be used"
+            QtWidgets.QMessageBox.critical(False, "Loading error", error_message)
+            QtCore.QTimer.singleShot(0, app.quit)
+            app.exec_()
             sys.exit(1)
 
     global mainwindow
@@ -291,7 +292,6 @@ def main():
     mainwindow.show()
 
     exit_code = app.exec_()
-
     signal.signal(signal.SIGINT, orig_sigint)
     signal.signal(signal.SIGTERM, orig_sigterm)
 
@@ -300,7 +300,7 @@ def main():
     # We force deleting the app object otherwise it's segfault on Fedora
     del app
     # We force a full garbage collect before exit
-    # for unknow reason otherwise Qt Segfault on OSX in some
+    # for unknown reason otherwise Qt Segfault on OSX in some
     # conditions
     import gc
     gc.collect()

@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_node_preferences_page.ui'
 #
-# Created: Sun Jul 10 16:48:58 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +12,6 @@ class Ui_VPCSNodePageWidget(object):
     def setupUi(self, VPCSNodePageWidget):
         VPCSNodePageWidget.setObjectName("VPCSNodePageWidget")
         VPCSNodePageWidget.resize(546, 455)
-        VPCSNodePageWidget.setAccessibleDescription("")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(VPCSNodePageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(VPCSNodePageWidget)

@@ -22,7 +22,8 @@ Default general settings.
 import os
 import sys
 import uuid
-import platform
+import distro
+import shutil
 
 # Default projects directory location
 DEFAULT_PROJECTS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/projects"))
@@ -41,6 +42,7 @@ DEFAULT_APPLIANCES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/appliances
 
 DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
 DEFAULT_LOCAL_SERVER_PORT = 3080
+DEFAULT_DELAY_CONSOLE_ALL = 500
 
 # Pre-configured Telnet console commands on various OSes
 if sys.platform.startswith("win"):
@@ -53,9 +55,10 @@ if sys.platform.startswith("win"):
         # windows 32-bit
         program_files_x86 = program_files = os.environ["PROGRAMFILES"]
 
-    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (included with GNS3)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
+    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (normal standalone version)': 'putty_standalone.exe -telnet %h %p -loghost "%d"',
+                                             'Putty (custom deprecated version)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
                                              'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "telnet %h %p"'.format(program_files_x86),
-                                             'Royal TS': '{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:%h /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="%p" /p:Name="%d"'.format(program_files),
+                                             'Royal TS': r'{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:%h /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="%p" /p:Name="%d"'.format(program_files),
                                              'SuperPutty': r'SuperPutty.exe -telnet "%h -P %p -wt \"%d\""',
                                              'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /N "%d" /T /TELNET %h %p'.format(program_files),
                                              'SecureCRT (personal profile)': r'"{}\AppData\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "%d" /TELNET %h %p'.format(userprofile),
@@ -66,16 +69,27 @@ if sys.platform.startswith("win"):
                                              'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:%h:%p" /TABBED "/TITLE:%d"'.format(program_files_x86)}
 
     # default on Windows
-    DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (included with GNS3)"]
+    if shutil.which("Solar-PuTTY.exe"):
+        # Solar-Putty is the default if it is installed.
+        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"] = 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"'
+        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"]
+        DEFAULT_DELAY_CONSOLE_ALL = 1500
+    else:
+        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3 downloaded from gns3.com)"] = 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"'
+        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (normal standalone version)"]
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
-        'Terminal': r"""osascript -e 'tell application "Terminal"'"""
+        'Terminal': r"""osascript"""
+                    r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
+                    r""" -e 'tell application "Terminal"'"""
                     r""" -e 'activate'"""
-                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=\"" & (system attribute "PATH") & "\" telnet %h %p ; exit"'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=" & quoted form of posix_path & " telnet %h %p ; exit"'"""
                     r""" -e 'end tell'""",
-        'Terminal tabbed (experimental)': r"""osascript -e 'tell application "Terminal"'"""
+        'Terminal tabbed (experimental)': r"""osascript"""
+                    r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
+                    r""" -e 'tell application "Terminal"'"""
                     r""" -e 'activate'"""
                     r""" -e 'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down'"""
                     r""" -e 'if (the (count of the window) = 0) then'"""
@@ -87,9 +101,11 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'repeat while the busy of window 1 = true'"""
                     r""" -e 'delay 0.01'"""
                     r""" -e 'end repeat'"""
-                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=\"" & (system attribute "PATH") & "\" telnet %h %p ; exit" in window 1'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=" & quoted form of posix_path & " telnet %h %p ; exit" in window 1'"""
                     r""" -e 'end tell'""",
-        'iTerm2 2.x': r"""osascript -e 'tell application "iTerm"'"""
+        'iTerm2 2.x': r"""osascript"""
+                    r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
+                    r""" -e 'tell application "iTerm"'"""
                     r""" -e 'activate'"""
                     r""" -e 'if (count of terminals) = 0 then'"""
                     r""" -e '  set t to (make new terminal)'"""
@@ -99,12 +115,14 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'tell t'"""
                     r""" -e '  set s to (make new session at the end of sessions)'"""
                     r""" -e '  tell s'"""
-                    r""" -e '    exec command "sh -c \"PATH=\\\"" & (system attribute "PATH") & "\\\" telnet %h %p"'"""
-
+                    r""" -e '    exec command "sh"'"""
+                    r""" -e '    write text "PATH=" & quoted form of posix_path & " exec telnet %h %p"'"""
                     r""" -e '  end tell'"""
                     r""" -e 'end tell'"""
                     r""" -e 'end tell'""",
-        'iTerm2 3.x': r"""osascript -e 'tell application "iTerm"'"""
+        'iTerm2 3.x': r"""osascript"""
+                    r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
+                    r""" -e 'tell application "iTerm"'"""
                     r""" -e 'activate'"""
                     r""" -e 'if (count of windows) = 0 then'"""
                     r""" -e '   set t to (create window with default profile)'"""
@@ -116,7 +134,7 @@ elif sys.platform.startswith("darwin"):
                     r""" -e '    set s to current session'"""
                     r""" -e '    tell s'"""
                     r""" -e '        set name to "%d"'"""
-                    r""" -e '        write text "PATH=\"" & (system attribute "PATH") & "\" exec telnet %h %p"'"""
+                    r""" -e '        write text "PATH=" & quoted form of posix_path & " exec telnet %h %p"'"""
                     r""" -e '    end tell'"""
                     r""" -e 'end tell'"""
                     r""" -e 'end tell'""",
@@ -144,8 +162,8 @@ else:
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]
 
     if sys.platform.startswith("linux"):
-        distro = platform.linux_distribution()[0]
-        if distro == "Debian" or distro == "Ubuntu" or distro == "LinuxMint":
+        distro_name = distro.name()
+        if distro_name == "Debian" or distro_name == "Ubuntu" or distro_name == "LinuxMint":
             DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Gnome Terminal"]
 
 # Pre-configured VNC console commands on various OSes
@@ -153,7 +171,7 @@ if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'TightVNC (included with GNS3)': 'tvnviewer.exe %h:%p',
-        'UltraVNC': 'C:\\Program Files\\uvnc bvba\\UltraVNC\\vncviewer.exe %h:%p'
+        'UltraVNC': r'"{}\uvnc bvba\UltraVNC\vncviewer.exe" %h:%p'.format(program_files)
     }
 
     # default Windows VNC console command
@@ -168,7 +186,7 @@ elif sys.platform.startswith("darwin"):
         " -e '  open location \"vnc://%h:%p\"'"
         " -e 'end tell'",
         'Chicken of the VNC': "/Applications/Chicken.app/Contents/MacOS/Chicken %h:%p",
-        'Chicken of the VNC < 2.2': "/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p",
+        'Chicken of the VNC < 2.2': r"/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p",
         'Royal TSX': "open 'rtsx://vnc%3A%2F%2F%h:%p'",
     }
 
@@ -189,11 +207,11 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer (included with GNS3)': '"c:\\Program Files\\VirtViewer v5.0-256\\bin\\remote-viewer.exe" spice://%h:%p',
+        'Remote Viewer': r'"{}\VirtViewer v7.0-256\bin\remote-viewer.exe" spice://%h:%p'.format(program_files),
     }
 
     # default Windows SPICE console command
-    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer (included with GNS3)']
+    DEFAULT_SPICE_CONSOLE_COMMAND = PRECONFIGURED_SPICE_CONSOLE_COMMANDS['Remote Viewer']
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
@@ -217,8 +235,8 @@ WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
 
 if sys.platform.startswith("win"):
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "{}\Wireshark\wireshark.exe %c".format(os.environ["PROGRAMFILES"]),
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(os.environ["PROGRAMFILES"])}
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: r"{}\Wireshark\wireshark.exe %c".format(program_files),
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: r'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(program_files)}
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
@@ -237,11 +255,19 @@ else:
 DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
 
 DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = ""
-if sys.platform.startswith("win") and "PROGRAMFILES(X86)" in os.environ:
+if sys.platform.startswith("win"):
     # Windows 64-bit
-    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'.format(os.environ["PROGRAMFILES(X86)"])
+    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'.format(program_files_x86)
 
 STYLES = ["Charcoal", "Classic", "Legacy"]
+
+SYMBOL_THEMES = ["Classic",
+                 "Affinity-square-blue",
+                 "Affinity-square-gray",
+                 "Affinity-square-red",
+                 "Affinity-circle-blue",
+                 "Affinity-circle-gray",
+                 "Affinity-circle-red"]
 
 if sys.platform.startswith("win"):
     DEFAULT_STYLE = "Classic"
@@ -259,10 +285,10 @@ GENERAL_SETTINGS = {
     "telnet_console_command": DEFAULT_TELNET_CONSOLE_COMMAND,
     "vnc_console_command": DEFAULT_VNC_CONSOLE_COMMAND,
     "spice_console_command": DEFAULT_SPICE_CONSOLE_COMMAND,
-    "delay_console_all": 500,
+    "delay_console_all": DEFAULT_DELAY_CONSOLE_ALL,
     "hide_getting_started_dialog": False,
     "hide_setup_wizard": False,
-    "hide_new_appliance_template_button": False,
+    "hide_new_template_button": False,
     "recent_files": [],
     "recent_projects": [],
     "geometry": "",
@@ -271,7 +297,8 @@ GENERAL_SETTINGS = {
     "debug_level": 0,
     "multi_profiles": False,
     "hdpi": not sys.platform.startswith("linux"),
-    "direct_file_upload": False
+    "direct_file_upload": False,
+    "symbol_theme": "Classic"
 }
 
 NODES_VIEW_SETTINGS = {
@@ -281,16 +308,23 @@ NODES_VIEW_SETTINGS = {
 GRAPHICS_VIEW_SETTINGS = {
     "scene_width": 2000,
     "scene_height": 1000,
+    "grid_size": 75,
+    "drawing_grid_size": 25,
     "draw_rectangle_selected_item": False,
     "draw_link_status_points": True,
     "default_label_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
     "default_label_color": "#000000",
+    "default_note_font": "TypeWriter,10,-1,5,75,0,0,0,0,0",
+    "default_note_color": "#000000",
     "zoom": None,
     "show_layers": False,
     "snap_to_grid": False,
+    "snap_to_grid_on_new_project": False,
     "show_grid": False,
+    "show_grid_on_new_project": False,
     "show_interface_labels": False,
-    "show_interface_labels_on_new_project": False
+    "show_interface_labels_on_new_project": False,
+    "limit_size_node_symbols": True
 }
 
 LOCAL_SERVER_SETTINGS = {

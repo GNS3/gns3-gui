@@ -6,18 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>559</width>
-    <height>515</height>
+    <width>542</width>
+    <height>449</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>IOU Devices</string>
   </property>
   <property name="accessibleName">
-   <string>IOU Device templates</string>
-  </property>
-  <property name="accessibleDescription">
-   <string/>
+   <string>IOU device templates</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -98,11 +95,21 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QPushButton" name="uiNewIOUDevicePushButton">
            <property name="text">
             <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="uiCopyIOUDevicePushButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Copy</string>
            </property>
           </widget>
          </item>

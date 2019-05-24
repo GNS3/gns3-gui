@@ -41,7 +41,7 @@ path={}""".format(local_server_path))
 
     LocalServerConfig.instance().setConfigFile(str(tmpdir / "test.cfg"))
     LocalServer._instance = None
-    with patch("gns3.local_server.LocalServer.localServerAutoStartIfRequire"):
+    with patch("gns3.local_server.LocalServer.localServerAutoStartIfRequired"):
         local_server = LocalServer.instance()
         local_server._config_directory = str(tmpdir)
         yield local_server

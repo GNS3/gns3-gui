@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TraceNGNodeWizard</class>
+ <widget class="QWizard" name="TraceNGNodeWizard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>706</width>
+    <height>452</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>New TraceNG node template</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QWizardPage" name="uiServerWizardPage">
+   <property name="title">
+    <string>Server</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a server type to run the TraceNG node.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QGroupBox" name="uiServerTypeGroupBox">
+      <property name="title">
+       <string>Server type</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QRadioButton" name="uiRemoteRadioButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Run the TraceNG node on a remote computer</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="uiVMRadioButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Run the TraceNG node on the GNS3 VM</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="uiLocalRadioButton">
+         <property name="text">
+          <string>Run the TraceNG node on your local computer</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="uiRemoteServersGroupBox">
+      <property name="title">
+       <string>Remote server</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiRemoteServersLabel">
+         <property name="text">
+          <string>Run on:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="uiRemoteServersComboBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiNameWizardPage">
+   <property name="title">
+    <string>Name and IP address</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a descriptive name and IP address for the new TraceNG node.</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiNameLabel">
+      <property name="text">
+       <string>Name:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="uiNameLineEdit"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiIPAddressLabel">
+      <property name="text">
+       <string>IP address:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="uiIPAddressLineEdit">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>uiNameLineEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

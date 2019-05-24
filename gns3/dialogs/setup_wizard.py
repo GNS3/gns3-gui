@@ -22,8 +22,7 @@ import shutil
 from gns3.qt import QtCore, QtWidgets, QtGui, QtNetwork, qslot
 from gns3.controller import Controller
 from gns3.local_server import LocalServer
-from gns3.utils.progress_dialog import ProgressDialog
-from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker
+from gns3.utils.interfaces import interfaces
 
 from ..settings import DEFAULT_LOCAL_SERVER_HOST
 from ..ui.setup_wizard_ui import Ui_SetupWizard
@@ -62,7 +61,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         self.uiLocalServerToolButton.clicked.connect(self._localServerBrowserSlot)
 
-        self.uiGNS3VMDownloadLinkUrlLabel.setText('')
+        self.uiGNS3VMDownloadLinkUrlLabel.setText("")
         self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
         self.uiVirtualBoxRadioButton.clicked.connect(self._listVirtualBoxVMsSlot)
@@ -81,9 +80,12 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
-            address_string = address.toString()
-            if address.protocol() != QtNetwork.QAbstractSocket.IPv6Protocol:
-                self.uiLocalServerHostComboBox.addItem(address_string, address.toString())
+            if address.protocol() in [QtNetwork.QAbstractSocket.IPv4Protocol, QtNetwork.QAbstractSocket.IPv6Protocol]:
+                address_string = address.toString()
+                if address_string.startswith("169.254") or address_string.startswith("fe80"):
+                    # ignore link-local addresses
+                    continue
+                self.uiLocalServerHostComboBox.addItem(address_string, address_string)
 
         if sys.platform.startswith("darwin"):
             self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_fusion_banner.png"))
@@ -91,10 +93,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_workstation_banner.png"))
 
         if sys.platform.startswith("linux"):
-            self.uiVMRadioButton.setText("Run the topologies in an isolated and standard VM")
-            self.uiLocalRadioButton.setText("Run the topologies on my computer")
             self.uiLocalRadioButton.setChecked(True)
-            self.uiLocalLabel.setVisible(False)
+            self.uiLocalLabel.setText("Dependencies like Dynamips and Qemu must be manually installed")
 
         Controller.instance().connected_signal.connect(self._refreshLocalServerStatusSlot)
         Controller.instance().connection_failed_signal.connect(self._refreshLocalServerStatusSlot)
@@ -116,7 +116,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
     def _VMwareBannerButtonClickedSlot(self):
         if sys.platform.startswith("darwin"):
-            url = "http://send.onenetworkdirect.net/z/621394/CD225091/"
+            url = "http://send.onenetworkdirect.net/z/621395/CD225091/"
         else:
             url = "http://send.onenetworkdirect.net/z/616207/CD225091/"
         QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
@@ -201,6 +201,19 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             index = self.uiLocalServerHostComboBox.findData(local_server_settings["host"])
             if index != -1:
                 self.uiLocalServerHostComboBox.setCurrentIndex(index)
+            else:
+                if self.uiVMRadioButton.isChecked():
+                    # Try to bind with the IP address allocated for VMnet1
+                    for interface in interfaces():
+                        if "vmnet1" in interface["name"].lower():
+                            index = self.uiLocalServerHostComboBox.findText(interface["ip_address"])
+                            break
+                else:
+                    index = self.uiLocalServerHostComboBox.findText(DEFAULT_LOCAL_SERVER_HOST)
+
+                if index != -1:
+                    self.uiLocalServerHostComboBox.setCurrentIndex(index)
+
             self.uiLocalServerPortSpinBox.setValue(local_server_settings["port"])
 
         elif self.page(page_id) == self.uiRemoteControllerWizardPage:
@@ -245,14 +258,16 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
         Refresh the local server status page
         """
+
+        self.uiLocalServerTextEdit.clear()
         if Controller.instance().connected():
-            self.uiLocalServerStatusLabel.setText("Connection to local server successful")
+            self.uiLocalServerTextEdit.setText("Connection to the local GNS3 server has been successful!")
             Controller.instance().get("/gns3vm", self._getSettingsCallback)
         elif Controller.instance().connecting():
-            self.uiLocalServerStatusLabel.setText("Please wait connection to the GNS3 server")
+            self.uiLocalServerTextEdit.setText("Please wait connection to the GNS3 server...")
         else:
             local_server_settings = LocalServer.instance().localServerSettings()
-            self.uiLocalServerStatusLabel.setText("Connection to local server failed.\n* Make sure GNS3 is allowed in your firewall.\n* Go back and try to change the server port\n* Please check with a browser if you can connect to {protocol}://{host}:{port}.\n* Try to run {path} in a terminal to see if you have an error if the above does not work.".format(protocol=local_server_settings["protocol"], host=local_server_settings["host"], port=local_server_settings["port"], path=local_server_settings["path"]))
+            self.uiLocalServerTextEdit.setText("Connection to local server failed. Please try one of the following:\n\n- Make sure GNS3 is allowed to run by your firewall.\n- Go back and try to change the server host binding and/or the port\n- Check with a browser if you can connect to {protocol}://{host}:{port}.\n- Try to run {path} in a terminal to see if you have an error.".format(protocol=local_server_settings["protocol"], host=local_server_settings["host"], port=local_server_settings["port"], path=local_server_settings["path"]))
 
     def _GNS3VMSettings(self):
         return self._gns3_vm_settings
@@ -263,7 +278,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
     def _saveSettingsCallback(self, result, error=False, **kwargs):
         if error:
             if "message" in result:
-                QtWidgets.QMessageBox.critical(self, "Save settings", "Error while save settings: {}".format(result["message"]))
+                QtWidgets.QMessageBox.critical(self, "Save settings", "Error while saving settings: {}".format(result["message"]))
             return
 
     def _addSummaryEntry(self, name, value):
@@ -323,7 +338,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 return False
 
             LocalServer.instance().updateLocalServerSettings(local_server_settings)
-            LocalServer.instance().localServerAutoStartIfRequire()
+            if not LocalServer.instance().localServerAutoStartIfRequired():
+                return False
 
         elif self.currentPage() == self.uiRemoteControllerWizardPage:
             local_server_settings = LocalServer.instance().localServerSettings()

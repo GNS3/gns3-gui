@@ -17,95 +17,69 @@
 
 from .qt import QtCore
 from .controller import Controller
-from .utils.server_select import server_select
+from .local_config import LocalConfig
+from .settings import GENERAL_SETTINGS
+
 
 import logging
 log = logging.getLogger(__name__)
 
 
 class ApplianceManager(QtCore.QObject):
+    """
+    Manager for appliances.
+    """
 
     appliances_changed_signal = QtCore.Signal()
 
     def __init__(self):
+
         super().__init__()
-        self._appliance_templates = []
         self._appliances = []
         self._controller = Controller.instance()
         self._controller.connected_signal.connect(self.refresh)
         self._controller.disconnected_signal.connect(self._controllerDisconnectedSlot)
-        self.refresh()
 
-    def refresh(self):
+    def refresh(self, update=False):
+        """
+        Gets the appliances from the controller.
+        """
+
         if self._controller.connected():
-            self._controller.get("/appliances/templates", self._listApplianceTemplateCallback)
-            self._controller.get("/appliances", self._listAppliancesCallback)
+            settings = LocalConfig.instance().loadSectionSettings("MainWindow", GENERAL_SETTINGS)
+            symbol_theme = settings["symbol_theme"]
+            if update is True:
+                self._controller.get("/appliances?update=yes&symbol_theme={}".format(symbol_theme), self._listAppliancesCallback, progressText="Downloading appliances from online registry...")
+            else:
+                self._controller.get("/appliances?symbol_theme={}".format(symbol_theme), self._listAppliancesCallback)
 
     def _controllerDisconnectedSlot(self):
-        self._appliance_templates = []
+        """
+        Called when the controller has been disconnected.
+        """
+
         self._appliances = []
         self.appliances_changed_signal.emit()
 
-    def appliance_templates(self):
-        return self._appliance_templates
-
     def appliances(self):
+        """
+        Returns the appliances.
+
+        :returns: array of appliances
+        """
+
         return self._appliances
 
-    def getAppliance(self, appliance_id):
-        """
-        Look for an appliance by appliance ID
-        """
-        for appliance in self._appliances:
-            if appliance["appliance_id"] == appliance_id:
-                return appliance
-        return None
-
     def _listAppliancesCallback(self, result, error=False, **kwargs):
+        """
+        Callback to get the appliances.
+        """
+
         if error is True:
-            log.error("Error while getting appliances list: {}".format(result["message"]))
+            log.error("Error while getting appliances list: {}".format(result.get("message", "unknown")))
             return
         self._appliances = result
         self.appliances_changed_signal.emit()
-
-    def _listApplianceTemplateCallback(self, result, error=False, **kwargs):
-        if error is True:
-            log.error("Error while getting appliance templates list: {}".format(result["message"]))
-            return
-        self._appliance_templates = result
-        self.appliances_changed_signal.emit()
-
-    def createNodeFromApplianceId(self, project, appliance_id, x, y):
-        for appliance in self._appliances:
-            if appliance["appliance_id"] == appliance_id:
-                break
-
-        project_id = project.id()
-
-        if appliance.get("compute_id") is None:
-            from .main_window import MainWindow
-            server = server_select(MainWindow.instance(), node_type=appliance["node_type"])
-            if server is None:
-                return False
-            self._controller.post("/projects/" + project_id + "/appliances/" + appliance_id, self._createNodeFromApplianceCallback, {
-                "compute_id": server.id(),
-                "x": int(x),
-                "y": int(y)
-            },
-                timeout=None)
-        else:
-            self._controller.post("/projects/" + project_id + "/appliances/" + appliance_id, self._createNodeFromApplianceCallback, {
-                "x": int(x),
-                "y": int(y)
-            },
-                timeout=None)
-        return True
-
-    def _createNodeFromApplianceCallback(self, result, error=False, **kwargs):
-        if error:
-            if "message" in result:
-                log.error("Error while creating node: {}".format(result["message"]))
-            return
 
     @staticmethod
     def instance():

@@ -40,6 +40,7 @@ class ShapeItem(DrawingItem):
         self.setAcceptHoverEvents(True)
         self._border = 5
         self._edge = None
+        self._originally_movable = True
 
         if svg is None:
             self.setRect(0, 0, width, height)
@@ -60,6 +61,7 @@ class ShapeItem(DrawingItem):
         """
 
         self.update()
+        self._originally_movable = self.flags() & QtWidgets.QGraphicsItem.ItemIsMovable
         if event.pos().x() > (self.rect().right() - self._border):
             self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
             self._edge = "right"
@@ -75,7 +77,6 @@ class ShapeItem(DrawingItem):
         elif event.pos().y() > (self.rect().bottom() - self._border):
             self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
             self._edge = "bottom"
-
         QtWidgets.QGraphicsItem.mousePressEvent(self, event)
 
     def mouseReleaseEvent(self, event):
@@ -86,7 +87,7 @@ class ShapeItem(DrawingItem):
         """
 
         self.update()
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
+        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, self._originally_movable)
         self._edge = None
         QtWidgets.QGraphicsItem.mouseReleaseEvent(self, event)
 
@@ -146,8 +147,8 @@ class ShapeItem(DrawingItem):
         :param event: QGraphicsSceneHoverEvent instance
         """
 
-        # objects on the background layer don't need cursors
-        if self.zValue() >= 0:
+        # locked objects don't need cursors
+        if not self.locked():
             if event.pos().x() > (self.rect().right() - self._border):
                 self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
             elif event.pos().x() < (self.rect().left() + self._border):
@@ -166,8 +167,8 @@ class ShapeItem(DrawingItem):
         :param event: QGraphicsSceneHoverEvent instance
         """
 
-        # objects on the background layer don't need cursors
-        if self.zValue() >= 0:
+        # locked objects don't need cursors
+        if not self.locked():
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
 
     def fromSvg(self, svg):

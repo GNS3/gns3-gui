@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>546</width>
-    <height>470</height>
+    <width>767</width>
+    <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>VMware VM configuration</string>
+   <string>VMware VM template configuration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -24,20 +24,32 @@
        <string>General settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
-        <number>10</number>
-       </property>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="uiCategoryComboBox"/>
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiNameLabel">
+         <property name="text">
+          <string>Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="uiNameLineEdit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiDefaultNameFormatLabel">
+         <property name="text">
+          <string>Default name format:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
+         <property name="text">
+          <string>Symbol:</string>
+         </property>
+        </widget>
        </item>
        <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -56,14 +68,79 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiSymbolLabel">
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
-          <string>Symbol:</string>
+          <string>Category:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="3" column="1">
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QComboBox" name="uiConsoleTypeComboBox">
+           <item>
+            <property name="text">
+             <string>telnet</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>none</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="uiConsoleAutoStartCheckBox">
+           <property name="text">
+            <string>Auto start console</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiOnCloseLabel">
+         <property name="text">
+          <string>On close:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="uiOnCloseComboBox"/>
+       </item>
+       <item row="6" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
+         <property name="text">
+          <string>Start VM in headless mode</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiBaseVMCheckBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Use as a linked base VM (experimental)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -76,60 +153,6 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiNameLabel">
-         <property name="text">
-          <string>Name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiBaseVMCheckBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Use as a linked base VM (experimental)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiCategoryLabel">
-         <property name="text">
-          <string>Category:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiACPIShutdownCheckBox">
-         <property name="text">
-          <string>Enable ACPI shutdown</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QCheckBox" name="uiHeadlessModeCheckBox">
-         <property name="text">
-          <string>Start VM in headless mode</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiDefaultNameFormatLabel">
-         <property name="text">
-          <string>Default name format:</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -137,22 +160,17 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
-        <number>10</number>
-       </property>
-       <item row="2" column="2">
-        <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiAdaptersLabel">
          <property name="text">
-          <string/>
+          <string>Adapters:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiFirstPortNameLabel">
+         <property name="text">
+          <string>First port name:</string>
          </property>
         </widget>
        </item>
@@ -173,23 +191,34 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
-        <widget class="QSpinBox" name="uiAdaptersSpinBox">
-         <property name="minimum">
-          <number>0</number>
-         </property>
-         <property name="maximum">
-          <number>10</number>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Type:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
-        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
-         <property name="maximum">
-          <number>128</number>
+       <item row="5" column="0" colspan="2">
+        <widget class="QLabel" name="uiCustomAdaptersLabel">
+         <property name="text">
+          <string>Custom adapters:</string>
          </property>
-         <property name="singleStep">
-          <number>4</number>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QPushButton" name="uiCustomAdaptersConfigurationPushButton">
+         <property name="text">
+          <string>&amp;Configure custom adapters</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="3">
+        <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option will allow GNS3 to replace all adapters of the VM. This allow you to use any interface of the VM in GNS3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Allow GNS3 to override non custom VMware adapter</string>
          </property>
         </widget>
        </item>
@@ -206,14 +235,7 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiAdaptersLabel">
-         <property name="text">
-          <string>Adapters:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="2">
+       <item row="4" column="2">
         <widget class="QComboBox" name="uiAdapterTypesComboBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -223,32 +245,45 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Type:</string>
+       <item row="3" column="2">
+        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
+         <property name="maximum">
+          <number>128</number>
+         </property>
+         <property name="singleStep">
+          <number>4</number>
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="3">
-        <widget class="QCheckBox" name="uiUseAnyAdapterCheckBox">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option will allow GNS3 to replace all adapters of the VM. This allow you to use any interface of the VM in GNS3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
+       <item row="2" column="2">
+        <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
          <property name="text">
-          <string>Allow GNS3 to override non custom VMware adapter</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiFirstPortNameLabel">
-         <property name="text">
-          <string>First port name:</string>
+          <string/>
          </property>
         </widget>
        </item>
        <item row="1" column="2">
         <widget class="QLineEdit" name="uiFirstPortNameLineEdit"/>
+       </item>
+       <item row="0" column="2">
+        <widget class="QSpinBox" name="uiAdaptersSpinBox">
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>10</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Usage</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPlainTextEdit" name="uiUsageTextEdit"/>
        </item>
       </layout>
      </widget>

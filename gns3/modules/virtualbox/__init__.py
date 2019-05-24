@@ -25,33 +25,25 @@ import shutil
 
 from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
+from gns3.controller import Controller
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from ..module import Module
 from .virtualbox_vm import VirtualBoxVM
-from .settings import VBOX_SETTINGS
-from .settings import VBOX_VM_SETTINGS
+from .settings import VBOX_SETTINGS, VBOX_VM_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
 
 
 class VirtualBox(Module):
-
     """
     VirtualBox module.
     """
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
-        self._virtualbox_vms = {}
-        self._nodes = []
-
-        self.configChangedSlot()
-
-    def configChangedSlot(self):
-        # load the settings
         self._loadSettings()
 
     @staticmethod
@@ -94,7 +86,23 @@ class VirtualBox(Module):
         if not os.path.exists(self._settings["vboxmanage_path"]):
             self._settings["vboxmanage_path"] = self._findVBoxManage(self)
 
-        self._loadVirtualBoxVMs()
+        # migrate VM settings to the controller (templates are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldVMs)
+
+    def _migrateOldVMs(self):
+        """
+        Migrate local VM settings to the controller.
+        """
+
+        if self._settings.get("vms"):
+            templates = []
+            for vm in self._settings.get("vms"):
+                vm_settings = VBOX_VM_SETTINGS.copy()
+                vm_settings.update(vm)
+                templates.append(Template(vm_settings))
+            TemplateManager.instance().updateList(templates)
+            self._settings["vms"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -106,140 +114,32 @@ class VirtualBox(Module):
 
         # save some settings to the local server config file
         if self._settings["vboxmanage_path"]:
-            server_settings = {
-                "vboxmanage_path": os.path.normpath(self._settings["vboxmanage_path"])
-            }
+            server_settings = {"vboxmanage_path": os.path.normpath(self._settings["vboxmanage_path"])}
             LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)
 
-    def _loadVirtualBoxVMs(self):
-        """
-        Load the VirtualBox VMs from the client settings file.
-        """
-
-        self._virtualbox_vms = {}
-        settings = LocalConfig.instance().settings()
-        if "vms" in settings.get(self.__class__.__name__, {}):
-            for vm in settings[self.__class__.__name__]["vms"]:
-                vmname = vm.get("vmname")
-                server = vm.get("server")
-                key = "{server}:{vmname}".format(server=server, vmname=vmname)
-                if key in self._virtualbox_vms or not vmname or not server:
-                    continue
-                vm_settings = VBOX_VM_SETTINGS.copy()
-                vm_settings.update(vm)
-                # For backward compatibility we use vmname
-                if not vm_settings["name"]:
-                    vm_settings["name"] = vmname
-                # for backward compatibility before version 1.4
-                if "symbol" not in vm_settings:
-                    vm_settings["symbol"] = vm_settings.get("default_symbol", vm_settings["symbol"])
-                    vm_settings["symbol"] = vm_settings["symbol"][:-11] + ".svg" if vm_settings["symbol"].endswith("normal.svg") else vm_settings["symbol"]
-                self._virtualbox_vms[key] = vm_settings
-
-    def _saveVirtualBoxVMs(self):
-        """
-        Saves the VirtualBox VMs to the client settings file.
-        """
-
-        self._settings["vms"] = list(self._virtualbox_vms.values())
-        self._saveSettings()
-
-    def VMs(self):
-        """
-        Returns VirtualBox VMs settings.
-
-        :returns: VirtualBox VMs settings (dictionary)
-        """
-
-        return self._virtualbox_vms
-
     @staticmethod
-    def vmConfigurationPage():
+    def configurationPage():
+        """
+        Returns the configuration page for this module.
+
+        :returns: QWidget object
+        """
+
         from .pages.virtualbox_vm_configuration_page import VirtualBoxVMConfigurationPage
         return VirtualBoxVMConfigurationPage
 
-    def setVMs(self, new_virtualbox_vms):
-        """
-        Sets VirtualBox VM settings.
-
-        :param new_virtualbox_vms: VirtualBox VM settings (dictionary)
-        """
-
-        self._virtualbox_vms = new_virtualbox_vms.copy()
-        self._saveVirtualBoxVMs()
-
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
-
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
-
     @staticmethod
-    def getNodeClass(name):
+    def getNodeClass(node_type, platform=None):
         """
-        Returns the object with the corresponding name.
+        Returns the class corresponding to node type.
 
-        :param name: object name
+        :param node_type: name of the node
+        :param platform: not used
+
+        :returns: class or None
         """
 
-        if name in globals():
-            return globals()[name]
-        return None
-
-    @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "virtualbox":
+        if node_type == "virtualbox":
             return VirtualBoxVM
         return None
 
@@ -253,26 +153,11 @@ class VirtualBox(Module):
 
         return [VirtualBoxVM]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        for vbox_vm in self._virtualbox_vms.values():
-            nodes.append(
-                {"class": VirtualBoxVM.__name__,
-                 "name": vbox_vm["name"],
-                 "server": vbox_vm["server"],
-                 "symbol": vbox_vm["symbol"],
-                 "categories": [vbox_vm["category"]]}
-            )
-        return nodes
-
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 
@@ -291,3 +176,10 @@ class VirtualBox(Module):
         if not hasattr(VirtualBox, "_instance"):
             VirtualBox._instance = VirtualBox()
         return VirtualBox._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "virtualbox"

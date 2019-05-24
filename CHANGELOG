@@ -1,5 +1,288 @@
 # Change Log
 
+## 2.1.18 22/05/2019
+
+* Fix error in HTTPConnection.request for Python3.6. Fixes #2793
+* Catch more OSError/PermissionError when checking md5 on remote images. Fixes #2582
+* Fix exception when grid size is 0. Fixes #2790
+* Catch PermissionError when scanning local image directories. Fixes #2791
+* Revert "Make sure the latest PyQt5 version 5.12.x is used on Windows." Ref #2778
+
+## 2.2.0b1 21/05/2019
+
+* Change behavior when an IOU license is verified. Fixes https://github.com/GNS3/gns3-server/issues/1555
+* Fix cannot load new profile. Fixes #2784
+* Fix remote packet capture when controller is also remote. Fixes #2785
+* Set console type to "none" by default for Ethernet switches and add a warning if trying to use "telnet". Fixes https://github.com/GNS3/gns3-gui/issues/2776
+* Add tooltip for symbol theme support in general preferences. Fixes #2770
+* Support for persistent docker volumes
+
+## 2.1.17 17/05/2019
+
+* No changes.
+
+## 2.2.0a5 15/04/2019
+
+* Revert "Drop old Qemu support (Windows and macOS) and legacy ASA support." Ref https://github.com/GNS3/gns3-server/issues/1579
+* Do not make NPF or NPCAP service mandatory to start the local server on Windows.
+* Do not try to upload a local image that is already installed on the local server.
+* Back to the major.minor version for config files. Ref https://github.com/GNS3/gns3-gui/issues/2756
+* Some adjustments with compute WebSocket handling. Ref https://github.com/GNS3/gns3-server/issues/1564
+* Fix AttributeError: 'GraphicsView' object has no attribute '_import_config_dir'. Fixes #2768
+* Do not try to lock a SvgIconItem. Fixes #2766
+* Prevent locked nodes to be deleted. Fixes https://github.com/GNS3/gns3-gui/issues/2764
+* Add PuTTY 0.71 and mark GNS3 PuTTY as deprecated. Fixes #2758
+* Fix bug with IOS platform detection. Fixes #2760
+
+## 2.1.16 15/04/2019
+
+* Do not make NPF or NPCAP service mandatory to start the local server on Windows.
+* Fix OverflowError error with progress dialog. Fixes #2767
+* More fixes for stuck progress window. Fixes #2765
+* Fix adding multiple devices - stuck progress window. Fixes #2765
+* Make sure the latest PyQt5 version 5.12.x is used on Windows.
+* Show a warning when a config export is not supported. Ref #2762
+
+## 2.1.15 21/03/2019
+
+* No changes on the GUI.
+
+## 2.2.0a4 05/04/2019
+
+* Use the full version number for path to config files. Ref https://github.com/GNS3/gns3-gui/issues/2756
+* Fix error message when shutting down GUI without a started server.
+* Fix remote packet capture and make sure packet capture is stopped when deleting an NIO. Fixes https://github.com/GNS3/gns3-gui/issues/2753
+* Store config files in version specific location
+* Update pytest from 4.3.1 to 4.4.0
+* Fix error messages on closing GNS3 application. Fixes https://github.com/GNS3/gns3-gui/issues/2750
+* Fix bug when list of files for an appliance is not displayed.
+* Update 'local' to 'bundled' in server & gui, Fixes: #1561
+
+## 2.2.0a3 25/03/2019
+
+* Fix bug when changing symbol. Fixes #2740
+* Fix issue when images are not uploaded from appliance wizard. Ref https://github.com/GNS3/gns3-gui/issues/2738
+
+## 2.2.0a2 14/03/2019
+
+* Try to handle stacked widget layout differently. Ref #2605
+* Early support for symbol themes.
+* Download custom appliance symbols from GitHub Fix symbol cache issue. Ref https://github.com/GNS3/gns3-gui/issues/2671 Fix temporary directory for symbols was not deleted Fix temporary appliance file was not deleted
+* New export project wizard.
+* Update paths for binaries moved to the MacOS directory in GNS3.app
+* Prevent to change layer position for locked items. Ref #2679
+* Display available appliances in a hierarchical folder structure. Fixes #2702
+* Handle locking/unlocking items independently from the layer position.
+* Better description to why an appliance cannot be installed.
+* Force jsonschema dependency to 2.6.0
+* Fix broken idle-pc support. Fixes #1515
+
+## 2.2.0a1 29/01/2019
+
+* Fix default NAT interface not restored on Windows. Fixes #2681
+* Merge and improvements to the setup wizard. Fixes #2676.
+* Adjust the setup wizard (VMware image size, layouts).
+* Refactor appliance wizard.
+* Natural sorting support for custom adapters tree widget.
+* Add the word "template" to configuration dialog titles.
+* Reorder node contextual menu.
+* Option to limit the size of node symbols (activated by default). Ref #2674.
+* Resize SVG node symbol only when height is above 80px. Ref #2674 Work on str instead of binary when resizing SVG symbol.
+* Automatically resize SVG symbols that are too big. Ref #2674.
+* Bigger new template wizard.
+* Fix DeprecationWarning: invalid escape sequence. Fixes https://github.com/GNS3/gns3-gui/issues/2670
+* Use theme icons in other contextual menus. Fixes #2669
+* Change some text regarding appliance installation.
+* Handle errors when creating template from appliance.
+* Template creation from an appliance.
+* Basic support to create new template from appliance.
+* Fix race condition when trying to automatically open a console and the project is already running. Fixes #1493.
+* Fix issue with IOS c7200 templates and usage variable.
+* Add usage instructions to node tooltip. Ref #2662.
+* Smaller node info dialog.
+* New node information dialog to display general, usage and command line information. Ref https://github.com/GNS3/gns3-gui/issues/2662 https://github.com/GNS3/gns3-gui/issues/2656
+* Support "usage" field for Dynamips, IOU, VirtualBox and VMware. Fixes https://github.com/GNS3/gns3-gui/issues/2657
+* Add "new template" entry to File menu. Fixes #2658
+* Fix bug with filter in add template. Fixes #2651.
+* Fix missing method '_newApplianceActionSlot'. Fixes #2643.
+* Use "template" to name what we use to create new nodes.
+* Use project instead of topology where appropriate.
+* Make sure nothing is named "compute server".
+* Use "node" instead of "appliance" for grid support.
+* Support for differing grid sizes for appliances and drawings. Requires corresponding commit on gns3-server.
+* New projects can be created with show grid/snap to grid.
+* Disallow changing layer of a locked object. Ref #2513.
+* Cosmetic changes regarding appliances.
+* Fix issue when duplicating an appliance on GUI side.
+* Fix issue to access configuration pages for Ethernet switch and hub appliances.
+* Fix small bugs when using the new appliance management API.
+* Fix bug with custom adapters and categories for Docker VM. Fixes https://github.com/GNS3/gns3-gui/issues/2613
+* Fix bug with categories with Docker appliances.
+* Schema validation for appliance API. Ref #1427.
+* Remove generic controller settings API endpoint.
+* Fix conflict between the two websocket streams (project & controller).
+* Fix platform.linux_distribution() is deprecated. Fixes https://github.com/GNS3/gns3-gui/issues/2578
+* Allow multiple appliances to be installed. Ref #2490
+* Add more information about appliance templates.
+* New appliance wizard to install an appliance from different sources. Ref #2490
+* Redesign appliance handling part 1. Ref #2490  - Removed appliance templates from device dock  - Use new controller notification stream  - Fixed device update and remove from device dock
+* Fix "Network session error" issues. Fixes #2560.
+* Set default layer for newly created nodes to 1 and 2 for all other drawings. Ref #2513.
+* Deactivate TraceNG module
+* Main menu actions to WebUI and Light Web Interface
+* Enable TraceNG module
+* Add Solar-Putty command line. Ref #2519.
+* Fix issues when locking/unlocking items. Ref #2513.
+* Fix tests for default note font/color.
+* Console support for clouds (to connect to external devices or services). Fixes #2500.
+* Fix LabelItem tests.
+* Separate appliance font from note font. Fixes #2477.
+* Do not include spaces in link description (%d replacement) for packet analyzer command. Ref #2485.
+* Fix error when trying to open project. Fixes #2508
+* Launch packet capture analyzer command without creating pipe.
+* Streamline appliance wizard. Fixes #2224.
+* Fix "Node list view not updated when renaming or deleting appliance template". Fixes #2356.
+* Automatically resize the Custom adapters configuration dialog. Fixes #2467.
+* Change size of custom adapters configuration dialog. Ref #2467.
+* Improve node tooltips. Fixes #2462.
+* Do not activate "console auto start" by default. Ref #1910.
+* Support for console auto start. Fixes #1910
+* Add custom_adapters setting support for appliance files. Ref #2361.
+* Possibility to customize port names and adapter types for Qemu, VirtualBox, VMware and Docker. Fixes #2361. MAC addresses can customized for Qemu as well.
+* Allow to have the projects with the same name in different locations. Fixes #2380.
+* Save state feature for VirtualBox and VMware. New "On close" setting to select the action to execute when closing/stopping a Qemu/VirtualBox/VMware VM.
+* Support for suspend to disk / resume (Qemu). Ref #725.
+* Fix bug with 'none' console type for Ethernet switch. Fix some tests related to traceng.
+* Allow to resize a Qemu VM disk (extend only). Ref #2382.
+* Allow to select the default NAT interface in preferences for local server.
+* Fix missing lock and unlock icons in resources.
+* Consistent icon styles for contextual menu. Fixes #1272.
+* Spice with agent support for Qemu VMs. Fixes #2355.
+* Fix zoom-in zoom-out step values. Ref #2457.
+* Support for console type "none" for all VMs. Fixes #2452.
+* Allow to copy Dynamips, IOU, Qemu and Docker templates in preferences. Fixes #2451.
+* Support for none console type (Qemu & Docker only)
+* Support Qemu with HAXM acceleration.
+* Use PyQt 5.10 and change AV build to use MSVS2017
+* PyQt5.10 support, Ref. #2434
+* Allow to accept a different md5 hash than the one in the appliance file. Ref. server#1246
+* Critical information during upload file with different md5, Ref. #1246
+* Restore locked item state.
+* Bump to version 2.2.0dev1 & refresh resources/ui files.
+* Have the contextual menu use icons from the active style. Ref #1272.
+* Individually lock or unlock an item on the scene. Fixes #1228.
+* Improve lock and unlock all items so some actions can still be performed on objects. Fixes #1134.
+* Lock or unlock all items button. Fixes #1134.
+* Move console to all devices icon after the separation bar. Ref #1272
+* Lock icons. Ref #1134.
+
+## 2.1.14 27/02/2019
+
+* Better description to why an appliance cannot be installed.
+
+## 2.1.13 26/02/2019
+
+* Disable computer hibernation detection mechanism. Ref #2678
+* Add some advice for request timeout message. Fixes #2652
+* Show/Hide interface labels when status points are not shown. Fixes #2690
+* Do not print critical message twice on stderr. Replace QMessageBox calls with no parent by log.error()/log.warning().
+* Show critical messages before the main window runs.
+* Avoid using PyQt5.Qt, which imports unneeded stuff. Fixes #2592
+* Fix SIP import error with recent PyQt versions. Fixes #2709
+* Upgrade to Qt 5.12. Fixes #2636
+* Adjust the setup wizard (VMware image size, layouts).
+
+## 2.1.12 23/01/2019
+
+* Option to resize SVG symbols that are too big (height above 80px, activated by default). Ref #2674.
+* Update VMware banners and links.
+* Allow users to refresh the template list in the nodes view panel.
+* Fix Dynamips decompress doesn't work with relative images. Fixes #2648.
+* Update download URL for "Check For Update".
+
+## 2.1.11 28/09/2018
+
+* Handle deleted SIP objects.
+* Update paths for UltraVNC and VirtViewer.
+* Indicate if Solar-PuTTY is included or not. Fixes #2595
+* Fix bad link to installation instructions in README.rst. Fixes #2590
+* Downgrade to Qt 5.9. Fixes #2592.
+
+## 2.1.10 15/09/2018
+
+* Fix small errors like unhandled exceptions etc.
+* Fix when appliance version is not available for Dynamips/IOU/Qemu. Fixes #2585.
+* Fix issue when installing appliance with no version selected. Fixes #2585.
+* Check for existing appliance name across all emulator types. Fixes #2584.
+* Improve the invalid port format detection. Fixes https://github.com/GNS3/gns3-gui/issues/2580
+* Catch OSError/PermissionError when checking md5 on remote image. Fixes #2582.
+* Fix UnicodeDecodeError in file editor. Fixes #2581.
+* Catch import error for win32serviceutil. Fixes #2583.
+* Fix bug with empty project ID when creating a new node. Fixes #2366
+* Fix various small errors, mostly about non-existing C/C++ objects.
+* Send extra controller and compute information in crash reports.
+* Update setup.py and fix minor issues.
+* Set the default delay console all value to 1500ms if using Solar-PuTTY.
+* Make Solar-Putty the default if installed. Ref #2519.
+* Fix issue with custom appliance. Fixes https://github.com/GNS3/gns3-registry/issues/361
+* Forbid controller and compute servers to be different versions. Report last compute server error to clients and display in the server summary.
+* Fix issue with appliance categories. Fixes https://github.com/GNS3/gns3-registry/issues/361
+* Add compute information to crash reports.
+* Add controller version in Sentry bug reports.
+* Backport: Fix "Network session error" issues. Fixes #2560.
+* Add SolarPutty command line. Fixes #2519.
+* Add missing Qemu boot priority values. Fixes https://github.com/GNS3/gns3-server/issues/1385
+* Update PyQt5 from version 5.8 to version 5.10. Fixes #2564.
+
+## 2.1.9 13/08/2018
+
+* Fix incorrect short port names in topology summary. Fixes https://github.com/GNS3/gns3-gui/issues/2562
+* Add compute version in server summary tooltip.
+* Fix test for Qemu boot priority. Fixes #2548.
+* Fix boot priority missing when installing an appliance. Fixes #2548.
+* Support PATH with UTF-8 characters in OSX telnet console, fixes #2537
+* Allow users to accept different MD5 hashes for preconfigured appliances. Fixes #2526.
+* Do not try to update drawing if it is being deleted. Ref #2483.
+* Catch exception when loading invalid appliance file.
+
+## 2.1.8 14/06/2018
+
+* Add error information when cannot access/read IOS/IOU config file. Ref #2501
+* Fallback when using process name to bring console to front.
+* Use process name to bring console to front. Fixes #2514.
+
+## 2.1.7 12/06/2018
+
+* Do not try to update link if it is being deleted. Fixes #2483.
+* Fix can't add SVG image to project. Fixes #2502
+* Remove unwanted trailing characters and other white spaces when reading .md5sum files. Fixes #2498.
+* Update interface sequence number check. Fixes #2491.
+* Logo should not have context menu, Fixes: #2507
+* Update logo position only when changes, Fixes: #2506
+
+## 2.1.6 22/05/2018
+
+* Ask for global variables when project is loaded
+* Add/Edit global variables of project
+* Rename tabs at Edit Project
+* Global variables tab on Edit project
+* Support of supplier logo and url
+* Add missing crowdfunder name in About dialog.
+* Project variables and supplier
+* No timeout when duplicating a project.
+* No timeout when restoring snapshot.
+* Add advanced settings for docker and ExtraHosts param, Ref. #2482
+* Replace "not supported" by "none" in topology summary view.
+
+## 2.1.5 18/04/2018
+
+* Fix Qemu binary list locks when a version is deleted. Fixes #2474.
+* Fix invalid answer from the PyPi server. Fixes #2473.
+* Fix wrong wizard page name.
+* Grid size support for projects. Fixes #2469.
+* Remove 'include INSTALL' from MANIFEST. Fixes #2470.
+* Check for valid IP address and prevent to run on non-Windows platforms.
+
 ## 2.1.4 12/03/2018
 
 * Update node on server on any change, Fixes: #2429

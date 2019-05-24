@@ -21,10 +21,11 @@ Link items are graphical representation of a link on the QGraphicsScene
 """
 
 import math
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
+from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot, sip_is_deleted
 
 from ..packet_capture import PacketCapture
 from ..dialogs.filter_dialog import FilterDialog
+from ..utils.get_icon import get_icon
 
 
 class SvgIconItem(QtSvg.QGraphicsSvgItem):
@@ -35,7 +36,8 @@ class SvgIconItem(QtSvg.QGraphicsSvgItem):
 
     def mousePressEvent(self, event):
 
-        self.parentItem().mousePressEvent(event)
+        if self.parentItem():
+            self.parentItem().mousePressEvent(event)
         event.accept()
 
 
@@ -222,14 +224,14 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         if not self._link.capturing():
             # start capture
             start_capture_action = QtWidgets.QAction("Start capture", menu)
-            start_capture_action.setIcon(QtGui.QIcon(':/icons/capture-start.svg'))
+            start_capture_action.setIcon(get_icon('capture-start.svg'))
             start_capture_action.triggered.connect(self._startCaptureActionSlot)
             menu.addAction(start_capture_action)
 
         if self._link.capturing():
             # stop capture
             stop_capture_action = QtWidgets.QAction("Stop capture", menu)
-            stop_capture_action.setIcon(QtGui.QIcon(':/icons/capture-stop.svg'))
+            stop_capture_action.setIcon(get_icon('capture-stop.svg'))
             stop_capture_action.triggered.connect(self._stopCaptureActionSlot)
             menu.addAction(stop_capture_action)
 
@@ -248,25 +250,25 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         if self._link.suspended() is False:
             # Edit filters
             filter_action = QtWidgets.QAction("Packet filters", menu)
-            filter_action.setIcon(QtGui.QIcon(':/icons/filter.svg'))
+            filter_action.setIcon(get_icon('filter.svg'))
             filter_action.triggered.connect(self._filterActionSlot)
             menu.addAction(filter_action)
 
             # Suspend link
             suspend_action = QtWidgets.QAction("Suspend", menu)
-            suspend_action.setIcon(QtGui.QIcon(':/icons/pause.svg'))
+            suspend_action.setIcon(get_icon('pause.svg'))
             suspend_action.triggered.connect(self._suspendActionSlot)
             menu.addAction(suspend_action)
         else:
             # Resume link
             resume_action = QtWidgets.QAction("Resume", menu)
-            resume_action.setIcon(QtGui.QIcon(':/icons/start.svg'))
+            resume_action.setIcon(get_icon('start.svg'))
             resume_action.triggered.connect(self._suspendActionSlot)
             menu.addAction(resume_action)
 
         # delete
         delete_action = QtWidgets.QAction("Delete", menu)
-        delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
+        delete_action.setIcon(get_icon('delete.svg'))
         delete_action.triggered.connect(self._deleteActionSlot)
         menu.addAction(delete_action)
 
@@ -286,14 +288,15 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
                 QtWidgets.QApplication.sendEvent(MainWindow.instance(), key)
                 return
 
-            # create the contextual menu
-            self.setAcceptHoverEvents(False)
-            menu = QtWidgets.QMenu()
-            self.populateLinkContextualMenu(menu)
-            menu.exec_(QtGui.QCursor.pos())
-            self.setAcceptHoverEvents(True)
-            self._hovered = False
-            self.adjust()
+            if not sip_is_deleted(self):
+                # create the contextual menu
+                self.setAcceptHoverEvents(False)
+                menu = QtWidgets.QMenu()
+                self.populateLinkContextualMenu(menu)
+                menu.exec_(QtGui.QCursor.pos())
+                self.setAcceptHoverEvents(True)
+                self._hovered = False
+                self.adjust()
 
     def keyPressEvent(self, event):
         """

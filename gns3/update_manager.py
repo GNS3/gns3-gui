@@ -26,7 +26,7 @@ import re
 from gns3.utils import parse_version
 
 from gns3 import version
-from gns3.qt import QtNetwork, QtCore, QtWidgets, QtGui
+from gns3.qt import QtNetwork, QtCore, QtWidgets, QtGui, qslot
 from gns3.local_config import LocalConfig
 
 
@@ -73,6 +73,9 @@ class UpdateManager(QtCore.QObject):
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
         request.setRawHeader(b'User-Agent', b'GNS3 Check For Update')
         request.setAttribute(QtNetwork.QNetworkRequest.User, user_attribute)
+        if parse_version(QtCore.QT_VERSION_STR) >= parse_version("5.6.0") and parse_version(QtCore.PYQT_VERSION_STR) >= parse_version("5.6.0"):
+            # follow redirects only supported starting with Qt 5.6.0
+            request.setAttribute(QtNetwork.QNetworkRequest.FollowRedirectsAttribute, True)
         reply = self._network_manager.get(request)
         reply.finished.connect(finished_slot)
         log.debug('Download %s', url)
@@ -90,13 +93,16 @@ class UpdateManager(QtCore.QObject):
         self._parent = parent
 
         if hasattr(sys, "frozen") and LocalConfig.instance().experimental():
-            url = 'https://pypi.python.org/pypi/gns3-gui/json'
+            url = 'https://pypi.org/pypi/gns3-gui/json'
             self._get(url, self._pypiReplySlot)
         else:
             self._get('http://update.gns3.net', self._gns3UpdateReplySlot)
 
+    @qslot
     def _gns3UpdateReplySlot(self):
         network_reply = self.sender()
+        if network_reply is None:
+            return
         if network_reply.error() != QtNetwork.QNetworkReply.NoError:
             if not self._silent:
                 QtWidgets.QMessageBox.critical(self._parent, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
@@ -104,10 +110,10 @@ class UpdateManager(QtCore.QObject):
         try:
             latest_release = bytes(network_reply.readAll()).decode("utf-8").rstrip()
         except UnicodeDecodeError:
-            log.warning("Invalid answer from the update server")
+            log.debug("Invalid answer from the update server")
             return
         if re.match(r"^[a-z0-9\.]+$", latest_release) is None:
-            log.warning("Invalid answer from the update server")
+            log.debug("Invalid answer from the update server")
             return
         if parse_version(version.__version__) < parse_version(latest_release):
             reply = QtWidgets.QMessageBox.question(self._parent,
@@ -116,7 +122,7 @@ class UpdateManager(QtCore.QObject):
                                                    QtWidgets.QMessageBox.Yes,
                                                    QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
-                QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.net/download/"))
+                QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.com/software"))
         elif not self._silent:
             QtWidgets.QMessageBox.information(self._parent, "Check For Update", "GNS3 is up-to-date!")
 
@@ -130,7 +136,9 @@ class UpdateManager(QtCore.QObject):
             body = bytes(network_reply.readAll()).decode("utf-8")
             body = json.loads(body)
         except (UnicodeEncodeError, ValueError) as e:
-            log.warning("Invalid answer from the PyPi server")
+            log.warning("Invalid answer from the PyPi server: {}".format(e))
+            QtWidgets.QMessageBox.critical(self._parent, "Check For Update", "Invalid answer from PyPi server")
+            return
 
         last_version = self._getLastMinorVersionFromPyPiReply(body)
         if parse_version(last_version) > parse_version(version.__version__):
@@ -154,6 +162,7 @@ class UpdateManager(QtCore.QObject):
 
         If no valid version is found it's return the current.
         """
+
         current_version = parse_version(version.__version__)
         for release in sorted(body['releases'].keys(), reverse=True):
             release_version = parse_version(release)

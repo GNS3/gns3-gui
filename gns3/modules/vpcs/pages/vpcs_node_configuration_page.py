@@ -30,7 +30,6 @@ from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 
 
 class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
-
     """
     QWidget configuration page for VPCS nodes.
     """
@@ -97,7 +96,6 @@ class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
         if not node:
             # these are template settings
 
-            # rename the label from "Name" to "Template name"
             self.uiNameLabel.setText("Template name:")
 
             # load the default name format
@@ -125,6 +123,13 @@ class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
             self.uiScriptFileLabel.hide()
             self.uiScriptFileEdit.hide()
             self.uiScriptFileToolButton.hide()
+
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
+        self.uiConsoleAutoStartCheckBox.setChecked(settings["console_auto_start"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -165,6 +170,10 @@ class VPCSNodeConfigurationPage(QtWidgets.QWidget, Ui_VPCSNodeConfigPageWidget):
                     settings["base_script_file"] = base_script_file
                 else:
                     QtWidgets.QMessageBox.critical(self, "Base script config file", "Cannot read the base script config file")
+
+        # save console type
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
+        settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
         return settings
 
     def _configFileValid(self, path):

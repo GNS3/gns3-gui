@@ -24,13 +24,12 @@ from gns3.node import Node
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.ethernet_switch_wizard_ui import Ui_EthernetSwitchWizard
-from .. import Builtin
 
 
 class EthernetSwitchWizard(VMWizard, Ui_EthernetSwitchWizard):
 
     """
-    Wizard to create an Ethernet switch template.
+    Wizard to create an Ethernet switch.
 
     :param parent: parent widget
     """
@@ -60,7 +59,7 @@ class EthernetSwitchWizard(VMWizard, Ui_EthernetSwitchWizard):
         settings = {"name": self.uiNameLineEdit.text(),
                     "symbol": ":/symbols/ethernet_switch.svg",
                     "category": Node.switches,
-                    "server": self._compute_id,
+                    "compute_id": self._compute_id,
                     "ports_mapping": ports}
 
         return settings

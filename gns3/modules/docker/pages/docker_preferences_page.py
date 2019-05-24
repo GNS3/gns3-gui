@@ -19,10 +19,8 @@
 Configuration page for Docker preferences.
 """
 
-import sys
 
-from gns3.qt import QtWidgets, qpartial
-from gns3.controller import Controller
+from gns3.qt import QtWidgets
 
 from .. import Docker
 from ..ui.docker_preferences_page_ui import Ui_DockerPreferencesPageWidget
@@ -30,7 +28,9 @@ from ..settings import DOCKER_SETTINGS
 
 
 class DockerPreferencesPage(QtWidgets.QWidget, Ui_DockerPreferencesPageWidget):
-    """QWidget preference page for Docker."""
+    """
+    QWidget preference page for Docker.
+    """
 
     def __init__(self):
 
@@ -40,25 +40,34 @@ class DockerPreferencesPage(QtWidgets.QWidget, Ui_DockerPreferencesPageWidget):
         # connect signals
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
 
-        # if not sys.platform.startswith("linux"):
-            # Docker is only supported on Linux
-
     def _restoreDefaultsSlot(self):
-        """Slot to populate the page widgets with the default settings."""
+        """
+        Slot to populate the page widgets with the default settings.
+        """
+
         self._populateWidgets(DOCKER_SETTINGS)
 
     def _populateWidgets(self, settings):
-        """Populates the widgets with the settings.
+        """
+        Populates the widgets with the settings.
 
         :param settings: Docker settings
         """
 
+        pass
+
     def loadPreferences(self):
-        """Loads Docker preferences."""
+        """
+        Loads Docker preferences.
+        """
+
         docker_settings = Docker.instance().settings()
         self._populateWidgets(docker_settings)
 
     def savePreferences(self):
-        """Saves Docker preferences."""
+        """
+        Saves Docker preferences.
+        """
+
         new_settings = {}
         Docker.instance().setSettings(new_settings)

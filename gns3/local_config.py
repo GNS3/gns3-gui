@@ -23,10 +23,11 @@ import copy
 
 import psutil
 
-from .qt import QtCore, QtWidgets, qslot
-from .version import __version__
+from .qt import QtCore, QtWidgets
+from .version import __version__, __version_info__
 from .utils import parse_version
-from .controller import Controller
+from .local_server_config import LocalServerConfig
+from .settings import LOCAL_SERVER_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -39,38 +40,17 @@ class LocalConfig(QtCore.QObject):
     """
 
     config_changed_signal = QtCore.Signal()
-    # When this signal is emit the config is saved on controller
-    save_on_controller_signal = QtCore.Signal()
 
     def __init__(self, config_file=None):
         """
-        :param config_file: Path to the config file (override all other config, usefull for tests)
+        :param config_file: Path to the config file (override all other config, useful for tests)
         """
 
         super().__init__()
         self._profile = None
         self._config_file = config_file
-        # Security to avoid pushing to the controller settings before
-        # we get the original settings from controller
-        self._settings_retrieved_from_controller = False
         self._migrateOldConfigPath()
         self._resetLoadConfig()
-        self._monitoring_changes = False
-        Controller.instance().connected_signal.connect(self.refreshConfigFromController)
-        self.save_on_controller_signal.connect(self._saveOnController)
-
-    def _monitorChanges(self):
-        """
-        Poll the remote server waiting for settings update
-        """
-        if self._monitoring_changes:
-            return
-        self._monitoring_changes = True
-        self._timer = QtCore.QTimer()
-        self._timer.setInterval(5000)
-        self._refreshingSettings = False
-        self._timer.timeout.connect(self.refreshConfigFromController)
-        self._timer.start()
 
     def _resetLoadConfig(self):
         """
@@ -109,8 +89,25 @@ class LocalConfig(QtCore.QObject):
             try:
                 # create the config file if it doesn't exist
                 os.makedirs(os.path.dirname(self._config_file), exist_ok=True)
-                with open(self._config_file, "w", encoding="utf-8") as f:
-                    json.dump({"version": __version__, "type": "settings"}, f)
+
+                if sys.platform.startswith("win"):
+                    old_config_path = os.path.join(os.path.expandvars("%APPDATA%"), "GNS3", filename)
+                else:
+                    old_config_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", filename)
+
+                # TODO: migrate versioned config file from a previous version of GNS3 (for instance 2.2 -> 2.3) + support profiles
+                if os.path.exists(old_config_path):
+                    # migrate post version 2.2.0 configuration file
+                    shutil.copyfile(old_config_path, self._config_file)
+                    # reset the local server path and ubridge path
+                    settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
+                    settings["path"] = ""
+                    settings["ubridge_path"] = ""
+                    LocalServerConfig.instance().saveSettings("Server", settings)
+                else:
+                    # create a new config
+                    with open(self._config_file, "w", encoding="utf-8") as f:
+                        json.dump({"version": __version__, "type": "settings"}, f)
             except OSError as e:
                 log.error("Could not create the config file {}: {}".format(self._config_file, e))
 
@@ -136,47 +133,18 @@ class LocalConfig(QtCore.QObject):
             self._config_file = None
             self._resetLoadConfig()
 
-    @qslot
-    def refreshConfigFromController(self):
-        """
-        Refresh the configuration from the controller
-        """
-        controller = Controller.instance()
-        if controller.connected():
-            self._refreshingSettings = True
-            controller.get("/settings", self._getSettingsCallback, showProgress=False)
-        self._monitorChanges()
-
-    def _getSettingsCallback(self, result, error=False, **kwargs):
-        self._refreshingSettings = False
-        if error:
-            log.debug("Can't get settings from controller")
-            return
-        if result == {} and self._settings != {}:
-            self._settings_retrieved_from_controller = True
-            self.save_on_controller_signal.emit()
-            return
-
-        # The server return an uuid to keep track of settings version
-        if self._settings.get("modification_uuid") != result.get("modification_uuid"):
-            self._settings.update(result)
-            # Update already loaded section
-            for section in self._settings.keys():
-                if isinstance(self._settings[section], dict):
-                    self.loadSectionSettings(section, self._settings[section])
-            self.config_changed_signal.emit()
-        self._settings_retrieved_from_controller = True
-
     def configDirectory(self):
         """
         Get the configuration directory
         """
+
+        version = "{}.{}".format(__version_info__[0], __version_info__[1])
         if sys.platform.startswith("win"):
             appdata = os.path.expandvars("%APPDATA%")
-            path = os.path.join(appdata, "GNS3")
+            path = os.path.join(appdata, "GNS3", version)
         else:
             home = os.path.expanduser("~")
-            path = os.path.join(home, ".config", "GNS3")
+            path = os.path.join(home, ".config", "GNS3", version)
 
         if self._profile is not None:
             path = os.path.join(path, "profiles", self._profile)
@@ -198,8 +166,9 @@ class LocalConfig(QtCore.QObject):
         # In < 1.4 on Mac the config was in a gns3.net directory
         # We have move to same location as Linux
         if sys.platform.startswith("darwin"):
+            version = "{}.{}".format(__version_info__[0], __version_info__[1])
             old_path = os.path.join(os.path.expanduser("~"), ".config", "gns3.net")
-            new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3")
+            new_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", version)
             if os.path.exists(old_path) and not os.path.exists(new_path):
                 try:
                     shutil.copytree(old_path, new_path)
@@ -208,7 +177,7 @@ class LocalConfig(QtCore.QObject):
 
     def _migrateOldConfig(self):
         """
-        Migrate pre 1.4 config
+        Migrate config from a previous version.
         """
 
         # Display an error if settings come from a more recent version of GNS3
@@ -216,28 +185,31 @@ class LocalConfig(QtCore.QObject):
         # settings from 1.6.1 with 1.5.1 you will have an error
         if "version" in self._settings:
             if parse_version(self._settings["version"])[:2] > parse_version(__version__)[:2]:
-                QtWidgets.QApplication(sys.argv)  # We need to create an application because settings are loaded before Qt init
-                QtWidgets.QMessageBox.critical(None, "Version error", "Your settings are for version {} of GNS3. You cannot use a previous version of GNS3 without risking losing data. If you want to reset delete the settings in {}".format(self._settings["version"], self.configDirectory()))
+                app = QtWidgets.QApplication(sys.argv)  # We need to create an application because settings are loaded before Qt init
+                error_message = "Settings are for version {} of GNS3. It is not possible to use a previous version of GNS3 without risking losing data. Delete the settings in '{}' to start GNS3".format(self._settings["version"], self.configDirectory())
+                QtWidgets.QMessageBox.critical(False, "Version error", error_message)
                 # Exit immediately not clean but we want to avoid any side effect that could corrupt the file
+                QtCore.QTimer.singleShot(0, app.quit)
+                app.exec_()
                 sys.exit(1)
 
         if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0alpha1"):
 
-            servers = self._settings.get("Servers", {})
+             servers = self._settings.get("Servers", {})
 
-            if "LocalServer" in self._settings:
+             if "LocalServer" in self._settings:
                 servers["local_server"] = copy.copy(self._settings["LocalServer"])
 
-                # We migrate the server binary for OSX due to the change from py2app to CX freeze
+                 # We migrate the server binary for OSX due to the change from py2app to CX freeze
                 if servers["local_server"]["path"] == "/Applications/GNS3.app/Contents/Resources/server/Contents/MacOS/gns3server":
                     servers["local_server"]["path"] = "gns3server"
 
-            if "RemoteServers" in self._settings:
+             if "RemoteServers" in self._settings:
                 servers["remote_servers"] = copy.copy(self._settings["RemoteServers"])
 
-            self._settings["Servers"] = servers
+             self._settings["Servers"] = servers
 
-            if "GUI" in self._settings:
+             if "GUI" in self._settings:
                 main_window = self._settings.get("MainWindow", {})
                 main_window["hide_getting_started_dialog"] = self._settings["GUI"].get("hide_getting_started_dialog", False)
                 self._settings["MainWindow"] = main_window
@@ -250,7 +222,7 @@ class LocalConfig(QtCore.QObject):
                     if self._settings["MainWindow"].get("telnet_console_command") not in PRECONFIGURED_TELNET_CONSOLE_COMMANDS.values():
                         self._settings["MainWindow"]["telnet_console_command"] = DEFAULT_TELNET_CONSOLE_COMMAND
 
-        # Migrate 1.X to 2.0
+         # Migrate 1.X to 2.0
         if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("2.0.0"):
             if "Qemu" in self._settings:
                 # The internet VM is replaced by the nat Node
@@ -261,7 +233,7 @@ class LocalConfig(QtCore.QObject):
                         vms.append(vm)
                 self._settings["Qemu"]["vms"] = vms
 
-        # Starting with 2.0.0dev5 IOU licence is stored in the settings
+         # Starting with 2.0.0dev5 IOU licence is stored in the settings
         if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("2.0.0"):
             if "IOU" in self._settings and "iourc_path" in self._settings["IOU"] and "iourc_content" not in self._settings["IOU"]:
                 try:
@@ -309,25 +281,6 @@ class LocalConfig(QtCore.QObject):
             self._last_config_changed = os.stat(self._config_file).st_mtime
         except (ValueError, OSError) as e:
             log.error("Could not write the config file {}: {}".format(self._config_file, e))
-        self.save_on_controller_signal.emit()
-
-    @qslot
-    def _saveOnController(self, *args):
-        """
-        Save some settings on controller for the transition from
-        GUI to a central controller. Will be removed later
-        """
-        if Controller.instance().connected() and self._settings_retrieved_from_controller:
-            # We save only non user specific sections
-            section_to_save_on_controller = ["Builtin", "Docker", "IOU", "Qemu", "VMware", "VPCS", "VirtualBox", "GraphicsView", "Dynamips"]
-            controller_settings = {}
-            for key, val in self._settings.items():
-                if key in section_to_save_on_controller:
-                    controller_settings[key] = val
-                # We want only the VM settings on the server
-                elif key == "Server":
-                    controller_settings["Server"]["vm"] = self._settings["Server"]["vm"]
-            Controller.instance().post("/settings", None, body=controller_settings)
 
     def checkConfigChanged(self):
 
@@ -483,14 +436,29 @@ class LocalConfig(QtCore.QObject):
         """
 
         from gns3.settings import GRAPHICS_VIEW_SETTINGS
-        return self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS) \
-                .get("show_interface_labels_on_new_project", False)
+        return self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS).get("show_interface_labels_on_new_project", False)
 
     def setShowInterfaceLabelsOnNewProject(self, value):
         from gns3.settings import GRAPHICS_VIEW_SETTINGS
         settings = self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS)
         settings["show_interface_labels_on_new_project"] = value
         self.saveSectionSettings("GraphicsView", settings)
+
+    def showGridOnNewProject(self):
+        """
+        :returns: Boolean. True if show_grid_on_new_project is enabled
+        """
+
+        from gns3.settings import GRAPHICS_VIEW_SETTINGS
+        return self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS).get("show_grid_on_new_project", False)
+
+    def snapToGridOnNewProject(self):
+        """
+        :returns: Boolean. True if snap_to_grid_on_new_project is enabled
+        """
+
+        from gns3.settings import GRAPHICS_VIEW_SETTINGS
+        return self.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS).get("snap_to_grid_on_new_project", False)
 
     @staticmethod
     def instance():

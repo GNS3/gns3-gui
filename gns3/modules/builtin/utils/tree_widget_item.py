@@ -19,7 +19,6 @@ from gns3.qt import QtWidgets
 
 
 class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
-
     """
     QTreeWidgetItem reimplementation to allow numeric sort.
     """

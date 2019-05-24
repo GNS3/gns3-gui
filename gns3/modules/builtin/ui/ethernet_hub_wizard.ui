@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>423</height>
+    <width>694</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
     <string>Server</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a server type to run your new Ethernet hub.</string>
+    <string>Please choose a server type to run the Ethernet hub.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">

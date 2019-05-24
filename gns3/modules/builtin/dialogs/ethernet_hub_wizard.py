@@ -24,13 +24,12 @@ from gns3.node import Node
 from gns3.dialogs.vm_wizard import VMWizard
 
 from ..ui.ethernet_hub_wizard_ui import Ui_EthernetHubWizard
-from .. import Builtin
 
 
 class EthernetHubWizard(VMWizard, Ui_EthernetHubWizard):
 
     """
-    Wizard to create an Ethernet hub template.
+    Wizard to create an Ethernet hub.
 
     :param parent: parent widget
     """
@@ -57,7 +56,7 @@ class EthernetHubWizard(VMWizard, Ui_EthernetHubWizard):
         settings = {"name": self.uiNameLineEdit.text(),
                     "symbol": ":/symbols/hub.svg",
                     "category": Node.switches,
-                    "server": self._compute_id,
+                    "compute_id": self._compute_id,
                     "ports_mapping": ports}
 
         return settings

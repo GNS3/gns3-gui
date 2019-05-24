@@ -15,6 +15,13 @@
   </property>
   <layout class="QVBoxLayout">
    <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>IOU licence (iourc file):</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <widget class="QPlainTextEdit" name="IOULicenceTextEdit">

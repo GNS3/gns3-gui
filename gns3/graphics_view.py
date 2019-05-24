@@ -21,7 +21,7 @@ Graphical view on the scene where items are drawn.
 
 import logging
 import os
-import sip
+from .qt import sip
 import sys
 
 from .qt import QtCore, QtGui, QtNetwork, QtWidgets, qpartial, qslot
@@ -34,25 +34,27 @@ from .modules.module_error import ModuleError
 from .modules.builtin import Builtin
 from .settings import GRAPHICS_VIEW_SETTINGS
 from .topology import Topology
-from .appliance_manager import ApplianceManager
+from .template_manager import TemplateManager
 from .dialogs.style_editor_dialog import StyleEditorDialog
 from .dialogs.text_editor_dialog import TextEditorDialog
 from .dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from .dialogs.idlepc_dialog import IdlePCDialog
 from .dialogs.console_command_dialog import ConsoleCommandDialog
 from .dialogs.file_editor_dialog import FileEditorDialog
+from .dialogs.node_info_dialog import NodeInfoDialog
 from .local_config import LocalConfig
 from .progress import Progress
 from .utils.server_select import server_select
 from .compute_manager import ComputeManager
+from .utils.get_icon import get_icon
 
 # link items
-from .items.link_item import LinkItem
+from .items.link_item import LinkItem, SvgIconItem
 from .items.ethernet_link_item import EthernetLinkItem
 from .items.serial_link_item import SerialLinkItem
 
 # other items
-from .items.note_item import NoteItem
+from .items.label_item import LabelItem
 from .items.text_item import TextItem
 from .items.shape_item import ShapeItem
 from .items.drawing_item import DrawingItem
@@ -60,12 +62,12 @@ from .items.rectangle_item import RectangleItem
 from .items.line_item import LineItem
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
+from .items.logo_item import  LogoItem
 
 log = logging.getLogger(__name__)
 
 
 class GraphicsView(QtWidgets.QGraphicsView):
-
     """
     Graphics view that displays the scene.
 
@@ -88,6 +90,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._adding_line = False
         self._newlink = None
         self._dragging = False
+        self._grid_size = 75
+        self._drawing_grid_size = 25
         self._last_mouse_position = None
         self._topology = Topology.instance()
         self._background_warning_msgbox = QtWidgets.QErrorMessage(self)
@@ -107,11 +111,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
 
         # default directories for QFileDialog
-        self._import_configs_from_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-        self._import_config_dir = ""
-        self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-        self._export_config_dir = ""
-
+        self._import_config_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        self._export_config_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
         self._local_addresses = ['0.0.0.0', '127.0.0.1', 'localhost', '::1', '0:0:0:0:0:0:0:1', '::', QtNetwork.QHostInfo.localHostName()]
 
     def setSceneSize(self, width, height):
@@ -126,6 +127,32 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if zoom:
             factor = zoom / 100.
             self.scale(factor, factor)
+
+    def setNodeGridSize(self, grid_size):
+        """
+        Sets the grid size for nodes.
+        """
+        self._grid_size = grid_size
+
+    def nodeGridSize(self):
+        """
+        Returns the grid size for nodes.
+        :return: integer
+        """
+        return self._grid_size
+
+    def setDrawingGridSize(self, grid_size):
+        """
+        Sets the grid size for drawings
+        """
+        self._drawing_grid_size = grid_size
+
+    def drawingGridSize(self):
+        """
+        Returns the grid size for drawings
+        :return: integer
+        """
+        return self._drawing_grid_size
 
     def setEnabled(self, enabled):
 
@@ -160,8 +187,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
         # clear the topology summary
         self._main_window.uiTopologySummaryTreeWidget.clear()
 
+        # reset the lock button
+        self._main_window.uiLockAllAction.setChecked(False)
+
         # clear all objects on the scene
         self.scene().clear()
+
 
     def _loadSettings(self):
         """
@@ -274,6 +305,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         image_item.create()
         self.scene().addItem(image_item)
         self._topology.addDrawing(image_item)
+
+    def addLogo(self, logo_path, logo_url):
+        logo_item = LogoItem(logo_path, logo_url, self._topology.project())
+        self.scene().addItem(logo_item)
 
     def addLink(self, source_node, source_port, destination_node, destination_port, **link_data):
         """
@@ -395,12 +430,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         is_not_link = True
+        is_not_logo = True
+
         item = self.itemAt(event.pos())
         if item and sip.isdeleted(item):
             return
 
         if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
             is_not_link = False
+        if item and (isinstance(item, LogoItem) or isinstance(item.parentItem(), LogoItem)):
+            is_not_logo = False
         else:
             for it in self.scene().items():
                 if isinstance(it, LinkItem):
@@ -420,20 +459,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 item.setSelected(False)
             else:
                 item.setSelected(True)
-        elif is_not_link and event.button() == QtCore.Qt.RightButton and not self._adding_link:
+        elif is_not_link and is_not_logo and event.button() == QtCore.Qt.RightButton and not self._adding_link:
             if item and not sip.isdeleted(item):
                 # Prevent right clicking on a selected item from de-selecting all other items
                 if not item.isSelected():
                     if not event.modifiers() & QtCore.Qt.ControlModifier:
                         for it in self.scene().items():
                             it.setSelected(False)
-                    if item.zValue() < 0:
-                        item.setFlag(item.ItemIsSelectable, True)
                     item.setSelected(True)
                     self._showDeviceContextualMenu(QtGui.QCursor.pos())
-                    if not sip.isdeleted(item) and item.zValue() < 0:
-                        item.setFlag(item.ItemIsSelectable, False)
-
                 else:
                     self._showDeviceContextualMenu(QtGui.QCursor.pos())
             # when more than one item is selected display the contextual menu even if mouse is not above an item
@@ -447,7 +481,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._userNodeLinking(event, item)
         elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
             pos = self.mapToScene(event.pos())
-            note = self.createDrawingItem("text", pos.x(), pos.y(), 1)
+            note = self.createDrawingItem("text", pos.x(), pos.y(), 2)
             pos_x = note.pos().x()
             pos_y = note.pos().y() - (note.boundingRect().height() / 2)
             note.setPos(pos_x, pos_y)
@@ -457,19 +491,19 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._adding_note = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_rectangle:
             pos = self.mapToScene(event.pos())
-            self.createDrawingItem("rect", pos.x(), pos.y(), 0)
+            self.createDrawingItem("rect", pos.x(), pos.y(), 1)
             self._main_window.uiDrawRectangleAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_rectangle = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_ellipse:
             pos = self.mapToScene(event.pos())
-            self.createDrawingItem("ellipse", pos.x(), pos.y(), 0)
+            self.createDrawingItem("ellipse", pos.x(), pos.y(), 1)
             self._main_window.uiDrawEllipseAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_ellipse = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_line:
             pos = self.mapToScene(event.pos())
-            self.createDrawingItem("line", pos.x(), pos.y(), 0)
+            self.createDrawingItem("line", pos.x(), pos.y(), 1)
             self._main_window.uiDrawLineAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_line = False
@@ -538,9 +572,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         if event.key() == QtCore.Qt.Key_Delete:
-            # check if we are editing an NoteItem instance, then send the delete key event to it
+            # check if we are editing an LabelItem instance, then send the delete key event to it
             for item in self.scene().selectedItems():
-                if (isinstance(item, NoteItem) or isinstance(item, TextItem)) and item.hasFocus():
+                if (isinstance(item, LabelItem) or isinstance(item, TextItem)) and item.hasFocus():
                     super().keyPressEvent(event)
                     return
             self.deleteActionSlot()
@@ -601,7 +635,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                         return
                     self.consoleFromItems(self.scene().selectedItems())
                     return
-            elif isinstance(item, NoteItem) and isinstance(item.parentItem(), NodeItem):
+            elif isinstance(item, LabelItem) and isinstance(item.parentItem(), NodeItem):
                 if item.parentItem().node().initialized():
                     item.parentItem().setSelected(True)
                     self.changeHostnameActionSlot()
@@ -633,7 +667,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # check if what is dragged is handled by this view
         if event.mimeData().hasFormat("text/uri-list") \
-                or event.mimeData().hasFormat("application/x-gns3-appliance"):
+                or event.mimeData().hasFormat("application/x-gns3-template"):
             event.acceptProposedAction()
             event.accept()
         else:
@@ -647,8 +681,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         # check if what has been dropped is handled by this view
-        if event.mimeData().hasFormat("application/x-gns3-appliance"):
-            appliance_id = event.mimeData().data("application/x-gns3-appliance").data().decode()
+        if event.mimeData().hasFormat("application/x-gns3-template"):
+            template_id = event.mimeData().data("application/x-gns3-template").data().decode()
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
@@ -659,11 +693,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     for node_number in range(integer):
                         x = event.pos().x() - (150 / 2) + (node_number % max_nodes_per_line) * offset
                         y = event.pos().y() - (70 / 2) + (node_number // max_nodes_per_line) * offset
-                        if self.createNodeFromApplianceId(appliance_id, QtCore.QPoint(x, y)) is False:
+                        if self.createNodeFromTemplateId(template_id, QtCore.QPoint(x, y)) is False:
                             event.ignore()
                             break
             else:
-                if self.createNodeFromApplianceId(appliance_id, event.pos()) is False:
+                if self.createNodeFromTemplateId(template_id, event.pos()) is False:
                     event.ignore()
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             # This should not arrive but we received bug report with it...
@@ -703,146 +737,147 @@ class GraphicsView(QtWidgets.QGraphicsView):
             return
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configPage"), items)):
+            # Action: Configure node
             configure_action = QtWidgets.QAction("Configure", menu)
-            configure_action.setIcon(QtGui.QIcon(':/icons/configuration.svg'))
+            configure_action.setIcon(get_icon("configuration.svg"))
             configure_action.triggered.connect(self.configureActionSlot)
             menu.addAction(configure_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
+            console_action = QtWidgets.QAction("Console", menu)
+            console_action.setIcon(get_icon("console.svg"))
+            console_action.triggered.connect(self.consoleActionSlot)
+            menu.addAction(console_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole"), items)):
+            aux_console_action = QtWidgets.QAction("Auxiliary console", menu)
+            aux_console_action.setIcon(get_icon("aux-console.svg"))
+            aux_console_action.triggered.connect(self.auxConsoleActionSlot)
+            menu.addAction(aux_console_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
+            start_action = QtWidgets.QAction("Start", menu)
+            start_action.setIcon(get_icon("start.svg"))
+            start_action.triggered.connect(self.startActionSlot)
+            menu.addAction(start_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
+            suspend_action = QtWidgets.QAction("Suspend", menu)
+            suspend_action.setIcon(get_icon("pause.svg"))
+            suspend_action.triggered.connect(self.suspendActionSlot)
+            menu.addAction(suspend_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
+            stop_action = QtWidgets.QAction("Stop", menu)
+            stop_action.setIcon(get_icon("stop.svg"))
+            stop_action.triggered.connect(self.stopActionSlot)
+            menu.addAction(stop_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
+            reload_action = QtWidgets.QAction("Reload", menu)
+            reload_action.setIcon(get_icon("reload.svg"))
+            reload_action.triggered.connect(self.reloadActionSlot)
+            menu.addAction(reload_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
+            console_edit_action = QtWidgets.QAction("Custom console", menu)
+            console_edit_action.setIcon(get_icon("console_edit.svg"))
+            console_edit_action.triggered.connect(self.customConsoleActionSlot)
+            menu.addAction(console_edit_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem), items)):
             # Action: Change hostname
             change_hostname_action = QtWidgets.QAction("Change hostname", menu)
-            change_hostname_action.setIcon(QtGui.QIcon(':/icons/show-hostname.svg'))
+            change_hostname_action.setIcon(get_icon("show-hostname.svg"))
             change_hostname_action.triggered.connect(self.changeHostnameActionSlot)
             menu.addAction(change_hostname_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem), items)):
             # Action: Change symbol
             change_symbol_action = QtWidgets.QAction("Change symbol", menu)
-            change_symbol_action.setIcon(QtGui.QIcon(':/icons/node_conception.svg'))
+            change_symbol_action.setIcon(get_icon("node_conception.svg"))
             change_symbol_action.triggered.connect(self.changeSymbolActionSlot)
             menu.addAction(change_symbol_action)
 
         if True in list(map(lambda item: isinstance(item, DrawingItem) or isinstance(item, NodeItem), items)):
             duplicate_action = QtWidgets.QAction("Duplicate", menu)
-            duplicate_action.setIcon(QtGui.QIcon(':/icons/new.svg'))
+            duplicate_action.setIcon(get_icon("duplicate.svg"))
             duplicate_action.triggered.connect(self.duplicateActionSlot)
             menu.addAction(duplicate_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "info"), items)):
+            # Action: Show node information
+            show_node_info_action = QtWidgets.QAction("Show node information", menu)
+            show_node_info_action.setIcon(get_icon("help.svg"))
+            show_node_info_action.triggered.connect(self.showNodeInfoSlot)
+            menu.addAction(show_node_info_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "nodeDir"), items)):
             # Action: Show in file manager
             show_in_file_manager_action = QtWidgets.QAction("Show in file manager", menu)
-            show_in_file_manager_action.setIcon(QtGui.QIcon(':/icons/open.svg'))
+            show_in_file_manager_action.setIcon(get_icon("open.svg"))
             show_in_file_manager_action.triggered.connect(self.showInFileManagerSlot)
             menu.addAction(show_in_file_manager_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
-            console_action = QtWidgets.QAction("Console", menu)
-            console_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
-            console_action.triggered.connect(self.consoleActionSlot)
-            menu.addAction(console_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "console"), items)):
-            console_edit_action = QtWidgets.QAction("Custom console", menu)
-            console_edit_action.setIcon(QtGui.QIcon(':/icons/console_edit.svg'))
-            console_edit_action.triggered.connect(self.customConsoleActionSlot)
-            menu.addAction(console_edit_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole"), items)):
-            aux_console_action = QtWidgets.QAction("Auxiliary console", menu)
-            aux_console_action.setIcon(QtGui.QIcon(':/icons/aux-console.svg'))
-            aux_console_action.triggered.connect(self.auxConsoleActionSlot)
-            menu.addAction(aux_console_action)
 
         if sys.platform.startswith("win") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
             # Action: bring console or window to front (Windows only)
             bring_to_front_action = QtWidgets.QAction("Bring to front", menu)
-            bring_to_front_action.setIcon(QtGui.QIcon(':/icons/front.svg'))
+            bring_to_front_action.setIcon(get_icon("front.svg"))
             bring_to_front_action.triggered.connect(self.bringToFrontSlot)
             menu.addAction(bring_to_front_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
             import_config_action = QtWidgets.QAction("Import config", menu)
-            import_config_action.setIcon(QtGui.QIcon(':/icons/import_config.svg'))
+            import_config_action.setIcon(get_icon("import.svg"))
             import_config_action.triggered.connect(self.importConfigActionSlot)
             menu.addAction(import_config_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
             export_config_action = QtWidgets.QAction("Export config", menu)
-            export_config_action.setIcon(QtGui.QIcon(':/icons/export_config.svg'))
+            export_config_action.setIcon(get_icon("export.svg"))
             export_config_action.triggered.connect(self.exportConfigActionSlot)
             menu.addAction(export_config_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
             export_config_action = QtWidgets.QAction("Edit config", menu)
-            export_config_action.setIcon(QtGui.QIcon(':/icons/edit.svg'))
+            export_config_action.setIcon(get_icon("edit.svg"))
             export_config_action.triggered.connect(self.editConfigActionSlot)
             menu.addAction(export_config_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepc"), items)):
             idlepc_action = QtWidgets.QAction("Idle-PC", menu)
-            idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
+            idlepc_action.setIcon(get_icon("calculate.svg"))
             idlepc_action.triggered.connect(self.idlepcActionSlot)
             menu.addAction(idlepc_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepc"), items)):
             auto_idlepc_action = QtWidgets.QAction("Auto Idle-PC", menu)
-            auto_idlepc_action.setIcon(QtGui.QIcon(':/icons/calculate.svg'))
+            auto_idlepc_action.setIcon(get_icon("calculate.svg"))
             auto_idlepc_action.triggered.connect(self.autoIdlepcActionSlot)
             menu.addAction(auto_idlepc_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            start_action = QtWidgets.QAction("Start", menu)
-            start_action.setIcon(QtGui.QIcon(':/icons/start.svg'))
-            start_action.triggered.connect(self.startActionSlot)
-            menu.addAction(start_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            suspend_action = QtWidgets.QAction("Suspend", menu)
-            suspend_action.setIcon(QtGui.QIcon(':/icons/pause.svg'))
-            suspend_action.triggered.connect(self.suspendActionSlot)
-            menu.addAction(suspend_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            stop_action = QtWidgets.QAction("Stop", menu)
-            stop_action.setIcon(QtGui.QIcon(':/icons/stop.svg'))
-            stop_action.triggered.connect(self.stopActionSlot)
-            menu.addAction(stop_action)
-
-        if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            reload_action = QtWidgets.QAction("Reload", menu)
-            reload_action.setIcon(QtGui.QIcon(':/icons/reload.svg'))
-            reload_action.triggered.connect(self.reloadActionSlot)
-            menu.addAction(reload_action)
-
-        if True in list(map(lambda item: isinstance(item, NoteItem), items)):
+        if True in list(map(lambda item: isinstance(item, LabelItem), items)):
             text_edit_action = QtWidgets.QAction("Text edit", menu)
-            text_edit_action.setIcon(QtGui.QIcon(':/icons/show-hostname.svg'))
+            text_edit_action.setIcon(get_icon("show-hostname.svg"))
             text_edit_action.triggered.connect(self.textEditActionSlot)
             menu.addAction(text_edit_action)
 
         if True in list(map(lambda item: isinstance(item, TextItem), items)):
             text_edit_action = QtWidgets.QAction("Text edit", menu)
-            text_edit_action.setIcon(QtGui.QIcon(':/icons/edit.svg'))
+            text_edit_action.setIcon(get_icon("edit.svg"))
             text_edit_action.triggered.connect(self.textEditActionSlot)
             menu.addAction(text_edit_action)
 
         if True in list(map(lambda item: isinstance(item, ShapeItem) or isinstance(item, LineItem), items)):
             style_action = QtWidgets.QAction("Style", menu)
-            style_action.setIcon(QtGui.QIcon(':/icons/drawing.svg'))
+            style_action.setIcon(get_icon("node_conception.svg"))
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "commandLine"), items)):
-            # Action: Get command line
-            show_in_file_manager_action = QtWidgets.QAction("Command line", menu)
-            show_in_file_manager_action.setIcon(QtGui.QIcon(':/icons/console.svg'))
-            show_in_file_manager_action.triggered.connect(self.getCommandLineSlot)
-            menu.addAction(show_in_file_manager_action)
-
-        if True in list(map(lambda item: isinstance(item, NoteItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
+        if True in list(map(lambda item: isinstance(item, LabelItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
             # action only for port labels
             reset_label_position_action = QtWidgets.QAction("Reset position", menu)
-            reset_label_position_action.setIcon(QtGui.QIcon(':/icons/reset.svg'))
+            reset_label_position_action.setIcon(get_icon("reset.svg"))
             reset_label_position_action.triggered.connect(self.resetLabelPositionActionSlot)
             menu.addAction(reset_label_position_action)
 
@@ -851,27 +886,41 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
             if len(items) > 1:
                 horizontal_align_action = QtWidgets.QAction("Align horizontally", menu)
-                horizontal_align_action.setIcon(QtGui.QIcon(':/icons/horizontally.svg'))
+                horizontal_align_action.setIcon(get_icon("horizontally.svg"))
                 horizontal_align_action.triggered.connect(self.horizontalAlignmentSlot)
                 menu.addAction(horizontal_align_action)
 
                 vertical_align_action = QtWidgets.QAction("Align vertically", menu)
-                vertical_align_action.setIcon(QtGui.QIcon(':/icons/vertically.svg'))
+                vertical_align_action.setIcon(get_icon("vertically.svg"))
                 vertical_align_action.triggered.connect(self.verticalAlignmentSlot)
                 menu.addAction(vertical_align_action)
 
             raise_layer_action = QtWidgets.QAction("Raise one layer", menu)
-            raise_layer_action.setIcon(QtGui.QIcon(':/icons/raise_z_value.svg'))
+            raise_layer_action.setIcon(get_icon("raise_z_value.svg"))
             raise_layer_action.triggered.connect(self.raiseLayerActionSlot)
             menu.addAction(raise_layer_action)
 
             lower_layer_action = QtWidgets.QAction("Lower one layer", menu)
-            lower_layer_action.setIcon(QtGui.QIcon(':/icons/lower_z_value.svg'))
+            lower_layer_action.setIcon(get_icon("lower_z_value.svg"))
             lower_layer_action.triggered.connect(self.lowerLayerActionSlot)
             menu.addAction(lower_layer_action)
 
+            if len(items) > 1:
+                lock_action = QtWidgets.QAction("Lock or unlock items", menu)
+                lock_action.setIcon(get_icon("lock.svg"))
+            else:
+                item = items[0]
+                if item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable:
+                    lock_action = QtWidgets.QAction("Lock item", menu)
+                    lock_action.setIcon(get_icon("lock.svg"))
+                else:
+                    lock_action = QtWidgets.QAction("Unlock item", menu)
+                    lock_action.setIcon(get_icon("unlock.svg"))
+            lock_action.triggered.connect(self.lockActionSlot)
+            menu.addAction(lock_action)
+
             delete_action = QtWidgets.QAction("Delete", menu)
-            delete_action.setIcon(QtGui.QIcon(':/icons/delete.svg'))
+            delete_action.setIcon(get_icon("delete.svg"))
             delete_action.triggered.connect(self.deleteActionSlot)
             menu.addAction(delete_action)
 
@@ -1025,7 +1074,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         nodes = {}
         node_initialized = False
         for item in items:
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized():
+            if isinstance(item, NodeItem) and item.node().console() is not None and item.node().initialized():
                 node_initialized = True
                 if item.node().status() == Node.started:
                     node = item.node()
@@ -1070,8 +1119,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         current_cmd = None
         console_type = "telnet"
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
-                if item.node().consoleType() not in ("telnet", "serial", "vnc", "spice"):
+            if isinstance(item, NodeItem) and item.node().console() is not None and item.node().initialized() and item.node().status() == Node.started:
+                if item.node().consoleType() not in ("telnet", "serial", "vnc", "spice", "spice+agent"):
                     continue
                 current_cmd = item.node().consoleCommand()
                 console_type = item.node().consoleType()
@@ -1079,9 +1128,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type=console_type, current=current_cmd)
         if ok:
             for item in self.scene().selectedItems():
-                if isinstance(item, NodeItem) and hasattr(item.node(), "console") and item.node().initialized() and item.node().status() == Node.started:
+                if isinstance(item, NodeItem) and item.node().console() is not None and item.node().initialized() and item.node().status() == Node.started:
                     node = item.node()
-                    if node.consoleType() not in ("telnet", "serial", "vnc", "spice"):
+                    if node.consoleType() not in ("telnet", "serial", "vnc", "spice", "spice+agent"):
                         continue
                     try:
                         node.openConsole(command=cmd)
@@ -1148,17 +1197,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 if not ok:
                     continue
 
-            if not self._import_config_dir:
-                self._import_config_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                             "Import {}".format(os.path.basename(config_file)),
-                                                            self._import_config_dir,
+                                                            self._import_config_directory,
                                                             "All files (*.*);;Config files (*.cfg)",
                                                             "Config files (*.cfg)")
             if not path:
                 continue
-            self._import_config_dir = os.path.dirname(path)
+            self._import_config_directory = os.path.dirname(path)
             item.node().importFile(config_file, path)
 
     def editConfigActionSlot(self):
@@ -1199,41 +1245,29 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             return
 
-        if not self._export_configs_to_dir:
-            self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-
         for item in items:
             for config_file in item.node().configFiles():
-                path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_configs_to_dir, item.node().name() + "_" + os.path.basename(config_file)), "All files (*.*);;Config files (*.cfg)")
+                path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_config_directory, item.node().name() + "_" + os.path.basename(config_file)), "All files (*.*);;Config files (*.cfg)")
                 if not path:
                     continue
-                self._export_configs_to_dir = os.path.dirname(path)
+                self._export_config_directory = os.path.dirname(path)
                 item.node().exportFile(config_file, path)
 
-    def getCommandLineSlot(self):
+    def showNodeInfoSlot(self):
         """
-        Slot to receive events from the get command line action in the
+        Slot to receive events from the show node info action in the
         contextual menu.
         """
 
         items = self.scene().selectedItems()
         if len(items) != 1:
-            QtWidgets.QMessageBox.critical(self, "Command line", "Please select only one router")
+            QtWidgets.QMessageBox.critical(self, "Show node information", "Please select only one node")
             return
         item = items[0]
-        if isinstance(item, NodeItem) and hasattr(item.node(), "commandLine"):
-            router = item.node()
-            if router.commandLine() is None:
-                QtWidgets.QMessageBox.warning(self, "Command line", "Get command line is not supported for this type of node.")
-            elif router.commandLine() == '':
-                QtWidgets.QMessageBox.warning(self, "Command line", "Please start the node in order to get the command line.")
-            else:
-                dialog = QtWidgets.QInputDialog(self)
-                dialog.setOptions(QtWidgets.QInputDialog.NoButtons)
-                dialog.setLabelText("Command used to start the VM:")
-                dialog.setTextValue(router.commandLine())
-                dialog.show()
-                dialog.exec_()
+        if isinstance(item, NodeItem):
+            dialog = NodeInfoDialog(item.node(), parent=self)
+            dialog.show()
+            dialog.exec_()
 
     def bringToFrontSlot(self):
         """
@@ -1312,9 +1346,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     node.setIdlepc(idlepc)
             # apply the idle-pc to templates with the same IOS image
             router.module().updateImageIdlepc(ios_image, idlepc)
-            QtWidgets.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {} and all routers with IOS image {}".format(idlepc,
-                                                                                                                                                       router.name(),
-                                                                                                                                                       ios_image))
+            QtWidgets.QMessageBox.information(self, "Auto Idle-PC", "Idle-PC value {} has been applied on {} and all templates with IOS image {}".format(idlepc,
+                                                                                                                                                         router.name(),
+                                                                                                                                                         ios_image))
 
     def duplicateActionSlot(self):
         """
@@ -1359,7 +1393,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NoteItem) or isinstance(item, TextItem):
+            if isinstance(item, LabelItem) or isinstance(item, TextItem):
                 items.append(item)
         if items:
             text_edit_dialog = TextEditorDialog(self._main_window, items)
@@ -1373,7 +1407,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         for item in self.scene().selectedItems():
-            if isinstance(item, NoteItem) and item.parentItem():
+            if isinstance(item, LabelItem) and item.parentItem():
                 links = item.parentItem().links()
                 for port in item.parentItem().node().ports():
                     # find the correct port associated with the label
@@ -1422,8 +1456,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
-                current_zvalue = item.zValue()
-                item.setZValue(current_zvalue + 1)
+                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
+                    log.error("Cannot move object to a upper layer because it is locked")
+                    continue
+                item.setZValue(item.zValue() + 1)
                 item.updateNode()
                 item.update()
 
@@ -1435,13 +1471,28 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
-                current_zvalue = item.zValue()
-                item.setZValue(current_zvalue - 1)
+                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
+                    log.error("Cannot move object to a lower layer because it is locked")
+                    continue
+                item.setZValue(item.zValue() - 1)
                 item.updateNode()
                 item.update()
 
-                if item.zValue() == -1:
-                    self._background_warning_msgbox.showMessage("Object moved to a background layer. You will now have to use the right-click action to select this object in the future and raise it to layer 0 to be able to move it")
+    def lockActionSlot(self):
+        """
+        Slot to receive events from the lock action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if not isinstance(item, LinkItem) and not isinstance(item, LabelItem) and not isinstance(item, SvgIconItem):
+                if item.locked() is True:
+                    item.setLocked(False)
+                else:
+                    item.setLocked(True)
+                if item.parentItem() is None:
+                    item.updateNode()
+                item.update()
 
     def deleteActionSlot(self):
         """
@@ -1452,7 +1503,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         selected_nodes = []
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem):
-                selected_nodes.append(item.node())
+                node = item.node()
+                if node.locked():
+                    QtWidgets.QMessageBox.critical(self, "Delete", "Cannot delete node '{}' because it is locked".format(node.name()))
+                    return
+                selected_nodes.append(node)
         if selected_nodes:
             if len(selected_nodes) > 1:
                 question = "Do you want to permanently delete these {} nodes?".format(len(selected_nodes))
@@ -1481,23 +1536,23 @@ class GraphicsView(QtWidgets.QGraphicsView):
         from .main_window import MainWindow
         mainwindow = MainWindow.instance()
 
-        if "server" in node_data:
+        if "compute_id" in node_data:
             try:
-                return ComputeManager.instance().getCompute(node_data["server"])
+                return ComputeManager.instance().getCompute(node_data["compute_id"])
             except KeyError:
-                raise ModuleError("Compute {} doesn't exists".format(node_data["server"]))
+                raise ModuleError("Compute {} doesn't exists".format(node_data["compute_id"]))
 
         server = server_select(mainwindow, node_data.get("node_type"))
         if server is None:
             raise ModuleError("Please select a server")
         return server
 
-    def createNodeFromApplianceId(self, appliance_id, pos):
+    def createNodeFromTemplateId(self, template_id, pos):
         """
-        Ask the server to create a node using this appliance
+        Ask the server to create a node using this template
         """
         pos = self.mapToScene(pos)
-        return ApplianceManager().instance().createNodeFromApplianceId(self._topology.project(), appliance_id, pos.x(), pos.y())
+        return TemplateManager().instance().createNodeFromTemplateId(self._topology.project(), template_id, pos.x(), pos.y())
 
     def createNodeItem(self, node, symbol, x, y):
         node.setSymbol(symbol)
@@ -1524,18 +1579,18 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if self._main_window and not sip.isdeleted(self._main_window):
             QtWidgets.QMessageBox.critical(self._main_window, name, message.strip())
 
-    def createDrawingItem(self, type, x, y, z, rotation=0, svg=None, drawing_id=None):
+    def createDrawingItem(self, type, x, y, z, locked=False, rotation=0, svg=None, drawing_id=None):
 
         if type == "ellipse":
-            item = EllipseItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = EllipseItem(pos=QtCore.QPoint(x, y), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "rect":
-            item = RectangleItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = RectangleItem(pos=QtCore.QPoint(x, y), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "line":
-            item = LineItem(pos=QtCore.QPoint(x, y), dst=QtCore.QPoint(200, 0), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = LineItem(pos=QtCore.QPoint(x, y), dst=QtCore.QPoint(200, 0), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
-            item = ImageItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = ImageItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, locked=locked, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "text":
-            item = TextItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = TextItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, locked=locked, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
 
         if drawing_id is None:
             item.create()
@@ -1547,21 +1602,25 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)
         if self._main_window.uiShowGridAction.isChecked():
-            gridSize = 75
+            grids = [(self.drawingGridSize(), QtGui.QColor(208, 208, 208)),
+                     (self.nodeGridSize(), QtGui.QColor(190, 190, 190))]
             painter.save()
-            painter.setPen(QtGui.QPen(QtGui.QColor(190, 190, 190)))
+            for (grid, colour) in grids:
+                if not grid:
+                    continue
+                painter.setPen(QtGui.QPen(colour))
 
-            left = int(rect.left()) - (int(rect.left()) % gridSize)
-            top = int(rect.top()) - (int(rect.top()) % gridSize)
+                left = int(rect.left()) - (int(rect.left()) % grid)
+                top = int(rect.top()) - (int(rect.top()) % grid)
 
-            x = left
-            while x < rect.right():
-                painter.drawLine(x, rect.top(), x, rect.bottom())
-                x += gridSize
-            y = top
-            while y < rect.bottom():
-                painter.drawLine(rect.left(), y, rect.right(), y)
-                y += gridSize
+                x = left
+                while x < rect.right():
+                    painter.drawLine(x, rect.top(), x, rect.bottom())
+                    x += grid
+                y = top
+                while y < rect.bottom():
+                    painter.drawLine(rect.left(), y, rect.right(), y)
+                    y += grid
             painter.restore()
 
     def toggleUiDeviceMenu(self):

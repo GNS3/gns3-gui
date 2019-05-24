@@ -75,7 +75,6 @@ class EthernetHubConfigurationPage(QtWidgets.QWidget, Ui_ethernetHubConfigPageWi
         if not node:
             # these are template settings
 
-            # rename the label from "Name" to "Template name"
             self.uiNameLabel.setText("Template name:")
 
             # load the default name format

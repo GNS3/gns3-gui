@@ -18,11 +18,14 @@
 import os
 import hashlib
 import tempfile
+import json
+import pathlib
 
-from .qt import QtCore, QtGui, QtWidgets, qpartial, qslot
+from .qt import QtCore, QtNetwork, QtGui, QtWidgets, QtWebSockets, qpartial, qslot
 from .symbol import Symbol
 from .local_server_config import LocalServerConfig
 from .settings import LOCAL_SERVER_SETTINGS
+from gns3.utils import parse_version
 
 import logging
 log = logging.getLogger(__name__)
@@ -30,35 +33,45 @@ log = logging.getLogger(__name__)
 
 class Controller(QtCore.QObject):
     """
-    An instance of the GNS3 server controller
+    An instance of the server controller.
     """
+
     connected_signal = QtCore.Signal()
     disconnected_signal = QtCore.Signal()
     connection_failed_signal = QtCore.Signal()
     project_list_updated_signal = QtCore.Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self):
+
         super().__init__()
         self._connected = False
         self._connecting = False
-        self._cache_directory = tempfile.mkdtemp()
+        self._notification_stream = None
+        self._version = None
+        self._cache_directory = tempfile.TemporaryDirectory(suffix="-gns3")
         self._http_client = None
-        # If it's the first error we display an alert box to the user
         self._first_error = True
         self._error_dialog = None
         self._display_error = True
         self._projects = []
+        self._controller_websocket = QtWebSockets.QWebSocket()
+        self._project_websocket = QtWebSockets.QWebSocket()
 
         # If we do multiple call in order to download the same symbol we queue them
         self._static_asset_download_queue = {}
 
     def host(self):
+
         return self._http_client.host()
+
+    def version(self):
+        return self._version
 
     def isRemote(self):
         """
         :returns Boolean: True if the controller is remote
         """
+
         settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
         return not settings["auto_start"]
 
@@ -66,24 +79,28 @@ class Controller(QtCore.QObject):
         """
         :returns: True if connection is in progress
         """
+
         return self._connecting
 
     def connected(self):
         """
         Is the controller connected
         """
+
         return self._connected
 
     def httpClient(self):
         """
-        :returns: HTTP client for connected to the controller
+        :returns: HTTP client to connect to the controller
         """
+
         return self._http_client
 
     def setHttpClient(self, http_client):
         """
         :param http_client: Instance of HTTP client to communicate with the server
         """
+
         self._http_client = http_client
         if self._http_client:
             if self.isRemote():
@@ -96,12 +113,14 @@ class Controller(QtCore.QObject):
         """
         :return: Instance of HTTP client to communicate with the server
         """
+
         return self._http_client
 
     def setDisplayError(self, val):
         """
         Allow error to be visible or not
         """
+
         self._display_error = val
         self._first_error = True
 
@@ -109,6 +128,7 @@ class Controller(QtCore.QObject):
         """
         Connection process as started
         """
+
         self._connected = False
         self._connecting = True
         self.get('/version', self._versionGetSlot)
@@ -118,11 +138,13 @@ class Controller(QtCore.QObject):
             self._connected = False
             self.disconnected_signal.emit()
             self._connectingToServer()
+            self.stopListenNotifications()
 
     def _versionGetSlot(self, result, error=False, **kwargs):
         """
-        Called after the inital version get
+        Called after the initial version get
         """
+
         if error:
             if self._first_error:
                 self._connecting = False
@@ -134,7 +156,7 @@ class Controller(QtCore.QObject):
                     self._error_dialog.setText("Error when connecting to the GNS3 server:\n{}".format(result["message"]))
                     self._error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
                     self._error_dialog.show()
-            # Try to connect again in x seconds
+            # Try to connect again in 5 seconds
             QtCore.QTimer.singleShot(5000, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
             self._first_error = False
         else:
@@ -142,32 +164,43 @@ class Controller(QtCore.QObject):
             if self._error_dialog:
                 self._error_dialog.reject()
                 self._error_dialog = None
+            self._version = result.get("version")
 
     def _httpClientConnectedSlot(self):
+
         if not self._connected:
             self._connected = True
             self._connecting = False
             self.connected_signal.emit()
             self.refreshProjectList()
+            self._startListenNotifications()
+
+    def post(self, *args, **kwargs):
+        return self.createHTTPQuery("POST", *args, **kwargs)
 
     def get(self, *args, **kwargs):
         return self.createHTTPQuery("GET", *args, **kwargs)
+
+    def put(self, *args, **kwargs):
+        return self.createHTTPQuery("PUT", *args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        return self.createHTTPQuery("DELETE", *args, **kwargs)
 
     def getCompute(self, path, compute_id, *args, **kwargs):
         """
         API get on a specific compute
         """
+
         compute_id = self.__fix_compute_id(compute_id)
         path = "/computes/{}{}".format(compute_id, path)
         return self.get(path, *args, **kwargs)
-
-    def post(self, *args, **kwargs):
-        return self.createHTTPQuery("POST", *args, **kwargs)
 
     def postCompute(self, path, compute_id, *args, **kwargs):
         """
         API post on a specific compute
         """
+
         compute_id = self.__fix_compute_id(compute_id)
         path = "/computes/{}{}".format(compute_id, path)
         return self.post(path, *args, **kwargs)
@@ -176,9 +209,10 @@ class Controller(QtCore.QObject):
         """
         Support for remote server <= 1.5
         This fix should be not require after the 2.1
-        when all the appliance template will be managed
-        on server
+        when all the templates will be managed on server
         """
+
+        #FIXME: remove this?
         if compute_id.startswith("http:") or compute_id.startswith("https:"):
             from .compute_manager import ComputeManager
             try:
@@ -191,28 +225,33 @@ class Controller(QtCore.QObject):
         """
         API post on a specific compute
         """
+
         compute_id = self.__fix_compute_id(compute_id)
         path = "/computes/endpoint/{}{}".format(compute_id, path)
         return self.get(path, *args, **kwargs)
 
-    def put(self, *args, **kwargs):
-        return self.createHTTPQuery("PUT", *args, **kwargs)
+    def putCompute(self, path, compute_id, *args, **kwargs):
+        """
+        API put on a specific compute
+        """
 
-    def delete(self, *args, **kwargs):
-        return self.createHTTPQuery("DELETE", *args, **kwargs)
+        compute_id = self.__fix_compute_id(compute_id)
+        path = "/computes/{}{}".format(compute_id, path)
+        return self.put(path, *args, **kwargs)
 
     def createHTTPQuery(self, method, path, *args, **kwargs):
         """
         Forward the query to the HTTP client or controller depending of the path
         """
+
         if self._http_client:
             return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
 
     def getSynchronous(self, endpoint, timeout=2):
         return self._http_client.getSynchronous(endpoint, timeout)
 
-    def connectWebSocket(self, path, *args):
-        return self._http_client.connectWebSocket(path)
+    def connectProjectWebSocket(self, path, *args):
+        return self._http_client.connectWebSocket(self._project_websocket, path)
 
     @staticmethod
     def instance():
@@ -236,7 +275,6 @@ class Controller(QtCore.QObject):
 
         if not self._http_client:
             return
-
 
         path = self.getStaticCachedPath(url)
 
@@ -276,8 +314,8 @@ class Controller(QtCore.QObject):
     def getStaticCachedPath(self, url):
         """
         Returns static cached (hashed) path
+
         :param url:
-        :return:
         """
         m = hashlib.md5()
         m.update(url.encode())
@@ -285,8 +323,21 @@ class Controller(QtCore.QObject):
             extension = ".svg"
         else:
             extension = ".png"
-        path = os.path.join(self._cache_directory, m.hexdigest() + extension)
+        path = os.path.join(self._cache_directory.name, m.hexdigest() + extension)
         return path
+
+    def clearStaticCache(self):
+        """
+        Clear the cache directory.
+        """
+
+        for filename in os.listdir(self._cache_directory.name):
+            if filename.endswith(".svg") or filename.endswith(".png"):
+                try:
+                    os.remove(os.path.join(self._cache_directory.name, filename))
+                except OSError as e:
+                    log.debug("Error deleting cached symbol '{}':{}".format(filename, e))
+                    continue
 
     def getSymbolIcon(self, symbol_id, callback, fallback=None):
         """
@@ -304,9 +355,30 @@ class Controller(QtCore.QObject):
             self.getStatic(Symbol(symbol_id).url(), qpartial(self._getIconCallback, callback), fallback=fallback)
 
     def _getIconCallback(self, callback, path):
+
+        pixmap = QtGui.QPixmap(path)
+        if pixmap.isNull():
+            log.debug("Invalid symbol {}".format(path))
+            path = ":/icons/cancel.svg"
         icon = QtGui.QIcon()
         icon.addFile(path)
         callback(icon)
+
+    def uploadSymbol(self, symbol_id, path):
+
+        self.post("/symbols/" + symbol_id + "/raw",
+                  qpartial(self._finishSymbolUpload, path),
+                  body=pathlib.Path(path), progressText="Uploading {}".format(symbol_id), timeout=None)
+
+    def _finishSymbolUpload(self, path, result, error=False, **kwargs):
+
+        if error:
+            log.error("Error while uploading symbol: {}: {}".format(path, result.get("message", "unknown")))
+            return
+
+        # Refresh the templates list
+        from .template_manager import TemplateManager
+        TemplateManager.instance().templates_changed_signal.emit()
 
     def getSymbols(self, callback):
         self.get('/symbols', callback=callback)
@@ -336,3 +408,78 @@ class Controller(QtCore.QObject):
 
     def projects(self):
         return self._projects
+
+    def _startListenNotifications(self):
+        if not self.connected():
+            return
+
+        # Due to bug in Qt on some version we need a dedicated network manager
+        self._notification_network_manager = QtNetwork.QNetworkAccessManager()
+        self._notification_stream = None
+
+        # Qt websocket before Qt 5.6 doesn't support auth
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
+            self._notification_stream = Controller.instance().createHTTPQuery("GET", "/notifications", self._endListenNotificationCallback,
+                                                                              downloadProgressCallback=self._event_received,
+                                                                              networkManager=self._notification_network_manager,
+                                                                              timeout=None,
+                                                                              showProgress=False,
+                                                                              ignoreErrors=True)
+
+        else:
+            self._notification_stream = self._http_client.connectWebSocket(self._controller_websocket, "/notifications/ws")
+            self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
+            self._notification_stream.error.connect(self._websocket_error)
+
+    def stopListenNotifications(self):
+        if self._notification_stream:
+            log.debug("Stop listening for notifications from controller")
+            stream = self._notification_stream
+            self._notification_stream = None
+            stream.abort()
+            self._notification_network_manager = None
+
+    def _endListenNotificationCallback(self, result, error=False, **kwargs):
+        """
+        If notification stream disconnect we reconnect to it
+        """
+        if self._notification_stream:
+            self._notification_stream = None
+            self._startListenNotifications()
+
+    @qslot
+    def _websocket_error(self, error):
+        if self._notification_stream:
+            log.error("Websocket notification stream error: {}".format(self._notification_stream.errorString()))
+            self._notification_stream = None
+            self._startListenNotifications()
+
+    @qslot
+    def _websocket_event_received(self, event):
+        try:
+            self._event_received(json.loads(event))
+        except ValueError as e:
+            log.error("Invalid event received: {}".format(e))
+
+    def _event_received(self, result, *args, **kwargs):
+
+        # Log only relevant events
+        if result["action"] not in ("ping", "compute.updated"):
+            log.debug("Event received from controller stream: {}".format(result))
+        if result["action"] == "template.created" or result["action"] == "template.updated":
+            from gns3.template_manager import TemplateManager
+            TemplateManager.instance().templateDataReceivedCallback(result["event"])
+        elif result["action"] == "template.deleted":
+            from gns3.template_manager import TemplateManager
+            TemplateManager.instance().deleteTemplateCallback(result["event"])
+        elif result["action"] == "compute.created" or result["action"] == "compute.updated":
+            from .compute_manager import ComputeManager
+            ComputeManager.instance().computeDataReceivedCallback(result["event"])
+        elif result["action"] == "log.error":
+            log.error(result["event"]["message"])
+        elif result["action"] == "log.warning":
+            log.warning(result["event"]["message"])
+        elif result["action"] == "log.info":
+            log.info(result["event"]["message"], extra={"show": True})
+        elif result["action"] == "ping":
+            pass

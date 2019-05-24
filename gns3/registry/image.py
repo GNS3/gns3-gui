@@ -38,7 +38,7 @@ class Image:
 
         self._location = "local"
         self._emulator = emulator
-        self.path = path
+        self._path = path
         if filename is None:
             self._filename = os.path.basename(self.path)
         else:
@@ -67,6 +67,13 @@ class Image:
         return self._filename
 
     @property
+    def path(self):
+        """
+        :returns: Image path
+        """
+        return self._path
+
+    @property
     def version(self):
         """
         :returns: Get the file version / release
@@ -90,27 +97,35 @@ class Image:
         """
 
         if self._md5sum is None:
-            from_cache = Image._cache.get(self.path)
+            from_cache = Image._cache.get(self._path)
             if from_cache:
                 self._md5sum = from_cache
                 return self._md5sum
 
-            if os.path.exists(self.path + ".md5sum"):
-                with open(self.path + ".md5sum", encoding="utf-8") as f:
-                    self._md5sum = f.read()
-                    return self._md5sum
+            md5_file = self._path + ".md5sum"
+            if os.path.exists(md5_file):
+                try:
+                    with open(md5_file) as f:
+                        self._md5sum = f.read().strip()
+                        return self._md5sum
+                except (OSError, UnicodeDecodeError) as e:
+                    log.debug("Could not read '{}': {}".format(md5_file, e))
 
-            if not os.path.isfile(self.path):
+            try:
+                if not os.path.isfile(self._path):
+                    return None
+                m = hashlib.md5()
+                with open(self._path, "rb") as f:
+                    while True:
+                        buf = f.read(4096)
+                        if not buf:
+                            break
+                        m.update(buf)
+            except (OSError, PermissionError) as e:
+                log.debug("Cannot access '{}': {}".format(self._path, e))
                 return None
-            m = hashlib.md5()
-            with open(self.path, "rb") as f:
-                while True:
-                    buf = f.read(4096)
-                    if not buf:
-                        break
-                    m.update(buf)
             self._md5sum = m.hexdigest()
-        Image._cache[self.path] = self._md5sum
+        Image._cache[self._path] = self._md5sum
         return self._md5sum
 
     @md5sum.setter
@@ -125,7 +140,7 @@ class Image:
         if self._filesize is not None:
             return self._filesize
         try:
-            self._filesize = os.path.getsize(self.path)
+            self._filesize = os.path.getsize(self._path)
             return self._filesize
         except OSError:
             return 0

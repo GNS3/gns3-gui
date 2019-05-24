@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NewTemplateWizard</class>
+ <widget class="QWizard" name="NewTemplateWizard">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>New template</string>
+  </property>
+  <widget class="QWizardPage" name="uiSelectTemplateSourceWizardPage">
+   <property name="title">
+    <string>New template</string>
+   </property>
+   <property name="subTitle">
+    <string>Please select how you want to create a new template</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QRadioButton" name="uiImportApplianceFromServerRadioButton">
+      <property name="text">
+       <string>&amp;Install an appliance from the GNS3 server (recommended)</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="uiImportApplianceFromFileRadioButton">
+      <property name="text">
+       <string>&amp;Import an appliance file (.gns3a extension)</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="uiCreateTemplateManuallyRadioButton">
+      <property name="text">
+       <string>&amp;Manually create a new template</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="uiApplianceFromServerWizardPage">
+   <property name="title">
+    <string>Appliances from server</string>
+   </property>
+   <property name="subTitle">
+    <string>Select one or more appliances to install. Update will request the server to download appliances from our online registry.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QLineEdit" name="uiFilterLineEdit">
+      <property name="placeholderText">
+       <string>Filter</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTreeWidget" name="uiAppliancesTreeWidget">
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ExtendedSelection</enum>
+      </property>
+      <property name="indentation">
+       <number>10</number>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <attribute name="headerShowSortIndicator" stdset="0">
+       <bool>true</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Appliance name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Emulator</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Vendor</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

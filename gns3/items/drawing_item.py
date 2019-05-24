@@ -41,8 +41,10 @@ class DrawingItem:
     Base class for non emulation item
     """
 
-    def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, rotation=0, **kws):
+    def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, locked=False, rotation=0, **kws):
         self._id = drawing_id
+        self._deleting = False
+        self._locked = locked
         if self._id is None:
             self._id = str(uuid.uuid4())
         self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable | QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
@@ -64,6 +66,8 @@ class DrawingItem:
         if rotation:
             self.setRotation(rotation)
 
+        self.setLocked(locked)
+
     def drawing_id(self):
         return self._id
 
@@ -81,13 +85,13 @@ class DrawingItem:
         """
 
         if error:
-            log.error("Error while setting up drawing: {}".format(result["message"]))
+            log.error("Error while creating drawing: {}".format(result["message"]))
             return False
         self._id = result["drawing_id"]
         self.updateDrawingCallback(result)
 
     def updateDrawing(self):
-        if self._id:
+        if self._id and not self.deleting() and self._project:
             self._project.put("/drawings/" + self._id, self.updateDrawingCallback, body=self.__json__(), showProgress=False)
 
     @qslot
@@ -101,10 +105,11 @@ class DrawingItem:
         """
 
         if error:
-            log.error("Error while setting up drawing: {}".format(result["message"]))
+            log.error("Error while updating drawing: {}".format(result["message"]))
             return False
         self.setPos(QtCore.QPoint(result["x"], result["y"]))
         self.setZValue(result["z"])
+        self.setLocked(result["locked"])
         self.setRotation(result["rotation"])
         if "svg" in result:
             self.fromSvg(result["svg"])
@@ -148,6 +153,7 @@ class DrawingItem:
             "x": int(self.pos().x()),
             "y": int(self.pos().y()),
             "z": int(self.zValue()),
+            "locked": self._locked,
             "rotation": int(self.rotation())
         }
         svg = self.toSvg()
@@ -157,21 +163,39 @@ class DrawingItem:
             self._hash_svg = hash_svg
         return data
 
-    def setZValue(self, value):
+    def locked(self):
         """
-        Sets a new Z value.
+        Is the drawing locked
+        """
+
+        return self._locked
+
+    def setLocked(self, locked):
+        """
+        Sets the locked value.
 
         :param value: Z value
         """
 
-        QtWidgets.QGraphicsItem.setZValue(self, value)
-
-        if self.zValue() < 0:
-            self.setFlag(self.ItemIsSelectable, False)
+        if locked is True:
             self.setFlag(self.ItemIsMovable, False)
         else:
-            self.setFlag(self.ItemIsSelectable, True)
             self.setFlag(self.ItemIsMovable, True)
+        self._locked = locked
+
+    def deleting(self):
+        """
+        Is the drawing being deleted
+        """
+
+        return self._deleting
+
+    def setDeleting(self):
+        """
+        Mark this drawing as being deleted
+        """
+
+        self._deleting = True
 
     def delete(self, skip_controller=False):
         """
@@ -180,6 +204,7 @@ class DrawingItem:
         :param skip_controller: Do not replicate change on the controller (usefull when it's already deleted on controller)
         """
 
+        self.setDeleting()
         self.scene().removeItem(self)
         from ..topology import Topology
         Topology.instance().removeDrawing(self)
@@ -188,11 +213,11 @@ class DrawingItem:
 
     def itemChange(self, change, value):
         if change == QtWidgets.QGraphicsItem.ItemPositionHasChanged and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
-            GRID_SIZE = 75
+            grid_size = self._graphics_view.drawingGridSize()
             mid_x = self.boundingRect().width() / 2
-            tmp_x = (GRID_SIZE * round((self.x() + mid_x) / GRID_SIZE)) - mid_x
+            tmp_x = (grid_size * round((self.x() + mid_x) / grid_size)) - mid_x
             mid_y = self.boundingRect().height() / 2
-            tmp_y = (GRID_SIZE * round((self.y() + mid_y) / GRID_SIZE)) - mid_y
+            tmp_y = (grid_size * round((self.y() + mid_y) / grid_size)) - mid_y
             if tmp_x != self.x() and tmp_y != self.y():
                 self.setPos(tmp_x, tmp_y)
 

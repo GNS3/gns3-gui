@@ -42,18 +42,20 @@ from .dialogs.edit_project_dialog import EditProjectDialog
 from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .items.node_item import NodeItem
-from .items.link_item import LinkItem
+from .items.link_item import LinkItem, SvgIconItem
 from .items.shape_item import ShapeItem
+from .items.label_item import LabelItem
 from .topology import Topology
 from .http_client import HTTPClient
 from .progress import Progress
 from .update_manager import UpdateManager
 from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
-from .dialogs.new_appliance_dialog import NewApplianceDialog
+from .dialogs.new_template_wizard import NewTemplateWizard
 from .dialogs.notif_dialog import NotifDialog, NotifDialogHandler
 from .status_bar import StatusBarHandler
 from .registry.appliance import ApplianceError
+from .template_manager import TemplateManager
 from .appliance_manager import ApplianceManager
 
 log = logging.getLogger(__name__)
@@ -109,12 +111,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.recent_project_actions = []
         self._start_time = time.time()
         local_config = LocalConfig.instance()
-        local_config.config_changed_signal.connect(self._localConfigChangedSlot)
+        #local_config.config_changed_signal.connect(self._localConfigChangedSlot)
         self._local_config_timer = QtCore.QTimer(self)
         self._local_config_timer.timeout.connect(local_config.checkConfigChanged)
         self._local_config_timer.start(1000)  # milliseconds
         self._analytics_client = AnalyticsClient()
-        self._appliance_manager = ApplianceManager()
+        self._template_manager = TemplateManager().instance()
+        self._appliance_manager = ApplianceManager().instance()
 
         # restore the geometry and state of the main window.
         self.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["geometry"].encode()))
@@ -138,6 +141,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
         self._screenshots_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
         self._pictures_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
+        self._appliance_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        self._portable_project_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        self._project_dir = None
 
         # add recent file actions to the File menu
         for i in range(0, self._maxrecent_files):
@@ -166,8 +172,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restore the style
         self._setStyle(self._settings.get("style"))
 
-        if self._settings["hide_new_appliance_template_button"]:
-            self.uiNewAppliancePushButton.hide()
+        if self._settings.get("hide_new_template_button"):
+            self.uiNewTemplatePushButton.hide()
 
         self.setWindowTitle("[*] GNS3")
 
@@ -204,6 +210,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiNewProjectAction.triggered.connect(self._newProjectActionSlot)
         self.uiOpenProjectAction.triggered.connect(self.openProjectActionSlot)
         self.uiOpenApplianceAction.triggered.connect(self.openApplianceActionSlot)
+        self.uiNewTemplateAction.triggered.connect(self._newTemplateActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
         self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
@@ -229,9 +236,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
         self.uiShowGridAction.triggered.connect(self._showGridActionSlot)
         self.uiSnapToGridAction.triggered.connect(self._snapToGridActionSlot)
+        self.uiLockAllAction.triggered.connect(self._lockActionSlot)
 
         # tool menu connections
-        self.uiWebInterfaceAction.triggered.connect(self._openWebInterfaceActionSlot)
+        self.uiWebInterfaceAction.triggered.connect(self._openLightWebInterfaceActionSlot)
+        self.uiWebUIAction.triggered.connect(self._openWebInterfaceActionSlot)
 
         # control menu connections
         self.uiStartAllAction.triggered.connect(self._startAllActionSlot)
@@ -270,8 +279,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiBrowseAllDevicesAction.triggered.connect(self._browseAllDevicesActionSlot)
         self.uiAddLinkAction.triggered.connect(self._addLinkActionSlot)
 
-        # new appliance button
-        self.uiNewAppliancePushButton.clicked.connect(self._newApplianceActionSlot)
+        # new template button
+        self.uiNewTemplatePushButton.clicked.connect(self._newTemplateActionSlot)
 
         # connect the signal to the view
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)
@@ -313,9 +322,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
         self.settings_updated_signal.emit()
 
-    def _openWebInterfaceActionSlot(self):
+    def _openLightWebInterfaceActionSlot(self):
         if Controller.instance().connected():
             QtGui.QDesktopServices.openUrl(QtCore.QUrl(Controller.instance().httpClient().fullUrl()))
+
+    def _openWebInterfaceActionSlot(self):
+        if Controller.instance().connected():
+            base_url = Controller.instance().httpClient().fullUrl()
+            webui_url = "{}/static/web-ui/bundled".format(base_url)
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl(webui_url))
 
     def _showGridActionSlot(self):
         """
@@ -342,6 +357,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             project.setSnapToGrid(self.uiSnapToGridAction.isChecked())
             project.update()
 
+    def _lockActionSlot(self):
+        """
+        Called when user click on the lock menu item
+        :return: None
+        """
+
+        for item in self.uiGraphicsView.items():
+            if not isinstance(item, LinkItem) and not isinstance(item, LabelItem) and not isinstance(item, SvgIconItem):
+                if self.uiLockAllAction.isChecked() and not item.locked():
+                    item.setLocked(True)
+                elif not self.uiLockAllAction.isChecked() and item.locked():
+                    item.setLocked(False)
+                if item.parentItem() is None:
+                    item.updateNode()
+                item.update()
+
     def analyticsClient(self):
         """
         Return the analytics client
@@ -366,26 +397,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiNodesDockWidget.setWindowTitle("")
 
         if create_new_project:
-            Topology.instance().createLoadProject(
-                self._project_dialog.getProjectSettings())
+            Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
 
         self._project_dialog = None
 
-    def _newApplianceActionSlot(self):
+    def _newTemplateActionSlot(self):
         """
-        Called when user want to create a new appliance
+        Called when user want to create a new template.
         """
-        dialog = NewApplianceDialog(self)
+
+        dialog = NewTemplateWizard(self)
         dialog.show()
         dialog.exec_()
-
-        # No projects
-        if Topology.instance().project() is None:
-            if self._open_file_at_startup:
-                self.loadPath(self._open_file_at_startup)
-                self._open_file_at_startup = None
-            else:
-                self._newProjectActionSlot()
 
     @qslot
     def openApplianceActionSlot(self, *args):
@@ -393,14 +416,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to open an appliance.
         """
 
-        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-        if len(directory) == 0:
+        directory = self._appliance_dir
+        if not os.path.exists(self._appliance_dir):
             directory = Topology.instance().projectsDirPath()
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Import appliance", directory,
                                                         "All files (*.*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
                                                         "GNS3 Appliance (*.gns3appliance *.gns3a)")
         if path:
             self.loadPath(path)
+            self._appliance_dir = os.path.dirname(path)
 
     def openProjectActionSlot(self):
         """
@@ -411,11 +435,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # If the server is remote we use the new project windows with the project library
             self._newProjectActionSlot()
         else:
-            path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", Topology.instance().projectsDirPath(),
+            directory = self._project_dir
+            if self._project_dir and not os.path.exists(self._project_dir):
+                directory = Topology.instance().projectsDirPath()
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", directory,
                                                             "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
                                                             "GNS3 Project (*.gns3)")
             if path:
                 self.loadPath(path)
+                self._project_dir = os.path.dirname(path)
 
     def openRecentFileSlot(self):
         """
@@ -506,9 +534,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Called when settings are updated
         """
         # It covers case when project is not set
-        # and we need to refresh appliance manager
+        # and we need to refresh template manager
+        # and appliance manager
         project = Topology.instance().project()
         if project is None:
+            self._template_manager.instance().refresh()
             self._appliance_manager.instance().refresh()
 
     def _refreshVisibleWidgets(self):
@@ -536,7 +566,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _importExportConfigsActionSlot(self):
         """
         Slot called when importing and exporting configs
-        for the entire topology.
+        for the entire project.
         """
 
         options = ["Export configs to a directory", "Import configs from a directory"]
@@ -715,7 +745,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to scale in the view.
         """
 
-        factor_in = pow(2.0, 120 / 240.0)
+        factor_in = pow(2.0, 60 / 240.0)
         self.uiGraphicsView.scaleView(factor_in)
         self._updateZoomSettings()
 
@@ -724,7 +754,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called to scale out the view.
         """
 
-        factor_out = pow(2.0, -120 / 240.0)
+        factor_out = pow(2.0, -60 / 240.0)
         self.uiGraphicsView.scaleView(factor_out)
         self._updateZoomSettings()
 
@@ -908,9 +938,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             setup_wizard.show()
             res = setup_wizard.exec_()
             # start and connect to the local server if needed
-            LocalServer.instance().localServerAutoStartIfRequire()
-            if res:
-                self._newApplianceActionSlot()
+            LocalServer.instance().localServerAutoStartIfRequired()
 
     def _aboutQtActionSlot(self):
         """
@@ -1102,6 +1130,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings["state"] = bytes(self.saveState().toBase64()).decode()
         self.setSettings(self._settings)
 
+        Controller.instance().stopListenNotifications()
         server = LocalServer.instance()
         server.stopLocalServer(wait=True)
 
@@ -1178,7 +1207,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._setupWizardActionSlot()
         else:
             # start and connect to the local server if needed
-            LocalServer.instance().localServerAutoStartIfRequire()
+            LocalServer.instance().localServerAutoStartIfRequired()
             if self._open_file_at_startup:
                 self.loadPath(self._open_file_at_startup)
                 self._open_file_at_startup = None
@@ -1307,7 +1336,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             try:
                 if file_path and os.path.exists(file_path):
                     action = self.recent_file_actions[index]
-                    action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
+                    duplicate = False
+                    for file_path_2 in self._settings["recent_files"]:
+                        if file_path != file_path_2 and os.path.basename(file_path) == os.path.basename(file_path_2):
+                            duplicate = True
+                            break
+                    if duplicate:
+                        action.setText(" {}. {} [{}]".format(index + 1, os.path.basename(file_path), file_path))
+                    else:
+                        action.setText(" {}. {}".format(index + 1, os.path.basename(file_path)))
                     action.setData(file_path)
                     action.setVisible(True)
                     index += 1
@@ -1352,14 +1389,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called to import a portable project
         """
-        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-        if len(directory) == 0:
+
+        directory = self._portable_project_dir
+        if not os.path.exists(directory):
             directory = Topology.instance().projectsDirPath()
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open appliance", directory,
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open portable project", directory,
                                                         "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
                                                         "GNS3 Portable Project (*.gns3project *.gns3p)")
         if path:
             Topology.instance().importProject(path)
+            self._portable_project_dir = os.path.dirname(path)
 
     def _editProjectActionSlot(self):
         if Topology.instance().project() is None:

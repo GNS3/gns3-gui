@@ -138,6 +138,18 @@ class LocalServerConfig:
         if changed:
             self.writeConfig()
 
+    def deleteSetting(self, section, name):
+        """
+        Delete a specific setting in a given section.
+
+        :param section: section name
+        :param name: setting name to delete
+        """
+
+        if section in self._config and name in self._config[section]:
+            del self._config[section][name]
+            self.writeConfig()
+
     @staticmethod
     def instance():
         """

@@ -196,7 +196,6 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         if not node:
             # these are template settings
 
-            # rename the label from "Name" to "Template name"
             self.uiNameLabel.setText("Template name:")
 
             # load the default name format
@@ -223,11 +222,16 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         for port_info in settings["ports_mapping"]:
             item = TreeWidgetItem(self.uiPortsTreeWidget)
             item.setText(0, str(port_info["port_number"]))
-            item.setText(1, str(port_info["vlan"]))
-            item.setText(2, port_info["type"])
+            item.setText(1, str(port_info.get("vlan", 1)))
+            item.setText(2, port_info.get("type", "access"))
             item.setText(3, port_info.get("ethertype", ""))
             self.uiPortsTreeWidget.addTopLevelItem(item)
             self._ports[port_info["port_number"]] = port_info
+
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
 
         self.uiPortsTreeWidget.resizeColumnToContents(0)
         self.uiPortsTreeWidget.resizeColumnToContents(1)
@@ -265,6 +269,9 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
             settings["symbol"] = symbol_path
 
             settings["category"] = self.uiCategoryComboBox.itemData(self.uiCategoryComboBox.currentIndex())
+
+        # save console type
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
 
         settings["ports_mapping"] = list(self._ports.values())
         return settings

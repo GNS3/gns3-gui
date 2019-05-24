@@ -29,7 +29,6 @@ log = logging.getLogger(__name__)
 
 
 class ComputeItem(QtWidgets.QTreeWidgetItem):
-
     """
     Custom item for the QTreeWidget instance
     (topology summary view).
@@ -62,19 +61,26 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
             text = "{} CPU {}%, RAM {}%".format(text, self._compute.cpuUsagePercent(), self._compute.memoryUsagePercent())
 
         self.setText(0, text)
-        self.setToolTip(0, text + " on " + self._compute.capabilities().get("platform", ""))
-
         if self._compute.connected():
             self._status = "connected"
+            self.setToolTip(0, "Server {} version {} running on {}".format(self._compute.name(),
+                                                                           self._compute.capabilities().get("version", "n/a"),
+                                                                           self._compute.capabilities().get("platform", "")))
             if usage is None or (self._compute.cpuUsagePercent() < 90 and self._compute.memoryUsagePercent() < 90):
                 self.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))
             else:
                 self.setIcon(0, QtGui.QIcon(':/icons/led_yellow.svg'))
         else:
-            if self._status == "unknown":
+            last_error = self._compute.lastError()
+            if last_error:
+                self.setToolTip(0, "Failed to connect to {}: {}".format(self._compute.name(), last_error))
+                self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
+            elif self._status == "unknown":
+                self.setToolTip(0, "Discovering or connecting to {}...".format(self._compute.name()))
                 self.setIcon(0, QtGui.QIcon(':/icons/led_gray.svg'))
             else:
                 self._status = "stopped"
+                self.setToolTip(0, "{} is stopped or cannot be reached".format(self._compute.name()))
                 self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
         self._parent.sortItems(0, QtCore.Qt.AscendingOrder)
 
@@ -94,8 +100,8 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
                 self.addChild(item)
         self.sortChildren(0, QtCore.Qt.AscendingOrder)
 
-class ComputeSummaryView(QtWidgets.QTreeWidget):
 
+class ComputeSummaryView(QtWidgets.QTreeWidget):
     """
     Compute summary view implementation.
 
@@ -105,9 +111,7 @@ class ComputeSummaryView(QtWidgets.QTreeWidget):
     def __init__(self, parent):
 
         super().__init__(parent)
-
         self._computes = {}
-
         ComputeManager.instance().created_signal.connect(self._computeAddedSlot)
         ComputeManager.instance().updated_signal.connect(self._computeUpdatedSlot)
         ComputeManager.instance().deleted_signal.connect(self._computeRemovedSlot)

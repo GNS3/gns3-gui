@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/vpcs/ui/vpcs_node_wizard.ui'
 #
-# Created: Sun Jul 10 16:48:58 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_VPCSNodeWizard(object):
     def setupUi(self, VPCSNodeWizard):
         VPCSNodeWizard.setObjectName("VPCSNodeWizard")
-        VPCSNodeWizard.resize(585, 423)
+        VPCSNodeWizard.resize(664, 452)
         VPCSNodeWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -70,7 +69,7 @@ class Ui_VPCSNodeWizard(object):
         _translate = QtCore.QCoreApplication.translate
         VPCSNodeWizard.setWindowTitle(_translate("VPCSNodeWizard", "New VPCS node template"))
         self.uiServerWizardPage.setTitle(_translate("VPCSNodeWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("VPCSNodeWizard", "Please choose a server type to run your new VPCS node."))
+        self.uiServerWizardPage.setSubTitle(_translate("VPCSNodeWizard", "Please choose a server type to run the VPCS node."))
         self.uiServerTypeGroupBox.setTitle(_translate("VPCSNodeWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("VPCSNodeWizard", "Run the VPCS node on a remote computer"))
         self.uiVMRadioButton.setText(_translate("VPCSNodeWizard", "Run the VPCS node on the GNS3 VM"))

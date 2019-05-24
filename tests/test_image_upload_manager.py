@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import pytest
 import unittest.mock
 import pathlib
+import tempfile
 
 from gns3.registry.image import Image
 from gns3.image_upload_manager import ImageUploadManager
@@ -25,7 +27,8 @@ from gns3.image_upload_manager import ImageUploadManager
 
 @pytest.fixture
 def image():
-    return Image('QEMU', 'test.img')
+    (fd, path) = tempfile.mkstemp(suffix=".img")
+    return Image('QEMU', path)
 
 
 @pytest.fixture
@@ -38,10 +41,12 @@ def callback():
 
 
 def test_direct_file_upload(image, controller, callback):
+
+
     manager = ImageUploadManager(image, controller, 'compute_id', callback, directFileUpload=True)
     manager.upload()
     controller.getEndpoint.assert_called_with(
-        '/QEMU/images/test.img',
+        '/QEMU/images/{}'.format(image.filename),
         'compute_id',
         manager._onLoadEndpointCallback,
         showProgress=False
@@ -50,8 +55,8 @@ def test_direct_file_upload(image, controller, callback):
     with unittest.mock.patch('gns3.image_upload_manager.HTTPClient') as client:
         manager._onLoadEndpointCallback(dict(endpoint='/endpoint'))
         client.fromUrl.return_value.createHTTPQuery.assert_called_with(
-            'POST', '/endpoint', manager._checkIfSuccessfulCallback, body=pathlib.Path('test.img'),
-            prefix="", progressText='Uploading test.img', timeout=None
+            'POST', '/endpoint', manager._checkIfSuccessfulCallback, body=pathlib.Path(image.path),
+            prefix="", context={'image_path': image.path}, progressText='Uploading {}'.format(image.filename), timeout=None
         )
 
     manager._checkIfSuccessfulCallback({})
@@ -62,11 +67,12 @@ def test_direct_file_upload_fallback_to_controller(image, controller, callback):
     manager = ImageUploadManager(image, controller, callback, directFileUpload=True)
     manager._checkIfSuccessfulCallback({}, error=True, connection_error=True)
     controller.postCompute.assert_called_with(
-        '/QEMU/images/test.img',
+        '/QEMU/images/{}'.format(image.filename),
         callback,
         None,
-        body=pathlib.Path('test.img'),
-        progressText='Uploading test.img',
+        body=pathlib.Path(image.path),
+        context={'image_path': image.path},
+        progressText='Uploading {}'.format(image.filename),
         timeout=None
     )
 
@@ -75,10 +81,12 @@ def test_upload_via_controller(image, controller, callback):
     manager = ImageUploadManager(image, controller, callback, directFileUpload=False)
     manager.upload()
     controller.postCompute.assert_called_with(
-        '/QEMU/images/test.img',
+        '/QEMU/images/{}'.format(image.filename),
         callback,
         None,
-        body=pathlib.Path('test.img'),
-        progressText='Uploading test.img',
+        body=pathlib.Path(image.path),
+        context={'image_path': image.path},
+        progressText='Uploading {}'.format(image.filename),
         timeout=None
     )
+

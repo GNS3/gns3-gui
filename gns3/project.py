@@ -24,7 +24,7 @@ from gns3.compute_manager import ComputeManager
 from gns3.topology import Topology
 from gns3.local_config import LocalConfig
 from gns3.settings import GRAPHICS_VIEW_SETTINGS
-from gns3.appliance_manager import ApplianceManager
+from gns3.template_manager import TemplateManager
 from gns3.utils import parse_version
 
 import logging
@@ -49,6 +49,7 @@ class Project(QtCore.QObject):
     # Called when project is fully loaded
     project_loaded_signal = QtCore.Signal()
 
+
     def __init__(self):
 
         self._id = None
@@ -61,16 +62,21 @@ class Project(QtCore.QObject):
         self._auto_close = False
 
         config = LocalConfig.instance()
-
-        graphic_settings = LocalConfig.instance().loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS)
+        graphic_settings = config.loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS)
         self._scene_width = graphic_settings["scene_width"]
         self._scene_height = graphic_settings["scene_height"]
         self._zoom = graphic_settings.get("zoom", None)
         self._show_layers = graphic_settings.get("show_layers", False)
         self._snap_to_grid = graphic_settings.get("snap_to_grid", False)
         self._show_grid = graphic_settings.get("show_grid", False)
+        self._grid_size = graphic_settings.get("grid_size", 75)
+        self._drawing_grid_size = graphic_settings.get("drawing_grid_size", 25)
         self._show_interface_labels = graphic_settings.get("show_interface_labels", False)
         self._show_interface_labels_on_new_project = config.showInterfaceLabelsOnNewProject()
+        self._show_grid_on_new_project = config.showGridOnNewProject()
+        self._snap_to_grid_on_new_project = config.snapToGridOnNewProject()
+        self._variables = None
+        self._supplier = None
 
         self._name = "untitled"
         self._filename = None
@@ -179,6 +185,32 @@ class Project(QtCore.QObject):
         """
         return self._show_grid
 
+    def setNodeGridSize(self, grid_size):
+        """
+        Sets the grid size for nodes.
+        """
+        self._grid_size = grid_size
+
+    def nodeGridSize(self):
+        """
+        Returns the grid size for nodes.
+        :return: integer
+        """
+        return self._grid_size
+
+    def setDrawingGridSize(self, grid_size):
+        """
+        Sets the grid size for drawings
+        """
+        self._drawing_grid_size = grid_size
+
+    def drawingGridSize(self):
+        """
+        Returns the grid size for drawings
+        :return: integer
+        """
+        return self._drawing_grid_size
+
     def setShowInterfaceLabels(self, show_interface_labels):
         """
         Sets show interface labels mode
@@ -191,6 +223,32 @@ class Project(QtCore.QObject):
         :return: boolean
         """
         return self._show_interface_labels
+
+    def setVariables(self, variables):
+        """
+        Sets variables of project
+        """
+        self._variables = variables
+
+    def variables(self):
+        """
+        Returns variables assigned to the project
+        :return: boolean
+        """
+        return self._variables
+
+    def setSupplier(self, supplier):
+        """
+        Sets supplier of project
+        """
+        self._supplier = supplier
+
+    def supplier(self):
+        """
+        Returns supplier
+        :return: boolean
+        """
+        return self._supplier
 
     def setName(self, name):
         """
@@ -268,12 +326,16 @@ class Project(QtCore.QObject):
         """
         Duplicate a project
         """
-        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id), qpartial(self._duplicateCallback, callback), body={"name": name, "path": path}, timeout=None)
+        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id),
+                                   qpartial(self._duplicateCallback, callback),
+                                   body={"name": name, "path": path},
+                                   progressText="Duplicating project '{}'...".format(name),
+                                   timeout=None)
 
     def _duplicateCallback(self, callback, result, error=False, **kwargs):
         if error:
             if "message" in result:
-                QtWidgets.QMessageBox.critical(None, "Duplicate project", "Error while duplicating: {}".format(result["message"]))
+                log.error("Error while duplicating project: {}".format(result["message"]))
             return
         if callback:
             callback(result["project_id"])
@@ -377,6 +439,10 @@ class Project(QtCore.QObject):
         body = {
             "name": self._name,
             "path": self.filesDir(),
+            "grid_size": self._grid_size,
+            "drawing_grid_size": self._drawing_grid_size,
+            "show_grid": self._show_grid_on_new_project,
+            "snap_to_grid": self._snap_to_grid_on_new_project,
             "show_interface_labels": self._show_interface_labels_on_new_project
         }
         Controller.instance().post("/projects", self._projectCreatedCallback, body=body)
@@ -396,7 +462,11 @@ class Project(QtCore.QObject):
             "show_layers": self._show_layers,
             "snap_to_grid": self._snap_to_grid,
             "show_grid": self._show_grid,
-            "show_interface_labels": self._show_interface_labels
+            "grid_size": self._grid_size,
+            "drawing_grid_size": self._drawing_grid_size,
+            "show_interface_labels": self._show_interface_labels,
+            "variables": self._variables,
+            "supplier": self._supplier
         }
         self.put("", self._projectUpdatedCallback, body=body)
 
@@ -416,6 +486,7 @@ class Project(QtCore.QObject):
             self._closed = False
             self._closing = False
             self._startListenNotifications()
+
         self.project_updated_signal.emit()
         self.project_loaded_signal.emit()
 
@@ -436,6 +507,15 @@ class Project(QtCore.QObject):
         self._show_layers = result.get("show_layers", False)
         self._snap_to_grid = result.get("snap_to_grid", False)
         self._show_grid = result.get("show_grid", False)
+        self._variables = result.get("variables", None)
+        self._supplier = result.get("supplier", None)
+
+        grid_size = result.get("grid_size", None)
+        if grid_size:
+            self._grid_size = grid_size
+        drawing_grid_size = result.get("drawing_grid_size", None)
+        if drawing_grid_size:
+            self._drawing_grid_size = drawing_grid_size
         self._show_interface_labels = result.get("show_interface_labels", False)
 
     def load(self, path=None):
@@ -449,7 +529,7 @@ class Project(QtCore.QObject):
 
     def _projectOpenCallback(self, result, error=False, **kwargs):
         if error:
-            self.project_creation_error_signal.emit(result["message"])
+            self.project_creation_error_signal.emit(result.get("message", "unknown"))
             return
 
         self._parseResponse(result)
@@ -464,7 +544,7 @@ class Project(QtCore.QObject):
 
     def _listNodesCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while listing project: {}".format(result["message"]))
+            log.error("Error while listing project: {}".format(result.get("message", "unknown")))
             return
         topo = Topology.instance()
         for node in result:
@@ -473,7 +553,7 @@ class Project(QtCore.QObject):
 
     def _listLinksCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while listing links: {}".format(result["message"]))
+            log.error("Error while listing links: {}".format(result.get("message", "unknown")))
             return
         topo = Topology.instance()
         for link in result:
@@ -482,7 +562,7 @@ class Project(QtCore.QObject):
 
     def _listDrawingsCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while listing drawings: {}".format(result["message"]))
+            log.error("Error while listing drawings: {}".format(result.get("message", "unknown")))
             return
         topo = Topology.instance()
         for drawing in result:
@@ -547,7 +627,7 @@ class Project(QtCore.QObject):
 
         else:
             path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
-            self._notification_stream = Controller.instance().connectWebSocket(path)
+            self._notification_stream = Controller.instance().connectProjectWebSocket(path)
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
 
@@ -575,9 +655,10 @@ class Project(QtCore.QObject):
             return
 
     def _event_received(self, result, *args, **kwargs):
+
         # Log only relevant events
-        if result["action"] not in ("ping", "compute.updated"):
-            log.debug("Event received: %s", result)
+        if result["action"] not in ("ping"):
+            log.debug("Event received from project stream: {}".format(result))
         if result["action"] == "node.created":
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is None:
@@ -626,11 +707,5 @@ class Project(QtCore.QObject):
             log.warning(result["event"]["message"])
         elif result["action"] == "log.info":
             log.info(result["event"]["message"], extra={"show": True})
-        elif result["action"] == "compute.created" or result["action"] == "compute.updated":
-            cm = ComputeManager.instance()
-            cm.computeDataReceivedCallback(result["event"])
-        elif result["action"] == "settings.updated":
-            LocalConfig.instance().refreshConfigFromController()
-            ApplianceManager.instance().refresh()
         elif result["action"] == "ping":
             pass

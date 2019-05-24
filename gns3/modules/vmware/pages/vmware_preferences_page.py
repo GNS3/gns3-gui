@@ -22,9 +22,8 @@ Configuration page for VMware preferences.
 import os
 import sys
 import shutil
-from gns3.qt import QtWidgets, qpartial
+from gns3.qt import QtWidgets
 from gns3.utils.sudo import sudo
-from gns3.controller import Controller
 
 from .. import VMware
 from ..ui.vmware_preferences_page_ui import Ui_VMwarePreferencesPageWidget
@@ -32,7 +31,6 @@ from ..settings import VMWARE_SETTINGS
 
 
 class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
-
     """
     QWidget preference page for VMware.
     """
@@ -52,7 +50,7 @@ class VMwarePreferencesPage(QtWidgets.QWidget, Ui_VMwarePreferencesPageWidget):
             # VMnet limit on Windows is 19
             self.uiVMnetEndRangeSpinBox.setMaximum(19)
         else:
-            # VMnet limit on Linux is 255
+            # VMnet limit on Linux/OSX is 255
             self.uiVMnetEndRangeSpinBox.setMaximum(255)
 
     def _vmrunPathBrowserSlot(self):

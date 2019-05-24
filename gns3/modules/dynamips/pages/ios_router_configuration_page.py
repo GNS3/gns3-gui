@@ -31,6 +31,9 @@ from gns3.node import Node
 from ..ui.ios_router_configuration_page_ui import Ui_iosRouterConfigPageWidget
 from ..settings import CHASSIS, ADAPTER_MATRIX, WIC_MATRIX
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget):
 
@@ -108,7 +111,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
 
         # try to guess the platform
         image = os.path.basename(path)
-        match = re.match("^(c[0-9]+)\\-\w+", image)
+        match = re.match(r"^(c[0-9]+)p?-\w+", image)
         if not match:
             QtWidgets.QMessageBox.warning(self, "IOS image", "Could not detect the platform, make sure this is a valid IOS image!")
             return
@@ -244,7 +247,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         if node:
             self._compute_id = node.compute().id()
         else:
-            self._compute_id = settings["server"]
+            self._compute_id = settings["compute_id"]
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -268,7 +271,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         if not node:
             # these are template settings
 
-            # rename the label from "Name" to "Template name"
             self.uiNameLabel.setText("Template name:")
 
             # load the default name format
@@ -323,14 +325,12 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiNPEComboBox.clear()
             self.uiNPEComboBox.addItems(["npe-100", "npe-150", "npe-175", "npe-200", "npe-225", "npe-300", "npe-400", "npe-g2"])
 
-            if settings["midplane"]:
-                index = self.uiMidplaneComboBox.findText(settings["midplane"])
-                if index != -1:
-                    self.uiMidplaneComboBox.setCurrentIndex(index)
-            if settings["npe"]:
-                index = self.uiNPEComboBox.findText(settings["npe"])
-                if index != -1:
-                    self.uiNPEComboBox.setCurrentIndex(index)
+            index = self.uiMidplaneComboBox.findText(settings.get("midplane", "vxr"))
+            if index != -1:
+                self.uiMidplaneComboBox.setCurrentIndex(index)
+            index = self.uiNPEComboBox.findText(settings.get("npe", "npe-400"))
+            if index != -1:
+                self.uiNPEComboBox.setCurrentIndex(index)
 
             if node:
                 # load the sensor settings
@@ -348,7 +348,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                     self.uiPowerSupply2ComboBox.setCurrentIndex(0)
                 else:
                     self.uiPowerSupply2ComboBox.setCurrentIndex(1)
-            else:
+            elif self.uiTabWidget.count() == 6:
                 self.uiTabWidget.removeTab(4)  # environment tab
 
             # all platforms but c7200 have the iomem feature
@@ -361,10 +361,18 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiMidplaneComboBox.hide()
             self.uiNPELabel.hide()
             self.uiNPEComboBox.hide()
-            self.uiTabWidget.removeTab(4)  # environment tab
+            if self.uiTabWidget.count() == 6:
+                self.uiTabWidget.removeTab(4)  # environment tab
 
             # load the I/O memory setting
             self.uiIomemSpinBox.setValue(settings["iomem"])
+
+        # load the console type
+        index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
+        if index != -1:
+            self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
+        self.uiConsoleAutoStartCheckBox.setChecked(settings["console_auto_start"])
 
         # load the memories and disks settings
         self.uiRamSpinBox.setValue(settings["ram"])
@@ -414,6 +422,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             self.uiSparseMemoryCheckBox.setChecked(settings["sparsemem"])
         else:
             self.uiSparseMemoryCheckBox.hide()
+
+        self.uiUsageTextEdit.setPlainText(settings["usage"])
 
     def _checkForLinkConnectedToAdapter(self, slot_number, settings, node):
         """
@@ -513,7 +523,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if self._configFileValid(startup_config):
                     settings["startup_config"] = startup_config
                 else:
-                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot read the startup-config file")
+                    QtWidgets.QMessageBox.critical(self, "Startup-config", "Cannot access or read the startup-config file")
 
             private_config = self.uiPrivateConfigLineEdit.text().strip()
             if not private_config:
@@ -522,7 +532,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if self._configFileValid(private_config):
                     settings["private_config"] = private_config
                 else:
-                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot read the private-config file")
+                    QtWidgets.QMessageBox.critical(self, "Private-config", "Cannot access or read the private-config file")
 
             symbol_path = self.uiSymbolLineEdit.text()
             settings["symbol"] = symbol_path
@@ -564,6 +574,10 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         else:
             # save the I/O memory setting
             settings["iomem"] = self.uiIomemSpinBox.value()
+
+        # save console type
+        settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
+        settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
 
         # save the memories and disks settings
         settings["ram"] = self.uiRamSpinBox.value()
@@ -620,7 +634,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if node:
                     settings["wic" + str(wic_number)] = node.settings().get("wic" + str(wic_number))
 
-                if settings["wic" + str(wic_number)] and settings["wic" + str(wic_number)] != wic_name:
+                if settings.get("wic" + str(wic_number)) and settings["wic" + str(wic_number)] != wic_name:
                     if node:
                         self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = wic_name
@@ -628,12 +642,21 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
                 if node:
                     self._checkForLinkConnectedToWIC(wic_number, settings, node)
                 settings["wic" + str(wic_number)] = ""
+
+        settings["usage"] = self.uiUsageTextEdit.toPlainText()
         return settings
 
     def _configFileValid(self, path):
         """
         Return true if it's a valid configuration file
         """
+
         if not os.path.isabs(path):
             path = os.path.join(LocalServer.instance().localServerSettings()["configs_path"], path)
-        return os.access(path, os.R_OK)
+        result = os.access(path, os.R_OK)
+        if not result:
+            if not os.path.exists(path):
+                log.error("Cannot access config file '{}'".format(path))
+            else:
+                log.error("Cannot read config file '{}'".format(path))
+        return result

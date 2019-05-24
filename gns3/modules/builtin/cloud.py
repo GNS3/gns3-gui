@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from gns3.node import Node
+from .settings import CLOUD_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -36,42 +37,31 @@ class Cloud(Node):
     def __init__(self, module, server, project):
 
         super().__init__(module, server, project)
+        # this is an always-on node
         self.setStatus(Node.started)
         self._always_on = True
         self._interfaces = {}
-        self._cloud_settings = {"ports_mapping": []}
+        self._cloud_settings = {"ports_mapping": [],
+                                "remote_console_host": CLOUD_SETTINGS["remote_console_host"],
+                                "remote_console_port": CLOUD_SETTINGS["remote_console_port"],
+                                "remote_console_type": CLOUD_SETTINGS["remote_console_type"],
+                                "remote_console_http_path": CLOUD_SETTINGS["remote_console_http_path"]
+                                }
         self.settings().update(self._cloud_settings)
 
     def interfaces(self):
 
         return self._interfaces
 
-    def _createCallback(self, result, error=False, **kwargs):
+    def _createCallback(self, result):
         """
         Callback for create.
 
         :param result: server response
         """
-        if "ports_mapping" in result:
-            self._settings["ports_mapping"] = result["ports_mapping"].copy()
 
         if "interfaces" in result:
             self._interfaces = result["interfaces"].copy()
-
-    def update(self, new_settings, force=False):
-        """
-        Updates the settings for this cloud.
-
-        :param new_settings: settings dictionary
-        :param force: force this node to update
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params or force:
-            self._update(params)
 
     def _updateCallback(self, result):
         """
@@ -80,11 +70,41 @@ class Cloud(Node):
         :param result: server response
         """
 
-        if "ports_mapping" in result:
-            self._settings["ports_mapping"] = result["ports_mapping"].copy()
-
         if "interfaces" in result:
             self._interfaces = result["interfaces"].copy()
+
+    def consoleType(self):
+        """
+        Get the console type.
+        """
+
+        return self.settings()["remote_console_type"]
+
+    def consoleHost(self):
+        """
+        Returns the host to connect to the console.
+
+        :returns: host (string)
+        """
+
+        return self.settings()["remote_console_host"]
+
+    def console(self):
+        """
+        Returns the console port number of this node
+
+        :returns: port number
+        """
+
+        return self.settings()["remote_console_port"]
+
+    def consoleHttpPath(self):
+        """
+        Returns the path of the web ui
+
+        :returns: string
+        """
+        return self._settings["remote_console_http_path"]
 
     def info(self):
         """
@@ -93,11 +113,23 @@ class Cloud(Node):
         :returns: formatted string
         """
 
-        info = """Cloud device {name} is always-on
-This is a node for external connections
-Device run on {host}
+        info = """Cloud {name} is always-on
+  Running on server {host} with port {port}
 """.format(name=self.name(),
-           host=self.compute().name())
+           host=self.compute().name(),
+           port=self.compute().port())
+
+        if self.consoleType() != "none":
+            info += """   Remote console is {console_host} on port {console} and type is {console_type}
+""".format(console_host=self.consoleHost(),
+           console=self.console(),
+           console_type=self.consoleType())
+            if self.consoleType() in ("http", "https"):
+                info += """   Remote console HTTP path is '{console_http_path}'
+""".format(console_http_path=self.consoleHttpPath())
+        else:
+            info += """   No remote console configured
+"""
 
         port_info = ""
         for port in self._ports:
@@ -128,11 +160,6 @@ Device run on {host}
         """
 
         return ":/symbols/cloud.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "Cloud"
 
     @staticmethod
     def categories():

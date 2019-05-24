@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/iou/ui/iou_device_wizard.ui'
 #
-# Created: Tue Sep 20 17:45:46 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_IOUDeviceWizard(object):
     def setupUi(self, IOUDeviceWizard):
         IOUDeviceWizard.setObjectName("IOUDeviceWizard")
-        IOUDeviceWizard.resize(586, 411)
+        IOUDeviceWizard.resize(670, 452)
         IOUDeviceWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -120,7 +119,7 @@ class Ui_IOUDeviceWizard(object):
         _translate = QtCore.QCoreApplication.translate
         IOUDeviceWizard.setWindowTitle(_translate("IOUDeviceWizard", "New IOU device template"))
         self.uiServerWizardPage.setTitle(_translate("IOUDeviceWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a server type to run your new IOU device."))
+        self.uiServerWizardPage.setSubTitle(_translate("IOUDeviceWizard", "Please choose a server type to run the IOU device."))
         self.uiServerTypeGroupBox.setTitle(_translate("IOUDeviceWizard", "Server type"))
         self.uiRemoteRadioButton.setText(_translate("IOUDeviceWizard", "Run this IOU device on a remote computers"))
         self.uiVMRadioButton.setText(_translate("IOUDeviceWizard", "Run this IOU device on the GNS3 VM"))

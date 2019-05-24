@@ -22,7 +22,6 @@ log = logging.getLogger(__name__)
 
 
 class EthernetSwitch(Node):
-
     """
     Ethernet switch.
 
@@ -30,6 +29,7 @@ class EthernetSwitch(Node):
     :param server: GNS3 server instance
     :param project: Project instance
     """
+
     URL_PREFIX = "ethernet_switch"
 
     def __init__(self, module, server, project):
@@ -38,41 +38,7 @@ class EthernetSwitch(Node):
         # this is an always-on node
         self.setStatus(Node.started)
         self._always_on = True
-        self.settings().update({"ports_mapping": [], "console": None, "console_type": "telnet"})
-
-    def _createCallback(self, result):
-        """
-        Callback for create.
-
-        :param result: server response (dict)
-        """
-        self.settings()["ports_mapping"] = result["ports_mapping"]
-        self.settings()["console"] = result["console"]
-
-    def console(self):
-        return self.settings()["console"]
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this Ethernet switch.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
-
-    def _updateCallback(self, result):
-        """
-        Callback for update.
-
-        :param result: server response
-        """
-        self.settings()["ports_mapping"] = result["ports_mapping"]
+        self.settings().update({"ports_mapping": [], "console_type": "none"})
 
     def info(self):
         """
@@ -82,13 +48,16 @@ class EthernetSwitch(Node):
         """
 
         info = """Ethernet switch {name} is always-on
-  Local node ID is {id}
-  Server's Node ID is {node_id}
-  Switch's server runs on {host}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           host=self.compute().name())
+           host=self.compute().name(),
+           port=self.compute().port(),
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:
@@ -139,11 +108,6 @@ class EthernetSwitch(Node):
         """
 
         return ":/symbols/ethernet_switch.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "Ethernet switch"
 
     @staticmethod
     def categories():

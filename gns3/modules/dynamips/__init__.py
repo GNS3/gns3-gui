@@ -23,13 +23,14 @@ import os
 import shutil
 import hashlib
 
-from gns3.qt import QtWidgets
 from gns3.local_config import LocalConfig
 from gns3.image_manager import ImageManager
 from gns3.local_server_config import LocalServerConfig
+from gns3.controller import Controller
+from gns3.template_manager import TemplateManager
+from gns3.template import Template
 
 from ..module import Module
-from ..module_error import ModuleError
 from .nodes.router import Router
 from .nodes.c1700 import C1700
 from .nodes.c2600 import C2600
@@ -39,8 +40,7 @@ from .nodes.c3725 import C3725
 from .nodes.c3745 import C3745
 from .nodes.c7200 import C7200
 from .nodes.etherswitch_router import EtherSwitchRouter
-from .settings import DYNAMIPS_SETTINGS
-from .settings import IOS_ROUTER_SETTINGS
+from .settings import DYNAMIPS_SETTINGS, IOS_ROUTER_SETTINGS
 from .settings import DEFAULT_IDLEPC
 
 PLATFORM_TO_CLASS = {
@@ -58,31 +58,21 @@ log = logging.getLogger(__name__)
 
 
 class Dynamips(Module):
-
     """
     Dynamips module.
     """
 
     def __init__(self):
         super().__init__()
-
-        self._settings = {}
-        self._ios_routers = {}
-        self._nodes = []
-        self._ios_images_cache = {}
-
-        self.configChangedSlot()
-
-    def configChangedSlot(self):
-        # load the settings and IOS images.
         self._loadSettings()
 
     @staticmethod
     def getDefaultIdlePC(path):
         """
-        Return the default IDLE PC for an image if the image
+        Returns the default IDLE PC for an image if the image
         exists or None otherwise
         """
+
         if not os.path.isfile(path):
             path = os.path.join(ImageManager.instance().getDirectoryForType("DYNAMIPS"), path)
             if not os.path.isfile(path):
@@ -98,6 +88,13 @@ class Dynamips(Module):
 
     @staticmethod
     def _md5sum(path):
+        """
+        Calculate MD5 checksum for image.
+
+        :param path: image path
+        :returns: MD5 checksum
+        """
+
         with open(path, "rb") as fd:
             m = hashlib.md5()
             while True:
@@ -120,7 +117,25 @@ class Dynamips(Module):
             else:
                 self._settings["dynamips_path"] = ""
 
-        self._loadIOSRouters()
+        # migrate router settings to the controller (templates are managed on server side starting with version 2.0)
+        Controller.instance().connected_signal.connect(self._migrateOldRouters)
+
+    def _migrateOldRouters(self):
+        """
+        Migrate local router settings to the controller.
+        """
+
+        if self._settings.get("routers"):
+            templates = []
+            for router in self._settings.get("routers"):
+                router_settings = IOS_ROUTER_SETTINGS.copy()
+                router_settings.update(router)
+                if not router_settings.get("chassis"):
+                    del router_settings["chassis"]
+                templates.append(Template(router_settings))
+            TemplateManager.instance().updateList(templates)
+            self._settings["routers"] = []
+            self._saveSettings()
 
     def _saveSettings(self):
         """
@@ -143,111 +158,6 @@ class Dynamips(Module):
         config = LocalServerConfig.instance()
         config.saveSettings(self.__class__.__name__, server_settings)
 
-    def _loadIOSRouters(self):
-        """
-        Load the IOS routers from the persistent settings file.
-        """
-
-        self._ios_routers = {}
-        settings = LocalConfig.instance().settings()
-        if "routers" in settings.get(self.__class__.__name__, {}):
-            for router in settings[self.__class__.__name__]["routers"]:
-                name = router.get("name")
-                server = router.get("server")
-                router["image"] = router.get("path", router["image"])  # for backward compatibility before version 1.3
-                key = "{server}:{name}".format(server=server, name=name)
-                if key in self._ios_routers or not name or not server:
-                    continue
-                router_settings = IOS_ROUTER_SETTINGS.copy()
-                router_settings.update(router)
-                # for backward compatibility before version 1.4
-                if "symbol" not in router_settings:
-                    router_settings["symbol"] = router_settings["default_symbol"]
-                    router_settings["symbol"] = router_settings["symbol"][:-11] + ".svg" if router_settings["symbol"].endswith("normal.svg") else router_settings["symbol"]
-                self._ios_routers[key] = router_settings
-
-    def _saveIOSRouters(self):
-        """
-        Saves the IOS routers to the persistent settings file.
-        """
-
-        self._settings["routers"] = list(self._ios_routers.values())
-        self._saveSettings()
-
-    def addNode(self, node):
-        """
-        Adds a node to this module.
-
-        :param node: Node instance
-        """
-
-        self._nodes.append(node)
-
-    def removeNode(self, node):
-        """
-        Removes a node from this module.
-
-        :param node: Node instance
-        """
-
-        if node in self._nodes:
-            self._nodes.remove(node)
-
-    def VMs(self):
-        """
-        Returns IOS routers settings.
-
-        :returns: IOS routers settings (dictionary)
-        """
-
-        return self._ios_routers
-
-    def setVMs(self, new_ios_routers):
-        """
-        Sets IOS images settings.
-
-        :param new_ios_routers: IOS images settings (dictionary)
-        """
-
-        self._ios_routers = new_ios_routers.copy()
-        self._saveIOSRouters()
-
-    @staticmethod
-    def vmConfigurationPage():
-        from .pages.ios_router_configuration_page import IOSRouterConfigurationPage
-        return IOSRouterConfigurationPage
-
-    def settings(self):
-        """
-        Returns the module settings
-
-        :returns: module settings (dictionary)
-        """
-
-        return self._settings
-
-    def setSettings(self, settings):
-        """
-        Sets the module settings
-
-        :param settings: module settings (dictionary)
-        """
-
-        self._settings.update(settings)
-        self._saveSettings()
-
-    def instantiateNode(self, node_class, server, project):
-        """
-        Instantiate a new node.
-
-        :param node_class: Node object
-        :param server: HTTPClient instance
-        :param project: Project instance
-        """
-
-        # create an instance of the node class
-        return node_class(self, server, project)
-
     def updateImageIdlepc(self, image_path, idlepc):
         """
         Updates the Idle-PC for an IOS image.
@@ -256,87 +166,40 @@ class Dynamips(Module):
         :param idlepc: Idle-PC value
         """
 
-        for ios_router in self._ios_routers.values():
-            if os.path.basename(ios_router["image"]) == image_path:
-                if ios_router["idlepc"] != idlepc:
-                    ios_router["idlepc"] = idlepc
-                    log.debug("Idle-PC value {} saved into '{}' template".format(idlepc, ios_router["name"]))
-                    self._saveIOSRouters()
-
-    def reset(self):
-        """
-        Resets the module.
-        """
-
-        self._nodes.clear()
-
-    def findAlternativeIOSImage(self, image, node):
-        """
-        Tries to find an alternative IOS image.
-
-        :param image: image name
-        :param node: requesting Node instance
-
-        :return: IOS image (dictionary)
-        """
-
-        if image in self._ios_images_cache:
-            return self._ios_images_cache[image]
-
-        from gns3.main_window import MainWindow
-        mainwindow = MainWindow.instance()
-        ios_routers = self.VMs()
-        candidate_ios_images = {}
-        alternative_image = {"image": image,
-                             "ram": None,
-                             "idlepc": None}
-
-        # find all images with the same platform and local server
-        for ios_router in ios_routers.values():
-            if ios_router["platform"] == node.settings()["platform"] and ios_router["server"] == "local":
-                if "chassis" in node.settings() and ios_router["chassis"] != node.settings()["chassis"]:
-                    # continue to look if the chassis is not compatible
-                    continue
-                candidate_ios_images[ios_router["image"]] = ios_router
-
-        if candidate_ios_images:
-            selection, ok = QtWidgets.QInputDialog.getItem(mainwindow,
-                                                           "IOS image", "IOS image {} could not be found\nPlease select an alternative from your existing images:".format(image),
-                                                           list(candidate_ios_images.keys()), 0, False)
-            if ok:
-                candidate = candidate_ios_images[selection]
-                alternative_image["image"] = candidate["image"]
-                alternative_image["ram"] = candidate["ram"]
-                alternative_image["idlepc"] = candidate["idlepc"]
-                self._ios_images_cache[image] = alternative_image
-                return alternative_image
-
-        # no registered IOS image is used, let's just ask for an IOS image path
-        msg = "Could not find the {} IOS image \nPlease select a similar IOS image!".format(image)
-        log.error(msg)
-        QtWidgets.QMessageBox.critical(mainwindow, "IOS image", msg)
-        from .pages.ios_router_preferences_page import IOSRouterPreferencesPage
-        image_path = IOSRouterPreferencesPage.getIOSImage(mainwindow, None)
-        if image_path:
-            alternative_image["image"] = image_path
-            self._ios_images_cache[image] = alternative_image
-        return alternative_image
+        for template in TemplateManager.instance().templates().values():
+            if template.template_type() == "dynamips":
+                template_settings = template.settings()
+                router_image = template_settings.get("image")
+                old_idlepc = template_settings.get("idlepc")
+                if os.path.basename(router_image) == image_path and old_idlepc != idlepc:
+                    template_settings["idlepc"] = idlepc
+                    template.setSettings(template_settings)
+                    log.debug("Idle-PC value {} saved into '{}' template".format(idlepc, template.name()))
+                    TemplateManager.instance().updateTemplate(template)
 
     @staticmethod
-    def getNodeClass(name):
+    def configurationPage():
         """
-        Returns the object with the corresponding name.
+        Returns the configuration page for this module.
 
-        :param name: object name
+        :returns: QWidget object
         """
 
-        if name in globals():
-            return globals()[name]
-        return None
+        from .pages.ios_router_configuration_page import IOSRouterConfigurationPage
+        return IOSRouterConfigurationPage
 
     @staticmethod
-    def getNodeType(name, platform=None):
-        if name == "dynamips":
+    def getNodeClass(node_type, platform=None):
+        """
+        Returns the class corresponding to node type.
+
+        :param node_type: node type (string)
+        :param platform: Dynamips platform
+
+        :returns: class or None
+        """
+
+        if node_type == "dynamips":
             return PLATFORM_TO_CLASS[platform]
         return None
 
@@ -350,28 +213,11 @@ class Dynamips(Module):
 
         return [C1700, C2600, C2691, C3600, C3725, C3745, C7200, EtherSwitchRouter]
 
-    def nodes(self):
-        """
-        Returns all the node data necessary to represent a node
-        in the nodes view and create a node on the scene.
-        """
-
-        nodes = []
-        for ios_router in self._ios_routers.values():
-            node_class = PLATFORM_TO_CLASS[ios_router["platform"]]
-            nodes.append(
-                {"class": node_class.__name__,
-                 "name": ios_router["name"],
-                 "server": ios_router["server"],
-                 "symbol": ios_router["symbol"],
-                 "categories": [ios_router["category"]]}
-            )
-
-        return nodes
-
     @staticmethod
     def preferencePages():
         """
+        Returns the preference pages for this module.
+
         :returns: QWidget object list
         """
 
@@ -390,3 +236,10 @@ class Dynamips(Module):
         if not hasattr(Dynamips, "_instance"):
             Dynamips._instance = Dynamips()
         return Dynamips._instance
+
+    def __str__(self):
+        """
+        Returns the module name.
+        """
+
+        return "dynamips"

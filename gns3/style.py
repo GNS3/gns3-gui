@@ -51,10 +51,13 @@ class Style:
         self._mw.uiNewProjectAction.setIcon(QtGui.QIcon(":/icons/new-project.svg"))
         self._mw.uiOpenProjectAction.setIcon(QtGui.QIcon(":/icons/open.svg"))
         self._mw.uiOpenApplianceAction.setIcon(QtGui.QIcon(":/icons/open.svg"))
+        self._mw.uiNewTemplateAction.setIcon(QtGui.QIcon(":/icons/plus.svg"))
         self._mw.uiSaveProjectAsAction.setIcon(QtGui.QIcon(":/icons/save-as.svg"))
+        self._mw.uiEditProjectAction.setIcon(QtGui.QIcon(":/icons/edit.svg"))
         self._mw.uiImportExportConfigsAction.setIcon(QtGui.QIcon(":/icons/import_export_configs.svg"))
-        self._mw.uiImportProjectAction.setIcon(QtGui.QIcon(":/icons/import_config.svg"))
-        self._mw.uiExportProjectAction.setIcon(QtGui.QIcon(":/icons/export_config.svg"))
+        self._mw.uiImportProjectAction.setIcon(QtGui.QIcon(":/icons/import.svg"))
+        self._mw.uiExportProjectAction.setIcon(QtGui.QIcon(":/icons/export.svg"))
+        self._mw.uiDeleteProjectAction.setIcon(QtGui.QIcon(":/icons/delete.svg"))
         self._mw.uiScreenshotAction.setIcon(QtGui.QIcon(":/icons/camera-photo.svg"))
         self._mw.uiSnapshotAction.setIcon(QtGui.QIcon(":/icons/snapshot.svg"))
         self._mw.uiQuitAction.setIcon(QtGui.QIcon(":/icons/quit.svg"))
@@ -82,6 +85,15 @@ class Style:
         self._mw.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/icons/browse-all-icons.png", ":/icons/browse-all-icons-hover.png"))
         self._mw.uiAddLinkAction.setIcon(self._getStyleIcon(":/icons/connection-new.svg", ":/charcoal_icons/connection-new-hover.svg"))
 
+        # Lock action has 4 different icons
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        self._mw.uiLockAllAction.setIcon(icon)
+
+
     def setClassicStyle(self):
         """
         Sets the classic GUI style.
@@ -91,10 +103,13 @@ class Style:
         self._mw.uiNewProjectAction.setIcon(self._getStyleIcon(":/classic_icons/new-project.svg", ":/classic_icons/new-project-hover.svg"))
         self._mw.uiOpenProjectAction.setIcon(self._getStyleIcon(":/classic_icons/open.svg", ":/classic_icons/open-hover.svg"))
         self._mw.uiOpenApplianceAction.setIcon(self._getStyleIcon(":/classic_icons/open.svg", ":/classic_icons/open-hover.svg"))
+        self._mw.uiNewTemplateAction.setIcon(self._getStyleIcon(":/classic_icons/plus.svg", ":/classic_icons/plus-hover.svg"))
         self._mw.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/classic_icons/save-as-project.svg", ":/classic_icons/save-as-project-hover.svg"))
+        self._mw.uiEditProjectAction.setIcon(self._getStyleIcon(":/classic_icons/edit.svg", ":/classic_icons/edit-hover.svg"))
         self._mw.uiImportExportConfigsAction.setIcon(self._getStyleIcon(":/classic_icons/import_export_configs.svg", ":/classic_icons/import_export_configs-hover.svg"))
         self._mw.uiImportProjectAction.setIcon(self._getStyleIcon(":/classic_icons/import.svg", ":/classic_icons/import-hover.svg"))
         self._mw.uiExportProjectAction.setIcon(self._getStyleIcon(":/classic_icons/export.svg", ":/classic_icons/export-hover.svg"))
+        self._mw.uiDeleteProjectAction.setIcon(self._getStyleIcon(":/classic_icons/delete.svg", ":/classic_icons/delete-hover.svg"))
         self._mw.uiScreenshotAction.setIcon(self._getStyleIcon(":/classic_icons/camera-photo.svg", ":/classic_icons/camera-photo-hover.svg"))
         self._mw.uiSnapshotAction.setIcon(self._getStyleIcon(":/classic_icons/snapshot.svg", ":/classic_icons/snapshot-hover.svg"))
         self._mw.uiQuitAction.setIcon(self._getStyleIcon(":/classic_icons/quit.svg", ":/classic_icons/quit-hover.svg"))
@@ -113,7 +128,7 @@ class Style:
         self._mw.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/classic_icons/rectangle.svg", ":/classic_icons/rectangle-hover.svg"))
         self._mw.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/classic_icons/ellipse.svg", ":/classic_icons/ellipse-hover.svg"))
         self._mw.uiDrawLineAction.setIcon(self._getStyleIcon(":/classic_icons/line.svg", ":/classic_icons/line-hover.svg"))
-        self._mw.uiEditReadmeAction.setIcon(self._getStyleIcon(":/classic_icons/edit.svg", ":/classic_icons/edit.svg"))
+        self._mw.uiEditReadmeAction.setIcon(self._getStyleIcon(":/classic_icons/edit.svg", ":/classic_icons/edit-hover.svg"))
         self._mw.uiOnlineHelpAction.setIcon(self._getStyleIcon(":/classic_icons/help.svg", ":/classic_icons/help-hover.svg"))
         self._mw.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/classic_icons/router.svg", ":/classic_icons/router-hover.svg"))
         self._mw.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/classic_icons/switch.svg", ":/classic_icons/switch-hover.svg"))
@@ -126,6 +141,14 @@ class Style:
         icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link-cancel.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self._mw.uiAddLinkAction.setIcon(icon)
+
+        # Lock action has 4 different icons
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/lock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/unlock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        self._mw.uiLockAllAction.setIcon(icon)
 
     def setCharcoalStyle(self):
         """
@@ -142,10 +165,13 @@ class Style:
         self._mw.uiNewProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/new-project.svg", ":/charcoal_icons/new-project-hover.svg"))
         self._mw.uiOpenProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/open.svg", ":/charcoal_icons/open-hover.svg"))
         self._mw.uiOpenApplianceAction.setIcon(self._getStyleIcon(":/charcoal_icons/open.svg", ":/charcoal_icons/open-hover.svg"))
+        self._mw.uiNewTemplateAction.setIcon(self._getStyleIcon(":/charcoal_icons/plus.svg", ":/charcoal_icons/plus-hover.svg"))
         self._mw.uiSaveProjectAsAction.setIcon(self._getStyleIcon(":/charcoal_icons/save-as-project.svg", ":/charcoal_icons/save-as-project-hover.svg"))
+        self._mw.uiEditProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/edit.svg", ":/charcoal_icons/edit-hover.svg"))
         self._mw.uiImportExportConfigsAction.setIcon(self._getStyleIcon(":/charcoal_icons/import_export_configs.svg", ":/charcoal_icons/import_export_configs-hover.svg"))
         self._mw.uiImportProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/import.svg", ":/charcoal_icons/import-hover.svg"))
         self._mw.uiExportProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/export.svg", ":/charcoal_icons/export-hover.svg"))
+        self._mw.uiDeleteProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/delete.svg", ":/charcoal_icons/delete-hover.svg"))
         self._mw.uiScreenshotAction.setIcon(self._getStyleIcon(":/charcoal_icons/camera-photo.svg", ":/charcoal_icons/camera-photo-hover.svg"))
         self._mw.uiSnapshotAction.setIcon(self._getStyleIcon(":/charcoal_icons/snapshot.svg", ":/charcoal_icons/snapshot-hover.svg"))
         self._mw.uiQuitAction.setIcon(self._getStyleIcon(":/charcoal_icons/quit.svg", ":/charcoal_icons/quit-hover.svg"))
@@ -164,7 +190,7 @@ class Style:
         self._mw.uiDrawRectangleAction.setIcon(self._getStyleIcon(":/charcoal_icons/rectangle.svg", ":/charcoal_icons/rectangle-hover.svg"))
         self._mw.uiDrawEllipseAction.setIcon(self._getStyleIcon(":/charcoal_icons/ellipse.svg", ":/charcoal_icons/ellipse-hover.svg"))
         self._mw.uiDrawLineAction.setIcon(self._getStyleIcon(":/charcoal_icons/line.svg", ":/charcoal_icons/line-hover.svg"))
-        self._mw.uiEditReadmeAction.setIcon(self._getStyleIcon(":/charcoal_icons/edit.svg", ":/charcoal_icons/edit.svg"))
+        self._mw.uiEditReadmeAction.setIcon(self._getStyleIcon(":/charcoal_icons/edit.svg", ":/charcoal_icons/edit-hover.svg"))
         self._mw.uiOnlineHelpAction.setIcon(self._getStyleIcon(":/charcoal_icons/help.svg", ":/charcoal_icons/help-hover.svg"))
         self._mw.uiBrowseRoutersAction.setIcon(self._getStyleIcon(":/charcoal_icons/router.svg", ":/charcoal_icons/router-hover.svg"))
         self._mw.uiBrowseSwitchesAction.setIcon(self._getStyleIcon(":/charcoal_icons/switch.svg", ":/charcoal_icons/switch-hover.svg"))
@@ -177,3 +203,11 @@ class Style:
         icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
         icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1-cancel.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self._mw.uiAddLinkAction.setIcon(icon)
+
+        # Lock action has 4 different icons
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/lock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/unlock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        self._mw.uiLockAllAction.setIcon(icon)

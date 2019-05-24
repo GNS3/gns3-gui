@@ -40,63 +40,43 @@ class DockerVM(Node):
         super().__init__(module, server, project)
 
         docker_vm_settings = {"image": "",
+                              "usage": "",
                               "adapters": DOCKER_CONTAINER_SETTINGS["adapters"],
+                              "custom_adapters": DOCKER_CONTAINER_SETTINGS["custom_adapters"],
                               "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
                               "environment": DOCKER_CONTAINER_SETTINGS["environment"],
-                              "console": None,
-                              "console_host": None,
                               "aux": None,
                               "console_type": DOCKER_CONTAINER_SETTINGS["console_type"],
+                              "console_auto_start": DOCKER_CONTAINER_SETTINGS["console_auto_start"],
                               "console_resolution": DOCKER_CONTAINER_SETTINGS["console_resolution"],
                               "console_http_port": DOCKER_CONTAINER_SETTINGS["console_http_port"],
-                              "console_http_path": DOCKER_CONTAINER_SETTINGS["console_http_path"]}
+                              "console_http_path": DOCKER_CONTAINER_SETTINGS["console_http_path"],
+                              "extra_hosts": DOCKER_CONTAINER_SETTINGS["extra_hosts"],
+                              "extra_volumes": DOCKER_CONTAINER_SETTINGS["extra_volumes"]}
 
         self.settings().update(docker_vm_settings)
 
-    def _createCallback(self, result):
-        """
-        Callback for Docker container creating.
-
-        :param result: server response
-        """
-        pass
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this Docker container.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-        if params:
-            self._update(params)
-
     def info(self):
-        """Returns information about this Docker container.
+        """
+        Returns information about this Docker container.
 
         :returns: formatted string
-        :rtype: string
         """
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
 
         info = """Docker container {name} is {state}
-  Node ID is {id}, server's Docker container ID is {node_id}
-  Docker VM's server run on {host}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  Docker image is "{image}"
   Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            host=self.compute().name(),
+           port=self.compute().port(),
            console=self._settings["console"],
-           console_type=self._settings["console_type"])
+           console_type=self._settings["console_type"],
+           image=self._settings["image"])
 
         port_info = ""
         for port in self._ports:
@@ -108,15 +88,8 @@ class DockerVM(Node):
                     port_name=port.name(),
                     port_description=port.description())
 
-        return info + port_info
-
-    def console(self):
-        """
-        Returns the console port for this Docker VM instance.
-
-        :returns: port (integer)
-        """
-        return self._settings["console"]
+        usage = "\n" + self._settings.get("usage")
+        return info + port_info + usage
 
     def consoleHttpPath(self):
         """
@@ -135,7 +108,8 @@ class DockerVM(Node):
         return self._settings["aux"]
 
     def configPage(self):
-        """Returns the configuration page widget to be used by the node configurator.
+        """
+        Returns the configuration page widget to be used by the node configurator.
 
         :returns: QWidget object
         """
@@ -144,7 +118,8 @@ class DockerVM(Node):
 
     @staticmethod
     def defaultSymbol():
-        """Returns the default symbol path for this node.
+        """
+        Returns the default symbol path for this node.
 
         :returns: symbol path (or resource).
         """
@@ -152,13 +127,9 @@ class DockerVM(Node):
 
     def configFiles(self):
         """
-        Return path of the /etc/network/interfaces
+        Returns the path of the /etc/network/interfaces
         """
         return ["etc/network/interfaces"]
-
-    @staticmethod
-    def symbolName():
-        return "Docker container"
 
     @staticmethod
     def categories():

@@ -26,7 +26,6 @@ log = logging.getLogger(__name__)
 
 
 class VPCSNode(Node):
-
     """
     VPCS node.
 
@@ -34,31 +33,17 @@ class VPCSNode(Node):
     :param server: GNS3 server instance
     :param project: Project instance
     """
+
     URL_PREFIX = "vpcs"
 
     def __init__(self, module, server, project):
         super().__init__(module, server, project)
 
-        vpcs_settings = {"console_host": None,
-                         "startup_script": None,
-                         "console": None}
+        vpcs_settings = {"startup_script": None,
+                         "console_type": "telnet",
+                         "console_auto_start": True}
 
         self.settings().update(vpcs_settings)
-
-    def update(self, new_settings):
-        """
-        Updates the settings for this VPCS node.
-
-        :param new_settings: settings dictionary
-        """
-
-        params = {}
-        for name, value in new_settings.items():
-            if name in self._settings and self._settings[name] != value:
-                params[name] = value
-
-        if params:
-            self._update(params)
 
     def info(self):
         """
@@ -67,21 +52,18 @@ class VPCSNode(Node):
         :returns: formatted string
         """
 
-        if self.status() == Node.started:
-            state = "started"
-        else:
-            state = "stopped"
-
         info = """Node {name} is {state}
-  Local node ID is {id}
-  Server's VPCS node ID is {node_id}
-  VPCS's server runs on {host}, console is on port {console}
+  Running on server {host} with port {port}
+  Local ID is {id} and server ID is {node_id}
+  Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
-           state=state,
+           state=self.state(),
            host=self.compute().name(),
-           console=self._settings["console"])
+           port=self.compute().port(),
+           console=self._settings["console"],
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:
@@ -97,16 +79,8 @@ class VPCSNode(Node):
         """
         Name of the configuration files
         """
+
         return ["startup.vpc"]
-
-    def console(self):
-        """
-        Returns the console port for this VPCS node.
-
-        :returns: port (integer)
-        """
-
-        return self._settings["console"]
 
     def configPage(self):
         """
@@ -127,11 +101,6 @@ class VPCSNode(Node):
         """
 
         return ":/symbols/vpcs_guest.svg"
-
-    @staticmethod
-    def symbolName():
-
-        return "VPCS"
 
     @staticmethod
     def categories():

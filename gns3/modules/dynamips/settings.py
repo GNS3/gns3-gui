@@ -32,13 +32,15 @@ DYNAMIPS_SETTINGS = {
 IOS_ROUTER_SETTINGS = {
     "name": "",
     "default_name_format": "R{0}",
+    "usage": "",
     "image": "",
     "symbol": ":/symbols/router.svg",
     "category": Node.routers,
     "startup_config": "",
     "private_config": "",
+    "console_type": "telnet",
+    "console_auto_start": False,
     "platform": "",
-    "chassis": "",
     "idlepc": "",
     "idlemax": 500,
     "idlesleep": 30,
@@ -52,7 +54,8 @@ IOS_ROUTER_SETTINGS = {
     "disk1": 0,
     "auto_delete_disks": False,
     "system_id": "FTX0945W0MY",
-    "server": "local"
+    "compute_id": "local",
+    "node_type": "dynamips"
 }
 
 # supported platforms with the default RAM value

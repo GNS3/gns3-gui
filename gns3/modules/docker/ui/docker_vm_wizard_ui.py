@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_wizard.ui'
 #
-# Created: Tue Sep 20 17:45:46 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DockerVMWizard(object):
     def setupUi(self, DockerVMWizard):
         DockerVMWizard.setObjectName("DockerVMWizard")
-        DockerVMWizard.resize(638, 437)
+        DockerVMWizard.resize(741, 452)
         DockerVMWizard.setModal(True)
         self.uiServerWizardPage = QtWidgets.QWizardPage()
         self.uiServerWizardPage.setObjectName("uiServerWizardPage")
@@ -168,6 +167,7 @@ class Ui_DockerVMWizard(object):
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
         self.uiConsoleTypeComboBox.addItem("")
+        self.uiConsoleTypeComboBox.addItem("")
         self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.uiConsoleTypeComboBox)
         DockerVMWizard.addPage(self.uiConsoleWizardPage)
         self.uiEnvironmentWizardPage = QtWidgets.QWizardPage()
@@ -195,13 +195,13 @@ class Ui_DockerVMWizard(object):
 
     def retranslateUi(self, DockerVMWizard):
         _translate = QtCore.QCoreApplication.translate
-        DockerVMWizard.setWindowTitle(_translate("DockerVMWizard", "New Docker VM template"))
+        DockerVMWizard.setWindowTitle(_translate("DockerVMWizard", "New Docker container template"))
         self.uiServerWizardPage.setTitle(_translate("DockerVMWizard", "Server"))
-        self.uiServerWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a server type to run your new Docker VM."))
+        self.uiServerWizardPage.setSubTitle(_translate("DockerVMWizard", "Please choose a server type to run the Docker container."))
         self.uiServerTypeGroupBox.setTitle(_translate("DockerVMWizard", "Server type"))
-        self.uiRemoteRadioButton.setText(_translate("DockerVMWizard", "Run this Docker VM on a remote computer"))
-        self.uiVMRadioButton.setText(_translate("DockerVMWizard", "Run this Docker VM on the GNS3 VM"))
-        self.uiLocalRadioButton.setText(_translate("DockerVMWizard", "Run this Docker VM on my local computer"))
+        self.uiRemoteRadioButton.setText(_translate("DockerVMWizard", "Run this Docker container on a remote computer"))
+        self.uiVMRadioButton.setText(_translate("DockerVMWizard", "Run this Docker container on the GNS3 VM"))
+        self.uiLocalRadioButton.setText(_translate("DockerVMWizard", "Run this Docker container on my local computer"))
         self.uiRemoteServersGroupBox.setTitle(_translate("DockerVMWizard", "Remote server"))
         self.uiRemoteServersLabel.setText(_translate("DockerVMWizard", "Run on:"))
         self.uiImageWizardPage.setTitle(_translate("DockerVMWizard", "Docker Virtual Machine"))
@@ -226,6 +226,7 @@ class Ui_DockerVMWizard(object):
         self.uiConsoleTypeComboBox.setItemText(1, _translate("DockerVMWizard", "vnc"))
         self.uiConsoleTypeComboBox.setItemText(2, _translate("DockerVMWizard", "http"))
         self.uiConsoleTypeComboBox.setItemText(3, _translate("DockerVMWizard", "https"))
+        self.uiConsoleTypeComboBox.setItemText(4, _translate("DockerVMWizard", "none"))
         self.uiEnvironmentWizardPage.setTitle(_translate("DockerVMWizard", "Environment"))
         self.uiEnvironmentWizardPage.setSubTitle(_translate("DockerVMWizard", "These variables will be passed to the container. Please read the container documentation to find what variables are used."))
         self.label_3.setText(_translate("DockerVMWizard", "There must be one pair by line, example: "))

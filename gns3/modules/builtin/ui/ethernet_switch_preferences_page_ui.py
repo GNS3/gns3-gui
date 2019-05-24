@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/builtin/ui/ethernet_switch_preferences_page.ui'
 #
-# Created: Fri Jun 10 17:15:20 2016
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +12,6 @@ class Ui_EthernetSwitchPreferencesPageWidget(object):
     def setupUi(self, EthernetSwitchPreferencesPageWidget):
         EthernetSwitchPreferencesPageWidget.setObjectName("EthernetSwitchPreferencesPageWidget")
         EthernetSwitchPreferencesPageWidget.resize(546, 455)
-        EthernetSwitchPreferencesPageWidget.setAccessibleDescription("")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(EthernetSwitchPreferencesPageWidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(EthernetSwitchPreferencesPageWidget)

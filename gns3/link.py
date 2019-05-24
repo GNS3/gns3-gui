@@ -21,10 +21,10 @@ Manages and stores everything needed for a connection between 2 devices.
 
 import os
 import re
-import sip
+from .qt import sip
 import uuid
 
-from .qt import QtCore, QtWidgets
+from .qt import QtCore
 from .controller import Controller
 
 
@@ -76,8 +76,10 @@ class Link(QtCore.QObject):
         self._destination_label = None
         self._link_id = link_id
         self._capturing = False
+        self._deleting = False
         self._capture_file_path = None
         self._capture_file = None
+        self._capture_compute_id = None
         self._initialized = False
         self._filters = {}
         self._suspend = False
@@ -102,27 +104,28 @@ class Link(QtCore.QObject):
             Controller.instance().post("/projects/{project_id}/links".format(project_id=source_node.project().id()), self._linkCreatedCallback, body=body)
 
     def _parseResponse(self, result):
-        self._capturing = result.get("capturing", False)
 
-        # If the controller is remote the capture path should be rewrite to something local
+        self._capturing = result.get("capturing", False)
         if self._capturing:
-            if Controller.instance().isRemote():
-                if self._capture_file_path is None and result.get("capture_file_path", None) is not None:
+            self._capture_compute_id = result.get("capture_compute_id", None)
+            self._capture_file_path = result.get("capture_file_path", None)
+            if Controller.instance().isRemote() or (self._capture_compute_id and self._capture_compute_id != "local"):
+                # We need to stream the pcap file content if the controller or compute is remote
+                if Controller.instance().isRemote() or self._capture_file_path is None:
                     self._capture_file = QtCore.QTemporaryFile()
                     self._capture_file.open(QtCore.QFile.WriteOnly)
                     self._capture_file.setAutoRemove(True)
                     self._capture_file_path = self._capture_file.fileName()
-                    Controller.instance().get(
-                        "/projects/{project_id}/links/{link_id}/pcap".format(
-                            project_id=self.project().id(),
-                            link_id=self._link_id),
-                        None,
-                        showProgress=False,
-                        downloadProgressCallback=self._downloadPcapProgress,
-                        ignoreErrors=True,  # If something is wrong avoid disconnect us from server
-                        timeout=None)
-            else:
-                self._capture_file_path = result["capture_file_path"]
+                else:
+                    self._capture_file = QtCore.QFile(self._capture_file_path)
+                    self._capture_file.open(QtCore.QFile.WriteOnly)
+                Controller.instance().get("/projects/{project_id}/links/{link_id}/pcap".format(project_id=self.project().id(), link_id=self._link_id),
+                                          None,
+                                          showProgress=False,
+                                          downloadProgressCallback=self._downloadPcapProgress,
+                                          ignoreErrors=True,  # If something is wrong avoid disconnect us from server
+                                          timeout=None)
+            log.debug("Capturing packets to '{}'".format(self._capture_file_path))
 
         if "nodes" in result:
             self._nodes = result["nodes"]
@@ -158,7 +161,7 @@ class Link(QtCore.QObject):
             self._updateLabels()
 
     def update(self):
-        if not self._link_id:
+        if not self._link_id or self.deleting():
             return
         body = self._prepareParams()
         Controller.instance().put("/projects/{project_id}/links/{link_id}".format(project_id=self._source_node.project().id(), link_id=self._link_id), self.updateLinkCallback, body=body)
@@ -171,7 +174,7 @@ class Link(QtCore.QObject):
 
     def updateLinkCallback(self, result, error=False, *args, **kwargs):
         if error:
-            QtWidgets.QMessageBox.warning(None, "Update link", "Error while updating link: {}".format(result["message"]))
+            log.warning("Error while updating link: {}".format(result["message"]))
             return
         self._parseResponse(result)
 
@@ -221,7 +224,7 @@ class Link(QtCore.QObject):
 
     def _linkCreatedCallback(self, result, error=False, **kwargs):
         if error:
-            QtWidgets.QMessageBox.warning(None, "Create link", "Error while creating link: {}".format(result["message"]))
+            log.warning("Error while creating link: {}".format(result["message"]))
             self.deleteLink(skip_controller=True)
             return
 
@@ -243,6 +246,19 @@ class Link(QtCore.QObject):
 
     def link_id(self):
         return self._link_id
+
+    def deleting(self):
+        """
+        Is the link being deleted
+        """
+        return self._deleting
+
+    def setDeleting(self):
+        """
+        Mark this link as being deleted
+        """
+
+        self._deleting = True
 
     def capturing(self):
         """
@@ -291,7 +307,7 @@ class Link(QtCore.QObject):
             self._source_port.name(),
             self._destination_node.name(),
             self._destination_port.name())
-        return re.sub("[^0-9A-Za-z_-]", "", capture_file_name)
+        return re.sub(r"[^0-9A-Za-z_-]", "", capture_file_name)
 
     def deleteLink(self, skip_controller=False):
         """
@@ -306,8 +322,10 @@ class Link(QtCore.QObject):
         if skip_controller:
             self._linkDeletedCallback({})
         else:
+            self.setDeleting()
             Controller.instance().delete("/projects/{project_id}/links/{link_id}".format(project_id=self.project().id(),
-                                                                                         link_id=self._link_id), self._linkDeletedCallback)
+                                                                                         link_id=self._link_id),
+                                                                                         self._linkDeletedCallback)
 
     def _linkDeletedCallback(self, result, error=False, **kwargs):
         """
@@ -332,62 +350,57 @@ class Link(QtCore.QObject):
             "capture_file_name": capture_file_name,
             "data_link_type": data_link_type
         }
-        Controller.instance().post(
-            "/projects/{project_id}/links/{link_id}/start_capture".format(
-                project_id=self.project().id(),
-                link_id=self._link_id),
-            self._startCaptureCallback,
-            body=data)
+        Controller.instance().post("/projects/{project_id}/links/{link_id}/start_capture".format(project_id=self.project().id(), link_id=self._link_id),
+                                   self._startCaptureCallback,
+                                   body=data)
 
     def _startCaptureCallback(self, result, error=False, **kwargs):
         if error:
             log.error("Error while starting capture on link: {}".format(result["message"]))
             return
-        self._parseResponse(result)
+        #self._parseResponse(result)
 
     def _downloadPcapProgress(self, content, server=None, context={}, **kwargs):
         """
         Called for each part of the file of the PCAP
         """
+
         if not self._capture_file_path:
             return
         self._capture_file.write(content)
         self._capture_file.flush()
 
     def stopCapture(self):
-        if Controller.instance().isRemote():
+
+        if Controller.instance().isRemote() or (self._capture_compute_id and self._capture_compute_id != "local"):
             if self._capture_file:
                 self._capture_file.close()
                 self._capture_file = None
-            if self._capture_file_path and os.path.exists(self._capture_file_path):
-                try:
-                    os.remove(self._capture_file_path)
-                except OSError as e:
-                    log.error("Can't remove file {}: {}".format(self._capture_file_path, e))
+            # if self._capture_file_path and os.path.exists(self._capture_file_path):
+            #     try:
+            #         os.remove(self._capture_file_path)
+            #     except OSError as e:
+            #         log.error("Cannot remove file {}: {}".format(self._capture_file_path, e))
         self._capture_file_path = None
-        Controller.instance().post(
-            "/projects/{project_id}/links/{link_id}/stop_capture".format(
-                project_id=self.project().id(),
-                link_id=self._link_id),
-            self._stopCaptureCallback)
+        Controller.instance().post("/projects/{project_id}/links/{link_id}/stop_capture".format(project_id=self.project().id(),
+                                                                                                link_id=self._link_id),
+                                                                                                self._stopCaptureCallback)
 
     def _stopCaptureCallback(self, result, error=False, **kwargs):
         if error:
             log.error("Error while stopping capture on link: {}".format(result["message"]))
             return
-        self._parseResponse(result)
+        #self._parseResponse(result)
 
     def get(self, path, callback, **kwargs):
         """
         HTTP Get from a link
         """
-        Controller.instance().get(
-            "/projects/{project_id}/links/{link_id}{path}".format(
-                project_id=self.project().id(),
-                link_id=self._link_id,
-                path=path),
-            callback,
-            **kwargs)
+        Controller.instance().get("/projects/{project_id}/links/{link_id}{path}".format(project_id=self.project().id(),
+                                                                                        link_id=self._link_id,
+                                                                                        path=path),
+                                  callback,
+                                  **kwargs)
 
     def id(self):
         """
