@@ -36,7 +36,6 @@ from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
 from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker
 from gns3.utils.progress_dialog import ProgressDialog
-from gns3.utils.http import getSynchronous
 from gns3.utils.sudo import sudo
 from gns3.http_client import HTTPClient
 from gns3.controller import Controller
@@ -515,9 +514,7 @@ class LocalServer(QtCore.QObject):
         :returns: boolean
         """
 
-        status, json_data = getSynchronous(self._settings["protocol"], self._settings["host"], self._port, "version",
-                                           timeout=2, user=self._settings["user"], password=self._settings["password"])
-
+        status, json_data = HTTPClient(self._settings).getSynchronous("GET", "/version", timeout=2)
         if status == 401:  # Auth issue that need to be solved later
             return True
         elif json_data is None:

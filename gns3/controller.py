@@ -213,9 +213,6 @@ class Controller(QtCore.QObject):
         if self._http_client:
             return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
 
-    def getSynchronous(self, endpoint, timeout=2):
-        return self._http_client.getSynchronous(endpoint, timeout)
-
     def connectWebSocket(self, path, *args):
         return self._http_client.connectWebSocket(path)
 
