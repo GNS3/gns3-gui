@@ -92,7 +92,7 @@ class UpdateManager(QtCore.QObject):
         self._silent = silent
         self._parent = parent
 
-        if hasattr(sys, "frozen") and LocalConfig.instance().experimental():
+        if not hasattr(sys, "frozen") and LocalConfig.instance().experimental():
             url = 'https://pypi.org/pypi/gns3-gui/json'
             self._get(url, self._pypiReplySlot)
         else:
