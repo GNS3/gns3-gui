@@ -727,46 +727,54 @@ class HTTPClient(QtCore.QObject):
                     e = HttpBadRequest(body)
                 raise e
 
-    def getSynchronous(self, endpoint, timeout=2):
+    def getSynchronous(self, method, endpoint, prefix="/v2", timeout=2):
         """
         Synchronous check if a server is running
 
-        :returns: Tuple (Status code, json of anwser). Status 0 is a non HTTP error
+        :returns: Tuple (Status code, json of answer). Status 0 is a non HTTP error
         """
-        try:
-            url = "{protocol}://{host}:{port}/v2/{endpoint}".format(protocol=self._protocol, host=self._host, port=self._port, endpoint=endpoint)
 
-            if self._user is not None and len(self._user) > 0:
-                log.debug("Synchronous get {} with user '{}'".format(url, self._user))
-                auth_handler = urllib.request.HTTPBasicAuthHandler()
-                auth_handler.add_password(realm="GNS3 server",
-                                          uri=url,
-                                          user=self._user,
-                                          passwd=self._password)
-                opener = urllib.request.build_opener(auth_handler)
-                urllib.request.install_opener(opener)
-            else:
-                log.debug("Synchronous get {} (no authentication)".format(url))
-            response = urllib.request.urlopen(url, timeout=timeout)
-            content_type = response.getheader("CONTENT-TYPE")
-            if response.status == 200:
+        host = self._getHostForQuery()
+
+        log.debug("{method} {protocol}://{host}:{port}{prefix}{endpoint}".format(method=method, protocol=self._protocol, host=host, port=self._port, prefix=prefix, endpoint=endpoint))
+        if self._user:
+            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}{prefix}{endpoint}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, prefix=prefix, endpoint=endpoint))
+        else:
+            url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{endpoint}".format(protocol=self._protocol, host=host, port=self._port, prefix=prefix, enpoint=endpoint))
+
+        request = self._request(url)
+        request = self._addAuth(request)
+        request.setRawHeader(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
+
+        try:
+            response = self._network_manager.sendCustomRequest(request, method.encode())
+        except SystemError as e:
+            log.error("Can't send query: {}".format(str(e)))
+            return
+
+        loop = QtCore.QEventLoop()
+        response.finished.connect(loop.quit)
+
+        if timeout is not None:
+            QtCore.QTimer.singleShot(timeout * 1000, qpartial(self._timeoutSlot, response, timeout))
+
+        if not loop.isRunning():
+            loop.exec_()
+
+        status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+        if response.error() != QtNetwork.QNetworkReply.NoError:
+            log.debug("Error while connecting to local server {}".format(response.errorString()))
+            return status, None
+        else:
+            content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+            if status == 200:
                 if content_type == "application/json":
-                    content = response.read()
+                    content = bytes(response.readAll())
                     json_data = json.loads(content.decode("utf-8"))
-                    return response.status, json_data
+                    return status, json_data
             else:
-                return response.status, None
-        except http.client.InvalidURL as e:
-            log.warning("Invalid local server url: {}".format(e))
-            return 0, None
-        except urllib.error.URLError:
-            # Connection refused. It's a normal behavior if server is not started
-            return 0, None
-        except urllib.error.HTTPError as e:
-            log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
-            return e.code, None
-        except (OSError, http.client.BadStatusLine, ValueError) as e:
-            log.debug("Error during get on {}:{}: {}".format(self.host(), self.port(), e))
+                return status, None
+
         return 0, None
 
     @classmethod
