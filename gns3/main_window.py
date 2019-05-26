@@ -392,9 +392,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._project_dialog = ProjectDialog(self)
         self._project_dialog.show()
         create_new_project = self._project_dialog.exec_()
-        # Close the device dock so it repopulates.  Done in case switching between cloud and local.
-        self.uiNodesDockWidget.setVisible(False)
-        self.uiNodesDockWidget.setWindowTitle("")
 
         if create_new_project:
             Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
