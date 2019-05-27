@@ -119,8 +119,12 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
                 include_images = "yes"
             else:
                 include_images = "no"
+            if self.uiIncludeSnapshotsCheckBox.isChecked():
+                include_snapshots = "yes"
+            else:
+                include_snapshots = "no"
             compression = self.uiCompressionComboBox.currentData()
-            export_worker = ExportProjectWorker(self._project, self._path, include_images, compression)
+            export_worker = ExportProjectWorker(self._project, self._path, include_images, include_snapshots, compression)
             progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self, create_thread=False)
             progress_dialog.show()
             progress_dialog.exec_()
