@@ -471,7 +471,7 @@ class HTTPClient(QtCore.QObject):
         host = self._getHostForQuery()
         request = websocket.request()
         ws_url = "ws://{host}:{port}{prefix}{path}".format(host=host, port=self._port, path=path, prefix=prefix)
-        log.debug("Connectin to WebSocket endpoint: {}".format(ws_url))
+        log.debug("Connecting to WebSocket endpoint: {}".format(ws_url))
         request.setUrl(QtCore.QUrl(ws_url))
         self._addAuth(request)
         websocket.open(request)

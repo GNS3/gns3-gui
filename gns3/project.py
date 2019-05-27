@@ -17,14 +17,12 @@
 
 import os
 import json
-from .qt import QtCore, qpartial, QtWidgets, QtNetwork, qslot
+from .qt import QtCore, qpartial, QtNetwork, QtWebSockets, qslot
 
 from gns3.controller import Controller
-from gns3.compute_manager import ComputeManager
 from gns3.topology import Topology
 from gns3.local_config import LocalConfig
 from gns3.settings import GRAPHICS_VIEW_SETTINGS
-from gns3.template_manager import TemplateManager
 from gns3.utils import parse_version
 
 import logging
@@ -48,7 +46,6 @@ class Project(QtCore.QObject):
 
     # Called when project is fully loaded
     project_loaded_signal = QtCore.Signal()
-
 
     def __init__(self):
 
@@ -84,6 +81,7 @@ class Project(QtCore.QObject):
         # Due to bug in Qt on some version we need a dedicated network manager
         self._notification_network_manager = QtNetwork.QNetworkAccessManager()
         self._notification_stream = None
+        self._websocket = QtWebSockets.QWebSocket()
 
         super().__init__()
 
@@ -485,7 +483,8 @@ class Project(QtCore.QObject):
         if self._closed:
             self._closed = False
             self._closing = False
-            self._startListenNotifications()
+            if not self._notification_stream:
+                self._startListenNotifications()
 
         self.project_updated_signal.emit()
         self.project_loaded_signal.emit()
@@ -537,7 +536,8 @@ class Project(QtCore.QObject):
         if self._closed:
             self._closed = False
             self._closing = False
-            self._startListenNotifications()
+            if not self._notification_stream:
+                self._startListenNotifications()
         self.project_updated_signal.emit()
 
         self.get("/nodes", self._listNodesCallback)
@@ -609,7 +609,7 @@ class Project(QtCore.QObject):
             log.debug("Stop listening for notifications from project %s", self._id)
             stream = self._notification_stream
             self._notification_stream = None
-            stream.abort()
+            stream.close()
 
     def _startListenNotifications(self):
         if not Controller.instance().connected():
@@ -627,7 +627,7 @@ class Project(QtCore.QObject):
 
         else:
             path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
-            self._notification_stream = Controller.instance().connectProjectWebSocket(path)
+            self._notification_stream = Controller.instance().httpClient().connectWebSocket(self._websocket, path)
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
 
@@ -700,7 +700,7 @@ class Project(QtCore.QObject):
         elif result["action"] == "project.updated":
             self._projectUpdatedCallback(result["event"])
         elif result["action"] == "snapshot.restored":
-            Topology.instance().createLoadProject({"project_id": result["event"]["project_id"]})
+            Topology.instance().restoreSnapshot(result["event"]["project_id"])
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":
