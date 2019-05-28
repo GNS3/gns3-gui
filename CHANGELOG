@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.1.19 28/05/2019
+
+* Fix wrong aligment of symbols in saved/exported projects. Fixes #2800
+* Replace urllib.request by Qt implementation for local server synchronous check. Fixes #2793
+* Set grid's minimum to 5. Fixes #2795
+
 ## 2.1.18 22/05/2019
 
 * Fix error in HTTPConnection.request for Python3.6. Fixes #2793
