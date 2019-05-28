@@ -740,7 +740,7 @@ class HTTPClient(QtCore.QObject):
         if self._user:
             url = QtCore.QUrl("{protocol}://{user}@{host}:{port}{prefix}{endpoint}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, prefix=prefix, endpoint=endpoint))
         else:
-            url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{endpoint}".format(protocol=self._protocol, host=host, port=self._port, prefix=prefix, enpoint=endpoint))
+            url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{endpoint}".format(protocol=self._protocol, host=host, port=self._port, prefix=prefix, endpoint=endpoint))
 
         request = self._request(url)
         request = self._addAuth(request)
