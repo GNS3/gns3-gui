@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.1.20 29/05/2019
+
+* Fix KeyError: 'endpoint' issue. Fixes #2802
+
 ## 2.1.19 28/05/2019
 
 * Fix wrong aligment of symbols in saved/exported projects. Fixes #2800
