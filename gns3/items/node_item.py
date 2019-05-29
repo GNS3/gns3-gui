@@ -103,21 +103,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         from ..main_window import MainWindow
         self._main_window = MainWindow.instance()
-        if self._main_window.uiSnapToGridAction.isChecked():
-            self._snapToGrid()
         self._settings = self._main_window.uiGraphicsView.settings()
 
         if node.initialized():
             self.createdSlot(node.id())
-
-    def _snapToGrid(self):
-
-        grid_size = self._main_window.uiGraphicsView.nodeGridSize()
-        mid_x = self.boundingRect().width() / 2
-        x = (grid_size * round((self.x() + mid_x) / grid_size)) - mid_x
-        mid_y = self.boundingRect().height() / 2
-        y = (grid_size * round((self.y() + mid_y) / grid_size)) - mid_y
-        self.setPos(x, y)
 
     def updateNode(self):
         """
