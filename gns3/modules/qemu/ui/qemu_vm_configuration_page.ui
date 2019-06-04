@@ -860,6 +860,8 @@
 &lt;li&gt;%vm-id% =VM ID&lt;/li&gt;
 &lt;li&gt;%project-id% = project ID&lt;/li&gt;
 &lt;li&gt;%project-path% = project path&lt;/li&gt;
+&lt;li&gt;%console-port% = console port number&lt;/li&gt;
+&lt;li&gt;%guest-cid% = unique ID from 3 to 65535&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/body&gt;&lt;/html&gt;</string>
             </property>

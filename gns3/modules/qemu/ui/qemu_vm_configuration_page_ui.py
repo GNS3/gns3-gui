@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -541,6 +541,8 @@ class Ui_QemuVMConfigPageWidget(object):
 "<li>%vm-id% =VM ID</li>\n"
 "<li>%project-id% = project ID</li>\n"
 "<li>%project-path% = project path</li>\n"
+"<li>%console-port% = console port number</li>\n"
+"<li>%guest-cid% = unique ID from 3 to 65535</li>\n"
 "</ul>\n"
 "</body></html>"))
         self.uiBaseVMCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use as a linked base VM"))
