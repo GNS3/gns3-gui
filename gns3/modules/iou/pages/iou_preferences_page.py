@@ -99,7 +99,8 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         :param settings: IOU settings
         """
 
-        self.IOULicenceTextEdit.setPlainText(settings["iourc_content"])
+        if settings["iourc_content"]:
+            self.IOULicenceTextEdit.setPlainText(settings["iourc_content"])
         self.uiLicensecheckBox.setChecked(settings["license_check"])
 
     def loadPreferences(self):
