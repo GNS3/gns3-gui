@@ -727,7 +727,7 @@ class HTTPClient(QtCore.QObject):
                     e = HttpBadRequest(body)
                 raise e
 
-    def getSynchronous(self, method, endpoint, prefix="/v2", timeout=2):
+    def getSynchronous(self, method, endpoint, prefix="/v2", timeout=5):
         """
         Synchronous check if a server is running
 

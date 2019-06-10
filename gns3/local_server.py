@@ -514,7 +514,7 @@ class LocalServer(QtCore.QObject):
         :returns: boolean
         """
 
-        status, json_data = HTTPClient(self._settings).getSynchronous("GET", "/version", timeout=2)
+        status, json_data = HTTPClient(self._settings).getSynchronous("GET", "/version")
         if status == 401:  # Auth issue that need to be solved later
             return True
         elif json_data is None:
