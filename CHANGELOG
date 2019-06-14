@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.1.21 14/06/2019
+
+* Increase timeout from 2 to 5 seconds for synchronous check. Ref #2805
+* Fix "General Preferences dialog displays misleading information". Fixes #2801
+
 ## 2.1.20 29/05/2019
 
 * Fix KeyError: 'endpoint' issue. Fixes #2802
