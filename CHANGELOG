@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.0b3 15/06/2019
+
+* Fix template migration issues from GUI to controller. Fixes https://github.com/GNS3/gns3-gui/issues/2803
+* %guest-cid% variable implementation for Qemu VMs. Fixes https://github.com/GNS3/gns3-gui/issues/2804
+* Increase timeout from 2 to 5 seconds for synchronous check. Ref #2805
+
 ## 2.2.0b2 29/05/2019
 
 * Fix KeyError: 'endpoint' issue. Fixes #2802
