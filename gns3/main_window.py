@@ -190,7 +190,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiSnapshotAction,
             self.uiEditProjectAction,
             self.uiDeleteProjectAction,
-            self.uiImportExportConfigsAction
+            self.uiImportExportConfigsAction,
+            self.uiLockAllAction
         ]
 
         # This widgets are not enabled if it's a remote controller (no access to the local file system)
