@@ -72,7 +72,11 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         """
         Loads the preference from controller.
         """
-        Controller.instance().get("/gns3vm", self._getSettingsCallback)
+
+        if Controller.instance().connected():
+            Controller.instance().get("/gns3vm", self._getSettingsCallback)
+        else:
+            log.error("Cannot load the GNS3 VM settings in the preferences dialog: not connected to the controller")
 
     @qslot
     def _getSettingsCallback(self, result, error=False, **kwargs):
@@ -81,7 +85,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             return
         if error:
             if "message" in result:
-                log.error("Error while getting settings : {}".format(result["message"]))
+                log.error("Error while getting the GNS3 VM settings : {}".format(result["message"]))
             return
         self._old_settings = copy.copy(result)
         self._settings = result
