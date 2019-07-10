@@ -616,7 +616,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return
         for image in appliance_configuration["images"]:
             if image["location"] == "local":
-                if self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
+                if not Controller.instance().isRemote() and self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
                     log.debug("{} is already on the local server".format(image["path"]))
                     return
                 image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
