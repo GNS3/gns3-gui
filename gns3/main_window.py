@@ -433,7 +433,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._newProjectActionSlot()
         else:
             directory = self._project_dir
-            if self._project_dir and not os.path.exists(self._project_dir):
+            if self._project_dir is None or not os.path.exists(self._project_dir):
                 directory = Topology.instance().projectsDirPath()
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", directory,
                                                             "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
