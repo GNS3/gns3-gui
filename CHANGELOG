@@ -1,5 +1,15 @@
 # Change Log
 
+## 2.2.0b4 11/07/2019
+
+* Fix issue preventing to open the QFileDialog in the correct directory.
+* Remove unused edit readme action. Fixes #2816
+* Remove deprecated Qemu parameter to run legacy ASA VMs. Fixes #2827
+* Upload images on remote controller. Fixes #2828
+* Preferences dialog: send API request only if connected to controller
+* Fix AttributeError: 'QGraphicsTextItem' object has no attribute 'locked'. Fixes #2814
+* Fix KeyError: 'chassis' when converting old IOS templates. Fixes #2813
+
 ## 2.2.0b3 15/06/2019
 
 * Fix template migration issues from GUI to controller. Fixes https://github.com/GNS3/gns3-gui/issues/2803
