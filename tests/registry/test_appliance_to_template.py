@@ -18,7 +18,6 @@
 import pytest
 import json
 import os
-from unittest.mock import patch
 
 from gns3.registry.config import Config
 from gns3.settings import LOCAL_SERVER_SETTINGS
@@ -207,47 +206,6 @@ def test_add_appliance_with_symbol_from_symbols_dir(empty_config, linux_microcor
 
     new_template = ApplianceToTemplate().new_template(config, "local")
     assert new_template["symbol"] == "linux_guest.svg"
-
-
-def test_add_appliance_with_symbol_from_web(empty_config, linux_microcore_img, symbols_dir):
-    with open("tests/registry/appliances/microcore-linux.gns3a", encoding="utf-8") as f:
-        config = json.load(f)
-    config["images"] = [
-        {
-            "type": "hda_disk_image",
-            "filename": "linux-microcore-3.4.1.img",
-            "path": linux_microcore_img
-        }
-    ]
-    config["symbol"] = "linux_guest.svg"
-    symbol_path = os.path.join(symbols_dir, "linux_guest.svg")
-
-    with patch("urllib.request.urlretrieve") as mock:
-        new_template = ApplianceToTemplate().new_template(config, "local")
-        mock.assert_called_with("https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/linux_guest.svg", symbol_path)
-    assert new_template["symbol"] == "linux_guest.svg"
-
-
-def test_add_appliance_with_symbol_from_web_error(empty_config, linux_microcore_img, symbols_dir):
-    with open("tests/registry/appliances/microcore-linux.gns3a", encoding="utf-8") as f:
-        config = json.load(f)
-    config["images"] = [
-        {
-            "type": "hda_disk_image",
-            "filename": "linux-microcore-3.4.1.img",
-            "path": linux_microcore_img
-        }
-    ]
-    config["symbol"] = "linux_guest.svg"
-    symbol_path = os.path.join(symbols_dir, "linux_guest.svg")
-
-    with patch("urllib.request.urlretrieve") as mock:
-        mock.side_effect = OSError
-        new_template = ApplianceToTemplate().new_template(config, "local")
-        mock.assert_called_with("https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/linux_guest.svg", symbol_path)
-
-    # In case of error we fallback on default symbol
-    assert new_template["symbol"] == ":/symbols/qemu_guest.svg"
 
 
 def test_add_appliance_with_port_name_format(linux_microcore_img):

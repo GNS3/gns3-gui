@@ -1,5 +1,47 @@
 # Change Log
 
+## 2.2.0b4 11/07/2019
+
+* Fix issue preventing to open the QFileDialog in the correct directory.
+* Remove unused edit readme action. Fixes #2816
+* Remove deprecated Qemu parameter to run legacy ASA VMs. Fixes #2827
+* Upload images on remote controller. Fixes #2828
+* Preferences dialog: send API request only if connected to controller
+* Fix AttributeError: 'QGraphicsTextItem' object has no attribute 'locked'. Fixes #2814
+* Fix KeyError: 'chassis' when converting old IOS templates. Fixes #2813
+
+## 2.2.0b3 15/06/2019
+
+* Fix template migration issues from GUI to controller. Fixes https://github.com/GNS3/gns3-gui/issues/2803
+* %guest-cid% variable implementation for Qemu VMs. Fixes https://github.com/GNS3/gns3-gui/issues/2804
+* Increase timeout from 2 to 5 seconds for synchronous check. Ref #2805
+
+## 2.2.0b2 29/05/2019
+
+* Fix KeyError: 'endpoint' issue. Fixes #2802
+* Fix wrong aligment of symbols in saved/exported projects. Fixes #2800
+* Replace urllib.request by Qt implementation for local server synchronous check. Fixes #2793
+* Support snapshots for portable projects. Fixes https://github.com/GNS3/gns3-gui/issues/2792
+* Fix event notification problem for projects and how snapshots are restored.
+* Do not close the nodes dock widget when creating project.
+* Fix no scan for images on remote controller. Fixes #2799
+* Use QNetworkAccessManager to download custom appliance symbols.
+* Experimental auto upgrade should not be available for "frozen" app. Fixes #2797
+* Don't allow link labels to be moved for locked nodes. Fixes #2794
+* Catch more OSError/PermissionError when checking md5 on remote images. Fixes #2582
+* Fix exception when grid size is 0. Fixes #2790
+* Catch PermissionError when scanning local image directories. Fixes #2791
+
+## 2.1.20 29/05/2019
+
+* Fix KeyError: 'endpoint' issue. Fixes #2802
+
+## 2.1.19 28/05/2019
+
+* Fix wrong aligment of symbols in saved/exported projects. Fixes #2800
+* Replace urllib.request by Qt implementation for local server synchronous check. Fixes #2793
+* Set grid's minimum to 5. Fixes #2795
+
 ## 2.1.18 22/05/2019
 
 * Fix error in HTTPConnection.request for Python3.6. Fixes #2793

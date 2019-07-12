@@ -190,7 +190,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiSnapshotAction,
             self.uiEditProjectAction,
             self.uiDeleteProjectAction,
-            self.uiImportExportConfigsAction
+            self.uiImportExportConfigsAction,
+            self.uiLockAllAction
         ]
 
         # This widgets are not enabled if it's a remote controller (no access to the local file system)
@@ -259,7 +260,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiDrawRectangleAction.triggered.connect(self._drawRectangleActionSlot)
         self.uiDrawEllipseAction.triggered.connect(self._drawEllipseActionSlot)
         self.uiDrawLineAction.triggered.connect(self._drawLineActionSlot)
-        self.uiEditReadmeAction.triggered.connect(self._editReadmeActionSlot)
 
         # help menu connections
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
@@ -392,9 +392,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._project_dialog = ProjectDialog(self)
         self._project_dialog.show()
         create_new_project = self._project_dialog.exec_()
-        # Close the device dock so it repopulates.  Done in case switching between cloud and local.
-        self.uiNodesDockWidget.setVisible(False)
-        self.uiNodesDockWidget.setWindowTitle("")
 
         if create_new_project:
             Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
@@ -436,7 +433,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._newProjectActionSlot()
         else:
             directory = self._project_dir
-            if self._project_dir and not os.path.exists(self._project_dir):
+            if self._project_dir is None or not os.path.exists(self._project_dir):
                 directory = Topology.instance().projectsDirPath()
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", directory,
                                                             "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
@@ -1065,12 +1062,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dialog.exec_()
             self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
             self.setSettings(self._settings)
-
-    def _editReadmeActionSlot(self):
-        """
-        Slot to edit the README file
-        """
-        Topology.instance().editReadme()
 
     def resizeEvent(self, event):
         self._notif_dialog.resize()

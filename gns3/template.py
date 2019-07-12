@@ -30,6 +30,10 @@ class Template:
             settings["template_id"] = str(uuid.uuid4())
         self._settings = copy.deepcopy(settings)
 
+        # The "appliance_id" setting has been replaced by "template_id" setting in version 2.2
+        if "appliance_id" in self._settings:
+            self._settings["template_id"] = self._settings.pop("appliance_id")
+
         # The "node_type" setting has been replaced by "template_type" setting in version 2.2
         if "node_type" in self._settings:
             self._settings["template_type"] = self._settings.pop("node_type")
@@ -37,6 +41,11 @@ class Template:
         # The "server" setting has been replaced by "compute_id" setting in version 2.2
         if "server" in self._settings:
             self._settings["compute_id"] = self._settings.pop("server")
+
+        for setting in self._settings.copy():
+            # remove deprecated settings
+            if setting in ["enable_remote_console", "use_ubridge", "acpi_shutdown", "default_symbol", "hover_symbol"]:
+                del self._settings[setting]
 
     def id(self):
         """

@@ -109,14 +109,14 @@ class Topology(QtCore.QObject):
 
         return self._project
 
-    def setProject(self, project):
+    def setProject(self, project, snapshot=False):
         """
         Set current project
 
         :param project: Project instance
         """
 
-        if self._project:
+        if self._project and snapshot is False:
             # Assert to detect when we create a new project object for the same project
             assert project is None or (project != self._project and project.id != self._project.id)
             self._project.stopListenNotifications()
@@ -133,7 +133,6 @@ class Topology(QtCore.QObject):
             self._main_window.setWindowTitle("GNS3")
 
         self.project_changed_signal.emit()
-
 
     def _projectUpdatedSlot(self):
         if not self._project or not self._project.filesDir() or not self._project.filename():
@@ -193,6 +192,7 @@ class Topology(QtCore.QObject):
         """
         Create load a project based on settings, not on the .gns3
         """
+
         self.setProject(None)
         from .project import Project
         project = Project()
@@ -214,6 +214,17 @@ class Topology(QtCore.QObject):
             project.create()
             self._main_window.uiStatusBar.showMessage("Project created", 2000)
         return project
+
+    def restoreSnapshot(self, project_id):
+        """
+        Restore a snapshot for a given project.
+        """
+
+        assert self._project.id() == project_id
+        project = self._project
+        self.setProject(project, snapshot=True)
+        project.load()
+        self._main_window.uiStatusBar.showMessage("Snapshot restored", 2000)
 
     def loadProject(self, path):
         """

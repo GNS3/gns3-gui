@@ -17,10 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import urllib.request
 import shutil
 from ssl import CertificateError
 
+from ..qt import QtCore, QtWidgets, QtNetwork
 from ..controller import Controller
 from .config import Config, ConfigException
 
@@ -33,7 +33,7 @@ class ApplianceToTemplate:
     Appliance installation.
     """
 
-    def new_template(self, appliance_config, server, controller_symbols=None):
+    def new_template(self, appliance_config, server, controller_symbols=None, parent=None):
         """
         Creates a new template from an appliance.
 
@@ -41,6 +41,7 @@ class ApplianceToTemplate:
         :param server
         """
 
+        self._parent = parent
         new_template = {
             "compute_id": server,
             "name": appliance_config["name"]
@@ -195,7 +196,7 @@ class ApplianceToTemplate:
 
         url = "https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/{}".format(symbol_id)
         try:
-            urllib.request.urlretrieve(url, path)
+            self._downloadApplianceSymbol(url, path)
             controller = Controller.instance()
             controller.clearStaticCache()
             if controller.isRemote():
@@ -203,3 +204,31 @@ class ApplianceToTemplate:
             return os.path.basename(path)
         except (OSError, CertificateError):
             return None
+
+    def _downloadApplianceSymbol(self, url, path, timeout=30):
+        """
+        Download an appliance symbol in a synchronous way.
+        """
+
+        network_manager = QtNetwork.QNetworkAccessManager()
+        request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+        request.setRawHeader(b'User-Agent', b'GNS3 symbol downloader')
+        reply = network_manager.get(request)
+        progress_dialog = QtWidgets.QProgressDialog("Downloading '{}' appliance symbol...".format(os.path.basename(path)), "Cancel", 0, 0, self._parent)
+        progress_dialog.setMinimumDuration(0)
+        reply.finished.connect(progress_dialog.close)
+        QtCore.QTimer.singleShot(timeout * 1000, progress_dialog.close)
+        log.debug("Downloading appliance symbol from '{}'".format(url))
+        progress_dialog.show()
+        progress_dialog.exec_()
+        status = reply.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+        if reply.error() == QtNetwork.QNetworkReply.NoError and status == 200:
+            try:
+                with open(path, 'wb+') as f:
+                    f.write(reply.readAll())
+            except OSError as e:
+                log.debug("Error while saving appliance symbol to '{}': {}".format(path, e))
+                raise
+            log.debug("Appliance symbol downloaded and saved to '{}'".format(path))
+        else:
+            log.warning("Error when downloading appliance symbol from '{}': {}".format(url, reply.errorString()))

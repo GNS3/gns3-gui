@@ -197,7 +197,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     QtWidgets.QMessageBox.warning(self, "GNS3 VM", "The GNS3 VM is not available, please configure the GNS3 VM before adding a new appliance.")
 
         elif self.page(page_id) == self.uiFilesWizardPage:
-            if self._compute_id != "local":
+            if Controller.instance().isRemote() or self._compute_id != "local":
                 self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
             else:
                 self.images_changed_signal.emit()
@@ -419,7 +419,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     if img.location == "local":
                         image["status"] = "Found locally"
                     else:
-                        image["status"] = "Found on {}".format(self._compute_id)
+                        compute = ComputeManager.instance().getCompute(self._compute_id)
+                        image["status"] = "Found on {}".format(compute.name())
                     image["md5sum"] = img.md5sum
                     image["filesize"] = img.filesize
                     image["path"] = img.path
@@ -574,7 +575,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, self._symbols)
+        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, self._symbols, parent=self)
         TemplateManager.instance().createTemplate(Template(new_template), callback=self._templateCreatedCallback)
         return False
 
@@ -615,7 +616,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             return
         for image in appliance_configuration["images"]:
             if image["location"] == "local":
-                if self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
+                if not Controller.instance().isRemote() and self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
                     log.debug("{} is already on the local server".format(image["path"]))
                     return
                 image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
