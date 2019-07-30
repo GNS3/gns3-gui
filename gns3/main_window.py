@@ -363,15 +363,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :return: None
         """
 
-        for item in self.uiGraphicsView.items():
-            if not isinstance(item, LinkItem) and not isinstance(item, LabelItem) and not isinstance(item, SvgIconItem):
-                if self.uiLockAllAction.isChecked() and not item.locked():
-                    item.setLocked(True)
-                elif not self.uiLockAllAction.isChecked() and item.locked():
-                    item.setLocked(False)
-                if item.parentItem() is None:
-                    item.updateNode()
-                item.update()
+        if self.uiGraphicsView.isEnabled():
+            for item in self.uiGraphicsView.items():
+                if not isinstance(item, LinkItem) and not isinstance(item, LabelItem) and not isinstance(item, SvgIconItem):
+                    if self.uiLockAllAction.isChecked() and not item.locked():
+                        item.setLocked(True)
+                    elif not self.uiLockAllAction.isChecked() and item.locked():
+                        item.setLocked(False)
+                    if item.parentItem() is None:
+                        item.updateNode()
+                    item.update()
 
     def analyticsClient(self):
         """
