@@ -99,7 +99,9 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         """
 
         if settings["iourc_content"]:
+            self.IOULicenceTextEdit.blockSignals(True)
             self.IOULicenceTextEdit.setPlainText(settings["iourc_content"])
+            self.IOULicenceTextEdit.blockSignals(False)
         self.uiLicensecheckBox.setChecked(settings["license_check"])
 
     def loadPreferences(self):
