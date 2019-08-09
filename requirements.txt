@@ -1,4 +1,4 @@
-jsonschema==2.6.0  # pyup: ignore
+jsonschema==3.0.2  # pyup: ignore
 raven>=5.23.0
 psutil>=2.2.1
 distro>=1.3.0
