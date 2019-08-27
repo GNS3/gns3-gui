@@ -83,7 +83,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             if address.protocol() in [QtNetwork.QAbstractSocket.IPv4Protocol, QtNetwork.QAbstractSocket.IPv6Protocol]:
                 address_string = address.toString()
                 if address_string.startswith("169.254") or address_string.startswith("fe80"):
-                    # ignore link-local addresses
+                    # ignore link-local addresses, could not use https://doc.qt.io/qt-5/qhostaddress.html#isLinkLocal
+                    # because it was introduced in Qt 5.11
                     continue
                 self.uiLocalServerHostComboBox.addItem(address_string, address_string)
 
@@ -411,7 +412,10 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Controller.instance().setDisplayError(True)
         settings = self.parentWidget().settings()
         if result:
-            settings["hide_setup_wizard"] = True
+            reply = QtWidgets.QMessageBox.question(self, "Wizard", "Do you want to run the wizard again when starting GNS3?",
+                                                   QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
+                settings["hide_setup_wizard"] = True
         else:
             local_server_settings = LocalServer.instance().localServerSettings()
             if local_server_settings["host"] is None:
