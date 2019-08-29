@@ -413,7 +413,9 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         if result:
             reply = QtWidgets.QMessageBox.question(self, "Wizard", "Do you want to run the wizard again when starting GNS3?",
                                                    QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.No:
+            if reply == QtWidgets.QMessageBox.Yes:
+                settings["hide_setup_wizard"] = False
+            elif reply == QtWidgets.QMessageBox.No:
                 settings["hide_setup_wizard"] = True
         else:
             local_server_settings = LocalServer.instance().localServerSettings()
