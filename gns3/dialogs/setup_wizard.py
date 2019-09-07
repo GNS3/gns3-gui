@@ -43,6 +43,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         super().__init__(parent)
         self.setupUi(self)
+        self.adjustSize()
 
         self._gns3_vm_settings = {
             "enable": True,
@@ -411,19 +412,13 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         Controller.instance().setDisplayError(True)
         settings = self.parentWidget().settings()
         if result:
-            reply = QtWidgets.QMessageBox.question(self, "Wizard", "Do you want to run the wizard again when starting GNS3?",
-                                                   QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
-                settings["hide_setup_wizard"] = False
-            elif reply == QtWidgets.QMessageBox.No:
-                settings["hide_setup_wizard"] = True
+            settings["hide_setup_wizard"] = True
         else:
             local_server_settings = LocalServer.instance().localServerSettings()
             if local_server_settings["host"] is None:
                 local_server_settings["host"] = DEFAULT_LOCAL_SERVER_HOST
                 LocalServer.instance().updateLocalServerSettings(local_server_settings)
-            settings["hide_setup_wizard"] = self.uiShowCheckBox.isChecked()
-
+            settings["hide_setup_wizard"] = not self.uiShowCheckBox.isChecked()
         self.parentWidget().setSettings(settings)
         super().done(result)
 

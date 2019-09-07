@@ -2,21 +2,18 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/setup_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_SetupWizard(object):
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName("SetupWizard")
-        SetupWizard.resize(1069, 615)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(SetupWizard.sizePolicy().hasHeightForWidth())
-        SetupWizard.setSizePolicy(sizePolicy)
+        SetupWizard.resize(1081, 534)
         SetupWizard.setModal(True)
         SetupWizard.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         SetupWizard.setOptions(QtWidgets.QWizard.NoBackButtonOnStartPage)
@@ -247,7 +244,7 @@ class Ui_SetupWizard(object):
         self.uiVMRadioButton.setToolTip(_translate("SetupWizard", "Dynamips, IOU, VPCS and Qemu will use this virtual machine."))
         self.uiVMRadioButton.setText(_translate("SetupWizard", "Run appliances in a virtual machine"))
         self.label.setText(_translate("SetupWizard", "Requires to download and install the GNS3 VM (available for free) "))
-        self.uiLocalRadioButton.setToolTip(_translate("SetupWizard", "Eveything that is supported by your system will run on your computer."))
+        self.uiLocalRadioButton.setToolTip(_translate("SetupWizard", "Everything that is supported by your system will run on your computer."))
         self.uiLocalRadioButton.setText(_translate("SetupWizard", "Run appliances on my local computer"))
         self.uiLocalLabel.setText(_translate("SetupWizard", "A limited number of appliances like the Cisco IOS routers <= C7200 can be run"))
         self.uiRemoteControllerRadioButton.setText(_translate("SetupWizard", "Run appliances on a remote server (advanced usage)"))
@@ -286,5 +283,4 @@ class Ui_SetupWizard(object):
         self.uiSummaryWizardPage.setSubTitle(_translate("SetupWizard", "The server type has been configured, please see the summary of the settings below"))
         self.uiSummaryTreeWidget.headerItem().setText(0, _translate("SetupWizard", "1"))
         self.uiSummaryTreeWidget.headerItem().setText(1, _translate("SetupWizard", "2"))
-
 from . import resources_rc
