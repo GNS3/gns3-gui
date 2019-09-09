@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.0rc5 09/09/2019
+
+* Adjust size for setup dialog and remove question about running the wizard again. Ref #2846
+
 ## 2.2.0rc4 30/08/2019
 
 * Fix issue when asking to run the setup wizard again. Ref #2846
