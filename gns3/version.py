@@ -23,7 +23,7 @@
 # or negative for a release candidate or beta (after the base version
 # number has been incremented)
 
-__version__ = "2.2.0dev17"
+__version__ = "2.2.0dev18"
 __version_info__ = (2, 2, 0, 99)
 
 # If it's a git checkout try to add the commit
