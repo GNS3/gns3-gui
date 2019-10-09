@@ -330,7 +330,7 @@ GRAPHICS_VIEW_SETTINGS = {
 LOCAL_SERVER_SETTINGS = {
     "path": "gns3server",
     "ubridge_path": "ubridge",
-    "host": "localhost",
+    "host": "0.0.0.0",
     "port": DEFAULT_LOCAL_SERVER_PORT,
     "images_path": DEFAULT_IMAGES_PATH,
     "projects_path": DEFAULT_PROJECTS_PATH,
