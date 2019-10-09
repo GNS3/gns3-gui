@@ -21,7 +21,7 @@ Thread to run a command and wait for its completion.
 
 import tempfile
 import subprocess
-import shlex
+from ..utils import shlex_quote
 from ..qt import QtCore
 
 import logging
@@ -63,7 +63,7 @@ class WaitForCommandWorker(QtCore.QObject):
                                                    timeout=self._timeout,
                                                    shell=self._shell)
         except (OSError, subprocess.SubprocessError) as e:
-            command_string = " ".join(shlex.quote(s) for s in self._command)
+            command_string = " ".join(shlex_quote(s) for s in self._command)
             self.error.emit('Could not execute command "{}": {}'.format(command_string, e), True)
             return
         self.finished.emit()

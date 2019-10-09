@@ -19,7 +19,7 @@
 Thread to run a command with administrator rights on Windows and wait for its completion.
 """
 
-import shlex
+from ..utils import shlex_quote
 from ..qt import QtCore
 
 import logging
@@ -69,7 +69,7 @@ class WaitForRunAsWorker(QtCore.QObject):
                                      lpFile=program,
                                      lpParameters=params)
         except pywintypes.error as e:
-            command_string = " ".join(shlex.quote(s) for s in self._command)
+            command_string = " ".join(shlex_quote(s) for s in self._command)
             self.error.emit('Could not execute command "{}": {}'.format(command_string, e), True)
             return
 
