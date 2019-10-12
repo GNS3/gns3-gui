@@ -125,6 +125,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>uiPreconfiguredCaptureReaderCommandComboBox</tabstop>
+  <tabstop>uiPreconfiguredCaptureReaderCommandPushButton</tabstop>
+  <tabstop>uiCaptureReaderCommandLineEdit</tabstop>
+  <tabstop>uiAutoStartCheckBox</tabstop>
+  <tabstop>uiCaptureAnalyzerCommandLineEdit</tabstop>
+  <tabstop>uiRestoreDefaultsPushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
