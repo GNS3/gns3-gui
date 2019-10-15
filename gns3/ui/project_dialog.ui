@@ -29,7 +29,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="uiNewProjectTab">
       <attribute name="title">
@@ -284,6 +284,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>uiProjectTabWidget</tabstop>
+  <tabstop>uiNameLineEdit</tabstop>
+  <tabstop>uiLocationLineEdit</tabstop>
+  <tabstop>uiLocationBrowserToolButton</tabstop>
+  <tabstop>uiOpenProjectPushButton</tabstop>
+  <tabstop>uiRecentProjectsPushButton</tabstop>
+  <tabstop>uiSettingsPushButton</tabstop>
+  <tabstop>uiProjectsTreeWidget</tabstop>
+  <tabstop>uiDeleteProjectButton</tabstop>
+  <tabstop>uiDuplicateProjectPushButton</tabstop>
+  <tabstop>uiRefreshProjectsPushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

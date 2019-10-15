@@ -223,7 +223,16 @@
        <string>Binary images</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
@@ -275,6 +284,9 @@
           </item>
           <item>
            <widget class="QListWidget" name="uiImageDirectoriesListWidget">
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="lineWidth">
              <number>0</number>
             </property>
@@ -370,7 +382,16 @@
        <string>Console applications</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
@@ -481,7 +502,16 @@
        <string>VNC</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
@@ -684,6 +714,9 @@
            <height>50</height>
           </size>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -727,16 +760,6 @@
         <widget class="QCheckBox" name="uiLimitSizeNodeSymbolCheckBox">
          <property name="text">
           <string>Limit the size of node symbols</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QCheckBox" name="uiDrawLinkStatusPointsCheckBox">
-         <property name="text">
-          <string>Draw link status points</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -785,6 +808,9 @@
            <height>50</height>
           </size>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -800,6 +826,9 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
          </property>
          <property name="suffix">
           <string> pixels</string>
@@ -825,6 +854,9 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
          </property>
          <property name="suffix">
           <string> pixels</string>
@@ -879,6 +911,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
          <property name="minimum">
           <number>5</number>
          </property>
@@ -900,6 +935,9 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
          </property>
          <property name="minimum">
           <number>5</number>
@@ -945,6 +983,16 @@
          </property>
         </spacer>
        </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QCheckBox" name="uiDrawLinkStatusPointsCheckBox">
+         <property name="text">
+          <string>Draw link status points</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="uiMiscTab">
@@ -952,7 +1000,16 @@
        <string>Miscellaneous</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
@@ -1066,6 +1123,56 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>uiProjectsPathLineEdit</tabstop>
+  <tabstop>uiProjectsPathToolButton</tabstop>
+  <tabstop>uiSymbolsPathLineEdit</tabstop>
+  <tabstop>uiSymbolsPathToolButton</tabstop>
+  <tabstop>uiConfigsPathLineEdit</tabstop>
+  <tabstop>uiConfigsPathToolButton</tabstop>
+  <tabstop>uiAppliancesPathLineEdit</tabstop>
+  <tabstop>uiAppliancesPathToolButton</tabstop>
+  <tabstop>uiStyleComboBox</tabstop>
+  <tabstop>uiSymbolThemeComboBox</tabstop>
+  <tabstop>uiImportConfigurationFilePushButton</tabstop>
+  <tabstop>uiExportConfigurationFilePushButton</tabstop>
+  <tabstop>uiBrowseConfigurationPushButton</tabstop>
+  <tabstop>uiImagesPathLineEdit</tabstop>
+  <tabstop>uiImagesPathToolButton</tabstop>
+  <tabstop>uiImageDirectoriesAddPushButton</tabstop>
+  <tabstop>uiImageDirectoriesDeletePushButton</tabstop>
+  <tabstop>uiTelnetConsoleCommandLineEdit</tabstop>
+  <tabstop>uiTelnetConsolePreconfiguredCommandPushButton</tabstop>
+  <tabstop>uiDelayConsoleAllSpinBox</tabstop>
+  <tabstop>uiVNCConsoleCommandLineEdit</tabstop>
+  <tabstop>uiVNCConsolePreconfiguredCommandPushButton</tabstop>
+  <tabstop>uiSPICEConsoleCommandLineEdit</tabstop>
+  <tabstop>uiSPICEConsolePreconfiguredCommandPushButton</tabstop>
+  <tabstop>uiSceneWidthSpinBox</tabstop>
+  <tabstop>uiSceneHeightSpinBox</tabstop>
+  <tabstop>uiNodeGridSizeSpinBox</tabstop>
+  <tabstop>uiDrawingGridSizeSpinBox</tabstop>
+  <tabstop>uiRectangleSelectedItemCheckBox</tabstop>
+  <tabstop>uiDrawLinkStatusPointsCheckBox</tabstop>
+  <tabstop>uiShowInterfaceLabelsOnNewProject</tabstop>
+  <tabstop>uiShowGridOnNewProject</tabstop>
+  <tabstop>uiSnapToGridOnNewProject</tabstop>
+  <tabstop>uiLimitSizeNodeSymbolCheckBox</tabstop>
+  <tabstop>uiDefaultLabelFontPushButton</tabstop>
+  <tabstop>uiDefaultLabelColorPushButton</tabstop>
+  <tabstop>uiDefaultNoteFontPushButton</tabstop>
+  <tabstop>uiDefaultNoteColorPushButton</tabstop>
+  <tabstop>uiCheckForUpdateCheckBox</tabstop>
+  <tabstop>uiCrashReportCheckBox</tabstop>
+  <tabstop>uiStatsCheckBox</tabstop>
+  <tabstop>uiOverlayNotificationsCheckBox</tabstop>
+  <tabstop>uiExperimentalFeaturesCheckBox</tabstop>
+  <tabstop>uiHdpiCheckBox</tabstop>
+  <tabstop>uiMultiProfilesCheckBox</tabstop>
+  <tabstop>uiDirectFileUpload</tabstop>
+  <tabstop>uiRestoreDefaultsPushButton</tabstop>
+  <tabstop>uiMiscTabWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
