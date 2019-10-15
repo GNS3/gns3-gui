@@ -179,6 +179,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>uiProjectNameLineEdit</tabstop>
+  <tabstop>uiSceneWidthSpinBox</tabstop>
+  <tabstop>uiSceneHeightSpinBox</tabstop>
+  <tabstop>uiNodeGridSizeSpinBox</tabstop>
+  <tabstop>uiDrawingGridSizeSpinBox</tabstop>
+  <tabstop>uiProjectAutoOpenCheckBox</tabstop>
+  <tabstop>uiProjectAutoStartCheckBox</tabstop>
+  <tabstop>uiProjectAutoCloseCheckBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

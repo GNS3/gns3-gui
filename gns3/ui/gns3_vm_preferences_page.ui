@@ -209,6 +209,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>uiEnableVMCheckBox</tabstop>
+  <tabstop>uiGNS3VMEngineComboBox</tabstop>
+  <tabstop>uiVMListComboBox</tabstop>
+  <tabstop>uiRefreshPushButton</tabstop>
+  <tabstop>uiHeadlessCheckBox</tabstop>
+  <tabstop>uiRamSpinBox</tabstop>
+  <tabstop>uiCpuSpinBox</tabstop>
+  <tabstop>uiWhenExitKeepRadioButton</tabstop>
+  <tabstop>uiWhenExitSuspendRadioButton</tabstop>
+  <tabstop>uiWhenExitStopRadioButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
  <designerdata>
