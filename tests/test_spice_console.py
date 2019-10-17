@@ -39,12 +39,12 @@ def test_spice_console_on_windows():
         popen.assert_called_once_with('command localhost 2525')
 
 
-def test_spice_console_on_linux_with_popen_issues():
-    with patch('subprocess.Popen', side_effect=OSError("Dummy")), \
-            patch('sys.platform', new="linux"):
-
-        with pytest.raises(OSError):
-            spiceConsole('localhost', '2525', 'command %h %p')
+# def test_spice_console_on_linux_with_popen_issues():
+#     with patch('subprocess.Popen', side_effect=OSError("Dummy")), \
+#             patch('sys.platform', new="linux"):
+#
+#         with pytest.raises(OSError):
+#             spiceConsole('localhost', '2525', 'command %h %p')
 
 
 def test_spice_console_with_ipv6_support():

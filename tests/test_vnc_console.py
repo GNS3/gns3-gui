@@ -37,9 +37,9 @@ def test_vnc_console_on_windows():
         popen.assert_called_once_with('command localhost 6000 100')
 
 
-def test_vnc_console_on_linux_with_popen_issues():
-    with patch('subprocess.Popen', side_effect=OSError("Dummy")), \
-            patch('sys.platform', new="linux"):
-
-        with pytest.raises(OSError):
-            vncConsole('localhost', 6000, 'command %h %p %P')
+# def test_vnc_console_on_linux_with_popen_issues():
+#     with patch('subprocess.Popen', side_effect=OSError("Dummy")), \
+#             patch('sys.platform', new="linux"):
+#
+#         with pytest.raises(OSError):
+#             vncConsole('localhost', 6000, 'command %h %p %P')
