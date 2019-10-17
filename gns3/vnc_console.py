@@ -37,7 +37,7 @@ def vncConsole(host, port, command):
     """
 
     if len(command.strip(' ')) == 0:
-        log.warning('VNC client is not configured')
+        log.error("VNC client is not configured")
         return
 
     # replace the place-holders by the actual values
@@ -56,4 +56,3 @@ def vncConsole(host, port, command):
             subprocess.Popen(args, env=os.environ)
     except (OSError, ValueError, subprocess.SubprocessError) as e:
         log.error("Could not start VNC program with command '{}': {}".format(command, e))
-        raise

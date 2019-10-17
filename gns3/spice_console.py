@@ -38,7 +38,7 @@ def spiceConsole(host, port, command):
     """
 
     if len(command.strip(' ')) == 0:
-        log.warning('SPICE client is not configured')
+        log.error("SPICE client is not configured")
         return
 
     # ipv6 support
@@ -59,5 +59,4 @@ def spiceConsole(host, port, command):
             args = shlex.split(command)
             subprocess.Popen(args, env=os.environ)
     except (OSError, ValueError, subprocess.SubprocessError) as e:
-        log.warning('could not start SPICE program "{}": {}'.format(command, e))
-        raise
+        log.error("Could not start SPICE program with command '{}': {}".format(command, e))
