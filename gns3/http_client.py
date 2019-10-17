@@ -770,10 +770,10 @@ class HTTPClient(QtCore.QObject):
             if status == 200:
                 if content_type == "application/json":
                     content = bytes(response.readAll())
-                    json_data = json.loads(content.decode("utf-8"))
-                    return status, json_data
-            else:
-                return status, None
+                    if content:
+                        json_data = json.loads(content.decode("utf-8"))
+                        return status, json_data
+            return status, None
 
         return 0, None
 
