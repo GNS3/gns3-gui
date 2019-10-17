@@ -764,18 +764,17 @@ class HTTPClient(QtCore.QObject):
         status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
         if response.error() != QtNetwork.QNetworkReply.NoError:
             log.debug("Error while connecting to local server {}".format(response.errorString()))
-            return status, None
         else:
             content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
-            if status == 200:
-                if content_type == "application/json":
-                    content = bytes(response.readAll())
-                    if content:
-                        json_data = json.loads(content.decode("utf-8"))
-                        return status, json_data
-            return status, None
-
-        return 0, None
+            if status == 200 and content_type == "application/json":
+                content = bytes(response.readAll())
+                try:
+                    json_data = json.loads(content.decode("utf-8"))
+                except (UnicodeEncodeError, ValueError) as e:
+                    log.warning("Could not read JSON data returned from {}: {}".format(url, e))
+                else:
+                    return status, json_data
+        return status, None
 
     @classmethod
     def fromUrl(cls, url, network_manager=None, base_settings=None):
