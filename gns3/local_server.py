@@ -130,6 +130,7 @@ class LocalServer(QtCore.QObject):
             import win32serviceutil
         except ImportError as e:
             log.error("Could not check if the {} service is running: {}".format(service_name, e))
+            return
 
         try:
             if win32serviceutil.QueryServiceStatus(service_name, None)[1] != win32service.SERVICE_RUNNING:
