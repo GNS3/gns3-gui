@@ -29,6 +29,7 @@ from .qt import QtCore, QtWidgets
 from .utils.progress_dialog import ProgressDialog
 from .utils.import_project_worker import ImportProjectWorker
 from .dialogs.project_export_wizard import ExportProjectWizard
+from .dialogs.file_editor_dialog import FileEditorDialog
 from .dialogs.project_welcome_dialog import ProjectWelcomeDialog
 
 from .modules import MODULES
@@ -243,6 +244,12 @@ class Topology(QtCore.QObject):
         self._main_window.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
         return True
 
+    def editReadme(self):
+        if self.project() is None:
+            return
+        dialog = FileEditorDialog(self.project(), "/README.txt", parent=self._main_window, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
+        dialog.show()
+        dialog.exec_()                         
     def _projectCreationErrorSlot(self, message):
         if self._project:
             self._project.project_creation_error_signal.disconnect(self._projectCreationErrorSlot)
