@@ -1054,8 +1054,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # TightVNC has lack support of IPv6 host at this moment
         if "vncviewer" in node.consoleCommand() and ":" in node.consoleHost():
-            QtWidgets.QMessageBox.warning(
-                self, "TightVNC", "TightVNC (vncviewer) may not start because of lack of IPv6 support.")
+            QtWidgets.QMessageBox.warning(self, "TightVNC", "TightVNC (vncviewer) may not start because of lack of IPv6 support.")
 
         try:
             node.openConsole(aux=aux)
