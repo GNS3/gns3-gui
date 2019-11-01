@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 import shlex
 import subprocess
 
@@ -95,6 +96,7 @@ def sudo(*commands, parent=None, shell=False):
                 if not progress_dialog.exec_():
                     return False
         return True
+
 
 if __name__ == '__main__':
     import sys
