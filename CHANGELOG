@@ -1,5 +1,22 @@
 # Change Log
 
+## 2.2.1 01/11/2019
+
+* Check if console_type is None.
+* Explicitly cleanup the cache directory.
+* Get Windows interface from registry if cannot load win32com module.
+* Ignore OSError returned by psutil when bringing console to front.
+* Catch error if NPF or NPCAP service cannot be detected. Ref https://github.com/GNS3/gns3-server/issues/1670
+* Better handling for reading synchronous JSON response from server. Ref #2874
+* Fix JSONDecodeError when getting server version. Fixes #2874
+* Fix FileNotFoundError exceptions when launching SPICE or VNC clients.
+* Fix UnboundLocalError local variable 'win32serviceutil' referenced before assignment
+* 'Fix' tab order in preferences dialog so it follows the layout
+* 'Fix' tab order in edit project dialog so it follows the layout
+* Use compatible shlex_quote to handle case where Windows needs double quotes around file names, not single quotes. Ref https://github.com/GNS3/gns3-gui/issues/2866
+* Use 0.0.0.0 by default for server host. Fixes https://github.com/GNS3/gns3-server/issues/1663
+* Catch IndexError when configuring port names. Fixes #2865
+
 ## 2.2.0 30/09/2019
 
 * No changes
