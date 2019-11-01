@@ -628,7 +628,7 @@ class Node(BaseNode):
         from .main_window import MainWindow
         general_settings = MainWindow.instance().settings()
 
-        if console_type != "telnet":
+        if console_type and console_type != "telnet":
             console_type = self.consoleType()
             if console_type == "vnc":
                 return general_settings["vnc_console_command"]
