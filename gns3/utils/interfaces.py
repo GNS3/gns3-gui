@@ -80,11 +80,10 @@ def get_windows_interfaces():
     :returns: list of windows interfaces
     """
 
-    import win32com.client
-    import pywintypes
-
     interfaces = []
     try:
+        import win32com.client
+        import pywintypes
         locator = win32com.client.Dispatch("WbemScripting.SWbemLocator")
         service = locator.ConnectServer(".", "root\cimv2")
         network_configs = service.InstancesOf("Win32_NetworkAdapterConfiguration")
@@ -109,7 +108,7 @@ def get_windows_interfaces():
                                    "netcard": adapter.name,
                                    "netmask": netmask,
                                    "type": "ethernet"})
-    except (AttributeError, pywintypes.com_error):
+    except (ImportError, AttributeError, pywintypes.com_error):
         log.warning("Could not use the COM service to retrieve interface info, trying using the registry...")
         return _get_windows_interfaces_from_registry()
 
