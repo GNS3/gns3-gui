@@ -66,7 +66,7 @@ def bring_window_to_front_from_process_name(process_name, title=None):
                     elif title in win32gui.GetWindowText(hwnd):
                         set_foreground_window(hwnd)
                         return True
-        except psutil.Error:
+        except (OSError, psutil.Error):
             continue
     return False
 
