@@ -765,7 +765,7 @@ class Node(BaseNode):
                 with open(context["path"], "wb+") as f:
                     f.write(raw_body)
             except OSError as e:
-                log.erro("Can't write %s: %s", context["path"], str(e))
+                log.error("Cannot export file '{}': {}".format(context["path"], e))
 
     def exportConfigsToDirectory(self, directory):
         """
