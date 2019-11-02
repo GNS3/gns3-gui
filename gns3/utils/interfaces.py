@@ -80,10 +80,10 @@ def get_windows_interfaces():
     :returns: list of windows interfaces
     """
 
+    import pywintypes
     interfaces = []
     try:
         import win32com.client
-        import pywintypes
         locator = win32com.client.Dispatch("WbemScripting.SWbemLocator")
         service = locator.ConnectServer(".", "root\cimv2")
         network_configs = service.InstancesOf("Win32_NetworkAdapterConfiguration")
