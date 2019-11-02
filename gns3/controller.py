@@ -48,7 +48,7 @@ class Controller(QtCore.QObject):
         self._connecting = False
         self._notification_stream = None
         self._version = None
-        self._cache_directory = tempfile.TemporaryDirectory(suffix="-gns3-cache")
+        self._cache_directory = tempfile.TemporaryDirectory(suffix="-gns3")
         self._http_client = None
         self._first_error = True
         self._error_dialog = None
@@ -58,13 +58,6 @@ class Controller(QtCore.QObject):
 
         # If we do multiple call in order to download the same symbol we queue them
         self._static_asset_download_queue = {}
-
-    def __del__(self):
-
-        try:
-            self._cache_directory.cleanup()
-        except FileNotFoundError:
-            pass
 
     def host(self):
 
