@@ -44,6 +44,9 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
         """
         super().__init__(parent)
         self.setupUi(self)
+        if console_type == "spice+agent":
+            # special case for spice+agent, use the spice console type
+            console_type = "spice"
         self._console_type = console_type
         self._current = current
 
@@ -63,7 +66,7 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
         elif self._console_type == "vnc":
             self._consoles = copy.copy(PRECONFIGURED_VNC_CONSOLE_COMMANDS)
             self._consoles.update(self._settings[self._console_type])
-        elif self._console_type.startswith("spice"):
+        elif self._console_type == "spice":
             self._consoles = copy.copy(PRECONFIGURED_SPICE_CONSOLE_COMMANDS)
             self._consoles.update(self._settings[self._console_type])
 
@@ -121,8 +124,8 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
         dialog = ConsoleCommandDialog(parent, console_type=console_type, current=current)
         dialog.show()
         if dialog.exec_():
-            return (True, dialog.uiCommandPlainTextEdit.toPlainText().replace("\n", " "))
-        return (False, None)
+            return True, dialog.uiCommandPlainTextEdit.toPlainText().replace("\n", " ")
+        return False, None
 
 
 if __name__ == '__main__':

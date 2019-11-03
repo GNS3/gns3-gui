@@ -1115,24 +1115,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
         Allow user to use a custom console for this VM
         """
 
-        current_cmd = None
-        console_type = "telnet"
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and item.node().console() is not None and item.node().initialized() and item.node().status() == Node.started:
+            if isinstance(item, NodeItem) and item.node().console() is not None and item.node().initialized():
                 if item.node().consoleType() not in ("telnet", "serial", "vnc", "spice", "spice+agent"):
                     continue
                 current_cmd = item.node().consoleCommand()
                 console_type = item.node().consoleType()
 
-        (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type=console_type, current=current_cmd)
-        if ok:
-            for item in self.scene().selectedItems():
-                if isinstance(item, NodeItem) and item.node().console() is not None and item.node().initialized() and item.node().status() == Node.started:
-                    node = item.node()
-                    if node.consoleType() not in ("telnet", "serial", "vnc", "spice", "spice+agent"):
-                        continue
+                (ok, cmd) = ConsoleCommandDialog.getCommand(self, console_type=console_type, current=current_cmd)
+                if ok:
                     try:
-                        node.openConsole(command=cmd)
+                        if item.node().status() != Node.started:
+                            QtWidgets.QMessageBox.warning(self, "Console", "This node must be started before a console can be opened")
+                            continue
+                        item.node().openConsole(command=cmd)
                     except (OSError, ValueError) as e:
                         QtWidgets.QMessageBox.critical(self, "Console", "Cannot start console application: {}".format(e))
 

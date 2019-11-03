@@ -50,7 +50,7 @@ def spiceConsole(host, port, command):
     command = command.replace("%p", str(port))
 
     try:
-        log.info('starting SPICE program "{}"'.format(command))
+        log.debug('starting SPICE program "{}"'.format(command))
         if sys.platform.startswith("win"):
             # use the string on Windows
             subprocess.Popen(command)
