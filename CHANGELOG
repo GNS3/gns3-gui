@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.2.2 04/11/2019
+
+* Fix KeyError: 'spice+agent'. Fixes #2890
+* Fix wrong log.error() call when exporting file.
+* Revert "Explicitly cleanup the cache directory."
+* Fix "UnboundLocalError: local variable 'pywintypes' referenced before assignment"
+* Fix GUI uses only telnet console. Fixes #2885
+* Fix missing sys module in sudo.py Fixes #2886
+
 ## 2.2.1 01/11/2019
 
 * Check if console_type is None.
