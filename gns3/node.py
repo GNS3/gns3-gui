@@ -641,7 +641,7 @@ class Node(BaseNode):
         Get the console type (serial, telnet or VNC)
         """
 
-        console_type = "telnet"
+        console_type = "none"
         if "console_type" in self.settings():
             return self.settings()["console_type"]
         return console_type
