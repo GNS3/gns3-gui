@@ -89,6 +89,10 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                     continue
                 self.uiLocalServerHostComboBox.addItem(address_string, address_string)
 
+        self.uiLocalServerHostComboBox.addItem("localhost", "localhost")  # local host
+        self.uiLocalServerHostComboBox.addItem("::", "::")  # all IPv6 addresses
+        self.uiLocalServerHostComboBox.addItem("0.0.0.0", "0.0.0.0")  # all IPv4 addresses
+
         if sys.platform.startswith("darwin"):
             self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_fusion_banner.png"))
         else:
@@ -415,9 +419,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             settings["hide_setup_wizard"] = True
         else:
             local_server_settings = LocalServer.instance().localServerSettings()
-            if local_server_settings["host"] is None:
-                local_server_settings["host"] = DEFAULT_LOCAL_SERVER_HOST
-                LocalServer.instance().updateLocalServerSettings(local_server_settings)
+            LocalServer.instance().updateLocalServerSettings(local_server_settings)
             settings["hide_setup_wizard"] = not self.uiShowCheckBox.isChecked()
         self.parentWidget().setSettings(settings)
         super().done(result)

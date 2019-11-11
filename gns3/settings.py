@@ -40,7 +40,7 @@ DEFAULT_CONFIGS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/configs"))
 # Default appliances location
 DEFAULT_APPLIANCES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/appliances"))
 
-DEFAULT_LOCAL_SERVER_HOST = "127.0.0.1"
+DEFAULT_LOCAL_SERVER_HOST = "localhost"
 DEFAULT_LOCAL_SERVER_PORT = 3080
 DEFAULT_DELAY_CONSOLE_ALL = 500
 
@@ -330,7 +330,7 @@ GRAPHICS_VIEW_SETTINGS = {
 LOCAL_SERVER_SETTINGS = {
     "path": "gns3server",
     "ubridge_path": "ubridge",
-    "host": "0.0.0.0",
+    "host": "localhost",
     "port": DEFAULT_LOCAL_SERVER_PORT,
     "images_path": DEFAULT_IMAGES_PATH,
     "projects_path": DEFAULT_PROJECTS_PATH,

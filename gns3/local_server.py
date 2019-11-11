@@ -31,7 +31,7 @@ import subprocess
 
 
 from gns3.qt import QtWidgets, QtCore, qslot
-from gns3.settings import LOCAL_SERVER_SETTINGS
+from gns3.settings import LOCAL_SERVER_SETTINGS, DEFAULT_LOCAL_SERVER_HOST
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
 from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker
@@ -246,6 +246,9 @@ class LocalServer(QtCore.QObject):
         """
         Update the local server settings. Keep the key not in new_settings
         """
+
+        if "host" in new_settings and new_settings["host"] is None:
+            new_settings["host"] = DEFAULT_LOCAL_SERVER_HOST
         old_settings = copy.copy(self._settings)
         if not self._settings:
             self._settings = new_settings

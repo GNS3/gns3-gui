@@ -67,6 +67,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                     # ignore link-local addresses
                     continue
                 self.uiLocalServerHostComboBox.addItem(address_string, address_string)
+        self.uiLocalServerHostComboBox.addItem("localhost", "localhost")  # local host
         self.uiLocalServerHostComboBox.addItem("::", "::")  # all IPv6 addresses
         self.uiLocalServerHostComboBox.addItem("0.0.0.0", "0.0.0.0")  # all IPv4 addresses
 
