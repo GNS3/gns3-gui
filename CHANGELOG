@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.2.3 12/11/2019
+
+* Fix issue when binding on 0.0.0.0. Fixes #2892
+* Allow double click on cloud with configured console to open session. Fixes #2894
+* Officially support Python 3.8. Ref https://github.com/GNS3/gns3-gui/issues/2895
+* Set psutil to version 5.6.3 in requirements.txt
+
 ## 2.2.2 04/11/2019
 
 * Fix KeyError: 'spice+agent'. Fixes #2890
