@@ -37,6 +37,24 @@ class Tox(TestCommand):
         errcode = tox.cmdline(self.test_args)
         sys.exit(errcode)
 
+
+if sys.platform.startswith('linux'):
+    data_files = [
+        ("share/applications/", ["resources/linux/applications/gns3.desktop"]),
+        ("/usr/local/share/icons/hicolor/16x16/apps", ["resources/linux/icons/16x16/apps/gns3.png"]),
+        ("/usr/local/share/icons/hicolor/32x32/apps", ["resources/linux/icons/32x32/apps/gns3.png"]),
+        ("/usr/local/share/icons/hicolor/48x48/apps", ["resources/linux/icons/48x48/apps/gns3.png"]),
+        ("/usr/local/share/icons/hicolor/48x48/apps/mimetypes", ["resources/linux/icons/48x48/apps/mimetypes/application-x-gns3.png",
+                                                                 "resources/linux/icons/48x48/apps/mimetypes/application-x-gns3appliance.png",
+                                                                 "resources/linux/icons/48x48/apps/mimetypes/application-x-gns3project.png"]),
+        ("/usr/local/share/icons/hicolor/scalable/apps", ["resources/linux/icons/scalable/apps/gns3.svg"]),
+        ("/usr/local/share/icons/hicolor/scalable/apps/mimetypes", ["resources/linux/icons/scalable/apps/mimetypes/application-x-gns3.svg",
+                                                                    "resources/linux/icons/scalable/apps/mimetypes/application-x-gns3appliance.svg",
+                                                                    "resources/linux/icons/scalable/apps/mimetypes/application-x-gns3project.svg"]),
+    ]
+else:
+    data_files = []
+
 setup(
     name="gns3-gui",
     version=__import__("gns3").__version__,
@@ -54,6 +72,7 @@ setup(
             "gns3 = gns3.main:main"
         ]
     },
+    data_files=data_files,
     packages=find_packages(".", exclude=["docs", "tests"]),
     include_package_data=True,
     package_data={"gns3": ["configs/*.txt", "schemas/*.json"]},

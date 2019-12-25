@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=gns3 %f
+Name=GNS3
+Comment=GNS3 Graphical Network Simulator
+Icon=gns3
+Categories=Education;Network;
+MimeType=application/x-gns3;application/x-gns3appliance;application/x-gns3project;
+Keywords=simulator;network;netsim;
