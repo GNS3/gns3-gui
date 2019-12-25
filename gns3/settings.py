@@ -197,7 +197,8 @@ else:
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'TightVNC': 'vncviewer %h:%p',
         'Vinagre': 'vinagre %h::%p',
-        'gvncviewer': 'gvncviewer %h:%P'
+        'gvncviewer': 'gvncviewer %h:%P',
+        'Remote Viewer': 'remote-viewer vnc://%h:%p'
     }
 
     # default VNC console command on other systems
