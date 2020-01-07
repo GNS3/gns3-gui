@@ -1095,11 +1095,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
     def consoleFromAllItems(self):
         """
-        Console from all scene items, except builtin devices.
+        Console from all scene items with console type different than "none"
         """
 
         items = [item for item in self.scene().items()
-                 if not (isinstance(item, NodeItem) and isinstance(item.node().module(), Builtin))]
+                 if isinstance(item, NodeItem) and item.node().consoleType() != "none"]
         self.consoleFromItems(items)
 
     def consoleActionSlot(self):
