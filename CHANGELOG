@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.2.4 08/01/2020
+
+* Fix "Console to all nodes" doesn't open cloud objects with console configured. Fixes #2902
+* Change default path for SecureCRT. Fixes #2896
+* Add icons in setup.py Ref #2898
+* Add remote viewer as a VNC console for Linux. Fixes #2913
+
 ## 2.2.3 12/11/2019
 
 * Fix issue when binding on 0.0.0.0. Fixes #2892
