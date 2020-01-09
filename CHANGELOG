@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.5 09/01/2020
+
+* Add gns3-gui.xml and update Linux icons paths & permissions. Ref #2919
+
 ## 2.2.4 08/01/2020
 
 * Fix "Console to all nodes" doesn't open cloud objects with console configured. Fixes #2902
