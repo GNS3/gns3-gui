@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+    <mime-type type="application/x-gns3">
+        <comment>GNS3 Project File</comment>
+	    <comment xml:lang="en">GNS3 Project File</comment>
+    	<glob pattern="*.gns3"/>
+    </mime-type>
+    <mime-type type="application/x-gns3project">
+        <comment>GNS3 Project File</comment>
+	    <comment xml:lang="en">GNS3 Portable Project File</comment>
+    	<glob pattern="*.gns3project"/>
+    </mime-type>
+    <mime-type type="application/x-gns3project">
+        <comment>GNS3 Project File</comment>
+	    <comment xml:lang="en">GNS3 Portable Project File</comment>
+    	<glob pattern="*.gns3p"/>
+    </mime-type>
+    <mime-type type="application/x-gns3appliance">
+        <comment>GNS3 Appliance File</comment>
+	    <comment xml:lang="en">GNS3 Appliance File</comment>
+    	<glob pattern="*.gns3appliance"/>
+    </mime-type>
+    <mime-type type="application/x-gns3appliance">
+        <comment>GNS3 Appliance File</comment>
+	    <comment xml:lang="en">GNS3 Appliance File</comment>
+    	<glob pattern="*.gns3a"/>
+    </mime-type>
+</mime-info>
