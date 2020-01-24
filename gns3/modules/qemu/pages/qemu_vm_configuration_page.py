@@ -99,8 +99,13 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         for name, option_name in Node.onCloseOptions().items():
             self.uiOnCloseComboBox.addItem(name, option_name)
 
+        # Supported NIC models: e1000, e1000-82544gc, e1000-82545em, e1000e, i82550, i82551, i82557a, i82557b, i82557c, i82558a
+        # i82558b, i82559a, i82559b, i82559c, i82559er, i82562, i82801, ne2k_pci, pcnet, rocker, rtl8139, virtio-net-pci, vmxnet3
         self._legacy_devices = ("e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio")
         self._qemu_network_devices = OrderedDict([("e1000", "Intel Gigabit Ethernet"),
+                                                  ("e1000-82544gc", "Intel 82544GC Gigabit Ethernet"),
+                                                  ("e1000-82545em", "Intel 82545EM Gigabit Ethernet"),
+                                                  ("e1000e", "Intel PCIe Gigabit Ethernet"),
                                                   ("i82550", "Intel i82550 Ethernet"),
                                                   ("i82551", "Intel i82551 Ethernet"),
                                                   ("i82557a", "Intel i82557A Ethernet"),
@@ -116,6 +121,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                                                   ("i82801", "Intel i82801 Ethernet"),
                                                   ("ne2k_pci", "NE2000 Ethernet"),
                                                   ("pcnet", "AMD PCNet Ethernet"),
+                                                  ("rocker", "Rocker L2 switch device"),
                                                   ("rtl8139", "Realtek 8139 Ethernet"),
                                                   ("virtio", "Legacy paravirtualized Network I/O"),
                                                   ("virtio-net-pci", "Paravirtualized Network I/O"),
@@ -395,7 +401,15 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             QtWidgets.QMessageBox.critical(self, "Invalid format", "Invalid port name format")
             return
 
-        dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, default_adapter, self._qemu_network_devices, base_mac_address, parent=self)
+        if self._settings["legacy_networking"]:
+            network_devices = {}
+            for nic, desc in self._qemu_network_devices.items():
+                if nic in self._legacy_devices:
+                    network_devices[nic] = desc
+        else:
+            network_devices = self._qemu_network_devices
+
+        dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, default_adapter, network_devices, base_mac_address, parent=self)
         dialog.show()
         dialog.exec_()
 
@@ -642,6 +656,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                     raise ConfigurationError()
 
         settings["adapters"] = adapters
+        settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
         settings["custom_adapters"] = self._custom_adapters.copy()
         settings["on_close"] = self.uiOnCloseComboBox.itemData(self.uiOnCloseComboBox.currentIndex())
         settings["cpus"] = self.uiCPUSpinBox.value()

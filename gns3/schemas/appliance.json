@@ -266,6 +266,9 @@
         "adapter_type": {
           "enum": [
               "e1000",
+              "e1000-82544gc",
+              "e1000-82545em",
+              "e1000e",
               "i82550",
               "i82551",
               "i82557a",
@@ -281,6 +284,7 @@
               "i82801",
               "ne2k_pci",
               "pcnet",
+              "rocker",
               "rtl8139",
               "virtio",
               "virtio-net-pci",
