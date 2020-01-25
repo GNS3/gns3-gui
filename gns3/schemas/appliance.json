@@ -266,6 +266,9 @@
         "adapter_type": {
           "enum": [
               "e1000",
+              "e1000-82544gc",
+              "e1000-82545em",
+              "e1000e",
               "i82550",
               "i82551",
               "i82557a",
@@ -281,6 +284,7 @@
               "i82801",
               "ne2k_pci",
               "pcnet",
+              "rocker",
               "rtl8139",
               "virtio",
               "virtio-net-pci",
@@ -301,19 +305,19 @@
           "title": "Number of Virtual CPU"
         },
         "hda_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
+            "enum": ["ide", "sata", "nvme","scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"],
             "title": "Disk interface for the installed hda_disk_image"
         },
         "hdb_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
+            "enum": ["ide", "sata", "nvme", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"],
             "title": "Disk interface for the installed hdb_disk_image"
         },
         "hdc_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
+            "enum": ["ide", "sata", "nvme", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"],
             "title": "Disk interface for the installed hdc_disk_image"
         },
         "hdd_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
+            "enum": ["ide", "sata", "nvme", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"],
             "title": "Disk interface for the installed hdd_disk_image"
         },
         "arch": {
