@@ -305,19 +305,19 @@
           "title": "Number of Virtual CPU"
         },
         "hda_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
+            "enum": ["ide", "sata", "nvme","scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"],
             "title": "Disk interface for the installed hda_disk_image"
         },
         "hdb_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
+            "enum": ["ide", "sata", "nvme", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"],
             "title": "Disk interface for the installed hdb_disk_image"
         },
         "hdc_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
+            "enum": ["ide", "sata", "nvme", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"],
             "title": "Disk interface for the installed hdc_disk_image"
         },
         "hdd_disk_interface": {
-            "enum": ["ide", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "sata"],
+            "enum": ["ide", "sata", "nvme", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"],
             "title": "Disk interface for the installed hdd_disk_image"
         },
         "arch": {

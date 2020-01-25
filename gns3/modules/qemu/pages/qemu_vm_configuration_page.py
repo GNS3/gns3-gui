@@ -78,7 +78,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiHdcDiskImageResizeToolButton.clicked.connect(self._hdcDiskImageResizeSlot)
         self.uiHddDiskImageResizeToolButton.clicked.connect(self._hddDiskImageResizeSlot)
 
-        disk_interfaces = ["ide", "sata", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"]
+        disk_interfaces = ["ide", "sata", "nvme", "scsi", "sd", "mtd", "floppy", "pflash", "virtio", "none"]
         self.uiHdaDiskInterfaceComboBox.addItems(disk_interfaces)
         self.uiHdbDiskInterfaceComboBox.addItems(disk_interfaces)
         self.uiHdcDiskInterfaceComboBox.addItems(disk_interfaces)
