@@ -144,7 +144,7 @@ class Topology(QtCore.QObject):
         self._main_window.uiGraphicsView.setDrawingGridSize(self._project.drawingGridSize())
         self._main_window.uiShowGridAction.setChecked(self._project.showGrid())
         self._main_window.showGrid(self._project.showGrid())
-        if os.path.exists(project_file):
+        if not Controller.instance().isRemote() and os.path.exists(project_file):
             self._main_window.updateRecentFileSettings(project_file)
             self._main_window.updateRecentFileActions()
 
