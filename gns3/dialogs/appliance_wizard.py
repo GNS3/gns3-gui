@@ -72,9 +72,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.uiCreateVersionPushButton.clicked.connect(self._createVersionPushButtonClickedSlot)
         self.allowCustomFiles.clicked.connect(self._allowCustomFilesChangedSlot)
 
-        #FIXME: deactivate the create version feature (confusing and maybe not necessary, TBD)
-        self.uiCreateVersionPushButton.hide()
-
         # directories where to search for images
         images_directories = list()
 
@@ -478,7 +475,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         Allow user to create a new version of an appliance
         """
 
-        new_version, ok = QtWidgets.QInputDialog.getText(self, "Creating a new version", "Creating a new version allows to import unknown files to use with this appliance.\nPlease share your experience on the GNS3 community if this version works.\n\nVersion name:", QtWidgets.QLineEdit.Normal)
+        new_version, ok = QtWidgets.QInputDialog.getText(self, "Creating a new version", "Create a new version for this appliance.\nPlease share your experience on the GNS3 community if this version works.\n\nVersion name:", QtWidgets.QLineEdit.Normal)
         if ok:
             try:
                 self._appliance.create_new_version(new_version)
