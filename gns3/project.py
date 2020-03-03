@@ -520,12 +520,12 @@ class Project(QtCore.QObject):
     def load(self, path=None):
         if not path:
             path = self.path()
-        if not Controller.instance().isRemote():
-            # load a local project
+        if not Controller.instance().isRemote() and path:
+            # load a local project from file
             body = {"path": path}
             Controller.instance().post("/projects/load", self._projectOpenCallback, body=body, timeout=None)
         else:
-            # open a remote project
+            # open a local/remote project
             self.post("/open", self._projectOpenCallback, timeout=None)
 
     def _projectOpenCallback(self, result, error=False, **kwargs):
