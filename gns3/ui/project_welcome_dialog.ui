@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>607</width>
-    <height>308</height>
+    <width>647</width>
+    <height>214</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Welcome</string>
+   <string>Project variables</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -32,7 +32,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Loading.. Please wait.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please provide the missing values for the project variables:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>

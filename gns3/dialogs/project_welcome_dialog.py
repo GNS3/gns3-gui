@@ -37,9 +37,7 @@ class ProjectWelcomeDialog(QtWidgets.QDialog, Ui_ProjectWelcomeDialog):
         self.uiOkButton.clicked.connect(self._okButtonClickedSlot)
         self.gridLayout.setAlignment(QtCore.Qt.AlignTop)
         self.label.setOpenExternalLinks(True)
-
         self._variables = self._getVariables(project)
-
         self._loadReadme()
         self._addMisingVariablesEdits()
 
@@ -50,10 +48,11 @@ class ProjectWelcomeDialog(QtWidgets.QDialog, Ui_ProjectWelcomeDialog):
         return variables
 
     def _addMisingVariablesEdits(self):
-        missing = [v for v in self._variables if v.get("value", "").strip() == ""]
+        #TODO: refactor this to use a QListWidget
+        missing = [v for v in self._variables if v.get("name") and v.get("value", "").strip() == ""]
         for i, variable in enumerate(missing, start=0):
             nameLabel = QtWidgets.QLabel()
-            nameLabel.setText(variable.get("name", ""))
+            nameLabel.setText(variable.get("name") + ":")
             self.gridLayout.addWidget(nameLabel, i, 0)
 
             valueEdit = QtWidgets.QLineEdit()
@@ -72,13 +71,13 @@ class ProjectWelcomeDialog(QtWidgets.QDialog, Ui_ProjectWelcomeDialog):
         variable["value"] = text
 
     def _okButtonClickedSlot(self):
-        missing = [v for v in self._variables if v.get("value", "").strip() == ""]
+        missing = [v for v in self._variables if v.get("name") and v.get("value", "").strip() == ""]
         if len(missing) > 0:
-            reply = QtWidgets.QMessageBox.warning(
-                self, 'Missing values',
-                'Are you sure you want to continue without providing missing values?',
-                QtWidgets.QMessageBox.Yes,
-                QtWidgets.QMessageBox.No)
+            reply = QtWidgets.QMessageBox.warning(self,
+                                                  "Missing values",
+                                                  "Are you sure you want to continue without providing missing values?",
+                                                  QtWidgets.QMessageBox.Yes,
+                                                  QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
                 return
 
