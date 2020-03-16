@@ -1506,6 +1506,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     QtWidgets.QMessageBox.critical(self, "Delete", "Cannot delete node '{}' because it is locked".format(node.name()))
                     return
                 selected_nodes.append(node)
+            if isinstance(item, DrawingItem) and item.locked():
+                QtWidgets.QMessageBox.critical(self, "Delete", "Cannot delete drawing because it is locked")
+                return
         if selected_nodes:
             if len(selected_nodes) > 1:
                 question = "Do you want to permanently delete these {} nodes?".format(len(selected_nodes))
