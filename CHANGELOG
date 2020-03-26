@@ -1,5 +1,22 @@
 # Change Log
 
+## 2.2.6 26/03/2020
+
+* Prevent locked drawings to be deleted. Fixes https://github.com/GNS3/gns3-gui/issues/2948
+* Fix issues with empty project variables. Fixes https://github.com/GNS3/gns3-gui/issues/2941
+* Upgrade psutil to version 5.6.6 due to CVE-2019-18874 https://github.com/advisories/GHSA-qfc5-mcwq-26q8
+* Use existing README.txt if existing when exporting portable project. Fixes https://github.com/GNS3/gns3-server/issues/1724
+* Allow creation of a diskless Qemu VMs. Fixes #2939
+* Re-enable "create new version" in appliance wizard. Fixes #2837
+* Fix unable to load project from project library. Fixes #2932
+* Fix some permission denied errors when loading remote project. Ref #2871 Fixes #2901
+* Add 'Royal TS V5' to predefined console list
+* Disallow invalid grid sized. Fixes #2908
+* Check if hostname is blank. Fixes #2924
+* Add nvme disk interface and fix scsi disk interface for Qemu VMs.
+* Add latest Qemu nic models.
+* Upgrade Qt version to 5.14.1. Ref #2778 #2903
+
 ## 2.2.5 09/01/2020
 
 * Add gns3-gui.xml and update Linux icons paths & permissions. Ref #2919
