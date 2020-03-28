@@ -38,7 +38,7 @@ class PacketCapture:
     def __init__(self):
         self._tail_process = {}
         self._capture_reader_process = {}
-        # Auto start the capture program for th link
+        # Auto start the capture program for this link
         self._autostart = {}
 
         Topology.instance().project_changed_signal.connect(self.killAllCapture)
@@ -47,6 +47,7 @@ class PacketCapture:
         """
         Kill all running captures (for example when change project)
         """
+
         for process in list(self._tail_process.values()):
             try:
                 process.kill()

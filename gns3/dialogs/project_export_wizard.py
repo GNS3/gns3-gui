@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import os
 import datetime
 
 from gns3.qt import QtCore, QtWidgets
@@ -55,7 +56,19 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         self.helpRequested.connect(self._showHelpSlot)
         self.uiPathBrowserToolButton.clicked.connect(self._pathBrowserSlot)
 
-        readme_text = "Project: '{}' created on {}\nAuthor: John Doe <john.doe@example.com>\n\nNo project description was given".format(self._project.name(), datetime.date.today())
+        # read an existing README.txt file if existing
+        readme_text = None
+        if project.filesDir():
+            readme_path = os.path.join(project.filesDir(), "README.txt")
+            if os.path.exists(readme_path):
+                try:
+                    with open(readme_path, "rb") as file:
+                        readme_text = file.read().decode("utf-8", errors="replace")
+                except OSError as e:
+                    log.warning("could not read {}: {}".format(readme_path, e))
+
+        if readme_text is None:
+            readme_text = "Project: '{}' created on {}\nAuthor: John Doe <john.doe@example.com>\n\nNo project description was given".format(self._project.name(), datetime.date.today())
         self.uiReadmeTextEdit.setPlainText(readme_text)
 
     def _pathBrowserSlot(self):

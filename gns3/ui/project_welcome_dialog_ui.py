@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/dominik/projects/gns3-gui/gns3/ui/project_welcome_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/project_welcome_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_ProjectWelcomeDialog(object):
     def setupUi(self, ProjectWelcomeDialog):
         ProjectWelcomeDialog.setObjectName("ProjectWelcomeDialog")
         ProjectWelcomeDialog.setWindowModality(QtCore.Qt.WindowModal)
-        ProjectWelcomeDialog.resize(607, 308)
+        ProjectWelcomeDialog.resize(659, 220)
         ProjectWelcomeDialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(ProjectWelcomeDialog)
         self.verticalLayout.setContentsMargins(-1, -1, 12, -1)
@@ -48,13 +50,14 @@ class Ui_ProjectWelcomeDialog(object):
         self.uiOkButton.setObjectName("uiOkButton")
         self.horizontalLayout.addWidget(self.uiOkButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem1)
 
         self.retranslateUi(ProjectWelcomeDialog)
         QtCore.QMetaObject.connectSlotsByName(ProjectWelcomeDialog)
 
     def retranslateUi(self, ProjectWelcomeDialog):
         _translate = QtCore.QCoreApplication.translate
-        ProjectWelcomeDialog.setWindowTitle(_translate("ProjectWelcomeDialog", "Welcome"))
-        self.label.setText(_translate("ProjectWelcomeDialog", "<html><head/><body><p>Loading.. Please wait.</p></body></html>"))
-
+        ProjectWelcomeDialog.setWindowTitle(_translate("ProjectWelcomeDialog", "Project variables"))
+        self.label.setText(_translate("ProjectWelcomeDialog", "<html><head/><body><p>Please provide the missing values for the project variables:</p></body></html>"))
 from . import resources_rc

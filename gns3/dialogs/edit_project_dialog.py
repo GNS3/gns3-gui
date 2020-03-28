@@ -108,14 +108,19 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         """
 
         if result:
-            self._project.setName(self.uiProjectNameLineEdit.text())
-            self._project.setAutoOpen(self.uiProjectAutoOpenCheckBox.isChecked())
-            self._project.setAutoClose(not self.uiProjectAutoCloseCheckBox.isChecked())
-            self._project.setAutoStart(self.uiProjectAutoStartCheckBox.isChecked())
-            self._project.setSceneHeight(self.uiSceneHeightSpinBox.value())
-            self._project.setSceneWidth(self.uiSceneWidthSpinBox.value())
-            self._project.setNodeGridSize(self.uiNodeGridSizeSpinBox.value())
-            self._project.setDrawingGridSize(self.uiDrawingGridSizeSpinBox.value())
-            self._project.setVariables(self._cleanVariables())
-            self._project.update()
+            node_grid_size = self.uiNodeGridSizeSpinBox.value()
+            drawing_grid_size = self.uiDrawingGridSizeSpinBox.value()
+            if node_grid_size % drawing_grid_size != 0:
+                QtWidgets.QMessageBox.critical(self, "Grid sizes", "Invalid grid sizes which will create overlapping lines")
+            else:
+                self._project.setNodeGridSize(node_grid_size)
+                self._project.setDrawingGridSize(drawing_grid_size)
+                self._project.setName(self.uiProjectNameLineEdit.text())
+                self._project.setAutoOpen(self.uiProjectAutoOpenCheckBox.isChecked())
+                self._project.setAutoClose(not self.uiProjectAutoCloseCheckBox.isChecked())
+                self._project.setAutoStart(self.uiProjectAutoStartCheckBox.isChecked())
+                self._project.setSceneHeight(self.uiSceneHeightSpinBox.value())
+                self._project.setSceneWidth(self.uiSceneWidthSpinBox.value())
+                self._project.setVariables(self._cleanVariables())
+                self._project.update()
         super().done(result)

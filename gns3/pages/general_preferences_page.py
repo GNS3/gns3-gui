@@ -421,8 +421,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         new_graphics_view_settings = {"scene_width": self.uiSceneWidthSpinBox.value(),
                                       "scene_height": self.uiSceneHeightSpinBox.value(),
-                                      "grid_size": self.uiNodeGridSizeSpinBox.value(),
-                                      "drawing_grid_size": self.uiDrawingGridSizeSpinBox.value(),
                                       "draw_rectangle_selected_item": self.uiRectangleSelectedItemCheckBox.isChecked(),
                                       "draw_link_status_points": self.uiDrawLinkStatusPointsCheckBox.isChecked(),
                                       "show_interface_labels_on_new_project": self.uiShowInterfaceLabelsOnNewProject.isChecked(),
@@ -433,4 +431,12 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
                                       "default_label_color": self._default_label_color.name(),
                                       "default_note_font": self.uiDefaultNoteStylePlainTextEdit.font().toString(),
                                       "default_note_color": self._default_note_color.name()}
+
+        node_grid_size = self.uiNodeGridSizeSpinBox.value()
+        drawing_grid_size = self.uiDrawingGridSizeSpinBox.value()
+        if node_grid_size % drawing_grid_size != 0:
+            QtWidgets.QMessageBox.critical(self, "Grid sizes", "Invalid grid sizes which will create overlapping lines")
+        else:
+            new_graphics_view_settings["grid_size"] = node_grid_size
+            new_graphics_view_settings["drawing_grid_size"] = drawing_grid_size
         MainWindow.instance().uiGraphicsView.setSettings(new_graphics_view_settings)

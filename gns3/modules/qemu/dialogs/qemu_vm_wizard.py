@@ -47,7 +47,6 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
         # Mandatory fields
         self.uiNameWizardPage.registerField("vm_name*", self.uiNameLineEdit)
-        self.uiDiskWizardPage.registerField("hda_disk_image*", self.uiHdaDiskImageLineEdit)
         self.uiInitrdKernelImageWizardPage.registerField("initrd*", self.uiInitrdImageLineEdit)
         self.uiInitrdKernelImageWizardPage.registerField("kernel_image*", self.uiKernelImageLineEdit)
 
@@ -153,9 +152,11 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             "qemu_path": qemu_path,
             "compute_id": self._compute_id,
             "category": Node.end_devices,
-            "hda_disk_image": self.uiHdaDiskImageLineEdit.text(),
             "console_type": console_type
         }
+
+        if self.uiHdaDiskImageLineEdit.text().strip():
+            settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text().strip()
 
         if self.uiLegacyASACheckBox.isChecked():
             # special settings for legacy ASA VM

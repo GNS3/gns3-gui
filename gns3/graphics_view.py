@@ -988,6 +988,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if isinstance(item, NodeItem) and item.node().initialized():
                 new_hostname, ok = QtWidgets.QInputDialog.getText(self, "Change hostname", "Hostname:", QtWidgets.QLineEdit.Normal, item.node().name())
                 if ok:
+                    if not new_hostname.strip():
+                        QtWidgets.QMessageBox.critical(self, "Change hostname", "Hostname cannot be blank")
+                        continue
                     if hasattr(item.node(), "validateHostname"):
                         if not item.node().validateHostname(new_hostname):
                             QtWidgets.QMessageBox.critical(self, "Change hostname", "Invalid name detected for this node: {}".format(new_hostname))
@@ -1503,6 +1506,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     QtWidgets.QMessageBox.critical(self, "Delete", "Cannot delete node '{}' because it is locked".format(node.name()))
                     return
                 selected_nodes.append(node)
+            if isinstance(item, DrawingItem) and item.locked():
+                QtWidgets.QMessageBox.critical(self, "Delete", "Cannot delete drawing because it is locked")
+                return
         if selected_nodes:
             if len(selected_nodes) > 1:
                 question = "Do you want to permanently delete these {} nodes?".format(len(selected_nodes))
