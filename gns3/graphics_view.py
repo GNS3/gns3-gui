@@ -460,25 +460,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
             else:
                 item.setSelected(True)
         elif is_not_link and is_not_logo and event.button() == QtCore.Qt.RightButton and not self._adding_link:
-            if item and not sip.isdeleted(item):
-                # Prevent right clicking on a selected item from de-selecting all other items
-                if not item.isSelected():
-                    if not event.modifiers() & QtCore.Qt.ControlModifier:
-                        for it in self.scene().items():
-                            it.setSelected(False)
-                    item.setSelected(True)
-                    self._showDeviceContextualMenu(QtGui.QCursor.pos())
-                else:
-                    self._showDeviceContextualMenu(QtGui.QCursor.pos())
-            # when more than one item is selected display the contextual menu even if mouse is not above an item
-            elif len(self.scene().selectedItems()) > 1:
-                self._showDeviceContextualMenu(QtGui.QCursor.pos())
+            pass #TODO: remove this without creating a bug...
         elif is_not_link and self._adding_link and event.button() == QtCore.Qt.RightButton:
             # send a escape key to the main window to cancel the link addition
             key = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Escape, QtCore.Qt.NoModifier)
             QtWidgets.QApplication.sendEvent(self._main_window, key)
         elif item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.LeftButton:
             self._userNodeLinking(event, item)
+            #context_event = QtGui.QContextMenuEvent(QtGui.QContextMenuEvent.Mouse, event.pos())
+            #QtWidgets.QApplication.sendEvent(self, context_event)
         elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
             pos = self.mapToScene(event.pos())
             note = self.createDrawingItem("text", pos.x(), pos.y(), 2)
@@ -511,6 +501,48 @@ class GraphicsView(QtWidgets.QGraphicsView):
             super().mousePressEvent(event)
 
         self.toggleUiDeviceMenu()
+
+    def contextMenuEvent(self, event):
+        """
+        Handles all context menu events.
+
+        :param event: QContextMenuEvent instance
+        """
+
+        is_not_link = True
+        is_not_logo = True
+
+        item = self.itemAt(event.pos())
+        if item and sip.isdeleted(item):
+            return
+
+        if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
+            is_not_link = False
+        if item and (isinstance(item, LogoItem) or isinstance(item.parentItem(), LogoItem)):
+            is_not_logo = False
+        else:
+            for it in self.scene().items():
+                if isinstance(it, LinkItem):
+                    it.setHovered(False)
+
+        if is_not_link and is_not_logo and not self._adding_link:
+            if item and not sip.isdeleted(item):
+                # Prevent right clicking on a selected item from de-selecting all other items
+                if not item.isSelected():
+                    if not event.modifiers() & QtCore.Qt.ControlModifier:
+                        for it in self.scene().items():
+                            it.setSelected(False)
+                    item.setSelected(True)
+                    self._showDeviceContextualMenu(event.globalPos())
+                else:
+                    self._showDeviceContextualMenu(event.globalPos())
+            # when more than one item is selected display the contextual menu even if mouse is not above an item
+            elif len(self.scene().selectedItems()) > 1:
+                self._showDeviceContextualMenu(event.globalPos())
+        #elif item and isinstance(item, NodeItem) and self._adding_link:
+        #    self._userNodeLinking(event, item)
+        else:
+            super().contextMenuEvent(event)
 
     def mouseReleaseEvent(self, event):
         """

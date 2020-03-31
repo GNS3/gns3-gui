@@ -142,19 +142,14 @@ class NodesView(QtWidgets.QTreeWidget):
         # when we're in docked mode, outside main window
         return self.window().parent()
 
-    def mousePressEvent(self, event):
+    def contextMenuEvent(self, event):
         """
-        Handles all mouse press events.
+        Handles all context menu events.
 
-        :param: QMouseEvent instance
+        :param event: QContextMenuEvent instance
         """
 
-        # Check that an item has been selected and right click
-        if event.button() == QtCore.Qt.RightButton:
-            self._showContextualMenu()
-            event.accept()
-            return
-        super().mousePressEvent(event)
+        self._showContextualMenu(event.globalPos())
 
     def mouseMoveEvent(self, event):
         """
@@ -181,7 +176,7 @@ class NodesView(QtWidgets.QTreeWidget):
             drag.exec_(QtCore.Qt.CopyAction)
             event.accept()
 
-    def _showContextualMenu(self):
+    def _showContextualMenu(self, pos):
 
         menu = QtWidgets.QMenu()
         refresh_action = QtWidgets.QAction("Refresh templates", menu)
@@ -207,7 +202,7 @@ class NodesView(QtWidgets.QTreeWidget):
                 delete_action.triggered.connect(qpartial(self._deleteSlot, template))
                 menu.addAction(delete_action)
 
-        menu.exec_(QtGui.QCursor.pos())
+        menu.exec_(pos)
 
     def _configurationSlot(self, template, configuration_page, source):
 

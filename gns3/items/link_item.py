@@ -280,23 +280,31 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         :param: QGraphicsSceneMouseEvent instance
         """
 
-        if event.button() == QtCore.Qt.RightButton:
-            if self._adding_flag:
-                # send a escape key to the main window to cancel the link addition
-                from ..main_window import MainWindow
-                key = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Escape, QtCore.Qt.NoModifier)
-                QtWidgets.QApplication.sendEvent(MainWindow.instance(), key)
-                return
+        if event.button() == QtCore.Qt.RightButton and self._adding_flag:
+            # send a escape key to the main window to cancel the link addition
+            from ..main_window import MainWindow
+            key = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Escape, QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(MainWindow.instance(), key)
+            return
+        else:
+            super().mousePressEvent(event)
 
-            if not sip_is_deleted(self):
-                # create the contextual menu
-                self.setAcceptHoverEvents(False)
-                menu = QtWidgets.QMenu()
-                self.populateLinkContextualMenu(menu)
-                menu.exec_(QtGui.QCursor.pos())
-                self.setAcceptHoverEvents(True)
-                self._hovered = False
-                self.adjust()
+    def contextMenuEvent(self, event):
+        """
+        Handles all context menu events.
+
+        :param event: QContextMenuEvent instance
+        """
+
+        if not sip_is_deleted(self):
+            # create the contextual menu
+            self.setAcceptHoverEvents(False)
+            menu = QtWidgets.QMenu()
+            self.populateLinkContextualMenu(menu)
+            menu.exec_(QtGui.QCursor.pos())
+            self.setAcceptHoverEvents(True)
+            self._hovered = False
+            self.adjust()
 
     def keyPressEvent(self, event):
         """

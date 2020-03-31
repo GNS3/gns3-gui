@@ -267,19 +267,16 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                         if item.link() == link:
                             view.centerOn(item)
 
-    def mousePressEvent(self, event):
+    def contextMenuEvent(self, event):
         """
-        Handles all mouse press events.
+        Handles all context menu events.
 
-        :param event: QMouseEvent instance
+        :param event: QContextMenuEvent instance
         """
 
-        if event.button() == QtCore.Qt.RightButton:
-            self._showContextualMenu()
-        else:
-            super().mousePressEvent(event)
+        self._showContextualMenu(event.globalPos())
 
-    def _showContextualMenu(self):
+    def _showContextualMenu(self, pos):
         """
         Contextual menu to expand and collapse the tree.
         """
@@ -336,7 +333,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                         item.populateLinkContextualMenu(menu)
                         break
 
-        menu.exec_(QtGui.QCursor.pos())
+        menu.exec_(pos)
 
     @qslot
     def _expandAllSlot(self, *args):
