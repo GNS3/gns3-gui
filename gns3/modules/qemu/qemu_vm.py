@@ -134,6 +134,13 @@ class QemuVM(Node):
         usage = "\n" + self._settings.get("usage")
         return info + port_info + usage
 
+    def configFiles(self):
+        """
+        Name of the configuration files
+        """
+
+        return ["config.zip"]
+
     def configPage(self):
         """
         Returns the configuration page widget to be used by the node properties dialog.
