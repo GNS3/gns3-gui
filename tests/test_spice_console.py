@@ -23,19 +23,20 @@ from unittest.mock import patch
 from gns3.spice_console import spiceConsole
 
 
-def test_spice_console_on_linux_and_mac():
+def test_spice_console_on_linux_and_mac(vpcs_device):
     with patch('subprocess.Popen') as popen, \
             patch('sys.platform', new="linux"):
 
-        spiceConsole('localhost', '2525', 'command %h %p')
+        vpcs_device.settings()["console_host"] = "localhost"
+        spiceConsole(vpcs_device, '2525', 'command %h %p')
         popen.assert_called_once_with(shlex.split('command localhost 2525'), env=os.environ)
 
 
-def test_spice_console_on_windows():
+def test_spice_console_on_windows(vpcs_device):
     with patch('subprocess.Popen') as popen, \
             patch('sys.platform', new="win"):
-
-        spiceConsole('localhost', '2525', 'command %h %p')
+        vpcs_device.settings()["console_host"] = "localhost"
+        spiceConsole(vpcs_device, '2525', 'command %h %p')
         popen.assert_called_once_with('command localhost 2525')
 
 
@@ -47,9 +48,10 @@ def test_spice_console_on_windows():
 #             spiceConsole('localhost', '2525', 'command %h %p')
 
 
-def test_spice_console_with_ipv6_support():
+def test_spice_console_with_ipv6_support(vpcs_device):
     with patch('subprocess.Popen') as popen, \
             patch('sys.platform', new="linux"):
 
-        spiceConsole('::1', '2525', 'command %h %p')
+        vpcs_device.settings()["console_host"] = "::1"
+        spiceConsole(vpcs_device, '2525', 'command %h %p')
         popen.assert_called_once_with(shlex.split('command [::1] 2525'), env=os.environ)

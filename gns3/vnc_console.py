@@ -52,7 +52,6 @@ def vncConsole(node, port, command):
     command = command.replace("%d", name.replace('"', '\\"'))
     command = command.replace("%i", node.project().id())
     command = command.replace("%n", str(node.id()))
-    command = command.replace("%c", Controller.instance().httpClient().fullUrl())
 
     try:
         log.debug('starting VNC program "{}"'.format(command))

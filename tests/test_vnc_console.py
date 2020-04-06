@@ -23,18 +23,20 @@ from unittest.mock import patch
 from gns3.vnc_console import vncConsole
 
 
-def test_vnc_console_on_linux_and_mac():
+def test_vnc_console_on_linux_and_mac(vpcs_device):
     with patch('subprocess.Popen') as popen, \
             patch('sys.platform', new="linux"):
-        vncConsole('localhost', 6000, 'command %h %p %P')
-        popen.assert_called_once_with(shlex.split('command localhost 6000 100'), env=os.environ)
+            vpcs_device.settings()["console_host"] = "localhost"
+            vncConsole(vpcs_device, 6000, 'command %h %p %P')
+            popen.assert_called_once_with(shlex.split('command localhost 6000 100'), env=os.environ)
 
 
-def test_vnc_console_on_windows():
+def test_vnc_console_on_windows(vpcs_device):
     with patch('subprocess.Popen') as popen, \
             patch('sys.platform', new="win"):
-        vncConsole('localhost', 6000, 'command %h %p %P')
-        popen.assert_called_once_with('command localhost 6000 100')
+            vpcs_device.settings()["console_host"] = "localhost"
+            vncConsole(vpcs_device, 6000, 'command %h %p %P')
+            popen.assert_called_once_with('command localhost 6000 100')
 
 
 # def test_vnc_console_on_linux_with_popen_issues():
