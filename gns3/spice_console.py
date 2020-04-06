@@ -24,15 +24,17 @@ import os
 import shlex
 import subprocess
 
+from .controller import Controller
+
 import logging
 log = logging.getLogger(__name__)
 
 
-def spiceConsole(host, port, command):
+def spiceConsole(node, port, command):
     """
     Start a SPICE console program.
 
-    :param host: host or IP address
+    :param node: Node instance
     :param port: port number
     :param command: command to be executed
     """
@@ -41,6 +43,9 @@ def spiceConsole(host, port, command):
         log.error("SPICE client is not configured")
         return
 
+    name = node.name()
+    host = node.consoleHost()
+
     # ipv6 support
     if ":" in host:
         host = "[{}]".format(host)
@@ -48,6 +53,11 @@ def spiceConsole(host, port, command):
     # replace the place-holders by the actual values
     command = command.replace("%h", host)
     command = command.replace("%p", str(port))
+    command = command.replace("%d", name.replace('"', '\\"'))
+    command = command.replace("%i", node.project().id())
+    command = command.replace("%n", str(node.id()))
+    command = command.replace("%c", Controller.instance().httpClient().fullUrl())
+
 
     try:
         log.debug('starting SPICE program "{}"'.format(command))

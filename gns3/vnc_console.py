@@ -24,15 +24,17 @@ import os
 import shlex
 import subprocess
 
+from .controller import Controller
+
 import logging
 log = logging.getLogger(__name__)
 
 
-def vncConsole(host, port, command):
+def vncConsole(node, port, command):
     """
     Start a VNC console program.
 
-    :param host: host or IP address
+    :param node: Node instance
     :param port: port number
     """
 
@@ -40,10 +42,17 @@ def vncConsole(host, port, command):
         log.error("VNC client is not configured")
         return
 
+    name = node.name()
+    host = node.consoleHost()
+
     # replace the place-holders by the actual values
     command = command.replace("%h", host)
     command = command.replace("%p", str(port))
     command = command.replace("%P", str(port - 5900))
+    command = command.replace("%d", name.replace('"', '\\"'))
+    command = command.replace("%i", node.project().id())
+    command = command.replace("%n", str(node.id()))
+    command = command.replace("%c", Controller.instance().httpClient().fullUrl())
 
     try:
         log.debug('starting VNC program "{}"'.format(command))
