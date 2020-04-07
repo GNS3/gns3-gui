@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.7 07/04/2020
+
+* Fix VNC console template doesn't extract %i (Project UUID). Fixes #2960
+* Fix contextual menu issues. Ref #2955
+
 ## 2.2.6 26/03/2020
 
 * Prevent locked drawings to be deleted. Fixes https://github.com/GNS3/gns3-gui/issues/2948
