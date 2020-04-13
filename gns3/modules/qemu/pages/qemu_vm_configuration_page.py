@@ -401,7 +401,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             QtWidgets.QMessageBox.critical(self, "Invalid format", "Invalid port name format")
             return
 
-        if self._settings["legacy_networking"]:
+        if self.uiLegacyNetworkingCheckBox.isChecked():
             network_devices = {}
             for nic, desc in self._qemu_network_devices.items():
                 if nic in self._legacy_devices:
