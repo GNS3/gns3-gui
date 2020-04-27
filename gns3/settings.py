@@ -295,7 +295,7 @@ GENERAL_SETTINGS = {
     "recent_projects": [],
     "geometry": "",
     "state": "",
-    "preferences_dialog_geometry": "",
+    #"preferences_dialog_geometry": "",
     "debug_level": 0,
     "multi_profiles": False,
     "hdpi": not sys.platform.startswith("linux"),
