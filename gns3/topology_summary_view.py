@@ -319,6 +319,11 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         reset_all_filters.triggered.connect(self._resetAllFiltersSlot)
         menu.addAction(reset_all_filters)
 
+        resume_suspended_links = QtWidgets.QAction("Resume all suspended links", menu)
+        resume_suspended_links.setIcon(get_icon("start.svg"))
+        resume_suspended_links.triggered.connect(self._resumeAllLinksSlot)
+        menu.addAction(resume_suspended_links)
+
         current_item = self.currentItem()
         from .main_window import MainWindow
         view = MainWindow.instance().uiGraphicsView
@@ -400,3 +405,13 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                 filters = {}
                 link.setFilters(filters)
                 link.update()
+
+    @qslot
+    def _resumeAllLinksSlot(self, *args):
+        """
+        Resume all suspended links.
+        """
+
+        for link in self._topology.links():
+            if link.suspended():
+                link.toggleSuspend()
