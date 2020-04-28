@@ -1135,6 +1135,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = [item for item in self.scene().items()
                  if isinstance(item, NodeItem) and item.node().consoleType() != "none"]
+        nb_items = len(items)
+        if nb_items > 10:
+            proceed = QtWidgets.QMessageBox.question(self,
+                                                     "Console to all nodes",
+                                                     "You are about to open console windows to {} nodes. Are you sure?".format(nb_items),
+                                                     QtWidgets.QMessageBox.Yes,
+                                                     QtWidgets.QMessageBox.No)
+
+            if proceed == QtWidgets.QMessageBox.No:
+                return
         self.consoleFromItems(items)
 
     def consoleActionSlot(self):
