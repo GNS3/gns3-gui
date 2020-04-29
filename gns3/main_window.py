@@ -84,6 +84,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings = {}
 
         self.setupUi(self)
+        self.setUnifiedTitleAndToolBarOnMac(True)
 
         self._notif_dialog = NotifDialog(self)
         # Setup logger
