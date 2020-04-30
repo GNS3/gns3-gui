@@ -241,7 +241,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiLockAllAction.triggered.connect(self._lockActionSlot)
 
         # tool menu connections
-        self.uiWebInterfaceAction.triggered.connect(self._openLightWebInterfaceActionSlot)
         self.uiWebUIAction.triggered.connect(self._openWebInterfaceActionSlot)
 
         # control menu connections
@@ -322,10 +321,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
         self.settings_updated_signal.emit()
-
-    def _openLightWebInterfaceActionSlot(self):
-        if Controller.instance().connected():
-            QtGui.QDesktopServices.openUrl(QtCore.QUrl(Controller.instance().httpClient().fullUrl()))
 
     def _openWebInterfaceActionSlot(self):
         if Controller.instance().connected():

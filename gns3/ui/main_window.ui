@@ -62,7 +62,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>986</width>
-     <height>40</height>
+     <height>42</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -163,7 +163,6 @@ background-none;
     </property>
     <addaction name="uiScreenshotAction"/>
     <addaction name="uiImportExportConfigsAction"/>
-    <addaction name="uiWebInterfaceAction"/>
     <addaction name="uiWebUIAction"/>
    </widget>
    <addaction name="uiFileMenu"/>
@@ -1187,11 +1186,6 @@ background-none;
     <string>Edit project</string>
    </property>
   </action>
-  <action name="uiWebInterfaceAction">
-   <property name="text">
-    <string>Light Web interface</string>
-   </property>
-  </action>
   <action name="uiDrawLineAction">
    <property name="checkable">
     <bool>true</bool>
@@ -1227,7 +1221,7 @@ background-none;
   </action>
   <action name="uiWebUIAction">
    <property name="text">
-    <string>WebUI - topology preview</string>
+    <string>Web UI - beta</string>
    </property>
   </action>
   <action name="uiNewTemplateAction">
