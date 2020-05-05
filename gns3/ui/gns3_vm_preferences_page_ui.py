@@ -2,16 +2,18 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/gns3_vm_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_GNS3VMPreferencesPageWidget(object):
     def setupUi(self, GNS3VMPreferencesPageWidget):
         GNS3VMPreferencesPageWidget.setObjectName("GNS3VMPreferencesPageWidget")
-        GNS3VMPreferencesPageWidget.resize(494, 585)
+        GNS3VMPreferencesPageWidget.resize(467, 657)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -102,12 +104,30 @@ class Ui_GNS3VMPreferencesPageWidget(object):
         self.uiCpuLabel = QtWidgets.QLabel(self.uiGNS3VMSettingsGroupBox)
         self.uiCpuLabel.setObjectName("uiCpuLabel")
         self.gridLayout.addWidget(self.uiCpuLabel, 5, 0, 1, 1)
+        self.uiPortLabel = QtWidgets.QLabel(self.uiGNS3VMSettingsGroupBox)
+        self.uiPortLabel.setObjectName("uiPortLabel")
+        self.gridLayout.addWidget(self.uiPortLabel, 2, 0, 1, 1)
+        self.uiPortSpinBox = QtWidgets.QSpinBox(self.uiGNS3VMSettingsGroupBox)
+        self.uiPortSpinBox.setMinimum(1)
+        self.uiPortSpinBox.setMaximum(65635)
+        self.uiPortSpinBox.setProperty("value", 80)
+        self.uiPortSpinBox.setObjectName("uiPortSpinBox")
+        self.gridLayout.addWidget(self.uiPortSpinBox, 2, 1, 1, 1)
         self.verticalLayout.addWidget(self.uiGNS3VMSettingsGroupBox)
         spacerItem = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
 
         self.retranslateUi(GNS3VMPreferencesPageWidget)
         QtCore.QMetaObject.connectSlotsByName(GNS3VMPreferencesPageWidget)
+        GNS3VMPreferencesPageWidget.setTabOrder(self.uiEnableVMCheckBox, self.uiGNS3VMEngineComboBox)
+        GNS3VMPreferencesPageWidget.setTabOrder(self.uiGNS3VMEngineComboBox, self.uiVMListComboBox)
+        GNS3VMPreferencesPageWidget.setTabOrder(self.uiVMListComboBox, self.uiRefreshPushButton)
+        GNS3VMPreferencesPageWidget.setTabOrder(self.uiRefreshPushButton, self.uiHeadlessCheckBox)
+        GNS3VMPreferencesPageWidget.setTabOrder(self.uiHeadlessCheckBox, self.uiRamSpinBox)
+        GNS3VMPreferencesPageWidget.setTabOrder(self.uiRamSpinBox, self.uiCpuSpinBox)
+        GNS3VMPreferencesPageWidget.setTabOrder(self.uiCpuSpinBox, self.uiWhenExitKeepRadioButton)
+        GNS3VMPreferencesPageWidget.setTabOrder(self.uiWhenExitKeepRadioButton, self.uiWhenExitSuspendRadioButton)
+        GNS3VMPreferencesPageWidget.setTabOrder(self.uiWhenExitSuspendRadioButton, self.uiWhenExitStopRadioButton)
 
     def retranslateUi(self, GNS3VMPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
@@ -126,4 +146,4 @@ class Ui_GNS3VMPreferencesPageWidget(object):
         self.uiRamLabel.setText(_translate("GNS3VMPreferencesPageWidget", "RAM:"))
         self.uiRamSpinBox.setSuffix(_translate("GNS3VMPreferencesPageWidget", " MB"))
         self.uiCpuLabel.setText(_translate("GNS3VMPreferencesPageWidget", "vCPUs:"))
-
+        self.uiPortLabel.setText(_translate("GNS3VMPreferencesPageWidget", "Port:"))

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>494</width>
-    <height>585</height>
+    <width>467</width>
+    <height>657</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -188,6 +188,26 @@
        <widget class="QLabel" name="uiCpuLabel">
         <property name="text">
          <string>vCPUs:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="uiPortLabel">
+        <property name="text">
+         <string>Port:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="uiPortSpinBox">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>65635</number>
+        </property>
+        <property name="value">
+         <number>80</number>
         </property>
        </widget>
       </item>

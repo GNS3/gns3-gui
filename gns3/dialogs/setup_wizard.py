@@ -52,7 +52,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             "engine": "vmware",
             "vcpus": 1,
             "ram": 2048,
-            "vmname": "GNS3 VM"
+            "vmname": "GNS3 VM",
+            "port": 80
         }
 
         self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
