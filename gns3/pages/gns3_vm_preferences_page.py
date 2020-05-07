@@ -97,7 +97,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self._settings = result
         self.uiRamSpinBox.setValue(self._settings["ram"])
         self.uiCpuSpinBox.setValue(self._settings["vcpus"])
-        self.uiPortSpinBox.setValue(self._settings["port"])
+        self.uiPortSpinBox.setValue(self._settings.get("port", 3080))
         self.uiEnableVMCheckBox.setChecked(self._settings["enable"])
         if self._settings["when_exit"] == "keep":
             self.uiWhenExitKeepRadioButton.setChecked(True)
