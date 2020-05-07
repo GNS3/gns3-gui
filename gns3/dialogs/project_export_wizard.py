@@ -55,21 +55,19 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         self.uiCompressionComboBox.setCurrentIndex(1)
         self.helpRequested.connect(self._showHelpSlot)
         self.uiPathBrowserToolButton.clicked.connect(self._pathBrowserSlot)
+        self._loadReadme()
 
-        # read an existing README.txt file if existing
-        readme_text = None
-        if project.filesDir():
-            readme_path = os.path.join(project.filesDir(), "README.txt")
-            if os.path.exists(readme_path):
-                try:
-                    with open(readme_path, "rb") as file:
-                        readme_text = file.read().decode("utf-8", errors="replace")
-                except OSError as e:
-                    log.warning("could not read {}: {}".format(readme_path, e))
+    def _loadReadme(self):
 
-        if readme_text is None:
+        self._project.get("/files/README.txt", self._loadedReadme)
+
+    def _loadedReadme(self, result, error=False, raw_body=None, context={}, **kwargs):
+
+        if not error:
+            self.uiReadmeTextEdit.setPlainText(raw_body.decode("utf-8", errors="replace"))
+        else:
             readme_text = "Project: '{}' created on {}\nAuthor: John Doe <john.doe@example.com>\n\nNo project description was given".format(self._project.name(), datetime.date.today())
-        self.uiReadmeTextEdit.setPlainText(readme_text)
+            self.uiReadmeTextEdit.setPlainText(readme_text)
 
     def _pathBrowserSlot(self):
 

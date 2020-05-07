@@ -84,6 +84,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings = {}
 
         self.setupUi(self)
+        self.setUnifiedTitleAndToolBarOnMac(True)
 
         self._notif_dialog = NotifDialog(self)
         # Setup logger
@@ -240,7 +241,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiLockAllAction.triggered.connect(self._lockActionSlot)
 
         # tool menu connections
-        self.uiWebInterfaceAction.triggered.connect(self._openLightWebInterfaceActionSlot)
         self.uiWebUIAction.triggered.connect(self._openWebInterfaceActionSlot)
 
         # control menu connections
@@ -321,10 +321,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
         self.settings_updated_signal.emit()
-
-    def _openLightWebInterfaceActionSlot(self):
-        if Controller.instance().connected():
-            QtGui.QDesktopServices.openUrl(QtCore.QUrl(Controller.instance().httpClient().fullUrl()))
 
     def _openWebInterfaceActionSlot(self):
         if Controller.instance().connected():
@@ -1058,11 +1054,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         with Progress.instance().context(min_duration=0):
             dialog = PreferencesDialog(self)
-            dialog.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["preferences_dialog_geometry"].encode()))
+            #dialog.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["preferences_dialog_geometry"].encode()))
             dialog.show()
             dialog.exec_()
-            self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
-            self.setSettings(self._settings)
+            #self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
+            #self.setSettings(self._settings)
 
     def resizeEvent(self, event):
         self._notif_dialog.resize()

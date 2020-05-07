@@ -210,7 +210,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
                     del self._iou_devices[key]
                     item.setText(0, iou_device["name"])
                     item.setData(0, QtCore.Qt.UserRole, new_key)
-                self._refreshInfo(dialog.settings)
+                self._refreshInfo(dialog.settings())
 
     def _iouDeviceDeleteSlot(self):
         """

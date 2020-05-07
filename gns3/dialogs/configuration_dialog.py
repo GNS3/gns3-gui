@@ -49,7 +49,6 @@ class ConfigurationDialog(QtWidgets.QDialog, Ui_configurationDialog):
         self._settings = settings
         self._configuration_page = configuration_page
 
-    @property
     def settings(self):
         return self._settings
 

@@ -1,5 +1,20 @@
 # Change Log
 
+## 2.2.8 07/05/2020
+
+* Default port set to 80 for server running in the GNS3 VM. Fixes #1737
+* Make the Web UI the default page. Ref https://github.com/GNS3/gns3-server/issues/1737
+* Fix "export portable project forgets contents of README". Fixes #1724
+* Activate unified title and toolbar on MacOS. Fixes #2968
+* Confirmation dialog for "console connect to all nodes". Fixes #2971
+* Add "Resume all suspended links". Fixes #2858
+* Revert "Change default path for SecureCRT. Fixes #2896"
+* Remove @property from ConfigurationDialog(). Fixes #2819 #2965
+* Use Environmental Markers to force jsonschema version. Fixes https://github.com/GNS3/gns3-gui/issues/2849 Version 3.2.0 with Python >= 3.8 Version 2.6.0 with Python < 3.8
+* Use Environmental Markers to force jsonschema version 2.6.0 on Windows/macOS. Ref https://github.com/GNS3/gns3-gui/issues/2849
+* Remove preferences dialog geometry restoration. Fixes #2807
+* Fix unable to configure custom adapters for Qemu VMs. Fixes #2961
+
 ## 2.2.7 07/04/2020
 
 * Fix VNC console template doesn't extract %i (Project UUID). Fixes #2960

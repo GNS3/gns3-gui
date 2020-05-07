@@ -66,6 +66,12 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self.uiRamLabel.setVisible(engine["support_ram"])
         self.uiRamSpinBox.setVisible(engine["support_ram"])
         self.uiCpuSpinBox.setVisible(engine["support_ram"])
+        if engine_id == "remote":
+            self.uiPortLabel.setVisible(False)
+            self.uiPortSpinBox.setVisible(False)
+        else:
+            self.uiPortLabel.setVisible(True)
+            self.uiPortSpinBox.setVisible(True)
         self._refreshVMSlot(ignore_error=True)
 
     def loadPreferences(self):
@@ -91,6 +97,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self._settings = result
         self.uiRamSpinBox.setValue(self._settings["ram"])
         self.uiCpuSpinBox.setValue(self._settings["vcpus"])
+        self.uiPortSpinBox.setValue(self._settings.get("port", 3080))
         self.uiEnableVMCheckBox.setChecked(self._settings["enable"])
         if self._settings["when_exit"] == "keep":
             self.uiWhenExitKeepRadioButton.setChecked(True)
@@ -168,7 +175,8 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             "when_exit": when_exit,
             "engine": self.uiGNS3VMEngineComboBox.currentData(),
             "ram": self.uiRamSpinBox.value(),
-            "vcpus": self.uiCpuSpinBox.value()
+            "vcpus": self.uiCpuSpinBox.value(),
+            "port": self.uiPortSpinBox.value()
         }
         if self._old_settings != settings:
             Controller.instance().put("/gns3vm", self._saveSettingsCallback, settings, timeout=60 * 5)
