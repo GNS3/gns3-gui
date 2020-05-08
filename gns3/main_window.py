@@ -910,7 +910,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to launch a browser pointing to the documentation page.
         """
 
-        QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://gns3.com/support/docs"))
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://docs.gns3.com/"))
 
     def _checkForUpdateActionSlot(self, silent=False):
         """
