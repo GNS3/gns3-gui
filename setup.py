@@ -78,6 +78,7 @@ setup(
     include_package_data=True,
     package_data={"gns3": ["configs/*.txt", "schemas/*.json"]},
     platforms="any",
+    setup_requires=["setuptools>=17.1"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: X11 Applications :: Qt",
