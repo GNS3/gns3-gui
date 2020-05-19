@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\fatoms\gns3-gui\gns3\ui\general_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/general_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_GeneralPreferencesPageWidget(object):
     def setupUi(self, GeneralPreferencesPageWidget):
@@ -142,7 +140,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiImageDirectoriesLabel.setObjectName("uiImageDirectoriesLabel")
         self.verticalLayout_10.addWidget(self.uiImageDirectoriesLabel)
         self.uiImageDirectoriesListWidget = QtWidgets.QListWidget(self.uiLocalBinaryImagePathsGroupBox)
-        self.uiImageDirectoriesListWidget.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.uiImageDirectoriesListWidget.setLineWidth(0)
         self.uiImageDirectoriesListWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.uiImageDirectoriesListWidget.setAlternatingRowColors(False)
@@ -315,7 +312,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiDefaultNoteStylePlainTextEdit.sizePolicy().hasHeightForWidth())
         self.uiDefaultNoteStylePlainTextEdit.setSizePolicy(sizePolicy)
         self.uiDefaultNoteStylePlainTextEdit.setMaximumSize(QtCore.QSize(16777215, 50))
-        self.uiDefaultNoteStylePlainTextEdit.setFocusPolicy(QtCore.Qt.NoFocus)
         self.uiDefaultNoteStylePlainTextEdit.setReadOnly(True)
         self.uiDefaultNoteStylePlainTextEdit.setObjectName("uiDefaultNoteStylePlainTextEdit")
         self.gridLayout_3.addWidget(self.uiDefaultNoteStylePlainTextEdit, 14, 0, 1, 3)
@@ -333,6 +329,10 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiLimitSizeNodeSymbolCheckBox = QtWidgets.QCheckBox(self.uiSceneTab)
         self.uiLimitSizeNodeSymbolCheckBox.setObjectName("uiLimitSizeNodeSymbolCheckBox")
         self.gridLayout_3.addWidget(self.uiLimitSizeNodeSymbolCheckBox, 9, 0, 1, 2)
+        self.uiDrawLinkStatusPointsCheckBox = QtWidgets.QCheckBox(self.uiSceneTab)
+        self.uiDrawLinkStatusPointsCheckBox.setChecked(True)
+        self.uiDrawLinkStatusPointsCheckBox.setObjectName("uiDrawLinkStatusPointsCheckBox")
+        self.gridLayout_3.addWidget(self.uiDrawLinkStatusPointsCheckBox, 5, 0, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.uiDefaultLabelFontPushButton = QtWidgets.QPushButton(self.uiSceneTab)
@@ -351,7 +351,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         sizePolicy.setHeightForWidth(self.uiDefaultLabelStylePlainTextEdit.sizePolicy().hasHeightForWidth())
         self.uiDefaultLabelStylePlainTextEdit.setSizePolicy(sizePolicy)
         self.uiDefaultLabelStylePlainTextEdit.setMaximumSize(QtCore.QSize(16777215, 50))
-        self.uiDefaultLabelStylePlainTextEdit.setFocusPolicy(QtCore.Qt.NoFocus)
         self.uiDefaultLabelStylePlainTextEdit.setReadOnly(True)
         self.uiDefaultLabelStylePlainTextEdit.setObjectName("uiDefaultLabelStylePlainTextEdit")
         self.gridLayout_3.addWidget(self.uiDefaultLabelStylePlainTextEdit, 11, 0, 1, 3)
@@ -361,7 +360,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiSceneHeightSpinBox.sizePolicy().hasHeightForWidth())
         self.uiSceneHeightSpinBox.setSizePolicy(sizePolicy)
-        self.uiSceneHeightSpinBox.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.uiSceneHeightSpinBox.setMinimum(500)
         self.uiSceneHeightSpinBox.setMaximum(1000000)
         self.uiSceneHeightSpinBox.setSingleStep(100)
@@ -374,7 +372,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiSceneWidthSpinBox.sizePolicy().hasHeightForWidth())
         self.uiSceneWidthSpinBox.setSizePolicy(sizePolicy)
-        self.uiSceneWidthSpinBox.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.uiSceneWidthSpinBox.setMinimum(500)
         self.uiSceneWidthSpinBox.setMaximum(1000000)
         self.uiSceneWidthSpinBox.setSingleStep(100)
@@ -399,7 +396,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiDrawingGridSizeSpinBox.sizePolicy().hasHeightForWidth())
         self.uiDrawingGridSizeSpinBox.setSizePolicy(sizePolicy)
-        self.uiDrawingGridSizeSpinBox.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.uiDrawingGridSizeSpinBox.setMinimum(5)
         self.uiDrawingGridSizeSpinBox.setMaximum(100)
         self.uiDrawingGridSizeSpinBox.setSingleStep(5)
@@ -412,7 +408,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiNodeGridSizeSpinBox.sizePolicy().hasHeightForWidth())
         self.uiNodeGridSizeSpinBox.setSizePolicy(sizePolicy)
-        self.uiNodeGridSizeSpinBox.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.uiNodeGridSizeSpinBox.setMinimum(5)
         self.uiNodeGridSizeSpinBox.setMaximum(150)
         self.uiNodeGridSizeSpinBox.setSingleStep(5)
@@ -428,10 +423,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.gridLayout_3.addWidget(self.uiRectangleSelectedItemCheckBox, 4, 0, 1, 3)
         spacerItem9 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_3.addItem(spacerItem9, 16, 0, 1, 1)
-        self.uiDrawLinkStatusPointsCheckBox = QtWidgets.QCheckBox(self.uiSceneTab)
-        self.uiDrawLinkStatusPointsCheckBox.setChecked(True)
-        self.uiDrawLinkStatusPointsCheckBox.setObjectName("uiDrawLinkStatusPointsCheckBox")
-        self.gridLayout_3.addWidget(self.uiDrawLinkStatusPointsCheckBox, 5, 0, 1, 2)
         self.uiMiscTabWidget.addTab(self.uiSceneTab, "")
         self.uiMiscTab = QtWidgets.QWidget()
         self.uiMiscTab.setObjectName("uiMiscTab")
@@ -481,53 +472,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.retranslateUi(GeneralPreferencesPageWidget)
         self.uiMiscTabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(GeneralPreferencesPageWidget)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiProjectsPathLineEdit, self.uiProjectsPathToolButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiProjectsPathToolButton, self.uiSymbolsPathLineEdit)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiSymbolsPathLineEdit, self.uiSymbolsPathToolButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiSymbolsPathToolButton, self.uiConfigsPathLineEdit)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiConfigsPathLineEdit, self.uiConfigsPathToolButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiConfigsPathToolButton, self.uiAppliancesPathLineEdit)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiAppliancesPathLineEdit, self.uiAppliancesPathToolButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiAppliancesPathToolButton, self.uiStyleComboBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiStyleComboBox, self.uiSymbolThemeComboBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiSymbolThemeComboBox, self.uiImportConfigurationFilePushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiImportConfigurationFilePushButton, self.uiExportConfigurationFilePushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiExportConfigurationFilePushButton, self.uiBrowseConfigurationPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiBrowseConfigurationPushButton, self.uiImagesPathLineEdit)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiImagesPathLineEdit, self.uiImagesPathToolButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiImagesPathToolButton, self.uiImageDirectoriesAddPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiImageDirectoriesAddPushButton, self.uiImageDirectoriesDeletePushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiImageDirectoriesDeletePushButton, self.uiTelnetConsoleCommandLineEdit)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiTelnetConsoleCommandLineEdit, self.uiTelnetConsolePreconfiguredCommandPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiTelnetConsolePreconfiguredCommandPushButton, self.uiDelayConsoleAllSpinBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiDelayConsoleAllSpinBox, self.uiVNCConsoleCommandLineEdit)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiVNCConsoleCommandLineEdit, self.uiVNCConsolePreconfiguredCommandPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiVNCConsolePreconfiguredCommandPushButton, self.uiSPICEConsoleCommandLineEdit)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiSPICEConsoleCommandLineEdit, self.uiSPICEConsolePreconfiguredCommandPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiSPICEConsolePreconfiguredCommandPushButton, self.uiSceneWidthSpinBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiSceneWidthSpinBox, self.uiSceneHeightSpinBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiSceneHeightSpinBox, self.uiNodeGridSizeSpinBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiNodeGridSizeSpinBox, self.uiDrawingGridSizeSpinBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiDrawingGridSizeSpinBox, self.uiRectangleSelectedItemCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiRectangleSelectedItemCheckBox, self.uiDrawLinkStatusPointsCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiDrawLinkStatusPointsCheckBox, self.uiShowInterfaceLabelsOnNewProject)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiShowInterfaceLabelsOnNewProject, self.uiShowGridOnNewProject)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiShowGridOnNewProject, self.uiSnapToGridOnNewProject)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiSnapToGridOnNewProject, self.uiLimitSizeNodeSymbolCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiLimitSizeNodeSymbolCheckBox, self.uiDefaultLabelFontPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiDefaultLabelFontPushButton, self.uiDefaultLabelColorPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiDefaultLabelColorPushButton, self.uiDefaultNoteFontPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiDefaultNoteFontPushButton, self.uiDefaultNoteColorPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiDefaultNoteColorPushButton, self.uiCheckForUpdateCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiCheckForUpdateCheckBox, self.uiCrashReportCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiCrashReportCheckBox, self.uiStatsCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiStatsCheckBox, self.uiOverlayNotificationsCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiOverlayNotificationsCheckBox, self.uiExperimentalFeaturesCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiExperimentalFeaturesCheckBox, self.uiHdpiCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiHdpiCheckBox, self.uiMultiProfilesCheckBox)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiMultiProfilesCheckBox, self.uiDirectFileUpload)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiDirectFileUpload, self.uiRestoreDefaultsPushButton)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiRestoreDefaultsPushButton, self.uiMiscTabWidget)
 
     def retranslateUi(self, GeneralPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
@@ -616,6 +560,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDefaultNoteFontPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Select default font"))
         self.uiDefaultNoteColorPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Select default color"))
         self.uiLimitSizeNodeSymbolCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Limit the size of node symbols"))
+        self.uiDrawLinkStatusPointsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Draw link status points"))
         self.uiDefaultLabelFontPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Select default font"))
         self.uiDefaultLabelColorPushButton.setText(_translate("GeneralPreferencesPageWidget", "&Select default color"))
         self.uiDefaultLabelStylePlainTextEdit.setPlainText(_translate("GeneralPreferencesPageWidget", "AaBbYyZz"))
@@ -627,7 +572,6 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiNodeGridSizeLabel.setText(_translate("GeneralPreferencesPageWidget", "Default node grid size:"))
         self.uiShowGridOnNewProject.setText(_translate("GeneralPreferencesPageWidget", "Show grid on new project"))
         self.uiRectangleSelectedItemCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Draw a rectangle when an item is selected"))
-        self.uiDrawLinkStatusPointsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Draw link status points"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiSceneTab), _translate("GeneralPreferencesPageWidget", "Topology view"))
         self.uiCheckForUpdateCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically check for update"))
         self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send anonymous crash reports"))
@@ -640,3 +584,4 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDirectFileUpload.setText(_translate("GeneralPreferencesPageWidget", "Upload files directly to computes (experimental)"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiMiscTab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
+

@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\fatoms\gns3-gui\gns3\ui\packet_capture_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/packet_capture_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_PacketCapturePreferencesPageWidget(object):
     def setupUi(self, PacketCapturePreferencesPageWidget):
@@ -66,11 +64,6 @@ class Ui_PacketCapturePreferencesPageWidget(object):
 
         self.retranslateUi(PacketCapturePreferencesPageWidget)
         QtCore.QMetaObject.connectSlotsByName(PacketCapturePreferencesPageWidget)
-        PacketCapturePreferencesPageWidget.setTabOrder(self.uiPreconfiguredCaptureReaderCommandComboBox, self.uiPreconfiguredCaptureReaderCommandPushButton)
-        PacketCapturePreferencesPageWidget.setTabOrder(self.uiPreconfiguredCaptureReaderCommandPushButton, self.uiCaptureReaderCommandLineEdit)
-        PacketCapturePreferencesPageWidget.setTabOrder(self.uiCaptureReaderCommandLineEdit, self.uiAutoStartCheckBox)
-        PacketCapturePreferencesPageWidget.setTabOrder(self.uiAutoStartCheckBox, self.uiCaptureAnalyzerCommandLineEdit)
-        PacketCapturePreferencesPageWidget.setTabOrder(self.uiCaptureAnalyzerCommandLineEdit, self.uiRestoreDefaultsPushButton)
 
     def retranslateUi(self, PacketCapturePreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
@@ -83,3 +76,4 @@ class Ui_PacketCapturePreferencesPageWidget(object):
         self.uiCaptureAnalyzerCommandLabel.setText(_translate("PacketCapturePreferencesPageWidget", "Packet capture analyzer command:"))
         self.uiCaptureReaderCommandLineEdit.setToolTip(_translate("PacketCapturePreferencesPageWidget", "<html><head/><body><p>Command line replacements:</p><p>%c = capture file (PCAP format)</p></body></html>"))
         self.uiRestoreDefaultsPushButton.setText(_translate("PacketCapturePreferencesPageWidget", "Restore defaults"))
+

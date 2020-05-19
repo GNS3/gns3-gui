@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\fatoms\gns3-gui\gns3\ui\gns3_vm_preferences_page.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/gns3_vm_preferences_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_GNS3VMPreferencesPageWidget(object):
     def setupUi(self, GNS3VMPreferencesPageWidget):
@@ -110,15 +108,6 @@ class Ui_GNS3VMPreferencesPageWidget(object):
 
         self.retranslateUi(GNS3VMPreferencesPageWidget)
         QtCore.QMetaObject.connectSlotsByName(GNS3VMPreferencesPageWidget)
-        GNS3VMPreferencesPageWidget.setTabOrder(self.uiEnableVMCheckBox, self.uiGNS3VMEngineComboBox)
-        GNS3VMPreferencesPageWidget.setTabOrder(self.uiGNS3VMEngineComboBox, self.uiVMListComboBox)
-        GNS3VMPreferencesPageWidget.setTabOrder(self.uiVMListComboBox, self.uiRefreshPushButton)
-        GNS3VMPreferencesPageWidget.setTabOrder(self.uiRefreshPushButton, self.uiHeadlessCheckBox)
-        GNS3VMPreferencesPageWidget.setTabOrder(self.uiHeadlessCheckBox, self.uiRamSpinBox)
-        GNS3VMPreferencesPageWidget.setTabOrder(self.uiRamSpinBox, self.uiCpuSpinBox)
-        GNS3VMPreferencesPageWidget.setTabOrder(self.uiCpuSpinBox, self.uiWhenExitKeepRadioButton)
-        GNS3VMPreferencesPageWidget.setTabOrder(self.uiWhenExitKeepRadioButton, self.uiWhenExitSuspendRadioButton)
-        GNS3VMPreferencesPageWidget.setTabOrder(self.uiWhenExitSuspendRadioButton, self.uiWhenExitStopRadioButton)
 
     def retranslateUi(self, GNS3VMPreferencesPageWidget):
         _translate = QtCore.QCoreApplication.translate
@@ -137,3 +126,4 @@ class Ui_GNS3VMPreferencesPageWidget(object):
         self.uiRamLabel.setText(_translate("GNS3VMPreferencesPageWidget", "RAM:"))
         self.uiRamSpinBox.setSuffix(_translate("GNS3VMPreferencesPageWidget", " MB"))
         self.uiCpuLabel.setText(_translate("GNS3VMPreferencesPageWidget", "vCPUs:"))
+

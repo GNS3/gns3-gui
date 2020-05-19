@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\fatoms\gns3-gui\gns3\ui\edit_project_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/edit_project_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_EditProjectDialog(object):
     def setupUi(self, EditProjectDialog):
@@ -94,14 +92,6 @@ class Ui_EditProjectDialog(object):
         self.uiButtonBox.accepted.connect(EditProjectDialog.accept)
         self.uiButtonBox.rejected.connect(EditProjectDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(EditProjectDialog)
-        EditProjectDialog.setTabOrder(self.tabWidget, self.uiProjectNameLineEdit)
-        EditProjectDialog.setTabOrder(self.uiProjectNameLineEdit, self.uiSceneWidthSpinBox)
-        EditProjectDialog.setTabOrder(self.uiSceneWidthSpinBox, self.uiSceneHeightSpinBox)
-        EditProjectDialog.setTabOrder(self.uiSceneHeightSpinBox, self.uiNodeGridSizeSpinBox)
-        EditProjectDialog.setTabOrder(self.uiNodeGridSizeSpinBox, self.uiDrawingGridSizeSpinBox)
-        EditProjectDialog.setTabOrder(self.uiDrawingGridSizeSpinBox, self.uiProjectAutoOpenCheckBox)
-        EditProjectDialog.setTabOrder(self.uiProjectAutoOpenCheckBox, self.uiProjectAutoStartCheckBox)
-        EditProjectDialog.setTabOrder(self.uiProjectAutoStartCheckBox, self.uiProjectAutoCloseCheckBox)
 
     def retranslateUi(self, EditProjectDialog):
         _translate = QtCore.QCoreApplication.translate
@@ -118,3 +108,4 @@ class Ui_EditProjectDialog(object):
         self.uiProjectAutoStartCheckBox.setText(_translate("EditProjectDialog", "Start all nodes when this project is opened"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.uiGeneralTab), _translate("EditProjectDialog", "General"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.uiGlobalVariablesTab), _translate("EditProjectDialog", "Global variables"))
+

@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\fatoms\gns3-gui\gns3\ui\project_dialog.ui'
+# Form implementation generated from reading ui file '/Users/noplay/code/gns3/gns3-gui/gns3/ui/project_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.3
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
-
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_ProjectDialog(object):
+
     def setupUi(self, ProjectDialog):
         ProjectDialog.setObjectName("ProjectDialog")
         ProjectDialog.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -116,28 +116,18 @@ class Ui_ProjectDialog(object):
         self.horizontalLayout.addItem(spacerItem3)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(ProjectDialog)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setObjectName("uiButtonBox")
         self.horizontalLayout.addWidget(self.uiButtonBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.retranslateUi(ProjectDialog)
-        self.uiProjectTabWidget.setCurrentIndex(1)
+        self.uiProjectTabWidget.setCurrentIndex(0)
         self.uiButtonBox.accepted.connect(ProjectDialog.accept)
         self.uiButtonBox.rejected.connect(ProjectDialog.reject)
         self.uiNameLineEdit.returnPressed.connect(ProjectDialog.accept)
         self.uiLocationLineEdit.returnPressed.connect(ProjectDialog.accept)
         QtCore.QMetaObject.connectSlotsByName(ProjectDialog)
-        ProjectDialog.setTabOrder(self.uiProjectTabWidget, self.uiNameLineEdit)
-        ProjectDialog.setTabOrder(self.uiNameLineEdit, self.uiLocationLineEdit)
-        ProjectDialog.setTabOrder(self.uiLocationLineEdit, self.uiLocationBrowserToolButton)
-        ProjectDialog.setTabOrder(self.uiLocationBrowserToolButton, self.uiOpenProjectPushButton)
-        ProjectDialog.setTabOrder(self.uiOpenProjectPushButton, self.uiRecentProjectsPushButton)
-        ProjectDialog.setTabOrder(self.uiRecentProjectsPushButton, self.uiSettingsPushButton)
-        ProjectDialog.setTabOrder(self.uiSettingsPushButton, self.uiProjectsTreeWidget)
-        ProjectDialog.setTabOrder(self.uiProjectsTreeWidget, self.uiDeleteProjectButton)
-        ProjectDialog.setTabOrder(self.uiDeleteProjectButton, self.uiDuplicateProjectPushButton)
-        ProjectDialog.setTabOrder(self.uiDuplicateProjectPushButton, self.uiRefreshProjectsPushButton)
 
     def retranslateUi(self, ProjectDialog):
         _translate = QtCore.QCoreApplication.translate

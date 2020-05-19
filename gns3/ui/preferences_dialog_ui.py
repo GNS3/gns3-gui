@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\fatoms\gns3-gui\gns3\ui\preferences_dialog.ui'
+# Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/preferences_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.3
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_PreferencesDialog(object):
     def setupUi(self, PreferencesDialog):
         PreferencesDialog.setObjectName("PreferencesDialog")
-        PreferencesDialog.resize(680, 517)
+        PreferencesDialog.resize(980, 680)
         PreferencesDialog.setModal(True)
         self.horizontalLayout = QtWidgets.QHBoxLayout(PreferencesDialog)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -31,7 +29,6 @@ class Ui_PreferencesDialog(object):
         font.setBold(True)
         font.setWeight(75)
         self.uiTreeWidget.setFont(font)
-        self.uiTreeWidget.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.uiTreeWidget.setIndentation(10)
         self.uiTreeWidget.setObjectName("uiTreeWidget")
         self.uiTreeWidget.headerItem().setText(0, "1")
@@ -57,13 +54,13 @@ class Ui_PreferencesDialog(object):
         self.uiTitleLabel.setObjectName("uiTitleLabel")
         self.vbox.addWidget(self.uiTitleLabel)
         self.scrollArea = QtWidgets.QScrollArea(self.layoutWidget)
-        self.scrollArea.setFocusPolicy(QtCore.Qt.NoFocus)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 269, 457))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 542, 559))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiStackedWidget = QtWidgets.QStackedWidget(self.scrollAreaWidgetContents_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
@@ -79,7 +76,6 @@ class Ui_PreferencesDialog(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.vbox.addWidget(self.scrollArea)
         self.uiButtonBox = QtWidgets.QDialogButtonBox(self.layoutWidget)
-        self.uiButtonBox.setFocusPolicy(QtCore.Qt.NoFocus)
         self.uiButtonBox.setOrientation(QtCore.Qt.Horizontal)
         self.uiButtonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.uiButtonBox.setCenterButtons(False)
@@ -95,4 +91,5 @@ class Ui_PreferencesDialog(object):
     def retranslateUi(self, PreferencesDialog):
         _translate = QtCore.QCoreApplication.translate
         PreferencesDialog.setWindowTitle(_translate("PreferencesDialog", "Preferences"))
+
 from . import resources_rc
