@@ -23,12 +23,11 @@ import struct
 import distro
 
 try:
-    import raven
-    from raven.transport.http import HTTPTransport
-    RAVEN_AVAILABLE = True
+    import sentry_sdk
+    SENTRY_SDK_AVAILABLE = True
 except ImportError:
-    # raven is not installed with deb package in order to simplify packaging
-    RAVEN_AVAILABLE = False
+    # Sentry SDK is not installed with deb package in order to simplify packaging
+    SENTRY_SDK_AVAILABLE = False
 
 from .utils.get_resource import get_resource
 from .version import __version__, __version_info__
@@ -69,49 +68,50 @@ class CrashReport:
         sentry_uncaught = logging.getLogger('sentry.errors.uncaught')
         sentry_uncaught.disabled = True
 
-    def captureException(self, exception, value, tb):
-        from .local_server import LocalServer
-        from .local_config import LocalConfig
-        from .controller import Controller
-        from .compute_manager import ComputeManager
+        if SENTRY_SDK_AVAILABLE:
+            cacert = None
+            if hasattr(sys, "frozen"):
+                cacert_resource = get_resource("cacert.pem")
+                if cacert_resource is not None and os.path.isfile(cacert_resource):
+                    cacert = cacert_resource
+                else:
+                    log.error("The SSL certificate bundle file '{}' could not be found".format(cacert_resource))
 
-        local_server = LocalServer.instance().localServerSettings()
-        if local_server["report_errors"]:
-            if not RAVEN_AVAILABLE:
-                return
+            sentry_sdk.init(dsn=CrashReport.DSN,
+                            release=__version__,
+                            ca_certs=cacert)
 
-            if os.path.exists(LocalConfig.instance().runAsRootPath()):
-                log.warning("User has run application as root. Crash reports are disabled.")
-                sys.exit(1)
-                return
-
-            if os.path.exists(".git"):
-                log.warning("A .git directory exist crash report is turn off for developers. Instant exit")
-                sys.exit(1)
-                return
-
-            if hasattr(exception, "fingerprint"):
-                client = raven.Client(CrashReport.DSN, release=__version__, fingerprint=['{{ default }}', exception.fingerprint], transport=HTTPTransport)
-            else:
-                client = raven.Client(CrashReport.DSN, release=__version__, transport=HTTPTransport)
-            context = {
+            tags = {
                 "os:name": platform.system(),
                 "os:release": platform.release(),
                 "os:win_32": " ".join(platform.win32_ver()),
                 "os:mac": "{} {}".format(platform.mac_ver()[0], platform.mac_ver()[2]),
                 "os:linux": " ".join(distro.linux_distribution()),
+
+            }
+
+            self._add_qt_information(tags)
+
+            with sentry_sdk.configure_scope() as scope:
+                for key, value in tags.items():
+                    scope.set_tag(key, value)
+
+            extra_context = {
                 "python:version": "{}.{}.{}".format(sys.version_info[0],
                                                     sys.version_info[1],
                                                     sys.version_info[2]),
                 "python:bit": struct.calcsize("P") * 8,
                 "python:encoding": sys.getdefaultencoding(),
-                "python:frozen": "{}".format(hasattr(sys, "frozen")),
+                "python:frozen": "{}".format(hasattr(sys, "frozen"))
             }
 
             # extra controller and compute information
-            extra_context = {"controller:version": Controller.instance().version(),
-                             "controller:host": Controller.instance().host(),
-                             "controller:connected": Controller.instance().connected()}
+            from .controller import Controller
+            from .compute_manager import ComputeManager
+            extra_context["controller:version"] = Controller.instance().version()
+            extra_context["controller:host"] = Controller.instance().host()
+            extra_context["controller:connected"] = Controller.instance().connected()
+
             for index, compute in enumerate(ComputeManager.instance().computes()):
                 extra_context["compute{}:id".format(index)] = compute.id()
                 extra_context["compute{}:name".format(index)] = compute.name(),
@@ -120,27 +120,46 @@ class CrashReport:
                 extra_context["compute{}:platform".format(index)] = compute.capabilities().get("platform")
                 extra_context["compute{}:version".format(index)] = compute.capabilities().get("version")
 
-            context = self._add_qt_information(context)
-            client.tags_context(context)
-            client.extra_context(extra_context)
+            with sentry_sdk.configure_scope() as scope:
+                for key, value in extra_context.items():
+                    scope.set_extra(key, value)
+
+    def captureException(self, exception, value, tb):
+        from .local_server import LocalServer
+        from .local_config import LocalConfig
+
+        local_server = LocalServer.instance().localServerSettings()
+        if local_server["report_errors"]:
+            if not SENTRY_SDK_AVAILABLE:
+                return
+
+            if os.path.exists(LocalConfig.instance().runAsRootPath()):
+                log.warning("User is running application as root. Crash reports disabled.")
+                sys.exit(1)
+                return
+
+            if os.path.exists(".git"):
+                log.warning("A .git directory exists, crash reporting is turned off for developers.")
+                sys.exit(1)
+                return
+
             try:
-                report = client.captureException((exception, value, tb))
+                sentry_sdk.capture_exception((exception, value, tb))
+                log.info("Crash report sent with event ID: {}".format(sentry_sdk.last_event_id()))
             except Exception as e:
                 log.error("Can't send crash report to Sentry: {}".format(e))
-                return
-            log.debug("Crash report sent with event ID: {}".format(client.get_ident(report)))
 
-    def _add_qt_information(self, context):
+    def _add_qt_information(self, tags):
+
         try:
             from .qt import QtCore
             from .qt import sip
         except ImportError:
-            return context
-        context["psutil:version"] = psutil.__version__
-        context["pyqt:version"] = QtCore.PYQT_VERSION_STR
-        context["qt:version"] = QtCore.QT_VERSION_STR
-        context["sip:version"] = sip.SIP_VERSION_STR
-        return context
+            return tags
+        tags["pyqt:version"] = QtCore.PYQT_VERSION_STR
+        tags["qt:version"] = QtCore.QT_VERSION_STR
+        tags["sip:version"] = sip.SIP_VERSION_STR
+        return tags
 
     @classmethod
     def instance(cls):

@@ -15,6 +15,15 @@ Installation
 
 Please see https://docs.gns3.com/
 
+Software dependencies
+---------------------
+
+PyQt5 which is either part of the Linux distribution or installable from PyPi. The other Python dependencies are automatically installed during the GNS3 GUI installation and are listed `here <https://github.com/GNS3/gns3-gui/blob/master/requirements.txt>`_
+
+For connecting to nodes using Telnet, a Telnet client is required. On Linux that's a terminal emulator like xterm, gnome-terminal, konsole plus the telnet program. For connecting to nodes with a GUI, a VNC client is required, optionally a SPICE client can be used for Qemu nodes.
+
+For using packet captures within GNS3, Wireshark should be installed. It's recommended, but if you don't need that functionality you can go without it.
+
 Development
 -------------
 
