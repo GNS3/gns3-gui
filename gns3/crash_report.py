@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import psutil
 import os
 import platform
 import struct
@@ -24,6 +23,7 @@ import distro
 
 try:
     import sentry_sdk
+    from sentry_sdk.integrations.logging import LoggingIntegration
     SENTRY_SDK_AVAILABLE = True
 except ImportError:
     # Sentry SDK is not installed with deb package in order to simplify packaging
@@ -52,21 +52,16 @@ class CrashReport:
     """
 
     DSN = "https://1a584cd17857429aaabb6f72686f3465:b3363c8eaccd43b2918032fa11c09a46@o19455.ingest.sentry.io/38506"
-    if hasattr(sys, "frozen"):
-        cacert = get_resource("cacert.pem")
-        if cacert is not None and os.path.isfile(cacert):
-            DSN += "?ca_certs={}".format(cacert)
-        else:
-            log.warning("The SSL certificate bundle file '{}' could not be found".format(cacert))
     _instance = None
 
     def __init__(self):
-        # We don't want sentry making noise if an error is catched when you don't have internet
+        # We don't want sentry making noise if an error is caught when we don't have internet
         sentry_errors = logging.getLogger('sentry.errors')
         sentry_errors.disabled = True
 
         sentry_uncaught = logging.getLogger('sentry.errors.uncaught')
         sentry_uncaught.disabled = True
+        self._sentry_initialized = False
 
         if SENTRY_SDK_AVAILABLE:
             cacert = None
@@ -76,6 +71,14 @@ class CrashReport:
                     cacert = cacert_resource
                 else:
                     log.error("The SSL certificate bundle file '{}' could not be found".format(cacert_resource))
+
+            # Don't send log records as events.
+            sentry_logging = LoggingIntegration(level=logging.INFO, event_level=None)
+
+            sentry_sdk.init(dsn=CrashReport.DSN,
+                            release=__version__,
+                            ca_certs=cacert,
+                            integrations=[sentry_logging])
 
             sentry_sdk.init(dsn=CrashReport.DSN,
                             release=__version__,
@@ -125,29 +128,31 @@ class CrashReport:
                     scope.set_extra(key, value)
 
     def captureException(self, exception, value, tb):
+
         from .local_server import LocalServer
         from .local_config import LocalConfig
 
         local_server = LocalServer.instance().localServerSettings()
         if local_server["report_errors"]:
+
             if not SENTRY_SDK_AVAILABLE:
+                log.warning("Cannot capture exception: Sentry SDK is not available")
                 return
 
             if os.path.exists(LocalConfig.instance().runAsRootPath()):
                 log.warning("User is running application as root. Crash reports disabled.")
-                sys.exit(1)
                 return
 
-            if os.path.exists(".git"):
-                log.warning("A .git directory exists, crash reporting is turned off for developers.")
-                sys.exit(1)
+            if not hasattr(sys, "frozen") and os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".git")):
+                log.warning(".git directory detected, crash reporting is turned off for developers.")
                 return
 
             try:
-                sentry_sdk.capture_exception((exception, value, tb))
+                error = (exception, value, tb)
+                sentry_sdk.capture_exception(error=error)
                 log.info("Crash report sent with event ID: {}".format(sentry_sdk.last_event_id()))
             except Exception as e:
-                log.error("Can't send crash report to Sentry: {}".format(e))
+                log.warning("Can't send crash report to Sentry: {}".format(e))
 
     def _add_qt_information(self, tags):
 
