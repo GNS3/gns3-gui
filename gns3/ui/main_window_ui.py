@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -46,7 +48,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtWidgets.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 986, 40))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 986, 42))
         self.uiMenuBar.setObjectName("uiMenuBar")
         self.uiEditMenu = QtWidgets.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName("uiEditMenu")
@@ -378,9 +380,9 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction.setCheckable(True)
         icon28 = QtGui.QIcon()
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon28.addPixmap(QtGui.QPixmap(":/icons/connection-new-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/cancel-connection.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.uiAddLinkAction.setIcon(icon28)
         self.uiAddLinkAction.setObjectName("uiAddLinkAction")
         self.uiFitInViewAction = QtWidgets.QAction(MainWindow)
@@ -407,26 +409,21 @@ class Ui_MainWindow(object):
         icon30.addPixmap(QtGui.QPixmap(":/icons/import.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.uiImportProjectAction.setIcon(icon30)
         self.uiImportProjectAction.setObjectName("uiImportProjectAction")
-        self.uiEditReadmeAction = QtWidgets.QAction(MainWindow)
-        icon31 = QtGui.QIcon()
-        icon31.addPixmap(QtGui.QPixmap(":/icons/edit.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.uiEditReadmeAction.setIcon(icon31)
-        self.uiEditReadmeAction.setObjectName("uiEditReadmeAction")
         self.uiAcademyAction = QtWidgets.QAction(MainWindow)
         self.uiAcademyAction.setObjectName("uiAcademyAction")
         self.uiDeleteProjectAction = QtWidgets.QAction(MainWindow)
-        icon32 = QtGui.QIcon()
-        icon32.addPixmap(QtGui.QPixmap(":/icons/delete.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.uiDeleteProjectAction.setIcon(icon32)
+        icon31 = QtGui.QIcon()
+        icon31.addPixmap(QtGui.QPixmap(":/icons/delete.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiDeleteProjectAction.setIcon(icon31)
         self.uiDeleteProjectAction.setObjectName("uiDeleteProjectAction")
         self.uiShowGridAction = QtWidgets.QAction(MainWindow)
         self.uiShowGridAction.setCheckable(True)
         self.uiShowGridAction.setObjectName("uiShowGridAction")
         self.uiEditProjectAction = QtWidgets.QAction(MainWindow)
-        self.uiEditProjectAction.setIcon(icon31)
+        icon32 = QtGui.QIcon()
+        icon32.addPixmap(QtGui.QPixmap(":/icons/edit.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uiEditProjectAction.setIcon(icon32)
         self.uiEditProjectAction.setObjectName("uiEditProjectAction")
-        self.uiWebInterfaceAction = QtWidgets.QAction(MainWindow)
-        self.uiWebInterfaceAction.setObjectName("uiWebInterfaceAction")
         self.uiDrawLineAction = QtWidgets.QAction(MainWindow)
         self.uiDrawLineAction.setCheckable(True)
         icon33 = QtGui.QIcon()
@@ -438,9 +435,9 @@ class Ui_MainWindow(object):
         self.uiLockAllAction.setChecked(False)
         icon34 = QtGui.QIcon()
         icon34.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon34.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         icon34.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         icon34.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon34.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
         self.uiLockAllAction.setIcon(icon34)
         self.uiLockAllAction.setObjectName("uiLockAllAction")
         self.uiWebUIAction = QtWidgets.QAction(MainWindow)
@@ -500,10 +497,8 @@ class Ui_MainWindow(object):
         self.uiAnnotateMenu.addAction(self.uiDrawRectangleAction)
         self.uiAnnotateMenu.addAction(self.uiDrawEllipseAction)
         self.uiAnnotateMenu.addAction(self.uiDrawLineAction)
-        self.uiAnnotateMenu.addAction(self.uiEditReadmeAction)
         self.uiToolsMenu.addAction(self.uiScreenshotAction)
         self.uiToolsMenu.addAction(self.uiImportExportConfigsAction)
-        self.uiToolsMenu.addAction(self.uiWebInterfaceAction)
         self.uiToolsMenu.addAction(self.uiWebUIAction)
         self.uiMenuBar.addAction(self.uiFileMenu.menuAction())
         self.uiMenuBar.addAction(self.uiEditMenu.menuAction())
@@ -702,18 +697,15 @@ class Ui_MainWindow(object):
         self.uiDoctorAction.setText(_translate("MainWindow", "GNS3 &Doctor"))
         self.uiExportProjectAction.setText(_translate("MainWindow", "Export portable project"))
         self.uiImportProjectAction.setText(_translate("MainWindow", "Import portable project"))
-        self.uiEditReadmeAction.setText(_translate("MainWindow", "Edit readme"))
         self.uiAcademyAction.setText(_translate("MainWindow", "GNS3 &Academy"))
         self.uiDeleteProjectAction.setText(_translate("MainWindow", "Delete project"))
         self.uiShowGridAction.setText(_translate("MainWindow", "Show the grid"))
         self.uiEditProjectAction.setText(_translate("MainWindow", "Edit project"))
-        self.uiWebInterfaceAction.setText(_translate("MainWindow", "Light Web interface"))
         self.uiDrawLineAction.setText(_translate("MainWindow", "Drawn line"))
         self.uiLockAllAction.setText(_translate("MainWindow", "Lock or unlock all items"))
         self.uiLockAllAction.setToolTip(_translate("MainWindow", "Lock or unlock all items"))
-        self.uiWebUIAction.setText(_translate("MainWindow", "WebUI - topology preview"))
+        self.uiWebUIAction.setText(_translate("MainWindow", "Web UI - beta"))
         self.uiNewTemplateAction.setText(_translate("MainWindow", "New template"))
-
 from ..compute_summary_view import ComputeSummaryView
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView
