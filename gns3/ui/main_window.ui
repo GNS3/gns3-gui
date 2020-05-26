@@ -151,6 +151,7 @@ background-none;
     <addaction name="uiDrawRectangleAction"/>
     <addaction name="uiDrawEllipseAction"/>
     <addaction name="uiDrawLineAction"/>
+    <addaction name="uiEditReadmeAction"/>
    </widget>
    <widget class="QMenu" name="uiDeviceMenu">
     <property name="title">
@@ -1153,6 +1154,15 @@ background-none;
    </property>
    <property name="text">
     <string>Import portable project</string>
+   </property>
+  </action>
+  <action name="uiEditReadmeAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/edit.svg</normaloff>:/icons/edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edit readme</string>
    </property>
   </action>
   <action name="uiAcademyAction">
