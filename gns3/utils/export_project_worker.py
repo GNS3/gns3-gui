@@ -28,17 +28,18 @@ class ExportProjectWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
     updated = QtCore.pyqtSignal(int)
 
-    def __init__(self, project, path, include_images, include_snapshots, compression):
+    def __init__(self, project, path, include_images, include_snapshots, reset_mac_addresses, compression):
         super().__init__()
         self._project = project
         self._include_images = include_images
         self._include_snapshots = include_snapshots
+        self._reset_mac_addresses = reset_mac_addresses
         self._path = path
         self._compression = compression
 
     def run(self):
         if self._project:
-            self._project.get("/export?include_images={}&include_snapshots={}&compression={}".format(self._include_images, self._include_snapshots, self._compression),
+            self._project.get("/export?include_images={}&include_snapshots={}&reset_mac_addresses={}&compression={}".format(self._include_images, self._include_snapshots, self._reset_mac_addresses, self._compression),
                               self._exportReceived,
                               downloadProgressCallback=self._downloadFileProgress,
                               timeout=None)
