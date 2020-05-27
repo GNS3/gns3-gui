@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>678</width>
+    <width>823</width>
     <height>367</height>
    </rect>
   </property>
@@ -201,6 +201,16 @@
           <widget class="QPushButton" name="uiDuplicateProjectPushButton">
            <property name="text">
             <string>Duplicate</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="uiResetMacAddressesCheckBox">
+           <property name="text">
+            <string>&amp;Reset MAC addresses</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

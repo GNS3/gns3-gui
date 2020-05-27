@@ -135,17 +135,20 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                                                          new_project_name)
             name = name.strip()
             if reply and len(name) > 0:
+
+                reset_mac_addresses = self.uiResetMacAddressesCheckBox.isChecked()
+
                 if Controller.instance().isRemote():
                     Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
                                                self._duplicateCallback,
-                                               body={"name": name},
+                                               body={"name": name, "reset_mac_addresses": reset_mac_addresses},
                                                progressText="Duplicating project '{}'...".format(name),
                                                timeout=None)
                 else:
                     project_location = os.path.join(Topology.instance().projectsDirPath(), name)
                     Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
                                                self._duplicateCallback,
-                                               body={"name": name, "path": project_location},
+                                               body={"name": name, "path": project_location, "reset_mac_addresses": reset_mac_addresses},
                                                progressText="Duplicating project '{}'...".format(name),
                                                timeout=None)
 
