@@ -71,6 +71,7 @@ class QemuVM(Node):
                             "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                             "mac_address": QEMU_VM_SETTINGS["mac_address"],
                             "legacy_networking": QEMU_VM_SETTINGS["legacy_networking"],
+                            "replicate_network_connection_state": QEMU_VM_SETTINGS["replicate_network_connection_state"],
                             "platform": QEMU_VM_SETTINGS["platform"],
                             "on_close": QEMU_VM_SETTINGS["on_close"],
                             "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],

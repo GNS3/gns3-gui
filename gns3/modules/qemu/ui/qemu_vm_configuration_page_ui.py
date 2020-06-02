@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_QemuVMConfigPageWidget(object):
     def setupUi(self, QemuVMConfigPageWidget):
@@ -268,6 +270,14 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiNetworkTab.setObjectName("uiNetworkTab")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.uiNetworkTab)
         self.gridLayout_5.setObjectName("gridLayout_5")
+        self.uiPortSegmentSizeLabel = QtWidgets.QLabel(self.uiNetworkTab)
+        self.uiPortSegmentSizeLabel.setObjectName("uiPortSegmentSizeLabel")
+        self.gridLayout_5.addWidget(self.uiPortSegmentSizeLabel, 3, 0, 1, 1)
+        self.uiPortSegmentSizeSpinBox = QtWidgets.QSpinBox(self.uiNetworkTab)
+        self.uiPortSegmentSizeSpinBox.setMaximum(128)
+        self.uiPortSegmentSizeSpinBox.setSingleStep(4)
+        self.uiPortSegmentSizeSpinBox.setObjectName("uiPortSegmentSizeSpinBox")
+        self.gridLayout_5.addWidget(self.uiPortSegmentSizeSpinBox, 3, 1, 1, 2)
         self.uiAdaptersLabel = QtWidgets.QLabel(self.uiNetworkTab)
         self.uiAdaptersLabel.setObjectName("uiAdaptersLabel")
         self.gridLayout_5.addWidget(self.uiAdaptersLabel, 0, 0, 1, 1)
@@ -284,9 +294,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiPortNameFormatLineEdit.setText("")
         self.uiPortNameFormatLineEdit.setObjectName("uiPortNameFormatLineEdit")
         self.gridLayout_5.addWidget(self.uiPortNameFormatLineEdit, 2, 1, 1, 2)
-        self.uiPortSegmentSizeLabel = QtWidgets.QLabel(self.uiNetworkTab)
-        self.uiPortSegmentSizeLabel.setObjectName("uiPortSegmentSizeLabel")
-        self.gridLayout_5.addWidget(self.uiPortSegmentSizeLabel, 3, 0, 1, 1)
         self.uiMacAddrLabel = QtWidgets.QLabel(self.uiNetworkTab)
         self.uiMacAddrLabel.setObjectName("uiMacAddrLabel")
         self.gridLayout_5.addWidget(self.uiMacAddrLabel, 4, 0, 1, 1)
@@ -304,9 +311,9 @@ class Ui_QemuVMConfigPageWidget(object):
         self.gridLayout_5.addWidget(self.uiCustomAdaptersConfigurationPushButton, 6, 1, 1, 2)
         self.uiLegacyNetworkingCheckBox = QtWidgets.QCheckBox(self.uiNetworkTab)
         self.uiLegacyNetworkingCheckBox.setObjectName("uiLegacyNetworkingCheckBox")
-        self.gridLayout_5.addWidget(self.uiLegacyNetworkingCheckBox, 7, 0, 1, 3)
+        self.gridLayout_5.addWidget(self.uiLegacyNetworkingCheckBox, 8, 0, 1, 3)
         spacerItem3 = QtWidgets.QSpacerItem(20, 261, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem3, 8, 2, 1, 1)
+        self.gridLayout_5.addItem(spacerItem3, 9, 2, 1, 1)
         self.uiAdapterTypesComboBox = QtWidgets.QComboBox(self.uiNetworkTab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -315,11 +322,6 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiAdapterTypesComboBox.setSizePolicy(sizePolicy)
         self.uiAdapterTypesComboBox.setObjectName("uiAdapterTypesComboBox")
         self.gridLayout_5.addWidget(self.uiAdapterTypesComboBox, 5, 1, 1, 2)
-        self.uiPortSegmentSizeSpinBox = QtWidgets.QSpinBox(self.uiNetworkTab)
-        self.uiPortSegmentSizeSpinBox.setMaximum(128)
-        self.uiPortSegmentSizeSpinBox.setSingleStep(4)
-        self.uiPortSegmentSizeSpinBox.setObjectName("uiPortSegmentSizeSpinBox")
-        self.gridLayout_5.addWidget(self.uiPortSegmentSizeSpinBox, 3, 1, 1, 2)
         self.uiAdaptersSpinBox = QtWidgets.QSpinBox(self.uiNetworkTab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -330,6 +332,9 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiAdaptersSpinBox.setMaximum(275)
         self.uiAdaptersSpinBox.setObjectName("uiAdaptersSpinBox")
         self.gridLayout_5.addWidget(self.uiAdaptersSpinBox, 0, 1, 1, 2)
+        self.uiReplicateNetworkConnectionStateCheckBox = QtWidgets.QCheckBox(self.uiNetworkTab)
+        self.uiReplicateNetworkConnectionStateCheckBox.setObjectName("uiReplicateNetworkConnectionStateCheckBox")
+        self.gridLayout_5.addWidget(self.uiReplicateNetworkConnectionStateCheckBox, 7, 0, 1, 3)
         self.uiQemutabWidget.addTab(self.uiNetworkTab, "")
         self.uiAdvancedSettingsTab = QtWidgets.QWidget()
         self.uiAdvancedSettingsTab.setObjectName("uiAdvancedSettingsTab")
@@ -502,16 +507,17 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiCdromImageLabel.setText(_translate("QemuVMConfigPageWidget", "Image:"))
         self.uiCdromImageToolButton.setText(_translate("QemuVMConfigPageWidget", "&Browse..."))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiCdromTab), _translate("QemuVMConfigPageWidget", "CD/DVD"))
+        self.uiPortSegmentSizeLabel.setText(_translate("QemuVMConfigPageWidget", "Segment size:"))
         self.uiAdaptersLabel.setText(_translate("QemuVMConfigPageWidget", "Adapters:"))
         self.uiFirstPortNameLabel.setText(_translate("QemuVMConfigPageWidget", "First port name:"))
         self.uiPortNameFormatLabel.setToolTip(_translate("QemuVMConfigPageWidget", "<html><head/><body><p>{0} - the port number, from 0 to the number of adapters-1.</p><p>{1} - the segment number, from 0 to the number of segments-1.</p><p>{port0} - named alias for {0}.</p><p>{port1} - the port number, from 1 to the number of adapters.</p><p>{segment0} - named alias for {1}.</p><p>{segment1} - the segment number, from 1 to the number of segments.</p></body></html>"))
         self.uiPortNameFormatLabel.setText(_translate("QemuVMConfigPageWidget", "Name format:"))
-        self.uiPortSegmentSizeLabel.setText(_translate("QemuVMConfigPageWidget", "Segment size:"))
         self.uiMacAddrLabel.setText(_translate("QemuVMConfigPageWidget", "Base MAC:"))
         self.uiAdapterTypesLabel.setText(_translate("QemuVMConfigPageWidget", "Type:"))
         self.uiCustomAdaptersLabel.setText(_translate("QemuVMConfigPageWidget", "Custom adapters:"))
         self.uiCustomAdaptersConfigurationPushButton.setText(_translate("QemuVMConfigPageWidget", "&Configure custom adapters"))
         self.uiLegacyNetworkingCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use the legacy networking mode"))
+        self.uiReplicateNetworkConnectionStateCheckBox.setText(_translate("QemuVMConfigPageWidget", "Replicate network connection states in Qemu"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiNetworkTab), _translate("QemuVMConfigPageWidget", "Network"))
         self.uiLinuxBootGroupBox.setTitle(_translate("QemuVMConfigPageWidget", "Linux boot specific settings"))
         self.uiKernelCommandLineLabel.setText(_translate("QemuVMConfigPageWidget", "Kernel command line:"))
@@ -548,4 +554,3 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiBaseVMCheckBox.setText(_translate("QemuVMConfigPageWidget", "Use as a linked base VM"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiAdvancedSettingsTab), _translate("QemuVMConfigPageWidget", "Advanced"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiUsageTab), _translate("QemuVMConfigPageWidget", "Usage"))
-

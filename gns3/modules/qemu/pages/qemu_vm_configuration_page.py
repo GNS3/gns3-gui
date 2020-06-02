@@ -525,6 +525,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self._custom_adapters = settings["custom_adapters"].copy()
 
         self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
+        self.uiReplicateNetworkConnectionStateCheckBox.setChecked(settings["replicate_network_connection_state"])
 
         # load the MAC address setting
         self.uiMacAddrLineEdit.setInputMask("HH:HH:HH:HH:HH:HH;_")
@@ -657,6 +658,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
         settings["adapters"] = adapters
         settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
+        settings["replicate_network_connection_state"] = self.uiReplicateNetworkConnectionStateCheckBox.isChecked()
         settings["custom_adapters"] = self._custom_adapters.copy()
         settings["on_close"] = self.uiOnCloseComboBox.itemData(self.uiOnCloseComboBox.currentIndex())
         settings["cpus"] = self.uiCPUSpinBox.value()
