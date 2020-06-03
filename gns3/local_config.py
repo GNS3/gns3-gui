@@ -488,7 +488,7 @@ class LocalConfig(QtCore.QObject):
                     if pid != my_pid:
                         try:
                             process = psutil.Process(pid=pid)
-                            ps_name = process.name()
+                            ps_name = process.name().lower()
                         except (OSError, psutil.NoSuchProcess, psutil.AccessDenied):
                             pass
                         else:
