@@ -526,6 +526,23 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiPortSegmentSizeLabel">
+         <property name="text">
+          <string>Segment size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
+         <property name="maximum">
+          <number>128</number>
+         </property>
+         <property name="singleStep">
+          <number>4</number>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="uiAdaptersLabel">
          <property name="text">
@@ -560,13 +577,6 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiPortSegmentSizeLabel">
-         <property name="text">
-          <string>Segment size:</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="0">
         <widget class="QLabel" name="uiMacAddrLabel">
          <property name="text">
@@ -598,14 +608,14 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="3">
+       <item row="8" column="0" colspan="3">
         <widget class="QCheckBox" name="uiLegacyNetworkingCheckBox">
          <property name="text">
           <string>Use the legacy networking mode</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="2">
+       <item row="9" column="2">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -628,16 +638,6 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1" colspan="2">
-        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
-         <property name="maximum">
-          <number>128</number>
-         </property>
-         <property name="singleStep">
-          <number>4</number>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1" colspan="2">
         <widget class="QSpinBox" name="uiAdaptersSpinBox">
          <property name="sizePolicy">
@@ -651,6 +651,13 @@
          </property>
          <property name="maximum">
           <number>275</number>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="3">
+        <widget class="QCheckBox" name="uiReplicateNetworkConnectionStateCheckBox">
+         <property name="text">
+          <string>Replicate network connection states in Qemu</string>
          </property>
         </widget>
        </item>
