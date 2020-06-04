@@ -1,5 +1,18 @@
 # Change Log
 
+## 2.2.9 04/06/2020
+
+* Fix GUI doesn't detect another GUI on macOS. Fixes #2994
+* Support to activate/deactive network connection state replication in Qemu.
+* Option to reset or not all MAC addresses when exporting or duplicating a project.
+* Fix Multi-device selection/deselection not working as expected with right click. Fixes #2986
+* Replace Raven by Sentry SDK. Fixes https://github.com/GNS3/gns3-server/issues/1758
+* Fix online help menu URL. Fixes #2984
+* Require setuptools>=17.1 in setup.py. Ref https://github.com/GNS3/gns3-server/issues/1751 This is to support environmental markers. https://github.com/pypa/setuptools/blob/master/CHANGES.rst#171
+* Update README. Ref https://github.com/GNS3/gns3-server/issues/1719
+* Restore editReadme attribute which was removed in Change 'New export project wizard'
+* Updated GUI pyqt files from Tab Order 'fixes' in "Tab Order in Preferences and Project Dialog #2872"
+
 ## 2.2.8 07/05/2020
 
 * Default port set to 80 for server running in the GNS3 VM. Fixes #1737
