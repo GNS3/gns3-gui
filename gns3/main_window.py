@@ -260,6 +260,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiDrawRectangleAction.triggered.connect(self._drawRectangleActionSlot)
         self.uiDrawEllipseAction.triggered.connect(self._drawEllipseActionSlot)
         self.uiDrawLineAction.triggered.connect(self._drawLineActionSlot)
+        self.uiEditReadmeAction.triggered.connect(self._editReadmeActionSlot)
 
         # help menu connections
         self.uiOnlineHelpAction.triggered.connect(self._onlineHelpActionSlot)
@@ -1059,6 +1060,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dialog.exec_()
             #self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
             #self.setSettings(self._settings)
+
+    def _editReadmeActionSlot(self):
+        """
+        Slot to edit the README file
+        """
+        Topology.instance().editReadme()
 
     def resizeEvent(self, event):
         self._notif_dialog.resize()
