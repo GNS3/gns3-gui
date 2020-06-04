@@ -247,9 +247,10 @@ class Topology(QtCore.QObject):
     def editReadme(self):
         if self.project() is None:
             return
-        dialog = FileEditorDialog(self.project(), "/README.txt", parent=self._main_window, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
+        dialog = FileEditorDialog(self.project(), "README.txt", parent=self._main_window, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
         dialog.show()
-        dialog.exec_()                         
+        dialog.exec_()
+
     def _projectCreationErrorSlot(self, message):
         if self._project:
             self._project.project_creation_error_signal.disconnect(self._projectCreationErrorSlot)
