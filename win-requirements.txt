@@ -1,4 +1,5 @@
 -rrequirements.txt
 
 PyQt5==5.12.3 # pyup: ignore
+jsonschema==2.6.0 # necessary because of https://github.com/GNS3/gns3-gui/issues/2849
 pywin32>=223 # pyup: ignore
