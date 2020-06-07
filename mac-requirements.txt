@@ -1,3 +1,2 @@
 -rrequirements.txt
 
-jsonschema==2.6.0 # necessary because of https://github.com/GNS3/gns3-gui/issues/2849
