@@ -527,14 +527,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if is_not_link and is_not_logo and not self._adding_link:
             if item and not sip.isdeleted(item):
-                # Right clicking on a selected item must de-select all other items
-                # excepting if CRTL is pressed
-                item.setSelected(True)
-                if not event.modifiers() & QtCore.Qt.ControlModifier:
-                    for it in self.scene().items():
-                        if item != it and it.isSelected():
+                # Prevent right clicking on a selected item from de-selecting all other items
+                if not item.isSelected():
+                    if not event.modifiers() & QtCore.Qt.ControlModifier:
+                        for it in self.scene().items():
                             it.setSelected(False)
-                self._showDeviceContextualMenu(event.globalPos())
+                    item.setSelected(True)
+                    self._showDeviceContextualMenu(event.globalPos())
+                else:
+                    self._showDeviceContextualMenu(event.globalPos())
             # when more than one item is selected display the contextual menu even if mouse is not above an item
             elif len(self.scene().selectedItems()) > 1:
                 self._showDeviceContextualMenu(event.globalPos())
