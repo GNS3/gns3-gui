@@ -533,9 +533,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                         for it in self.scene().items():
                             it.setSelected(False)
                     item.setSelected(True)
-                    self._showDeviceContextualMenu(event.globalPos())
-                else:
-                    self._showDeviceContextualMenu(event.globalPos())
+                self._showDeviceContextualMenu(event.globalPos())
             # when more than one item is selected display the contextual menu even if mouse is not above an item
             elif len(self.scene().selectedItems()) > 1:
                 self._showDeviceContextualMenu(event.globalPos())
@@ -756,6 +754,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.populateDeviceContextualMenu(menu)
         menu.exec_(pos)
         menu.clear()
+        # Make sure to deselect all items.
+        # This is to prevent a bug on Windows
+        # see https://github.com/GNS3/gns3-gui/issues/2986
+        for it in self.scene().items():
+            it.setSelected(False)
 
     def populateDeviceContextualMenu(self, menu):
         """
