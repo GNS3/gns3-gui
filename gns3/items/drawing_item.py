@@ -212,14 +212,13 @@ class DrawingItem:
             self._project.delete("/drawings/" + self._id, None, body=self.__json__())
 
     def itemChange(self, change, value):
-        if change == QtWidgets.QGraphicsItem.ItemPositionHasChanged and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
+
+        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
             grid_size = self._graphics_view.drawingGridSize()
             mid_x = self.boundingRect().width() / 2
-            tmp_x = (grid_size * round((self.x() + mid_x) / grid_size)) - mid_x
+            value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)
             mid_y = self.boundingRect().height() / 2
-            tmp_y = (grid_size * round((self.y() + mid_y) / grid_size)) - mid_y
-            if tmp_x != self.x() and tmp_y != self.y():
-                self.setPos(tmp_x, tmp_y)
+            value.setY((grid_size * round((value.y()+mid_y)/grid_size)) - mid_y)
 
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
             if not value:
