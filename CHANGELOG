@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.2.10 18/06/2020
+
+* New fix for multi-device selection/deselection not working as expected with right click. Fixes #2986
+* Optimize snap-to-grid code for drawing items. Fixes #2997
+* Move jsonschema 2.6.0 requirement in build repository.
+* Only use jsonschema 2.6.0 on Windows and macOS.
+* Disable default integrations for sentry sdk.
+
 ## 2.2.9 04/06/2020
 
 * Fix GUI doesn't detect another GUI on macOS. Fixes #2994
