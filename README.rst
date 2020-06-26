@@ -1,8 +1,8 @@
 GNS3-gui
 ========
 
-.. image:: https://travis-ci.org/GNS3/gns3-gui.svg?branch=master
-    :target: https://travis-ci.org/GNS3/gns3-gui
+.. image:: https://github.com/GNS3/gns3-gui/workflows/testing/badge.svg
+    :target: https://github.com/GNS3/gns3-gui/actions?query=workflow%3Atesting
 
 .. image:: https://img.shields.io/pypi/v/gns3-gui.svg
     :target: https://pypi.python.org/pypi/gns3-gui
