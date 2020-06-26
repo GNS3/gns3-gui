@@ -1,0 +1,19 @@
+name: testing
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and run Docker image
+      run: |
+        docker build -t gns3-gui-test .
+        docker run gns3-gui-test

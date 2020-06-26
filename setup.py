@@ -24,7 +24,7 @@ if len(sys.argv) >= 2 and sys.argv[1] == "install" and sys.version_info < (3, 4)
     raise SystemExit("Python 3.4 or higher is required")
 
 
-class Tox(TestCommand):
+class PyTest(TestCommand):
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
@@ -33,10 +33,10 @@ class Tox(TestCommand):
 
     def run_tests(self):
         # import here, cause outside the eggs aren't loaded
-        import tox
-        errcode = tox.cmdline(self.test_args)
-        sys.exit(errcode)
+        import pytest
 
+        errcode = pytest.main(self.test_args)
+        sys.exit(errcode)
 
 if sys.platform.startswith('linux'):
     data_files = [
@@ -61,8 +61,8 @@ setup(
     version=__import__("gns3").__version__,
     url="http://github.com/GNS3/gns3-gui",
     license="GNU General Public License v3 (GPLv3)",
-    tests_require=["tox"],
-    cmdclass={"test": Tox},
+    tests_require=["pytest"],
+    cmdclass={"test": PyTest},
     author="Jeremy Grossmann",
     author_email="package-maintainer@gns3.net",
     description="GNS3 graphical interface for the GNS3 server.",
