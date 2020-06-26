@@ -25,7 +25,7 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f dev-requirements.txt ]; then pip install -r dev-requirements.txt; fi
         # install PyQt5
-        sudo apt install -y python3-pyqt5 python3-pip python3-pyqt5.qtsvg python3-pyqt5.qtwebsockets
+        sudo apt install -y python3-sip python3-pyqt5 python3-pyqt5.qtsvg python3-pyqt5.qtwebsockets
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
