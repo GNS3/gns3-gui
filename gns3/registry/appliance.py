@@ -19,7 +19,7 @@
 import json
 import copy
 import os
-import collections
+import collections.abc
 import jsonschema
 
 
@@ -30,7 +30,7 @@ class ApplianceError(Exception):
     pass
 
 
-class Appliance(collections.Mapping):
+class Appliance(collections.abc.Mapping):
 
     def __init__(self, registry, path):
         """
