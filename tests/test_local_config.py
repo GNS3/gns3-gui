@@ -22,6 +22,7 @@ import json
 from unittest.mock import patch, MagicMock
 
 from gns3.local_config import LocalConfig
+from gns3.version import __version_info__
 
 
 @pytest.fixture
@@ -119,16 +120,17 @@ def test_migrateOldConfigOSX(tmpdir):
 
         local_config = LocalConfig()
 
-        assert os.path.exists(str(tmpdir / '.config' / 'GNS3'))
-        assert os.path.exists(str(tmpdir / '.config' / 'GNS3' / 'hello'))
+        version = "{}.{}".format(__version_info__[0], __version_info__[1])
+        assert os.path.exists(str(tmpdir / '.config' / 'GNS3' / version))
+        assert os.path.exists(str(tmpdir / '.config' / 'GNS3' / version / 'hello'))
         assert os.path.exists(str(tmpdir / '.config' / 'gns3.net'))
 
         # It should migrate only one time
         open(str(tmpdir / '.config' / 'gns3.net' / 'world'), 'w+').close()
 
         local_config._migrateOldConfigPath()
-        assert os.path.exists(str(tmpdir / '.config' / 'GNS3' / 'hello'))
-        assert not os.path.exists(str(tmpdir / '.config' / 'GNS3' / 'world'))
+        assert os.path.exists(str(tmpdir / '.config' / 'GNS3' / version / 'hello'))
+        assert not os.path.exists(str(tmpdir / '.config' / 'GNS3' / version / 'world'))
 
 
 def test_migrate13Config(tmpdir):
