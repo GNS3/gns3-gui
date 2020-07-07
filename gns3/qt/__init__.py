@@ -115,10 +115,13 @@ class LogQMessageBox(QtWidgets.QMessageBox):
     show a stack trace when a critical message box is shown in debug mode
     """
     @staticmethod
-    def critical(parent, title, message, *args):
+    def critical(parent, title, message, *args, show_stack_info=False):
         if message.startswith("QXcbConnection"):  # Qt noise not relevant
             return
-        LogQMessageBox._get_logger().critical(re.sub(r"<[^<]+?>", "", message), stack_info=LogQMessageBox.stack_info())
+        stack_info = None
+        if show_stack_info:
+            stack_info = LogQMessageBox.stack_info()
+        LogQMessageBox._get_logger().critical(re.sub(r"<[^<]+?>", "", message), stack_info=stack_info)
         if parent is False:
             # special case to display a QMessageBox before the main window is created.
             parent = None

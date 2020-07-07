@@ -1185,8 +1185,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # restore debug level
         if self._settings["debug_level"]:
+            print("Activating debugging (use command 'debug 0' to deactivate)")
             root = logging.getLogger()
-            root.addHandler(logging.StreamHandler(sys.stdout))
+            root.setLevel(logging.DEBUG)
 
         # restore the style
         self._setStyle(self._settings.get("style"))
