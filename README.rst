@@ -7,6 +7,9 @@ GNS3-gui
 .. image:: https://img.shields.io/pypi/v/gns3-gui.svg
     :target: https://pypi.python.org/pypi/gns3-gui
 
+.. image:: https://snyk.io/test/github/GNS3/gns3-gui/badge.svg
+    :target: https://snyk.io/test/github/GNS3/gns3-gui
+
 
 GNS3 GUI repository.
 
