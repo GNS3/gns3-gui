@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.2.11 09/07/2020
+
+* Try to fix "Recent project" selection not working. Ref #3007
+* Fix debug entries shown twice in console window and double error messages with remote GNS3VM. Fixes #3010
+* Fix deprecation warning. Ref #3009
+* Fix tests on macOS. Ref #3009
+* Fix sentry SDK is configured twice.
+
 ## 2.2.10 18/06/2020
 
 * New fix for multi-device selection/deselection not working as expected with right click. Fixes #2986
