@@ -237,13 +237,13 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         """
 
         menu = QtWidgets.QMenu()
-        menu.triggered.connect(self._menuTriggeredSlot)
         if Controller.instance().isRemote():
             for action in self._main_window.recent_project_actions:
                 menu.addAction(action)
         else:
             for action in self._main_window.recent_file_actions:
                 menu.addAction(action)
+        menu.triggered.connect(self._menuTriggeredSlot)
         menu.exec_(QtGui.QCursor.pos())
 
     def _overwriteProjectCallback(self, result, error=False, **kwargs):
