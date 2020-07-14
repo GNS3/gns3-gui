@@ -541,7 +541,6 @@ class Project(QtCore.QObject):
             if not self._notification_stream:
                 self._startListenNotifications()
         self.project_updated_signal.emit()
-
         self.get("/nodes", self._listNodesCallback)
 
     def _listNodesCallback(self, result, error=False, **kwargs):

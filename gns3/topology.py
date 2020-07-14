@@ -29,13 +29,16 @@ from .qt import QtCore, QtWidgets
 from .utils.progress_dialog import ProgressDialog
 from .utils.import_project_worker import ImportProjectWorker
 from .dialogs.project_export_wizard import ExportProjectWizard
-from .dialogs.file_editor_dialog import FileEditorDialog
 from .dialogs.project_welcome_dialog import ProjectWelcomeDialog
+from .dialogs.show_readme_dialog import ShowReadmeDialog
 
 from .modules import MODULES
 from .modules.module_error import ModuleError
 from .compute_manager import ComputeManager
 from .controller import Controller
+from .local_config import LocalConfig
+from .settings import GENERAL_SETTINGS
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -189,6 +192,17 @@ class Topology(QtCore.QObject):
                 dialog.show()
                 dialog.exec_()
 
+        settings = LocalConfig.instance().loadSectionSettings("MainWindow", GENERAL_SETTINGS)
+        if settings["auto_open_readme"]:
+            self.project().get("/files/README.txt", self._getReadmeCallback)
+
+    def _getReadmeCallback(self, result, error=False, raw_body=None, **kwargs):
+        if not error:
+            content = raw_body.decode("utf-8", errors="ignore")
+            dialog = ShowReadmeDialog(self.project(), "README.txt", content, parent=self._main_window)
+            dialog.show()
+            dialog.exec_()
+
     def createLoadProject(self, project_settings):
         """
         Create load a project based on settings, not on the .gns3
@@ -247,7 +261,18 @@ class Topology(QtCore.QObject):
     def editReadme(self):
         if self.project() is None:
             return
-        dialog = FileEditorDialog(self.project(), "README.txt", parent=self._main_window, default="Project title\n\nAuthor: Grace Hopper <grace@example.org>\n\nThis project is about...")
+
+        from .dialogs.edit_project_dialog import EditProjectDialog
+        dialog = EditProjectDialog(self._main_window)
+        dialog.show()
+        dialog.tabWidget.setCurrentIndex(1)
+        dialog.exec_()
+
+    def showReadme(self):
+        if self.project() is None:
+            return
+
+        dialog = ShowReadmeDialog(self.project(), "README.txt", parent=self._main_window)
         dialog.show()
         dialog.exec_()
 

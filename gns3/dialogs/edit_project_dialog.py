@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtWidgets, QtCore, qslot, qpartial
+from gns3.utils import parse_version
+
+from ..qt import QtGui, QtWidgets, QtCore, qslot, qpartial
 from ..topology import Topology
 from ..ui.edit_project_dialog_ui import Ui_EditProjectDialog
 
@@ -46,8 +48,37 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         self.uiNewVarButton.clicked.connect(self.onAddNewVariable)
         self.uiGlobalVariablesGrid.addWidget(self.uiNewVarButton, 0, 3, QtCore.Qt.AlignRight)
 
+        self._readme_filename = "README.txt"
+        self.uiTabWidget.currentChanged.connect(self._previewMarkdownSlot)
+        self._loadReadme()
+
         self._variables = self.setUpVariables()
         self.updateGlobalVariables()
+
+    def _loadReadme(self):
+
+        self._project.get("/files/{}".format(self._readme_filename), self._loadedReadme)
+
+    def _loadedReadme(self, result, error=False, raw_body=None, context={}, **kwargs):
+
+        if not error:
+            content = raw_body.decode("utf-8", errors="replace")
+            self.uiReadmeTextEdit.setPlainText(content)
+
+    def _previewMarkdownSlot(self, index):
+
+        # index 1 is preview tab
+        if index == 1:
+
+            # QTextDocument before Qt version 5.14 doesn't support Markdown
+            if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.14.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.14.0"):
+                QtWidgets.QMessageBox.critical(self, "Markdown preview", "Markdown preview is only support with Qt version 5.14.0 or above")
+                return
+
+            # show Markdown preview
+            document = QtGui.QTextDocument()
+            self.uiReadmePreview.setDocument(document)
+            document.setMarkdown(self.uiReadmeTextEdit.toPlainText())
 
     def setUpVariables(self):
         new_variable = {"name": "", "value": ""}
@@ -123,4 +154,12 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
                 self._project.setSceneWidth(self.uiSceneWidthSpinBox.value())
                 self._project.setVariables(self._cleanVariables())
                 self._project.update()
+                content = self.uiReadmeTextEdit.toPlainText()
+                if content:
+                    self._project.post("/files/{}".format(self._readme_filename), self._saveReadmeCallback, body=content)
         super().done(result)
+
+    def _saveReadmeCallback(self, result, error=False, **kwargs):
+
+        if error:
+            QtWidgets.QMessageBox.critical(self, "Edit project", "Could not created readme file")

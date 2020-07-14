@@ -192,7 +192,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiEditProjectAction,
             self.uiDeleteProjectAction,
             self.uiImportExportConfigsAction,
-            self.uiLockAllAction
+            self.uiLockAllAction,
+            self.uiShowReadmeAction
         ]
 
         # This widgets are not enabled if it's a remote controller (no access to the local file system)
@@ -237,6 +238,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiResetPortLabelsAction.triggered.connect(self._resetPortLabelsActionSlot)
         self.uiShowPortNamesAction.triggered.connect(self._showPortNamesActionSlot)
         self.uiShowGridAction.triggered.connect(self._showGridActionSlot)
+        self.uiShowReadmeAction.triggered.connect(self._showReadmeActionSlot)
         self.uiSnapToGridAction.triggered.connect(self._snapToGridActionSlot)
         self.uiLockAllAction.triggered.connect(self._lockActionSlot)
 
@@ -1066,6 +1068,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to edit the README file
         """
         Topology.instance().editReadme()
+
+    def _showReadmeActionSlot(self):
+        """
+        Slot to show the README file
+        """
+        Topology.instance().showReadme()
 
     def resizeEvent(self, event):
         self._notif_dialog.resize()

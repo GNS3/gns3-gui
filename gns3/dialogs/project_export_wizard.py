@@ -16,10 +16,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import os
 import datetime
 
-from gns3.qt import QtCore, QtWidgets
+from gns3.qt import QtCore, QtWidgets, QtGui
+from gns3.utils import parse_version
 from ..local_server import LocalServer
 from ..utils.progress_dialog import ProgressDialog
 from ..utils.export_project_worker import ExportProjectWorker
@@ -55,19 +55,33 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         self.uiCompressionComboBox.setCurrentIndex(1)
         self.helpRequested.connect(self._showHelpSlot)
         self.uiPathBrowserToolButton.clicked.connect(self._pathBrowserSlot)
+
+        # QTextDocument before Qt version 5.14 doesn't support Markdown
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.14.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.14.0"):
+            self._use_markdown = False
+        else:
+            self._use_markdown = True
+
+        self._readme_filename = "README.txt"
+        self.uiTabWidget.currentChanged.connect(self._previewMarkdownSlot)
         self._loadReadme()
 
     def _loadReadme(self):
 
-        self._project.get("/files/README.txt", self._loadedReadme)
+        self._project.get("/files/{}".format(self._readme_filename), self._loadedReadme)
 
     def _loadedReadme(self, result, error=False, raw_body=None, context={}, **kwargs):
 
         if not error:
-            self.uiReadmeTextEdit.setPlainText(raw_body.decode("utf-8", errors="replace"))
+            content = raw_body.decode("utf-8", errors="replace")
+            self.uiReadmeTextEdit.setPlainText(content)
         else:
-            readme_text = "Project: '{}' created on {}\nAuthor: John Doe <john.doe@example.com>\n\nNo project description was given".format(self._project.name(), datetime.date.today())
-            self.uiReadmeTextEdit.setPlainText(readme_text)
+            if self._use_markdown:
+                readme_markdown = "# Project {}\n\nCreated on: {}\n\nAuthor: John Doe <john.doe@example.com>\n\n## Description\n\nNo project description was given".format(self._project.name(), datetime.date.today())
+                self.uiReadmeTextEdit.setPlainText(readme_markdown)
+            else:
+                readme_text = "Project: '{}' created on {}\nAuthor: John Doe <john.doe@example.com>\n\nNo project description was given".format(self._project.name(), datetime.date.today())
+                self.uiReadmeTextEdit.setPlainText(readme_text)
 
     def _pathBrowserSlot(self):
 
@@ -82,6 +96,20 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
             return
 
         self.uiPathLineEdit.setText(path)
+
+    def _previewMarkdownSlot(self, index):
+
+        # index 1 is preview tab
+        if index == 1:
+
+            if self._use_markdown is False:
+                QtWidgets.QMessageBox.critical(self, "Markdown preview", "Markdown preview is only support with Qt version 5.14.0 or above")
+                return
+
+            # show Markdown preview
+            document = QtGui.QTextDocument()
+            self.uiReadmePreviewEdit.setDocument(document)
+            document.setMarkdown(self.uiReadmeTextEdit.toPlainText())
 
     def _showHelpSlot(self):
 
@@ -111,9 +139,9 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
                 return False
             self._path = path
         elif self.currentPage() == self.uiProjectReadmeWizardPage:
-            text = self.uiReadmeTextEdit.toPlainText().strip()
-            if text:
-                self._project.post("/files/README.txt", self._saveReadmeCallback, body=text)
+            content = self.uiReadmeTextEdit.toPlainText()
+            if content:
+                self._project.post("/files/{}".format(self._readme_filename), self._saveReadmeCallback, body=content)
         return True
 
     def _saveReadmeCallback(self, result, error=False, **kwargs):
