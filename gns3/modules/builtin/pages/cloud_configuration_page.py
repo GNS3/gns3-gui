@@ -490,6 +490,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             self._interfaces = self._node.interfaces()
             self._loadNetworkInterfaces(self._interfaces)
 
+        self.uiUsageTextEdit.setPlainText(settings["usage"])
         # load the current ports
         self._ports = []
         self.uiEthernetListWidget.clear()
@@ -560,4 +561,6 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             settings["ports_mapping"] = self._ports
         else:
             settings["ports_mapping"] = self._ports
+
+        settings["usage"] = self.uiUsageTextEdit.toPlainText()
         return settings
