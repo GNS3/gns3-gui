@@ -654,7 +654,7 @@ class Node(BaseNode):
         """
 
         host = self.settings()["console_host"]
-        if host is None or host == "::" or host == "0.0.0.0":
+        if host is None or host == "::" or host == "0.0.0.0" or host == "0:0:0:0:0:0:0:0":
             host = Controller.instance().host()
         return host
 
