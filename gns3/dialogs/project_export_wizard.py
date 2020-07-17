@@ -34,6 +34,8 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
     Export project wizard.
     """
 
+    readme_signal = QtCore.pyqtSignal()
+
     def __init__(self, project, parent):
 
         super().__init__(parent)
@@ -138,15 +140,21 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
                 QtWidgets.QMessageBox.critical(self, "Export project", "Cannot export project to '{}': {}".format(path, e))
                 return False
             self._path = path
-        elif self.currentPage() == self.uiProjectReadmeWizardPage:
-            content = self.uiReadmeTextEdit.toPlainText()
-            if content:
-                self._project.post("/files/{}".format(self._readme_filename), self._saveReadmeCallback, body=content)
         return True
 
     def _saveReadmeCallback(self, result, error=False, **kwargs):
         if error:
             QtWidgets.QMessageBox.critical(self, "Export project", "Could not created readme file")
+        self.readme_signal.emit()
+
+    def waitForReadme(self, signal, timeout=10000):
+
+        # inspired from https://www.jdreaver.com/posts/2014-07-03-waiting-for-signals-pyside-pyqt.html
+        loop = QtCore.QEventLoop()
+        signal.connect(loop.quit)
+        if timeout is not None:
+            QtCore.QTimer.singleShot(timeout, loop.quit)
+        loop.exec_()
 
     def done(self, result):
         """
@@ -154,6 +162,11 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         """
 
         if result:
+
+            content = self.uiReadmeTextEdit.toPlainText()
+            if content:
+                self._project.post("/files/{}".format(self._readme_filename), self._saveReadmeCallback, body=content)
+
             if self.uiIncludeImagesCheckBox.isChecked():
                 include_images = "yes"
             else:
@@ -167,6 +180,7 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
             else:
                 reset_mac_addresses = "no"
             compression = self.uiCompressionComboBox.currentData()
+            self.waitForReadme(self.readme_signal)
             export_worker = ExportProjectWorker(self._project, self._path, include_images, include_snapshots, reset_mac_addresses, compression)
             progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self, create_thread=False)
             progress_dialog.show()
