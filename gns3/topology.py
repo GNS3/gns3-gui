@@ -24,7 +24,7 @@ import xml.etree.ElementTree as ET
 
 
 from .local_server import LocalServer
-from .qt import QtCore, QtWidgets
+from .qt import QtCore, QtWidgets, qpartial
 
 from .utils.progress_dialog import ProgressDialog
 from .utils.import_project_worker import ImportProjectWorker
@@ -130,7 +130,7 @@ class Topology(QtCore.QObject):
         if project:
             self._project.project_updated_signal.connect(self._projectUpdatedSlot)
             self._project.project_creation_error_signal.connect(self._projectCreationErrorSlot)
-            self._project.project_loaded_signal.connect(self._projectLoadedSlot)
+            self._project.project_loaded_signal.connect(qpartial(self._projectLoadedSlot, snapshot))
             self._main_window.setWindowTitle("{name} - GNS3".format(name=self._project.name()))
             self._main_window.uiGraphicsView.setSceneSize(project.sceneWidth(), project.sceneHeight())
         else:
@@ -155,7 +155,7 @@ class Topology(QtCore.QObject):
         self._main_window.updateRecentProjectsSettings(self._project.id(), self._project.name(), self._project.path())
         self._main_window.updateRecentProjectActions()
 
-    def _projectLoadedSlot(self):
+    def _projectLoadedSlot(self, snapshot):
         # when project is loaded we can make updates in GUI
         if self._project is not None:
             self._main_window.uiShowLayersAction.setChecked(self._project.showLayers())
@@ -181,7 +181,9 @@ class Topology(QtCore.QObject):
                     supplier.get('url', None)
                 )
 
-            self._displayProjectWelcomeDialog()
+            if snapshot is False:
+                self._displayProjectWelcomeDialog()
+            self._project.project_loaded_signal.disconnect()
 
     def _displayProjectWelcomeDialog(self):
         variables = self.project().variables()
