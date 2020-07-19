@@ -19,7 +19,7 @@ from .qt import sip
 import time
 from contextlib import contextmanager
 
-from .utils import human_filesize
+from .utils import human_size
 from .qt import QtCore, QtWidgets, QtNetwork, qslot
 
 import logging
@@ -195,7 +195,7 @@ class Progress(QtCore.QObject):
                         progress_dialog.setValue(100)
 
                 if text and query["maximum"] > 1000:
-                    text += "\n{} / {}".format(human_filesize(query["current"]), human_filesize(query["maximum"]))
+                    text += "\n{} / {}".format(human_size(query["current"]), human_size(query["maximum"]))
 
             if text:
                 progress_dialog.setLabelText(text)

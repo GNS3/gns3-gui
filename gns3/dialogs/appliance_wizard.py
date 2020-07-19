@@ -29,7 +29,7 @@ from ..registry.registry import Registry
 from ..registry.config import Config
 from ..registry.appliance_to_template import ApplianceToTemplate
 from ..registry.image import Image
-from ..utils import human_filesize
+from ..utils import human_size
 from ..utils.wait_for_lambda_worker import WaitForLambdaWorker
 from ..utils.progress_dialog import ProgressDialog
 from ..compute_manager import ComputeManager
@@ -347,7 +347,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
                 size += image.get("filesize", 0)
                 image_widget = QtWidgets.QTreeWidgetItem([image["filename"],
-                                                          human_filesize(image.get("filesize", 0)),
+                                                          human_size(image.get("filesize", 0)),
                                                           image["status"]])
                 if image["status"] == "Missing":
                     image_widget.setForeground(2, QtGui.QBrush(QtGui.QColor("red")))
@@ -372,7 +372,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 expand = False
                 top.setForeground(2, QtGui.QBrush(QtGui.QColor("green")))
 
-            top.setData(1, QtCore.Qt.DisplayRole, human_filesize(size))
+            top.setData(1, QtCore.Qt.DisplayRole, human_size(size))
             top.setData(2, QtCore.Qt.DisplayRole, status)
             top.setData(0, QtCore.Qt.UserRole, version)
             top.setData(2, QtCore.Qt.UserRole, self._appliance)
