@@ -357,6 +357,7 @@ class LocalServer(QtCore.QObject):
                                              "Local server",
                                              "Connecting to server {} on port {}...".format(self._settings["host"], self._port),
                                              "Cancel", busy=True, parent=self.parent())
+            progress_dialog.setMinimumDuration(0)
             progress_dialog.show()
             if not progress_dialog.exec_():
                 return False
