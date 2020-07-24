@@ -1377,15 +1377,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def _controllerConnectedSlot(self):
 
+        self.updateRecentFileActions()
+        self._refreshVisibleWidgets()
+
         if self._settings["hide_setup_wizard"]:
             if self._open_file_at_startup:
                 self.loadPath(self._open_file_at_startup)
                 self._open_file_at_startup = None
             elif Topology.instance().project() is None:
                 self._newProjectActionSlot()
-
-        self.updateRecentFileActions()
-        self._refreshVisibleWidgets()
 
     def run_later(self, counter, callback):
         """
