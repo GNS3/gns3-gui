@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>986</width>
-    <height>716</height>
+    <height>719</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -151,6 +151,7 @@ background-none;
     <addaction name="uiReloadAllAction"/>
     <addaction name="uiAuxConsoleAllAction"/>
     <addaction name="uiConsoleAllAction"/>
+    <addaction name="uiResetConsoleAllAction"/>
    </widget>
    <widget class="QMenu" name="uiAnnotateMenu">
     <property name="title">
@@ -1292,6 +1293,11 @@ background-none;
   <action name="uiResetDocksAction">
    <property name="text">
     <string>Reset docks</string>
+   </property>
+  </action>
+  <action name="uiResetConsoleAllAction">
+   <property name="text">
+    <string>Reset all console connections</string>
    </property>
   </action>
  </widget>
