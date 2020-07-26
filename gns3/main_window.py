@@ -263,6 +263,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiReloadAllAction.triggered.connect(self._reloadAllActionSlot)
         self.uiAuxConsoleAllAction.triggered.connect(self._auxConsoleAllActionSlot)
         self.uiConsoleAllAction.triggered.connect(self._consoleAllActionSlot)
+        self.uiResetConsoleAllAction.triggered.connect(self._consoleResetAllActionSlot)
 
         # device menu is contextual and is build on-the-fly
         self.uiDeviceMenu.aboutToShow.connect(self._deviceMenuActionSlot)
@@ -854,6 +855,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         project = Topology.instance().project()
         if project is not None:
             project.reload_all_nodes()
+
+    def _consoleResetAllActionSlot(self):
+        """
+        Slot called when reset all console connections.
+        """
+
+        project = Topology.instance().project()
+        if project is not None:
+            project.reset_console_all_nodes()
 
     def _deviceMenuActionSlot(self):
         """
