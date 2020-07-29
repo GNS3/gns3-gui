@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>919</width>
-    <height>1072</height>
+    <width>961</width>
+    <height>1126</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -166,14 +166,14 @@
          </item>
         </layout>
        </item>
-       <item row="11" column="0">
+       <item row="12" column="0">
         <widget class="QLabel" name="uiConsoleResolutionLabel">
          <property name="text">
           <string>VNC console resolution:</string>
          </property>
         </widget>
        </item>
-       <item row="11" column="1">
+       <item row="12" column="1">
         <widget class="QComboBox" name="uiConsoleResolutionComboBox">
          <item>
           <property name="text">
@@ -212,14 +212,14 @@
          </item>
         </widget>
        </item>
-       <item row="12" column="0">
+       <item row="13" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
           <string>HTTP port in the container:</string>
          </property>
         </widget>
        </item>
-       <item row="12" column="1">
+       <item row="13" column="1">
         <widget class="QSpinBox" name="uiConsoleHttpPortSpinBox">
          <property name="minimum">
           <number>1</number>
@@ -229,17 +229,17 @@
          </property>
         </widget>
        </item>
-       <item row="13" column="0">
+       <item row="14" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>HTTP path:</string>
          </property>
         </widget>
        </item>
-       <item row="13" column="1">
+       <item row="14" column="1">
         <widget class="QLineEdit" name="uiHttpConsolePathLineEdit"/>
        </item>
-       <item row="14" column="0">
+       <item row="15" column="0">
         <widget class="QLabel" name="uiEnvironmentLabel">
          <property name="text">
           <string>Environment variables:
@@ -253,17 +253,17 @@
          </property>
         </widget>
        </item>
-       <item row="14" column="1">
+       <item row="15" column="1">
         <widget class="QTextEdit" name="uiEnvironmentTextEdit"/>
        </item>
-       <item row="15" column="0">
+       <item row="16" column="0">
         <widget class="QLabel" name="uiNetworkConfigLabel">
          <property name="text">
           <string>Network configuration</string>
          </property>
         </widget>
        </item>
-       <item row="15" column="1">
+       <item row="16" column="1">
         <widget class="QPushButton" name="uiNetworkConfigEditButton">
          <property name="text">
           <string>Edit</string>
@@ -305,6 +305,27 @@
          <property name="singleStep">
           <number>32</number>
          </property>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="uiAuxTypeLabel">
+         <property name="text">
+          <string>Auxiliary console type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QComboBox" name="uiAuxTypeComboBox">
+         <item>
+          <property name="text">
+           <string>telnet</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>none</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
