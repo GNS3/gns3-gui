@@ -67,7 +67,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         self.uiRefreshPushButton.clicked.connect(self._refreshVMListSlot)
         self.uiVmwareRadioButton.clicked.connect(self._listVMwareVMsSlot)
         self.uiVirtualBoxRadioButton.clicked.connect(self._listVirtualBoxVMsSlot)
-        self.uiVMwareBannerButton.clicked.connect(self._VMwareBannerButtonClickedSlot)
         settings = parent.settings()
         self.uiShowCheckBox.setChecked(settings["hide_setup_wizard"])
 
@@ -94,11 +93,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         self.uiLocalServerHostComboBox.addItem("::", "::")  # all IPv6 addresses
         self.uiLocalServerHostComboBox.addItem("0.0.0.0", "0.0.0.0")  # all IPv4 addresses
 
-        if sys.platform.startswith("darwin"):
-            self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_fusion_banner.png"))
-        else:
-            self.uiVMwareBannerButton.setIcon(QtGui.QIcon(":/images/vmware_workstation_banner.png"))
-
         if sys.platform.startswith("linux"):
             self.uiLocalRadioButton.setChecked(True)
             self.uiLocalLabel.setText("Dependencies like Dynamips and Qemu must be manually installed")
@@ -120,13 +114,6 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             return
 
         self.uiLocalServerPathLineEdit.setText(path)
-
-    def _VMwareBannerButtonClickedSlot(self):
-        if sys.platform.startswith("darwin"):
-            url = "http://send.onenetworkdirect.net/z/621395/CD225091/"
-        else:
-            url = "http://send.onenetworkdirect.net/z/616207/CD225091/"
-        QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
 
     def _listVMwareVMsSlot(self):
         """

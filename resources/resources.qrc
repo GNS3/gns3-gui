@@ -326,8 +326,6 @@
         <file>charcoal_icons/filter-hover.svg</file>
         <file>charcoal_icons/filter-reset.svg</file>
         <file>charcoal_icons/filter-reset-hover.svg</file>
-        <file>images/vmware_fusion_banner.png</file>
-        <file>images/vmware_workstation_banner.png</file>
         <file>styles/charcoal.css</file>
     </qresource>
 </RCC>
