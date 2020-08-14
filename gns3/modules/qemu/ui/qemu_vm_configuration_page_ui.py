@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_QemuVMConfigPageWidget(object):
     def setupUi(self, QemuVMConfigPageWidget):
         QemuVMConfigPageWidget.setObjectName("QemuVMConfigPageWidget")
-        QemuVMConfigPageWidget.resize(941, 877)
+        QemuVMConfigPageWidget.resize(941, 939)
         self.verticalLayout = QtWidgets.QVBoxLayout(QemuVMConfigPageWidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.uiQemutabWidget = QtWidgets.QTabWidget(QemuVMConfigPageWidget)
@@ -236,6 +236,9 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiHddDiskInterfaceComboBox = QtWidgets.QComboBox(self.uiHddGroupBox)
         self.uiHddDiskInterfaceComboBox.setObjectName("uiHddDiskInterfaceComboBox")
         self.gridLayout_9.addWidget(self.uiHddDiskInterfaceComboBox, 2, 1, 1, 1)
+        self.uiCreateConfigDiskCheckBox = QtWidgets.QCheckBox(self.uiHddGroupBox)
+        self.uiCreateConfigDiskCheckBox.setObjectName("uiCreateConfigDiskCheckBox")
+        self.gridLayout_9.addWidget(self.uiCreateConfigDiskCheckBox, 3, 0, 1, 2)
         self.gridLayout_11.addWidget(self.uiHddGroupBox, 3, 0, 1, 1)
         spacerItem1 = QtWidgets.QSpacerItem(438, 257, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_11.addItem(spacerItem1, 4, 0, 1, 1)
@@ -502,6 +505,7 @@ class Ui_QemuVMConfigPageWidget(object):
         self.uiHddDiskImageCreateToolButton.setText(_translate("QemuVMConfigPageWidget", "Create..."))
         self.uiHddDiskImageResizeToolButton.setText(_translate("QemuVMConfigPageWidget", "Resize..."))
         self.uiHddDiskInterfaceLabel.setText(_translate("QemuVMConfigPageWidget", "Disk interface:"))
+        self.uiCreateConfigDiskCheckBox.setText(_translate("QemuVMConfigPageWidget", "Automatically a create a config disk on HDD"))
         self.uiQemutabWidget.setTabText(self.uiQemutabWidget.indexOf(self.uiHddTab), _translate("QemuVMConfigPageWidget", "HDD"))
         self.uiCdromGroupBox.setTitle(_translate("QemuVMConfigPageWidget", "CD/DVD-ROM"))
         self.uiCdromImageLabel.setText(_translate("QemuVMConfigPageWidget", "Image:"))
