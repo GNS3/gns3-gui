@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>929</width>
+    <width>941</width>
     <height>939</height>
    </rect>
   </property>
@@ -482,6 +482,13 @@
           </item>
           <item row="2" column="1">
            <widget class="QComboBox" name="uiHddDiskInterfaceComboBox"/>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiCreateConfigDiskCheckBox">
+            <property name="text">
+             <string>Automatically a create a config disk on HDD</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
