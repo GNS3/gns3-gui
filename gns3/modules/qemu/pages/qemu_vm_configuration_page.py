@@ -90,6 +90,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
         self.uiLegacyNetworkingCheckBox.stateChanged.connect(self._legacyNetworkingChangedSlot)
         self.uiCustomAdaptersConfigurationPushButton.clicked.connect(self._customAdaptersConfigurationSlot)
+        self.uiCreateConfigDiskCheckBox.stateChanged.connect(self._createConfigDiskChangedSlot)
 
         # add the categories
         for name, category in Node.defaultCategories().items():
@@ -365,6 +366,16 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self._refreshQemuNetworkDevices(legacy_networking=True)
         else:
             self._refreshQemuNetworkDevices()
+
+    def _createConfigDiskChangedSlot(self, state):
+        """
+        Slot to allow or not HDD disk to be configured based on the state of the config disk option.
+        """
+
+        self.uiHddDiskImageLineEdit.setEnabled(not state)
+        self.uiHddDiskImageToolButton.setEnabled(not state)
+        self.uiHddDiskImageCreateToolButton.setEnabled(not state)
+        self.uiHddDiskImageResizeToolButton.setEnabled(not state)
 
     def _customAdaptersConfigurationSlot(self):
         """
