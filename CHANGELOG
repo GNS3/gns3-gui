@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.2.12 07/08/2020
+
+* Downgrade psutil to version 5.6.7
+* Fix log shows the GUI command line without spaces between its arguments. Fixes #3026
+* Use server host is console host is equal to "0:0:0:0:0:0:0:0"
+* Remove VMware promotion.
+
 ## 2.2.11 09/07/2020
 
 * Try to fix "Recent project" selection not working. Ref #3007

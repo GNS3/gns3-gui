@@ -15,7 +15,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(986, 716)
+        MainWindow.resize(986, 719)
         MainWindow.setContextMenuPolicy(QtCore.Qt.PreventContextMenu)
         MainWindow.setStyleSheet("#toolBar_Devices QToolButton {\n"
 "width: 50px;\n"
@@ -452,6 +452,8 @@ class Ui_MainWindow(object):
         self.uiEditReadmeAction = QtWidgets.QAction(MainWindow)
         self.uiEditReadmeAction.setIcon(icon31)
         self.uiEditReadmeAction.setObjectName("uiEditReadmeAction")
+        self.uiResetConsoleAllAction = QtWidgets.QAction(MainWindow)
+        self.uiResetConsoleAllAction.setObjectName("uiResetConsoleAllAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -500,6 +502,7 @@ class Ui_MainWindow(object):
         self.uiControlMenu.addAction(self.uiReloadAllAction)
         self.uiControlMenu.addAction(self.uiAuxConsoleAllAction)
         self.uiControlMenu.addAction(self.uiConsoleAllAction)
+        self.uiControlMenu.addAction(self.uiResetConsoleAllAction)
         self.uiAnnotateMenu.addAction(self.uiAddNoteAction)
         self.uiAnnotateMenu.addAction(self.uiInsertImageAction)
         self.uiAnnotateMenu.addAction(self.uiDrawRectangleAction)
@@ -718,6 +721,7 @@ class Ui_MainWindow(object):
         self.uiNewTemplateAction.setText(_translate("MainWindow", "New template"))
         self.uiEditReadmeAction.setText(_translate("MainWindow", "Edit readme"))
         self.uiEditReadmeAction.setToolTip(_translate("MainWindow", "Edit readme"))
+        self.uiResetConsoleAllAction.setText(_translate("MainWindow", "Reset all console connections"))
 from ..compute_summary_view import ComputeSummaryView
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView

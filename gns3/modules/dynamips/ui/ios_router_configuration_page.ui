@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>980</width>
-    <height>734</height>
+    <width>964</width>
+    <height>830</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -250,7 +250,7 @@
          </item>
         </layout>
        </item>
-       <item row="12" column="1" colspan="2">
+       <item row="14" column="1" colspan="2">
         <spacer>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -263,6 +263,27 @@
          </property>
         </spacer>
        </item>
+       <item row="12" column="2">
+        <widget class="QComboBox" name="uiAuxTypeComboBox">
+         <item>
+          <property name="text">
+           <string>telnet</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>none</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="12" column="0" colspan="2">
+        <widget class="QLabel" name="uiAuxTypeLabel">
+         <property name="text">
+          <string>Aux console type:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="uiMemoriesPageWidget">
@@ -270,7 +291,16 @@
        <string>Memories and disks</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item row="0" column="0">
@@ -448,7 +478,16 @@
        <string>Slots</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
@@ -649,7 +688,16 @@
        <string>Advanced</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
@@ -828,7 +876,16 @@
        <string>Environment</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>

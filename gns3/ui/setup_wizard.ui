@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1081</width>
-    <height>534</height>
+    <width>1104</width>
+    <height>665</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -234,33 +234,6 @@
     <string>In order to run the GNS3 VM you must first have VMware or VirtualBox installed and the GNS3 VM.ova imported with one of these software.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
-     <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
-      <property name="text">
-       <string>Virtualization software:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2" rowspan="4">
-     <widget class="QPushButton" name="uiVMwareBannerButton">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../../resources/resources.qrc">
-        <normaloff>:/images/vmware_fusion_banner.png</normaloff>:/images/vmware_fusion_banner.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>300</width>
-        <height>150</height>
-       </size>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0">
      <widget class="QRadioButton" name="uiVmwareRadioButton">
       <property name="toolTip">
@@ -274,18 +247,12 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+    <item row="0" column="0">
+     <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
+      <property name="text">
+       <string>Virtualization software:</string>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>317</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
+     </widget>
     </item>
     <item row="2" column="0">
      <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
@@ -328,7 +295,7 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="0" colspan="3">
+    <item row="6" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QComboBox" name="uiVMListComboBox">
@@ -349,7 +316,7 @@
       </item>
      </layout>
     </item>
-    <item row="8" column="0" colspan="3">
+    <item row="8" column="0" colspan="2">
      <widget class="QSpinBox" name="uiCPUSpinBox">
       <property name="minimum">
        <number>1</number>
@@ -362,7 +329,7 @@
       </property>
      </widget>
     </item>
-    <item row="10" column="0" colspan="3">
+    <item row="10" column="0" colspan="2">
      <widget class="QSpinBox" name="uiRAMSpinBox">
       <property name="enabled">
        <bool>true</bool>

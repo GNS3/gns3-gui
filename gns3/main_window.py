@@ -155,7 +155,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiFileMenu.insertActions(self.uiQuitAction, self.recent_file_actions)
         self.recent_file_actions_separator = self.uiFileMenu.insertSeparator(self.uiQuitAction)
         self.recent_file_actions_separator.setVisible(False)
-        self.updateRecentFileActions()
+        #self.updateRecentFileActions()
 
         # add recent projects to the File menu
         for i in range(0, self._maxrecent_files):
@@ -196,10 +196,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiShowReadmeAction
         ]
 
-        # This widgets are not enabled if it's a remote controller (no access to the local file system)
-        self.disableWhenRemoteContollerWidgets = [
-            # self.uiImportExportConfigsAction
+        for widget in self.disableWhenNoProjectWidgets:
+            widget.setEnabled(False)
+
+        self.disableWhenControllerNotConnectedWidgets = [
+            self.uiNewProjectAction,
+            self.uiOpenProjectAction,
+            self.uiImportProjectAction,
+            self.uiNewTemplateAction,
+            self.uiOpenApplianceAction,
+            self.uiWebUIAction,
+            self.uiNodesDockWidget
         ]
+
+        for widget in self.disableWhenControllerNotConnectedWidgets:
+            widget.setEnabled(False)
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
@@ -252,6 +263,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiReloadAllAction.triggered.connect(self._reloadAllActionSlot)
         self.uiAuxConsoleAllAction.triggered.connect(self._auxConsoleAllActionSlot)
         self.uiConsoleAllAction.triggered.connect(self._consoleAllActionSlot)
+        self.uiResetConsoleAllAction.triggered.connect(self._consoleResetAllActionSlot)
 
         # device menu is contextual and is build on-the-fly
         self.uiDeviceMenu.aboutToShow.connect(self._deviceMenuActionSlot)
@@ -542,8 +554,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Refresh widgets that should be visible or not
         """
-        for widget in self.disableWhenRemoteContollerWidgets:
-            widget.setVisible(not Controller.instance().isRemote())
+
+        for widget in self.disableWhenControllerNotConnectedWidgets:
+            widget.setEnabled(Controller.instance().connected())
 
         # No projects
         if Topology.instance().project() is None:
@@ -842,6 +855,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         project = Topology.instance().project()
         if project is not None:
             project.reload_all_nodes()
+
+    def _consoleResetAllActionSlot(self):
+        """
+        Slot called when reset all console connections.
+        """
+
+        project = Topology.instance().project()
+        if project is not None:
+            project.reset_console_all_nodes()
 
     def _deviceMenuActionSlot(self):
         """
@@ -1212,11 +1234,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             # start and connect to the local server if needed
             LocalServer.instance().localServerAutoStartIfRequired()
-            if self._open_file_at_startup:
-                self.loadPath(self._open_file_at_startup)
-                self._open_file_at_startup = None
-            elif Topology.instance().project() is None:
-                self._newProjectActionSlot()
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)
@@ -1369,8 +1386,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.recent_file_actions_separator.setVisible(False)
 
     def _controllerConnectedSlot(self):
+
         self.updateRecentFileActions()
         self._refreshVisibleWidgets()
+
+        if self._settings["hide_setup_wizard"]:
+            if self._open_file_at_startup:
+                self.loadPath(self._open_file_at_startup)
+                self._open_file_at_startup = None
+            elif Topology.instance().project() is None:
+                self._newProjectActionSlot()
 
     def run_later(self, counter, callback):
         """
