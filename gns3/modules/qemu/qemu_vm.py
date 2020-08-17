@@ -144,7 +144,9 @@ class QemuVM(Node):
         Name of the configuration files
         """
 
-        return ["config.zip"]
+        if self._settings.get("create_config_disk"):
+            return ["config.zip"]
+        return None
 
     def auxConsole(self):
         """
