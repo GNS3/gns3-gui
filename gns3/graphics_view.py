@@ -861,19 +861,19 @@ class GraphicsView(QtWidgets.QGraphicsView):
             bring_to_front_action.triggered.connect(self.bringToFrontSlot)
             menu.addAction(bring_to_front_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and bool(item.node().configFiles()), items)):
             import_config_action = QtWidgets.QAction("Import config", menu)
             import_config_action.setIcon(get_icon("import.svg"))
             import_config_action.triggered.connect(self.importConfigActionSlot)
             menu.addAction(import_config_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and bool(item.node().configFiles()), items)):
             export_config_action = QtWidgets.QAction("Export config", menu)
             export_config_action.setIcon(get_icon("export.svg"))
             export_config_action.triggered.connect(self.exportConfigActionSlot)
             menu.addAction(export_config_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configFiles"), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and bool(item.node().configFiles()), items)):
             export_config_action = QtWidgets.QAction("Edit config", menu)
             export_config_action.setIcon(get_icon("edit.svg"))
             export_config_action.triggered.connect(self.editConfigActionSlot)
@@ -1226,7 +1226,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "configFiles") and item.node().initialized():
+            if isinstance(item, NodeItem) and item.node().configFiles() and item.node().initialized():
                 items.append(item)
 
         if not items:
@@ -1257,7 +1257,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "configFiles") and item.node().initialized():
+            if isinstance(item, NodeItem) and item.node().configFiles() and item.node().initialized():
                 items.append(item)
 
         if not items:
@@ -1282,7 +1282,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and hasattr(item.node(), "configFiles") and item.node().initialized():
+            if isinstance(item, NodeItem) and item.node().configFiles() and item.node().initialized():
                 items.append(item)
 
         if not items:
