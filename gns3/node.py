@@ -210,6 +210,15 @@ class Node(BaseNode):
 
         return None
 
+    def configTextFiles(self):
+        """
+        Name of the configuration files, which are plain text files
+
+        :returns: List of configuration files, False if no files
+        """
+
+        return self.configFiles()
+
     def get(self, path, *args, **kwargs):
         """
         GET on current server / project

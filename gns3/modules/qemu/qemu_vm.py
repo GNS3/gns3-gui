@@ -148,6 +148,15 @@ class QemuVM(Node):
             return ["config.zip"]
         return None
 
+    def configTextFiles(self):
+        """
+        Name of the configuration files, which are plain text files
+
+        :returns: List of configuration files, False if no files
+        """
+
+        return None
+
     def auxConsole(self):
         """
         Returns the console port for this Docker VM instance.

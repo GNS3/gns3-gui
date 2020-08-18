@@ -873,7 +873,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             export_config_action.triggered.connect(self.exportConfigActionSlot)
             menu.addAction(export_config_action)
 
-        if True in list(map(lambda item: isinstance(item, NodeItem) and bool(item.node().configFiles()), items)):
+        if True in list(map(lambda item: isinstance(item, NodeItem) and bool(item.node().configTextFiles()), items)):
             export_config_action = QtWidgets.QAction("Edit config", menu)
             export_config_action.setIcon(get_icon("edit.svg"))
             export_config_action.triggered.connect(self.editConfigActionSlot)
@@ -1257,17 +1257,17 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         items = []
         for item in self.scene().selectedItems():
-            if isinstance(item, NodeItem) and item.node().configFiles() and item.node().initialized():
+            if isinstance(item, NodeItem) and item.node().configTextFiles() and item.node().initialized():
                 items.append(item)
 
         if not items:
             return
 
         for item in items:
-            if len(item.node().configFiles()) == 1:
-                config_file = item.node().configFiles()[0]
+            if len(item.node().configTextFiles()) == 1:
+                config_file = item.node().configTextFiles()[0]
             else:
-                config_file, ok = QtWidgets.QInputDialog.getItem(self, "Edit file", "File to edit?", item.node().configFiles(), 0, False)
+                config_file, ok = QtWidgets.QInputDialog.getItem(self, "Edit file", "File to edit?", item.node().configTextFiles(), 0, False)
                 if not ok:
                     continue
             dialog = FileEditorDialog(item.node(), config_file, parent=self)
