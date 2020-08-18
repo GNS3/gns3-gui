@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>941</width>
-    <height>939</height>
+    <height>944</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -261,7 +261,7 @@
        <item row="0" column="0">
         <widget class="QGroupBox" name="uiHdaGroupBox">
          <property name="title">
-          <string>HDA (Primary Master)</string>
+          <string>HDA (Disk 0)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0">
@@ -318,7 +318,7 @@
        <item row="1" column="0">
         <widget class="QGroupBox" name="uiHdbgroupBox">
          <property name="title">
-          <string>HDB (Primary Slave)</string>
+          <string>HDB (Disk 1)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
           <item row="0" column="0">
@@ -375,7 +375,7 @@
        <item row="2" column="0">
         <widget class="QGroupBox" name="uiHdcGroupBox">
          <property name="title">
-          <string>HDC (Secondary Master)</string>
+          <string>HDC (Disk 2)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">
           <item row="0" column="0">
@@ -432,7 +432,7 @@
        <item row="3" column="0">
         <widget class="QGroupBox" name="uiHddGroupBox">
          <property name="title">
-          <string>HDD (Secondary Slave)</string>
+          <string>HDD (Disk 3)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_9">
           <item row="0" column="0">
