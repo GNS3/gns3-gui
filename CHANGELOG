@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.13 04/09/2020
+
+* No changes
+
 ## 2.2.12 07/08/2020
 
 * Downgrade psutil to version 5.6.7
