@@ -171,8 +171,8 @@ def test_create_new_version():
         os.path.dirname(__file__), "appliances", "microcore-linux.gns3a")
 
     a = Appliance(registry, appliance_path)
-
-    a.create_new_version("42.0")
+    new_version = {'images': {'hda_disk_image': {'filename': 'linux-microcore-42.0.img', 'version': '42.0'}}, 'name': '42.0'}
+    a.create_new_version(new_version)
     v = a['versions'][-1:][0]
     assert v == {
         'images':
