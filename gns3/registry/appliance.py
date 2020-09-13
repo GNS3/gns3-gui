@@ -115,22 +115,14 @@ class Appliance(collections.abc.Mapping):
                 if not found:
                     raise ApplianceError("Broken appliance missing file {} for version {}".format(filename, version["name"]))
 
-    def create_new_version(self, version_name):
+    def create_new_version(self, new_version):
         """
         Duplicate a version in order to create a new version
         """
-        if 'versions' not in self._appliance.keys() or not self._appliance["versions"]:
+
+        if "versions" not in self._appliance.keys() or not self._appliance["versions"]:
             raise ApplianceError("Your appliance file doesn't contain any versions")
-
-        ref = self._appliance["versions"][0]
-        new_version = {'name': version_name}
-        new_version['images'] = {}
-
-        for disk_type in ref['images']:
-            filename = ref['images'][disk_type]['filename']
-            filename = filename.replace(ref['images'][disk_type]['version'], version_name)
-            new_version['images'][disk_type] = {'filename': filename, 'version': version_name}
-        self._appliance['versions'].append(new_version)
+        self._appliance["versions"].append(new_version)
 
     def search_images_for_version(self, version_name):
         """

@@ -475,8 +475,24 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         Allow user to create a new version of an appliance
         """
 
-        new_version, ok = QtWidgets.QInputDialog.getText(self, "Creating a new version", "Create a new version for this appliance.\nPlease share your experience on the GNS3 community if this version works.\n\nVersion name:", QtWidgets.QLineEdit.Normal)
+        current = self.uiApplianceVersionTreeWidget.currentItem()
+        if current is None:
+            QtWidgets.QMessageBox.critical(self.parent(), "Base version", "Please select a base version")
+            return
+        base_version = current.data(0, QtCore.Qt.UserRole)
+
+        new_version_name, ok = QtWidgets.QInputDialog.getText(self, "Creating a new version", "Create a new version for this appliance.\nPlease share your experience on the GNS3 community if this version works.\n\nVersion name:", QtWidgets.QLineEdit.Normal, base_version.get("name"))
         if ok:
+            new_version = {"name": new_version_name}
+            new_version["images"] = {}
+
+            for disk_type in base_version["images"]:
+                base_filename = base_version["images"][disk_type]["filename"]
+                filename, ok = QtWidgets.QInputDialog.getText(self, "Image", "Disk image filename for {}".format(disk_type), QtWidgets.QLineEdit.Normal, base_filename)
+                if not ok:
+                    filename = base_filename
+                new_version["images"][disk_type] = {"filename": filename, "version": new_version_name}
+
             try:
                 self._appliance.create_new_version(new_version)
             except ApplianceError as e:
