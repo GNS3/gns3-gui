@@ -23,8 +23,8 @@
 # or negative for a release candidate or beta (after the base version
 # number has been incremented)
 
-__version__ = "2.2.14dev1"
-__version_info__ = (2, 2, 14, 99)  # If it's a git checkout try to add the commit
+__version__ = "2.2.14"
+__version_info__ = (2, 2, 14, 0)
 
 if "dev" in __version__:
     try:

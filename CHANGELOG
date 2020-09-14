@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.14 14/09/2020
+
+* Improvements to add a new version of an appliance from wizard. Fixes #3002.
+
 ## 2.2.13 04/09/2020
 
 * No changes
