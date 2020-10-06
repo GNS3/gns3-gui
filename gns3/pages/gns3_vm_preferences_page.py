@@ -80,7 +80,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         """
 
         if Controller.instance().connected():
-            Controller.instance().get("/gns3vm", self._getSettingsCallback)
+            Controller.instance().get("/gns3vm/", self._getSettingsCallback)
         else:
             log.error("Cannot load the GNS3 VM settings in the preferences dialog: not connected to the controller")
 

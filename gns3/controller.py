@@ -444,8 +444,7 @@ class Controller(QtCore.QObject):
     def _websocket_error(self, error):
         if self._notification_stream:
             log.error("Websocket notification stream error: {}".format(self._notification_stream.errorString()))
-            self._notification_stream = None
-            self._startListenNotifications()
+            self.stopListenNotifications()
 
     @qslot
     def _websocket_event_received(self, event):

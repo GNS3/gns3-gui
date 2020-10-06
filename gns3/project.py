@@ -443,7 +443,7 @@ class Project(QtCore.QObject):
             "snap_to_grid": self._snap_to_grid_on_new_project,
             "show_interface_labels": self._show_interface_labels_on_new_project
         }
-        Controller.instance().post("/projects", self._projectCreatedCallback, body=body)
+        Controller.instance().post("/projects/", self._projectCreatedCallback, body=body)
 
     def update(self):
         """
@@ -645,8 +645,7 @@ class Project(QtCore.QObject):
     def _websocket_error(self, error):
         if self._notification_stream:
             log.error(self._notification_stream.errorString())
-            self._notification_stream = None
-            self._startListenNotifications()
+            self.stopListenNotifications()
 
     @qslot
     def _websocket_event_received(self, event):
