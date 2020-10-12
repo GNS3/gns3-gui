@@ -178,8 +178,9 @@ class ApplianceToTemplate:
         if symbol_id.startswith(":/symbols/"):
             return symbol_id
 
+        controller = Controller.instance()
         path = os.path.join(Config().symbols_dir, symbol_id)
-        if os.path.exists(path):
+        if not controller.isRemote() and os.path.exists(path):
             return os.path.basename(path)
 
         if controller_symbols:
@@ -197,7 +198,6 @@ class ApplianceToTemplate:
         url = "https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/{}".format(symbol_id)
         try:
             self._downloadApplianceSymbol(url, path)
-            controller = Controller.instance()
             controller.clearStaticCache()
             if controller.isRemote():
                 controller.uploadSymbol(symbol_id, path)

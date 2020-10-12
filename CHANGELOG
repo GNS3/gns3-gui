@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.15 07/10/2020
+
+* Fix custom symbol not sent to remote controller when installing appliance
+
 ## 2.2.14 14/09/2020
 
 * Improvements to add a new version of an appliance from wizard. Fixes #3002.
