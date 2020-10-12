@@ -199,6 +199,26 @@ class Node(BaseNode):
 
         return self._always_on
 
+    def configFiles(self):
+        """
+        Name of the configuration files
+
+        This method should be overridden in derived classes
+
+        :returns: List of configuration files, False if no files
+        """
+
+        return None
+
+    def configTextFiles(self):
+        """
+        Name of the configuration files, which are plain text files
+
+        :returns: List of configuration files, False if no files
+        """
+
+        return self.configFiles()
+
     def get(self, path, *args, **kwargs):
         """
         GET on current server / project
@@ -378,6 +398,8 @@ class Node(BaseNode):
         general_node_properties = ("name",
                                    "console",
                                    "console_type",
+                                   "aux",
+                                   "aux_type",
                                    "x",
                                    "y",
                                    "z",
@@ -538,7 +560,7 @@ class Node(BaseNode):
             del result["properties"]
 
         # Update common element of all nodes
-        for key in ["x", "y", "z", "locked", "symbol", "label", "console_host", "console", "console_type", "console_auto_start", "custom_adapters"]:
+        for key in ["x", "y", "z", "locked", "symbol", "label", "console_host", "console", "console_type", "console_auto_start", "aux", "aux_type", "custom_adapters"]:
             if key in result:
                 self._settings[key] = result[key]
 
@@ -658,6 +680,16 @@ class Node(BaseNode):
             host = Controller.instance().host()
         return host
 
+    def auxType(self):
+        """
+        Get the auxiliary console type (serial, telnet or VNC)
+        """
+
+        aux_type = "none"
+        if "aux_type" in self.settings():
+            return self.settings()["aux_type"]
+        return aux_type
+
     def setStatus(self, status):
         """
         Overloaded setStatus() method for console auto start.
@@ -679,7 +711,7 @@ class Node(BaseNode):
 
         if command is None:
             if aux:
-                command = self.consoleCommand(console_type="telnet")
+                command = self.consoleCommand(console_type=self.auxType())
             else:
                 command = self.consoleCommand()
 
@@ -689,8 +721,8 @@ class Node(BaseNode):
             console_port = self.auxConsole()
             if console_port is None:
                 raise ValueError("AUX console port not allocated for {}".format(self.name()))
-            # AUX console is always telnet
-            console_type = "telnet"
+            if "aux_type" in self.settings():
+                console_type = self.auxType()
         else:
             console_port = self.console()
             if console_port is None:
@@ -774,7 +806,7 @@ class Node(BaseNode):
         :param directory: destination directory path
         """
 
-        if not hasattr(self, "configFiles"):
+        if not self.configFiles():
             return False
         for file in self.configFiles():
             self.get("/files/{file}".format(file=file),
@@ -813,7 +845,7 @@ class Node(BaseNode):
         :param directory: source directory path
         """
 
-        if not hasattr(self, "configFiles"):
+        if not self.configFiles():
             return
 
         try:

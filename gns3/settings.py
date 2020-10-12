@@ -299,6 +299,7 @@ GENERAL_SETTINGS = {
     "debug_level": 0,
     "multi_profiles": False,
     "hdpi": not sys.platform.startswith("linux"),
+    "auto_open_readme": True,
     "direct_file_upload": False,
     "symbol_theme": "Classic"
 }

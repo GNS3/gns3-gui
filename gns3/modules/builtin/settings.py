@@ -34,6 +34,7 @@ BUILTIN_SETTINGS = {
 
 CLOUD_SETTINGS = {
     "name": "",
+    "usage": "",
     "remote_console_host": "127.0.0.1",
     "remote_console_port": 23,
     "remote_console_type": "none",

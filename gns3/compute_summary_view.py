@@ -23,6 +23,7 @@ from .qt import QtGui, QtCore, QtWidgets
 from .compute_manager import ComputeManager
 from .topology import Topology
 from .node import Node
+from .utils import human_size
 
 import logging
 log = logging.getLogger(__name__)
@@ -58,14 +59,20 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
         text = self._compute.name()
 
         if self._compute.cpuUsagePercent() is not None:
-            text = "{} CPU {}%, RAM {}%".format(text, self._compute.cpuUsagePercent(), self._compute.memoryUsagePercent())
+            text = "{} CPU {}%, RAM {}%, DISK {}%".format(text,
+                                                          self._compute.cpuUsagePercent(),
+                                                          self._compute.memoryUsagePercent(),
+                                                          self._compute.diskUsagePercent())
 
         self.setText(0, text)
         if self._compute.connected():
             self._status = "connected"
-            self.setToolTip(0, "Server {} version {} running on {}".format(self._compute.name(),
-                                                                           self._compute.capabilities().get("version", "n/a"),
-                                                                           self._compute.capabilities().get("platform", "")))
+            self.setToolTip(0, "Server {} v{} running on {} (CPUs={} / RAM={} / DISK={})".format(self._compute.name(),
+                                                                                                 self._compute.capabilities().get("version", "n/a"),
+                                                                                                 self._compute.capabilities().get("platform", ""),
+                                                                                                 self._compute.capabilities().get("cpus", 0),
+                                                                                                 human_size(self._compute.capabilities().get("memory", 0)),
+                                                                                                 human_size(self._compute.capabilities().get("disk_size", 0))))
             if usage is None or (self._compute.cpuUsagePercent() < 90 and self._compute.memoryUsagePercent() < 90):
                 self.setIcon(0, QtGui.QIcon(':/icons/led_green.svg'))
             else:

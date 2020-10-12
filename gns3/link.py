@@ -345,6 +345,29 @@ class Link(QtCore.QObject):
         # let the GUI know about this link has been deleted
         self.delete_link_signal.emit(self._id)
 
+    def resetLink(self):
+        """
+        Resets this link.
+        """
+
+        log.debug("reset link from {} {} to {} {}".format(self._source_node.name(),
+                                                          self._source_port.name(),
+                                                          self._destination_node.name(),
+                                                          self._destination_port.name()))
+
+        Controller.instance().post("/projects/{project_id}/links/{link_id}/reset".format(project_id=self.project().id(),
+                                                                                         link_id=self._link_id),
+                                                                                         self._linkResetCallback)
+
+    def _linkResetCallback(self, result, error=False, **kwargs):
+        """
+        Called after the link is reset.
+        """
+
+        if error:
+            log.error("Error while resetting link: {}".format(result["message"]))
+            return
+
     def startCapture(self, data_link_type, capture_file_name):
         data = {
             "capture_file_name": capture_file_name,

@@ -43,6 +43,7 @@ def test_getComputeRemote1X():
         "user": None,
         "cpu_usage_percent": None,
         "memory_usage_percent": None,
+        "disk_usage_percent": None,
         "capabilities": {"test": "a"}
     })
 
@@ -77,6 +78,7 @@ def test_listComputesCallback():
             "user": None,
             "cpu_usage_percent": None,
             "memory_usage_percent": None,
+            "disk_usage_percent": None,
             "capabilities": {"test": "a"}
         }
     ])
@@ -100,6 +102,7 @@ def test_computeDataReceivedCallback():
         "user": None,
         "cpu_usage_percent": None,
         "memory_usage_percent": None,
+        "disk_usage_percent": None,
         "capabilities": {"test": "a"}
     })
     assert cm._computes["test"].name() == "Test server"
@@ -123,6 +126,7 @@ def test_computeDataReceivedCallback():
         "user": None,
         "cpu_usage_percent": None,
         "memory_usage_percent": None,
+        "disk_usage_percent": None,
         "capabilities": {"test": "a"}
     })
     assert cm._computes["test"].name() == "Test Compute"

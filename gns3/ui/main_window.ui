@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>986</width>
-    <height>716</height>
+    <height>719</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -38,7 +38,16 @@ background-none;
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -62,7 +71,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>986</width>
-     <height>42</height>
+     <height>39</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -127,6 +136,7 @@ background-none;
     <addaction name="uiShowGridAction"/>
     <addaction name="uiResetPortLabelsAction"/>
     <addaction name="uiShowPortNamesAction"/>
+    <addaction name="uiShowReadmeAction"/>
     <addaction name="uiLockAllAction"/>
     <addaction name="separator"/>
     <addaction name="uiDocksMenu"/>
@@ -141,6 +151,7 @@ background-none;
     <addaction name="uiReloadAllAction"/>
     <addaction name="uiAuxConsoleAllAction"/>
     <addaction name="uiConsoleAllAction"/>
+    <addaction name="uiResetConsoleAllAction"/>
    </widget>
    <widget class="QMenu" name="uiAnnotateMenu">
     <property name="title">
@@ -228,7 +239,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -372,7 +392,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -438,7 +467,16 @@ background-none;
      </sizepolicy>
     </property>
     <layout class="QGridLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -482,7 +520,16 @@ background-none;
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -1156,13 +1203,13 @@ background-none;
     <string>Import portable project</string>
    </property>
   </action>
-  <action name="uiEditReadmeAction">
+  <action name="uiShowReadmeAction">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/edit.svg</normaloff>:/icons/edit.svg</iconset>
    </property>
    <property name="text">
-    <string>Edit readme</string>
+    <string>Show readme</string>
    </property>
   </action>
   <action name="uiAcademyAction">
@@ -1241,6 +1288,23 @@ background-none;
    </property>
    <property name="text">
     <string>New template</string>
+   </property>
+  </action>
+  <action name="uiEditReadmeAction">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/edit.svg</normaloff>:/icons/edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edit readme</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit readme</string>
+   </property>
+  </action>
+  <action name="uiResetConsoleAllAction">
+   <property name="text">
+    <string>Reset all console connections</string>
    </property>
   </action>
  </widget>

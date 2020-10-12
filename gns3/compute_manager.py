@@ -120,6 +120,7 @@ class ComputeManager(QtCore.QObject):
         self._computes[compute_id].setUser(compute["user"])
         self._computes[compute_id].setCpuUsagePercent(compute["cpu_usage_percent"])
         self._computes[compute_id].setMemoryUsagePercent(compute["memory_usage_percent"])
+        self._computes[compute_id].setDiskUsagePercent(compute["disk_usage_percent"])
         self._computes[compute_id].setCapabilities(compute["capabilities"])
         self._computes[compute_id].setLastError(compute.get("last_error"))
 

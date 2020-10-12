@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>979</width>
-    <height>564</height>
+    <width>1034</width>
+    <height>575</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -554,6 +554,16 @@
       <zorder>uiConsoleHttpPathLineEdit</zorder>
       <zorder>uiConsoleTypeLabel</zorder>
       <zorder>uiConsoleTypeComboBox</zorder>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Usage</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPlainTextEdit" name="uiUsageTextEdit"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>

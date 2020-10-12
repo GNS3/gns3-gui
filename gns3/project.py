@@ -365,6 +365,15 @@ class Project(QtCore.QObject):
 
         Controller.instance().post("/projects/{project_id}/nodes/reload".format(project_id=self._id), None, body={}, timeout=None)
 
+    def reset_console_all_nodes(self):
+        """Reset console for all nodes belonging to this project"""
+
+        # Don't do anything if the project doesn't exist on the server
+        if self._id is None:
+            return
+
+        Controller.instance().post("/projects/{project_id}/nodes/console/reset".format(project_id=self._id), None, body={}, timeout=None)
+
     def get(self, path, callback, **kwargs):
         """
         HTTP GET on the remote server
@@ -541,7 +550,6 @@ class Project(QtCore.QObject):
             if not self._notification_stream:
                 self._startListenNotifications()
         self.project_updated_signal.emit()
-
         self.get("/nodes", self._listNodesCallback)
 
     def _listNodesCallback(self, result, error=False, **kwargs):

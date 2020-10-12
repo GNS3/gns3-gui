@@ -301,6 +301,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiImagesPathLineEdit.setText(local_server["images_path"])
         self.uiConfigsPathLineEdit.setText(local_server["configs_path"])
         self.uiAppliancesPathLineEdit.setText(local_server["appliances_path"])
+        self.uiAutoOpenReadmeCheckBox.setChecked(settings["auto_open_readme"])
         self.uiStatsCheckBox.setChecked(settings["send_stats"])
         self.uiOverlayNotificationsCheckBox.setChecked(settings["overlay_notifications"])
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
@@ -411,6 +412,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             "vnc_console_command": self.uiVNCConsoleCommandLineEdit.text(),
             "spice_console_command": self.uiSPICEConsoleCommandLineEdit.text(),
             "delay_console_all": self.uiDelayConsoleAllSpinBox.value(),
+            "auto_open_readme": self.uiAutoOpenReadmeCheckBox.isChecked(),
             "send_stats": self.uiStatsCheckBox.isChecked(),
             "multi_profiles": self.uiMultiProfilesCheckBox.isChecked(),
             "direct_file_upload": self.uiDirectFileUpload.isChecked()

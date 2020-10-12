@@ -100,11 +100,14 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         self.uiEnvironmentTextEdit.setText(settings["environment"])
         self.uiConsoleTypeComboBox.setCurrentIndex(self.uiConsoleTypeComboBox.findText(settings["console_type"]))
         self.uiConsoleAutoStartCheckBox.setChecked(settings["console_auto_start"])
+        self.uiAuxTypeComboBox.setCurrentIndex(self.uiAuxTypeComboBox.findText(settings["aux_type"]))
         self.uiConsoleResolutionComboBox.setCurrentIndex(self.uiConsoleResolutionComboBox.findText(settings["console_resolution"]))
         self.uiConsoleHttpPortSpinBox.setValue(settings["console_http_port"])
         self.uiHttpConsolePathLineEdit.setText(settings["console_http_path"])
         self.uiExtraHostsTextEdit.setPlainText(settings["extra_hosts"])
         self.uiExtraVolumeTextEdit.setPlainText("\n".join(settings["extra_volumes"]))
+        self.uiMaxMemorySpinBox.setValue(settings["memory"])
+        self.uiMaxCPUsDoubleSpinBox.setValue(settings["cpus"])
 
         if not group:
             self.uiNameLineEdit.setText(settings["name"])
@@ -172,12 +175,15 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         settings["environment"] = self.uiEnvironmentTextEdit.toPlainText()
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText()
         settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
+        settings["aux_type"] = self.uiAuxTypeComboBox.currentText()
         settings["console_resolution"] = self.uiConsoleResolutionComboBox.currentText()
         settings["console_http_port"] = self.uiConsoleHttpPortSpinBox.value()
         settings["console_http_path"] = self.uiHttpConsolePathLineEdit.text()
         settings["extra_hosts"] = self.uiExtraHostsTextEdit.toPlainText()
         # only tidy input here, validation is performed server side
         settings["extra_volumes"] = [ y for x in self.uiExtraVolumeTextEdit.toPlainText().split("\n") for y in [ x.strip() ] if y ]
+        settings["memory"] = self.uiMaxMemorySpinBox.value()
+        settings["cpus"] = self.uiMaxCPUsDoubleSpinBox.value()
 
         if not group:
             adapters = self.uiAdapterSpinBox.value()

@@ -39,10 +39,13 @@ DOCKER_CONTAINER_SETTINGS = {
     "environment": "",
     "console_type": "telnet",
     "console_auto_start": False,
+    "aux_type": "none",
     "console_resolution": "1024x768",
     "console_http_port": 80,
     "console_http_path": "/",
     "extra_hosts": "",
     "extra_volumes": [],
+    "memory": 0,
+    "cpus": 0,
     "node_type": "docker"
 }

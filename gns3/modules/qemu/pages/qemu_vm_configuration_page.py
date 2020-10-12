@@ -90,6 +90,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
         self.uiLegacyNetworkingCheckBox.stateChanged.connect(self._legacyNetworkingChangedSlot)
         self.uiCustomAdaptersConfigurationPushButton.clicked.connect(self._customAdaptersConfigurationSlot)
+        self.uiCreateConfigDiskCheckBox.stateChanged.connect(self._createConfigDiskChangedSlot)
 
         # add the categories
         for name, category in Node.defaultCategories().items():
@@ -366,6 +367,16 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         else:
             self._refreshQemuNetworkDevices()
 
+    def _createConfigDiskChangedSlot(self, state):
+        """
+        Slot to allow or not HDD disk to be configured based on the state of the config disk option.
+        """
+
+        self.uiHddDiskImageLineEdit.setEnabled(not state)
+        self.uiHddDiskImageToolButton.setEnabled(not state)
+        self.uiHddDiskImageCreateToolButton.setEnabled(not state)
+        self.uiHddDiskImageResizeToolButton.setEnabled(not state)
+
     def _customAdaptersConfigurationSlot(self):
         """
         Slot to open the custom adapters configuration dialog
@@ -453,6 +464,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiHdbDiskInterfaceComboBox.setCurrentIndex(self.uiHdbDiskInterfaceComboBox.findText(settings["hdb_disk_interface"]))
             self.uiHdcDiskInterfaceComboBox.setCurrentIndex(self.uiHdcDiskInterfaceComboBox.findText(settings["hdc_disk_interface"]))
             self.uiHddDiskInterfaceComboBox.setCurrentIndex(self.uiHddDiskInterfaceComboBox.findText(settings["hdd_disk_interface"]))
+            self.uiCreateConfigDiskCheckBox.setChecked(settings["create_config_disk"])
             self.uiCdromImageLineEdit.setText(settings["cdrom_image"])
             self.uiBiosImageLineEdit.setText(settings["bios_image"])
             self.uiInitrdLineEdit.setText(settings["initrd"])
@@ -518,6 +530,10 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         index = self.uiConsoleTypeComboBox.findText(settings["console_type"])
         if index != -1:
             self.uiConsoleTypeComboBox.setCurrentIndex(index)
+
+        index = self.uiAuxTypeComboBox.findText(settings["aux_type"])
+        if index != -1:
+            self.uiAuxTypeComboBox.setCurrentIndex(index)
 
         self.uiConsoleAutoStartCheckBox.setChecked(settings["console_auto_start"])
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
@@ -588,6 +604,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             settings["hdb_disk_interface"] = self.uiHdbDiskInterfaceComboBox.currentText()
             settings["hdc_disk_interface"] = self.uiHdcDiskInterfaceComboBox.currentText()
             settings["hdd_disk_interface"] = self.uiHddDiskInterfaceComboBox.currentText()
+            settings["create_config_disk"] = self.uiCreateConfigDiskCheckBox.isChecked()
             settings["cdrom_image"] = self.uiCdromImageLineEdit.text().strip()
             settings["bios_image"] = self.uiBiosImageLineEdit.text().strip()
             settings["initrd"] = self.uiInitrdLineEdit.text().strip()
@@ -644,6 +661,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         settings["boot_priority"] = self.uiBootPriorityComboBox.itemData(self.uiBootPriorityComboBox.currentIndex())
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
         settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
+        settings["aux_type"] = self.uiAuxTypeComboBox.currentText().lower()
         settings["adapter_type"] = self.uiAdapterTypesComboBox.itemData(self.uiAdapterTypesComboBox.currentIndex())
         settings["kernel_command_line"] = self.uiKernelCommandLineEdit.text()
 

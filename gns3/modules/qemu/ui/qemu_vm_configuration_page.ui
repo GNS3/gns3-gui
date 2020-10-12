@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>941</width>
-    <height>877</height>
+    <height>944</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -202,7 +202,7 @@
          </item>
         </layout>
        </item>
-       <item row="10" column="1">
+       <item row="11" column="1">
         <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -215,6 +215,42 @@
          </property>
         </spacer>
        </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="uiAuxTypeLabel">
+         <property name="text">
+          <string>Auxiliary console type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QComboBox" name="uiAuxTypeComboBox">
+         <item>
+          <property name="text">
+           <string>telnet</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>vnc</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>spice</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>spice+agent</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>none</string>
+          </property>
+         </item>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="uiHddTab">
@@ -225,7 +261,7 @@
        <item row="0" column="0">
         <widget class="QGroupBox" name="uiHdaGroupBox">
          <property name="title">
-          <string>HDA (Primary Master)</string>
+          <string>HDA (Disk 0)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0">
@@ -282,7 +318,7 @@
        <item row="1" column="0">
         <widget class="QGroupBox" name="uiHdbgroupBox">
          <property name="title">
-          <string>HDB (Primary Slave)</string>
+          <string>HDB (Disk 1)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
           <item row="0" column="0">
@@ -339,7 +375,7 @@
        <item row="2" column="0">
         <widget class="QGroupBox" name="uiHdcGroupBox">
          <property name="title">
-          <string>HDC (Secondary Master)</string>
+          <string>HDC (Disk 2)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">
           <item row="0" column="0">
@@ -396,7 +432,7 @@
        <item row="3" column="0">
         <widget class="QGroupBox" name="uiHddGroupBox">
          <property name="title">
-          <string>HDD (Secondary Slave)</string>
+          <string>HDD (Disk 3)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_9">
           <item row="0" column="0">
@@ -447,6 +483,13 @@
           <item row="2" column="1">
            <widget class="QComboBox" name="uiHddDiskInterfaceComboBox"/>
           </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiCreateConfigDiskCheckBox">
+            <property name="text">
+             <string>Automatically a create a config disk on HDD</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -470,7 +513,16 @@
        <string>CD/DVD</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
