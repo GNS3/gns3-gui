@@ -452,7 +452,7 @@ class Project(QtCore.QObject):
             "snap_to_grid": self._snap_to_grid_on_new_project,
             "show_interface_labels": self._show_interface_labels_on_new_project
         }
-        Controller.instance().post("/projects/", self._projectCreatedCallback, body=body)
+        Controller.instance().post("/projects", self._projectCreatedCallback, body=body)
 
     def update(self):
         """
