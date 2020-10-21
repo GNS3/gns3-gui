@@ -25,6 +25,7 @@ from .local_config import LocalConfig
 from .settings import PACKET_CAPTURE_SETTINGS
 from .dialogs.capture_dialog import CaptureDialog
 from .topology import Topology
+from .controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
@@ -37,6 +38,7 @@ class PacketCapture:
 
     def __init__(self):
         self._tail_process = {}
+        self._curl_process = {}
         self._capture_reader_process = {}
         # Auto start the capture program for this link
         self._autostart = {}
@@ -49,6 +51,11 @@ class PacketCapture:
         """
 
         for process in list(self._tail_process.values()):
+            try:
+                process.kill()
+            except OSError:
+                pass
+        for process in list(self._curl_process.values()):
             try:
                 process.kill()
             except OSError:
@@ -93,6 +100,38 @@ class PacketCapture:
 
         if link:
             if link.capturing():
+                if Controller.instance().isRemote():
+                    # run curl here
+                    if sys.platform.startswith("win"):
+                        # hide curl window on Windows
+                        info = subprocess.STARTUPINFO()
+                        info.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                        info.wShowWindow = subprocess.SW_HIDE
+                        if hasattr(sys, "frozen"):
+                            curl_path = os.path.dirname(os.path.abspath(sys.executable))  # for Popen to find curl.exe
+                        else:
+                            # We suppose a developer will have curl in the standard GNS3 location
+                            curl_path = "C:\\Program Files\\GNS3"
+                        curl_exe = os.path.join(curl_path, "curl.exe")
+                    else:
+                        curl_exe = "curl"
+                    try:
+                        command1 = "\"{curl_full_exe}\" --silent --no-buffer --output \"{pcap_local}\" \"{pcap_http}\"".format(
+                            curl_full_exe=curl_exe,
+                            pcap_local=link.capture_file_path().translate(str.maketrans({"\"": r"\\\""})),
+                            pcap_http="http://{remote_server}:{remote_port}/v2/projects/{project_id}/links/{link_id}/pcap".format(
+                                remote_server=Controller.instance().host(),
+                                remote_port=Controller.instance().getHttpClient()._port,  # fixme
+                                project_id=link.project().id(),
+                                link_id=link.link_id()
+                            ).translate(str.maketrans({"\"": r"\\\""}))
+                        )
+                        log.debug(command1)
+                        self._curl_process[link] = subprocess.Popen(command1, startupinfo=info)
+                    except OSError as e:
+                        log.error("Can't start packet capture program {}".format(str(e)))
+                        return
+
                 if self._autostart.get(link) and link not in self._tail_process:
                     self.startPacketCaptureReader(link)
                 log.debug("Has successfully started capturing packets on {} to {}".format(link.id(), link.capture_file_path()))
@@ -123,6 +162,9 @@ class PacketCapture:
         if link in self._tail_process and self._tail_process[link].poll() is None:
             self._tail_process[link].kill()
             del self._tail_process[link]
+        if link in self._curl_process and self._curl_process[link].poll() is None:
+            self._curl_process[link].kill()
+            del self._curl_process[link]
 
     def startPacketCaptureAnalyzer(self, link):
         """

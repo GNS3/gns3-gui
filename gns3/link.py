@@ -119,12 +119,6 @@ class Link(QtCore.QObject):
                 else:
                     self._capture_file = QtCore.QFile(self._capture_file_path)
                     self._capture_file.open(QtCore.QFile.WriteOnly)
-                Controller.instance().get("/projects/{project_id}/links/{link_id}/pcap".format(project_id=self.project().id(), link_id=self._link_id),
-                                          None,
-                                          showProgress=False,
-                                          downloadProgressCallback=self._downloadPcapProgress,
-                                          ignoreErrors=True,  # If something is wrong avoid disconnect us from server
-                                          timeout=None)
             log.debug("Capturing packets to '{}'".format(self._capture_file_path))
 
         if "nodes" in result:
