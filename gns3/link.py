@@ -119,7 +119,7 @@ class Link(QtCore.QObject):
                 else:
                     self._capture_file = QtCore.QFile(self._capture_file_path)
                     self._capture_file.open(QtCore.QFile.WriteOnly)
-                Controller.instance().get("/projects/{project_id}/links/{link_id}/pcap".format(project_id=self.project().id(), link_id=self._link_id),
+                Controller.instance().get("/projects/{project_id}/links/{link_id}/capture/stream".format(project_id=self.project().id(), link_id=self._link_id),
                                           None,
                                           showProgress=False,
                                           downloadProgressCallback=self._downloadPcapProgress,
@@ -373,7 +373,7 @@ class Link(QtCore.QObject):
             "capture_file_name": capture_file_name,
             "data_link_type": data_link_type
         }
-        Controller.instance().post("/projects/{project_id}/links/{link_id}/start_capture".format(project_id=self.project().id(), link_id=self._link_id),
+        Controller.instance().post("/projects/{project_id}/links/{link_id}/capture/start".format(project_id=self.project().id(), link_id=self._link_id),
                                    self._startCaptureCallback,
                                    body=data)
 
@@ -405,7 +405,7 @@ class Link(QtCore.QObject):
             #     except OSError as e:
             #         log.error("Cannot remove file {}: {}".format(self._capture_file_path, e))
         self._capture_file_path = None
-        Controller.instance().post("/projects/{project_id}/links/{link_id}/stop_capture".format(project_id=self.project().id(),
+        Controller.instance().post("/projects/{project_id}/links/{link_id}/capture/stop".format(project_id=self.project().id(),
                                                                                                 link_id=self._link_id),
                                                                                                 self._stopCaptureCallback)
 

@@ -271,7 +271,7 @@ class HTTPClient(QtCore.QObject):
                         progressText=None,
                         timeout=120,
                         server=None,
-                        prefix="/v2",
+                        prefix="/v3",
                         params={},
                         networkManager=None,
                         eventsHandler=None,
@@ -468,7 +468,7 @@ class HTTPClient(QtCore.QObject):
             request.setRawHeader(b"Authorization", auth_string.encode())
         return request
 
-    def connectWebSocket(self, websocket, path, prefix="/v2"):
+    def connectWebSocket(self, websocket, path, prefix="/v3"):
         """
         Path of the websocket endpoint
         """
@@ -510,7 +510,7 @@ class HTTPClient(QtCore.QObject):
             query_string += urllib.parse.urlencode(params)
         return query_string
 
-    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", params={}, networkManager=None, eventsHandler=None, **kwargs):
+    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v3", params={}, networkManager=None, eventsHandler=None, **kwargs):
         """
         Call the remote server
 
@@ -731,7 +731,7 @@ class HTTPClient(QtCore.QObject):
                     e = HttpBadRequest(body)
                 raise e
 
-    def getSynchronous(self, method, endpoint, prefix="/v2", timeout=5):
+    def getSynchronous(self, method, endpoint, prefix="/v3", timeout=5):
         """
         Synchronous check if a server is running
 
