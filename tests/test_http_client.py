@@ -65,7 +65,7 @@ def test_get_connected(http_client, http_request, network_manager, response):
     callback = unittest.mock.MagicMock()
 
     http_client.createHTTPQuery("GET", "/test", callback)
-    http_request.assert_called_with(QtCore.QUrl("http://127.0.0.1:3080/v2/test"))
+    http_request.assert_called_with(QtCore.QUrl("http://127.0.0.1:3080/v3/test"))
     http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
     assert network_manager.sendCustomRequest.called
@@ -95,7 +95,7 @@ def test_get_connected_auth(http_client, http_request, network_manager, response
     callback = unittest.mock.MagicMock()
 
     http_client.createHTTPQuery("GET", "/test", callback)
-    http_request.assert_called_with(QtCore.QUrl("http://gns3@127.0.0.1:3080/v2/test"))
+    http_request.assert_called_with(QtCore.QUrl("http://gns3@127.0.0.1:3080/v3/test"))
     http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"Authorization", b"Basic Z25zMzozc25n")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
@@ -348,4 +348,4 @@ def test_connectWebSocket(http_client):
         http_client.connectWebSocket(test, '/test')
     assert open_mock.called
     request = open_mock.call_args[0][0]
-    assert request.url().toString() == "ws://127.0.0.1:3080/v2/test"
+    assert request.url().toString() == "ws://127.0.0.1:3080/v3/test"
