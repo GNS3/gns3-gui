@@ -19,7 +19,6 @@
 Manages and stores everything needed for a connection between 2 devices.
 """
 
-import os
 import re
 from .qt import sip
 import uuid
@@ -79,6 +78,7 @@ class Link(QtCore.QObject):
         self._deleting = False
         self._capture_file_path = None
         self._capture_file = None
+        self._response_stream = None
         self._capture_compute_id = None
         self._initialized = False
         self._filters = {}
@@ -119,13 +119,15 @@ class Link(QtCore.QObject):
                 else:
                     self._capture_file = QtCore.QFile(self._capture_file_path)
                     self._capture_file.open(QtCore.QFile.WriteOnly)
-                Controller.instance().get("/projects/{project_id}/links/{link_id}/pcap".format(project_id=self.project().id(), link_id=self._link_id),
-                                          None,
-                                          showProgress=False,
-                                          downloadProgressCallback=self._downloadPcapProgress,
-                                          ignoreErrors=True,  # If something is wrong avoid disconnect us from server
-                                          timeout=None)
-            log.debug("Capturing packets to '{}'".format(self._capture_file_path))
+                self._response_stream = Controller.instance().get("/projects/{project_id}/links/{link_id}/pcap".format(project_id=self.project().id(), link_id=self._link_id),
+                                                                  None,
+                                                                  showProgress=False,
+                                                                  downloadProgressCallback=self._downloadPcapProgress,
+                                                                  ignoreErrors=True,  # If something is wrong avoid disconnect us from server
+                                                                  timeout=None)
+            log.debug("Has successfully started capturing packets on link {} to '{}'".format(self._link_id, self._capture_file_path))
+        else:
+            self._response_stream = None
 
         if "nodes" in result:
             self._nodes = result["nodes"]
@@ -356,9 +358,8 @@ class Link(QtCore.QObject):
 
     def _startCaptureCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while starting capture on link: {}".format(result["message"]))
+            log.error("Error while starting capture on link {}: {}".format(self._link_id, result["message"]))
             return
-        #self._parseResponse(result)
 
     def _downloadPcapProgress(self, content, server=None, context={}, **kwargs):
         """
@@ -386,11 +387,12 @@ class Link(QtCore.QObject):
                                                                                                 link_id=self._link_id),
                                                                                                 self._stopCaptureCallback)
 
+
     def _stopCaptureCallback(self, result, error=False, **kwargs):
         if error:
-            log.error("Error while stopping capture on link: {}".format(result["message"]))
+            log.error("Error while stopping capture on link {}: {}".format(self._link_id, result["message"]))
             return
-        #self._parseResponse(result)
+        log.debug("Has successfully stopped capturing packets on link {}".format(self._link_id))
 
     def get(self, path, callback, **kwargs):
         """
