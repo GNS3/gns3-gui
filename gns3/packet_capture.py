@@ -90,12 +90,11 @@ class PacketCapture:
 
     def _updatedLinkSlot(self, link_id):
         link = self.topology().getLink(link_id)
-
         if link:
             if link.capturing():
                 if self._autostart.get(link) and link not in self._tail_process:
+                    log.debug("Starting packet capture reader for link {}".format(link.link_id()))
                     self.startPacketCaptureReader(link)
-                log.debug("Has successfully started capturing packets on {} to {}".format(link.id(), link.capture_file_path()))
             else:
                 self.stopPacketCaptureReader(link)
 
@@ -108,7 +107,6 @@ class PacketCapture:
         """
 
         link.stopCapture()
-        log.debug("Has successfully stopped capturing packets on {}".format(link.id()))
 
     def startPacketCaptureReader(self, link):
         """
@@ -121,6 +119,7 @@ class PacketCapture:
         Stop the packet capture reader
         """
         if link in self._tail_process and self._tail_process[link].poll() is None:
+            log.debug("Stopping packet capture reader for link {}".format(link.link_id()))
             self._tail_process[link].kill()
             del self._tail_process[link]
 

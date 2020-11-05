@@ -54,6 +54,7 @@ https://github.com/Kozea/wdb
 
 Security issues
 ----------------
-Please contact us using contact informations available here:
-http://docs.gns3.com/1ON9JBXSeR7Nt2-Qum2o3ZX0GU86BZwlmNSUgvmqNWGY/index.html
+
+Please contact us at security@gns3.net
+
 

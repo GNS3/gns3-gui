@@ -50,6 +50,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             "headless": False,
             "when_exit": "stop",
             "engine": "vmware",
+            "allocate_vcpus_ram": True,
             "vcpus": 1,
             "ram": 2048,
             "vmname": "GNS3 VM",
