@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.16 05/11/2020
+
+* Fix packets capture stops after some time. Fixes #3067
+* Option to allocate or not the vCPUs and RAM settings for the GNS3 VM. Fixes https://github.com/GNS3/gns3-gui/issues/3069
+
 ## 2.2.15 07/10/2020
 
 * Fix custom symbol not sent to remote controller when installing appliance
