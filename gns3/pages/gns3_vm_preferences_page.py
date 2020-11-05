@@ -42,6 +42,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
         self._initialized = False
         self.uiRefreshPushButton.clicked.connect(self._refreshVMSlot)
         self.uiGNS3VMEngineComboBox.currentIndexChanged.connect(self._engineChangedSlot)
+        self.uiAllocatevCPUsRAMCheckBox.stateChanged.connect(self._allocatevCPUsRAMSlot)
         Controller.instance().connected_signal.connect(self.loadPreferences)
 
     def pageInitialized(self):
@@ -74,6 +75,18 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             self.uiPortSpinBox.setVisible(True)
         self._refreshVMSlot(ignore_error=True)
 
+    def _allocatevCPUsRAMSlot(self, state):
+        """
+        Slot to enable or not the vCPUS and RAM spin boxes.
+        """
+
+        if state:
+            self.uiRamSpinBox.setEnabled(True)
+            self.uiCpuSpinBox.setEnabled(True)
+        else:
+            self.uiRamSpinBox.setEnabled(False)
+            self.uiCpuSpinBox.setEnabled(False)
+
     def loadPreferences(self):
         """
         Loads the preference from controller.
@@ -95,6 +108,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             return
         self._old_settings = copy.copy(result)
         self._settings = result
+        self.uiAllocatevCPUsRAMCheckBox.setChecked(self._settings["allocate_vcpus_ram"])
         self.uiRamSpinBox.setValue(self._settings["ram"])
         self.uiCpuSpinBox.setValue(self._settings["vcpus"])
         self.uiPortSpinBox.setValue(self._settings.get("port", 3080))
@@ -174,6 +188,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
             "headless": self.uiHeadlessCheckBox.isChecked(),
             "when_exit": when_exit,
             "engine": self.uiGNS3VMEngineComboBox.currentData(),
+            "allocate_vcpus_ram": self.uiAllocatevCPUsRAMCheckBox.isChecked(),
             "ram": self.uiRamSpinBox.value(),
             "vcpus": self.uiCpuSpinBox.value(),
             "port": self.uiPortSpinBox.value()
