@@ -1062,7 +1062,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     break
 
                 if os.path.exists(node_dir):
-                    log.debug("Open %s in file manager")
+                    log.debug(f"Open {node_dir} in file manager")
                     if QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(node_dir)) is False:
                         QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(node_dir))
                         break

@@ -445,7 +445,7 @@ class Project(QtCore.QObject):
         """
         body = {
             "name": self._name,
-            "path": self.filesDir(),
+            #"path": self.filesDir(),  # deprecated
             "grid_size": self._grid_size,
             "drawing_grid_size": self._drawing_grid_size,
             "show_grid": self._show_grid_on_new_project,
