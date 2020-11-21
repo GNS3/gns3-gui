@@ -829,7 +829,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         reply = QtWidgets.QMessageBox.question(self, "Confirm Stop All", "Are you sure you want to stop all devices?",
                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-            
         project = Topology.instance().project()
         if project is not None:
             project.stop_all_nodes()
