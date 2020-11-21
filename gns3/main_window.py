@@ -810,6 +810,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called when starting all the nodes.
         """
+
+        reply = QtWidgets.QMessageBox.question(self, "Confirm Start All", "Are you sure you want to start all devices?",
+                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                                                   
+        if reply == QtWidgets.QMessageBox.No:
+            return
+
         project = Topology.instance().project()
         if project is not None:
             project.start_all_nodes()
@@ -818,6 +825,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called when suspending all the nodes.
         """
+
+        reply = QtWidgets.QMessageBox.question(self, "Confirm Suspend All", "Are you sure you want to suspend all devices?",
+                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+
+        if reply == QtWidgets.QMessageBox.No:
+            return
 
         project = Topology.instance().project()
         if project is not None:
@@ -828,6 +841,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when stopping all the nodes.
         """
 
+        reply = QtWidgets.QMessageBox.question(self, "Confirm Stop All", "Are you sure you want to stop all devices?",
+                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+
+        if reply == QtWidgets.QMessageBox.No:
+            return
+
         project = Topology.instance().project()
         if project is not None:
             project.stop_all_nodes()
@@ -836,6 +855,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot called when reloading all the nodes.
         """
+
+        reply = QtWidgets.QMessageBox.question(self, "Confirm Reload All", "Are you sure you want to reload all devices?",
+                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+
+        if reply == QtWidgets.QMessageBox.No:
+            return
 
         project = Topology.instance().project()
         if project is not None:
