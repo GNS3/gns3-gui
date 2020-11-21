@@ -813,6 +813,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         reply = QtWidgets.QMessageBox.question(self, "Confirm Start All", "Are you sure you want to start all devices?",
                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                                                   
         if reply == QtWidgets.QMessageBox.No:
             return
 
@@ -857,7 +858,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         reply = QtWidgets.QMessageBox.question(self, "Confirm Reload All", "Are you sure you want to reload all devices?",
                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                                                   
+
         if reply == QtWidgets.QMessageBox.No:
             return
 
