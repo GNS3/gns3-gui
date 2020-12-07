@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.17 04/12/2020
+
+* Remove "-nographic" option by default for Qemu VM. Fixes #3094
+* Fix app cannot start on macOS Big Sur. Ref #3037
+* Require confirmation before stopping all devices.
+
 ## 2.2.16 05/11/2020
 
 * Fix packets capture stops after some time. Fixes #3067

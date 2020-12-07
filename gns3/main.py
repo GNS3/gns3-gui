@@ -118,6 +118,9 @@ def main():
     # an extra argument starting with -psn_. We filter it
     if sys.platform.startswith("darwin"):
         sys.argv = [a for a in sys.argv if not a.startswith("-psn_")]
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.15.2"):
+            # Fixes issue on macOS Big Sur: https://github.com/GNS3/gns3-gui/issues/3037
+            os.environ["QT_MAC_WANTS_LAYER"] = "1"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("project", help="load a GNS3 project (.gns3)", metavar="path", nargs="?")

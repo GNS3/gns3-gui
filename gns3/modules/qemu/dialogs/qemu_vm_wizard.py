@@ -177,8 +177,6 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
                 (sys.platform.startswith("darwin") and "GNS3.app" in qemu_path):
             settings["options"] += " -vga none -vnc none"
             settings["legacy_networking"] = True
-        else:
-            settings["options"] += " -nographic"
         settings["options"] = settings["options"].strip()
 
         return settings
