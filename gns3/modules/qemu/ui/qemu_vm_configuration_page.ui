@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>941</width>
-    <height>877</height>
+    <height>939</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -399,14 +399,21 @@
           <string>HDD (Secondary Slave)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_9">
-          <item row="0" column="0">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiCreateConfigDiskCheckBox">
+            <property name="text">
+             <string>Automatically create a config disk on HDD</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
            <widget class="QLabel" name="uiHddDiskImageLabel">
             <property name="text">
              <string>Disk image:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" rowspan="2">
+          <item row="1" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
              <widget class="QLineEdit" name="uiHddDiskImageLineEdit"/>
@@ -437,7 +444,7 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0" rowspan="2">
+          <item row="2" column="0">
            <widget class="QLabel" name="uiHddDiskInterfaceLabel">
             <property name="text">
              <string>Disk interface:</string>
@@ -470,7 +477,16 @@
        <string>CD/DVD</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item>
