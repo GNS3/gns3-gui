@@ -199,6 +199,26 @@ class Node(BaseNode):
 
         return self._always_on
 
+    def configFiles(self):
+        """
+        Name of the configuration files
+
+        This method should be overridden in derived classes
+
+        :returns: List of configuration files, False if no files
+        """
+
+        return None
+
+    def configTextFiles(self):
+        """
+        Name of the configuration files, which are plain text files
+
+        :returns: List of configuration files, False if no files
+        """
+
+        return self.configFiles()
+
     def get(self, path, *args, **kwargs):
         """
         GET on current server / project
@@ -774,7 +794,7 @@ class Node(BaseNode):
         :param directory: destination directory path
         """
 
-        if not hasattr(self, "configFiles"):
+        if not self.configFiles():
             return False
         for file in self.configFiles():
             self.get("/files/{file}".format(file=file),
@@ -813,7 +833,7 @@ class Node(BaseNode):
         :param directory: source directory path
         """
 
-        if not hasattr(self, "configFiles"):
+        if not self.configFiles():
             return
 
         try:
