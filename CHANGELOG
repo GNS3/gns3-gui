@@ -1,5 +1,17 @@
 # Change Log
 
+## 2.2.18 16/02/2021
+
+* SSL support.
+* Remove the useless file "zoom-in (copy).svg". Fixes #3114
+* Use HDD disk image as startup QEMU config disk
+* Edit only text mode config files
+* Hide config import/export when configFiles attribute is empty
+* Qemu disk interfaces must be set to "none" by default. Ref #3035
+* Do not allow image to be configured on Qemu VM secondary slave disk if create config disk option is enabled.
+* Add explicit option to automatically create or not the config disk. Off by default.
+* QEMU config disk support
+
 ## 2.2.17 04/12/2020
 
 * Remove "-nographic" option by default for Qemu VM. Fixes #3094
