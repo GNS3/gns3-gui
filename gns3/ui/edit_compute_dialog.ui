@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>579</width>
-    <height>374</height>
+    <width>585</width>
+    <height>353</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,10 +23,31 @@
       <string>Server settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="3" column="0">
+       <widget class="QLabel" name="uiServerPortLabel">
+        <property name="text">
+         <string>Port:</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <widget class="QLineEdit" name="uiServerNameLineEdit"/>
       </item>
       <item row="2" column="1" colspan="2">
+       <widget class="QLineEdit" name="uiServerHostLineEdit">
+        <property name="text">
+         <string>192.168.56.101</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="uiServerHostLabel">
+        <property name="text">
+         <string>Host:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" colspan="2">
        <widget class="QSpinBox" name="uiServerPortSpinBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -52,25 +73,25 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QLineEdit" name="uiServerHostLineEdit">
-        <property name="text">
-         <string>192.168.56.101</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="uiServerHostLabel">
+       <widget class="QLabel" name="uiServerProtocolLabel">
         <property name="text">
-         <string>Host:</string>
+         <string>Protocol:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="uiServerPortLabel">
-        <property name="text">
-         <string>Port:</string>
-        </property>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="uiServerProtocolComboBox">
+        <item>
+         <property name="text">
+          <string>HTTP</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>HTTPS</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
