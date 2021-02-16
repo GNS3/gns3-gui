@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1273</width>
-    <height>1097</height>
+    <width>681</width>
+    <height>843</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -295,24 +295,14 @@
           <string>Remote main server</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
              <string>Host:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" colspan="2">
-           <widget class="QLineEdit" name="uiRemoteMainServerHostLineEdit"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Port:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" colspan="2">
+          <item row="2" column="1" colspan="2">
            <widget class="QSpinBox" name="uiRemoteMainServerPortSpinBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -331,42 +321,73 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
              <string>Auth:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QCheckBox" name="uiRemoteMainServerAuthCheckBox">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
+          <item row="4" column="2">
+           <widget class="QLineEdit" name="uiRemoteMainServerUserLineEdit"/>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>User:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="uiRemoteMainServerUserLineEdit"/>
+          <item row="5" column="2">
+           <widget class="QLineEdit" name="uiRemoteMainServerPasswordLineEdit">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+           </widget>
           </item>
-          <item row="4" column="0" colspan="2">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Port:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="2">
+           <widget class="QLineEdit" name="uiRemoteMainServerHostLineEdit"/>
+          </item>
+          <item row="5" column="0" colspan="2">
            <widget class="QLabel" name="label_5">
             <property name="text">
              <string>Password:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
-           <widget class="QLineEdit" name="uiRemoteMainServerPasswordLineEdit">
-            <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
+          <item row="3" column="2">
+           <widget class="QCheckBox" name="uiRemoteMainServerAuthCheckBox">
+            <property name="text">
+             <string/>
             </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiRemoteMainServerProtocolLabel">
+            <property name="text">
+             <string>Protocol:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="2">
+           <widget class="QComboBox" name="uiRemoteMainServerProtocolComboBox">
+            <item>
+             <property name="text">
+              <string>HTTP</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HTTPS</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -404,7 +425,16 @@
        <string>Remote servers</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
         <number>10</number>
        </property>
        <item row="0" column="0" colspan="2">

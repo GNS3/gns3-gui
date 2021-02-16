@@ -130,7 +130,7 @@ class Controller(QtCore.QObject):
 
         self._connected = False
         self._connecting = True
-        self.get('/version', self._versionGetSlot)
+        self.httpClient().getSynchronous('/version', self._versionGetSlot, timeout=60)
 
     def _httpClientDisconnectedSlot(self):
         if self._connected:
@@ -423,6 +423,7 @@ class Controller(QtCore.QObject):
             self._notification_stream = self._http_client.connectWebSocket(self._websocket, "/notifications/ws")
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
+            self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
 
     def stopListenNotifications(self):
         if self._notification_stream:
@@ -446,6 +447,11 @@ class Controller(QtCore.QObject):
             log.error("Websocket notification stream error: {}".format(self._notification_stream.errorString()))
             self._notification_stream = None
             self._startListenNotifications()
+
+    @qslot
+    def _sslErrorsSlot(self, ssl_errors):
+
+        self._http_client.handleSslError(self._notification_stream, ssl_errors)
 
     @qslot
     def _websocket_event_received(self, event):

@@ -41,6 +41,9 @@ class EditComputeDialog(QtWidgets.QDialog, Ui_EditComputeDialog):
             self.uiServerHostLineEdit.setText(self._compute.host())
             self.uiServerPortSpinBox.setValue(self._compute.port())
 
+            index = self.uiServerProtocolComboBox.findText(self._compute.protocol().upper())
+            self.uiServerProtocolComboBox.setCurrentIndex(index)
+
             if self._compute.user():
                 self.uiEnableAuthenticationCheckBox.setChecked(True)
                 self.uiServerUserLineEdit.setText(self._compute.user())
@@ -78,7 +81,7 @@ class EditComputeDialog(QtWidgets.QDialog, Ui_EditComputeDialog):
 
         host = self.uiServerHostLineEdit.text().strip()
         name = self.uiServerNameLineEdit.text().strip()
-        protocol = "http"
+        protocol = self.uiServerProtocolComboBox.currentText().lower()
         port = self.uiServerPortSpinBox.value()
         user = self.uiServerUserLineEdit.text().strip()
         password = self.uiServerPasswordLineEdit.text().strip()
