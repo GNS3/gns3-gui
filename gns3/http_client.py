@@ -18,18 +18,15 @@
 from .qt import sip
 import json
 import copy
-import http
 import uuid
 import pathlib
 import base64
-import datetime
 import ipaddress
 import urllib.request
 import urllib.parse
 
-
 from .version import __version__, __version_info__
-from .qt import QtCore, QtNetwork, qpartial, sip_is_deleted
+from .qt import QtCore, QtNetwork, QtWidgets, qpartial, sip_is_deleted
 from .utils import parse_version
 
 import logging
@@ -79,6 +76,18 @@ class HTTPClient(QtCore.QObject):
         self._shutdown = False  # Shutdown in progress
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", None)
 
+        # Add custom CA
+        # ssl_config = QtNetwork.QSslConfiguration.defaultConfiguration()
+        # if ssl_config.addCaCertificates("/path/to/rootCA.crt"):
+        #     log.debug("CA certificate added")
+        # QtNetwork.QSslConfiguration.setDefaultConfiguration(ssl_config)
+
+        if self._protocol == "https":
+            if not QtNetwork.QSslSocket.supportsSsl():
+                log.error("SSL is not supported")
+            else:
+                log.debug(f"SSL is supported, version: {QtNetwork.QSslSocket().sslLibraryBuildVersionString()}")
+
         # In order to detect computer hibernation we detect the date of the last
         # query and disconnect if time is too long between two query
         self._last_query_timestamp = None
@@ -92,6 +101,12 @@ class HTTPClient(QtCore.QObject):
 
         # List of query waiting for the connection
         self._query_waiting_connections = []
+
+        # To catch SSL errors
+        self._network_manager.sslErrors.connect(self._sslErrorsSlot)
+
+        # Store SSL error exceptions
+        self._ssl_exceptions = {}
 
     def setMaxTimeDifferenceBetweenQueries(self, value):
         self._max_time_difference_between_queries = value
@@ -470,7 +485,14 @@ class HTTPClient(QtCore.QObject):
         """
         host = self._getHostForQuery()
         request = websocket.request()
-        ws_url = "ws://{host}:{port}{prefix}{path}".format(host=host, port=self._port, path=path, prefix=prefix)
+        ws_protocol = "ws"
+        if self._protocol == "https":
+            ws_protocol = "wss"
+        ws_url = "{protocol}://{host}:{port}{prefix}{path}".format(protocol=ws_protocol,
+                                                                   host=host,
+                                                                   port=self._port,
+                                                                   path=path,
+                                                                   prefix=prefix)
         log.debug("Connecting to WebSocket endpoint: {}".format(ws_url))
         request.setUrl(QtCore.QUrl(ws_url))
         self._addAuth(request)
@@ -775,6 +797,55 @@ class HTTPClient(QtCore.QObject):
                 else:
                     return status, json_data
         return status, None
+
+    def _sslErrorsSlot(self, response, ssl_errors):
+
+        self.handleSslError(response, ssl_errors)
+
+    def handleSslError(self, response, ssl_errors):
+
+        if self._accept_insecure_certificate:
+            response.ignoreSslErrors()
+            return
+
+        url = response.request().url()
+        host_port_key = f"{url.host()}:{url.port()}"
+
+        # get the certificate digest
+        ssl_config = response.sslConfiguration()
+        peer_cert = ssl_config.peerCertificate()
+        digest = peer_cert.digest()
+
+        if host_port_key in self._ssl_exceptions:
+
+            if self._ssl_exceptions[host_port_key] == digest:
+                response.ignoreSslErrors()
+                return
+
+        from gns3.main_window import MainWindow
+        main_window = MainWindow.instance()
+
+        msgbox = QtWidgets.QMessageBox(main_window)
+        msgbox.setWindowTitle("SSL error detected")
+        msgbox.setText(f"This server could not prove that it is {url.host()}:{url.port()}. Please carefully examine the certificate to make sure the server can be trusted.")
+        msgbox.setInformativeText(f"{ssl_errors[0].errorString()}")
+        msgbox.setDetailedText(peer_cert.toText())
+        msgbox.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        connect_button = QtWidgets.QPushButton(f"&Connect to {url.host()}:{url.port()}", msgbox)
+        msgbox.addButton(connect_button, QtWidgets.QMessageBox.YesRole)
+        abort_button = QtWidgets.QPushButton("&Abort", msgbox)
+        msgbox.addButton(abort_button, QtWidgets.QMessageBox.RejectRole)
+        msgbox.setDefaultButton(abort_button)
+        msgbox.setIcon(QtWidgets.QMessageBox.Critical)
+        msgbox.exec_()
+
+        if msgbox.clickedButton() == connect_button:
+            self._ssl_exceptions[host_port_key] = digest
+            response.ignoreSslErrors()
+        else:
+            for error in ssl_errors:
+                log.error(f"SSL error detected: {error.errorString()}")
+            main_window.close()
 
     @classmethod
     def fromUrl(cls, url, network_manager=None, base_settings=None):
