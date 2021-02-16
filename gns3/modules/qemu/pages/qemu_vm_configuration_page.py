@@ -372,8 +372,11 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to allow or not HDD disk to be configured based on the state of the config disk option.
         """
 
-        self.uiHddDiskImageLineEdit.setEnabled(not state)
-        self.uiHddDiskImageToolButton.setEnabled(not state)
+        _translate = QtCore.QCoreApplication.translate
+        if state:
+            self.uiHddDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Startup-cfg:"))
+        else:
+            self.uiHddDiskImageLabel.setText(_translate("QemuVMConfigPageWidget", "Disk image:"))
         self.uiHddDiskImageCreateToolButton.setEnabled(not state)
         self.uiHddDiskImageResizeToolButton.setEnabled(not state)
 

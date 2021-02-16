@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>941</width>
-    <height>944</height>
+    <height>939</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -435,14 +435,21 @@
           <string>HDD (Disk 3)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_9">
-          <item row="0" column="0">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiCreateConfigDiskCheckBox">
+            <property name="text">
+             <string>Automatically create a config disk on HDD</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
            <widget class="QLabel" name="uiHddDiskImageLabel">
             <property name="text">
              <string>Disk image:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="1" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
              <widget class="QLineEdit" name="uiHddDiskImageLineEdit"/>
@@ -473,14 +480,14 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="uiHddDiskInterfaceLabel">
             <property name="text">
              <string>Disk interface:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QComboBox" name="uiHddDiskInterfaceComboBox"/>
           </item>
           <item row="2" column="0" colspan="2">

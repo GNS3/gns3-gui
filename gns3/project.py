@@ -640,6 +640,7 @@ class Project(QtCore.QObject):
             self._notification_stream = Controller.instance().httpClient().connectWebSocket(self._websocket, path)
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
+            self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
 
     def _endListenNotificationCallback(self, result, error=False, **kwargs):
         """
@@ -654,6 +655,11 @@ class Project(QtCore.QObject):
         if self._notification_stream:
             log.error(self._notification_stream.errorString())
             self.stopListenNotifications()
+
+    @qslot
+    def _sslErrorsSlot(self, ssl_errors):
+
+        Controller.instance().httpClient().handleSslError(self._notification_stream, ssl_errors)
 
     @qslot
     def _websocket_event_received(self, event):
