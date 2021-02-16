@@ -652,7 +652,7 @@ class Project(QtCore.QObject):
     @qslot
     def _sslErrorsSlot(self, ssl_errors):
 
-        self._http_client.handleSslError(self._notification_stream, ssl_errors)
+        Controller.instance().httpClient().handleSslError(self._notification_stream, ssl_errors)
 
     @qslot
     def _websocket_event_received(self, event):
