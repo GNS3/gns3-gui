@@ -44,5 +44,6 @@ DOCKER_CONTAINER_SETTINGS = {
     "console_http_path": "/",
     "extra_hosts": "",
     "extra_volumes": [],
+    "extra_parameters": "",
     "node_type": "docker"
 }

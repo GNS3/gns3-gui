@@ -52,7 +52,8 @@ class DockerVM(Node):
                               "console_http_port": DOCKER_CONTAINER_SETTINGS["console_http_port"],
                               "console_http_path": DOCKER_CONTAINER_SETTINGS["console_http_path"],
                               "extra_hosts": DOCKER_CONTAINER_SETTINGS["extra_hosts"],
-                              "extra_volumes": DOCKER_CONTAINER_SETTINGS["extra_volumes"]}
+                              "extra_volumes": DOCKER_CONTAINER_SETTINGS["extra_volumes"],
+                              "extra_parameters": DOCKER_CONTAINER_SETTINGS["extra_parameters"]}
 
         self.settings().update(docker_vm_settings)
 
