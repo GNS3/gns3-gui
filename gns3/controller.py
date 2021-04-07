@@ -130,7 +130,9 @@ class Controller(QtCore.QObject):
 
         self._connected = False
         self._connecting = True
-        self.httpClient().getSynchronous('/version', self._versionGetSlot, timeout=60)
+
+        # Immediately connect to the server
+        QtCore.QTimer.singleShot(0, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
 
     def _httpClientDisconnectedSlot(self):
         if self._connected:
