@@ -168,6 +168,7 @@ class Controller(QtCore.QObject):
                 self._error_dialog.reject()
                 self._error_dialog = None
             self._version = result.get("version")
+            self._http_client.connection_connected_signal.emit()
 
     def _httpClientConnectedSlot(self):
 
