@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.2.20 09/04/2021
+
+* Fix project does not load anymore. Fixes #3140
+* Do not connect to server while waiting for user to accept/reject SSL certificate. Fixes #3144
+* Fix invalid server version check request. Fixes #3144
+* Upgrade dependencies
+* Add terminator as a predefined custom console option
+
 ## 2.2.19 05/03/2021
 
 * No changes
