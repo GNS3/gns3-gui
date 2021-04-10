@@ -130,7 +130,8 @@ class Controller(QtCore.QObject):
 
         self._connected = False
         self._connecting = True
-        self.httpClient().getSynchronous('/version', self._versionGetSlot, timeout=60)
+        status, json_data = self.httpClient().getSynchronous('GET', '/version', timeout=60)
+        self._versionGetSlot(json_data, status is None or status >= 300)
 
     def _httpClientDisconnectedSlot(self):
         if self._connected:
@@ -148,11 +149,14 @@ class Controller(QtCore.QObject):
             if self._first_error:
                 self._connecting = False
                 self.connection_failed_signal.emit()
-                if "message" in result and self._display_error:
+                if self._display_error:
                     self._error_dialog = QtWidgets.QMessageBox(self.parent())
                     self._error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
                     self._error_dialog.setWindowTitle("Connection to server")
-                    self._error_dialog.setText("Error when connecting to the GNS3 server:\n{}".format(result["message"]))
+                    if result and "message" in result:
+                        self._error_dialog.setText("Error when connecting to the GNS3 server:\n{}".format(result["message"]))
+                    else:
+                        self._error_dialog.setText("Cannot connect to the GNS3 server")
                     self._error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
                     self._error_dialog.show()
             # Try to connect again in 5 seconds
@@ -164,6 +168,7 @@ class Controller(QtCore.QObject):
                 self._error_dialog.reject()
                 self._error_dialog = None
             self._version = result.get("version")
+            self._http_client.connection_connected_signal.emit()
 
     def _httpClientConnectedSlot(self):
 

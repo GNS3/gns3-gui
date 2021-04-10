@@ -65,7 +65,7 @@ class Topology(QtCore.QObject):
         self._main_window = None
 
         # If set the project is loaded when we got connection to the controller
-        # usefull when we open a project from cli or when server restart
+        # useful when we open a project from cli or when server restart
         self._project_to_load_path = None
         self._project_id_to_load = None
 
