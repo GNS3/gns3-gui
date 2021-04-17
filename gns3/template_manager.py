@@ -69,7 +69,7 @@ class TemplateManager(QtCore.QObject):
         """
 
         log.debug("Create template '{}' (ID={})".format(template.name(), template.id()))
-        self._controller.post("/templates", callback, body=template.asdict())
+        self._controller.post("/templates", callback, body=template.__json__())
 
     def deleteTemplate(self, template_id):
         """
@@ -105,7 +105,7 @@ class TemplateManager(QtCore.QObject):
         """
 
         log.debug("Update template '{}' (ID={})".format(template.name(), template.id()))
-        self._controller.put("/templates/{template_id}".format(template_id=template.id()), None, body=template.asdict())
+        self._controller.put("/templates/{template_id}".format(template_id=template.id()), None, body=template.__json__())
 
     def updateList(self, templates):
         """

@@ -156,7 +156,7 @@ def test_updateList_updated(controller):
     compute.setName("TEST2")
     cm.updateList(computes)
     assert cm._computes["test1"].name() == "TEST2"
-    controller._http_client.createHTTPQuery.assert_called_with("PUT", "/computes/test1", None, body=compute.asdict())
+    controller._http_client.createHTTPQuery.assert_called_with("PUT", "/computes/test1", None, body=compute.__json__())
 
 
 def test_updateList_added(controller):
