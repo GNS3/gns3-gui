@@ -239,14 +239,14 @@ class ComputeManager(QtCore.QObject):
                 for c in computes:
                     if c.id() == compute_id and c != self._computes[compute_id]:
                         log.debug("Update compute %s", compute_id)
-                        self._controller.put("/computes" + compute_id, None, body=c.__json__())
+                        self._controller.put("/computes" + compute_id, None, body=c.asdict())
                         self._computes[compute_id] = c
                         self.updated_signal.emit(compute_id)
         # Create the new nodes
         for compute in computes:
             if compute.id() not in self._computes:
                 log.debug("Create compute %s", compute.id())
-                self._controller.post("/computes", None, body=compute.__json__())
+                self._controller.post("/computes", None, body=compute.asdict())
                 self._computes[compute.id()] = compute
                 self.created_signal.emit(compute.id())
 

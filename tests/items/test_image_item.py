@@ -41,8 +41,8 @@ def test_fromSvg(image, project):
 
 def test_json(image):
     image._hash_svg = None
-    assert "svg" in  image.__json__()
+    assert "svg" in  image.asdict()
     # If we call the function twice and the svg didn't change we don't send the modification
-    assert "svg" not in  image.__json__()
+    assert "svg" not in  image.asdict()
 
 
