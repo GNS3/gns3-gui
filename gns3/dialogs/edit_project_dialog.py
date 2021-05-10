@@ -98,7 +98,7 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         variable["value"] = text
 
     def _cleanVariables(self):
-        return [v for v in self._variables if v.get("name", "").strip() != ""]
+        return [v for v in self._variables if v.get("name").strip() != ""]
 
     def done(self, result):
         """
