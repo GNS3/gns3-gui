@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.21 10/05/2021
+
+* Fix issue with empty project variable name. Fixes #3162
+* Downgrade to PyQt5 5.12.1. Fixes https://github.com/GNS3/gns3-gui/issues/3169
+
 ## 2.2.20 09/04/2021
 
 * Fix project does not load anymore. Fixes #3140
