@@ -41,6 +41,7 @@ class SvgIconItem(QtSvg.QGraphicsSvgItem):
             self.parentItem().mousePressEvent(event)
         event.accept()
 
+
 class LinkItem(QtWidgets.QGraphicsPathItem):
 
     """
