@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.2.22 10/06/2021
+
+* Fix exception shown when GNS3 is started with empty config. Fixes #3188
+* Add ZOC8 console terminal for macOS command line
+* Link style support. Fixes https://github.com/GNS3/gns3-gui/issues/2461
+* Fix charcoal theme. Ref #3137
+* Fix issue when showing menu to select port. Fixes #3169
+
 ## 2.2.21 10/05/2021
 
 * Fix issue with empty project variable name. Fixes #3162
