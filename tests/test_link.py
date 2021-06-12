@@ -130,9 +130,9 @@ def test_delete_link(devices, project, controller):
 
 def test_start_capture_link(link, controller, project):
     link.startCapture("DLT_EN10MB", "test.pcap")
-    controller.post.assert_called_with("/projects/{}/links/{}/start_capture".format(project.id(), link._link_id), link._startCaptureCallback, body={'capture_file_name': 'test.pcap', 'data_link_type': 'DLT_EN10MB'})
+    controller.post.assert_called_with("/projects/{}/links/{}/capture/start".format(project.id(), link._link_id), link._startCaptureCallback, body={'capture_file_name': 'test.pcap', 'data_link_type': 'DLT_EN10MB'})
 
 
 def test_stop_capture_link(link, controller, project):
     link.stopCapture()
-    controller.post.assert_called_with("/projects/{}/links/{}/stop_capture".format(project.id(), link._link_id), link._stopCaptureCallback)
+    controller.post.assert_called_with("/projects/{}/links/{}/capture/stop".format(project.id(), link._link_id), link._stopCaptureCallback)

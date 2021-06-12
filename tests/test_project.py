@@ -41,7 +41,6 @@ def test_project_create(tmpdir, controller):
     assert args[0] == "POST"
     assert args[1] == "/projects"
     assert kwargs["body"] == {"name": "test",
-                              "path": str(tmpdir),
                               "grid_size": 75,
                               "drawing_grid_size": 25,
                               "show_grid": False,

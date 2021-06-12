@@ -408,23 +408,23 @@ class HTTPClient(QtCore.QObject):
             self._query_waiting_connections = []
             return
 
-        # if params["version"].split("-")[0] != __version__.split("-")[0]:
-        #     msg = "Client version {} is not the same as server (controller) version {}".format(__version__, params["version"])
-        #     # Stable release
-        #     if __version_info__[3] == 0:
-        #         log.error(msg)
-        #         for request, callback in self._query_waiting_connections:
-        #             if callback is not None:
-        #                 callback({"message": msg}, error=True, server=server)
-        #         return
-        #     # We don't allow different major version to interact even with dev build
-        #     elif parse_version(__version__)[:2] != parse_version(params["version"])[:2]:
-        #         log.error(msg)
-        #         for request, callback in self._query_waiting_connections:
-        #             if callback is not None:
-        #                 callback({"message": msg}, error=True, server=server)
-        #         return
-        #     log.warning("{}\nUsing different versions may result in unexpected problems. Please upgrade or use at your own risk.".format(msg))
+        if params["version"].split("-")[0] != __version__.split("-")[0]:
+            msg = "Client version {} is not the same as server (controller) version {}".format(__version__, params["version"])
+            # Stable release
+            if __version_info__[3] == 0:
+                log.error(msg)
+                for request, callback in self._query_waiting_connections:
+                    if callback is not None:
+                        callback({"message": msg}, error=True, server=server)
+                return
+            # We don't allow different major version to interact even with dev build
+            elif parse_version(__version__)[:2] != parse_version(params["version"])[:2]:
+                log.error(msg)
+                for request, callback in self._query_waiting_connections:
+                    if callback is not None:
+                        callback({"message": msg}, error=True, server=server)
+                return
+            log.warning("{}\nUsing different versions may result in unexpected problems. Please upgrade or use at your own risk.".format(msg))
 
         self._connected = True
         self._retry = 0
