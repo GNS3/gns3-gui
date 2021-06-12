@@ -25,6 +25,7 @@ from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot, sip_is_deleted
 
 from ..packet_capture import PacketCapture
 from ..dialogs.filter_dialog import FilterDialog
+from ..dialogs.style_editor_dialog_link import StyleEditorDialogLink
 from ..utils.get_icon import get_icon
 
 
@@ -136,6 +137,21 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
     @qslot
     def _suspendActionSlot(self, *args):
         self._link.toggleSuspend()
+
+    @qslot
+    def _styleActionSlot(self, *args):
+        style_dialog = StyleEditorDialogLink(self, self._main_window)
+        style_dialog.show()
+        style_dialog.exec_()
+
+    def setLinkStyle(self, link_style):
+        self._link._link_style["color"] = link_style["color"]
+        self._link._link_style["width"] = link_style["width"]
+        self._link._link_style["type"]  = link_style["type"]
+
+        # This refers to functions in link.py!
+        self._link.setLinkStyle(link_style)
+        self._link.update()
 
     def delete(self):
         """
@@ -277,6 +293,12 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         reset_action.setIcon(get_icon('reload.svg'))
         reset_action.triggered.connect(self._resetActionSlot)
         menu.addAction(reset_action)
+
+        # style
+        style_action = QtWidgets.QAction("Style", menu)
+        style_action.setIcon(get_icon("node_conception.svg"))
+        style_action.triggered.connect(self._styleActionSlot)
+        menu.addAction(style_action)
 
         # delete
         delete_action = QtWidgets.QAction("Delete", menu)

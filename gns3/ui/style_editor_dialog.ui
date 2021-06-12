@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>StyleEditorDialog</class>
  <widget class="QDialog" name="StyleEditorDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>328</width>
-    <height>252</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Style editor</string>
   </property>
@@ -22,7 +14,7 @@
      <property name="title">
       <string>Style settings</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="uiColorLabel">
         <property name="text">

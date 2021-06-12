@@ -90,7 +90,7 @@ class Link(QtCore.QObject):
         self._creator = False
 
         self._nodes = []
-
+        self._link_style = {}
         self._source_node.addLink(self)
         self._destination_node.addLink(self)
 
@@ -134,6 +134,8 @@ class Link(QtCore.QObject):
             self._updateLabels()
         if "filters" in result:
             self._filters = result["filters"]
+        if "link_style" in result:
+            self._link_style = result["link_style"]
         if "suspend" in result:
             self._suspend = result["suspend"]
         self.updated_link_signal.emit(self._id)
@@ -216,6 +218,7 @@ class Link(QtCore.QObject):
                 }
             ],
             "filters": self._filters,
+            "link_style": self._link_style,
             "suspend": self._suspend
         }
         if self._source_port.label():
@@ -493,3 +496,9 @@ class Link(QtCore.QObject):
         :params filters: List of filters
         """
         self._filters = filters
+
+    def setLinkStyle(self, link_style):
+        """
+        :params _link_style: Set link style attributes
+        """
+        self._link_style = link_style

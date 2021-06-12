@@ -392,7 +392,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         # link addition code
         if not self._newlink:
             source_item = item
-            source_port = source_item.connectToPort()
+            source_port = source_item.connectToPort(event.globalPos())
             if not source_port:
                 return
 
@@ -409,7 +409,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             source_item = self._newlink.sourceItem()
             source_port = self._newlink.sourcePort()
             destination_item = item
-            destination_port = destination_item.connectToPort()
+            destination_port = destination_item.connectToPort(event.globalPos())
             if not destination_port:
                 return
 
