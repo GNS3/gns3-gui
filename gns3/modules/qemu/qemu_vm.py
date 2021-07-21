@@ -62,6 +62,7 @@ class QemuVM(Node):
                             "bios_image_md5sum": "",
                             "boot_priority": QEMU_VM_SETTINGS["boot_priority"],
                             "options": "",
+                            "path_snapshot": "", # need this when showing configuration of an instance
                             "ram": QEMU_VM_SETTINGS["ram"],
                             "cpus": QEMU_VM_SETTINGS["cpus"],
                             "console_type": QEMU_VM_SETTINGS["console_type"],
