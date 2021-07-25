@@ -160,7 +160,8 @@ else:
                                              'SecureCRT': 'SecureCRT /T /N "%d"  /TELNET %h %p',
                                              'Mate Terminal': 'mate-terminal --tab -e "telnet %h %p"  -t "%d"',
                                              'terminator': 'terminator -e "telnet %h %p" -T "%d"',
-                                             'urxvt': 'urxvt -title %d -e telnet %h %p'}
+                                             'urxvt': 'urxvt -title %d -e telnet %h %p',
+                                             'kitty': 'kitty -T %d telnet %h %p'}
 
     # default Telnet console command on other systems
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]
