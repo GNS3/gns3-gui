@@ -100,8 +100,8 @@ class ApplianceToTemplate:
         new_config.pop("arch", None)
 
         options = appliance_config["qemu"].get("options", "")
-        if appliance_config["qemu"].get("kvm", "allow") == "disable" and "-no-kvm" not in options:
-            options += " -no-kvm"
+        if appliance_config["qemu"].get("kvm", "allow") == "disable" and "-machine accel=tcg" not in options:
+            options += " -machine accel=tcg"
         new_config["options"] = options.strip()
 
         for image in appliance_config["images"]:
