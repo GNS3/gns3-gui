@@ -159,7 +159,7 @@ class EthernetLinkItem(LinkItem):
             else:
                 source_port_label.hide()
 
-            if self._settings["draw_link_status_points"]:
+            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.NoPen:
                 painter.drawPoint(point1)
 
             if self._link.suspended() or self._destination_port.status() == Port.suspended:
@@ -202,7 +202,7 @@ class EthernetLinkItem(LinkItem):
             else:
                 destination_port_label.hide()
 
-            if self._settings["draw_link_status_points"]:
+            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.NoPen:
                 painter.drawPoint(point2)
 
         self._drawSymbol()

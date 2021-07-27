@@ -147,7 +147,7 @@ class SerialLinkItem(LinkItem):
             else:
                 source_port_label.hide()
 
-            if self._settings["draw_link_status_points"]:
+            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.NoPen:
                 painter.drawPoint(self.source_point)
 
             # destination point color
@@ -179,7 +179,7 @@ class SerialLinkItem(LinkItem):
             else:
                 destination_port_label.hide()
 
-            if self._settings["draw_link_status_points"]:
+            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.NoPen:
                 painter.drawPoint(self.destination_point)
 
         self._drawSymbol()
