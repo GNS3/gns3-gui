@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.2.23 05/08/2021
+
+* Handle -no-kvm param deprecated in Qemu >= v5.2
+* Support for invisible links. Fixes #2461
+* Add kitty console application command line. Fixes #3203
+* Add Windows Terminal profile as an option for Console Applications. Fixes #3193
+
 ## 2.2.22 10/06/2021
 
 * Fix exception shown when GNS3 is started with empty config. Fixes #3188
