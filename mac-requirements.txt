@@ -1,1 +1,3 @@
 -r requirements.txt
+
+PyQt5==5.12.3

@@ -49,6 +49,7 @@ class StyleEditorDialogLink(QtWidgets.QDialog, Ui_StyleEditorDialog):
         self.uiBorderStyleComboBox.addItem("Dot", QtCore.Qt.DotLine)
         self.uiBorderStyleComboBox.addItem("Dash Dot", QtCore.Qt.DashDotLine)
         self.uiBorderStyleComboBox.addItem("Dash Dot Dot", QtCore.Qt.DashDotDotLine)
+        self.uiBorderStyleComboBox.addItem("Invisible", QtCore.Qt.NoPen)
 
         self.uiColorLabel.hide()
         self.uiColorPushButton.hide()
