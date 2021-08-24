@@ -554,7 +554,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if self.uiQemuListComboBox.count() == 1:
                 self.next()
             else:
-                i = self.uiQemuListComboBox.findText(self._appliance["qemu"]["arch"], QtCore.Qt.MatchContains)
+                i = self.uiQemuListComboBox.findData(self._appliance["qemu"]["arch"], flags=QtCore.Qt.MatchEndsWith)
                 if i != -1:
                     self.uiQemuListComboBox.setCurrentIndex(i)
 
