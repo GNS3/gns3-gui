@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.2.24 25/08/2021
+
+* Fix incorrect Qemu binary selected when importing template. Fixes https://github.com/GNS3/gns3-gui/issues/3216
+* Early support for Python3.10
+* Bump pywin32 from 300 to 301
+* Add PyQt5==5.12.3 for macOS build
+
 ## 2.2.23 05/08/2021
 
 * Handle -no-kvm param deprecated in Qemu >= v5.2
