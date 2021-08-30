@@ -388,7 +388,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         else:
             self._node_label.setPos(label_data["x"], label_data["y"])
 
-    def connectToPort(self, unavailable_ports=[]):
+    def connectToPort(self, pos, unavailable_ports=[]):
         """
         Shows a contextual menu for the user to choose port or auto-select one.
 
@@ -436,7 +436,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 menu.addAction(QtGui.QIcon(':/icons/led_green.svg'), port_object.name())
 
         menu.triggered.connect(self.selectedPortSlot)
-        menu.exec_(QtGui.QCursor.pos())
+        # add some delay before showing the menu
+        # https://github.com/GNS3/gns3-gui/issues/3169
+        QtCore.QThread.msleep(100)
+        menu.exec_(pos)
         return self._selected_port
 
     def selectedPortSlot(self, action):

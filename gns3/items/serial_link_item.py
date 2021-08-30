@@ -50,10 +50,16 @@ class SerialLinkItem(LinkItem):
 
         LinkItem.adjust(self)
 
-        if self._hovered:
-            self.setPen(QtGui.QPen(QtCore.Qt.red, self._pen_width + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-        else:
-            self.setPen(QtGui.QPen(QtCore.Qt.darkRed, self._pen_width, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+        try:
+            if self._hovered:
+                self.setPen(QtGui.QPen(QtCore.Qt.red, self._link._link_style["width"] + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+            else:
+                self.setPen(QtGui.QPen(QtGui.QColor(self._link._link_style["color"]), self._link._link_style["width"], self._link._link_style["type"], QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+        except:
+            if self._hovered:
+                self.setPen(QtGui.QPen(QtCore.Qt.red, self._pen_width + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+            else:
+                self.setPen(QtGui.QPen(QtCore.Qt.darkRed, self._pen_width, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 
         # get source to destination angle
         vector_angle = math.atan2(self.dy, self.dx)
@@ -141,7 +147,7 @@ class SerialLinkItem(LinkItem):
             else:
                 source_port_label.hide()
 
-            if self._settings["draw_link_status_points"]:
+            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.NoPen:
                 painter.drawPoint(self.source_point)
 
             # destination point color
@@ -173,7 +179,7 @@ class SerialLinkItem(LinkItem):
             else:
                 destination_port_label.hide()
 
-            if self._settings["draw_link_status_points"]:
+            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.NoPen:
                 painter.drawPoint(self.destination_point)
 
         self._drawSymbol()

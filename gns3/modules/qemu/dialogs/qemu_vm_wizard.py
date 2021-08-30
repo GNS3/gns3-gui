@@ -164,7 +164,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             settings["initrd"] = self.uiInitrdImageLineEdit.text()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text()
             settings["kernel_command_line"] = "ide_generic.probe_mask=0x01 ide_core.chs=0.0:980,16,32 auto nousb console=ttyS0,9600 bigphysarea=65536 ide1=noprobe no-hlt -net nic"
-            settings["options"] = "-no-kvm -icount auto"
+            settings["options"] = "-machine accel=tcg -icount auto"
             if not sys.platform.startswith("darwin"):
                 settings["cpu_throttling"] = 80  # limit to 80% CPU usage
             settings["process_priority"] = "low"

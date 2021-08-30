@@ -141,8 +141,10 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'end tell'""",
         'Royal TSX': "open 'rtsx://telnet%3A%2F%2F%h:%p'",
         'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "%d" /T /TELNET %h %p',
+        'Windows Terminal': 'wt.exe -w 1 new-tab --title %d telnet %h %p',
         'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"',
-        'ZOC 7': '/Applications/zoc7.app/Contents/MacOS/zoc7 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
+        'ZOC 7': '/Applications/zoc7.app/Contents/MacOS/zoc7 "/TELNET:%h:%p" /TABBED "/TITLE:%d"',
+        'ZOC 8': '/Applications/zoc8.app/Contents/MacOS/zoc8 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
     }
 
     # default Mac OS X Telnet console command
@@ -158,7 +160,8 @@ else:
                                              'SecureCRT': 'SecureCRT /T /N "%d"  /TELNET %h %p',
                                              'Mate Terminal': 'mate-terminal --tab -e "telnet %h %p"  -t "%d"',
                                              'terminator': 'terminator -e "telnet %h %p" -T "%d"',
-                                             'urxvt': 'urxvt -title %d -e telnet %h %p'}
+                                             'urxvt': 'urxvt -title %d -e telnet %h %p',
+                                             'kitty': 'kitty -T %d telnet %h %p'}
 
     # default Telnet console command on other systems
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]

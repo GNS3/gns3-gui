@@ -1,4 +1,5 @@
 QWidget {
+    color: black;
     background-color: #535353;
 }
 
@@ -7,10 +8,12 @@ QToolBar {
 }
 
 QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QListWidget, QLineEdit, QSpinBox, QComboBox {
-  background-color: #dedede
+  color: black;
+  background-color: #dedede;
 }
 
 QLabel, QMenu, QStatusBar {
+  color: black;
   color: #dedede;
 }
 
@@ -48,6 +51,7 @@ QComboBox {
 }
 
 QComboBox QAbstractItemView {
+    color: black;
     background-color: #dedede;
 }
 

@@ -86,6 +86,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setUnifiedTitleAndToolBarOnMac(True)
 
+        # These widgets will be disabled when no project is loaded
+        self.disableWhenNoProjectWidgets = [
+            self.uiGraphicsView,
+            self.uiAnnotateMenu,
+            self.uiAnnotationToolBar,
+            self.uiControlToolBar,
+            self.uiControlMenu,
+            self.uiSaveProjectAsAction,
+            self.uiExportProjectAction,
+            self.uiScreenshotAction,
+            self.uiSnapshotAction,
+            self.uiEditProjectAction,
+            self.uiDeleteProjectAction,
+            self.uiImportExportConfigsAction,
+            self.uiLockAllAction
+        ]
+
         self._notif_dialog = NotifDialog(self)
         # Setup logger
         logging.getLogger().addHandler(NotifDialogHandler(self._notif_dialog))
@@ -177,28 +194,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiNewTemplatePushButton.hide()
 
         self.setWindowTitle("[*] GNS3")
-
-        # This widgets will be disable when you have no project loaded
-        self.disableWhenNoProjectWidgets = [
-            self.uiGraphicsView,
-            self.uiAnnotateMenu,
-            self.uiAnnotationToolBar,
-            self.uiControlToolBar,
-            self.uiControlMenu,
-            self.uiSaveProjectAsAction,
-            self.uiExportProjectAction,
-            self.uiScreenshotAction,
-            self.uiSnapshotAction,
-            self.uiEditProjectAction,
-            self.uiDeleteProjectAction,
-            self.uiImportExportConfigsAction,
-            self.uiLockAllAction
-        ]
-
-        # This widgets are not enabled if it's a remote controller (no access to the local file system)
-        self.disableWhenRemoteContollerWidgets = [
-            # self.uiImportExportConfigsAction
-        ]
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
@@ -540,8 +535,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Refresh widgets that should be visible or not
         """
-        for widget in self.disableWhenRemoteContollerWidgets:
-            widget.setVisible(not Controller.instance().isRemote())
 
         # No projects
         if Topology.instance().project() is None:
