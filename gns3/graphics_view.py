@@ -577,7 +577,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             delta = event.angleDelta()
             if delta is not None and delta.x() == 0:
                 # CTRL is pressed then use the mouse wheel to zoom in or out.
-                self.scaleView(pow(2.0, delta.y() / 240.0))
+                self.scaleView(pow(2.0, (delta.y()/2) / 240.0))
                 self._topology.project().setZoom(round(self.transform().m11() * 100))
                 self._topology.project().update()
         else:
