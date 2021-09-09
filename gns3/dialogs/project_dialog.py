@@ -236,7 +236,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         Add recent projects in a menu.
         """
 
-        menu = QtWidgets.QMenu()
+        menu = QtWidgets.QMenu(parent=self)
         if Controller.instance().isRemote():
             for action in self._main_window.recent_project_actions:
                 menu.addAction(action)
