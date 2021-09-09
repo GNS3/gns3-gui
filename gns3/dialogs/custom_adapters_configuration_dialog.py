@@ -169,6 +169,9 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
             adapter_number = item.data(0, QtCore.Qt.UserRole)
             custom_adapter_settings["adapter_number"] = adapter_number
             original_port_name = item.data(1, QtCore.Qt.UserRole)
+            if not port_name:
+                QtWidgets.QMessageBox.critical(self, "Port name", "Port name cannot be empty for adapter {}".format(adapter_number))
+                return False
             if original_port_name != port_name:
                 custom_adapter_settings["port_name"] = port_name
             if self._default_adapter_type and self._adapter_types:
@@ -180,13 +183,14 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
                 if mac_address and mac_address != ":::::":
                     if not re.search(r"""^([0-9a-fA-F]{2}[:]){5}[0-9a-fA-F]{2}$""", mac_address):
                         QtWidgets.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hh:hh:hh:hh:hh:hh)")
-                        return
+                        return False
                     default_mac_address = self._IntegerToMac(self._MacToInteger(self._base_mac_address) + adapter_number)
                     if mac_address != default_mac_address:
                         custom_adapter_settings["mac_address"] = mac_address
             if len(custom_adapter_settings) > 1:
                 # only save if there is more than the adapter_number key
                 self._custom_adapters.append(custom_adapter_settings.copy())
+        return True
 
     def done(self, result):
         """
@@ -196,5 +200,6 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
         """
 
         if result:
-            self._updateCustomAdapters()
+            if not self._updateCustomAdapters():
+                return
         super().done(result)

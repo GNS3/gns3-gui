@@ -560,7 +560,7 @@ class Node(BaseNode):
             del result["properties"]
 
         # Update common element of all nodes
-        for key in ["x", "y", "z", "locked", "symbol", "label", "console_host", "console", "console_type", "console_auto_start", "aux", "aux_type", "custom_adapters"]:
+        for key in ["x", "y", "z", "locked", "symbol", "label", "console_host", "console", "console_type", "console_auto_start", "aux", "aux_type", "custom_adapters", "first_port_name", "port_name_format", "port_segment_size"]:
             if key in result:
                 self._settings[key] = result[key]
 
