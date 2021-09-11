@@ -28,6 +28,7 @@ import urllib.parse
 from .version import __version__, __version_info__
 from .qt import QtCore, QtNetwork, QtWidgets, qpartial, sip_is_deleted
 from .utils import parse_version
+from .dialogs.login_dialog import LoginDialog
 
 import logging
 log = logging.getLogger(__name__)
@@ -59,6 +60,7 @@ class HTTPClient(QtCore.QObject):
 
         self._protocol = settings.get("protocol", "http")
         self._host = settings["host"]
+        self._jwt_token = None
         try:
             if self._host is None or self._host == "0.0.0.0":
                 self._host = "127.0.0.1"
@@ -426,13 +428,24 @@ class HTTPClient(QtCore.QObject):
                 return
             log.warning("{}\nUsing different versions may result in unexpected problems. Please upgrade or use at your own risk.".format(msg))
 
-        self._connected = True
-        self._retry = 0
-        self.connection_connected_signal.emit()
-        for request, callback in self._query_waiting_connections:
-            if request:
-                request()
-        self._query_waiting_connections = []
+        # send a request that requires authentication to start the process of getting a JWT token
+        self._executeHTTPQuery("GET", "/users/me", None, {}, server=server, timeout=10, showProgress=False)
+
+    def _authenticateCallback(self, result, error=False, **kwargs):
+        """
+        Callback to receive JWT token.
+        """
+
+        if not error:
+            log.info(f"Authenticated with server")
+            self._jwt_token = result.get("access_token")
+            self._connected = True
+            self._retry = 0
+            self.connection_connected_signal.emit()
+            for request, callback in self._query_waiting_connections:
+                if request:
+                    request()
+            self._query_waiting_connections = []
 
     def _addBodyToRequest(self, body, request):
         """
@@ -474,19 +487,24 @@ class HTTPClient(QtCore.QObject):
 
     def _addAuth(self, request):
         """
-        If require add basic auth header
+        Add authentication information
         """
+
         if self._user:
             auth_string = "{}:{}".format(self._user, self._password)
             auth_string = base64.b64encode(auth_string.encode("utf-8"))
             auth_string = "Basic {}".format(auth_string.decode())
             request.setRawHeader(b"Authorization", auth_string.encode())
+
+        if self._jwt_token:
+            request.setRawHeader(b"Authorization", f"Bearer {self._jwt_token}".encode())
         return request
 
     def connectWebSocket(self, websocket, path, prefix="/v3"):
         """
         Path of the websocket endpoint
         """
+
         host = self._getHostForQuery()
         request = websocket.request()
         ws_protocol = "ws"
@@ -688,7 +706,23 @@ class HTTPClient(QtCore.QObject):
             else:
                 status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
                 if status == 401:
-                    log.error(error_message)
+                    from gns3.main_window import MainWindow
+                    main_window = MainWindow.instance()
+                    login_dialog = LoginDialog(main_window)
+                    login_dialog.show()
+                    login_dialog.raise_()
+                    if login_dialog.exec_():
+                        username = login_dialog.getUsername()
+                        password = login_dialog.getPassword()
+                        if username and password:
+                            data = {
+                                "username": username,
+                                "password": password
+                            }
+                            self._executeHTTPQuery("POST", "/users/authenticate", self._authenticateCallback, data, server=server, timeout=10, showProgress=False)
+                            return
+                    else:
+                        log.error(error_message)
 
             try:
                 body = bytes(response.readAll()).decode("utf-8").strip("\0")
