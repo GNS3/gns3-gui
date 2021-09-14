@@ -1,5 +1,16 @@
 # Change Log
 
+## 2.2.25 14/09/2021
+
+* Fix menu disabled for modal dialogs on macOS. Fixes #3007
+* Change method to display the recent files menu. Fixes #3007
+* Fix bug when using empty port names for custom adapters. Fixes #3228
+* Upgrade Qt to version 5.15.4 on macOS
+* Fix mouse zoom-in/out step value is two times bigger than keyboard one. Fixes #3226
+* Upgrade to Qt 5.15.4 on Windows. Ref #3210
+* Fix issue with custom adapters at the node level. Fixes #3223
+* Explicitly require setuptools, utils/get_resource.py imports pkg_resources
+
 ## 2.2.24 25/08/2021
 
 * Fix incorrect Qemu binary selected when importing template. Fixes https://github.com/GNS3/gns3-gui/issues/3216
