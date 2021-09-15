@@ -821,6 +821,18 @@ class GraphicsView(QtWidgets.QGraphicsView):
             menu.addAction(console_edit_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem), items)):
+            isolate_action = QtWidgets.QAction("Isolate", menu)
+            isolate_action.setIcon(get_icon("link-pause.svg"))
+            isolate_action.triggered.connect(self.isolateActionSlot)
+            menu.addAction(isolate_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem), items)):
+            unisolate_action = QtWidgets.QAction("Un-isolate", menu)
+            unisolate_action.setIcon(get_icon("link-start.svg"))
+            unisolate_action.triggered.connect(self.unisolateActionSlot)
+            menu.addAction(unisolate_action)
+
+        if True in list(map(lambda item: isinstance(item, NodeItem), items)):
             # Action: Change hostname
             change_hostname_action = QtWidgets.QAction("Change hostname", menu)
             change_hostname_action.setIcon(get_icon("show-hostname.svg"))
@@ -998,6 +1010,26 @@ class GraphicsView(QtWidgets.QGraphicsView):
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem) and hasattr(item.node(), "reload") and item.node().initialized():
                 item.node().reload()
+
+    def isolateActionSlot(self):
+        """
+        Slot to receive events from the isolate action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "isolate") and item.node().initialized():
+                item.node().isolate()
+
+    def unisolateActionSlot(self):
+        """
+        Slot to receive events from the unisolate action in the
+        contextual menu.
+        """
+
+        for item in self.scene().selectedItems():
+            if isinstance(item, NodeItem) and hasattr(item.node(), "unisolate") and item.node().initialized():
+                item.node().unisolate()
 
     def configureActionSlot(self):
         """

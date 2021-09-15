@@ -167,6 +167,8 @@
         <file>classic_icons/line-hover.svg</file>
         <file>classic_icons/reload.svg</file>
         <file>classic_icons/reload-hover.svg</file>
+        <file>classic_icons/link-start.svg</file>
+        <file>classic_icons/link-pause.svg</file>
         <file>classic_icons/router.svg</file>
         <file>classic_icons/router-hover.svg</file>
         <file>classic_icons/save-project.svg</file>
@@ -276,6 +278,8 @@
         <file>charcoal_icons/line-hover.svg</file>
         <file>charcoal_icons/reload.svg</file>
         <file>charcoal_icons/reload-hover.svg</file>
+        <file>charcoal_icons/link-start.svg</file>
+        <file>charcoal_icons/link-pause.svg</file>
         <file>charcoal_icons/router.svg</file>
         <file>charcoal_icons/router-hover.svg</file>
         <file>charcoal_icons/save-project.svg</file>

@@ -337,6 +337,50 @@ class Node(BaseNode):
         else:
             self._parseControllerResponse(result)
 
+    def isolate(self):
+        """
+        Isolates this node instance.
+        """
+
+        log.debug("{} is being isolated".format(self.name()))
+        self.post("/isolate", self._isolateCallback, timeout=None, showProgress=False)
+
+    def _isolateCallback(self, result, error=False, **kwargs):
+        """
+        Callback for isolate
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while isolating {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            self._parseControllerResponse(result)
+
+    def unisolate(self):
+        """
+        Un-isolates this node instance.
+        """
+
+        log.debug("{} is being un-isolated".format(self.name()))
+        self.post("/unisolate", self._unisolateCallback, timeout=None, showProgress=False)
+
+    def _unisolateCallback(self, result, error=False, **kwargs):
+        """
+        Callback for unisolate
+
+        :param result: server response (dict)
+        :param error: indicates an error (boolean)
+        """
+
+        if error:
+            log.error("error while un-isolating {}: {}".format(self.name(), result["message"]))
+            self.server_error_signal.emit(self.id(), result["message"])
+        else:
+            self._parseControllerResponse(result)
+
     def createNodeCallback(self, result):
         """
         Callback when the node has been created on the controller.
