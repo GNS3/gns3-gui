@@ -151,6 +151,22 @@ class NodesView(QtWidgets.QTreeWidget):
 
         self._showContextualMenu(event.globalPos())
 
+    def mouseDoubleClickEvent(self, event):
+        """
+        Handles all mouse double click events.
+
+        :param event: QMouseEvent instance
+        """
+
+        item = self.itemAt(event.pos())
+        if item:
+            template = TemplateManager.instance().getTemplate(item.data(0, QtCore.Qt.UserRole))
+            if template:
+                configuration_page = TEMPLATE_TYPE_TO_CONFIGURATION_PAGE.get(template.template_type())
+                if not template.builtin() and configuration_page:
+                    self._configurationSlot(template, configuration_page)
+        super().mouseDoubleClickEvent(event)
+
     def mouseMoveEvent(self, event):
         """
         Handles all mouse move events.
@@ -204,14 +220,14 @@ class NodesView(QtWidgets.QTreeWidget):
 
         menu.exec_(pos)
 
-    def _configurationSlot(self, template, configuration_page, source):
+    def _configurationSlot(self, template, configuration_page, source=None):
 
         dialog = ConfigurationDialog(template.name(), template.settings(), configuration_page(), parent=self)
         dialog.show()
         if dialog.exec_():
             TemplateManager.instance().updateTemplate(template)
 
-    def _deleteSlot(self, template, source):
+    def _deleteSlot(self, template, source=None):
 
         reply = QtWidgets.QMessageBox.question(self, "Template", "Delete {} template?".format(template.name()),
                                                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
