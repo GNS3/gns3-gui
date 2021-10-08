@@ -54,6 +54,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         self.uiEditVirtualBoxVMPushButton.clicked.connect(self._vboxVMEditSlot)
         self.uiDeleteVirtualBoxVMPushButton.clicked.connect(self._vboxVMDeleteSlot)
         self.uiVirtualBoxVMsTreeWidget.itemSelectionChanged.connect(self._vboxVMChangedSlot)
+        self.uiVirtualBoxVMsTreeWidget.itemDoubleClicked.connect(self._vboxVMEditSlot)
 
     def _createSectionItem(self, name):
         """

@@ -53,6 +53,8 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         self.uiEditEthernetHubPushButton.clicked.connect(self._editEthernetHubSlot)
         self.uiDeleteEthernetHubPushButton.clicked.connect(self._deleteEthernetHubSlot)
         self.uiEthernetHubsTreeWidget.itemSelectionChanged.connect(self._ethernetHubChangedSlot)
+        self.uiEthernetHubsTreeWidget.itemDoubleClicked.connect(self._editEthernetHubSlot)
+
 
     def _createSectionItem(self, name):
         """
