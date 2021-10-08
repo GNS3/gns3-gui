@@ -54,6 +54,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiEditQemuVMPushButton.clicked.connect(self._qemuVMEditSlot)
         self.uiDeleteQemuVMPushButton.clicked.connect(self._qemuVMDeleteSlot)
         self.uiQemuVMsTreeWidget.itemSelectionChanged.connect(self._qemuVMChangedSlot)
+        self.uiQemuVMsTreeWidget.itemDoubleClicked.connect(self._qemuVMEditSlot)
 
     def _createSectionItem(self, name):
         """

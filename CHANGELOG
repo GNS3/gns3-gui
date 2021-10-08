@@ -1,5 +1,15 @@
 # Change Log
 
+## 2.2.26 08/10/2021
+
+* Upgrade embedded Python to version 3.7 in Windows package
+* Upgrade Visual C++ Redistributable for Visual Studio 2019 in Windows package
+* Fix SSL support in Windows package
+* Open "template configuration" dialog with double click on template name in "Preferences". Fixes #3239
+* Only show "virtio" network adapter when legacy node is enabled. Fixes https://github.com/GNS3/gns3-gui/issues/1969
+* Double-click on a template opens "template configuration" dialog. Fixes #3236
+* Fix "Custom symbols" can't be unfolded after using "Filter" field. Fixes #3231
+
 ## 2.2.25 14/09/2021
 
 * Fix menu disabled for modal dialogs on macOS. Fixes #3007

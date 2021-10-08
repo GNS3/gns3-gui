@@ -119,13 +119,13 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         """
         text = self.uiSearchLineEdit.text()
         for item in self._symbol_items:
-            if not item.data(0, QtCore.Qt.UserRole).builtin():
-                item.setHidden(True)
+            # if not item.data(0, QtCore.Qt.UserRole).builtin():
+            #     item.setHidden(True)
+            # else:
+            if not text.strip() or text.strip().lower() in item.text(0).lower():
+                item.setHidden(False)
             else:
-                if len(text.strip()) == 0 or text.strip().lower() in item.text(0).lower():
-                    item.setHidden(False)
-                else:
-                    item.setHidden(True)
+                item.setHidden(True)
 
     def _customSymbolToggledSlot(self, checked):
         """

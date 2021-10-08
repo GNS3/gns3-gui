@@ -52,6 +52,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         self.uiEditCloudNodePushButton.clicked.connect(self._editCloudNodeSlot)
         self.uiDeleteCloudNodePushButton.clicked.connect(self._deleteCloudNodeSlot)
         self.uiCloudNodesTreeWidget.itemSelectionChanged.connect(self._cloudNodeChangedSlot)
+        self.uiCloudNodesTreeWidget.itemDoubleClicked.connect(self._editCloudNodeSlot)
 
     def _createSectionItem(self, name):
         """

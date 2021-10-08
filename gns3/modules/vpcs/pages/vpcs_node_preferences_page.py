@@ -53,6 +53,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         self.uiEditVPCSPushButton.clicked.connect(self._editVPCSSlot)
         self.uiDeleteVPCSPushButton.clicked.connect(self._deleteVPCSSlot)
         self.uiVPCSTreeWidget.itemSelectionChanged.connect(self._vpcsChangedSlot)
+        self.uiVPCSTreeWidget.itemDoubleClicked.connect(self._editVPCSSlot)
 
     def _createSectionItem(self, name):
         """
