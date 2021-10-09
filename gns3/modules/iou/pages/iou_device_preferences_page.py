@@ -59,6 +59,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         self.uiEditIOUDevicePushButton.clicked.connect(self._iouDeviceEditSlot)
         self.uiDeleteIOUDevicePushButton.clicked.connect(self._iouDeviceDeleteSlot)
         self.uiIOUDevicesTreeWidget.itemSelectionChanged.connect(self._iouDeviceChangedSlot)
+        self.uiIOUDevicesTreeWidget.itemDoubleClicked.connect(self._iouDeviceEditSlot)
 
     def _createSectionItem(self, name):
         """

@@ -53,6 +53,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         self.uiEditEthernetSwitchPushButton.clicked.connect(self._editEthernetSwitchSlot)
         self.uiDeleteEthernetSwitchPushButton.clicked.connect(self._deleteEthernetSwitchSlot)
         self.uiEthernetSwitchesTreeWidget.itemSelectionChanged.connect(self._ethernetSwitchChangedSlot)
+        self.uiEthernetSwitchesTreeWidget.itemDoubleClicked.connect(self._editEthernetSwitchSlot)
 
     def _createSectionItem(self, name):
         """

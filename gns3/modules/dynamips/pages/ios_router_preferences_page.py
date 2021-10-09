@@ -70,6 +70,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         self.uiDeleteIOSRouterPushButton.clicked.connect(self._iosRouterDeleteSlot)
         self.uiIOSRoutersTreeWidget.itemSelectionChanged.connect(self._iosRouterChangedSlot)
         self.uiDecompressIOSPushButton.clicked.connect(self._decompressIOSSlot)
+        self.uiIOSRoutersTreeWidget.itemDoubleClicked.connect(self._iosRouterEditSlot)
 
     def _iosRouterChangedSlot(self):
         """

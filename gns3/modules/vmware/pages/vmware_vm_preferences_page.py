@@ -53,6 +53,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiEditVMwareVMPushButton.clicked.connect(self._vmwareVMEditSlot)
         self.uiDeleteVMwareVMPushButton.clicked.connect(self._vmwareVMDeleteSlot)
         self.uiVMwareVMsTreeWidget.itemSelectionChanged.connect(self._vmwareVMChangedSlot)
+        self.uiVMwareVMsTreeWidget.itemDoubleClicked.connect(self._vmwareVMEditSlot)
 
     def _createSectionItem(self, name):
         """

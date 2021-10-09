@@ -52,6 +52,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         self.uiEditDockerVMPushButton.clicked.connect(self._dockerImageEditSlot)
         self.uiDeleteDockerVMPushButton.clicked.connect(self._dockerImageDeleteSlot)
         self.uiDockerVMsTreeWidget.itemSelectionChanged.connect(self._dockerImageChangedSlot)
+        self.uiDockerVMsTreeWidget.itemDoubleClicked.connect(self._dockerImageEditSlot)
 
     def _createSectionItem(self, name):
         """

@@ -102,6 +102,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
         # Supported NIC models: e1000, e1000-82544gc, e1000-82545em, e1000e, i82550, i82551, i82557a, i82557b, i82557c, i82558a
         # i82558b, i82559a, i82559b, i82559c, i82559er, i82562, i82801, ne2k_pci, pcnet, rocker, rtl8139, virtio-net-pci, vmxnet3
+        # This list can be retrieved using "qemu-system-x86_64 -nic model=?" or "qemu-system-x86_64 -device help"
         self._legacy_devices = ("e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio")
         self._qemu_network_devices = OrderedDict([("e1000", "Intel Gigabit Ethernet"),
                                                   ("e1000-82544gc", "Intel 82544GC Gigabit Ethernet"),
@@ -153,6 +154,9 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiAdapterTypesComboBox.clear()
         for device_name, device_description in self._qemu_network_devices.items():
             if legacy_networking and device_name not in self._legacy_devices:
+                continue
+            # special case for virtio legacy networking
+            if not legacy_networking and device_name == "virtio":
                 continue
             self.uiAdapterTypesComboBox.addItem("{} ({})".format(device_description, device_name), device_name)
 
@@ -421,7 +425,9 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 if nic in self._legacy_devices:
                     network_devices[nic] = desc
         else:
-            network_devices = self._qemu_network_devices
+            network_devices = self._qemu_network_devices.copy()
+            # special case for virtio legacy networking
+            network_devices.pop("virtio")
 
         dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, default_adapter, network_devices, base_mac_address, parent=self)
         dialog.show()

@@ -8,7 +8,7 @@ RUN apt-get clean
 
 ADD dev-requirements.txt /dev-requirements.txt
 ADD requirements.txt /requirements.txt
-RUN pip3 install -r /dev-requirements.txt
+RUN pip3 install --no-cache-dir -r /dev-requirements.txt
 
 ADD . /src
 WORKDIR /src
