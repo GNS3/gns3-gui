@@ -388,7 +388,6 @@
           "md5sum": {
             "type": "string",
             "title": "md5sum of the file",
-            "type": "string",
             "pattern": "^[a-f0-9]{32}$"
           },
           "filesize": {
