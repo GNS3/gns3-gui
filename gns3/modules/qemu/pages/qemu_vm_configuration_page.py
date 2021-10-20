@@ -88,7 +88,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiInitrdToolButton.clicked.connect(self._initrdBrowserSlot)
         self.uiKernelImageToolButton.clicked.connect(self._kernelImageBrowserSlot)
         self.uiActivateCPUThrottlingCheckBox.stateChanged.connect(self._cpuThrottlingChangedSlot)
-        self.uiLegacyNetworkingCheckBox.stateChanged.connect(self._legacyNetworkingChangedSlot)
         self.uiCustomAdaptersConfigurationPushButton.clicked.connect(self._customAdaptersConfigurationSlot)
         self.uiCreateConfigDiskCheckBox.stateChanged.connect(self._createConfigDiskChangedSlot)
 
@@ -103,7 +102,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         # Supported NIC models: e1000, e1000-82544gc, e1000-82545em, e1000e, i82550, i82551, i82557a, i82557b, i82557c, i82558a
         # i82558b, i82559a, i82559b, i82559c, i82559er, i82562, i82801, ne2k_pci, pcnet, rocker, rtl8139, virtio-net-pci, vmxnet3
         # This list can be retrieved using "qemu-system-x86_64 -nic model=?" or "qemu-system-x86_64 -device help"
-        self._legacy_devices = ("e1000", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "virtio")
         self._qemu_network_devices = OrderedDict([("e1000", "Intel Gigabit Ethernet"),
                                                   ("e1000-82544gc", "Intel 82544GC Gigabit Ethernet"),
                                                   ("e1000-82545em", "Intel 82545EM Gigabit Ethernet"),
@@ -125,7 +123,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                                                   ("pcnet", "AMD PCNet Ethernet"),
                                                   ("rocker", "Rocker L2 switch device"),
                                                   ("rtl8139", "Realtek 8139 Ethernet"),
-                                                  ("virtio", "Legacy paravirtualized Network I/O"),
                                                   ("virtio-net-pci", "Paravirtualized Network I/O"),
                                                   ("vmxnet3", "VMWare Paravirtualized Ethernet v3")])
 
@@ -144,20 +141,14 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
 
-    def _refreshQemuNetworkDevices(self, legacy_networking=False):
+    def _refreshQemuNetworkDevices(self,):
         """
         Refreshes the Qemu network device list.
 
-        :param legacy_networking: True if legacy networking is enabled.
         """
 
         self.uiAdapterTypesComboBox.clear()
         for device_name, device_description in self._qemu_network_devices.items():
-            if legacy_networking and device_name not in self._legacy_devices:
-                continue
-            # special case for virtio legacy networking
-            if not legacy_networking and device_name == "virtio":
-                continue
             self.uiAdapterTypesComboBox.addItem("{} ({})".format(device_description, device_name), device_name)
 
     @staticmethod
@@ -361,16 +352,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         else:
             self.uiCPUThrottlingSpinBox.setEnabled(False)
 
-    def _legacyNetworkingChangedSlot(self, state):
-        """
-        Slot to enable or not legacy networking.
-        """
-
-        if state:
-            self._refreshQemuNetworkDevices(legacy_networking=True)
-        else:
-            self._refreshQemuNetworkDevices()
-
     def _createConfigDiskChangedSlot(self, state):
         """
         Slot to allow or not HDD disk to be configured based on the state of the config disk option.
@@ -419,16 +400,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             QtWidgets.QMessageBox.critical(self, "Invalid format", "Invalid port name format")
             return
 
-        if self.uiLegacyNetworkingCheckBox.isChecked():
-            network_devices = {}
-            for nic, desc in self._qemu_network_devices.items():
-                if nic in self._legacy_devices:
-                    network_devices[nic] = desc
-        else:
-            network_devices = self._qemu_network_devices.copy()
-            # special case for virtio legacy networking
-            network_devices.pop("virtio")
-
+        network_devices = self._qemu_network_devices.copy()
         dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, default_adapter, network_devices, base_mac_address, parent=self)
         dialog.show()
         dialog.exec_()
@@ -548,8 +520,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
         self._custom_adapters = settings["custom_adapters"].copy()
-
-        self.uiLegacyNetworkingCheckBox.setChecked(settings["legacy_networking"])
         self.uiReplicateNetworkConnectionStateCheckBox.setChecked(settings["replicate_network_connection_state"])
 
         # load the MAC address setting
@@ -684,7 +654,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                     raise ConfigurationError()
 
         settings["adapters"] = adapters
-        settings["legacy_networking"] = self.uiLegacyNetworkingCheckBox.isChecked()
         settings["replicate_network_connection_state"] = self.uiReplicateNetworkConnectionStateCheckBox.isChecked()
         settings["custom_adapters"] = self._custom_adapters.copy()
         settings["on_close"] = self.uiOnCloseComboBox.itemData(self.uiOnCloseComboBox.currentIndex())

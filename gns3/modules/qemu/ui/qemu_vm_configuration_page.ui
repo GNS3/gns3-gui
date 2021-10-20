@@ -578,107 +578,12 @@
        <string>Network</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiPortSegmentSizeLabel">
-         <property name="text">
-          <string>Segment size:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" colspan="2">
-        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
-         <property name="maximum">
-          <number>128</number>
-         </property>
-         <property name="singleStep">
-          <number>4</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiAdaptersLabel">
-         <property name="text">
-          <string>Adapters:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="uiFirstPortNameLabel">
-         <property name="text">
-          <string>First port name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" colspan="2">
-        <widget class="QLineEdit" name="uiFirstPortNameLineEdit"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiPortNameFormatLabel">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;{0} - the port number, from 0 to the number of adapters-1.&lt;/p&gt;&lt;p&gt;{1} - the segment number, from 0 to the number of segments-1.&lt;/p&gt;&lt;p&gt;{port0} - named alias for {0}.&lt;/p&gt;&lt;p&gt;{port1} - the port number, from 1 to the number of adapters.&lt;/p&gt;&lt;p&gt;{segment0} - named alias for {1}.&lt;/p&gt;&lt;p&gt;{segment1} - the segment number, from 1 to the number of segments.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Name format:</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="1" colspan="2">
         <widget class="QLineEdit" name="uiPortNameFormatLineEdit">
          <property name="text">
           <string/>
          </property>
         </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiMacAddrLabel">
-         <property name="text">
-          <string>Base MAC:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1" colspan="2">
-        <widget class="QLineEdit" name="uiMacAddrLineEdit"/>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiAdapterTypesLabel">
-         <property name="text">
-          <string>Type:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="uiCustomAdaptersLabel">
-         <property name="text">
-          <string>Custom adapters:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1" colspan="2">
-        <widget class="QPushButton" name="uiCustomAdaptersConfigurationPushButton">
-         <property name="text">
-          <string>&amp;Configure custom adapters</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="3">
-        <widget class="QCheckBox" name="uiLegacyNetworkingCheckBox">
-         <property name="text">
-          <string>Use the legacy networking mode</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="2">
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>261</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item row="5" column="1" colspan="2">
         <widget class="QComboBox" name="uiAdapterTypesComboBox">
@@ -687,6 +592,13 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiAdapterTypesLabel">
+         <property name="text">
+          <string>Type:</string>
          </property>
         </widget>
        </item>
@@ -706,10 +618,91 @@
          </property>
         </widget>
        </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiPortSegmentSizeLabel">
+         <property name="text">
+          <string>Segment size:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>261</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="uiFirstPortNameLabel">
+         <property name="text">
+          <string>First port name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QLineEdit" name="uiFirstPortNameLineEdit"/>
+       </item>
        <item row="7" column="0" colspan="3">
         <widget class="QCheckBox" name="uiReplicateNetworkConnectionStateCheckBox">
          <property name="text">
           <string>Replicate network connection states in Qemu</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" colspan="2">
+        <widget class="QPushButton" name="uiCustomAdaptersConfigurationPushButton">
+         <property name="text">
+          <string>&amp;Configure custom adapters</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QSpinBox" name="uiPortSegmentSizeSpinBox">
+         <property name="maximum">
+          <number>128</number>
+         </property>
+         <property name="singleStep">
+          <number>4</number>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="uiCustomAdaptersLabel">
+         <property name="text">
+          <string>Custom adapters:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" colspan="2">
+        <widget class="QLineEdit" name="uiMacAddrLineEdit"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiAdaptersLabel">
+         <property name="text">
+          <string>Adapters:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiPortNameFormatLabel">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;{0} - the port number, from 0 to the number of adapters-1.&lt;/p&gt;&lt;p&gt;{1} - the segment number, from 0 to the number of segments-1.&lt;/p&gt;&lt;p&gt;{port0} - named alias for {0}.&lt;/p&gt;&lt;p&gt;{port1} - the port number, from 1 to the number of adapters.&lt;/p&gt;&lt;p&gt;{segment0} - named alias for {1}.&lt;/p&gt;&lt;p&gt;{segment1} - the segment number, from 1 to the number of segments.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Name format:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiMacAddrLabel">
+         <property name="text">
+          <string>Base MAC:</string>
          </property>
         </widget>
        </item>
