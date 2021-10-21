@@ -71,7 +71,7 @@ class TemplateManager(QtCore.QObject):
         log.debug("Create template '{}' (ID={})".format(template.name(), template.id()))
         self._controller.post("/templates", callback, body=template.__json__())
 
-    def deleteTemplate(self, template_id):
+    def deleteTemplate(self, template_id, prune_images=False):
         """
         Deletes a template on the controller.
 
@@ -81,7 +81,7 @@ class TemplateManager(QtCore.QObject):
         if template_id in self._templates and not self._templates[template_id].builtin():
             template = self._templates[template_id]
             log.debug("Delete template '{}' (ID={})".format(template.name(), template_id))
-            self._controller.delete("/templates/{template_id}".format(template_id=template_id), None)
+            self._controller.delete(f"/templates/{template_id}?prune_images={prune_images}", None)
 
     def deleteTemplateCallback(self, result, error=False, **kwargs):
         """
