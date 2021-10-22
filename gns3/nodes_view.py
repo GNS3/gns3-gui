@@ -32,7 +32,6 @@ from gns3.modules.builtin import Builtin
 from gns3.modules.dynamips import Dynamips
 from gns3.modules.iou import IOU
 from gns3.modules.vpcs import VPCS
-from gns3.modules.traceng import TraceNG
 from gns3.modules.virtualbox import VirtualBox
 from gns3.modules.qemu import Qemu
 from gns3.modules.vmware import VMware
@@ -58,7 +57,6 @@ TEMPLATE_TYPE_TO_CONFIGURATION_PAGE = {
     "dynamips": Dynamips.configurationPage(),
     "iou": IOU.configurationPage(),
     "vpcs": VPCS.configurationPage(),
-    "traceng": TraceNG.configurationPage(),
     "virtualbox": VirtualBox.configurationPage(),
     "qemu": Qemu.configurationPage(),
     "vmware": VMware.configurationPage(),

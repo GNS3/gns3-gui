@@ -146,7 +146,6 @@ def main():
                 frozen_dir,
                 os.path.normpath(os.path.join(frozen_dir, 'dynamips')),
                 os.path.normpath(os.path.join(frozen_dir, 'vpcs')),
-                os.path.normpath(os.path.join(frozen_dir, 'traceng'))
             ]
 
         os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
