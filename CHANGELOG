@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.27 12/11/2021
+
+* Fix symbols in "Symbol selection" dialog are not placed in alphabetical order. Fixes #3245
+* Fix links duplicates in topology summary. Fixes #3251
+* chore : use --no-cache-dir flag to pip in dockerfiles to save space
+
 ## 2.2.26 08/10/2021
 
 * Upgrade embedded Python to version 3.7 in Windows package
