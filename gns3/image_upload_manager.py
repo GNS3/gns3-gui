@@ -30,22 +30,17 @@ class ImageUploadManager(object):
     Manager over the image upload. Encapsulates file uploads to computes or via controller.
     """
 
-    def __init__(self, image, controller, compute_id, callback=None, directFileUpload=False):
+    def __init__(self, image, controller, compute_id, callback=None):
         self._image = image
         self._compute_id = compute_id
         self._callback = callback
-        self._directFileUpload = directFileUpload
         self._controller = controller
 
     def upload(self):
         if not os.path.exists(self._image.path):
             log.error("Image '{}' could not be found".format(self._image.path))
             return
-        if self._directFileUpload:
-            # first obtain endpoint and know when target request
-            self._controller.getEndpoint(self._getComputePath(), self._compute_id, self._onLoadEndpointCallback, showProgress=False)
-        else:
-            self._fileUploadToController()
+        self._fileUploadToController()
 
     def _getComputePath(self):
         return '/{emulator}/images/{filename}'.format(emulator=self._image.emulator, filename=self._image.filename)

@@ -1051,16 +1051,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="uiDirectFileUpload">
-         <property name="toolTip">
-          <string>Experimental, requires computes visibility from GUI network</string>
-         </property>
-         <property name="text">
-          <string>Upload files directly to computes (experimental)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1149,7 +1139,6 @@
   <tabstop>uiExperimentalFeaturesCheckBox</tabstop>
   <tabstop>uiHdpiCheckBox</tabstop>
   <tabstop>uiMultiProfilesCheckBox</tabstop>
-  <tabstop>uiDirectFileUpload</tabstop>
   <tabstop>uiRestoreDefaultsPushButton</tabstop>
   <tabstop>uiMiscTabWidget</tabstop>
  </tabstops>

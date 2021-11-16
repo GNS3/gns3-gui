@@ -416,20 +416,6 @@ class LocalConfig(QtCore.QObject):
         settings["multi_profiles"] = value
         self.saveSectionSettings("MainWindow", settings)
 
-    def directFileUpload(self):
-        """
-        :returns: Boolean. True if direct_file_upload is enabled
-        """
-
-        from gns3.settings import GENERAL_SETTINGS
-        return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["direct_file_upload"]
-
-    def setDirectFileUpload(self, value):
-        from gns3.settings import GENERAL_SETTINGS
-        settings = self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)
-        settings["direct_file_upload"] = value
-        self.saveSectionSettings("MainWindow", settings)
-
     def showInterfaceLabelsOnNewProject(self):
         """
         :returns: Boolean. True if show_interface_labels_on_new_project is enabled

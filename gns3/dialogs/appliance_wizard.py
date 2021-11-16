@@ -531,7 +531,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Can't access to the image file {}: {}.".format(path, str(e)))
             return
 
-        image_upload_manger = ImageUploadManager(image, Controller.instance(), self._compute_id, self._imageUploadedCallback, LocalConfig.instance().directFileUpload())
+        image_upload_manger = ImageUploadManager(image, Controller.instance(), self._compute_id)
         image_upload_manger.upload()
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
@@ -633,7 +633,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     log.debug("{} is already on the local server".format(image["path"]))
                     return
                 image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
-                image_upload_manager = ImageUploadManager(image, Controller.instance(), self._compute_id, self._applianceImageUploadedCallback, LocalConfig.instance().directFileUpload())
+                image_upload_manager = ImageUploadManager(image, Controller.instance(), self._compute_id, self._applianceImageUploadedCallback)
                 image_upload_manager.upload()
                 self._image_uploading_count += 1
 

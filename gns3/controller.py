@@ -225,15 +225,6 @@ class Controller(QtCore.QObject):
                 return compute_id
         return compute_id
 
-    def getEndpoint(self, path, compute_id, *args, **kwargs):
-        """
-        API post on a specific compute
-        """
-
-        compute_id = self.__fix_compute_id(compute_id)
-        path = "/computes/endpoint/{}{}".format(compute_id, path)
-        return self.get(path, *args, **kwargs)
-
     def putCompute(self, path, compute_id, *args, **kwargs):
         """
         API put on a specific compute
