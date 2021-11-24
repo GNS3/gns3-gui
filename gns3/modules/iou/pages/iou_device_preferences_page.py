@@ -88,7 +88,11 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", iou_device.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", iou_device["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(iou_device["compute_id"]).name()])
+            compute_id = iou_device.get("compute_id")
+            if compute_id:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+            else:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:
             # Compute doesn't exists
             pass

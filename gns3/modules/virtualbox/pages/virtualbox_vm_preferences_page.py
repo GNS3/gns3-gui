@@ -86,7 +86,11 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vbox_vm["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["RAM:", str(vbox_vm["ram"])])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vbox_vm["compute_id"]).name()])
+            compute_id = vbox_vm.get("compute_id")
+            if compute_id:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+            else:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vbox_vm["headless"])])

@@ -83,7 +83,11 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         if vmware_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", vmware_vm["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(vmware_vm["compute_id"]).name()])
+            compute_id = vmware_vm.get("compute_id")
+            if compute_id:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+            else:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])

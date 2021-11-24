@@ -386,7 +386,11 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", ios_router.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ios_router["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ios_router["compute_id"]).name()])
+            compute_id = ios_router.get("compute_id")
+            if compute_id:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance(compute_id).getCompute().name()])
+            else:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Platform:", ios_router["platform"]])

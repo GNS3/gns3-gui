@@ -87,7 +87,11 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", cloud_node["remote_console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", cloud_node["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(cloud_node["compute_id"]).name()])
+            compute_id = cloud_node.get("compute_id")
+            if compute_id:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+            else:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:
             pass
 

@@ -81,7 +81,11 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", docker_container.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Image name:", docker_container["image"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(docker_container["compute_id"]).name()])
+            compute_id = docker_container.get("compute_id")
+            if compute_id:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+            else:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", str(docker_container["console_type"])])

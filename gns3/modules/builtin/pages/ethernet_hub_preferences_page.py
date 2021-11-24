@@ -83,7 +83,11 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", ethernet_hub.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ethernet_hub["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_hub["compute_id"]).name()])
+            compute_id = ethernet_hub.get("compute_id")
+            if compute_id:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+            else:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Number of ports:", str(len(ethernet_hub["ports_mapping"]))])

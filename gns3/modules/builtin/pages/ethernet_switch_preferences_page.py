@@ -82,7 +82,11 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         QtWidgets.QTreeWidgetItem(section_item, ["Template ID:", ethernet_switch.get("template_id", "none")])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", ethernet_switch["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(ethernet_switch["compute_id"]).name()])
+            compute_id = ethernet_switch.get("compute_id")
+            if compute_id:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+            else:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:
             pass
 

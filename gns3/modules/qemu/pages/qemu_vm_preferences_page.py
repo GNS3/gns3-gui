@@ -84,7 +84,11 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         if qemu_vm["linked_clone"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", qemu_vm["default_name_format"]])
         try:
-            QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(qemu_vm["compute_id"]).name()])
+            compute_id = qemu_vm.get("compute_id")
+            if compute_id:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+            else:
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", qemu_vm["console_type"]])
