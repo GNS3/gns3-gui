@@ -437,7 +437,7 @@ class Project(QtCore.QObject):
         """
 
         path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
-        Controller.instance().createHTTPQuery(method, path, callback, body=body, **kwargs)
+        Controller.instance().request(method, path, callback, body=body, **kwargs)
 
     def create(self):
         """
@@ -628,13 +628,15 @@ class Project(QtCore.QObject):
         # Qt websocket before Qt 5.6 doesn't support auth
         if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
             path = "/projects/{project_id}/notifications".format(project_id=self._id)
-            self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
-                                                                              downloadProgressCallback=self._event_received,
-                                                                              networkManager=self._notification_network_manager,
-                                                                              timeout=None,
-                                                                              showProgress=False,
-                                                                              ignoreErrors=True)
-
+            self._notification_stream = Controller.instance().request(
+                "GET",
+                path, self._endListenNotificationCallback,
+                downloadProgressCallback=self._event_received,
+                networkManager=self._notification_network_manager,
+                timeout=None,
+                show_progress=False,
+                ignoreErrors=True
+            )
         else:
             path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
             self._notification_stream = Controller.instance().httpClient().connectWebSocket(self._websocket, path)

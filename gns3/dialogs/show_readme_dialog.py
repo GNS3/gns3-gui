@@ -61,10 +61,10 @@ class ShowReadmeDialog(QtWidgets.QDialog, Ui_ShowReadmeDialog):
     def _refreshSlot(self):
         self._project.get("/files/" + self._path, self._getCallback)
 
-    def _getCallback(self, result, error=False, raw_body=None, **kwargs):
+    def _getCallback(self, result, error=False, **kwargs):
 
         if not error:
-            content = raw_body.decode("utf-8", errors="ignore")
+            content = result.decode("utf-8", errors="ignore")
             if self._markdown:
                 self._document.setMarkdown(content)
             else:

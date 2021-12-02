@@ -121,7 +121,7 @@ class Link(QtCore.QObject):
                     self._capture_file.open(QtCore.QFile.WriteOnly)
                 self._response_stream = Controller.instance().get("/projects/{project_id}/links/{link_id}/capture/stream".format(project_id=self.project().id(), link_id=self._link_id),
                                                                   None,
-                                                                  showProgress=False,
+                                                                  show_progress=False,
                                                                   downloadProgressCallback=self._downloadPcapProgress,
                                                                   ignoreErrors=True,  # If something is wrong avoid disconnect us from server
                                                                   timeout=None)

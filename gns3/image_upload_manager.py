@@ -45,16 +45,6 @@ class ImageUploadManager(object):
     def _getComputePath(self):
         return '/{emulator}/images/{filename}'.format(emulator=self._image.emulator, filename=self._image.filename)
 
-    def _onLoadEndpointCallback(self, result, error=False, **kwargs):
-        if error:
-            if "message" in result:
-                log.error("Error while getting endpoint: {}".format(result["message"]))
-            return
-
-        # we know where is the endpoint and we trying to post there a file
-        endpoint = result['endpoint']
-        self._fileUploadToCompute(endpoint)
-
     def _checkIfSuccessfulCallback(self, result, error=False, **kwargs):
         if error:
             connection_error = kwargs.get('connection_error', False)
@@ -68,16 +58,6 @@ class ImageUploadManager(object):
                     log.error("Error while direct file upload: {}".format(result["message"]))
             return
         self._callback(result, error, **kwargs)
-
-    def _fileUploadToCompute(self, endpoint):
-        log.debug("Uploading image '{}' to compute".format(self._image.path))
-        parse_results = urllib.parse.urlparse(endpoint)
-        network_manager = self._controller.getHttpClient().getNetworkManager()
-        client = HTTPClient.fromUrl(endpoint, network_manager=network_manager)
-        # We don't retry connection as in case of fail we try direct file upload
-        client.setMaxRetryConnection(0)
-        client.createHTTPQuery('POST', parse_results.path, self._checkIfSuccessfulCallback, body=pathlib.Path(self._image.path),
-                               context={"image_path": self._image.path}, progressText="Uploading {}".format(self._image.filename), timeout=None, prefix="")
 
     def _fileUploadToController(self):
         log.debug("Uploading image '{}' to controller".format(self._image.path))

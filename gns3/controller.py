@@ -102,10 +102,8 @@ class Controller(QtCore.QObject):
 
         self._http_client = http_client
         if self._http_client:
-            if self.isRemote():
-                self._http_client.setMaxTimeDifferenceBetweenQueries(120)
-            self._http_client.connection_connected_signal.connect(self._httpClientConnectedSlot)
-            self._http_client.connection_disconnected_signal.connect(self._httpClientDisconnectedSlot)
+            self._http_client.connected_signal.connect(self._httpClientConnectedSlot)
+            self._http_client.disconnected_signal.connect(self._httpClientDisconnectedSlot)
             self._connectingToServer()
 
     def getHttpClient(self):
@@ -130,45 +128,15 @@ class Controller(QtCore.QObject):
 
         self._connected = False
         self._connecting = True
-        status, json_data = self.httpClient().getSynchronous('GET', '/version', timeout=60)
-        self._versionGetSlot(json_data, status is None or status >= 300)
+        self.httpClient().connectToServer()
 
     def _httpClientDisconnectedSlot(self):
+
         if self._connected:
             self._connected = False
             self.disconnected_signal.emit()
             self._connectingToServer()
             self.stopListenNotifications()
-
-    def _versionGetSlot(self, result, error=False, **kwargs):
-        """
-        Called after the initial version get
-        """
-
-        if error:
-            if self._first_error:
-                self._connecting = False
-                self.connection_failed_signal.emit()
-                if self._display_error:
-                    self._error_dialog = QtWidgets.QMessageBox(self.parent())
-                    self._error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
-                    self._error_dialog.setWindowTitle("Connection to server")
-                    if result and "message" in result:
-                        self._error_dialog.setText("Error when connecting to the GNS3 server:\n{}".format(result["message"]))
-                    else:
-                        self._error_dialog.setText("Cannot connect to the GNS3 server")
-                    self._error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
-                    self._error_dialog.show()
-            # Try to connect again in 5 seconds
-            QtCore.QTimer.singleShot(5000, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
-            self._first_error = False
-        else:
-            self._first_error = True
-            if self._error_dialog:
-                self._error_dialog.reject()
-                self._error_dialog = None
-            self._version = result.get("version")
-            self._http_client.connection_connected_signal.emit()
 
     def _httpClientConnectedSlot(self):
 
@@ -180,16 +148,16 @@ class Controller(QtCore.QObject):
             self._startListenNotifications()
 
     def post(self, *args, **kwargs):
-        return self.createHTTPQuery("POST", *args, **kwargs)
+        return self.request("POST", *args, **kwargs)
 
     def get(self, *args, **kwargs):
-        return self.createHTTPQuery("GET", *args, **kwargs)
+        return self.request("GET", *args, **kwargs)
 
     def put(self, *args, **kwargs):
-        return self.createHTTPQuery("PUT", *args, **kwargs)
+        return self.request("PUT", *args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        return self.createHTTPQuery("DELETE", *args, **kwargs)
+        return self.request("DELETE", *args, **kwargs)
 
     def getCompute(self, path, compute_id, *args, **kwargs):
         """
@@ -234,13 +202,13 @@ class Controller(QtCore.QObject):
         path = "/computes/{}{}".format(compute_id, path)
         return self.put(path, *args, **kwargs)
 
-    def createHTTPQuery(self, method, path, *args, **kwargs):
+    def request(self, method, path, *args, **kwargs):
         """
         Forward the query to the HTTP client or controller depending of the path
         """
 
         if self._http_client:
-            return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
+            return self._http_client.sendRequest(method, path, *args, **kwargs)
 
     @staticmethod
     def instance():
@@ -273,9 +241,10 @@ class Controller(QtCore.QObject):
             self._static_asset_download_queue[path].append((callback, fallback, ))
         else:
             self._static_asset_download_queue[path] = [(callback, fallback, )]
-            self._http_client.createHTTPQuery("GET", url, qpartial(self._getStaticCallback, url, path))
+            self._http_client.sendRequest("GET", url, qpartial(self._getStaticCallback, url, path), raw=True)
 
-    def _getStaticCallback(self, url, path, result, error=False, raw_body=None, **kwargs):
+    def _getStaticCallback(self, url, path, result, error=False, **kwargs):
+
         if path not in self._static_asset_download_queue:
             return
 
@@ -291,7 +260,7 @@ class Controller(QtCore.QObject):
             return
         try:
             with open(path, "wb+") as f:
-                f.write(raw_body)
+                f.write(result)
         except OSError as e:
             log.error("Can't write to {}: {}".format(path, str(e)))
             return
@@ -408,13 +377,16 @@ class Controller(QtCore.QObject):
 
         # Qt websocket before Qt 5.6 doesn't support auth
         if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
-            self._notification_stream = Controller.instance().createHTTPQuery("GET", "/notifications", self._endListenNotificationCallback,
-                                                                              downloadProgressCallback=self._event_received,
-                                                                              networkManager=self._notification_network_manager,
-                                                                              timeout=None,
-                                                                              showProgress=False,
-                                                                              ignoreErrors=True)
-
+            self._notification_stream = Controller.instance().request(
+                "GET",
+                "/notifications",
+                self._endListenNotificationCallback,
+                downloadProgressCallback=self._event_received,
+                networkManager=self._notification_network_manager,
+                timeout=None,
+                show_progress=False,
+                ignoreErrors=True
+            )
         else:
             self._notification_stream = self._http_client.connectWebSocket(self._websocket, "/notifications/ws")
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)

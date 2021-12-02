@@ -100,8 +100,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Controller.instance().setParent(self)
         LocalServer.instance().setParent(self)
 
-        HTTPClient.setProgressCallback(Progress.instance(self))
-
         self._first_file_load = True
         self._open_project_path = None
         self._loadSettings()

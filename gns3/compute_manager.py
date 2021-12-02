@@ -66,7 +66,7 @@ class ComputeManager(QtCore.QObject):
         if self._controller.connected() and datetime.datetime.now().timestamp() - self._last_computes_refresh > 1:
             self._last_computes_refresh = datetime.datetime.now().timestamp()
             self._refreshingComputes = True
-            self._controller.get("/computes", self._listComputesCallback, showProgress=False, timeout=30)
+            self._controller.get("/computes", self._listComputesCallback, show_progress=False, timeout=30)
 
     def _controllerConnectedSlot(self):
         """
@@ -75,7 +75,7 @@ class ComputeManager(QtCore.QObject):
 
         if self._controller.connected():
             self._refreshingComputes = True
-            self._controller.get("/computes", self._listComputesCallback, showProgress=False, timeout=30)
+            self._controller.get("/computes", self._listComputesCallback, show_progress=False, timeout=30)
 
     def _controllerDisconnectedSlot(self):
         """
