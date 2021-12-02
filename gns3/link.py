@@ -91,8 +91,6 @@ class Link(QtCore.QObject):
 
         self._nodes = []
         self._link_style = {}
-        self._source_node.addLink(self)
-        self._destination_node.addLink(self)
 
         body = self._prepareParams()
         if self._link_id:

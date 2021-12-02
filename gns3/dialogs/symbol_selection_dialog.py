@@ -108,6 +108,9 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                 item.setIcon(0, icon)
 
             Controller.instance().getStatic(symbol.url(), qpartial(render, item))
+
+        for parent in self._parents.values():
+            parent.sortChildren(0, QtCore.Qt.AscendingOrder)
         self.adjustSize()
 
     def _searchTextChangedSlot(self, text):
