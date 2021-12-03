@@ -39,10 +39,13 @@ class ExportProjectWorker(QtCore.QObject):
 
     def run(self):
         if self._project:
-            self._project.get("/export?include_images={}&include_snapshots={}&reset_mac_addresses={}&compression={}".format(self._include_images, self._include_snapshots, self._reset_mac_addresses, self._compression),
-                              self._exportReceived,
-                              downloadProgressCallback=self._downloadFileProgress,
-                              timeout=None)
+            self._project.get(
+                "/export?include_images={}&include_snapshots={}&reset_mac_addresses={}&compression={}".format(self._include_images, self._include_snapshots, self._reset_mac_addresses, self._compression),
+                self._exportReceived,
+                download_progress_callback=self._downloadFileProgress,
+                timeout=None,
+                wait=True
+            )
 
     def _exportReceived(self, content, error=False, server=None, context={}, **kwargs):
         if error:

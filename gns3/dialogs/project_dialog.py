@@ -139,18 +139,24 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 reset_mac_addresses = self.uiResetMacAddressesCheckBox.isChecked()
 
                 if Controller.instance().isRemote():
-                    Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
-                                               self._duplicateCallback,
-                                               body={"name": name, "reset_mac_addresses": reset_mac_addresses},
-                                               progressText="Duplicating project '{}'...".format(name),
-                                               timeout=None)
+                    Controller.instance().post(
+                        "/projects/{project_id}/duplicate".format(project_id=project_id),
+                        self._duplicateCallback,
+                        body={"name": name, "reset_mac_addresses": reset_mac_addresses},
+                        progress_text="Duplicating project '{}'...".format(name),
+                        timeout=None,
+                        wait=True
+                    )
                 else:
                     project_location = os.path.join(Topology.instance().projectsDirPath(), name)
-                    Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=project_id),
-                                               self._duplicateCallback,
-                                               body={"name": name, "path": project_location, "reset_mac_addresses": reset_mac_addresses},
-                                               progressText="Duplicating project '{}'...".format(name),
-                                               timeout=None)
+                    Controller.instance().post(
+                        "/projects/{project_id}/duplicate".format(project_id=project_id),
+                        self._duplicateCallback,
+                        body={"name": name, "path": project_location, "reset_mac_addresses": reset_mac_addresses},
+                        progress_text="Duplicating project '{}'...".format(name),
+                        timeout=None,
+                        wait=True
+                    )
 
     def _duplicateCallback(self, result, error=False, **kwargs):
         if error:

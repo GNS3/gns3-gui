@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>681</width>
-    <height>843</height>
+    <height>791</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -70,12 +70,8 @@
           <string>General settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="uiLocalServerPathLabel">
-            <property name="text">
-             <string>Server path:</string>
-            </property>
-           </widget>
+          <item row="5" column="0">
+           <widget class="QComboBox" name="uiLocalServerHostComboBox"/>
           </item>
           <item row="1" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout">
@@ -93,13 +89,6 @@
              </widget>
             </item>
            </layout>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="uiUbridgePathLabel">
-            <property name="text">
-             <string>Ubridge path:</string>
-            </property>
-           </widget>
           </item>
           <item row="3" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -125,13 +114,24 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QComboBox" name="uiLocalServerHostComboBox"/>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="uiLocalServerPortLabel">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiLocalServerPathLabel">
             <property name="text">
-             <string>Port:</string>
+             <string>Server path:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiUbridgePathLabel">
+            <property name="text">
+             <string>Ubridge path:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QCheckBox" name="uiConsoleConnectionsToAnyIPCheckBox">
+            <property name="text">
+             <string>Allow console connections to any local IP address</string>
             </property>
            </widget>
           </item>
@@ -148,17 +148,10 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="0">
-           <widget class="QCheckBox" name="uiLocalServerAuthCheckBox">
+          <item row="6" column="0">
+           <widget class="QLabel" name="uiLocalServerPortLabel">
             <property name="text">
-             <string>Protect server with password (recommended)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="0">
-           <widget class="QCheckBox" name="uiConsoleConnectionsToAnyIPCheckBox">
-            <property name="text">
-             <string>Allow console connections to any local IP address</string>
+             <string>Port:</string>
             </property>
            </widget>
           </item>
@@ -302,7 +295,45 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1" colspan="2">
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="uiRemoteMainServerUserLineEdit"/>
+          </item>
+          <item row="4" column="2">
+           <widget class="QLineEdit" name="uiRemoteMainServerPasswordLineEdit">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Password:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiRemoteMainServerProtocolLabel">
+            <property name="text">
+             <string>Protocol:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Username:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Port:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
            <widget class="QSpinBox" name="uiRemoteMainServerPortSpinBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -321,62 +352,10 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Auth:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QLineEdit" name="uiRemoteMainServerUserLineEdit"/>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>User:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QLineEdit" name="uiRemoteMainServerPasswordLineEdit">
-            <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Port:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" colspan="2">
+          <item row="1" column="2">
            <widget class="QLineEdit" name="uiRemoteMainServerHostLineEdit"/>
           </item>
-          <item row="5" column="0" colspan="2">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Password:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QCheckBox" name="uiRemoteMainServerAuthCheckBox">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="uiRemoteMainServerProtocolLabel">
-            <property name="text">
-             <string>Protocol:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" colspan="2">
+          <item row="0" column="2">
            <widget class="QComboBox" name="uiRemoteMainServerProtocolComboBox">
             <item>
              <property name="text">
@@ -581,7 +560,6 @@
   <tabstop>uiUbridgeToolButton</tabstop>
   <tabstop>uiLocalServerHostComboBox</tabstop>
   <tabstop>uiLocalServerPortSpinBox</tabstop>
-  <tabstop>uiLocalServerAuthCheckBox</tabstop>
   <tabstop>uiConsoleConnectionsToAnyIPCheckBox</tabstop>
   <tabstop>uiConsoleStartPortSpinBox</tabstop>
   <tabstop>uiConsoleEndPortSpinBox</tabstop>

@@ -135,7 +135,15 @@ class ImageManager:
             raise Exception('Invalid node type')
 
         filename = self._getRelativeImagePath(path, node_type).replace("\\", "/")
-        Controller.instance().postCompute('{}/{}'.format(upload_endpoint, filename), server, None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
+        Controller.instance().postCompute(
+            '{}/{}'.format(upload_endpoint, filename),
+            server,
+            None,
+            body=pathlib.Path(path),
+            progres_text="Uploading {}".format(filename),
+            timeout=None,
+            wait=True
+        )
         return filename
 
     def _getRelativeImagePath(self, path, node_type):

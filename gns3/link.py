@@ -119,12 +119,13 @@ class Link(QtCore.QObject):
                 else:
                     self._capture_file = QtCore.QFile(self._capture_file_path)
                     self._capture_file.open(QtCore.QFile.WriteOnly)
-                self._response_stream = Controller.instance().get("/projects/{project_id}/links/{link_id}/capture/stream".format(project_id=self.project().id(), link_id=self._link_id),
-                                                                  None,
-                                                                  show_progress=False,
-                                                                  downloadProgressCallback=self._downloadPcapProgress,
-                                                                  ignoreErrors=True,  # If something is wrong avoid disconnect us from server
-                                                                  timeout=None)
+                self._response_stream = Controller.instance().get(
+                    "/projects/{project_id}/links/{link_id}/capture/stream".format(project_id=self.project().id(), link_id=self._link_id),
+                    callback=None,
+                    show_progress=False,
+                    download_progress_callback=self._downloadPcapProgress,
+                    timeout=None
+                )
             log.debug("Has successfully started capturing packets on link {} to '{}'".format(self._link_id, self._capture_file_path))
         else:
             self._response_stream = None

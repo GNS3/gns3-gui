@@ -187,7 +187,14 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         SymbolSelectionDialog._symbols_dir = os.path.dirname(path)
 
         symbol_id = os.path.basename(path)
-        Controller.instance().post("/symbols/" + symbol_id + "/raw", qpartial(self._finishSymbolUpload, path), body=pathlib.Path(path), progressText="Uploading {}".format(symbol_id), timeout=None)
+        Controller.instance().post(
+            "/symbols/" + symbol_id + "/raw",
+            qpartial(self._finishSymbolUpload, path),
+            body=pathlib.Path(path),
+            progress_text="Uploading {}".format(symbol_id),
+            timeout=None,
+            wait=True
+        )
 
     def _finishSymbolUpload(self, path, result, error=False, **kwargs):
         if error:

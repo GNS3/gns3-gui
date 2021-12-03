@@ -15,24 +15,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .qt import sip
+
 import json
 import pathlib
-import base64
 import ipaddress
 import urllib.request
 import urllib.parse
 import copy
 import uuid
 
-from typing import List
+from typing import List, Union, Callable, Optional
+from .qt import sip
 from .version import __version__, __version_info__
-from .qt import QtCore, QtNetwork, QtWidgets, qpartial
+from .qt import QtCore, QtNetwork, QtWidgets, QtWebSockets, qpartial
 from .utils import parse_version
 from .dialogs.login_dialog import LoginDialog
 
 from .http_client_error import (
     HttpClientError,
+    HttpClientCancelledRequestError,
     HttpClientBadRequestError,
     HttpClientUnauthorizedError,
     HttpClientTimeoutError
@@ -43,8 +44,16 @@ log = logging.getLogger(__name__)
 
 
 class QNetworkReplyWatcher(QtCore.QObject):
+    """
+    Synchronously wait for a QNetworkReply to be completed
+    """
 
-    def __init__(self, show_progress: bool = True, parent: QtWidgets.QWidget = None):
+    def __init__(
+            self,
+            show_progress: bool = True,
+            progress_text: str = None,
+            parent: QtWidgets.QWidget = None
+    ):
 
         if not parent:
             from gns3.main_window import MainWindow
@@ -53,14 +62,31 @@ class QNetworkReplyWatcher(QtCore.QObject):
         super().__init__(parent)
 
         if show_progress:
-            self._progress = QtWidgets.QProgressDialog("Waiting for server", "Cancel", 0, 0, parent)
+            if not progress_text:
+                progress_text = "Waiting for server"
+            self._progress = QtWidgets.QProgressDialog(progress_text, "Cancel", 0, 0, parent)
             self._progress.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
             self._progress.setWindowModality(QtCore.Qt.ApplicationModal)
-            #self._progress.setMinimumDuration(0)
         else:
             self._progress = None
 
+    def _updateProgress(self, bytes_sent: int, bytes_total: int) -> None:
+        """
+        Update upload or download progress.
+        """
+
+        if bytes_total > 0:
+            if not self._progress.maximum():
+                self._progress.setMaximum(100)
+            self._progress.setValue(100 * bytes_sent / bytes_total)
+
     def waitForReply(self, reply: QtNetwork.QNetworkReply, timeout=60) -> None:
+        """
+        Wait for the QNetworkReply to be complete or for the timeout
+
+        :param reply: QNetworkReply instance
+        :param timeout: Number of seconds before timeout
+        """
 
         loop = QtCore.QEventLoop()
 
@@ -74,6 +100,8 @@ class QNetworkReplyWatcher(QtCore.QObject):
 
         if self._progress:
             reply.finished.connect(self._progress.close)
+            reply.uploadProgress.connect(self._updateProgress)
+            reply.downloadProgress.connect(self._updateProgress)
             self._progress.canceled.connect(reply.abort)
             self._progress.show()
 
@@ -88,10 +116,11 @@ class QNetworkReplyWatcher(QtCore.QObject):
 
 class HTTPClient(QtCore.QObject):
     """
-    HTTP client.
+    HTTP client to communicate with the controller REST API
 
     :param settings: Dictionary with connection information to the server
-    :param network_manager: A QT network manager
+    :param max_retry_connection: Number of time to try to connect to the server
+    :param prefix: API version (prefix)
     """
 
     connected_signal = QtCore.Signal()
@@ -114,12 +143,13 @@ class HTTPClient(QtCore.QObject):
                 self._host = "::1"
         except ipaddress.AddressValueError:
             log.error("Invalid host name %s", self._host)
-        self._port = int(settings["port"])
-        self._user = settings.get("user", None)
-        self._password = settings.get("password", None)
 
-        self._retry = 0  # how many time we have already retried connection
+        self._port = int(settings["port"])
+        self._username = settings.get("username")
+        self._password = settings.get("password")
+        self._retry = 0  # how many times we have already retried connection
         self._max_retry_connection = max_retry_connection
+        self._retry_connection = False
         self._connected = False
         self._shutdown = False  # shutdown in progress
         self._accept_insecure_certificate = settings.get("accept_insecure_certificate", False)
@@ -141,7 +171,7 @@ class HTTPClient(QtCore.QObject):
         # Allow to follow redirections
         #self._network_manager.setRedirectPolicy(QtNetwork.QNetworkRequest.SameOriginRedirectPolicy)
 
-        # A buffer used by progress download
+        # Buffer for JSON notifications
         self._buffer = {}
 
         # List of query waiting for the connection
@@ -155,45 +185,45 @@ class HTTPClient(QtCore.QObject):
 
     def host(self) -> str:
         """
-        Host display to user
+        Return the server IP or hostname
         """
+
         return self._host
 
     def setHost(self, host: str) -> None:
+        """
+        Set the server IP or hostname
+        """
 
         self._host = host
 
     def port(self) -> int:
         """
-        Port display to user
+        Return the server port
         """
+
         return self._port
 
     def setPort(self, port: int) -> None:
+        """
+        Set the server port
+        """
 
         self._port = port
 
     def protocol(self) -> str:
         """
-        Transport protocol
+        Return the transport protocol (HTTP, HTTPS)
         """
 
         return self._protocol
 
-    def setAcceptInsecureCertificate(self, certificate: bool):
+    def setAcceptInsecureCertificate(self, certificate: bool) -> None:
         """
         Does the server accept this insecure SSL certificate digest
-
-        :param: Certificate digest
         """
 
         self._accept_insecure_certificate = certificate
-
-    def user(self) -> str:
-        """
-        User login display to GNS3 user
-        """
-        return self._user
 
     def url(self) -> str:
         """
@@ -206,25 +236,14 @@ class HTTPClient(QtCore.QObject):
 
     def fullUrl(self) -> str:
         """
-        Returns current server url including user and password
+        Returns current server URL
         """
 
         host = self.host()
         if ":" in self.host():
             host = "[{}]".format(host)
 
-        if self._user:
-            return "{}://{}:{}@{}:{}".format(self.protocol(), self._user, self._password, host, self.port())
-        else:
-            return "{}://{}:{}".format(self.protocol(), host, self.port())
-
-    def password(self) -> str:
-
-        return self._password
-
-    def setPassword(self, password: str) -> None:
-
-        self._password = password
+        return "{}://{}:{}".format(self.protocol(), host, self.port())
 
     def shutdown(self) -> None:
         """
@@ -236,61 +255,61 @@ class HTTPClient(QtCore.QObject):
 
     def connected(self) -> bool:
         """
-        Returns if the client is connected.
-        :returns: True or False
+        Return whether the client is connected or not
         """
 
         return self._connected
 
-    def close(self):
+    def close(self) -> None:
         """
-        Closes the connection with the server.
+        Closes the connection with the server
         """
 
         self._connected = False
 
-    def _request(self, url):
+    def _request(self, url: str) -> QtNetwork.QNetworkRequest:
         """
-        Get a QNetworkRequest object. You can mock this
+        Return a QNetworkRequest object. You can mock this
         if you want low level mocking.
 
-        :param url: Url of remote ressource (QtCore.QUrl)
-        :returns: QT Network request (QtNetwork.QNetworkRequest)
+        :param url: URL for the request
+        :returns: QtNetwork.QNetworkRequest instance
         """
 
-        return QtNetwork.QNetworkRequest(url)
+        return QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 
     def sendRequest(
             self,
-            method,
-            endpoint,
-            callback,
-            body={},
-            context={},
-            downloadProgressCallback=None,
-            show_progress=True,
-            ignoreErrors=False,
-            progressText=None,
-            timeout=120,
-            params={},
-            raw=False,
-            **kwargs
-    ):
+            method: str,
+            endpoint: str,
+            callback: Callable,
+            body: Union[dict, pathlib.Path, str] = None,
+            context: dict = None,
+            download_progress_callback: Callable = None,
+            show_progress: bool = True,
+            progress_text: str = None,
+            disconnect_on_error: bool = False,
+            timeout: int = 120,
+            params: dict = None,
+            raw: bool = False,
+            wait: bool = False
+    ) -> Optional[Union[str, bytes]]:
         """
-        Call the remote server, if not connected, check connection before
+        Send a request to the server
 
         :param method: HTTP method
         :param endpoint: API endpoint
-        :param body: params to send (dictionary or pathlib.Path)
         :param callback: callback method to call when the server replies
+        :param body: Body to send (dictionary, string or pathlib.Path)
         :param context: Pass a context to the response callback
-        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
-        :param show_progress: Display progress to the user
-        :param progressText: Text display to user in the progress dialog. None for auto generated
-        :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
+        :param download_progress_callback: Callback called when received something, it can be an incomplete reply
+        :param show_progress: Display a progress bar dialog
+        :param progress_text: Custom text to display in the progress bar dialog
+        :param disconnect_on_error: Disconnect from server if there is an error
         :param timeout: Delay in seconds before raising a timeout
-        :param params: Query arguments parameters
-        :returns: QNetworkReply
+        :param params: Query parameters
+        :param raw: Return the raw server reply body (bytes)
+        :param wait: Wait for server reply asynchronously
         """
 
         # Shutdown in progress do not execute the request
@@ -304,13 +323,14 @@ class HTTPClient(QtCore.QObject):
             qpartial(callback),
             body,
             context=context,
-            #downloadProgressCallback=downloadProgressCallback,
+            download_progress_callback=download_progress_callback,
             show_progress=show_progress,
-            #ignoreErrors=ignoreErrors,
-            #progressText=progressText,
+            disconnect_on_error=disconnect_on_error,
+            progress_text=progress_text,
             timeout=timeout,
             params=params,
-            raw=raw
+            raw=raw,
+            wait=wait
         )
 
         if self._connected:
@@ -321,39 +341,17 @@ class HTTPClient(QtCore.QObject):
             if len(self._query_waiting_connections) == 1:
                 log.debug("Connection to {}".format(self.url()))
                 self.connectToServer()
-                #self._executeHTTPQuery("GET", "/version", self._callbackConnect, {}, timeout=10, show_progress=False)
 
-    # def _connectionError(self, callback, msg="", server=None):
-    #     """
-    #     Return an error to user if connection failed
-    #
-    #     :param callback: User callback
-    #     :param msg: An optional additional message for the callback
-    #     :param server: Server where the query is execute
-    #     """
-    #
-    #     if len(msg) > 0:
-    #         msg = "Cannot connect to server {}: {}".format(self.url(), msg)
-    #     else:
-    #         msg = "Cannot connect to {}. Please check if GNS3 is allowed in your antivirus and firewall. And that server version is {}.".format(self.url(), __version__)
-    #     for request, callback in self._query_waiting_connections:
-    #         if callback is not None:
-    #             callback({"message": msg}, error=True, server=server, connection_error=True)
-    #     self._query_waiting_connections = []
-
-    # def _retryConnection(self, server=None):
-    #     log.debug("Retry connection to {}".format(self.url()))
-    #     self._retry += 1
-    #     QtCore.QTimer.singleShot(1000, qpartial(self._executeHTTPQuery, "GET", "/version", self._callbackConnect, {}, server=server, timeout=5))
-
-    def _addBodyToRequest(self, body, request):
+    def _addBodyToRequest(
+            self,
+            body: Optional[Union[dict, pathlib.Path, str]],
+            request: QtNetwork.QNetworkRequest
+    ) -> Optional[Union[QtCore.QBuffer, QtCore.QFile]]:
         """
-        Add the require headers for sending the body.
-        It detect the type of body for sending the corresponding headers
-        and methods.
+        Add the required headers for sending the body.
 
-        :param body: The body
-        :returns: The body compatible with Qt
+        :param body: body to send in request
+        :returns: body compatible with Qt
         """
 
         if body is None:
@@ -361,45 +359,42 @@ class HTTPClient(QtCore.QObject):
 
         if isinstance(body, dict):
             body = json.dumps(body)
-            request.setRawHeader(b"Content-Type", b"application/json")
-            request.setRawHeader(b"Content-Length", str(len(body)).encode())
             data = QtCore.QByteArray(body.encode())
             body = QtCore.QBuffer(self)
             body.setData(data)
             body.open(QtCore.QIODevice.ReadOnly)
+            request.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, "application/json")
+            request.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, str(data.size()))
+            #request.setRawHeader(b"Content-Length", str(data.size()).encode())
             return body
         elif isinstance(body, pathlib.Path):
             body = QtCore.QFile(str(body), self)
             body.open(QtCore.QFile.ReadOnly)
-            request.setRawHeader(b"Content-Type", b"application/octet-stream")
-            # QT is smart and will compute the Content-Lenght for us
+            request.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, "application/octet-stream")
+            request.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, str(body.size()))
+            #request.setRawHeader(b"Content-Length", str(body.size()).encode())
             return body
         elif isinstance(body, str):
-            request.setRawHeader(b"Content-Type", b"application/octet-stream")
             data = QtCore.QByteArray(body.encode())
             body = QtCore.QBuffer(self)
             body.setData(data)
             body.open(QtCore.QIODevice.ReadOnly)
+            request.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, "application/octet-stream")
+            #request.setRawHeader(b"Content-Length", str(data.size()).encode())
             return body
         else:
             return None
 
-    def _addAuth(self, request):
+    def _addAuth(self, request: QtNetwork.QNetworkRequest) -> QtNetwork.QNetworkRequest:
         """
-        Add authentication information
+        Add the JWT token in the authentication header
         """
-
-        if self._user:
-            auth_string = "{}:{}".format(self._user, self._password)
-            auth_string = base64.b64encode(auth_string.encode("utf-8"))
-            auth_string = "Basic {}".format(auth_string.decode())
-            request.setRawHeader(b"Authorization", auth_string.encode())
 
         if self._jwt_token:
             request.setRawHeader(b"Authorization", f"Bearer {self._jwt_token}".encode())
         return request
 
-    def connectWebSocket(self, websocket, endpoint):
+    def connectWebSocket(self, websocket: QtWebSockets.QWebSocket, endpoint: str) -> QtWebSockets.QWebSocket:
         """
         Connect to websocket endpoint
         """
@@ -418,10 +413,11 @@ class HTTPClient(QtCore.QObject):
         websocket.open(request)
         return websocket
 
-    def _getHostForQuery(self):
+    def _getHostForQuery(self) -> str:
         """
-        Get hostname that could be use by Qt
+        Get a hostname that can be used by Qt
         """
+
         try:
             ip = self._host.rsplit('%', 1)[0]
             ipaddress.IPv6Address(ip)  # remove any scope ID
@@ -431,7 +427,7 @@ class HTTPClient(QtCore.QObject):
             host = self._host
         return host
 
-    def _paramsToQueryString(self, params):
+    def _paramsToQueryString(self, params: dict) -> str:
         """
         :param params: Dictionary of query string parameters
         :returns: String of the query string
@@ -448,22 +444,23 @@ class HTTPClient(QtCore.QObject):
             query_string += urllib.parse.urlencode(params)
         return query_string
 
-    def _readyReadySlot(self, response, callback, context, *args):
+    def _dataReadySlot(self, reply, callback, context):
         """
-        Process a packet receive on the notification feed.
-        The feed can contains qpartial JSON. If we found a
-        part of a JSON we keep it for the next packet
+        Process a packet received on the notification feed.
+        The feed can contain qpartial JSON. If we find fragmented
+        JSON, we keep it for the next packet
         """
-        if response.error() != QtNetwork.QNetworkReply.NoError:
+
+        if reply.error() != QtNetwork.QNetworkReply.NoError:
             return
 
         # HTTP error
-        status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+        status = reply.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
         if status >= 300:
             return
 
-        content = bytes(response.readAll())
-        content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+        content = bytes(reply.readAll())
+        content_type = reply.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
         if content_type == "application/json":
             content = content.decode("utf-8")
             if context["query_id"] in self._buffer:
@@ -479,45 +476,58 @@ class HTTPClient(QtCore.QObject):
         else:
             callback(content, context=context)
 
-    def _timeoutSlot(self, reply, timeout):
+    def _timeoutSlot(self, reply: QtNetwork.QNetworkReply, timeout: int) -> None:
         """
-        Beware it's call for all request you need to check the status of the response
+        Call for all requests, you need to check the status of the response
         """
+
         # We check if we received HTTP headers
         if not sip.isdeleted(reply) and reply.isRunning() and not len(reply.rawHeaderList()) > 0:
             if not reply.error() != QtNetwork.QNetworkReply.NoError:
-                log.warning("Timeout after {} seconds for request {}. Please check the connection is not blocked by a firewall or an anti-virus.".format(timeout, reply.url().toString()))
+                log.warning(f"Timeout after {timeout} seconds for request {reply.url().toString()}. \
+                Please check the connection is not blocked by a firewall or an anti-virus.")
                 reply.abort()
 
-    def disconnect(self):
+    def disconnect(self) -> None:
         """
-        Disconnect from the remote server
+        Disconnect from the server
         """
 
-        if not self.connected():
+        if self.connected():
             self.disconnected_signal.emit()
             self.close()
 
     def _handleUnauthorizedRequest(self, reply: QtNetwork.QNetworkReply) -> None:
+        """
+        Request the username / password to authenticate with the server
+        """
 
-        login_dialog = LoginDialog(self._main_window)
-        login_dialog.show()
-        login_dialog.raise_()
-        if login_dialog.exec_():
-            username = login_dialog.getUsername()
-            password = login_dialog.getPassword()
-            if username and password:
-                body = {
-                    "username": username,
-                    "password": password
-                }
-                content = self._executeHTTPQuery("POST", "/users/authenticate", body=body, wait=True)
-                if content:
-                    log.info(f"Authenticated with server")
-                    token = content.get("access_token")
-                    if token:
-                        self._jwt_token = token
-                        return
+        if not self._username or not self._password:
+            username = password = None
+            login_dialog = LoginDialog(self._main_window)
+            if self._username:
+                login_dialog.setUsername(self._username)
+            login_dialog.show()
+            login_dialog.raise_()
+            if login_dialog.exec_():
+                username = login_dialog.getUsername()
+                password = login_dialog.getPassword()
+        else:
+            username = self._username
+            password = self._password
+
+        if username and password:
+            body = {
+                "username": username,
+                "password": password
+            }
+            content = self._executeHTTPQuery("POST", "/users/authenticate", body=body, wait=True)
+            if content:
+                log.info(f"Authenticated with server")
+                token = content.get("access_token")
+                if token:
+                    self._jwt_token = token
+                    return
         else:
             raise HttpClientUnauthorizedError(f"{reply.errorString()}")
 
@@ -529,8 +539,8 @@ class HTTPClient(QtCore.QObject):
         version = content.get("version")
         local = content.get("local")
 
-        if not version or not local:
-            raise HttpClientBadRequestError(f"The remote server is not a GNS3 server: {content}")
+        if version is None or local is None:
+            raise HttpClientBadRequestError(f"The server is not a GNS3 server: {content}")
 
         if version.split("-")[0] != __version__.split("-")[0]:
             msg = f"Client version {__version__} is not the same as server version {version}"
@@ -540,15 +550,54 @@ class HTTPClient(QtCore.QObject):
             log.warning(f"{msg}\nUsing different versions may result in unexpected problems.\n"
                         "Please upgrade or use at your own risk.")
 
+    def _retryConnectionToServer(self, wait_time: int = 5):
+        """
+        Retry a connection.
+        """
+
+        self._retry += 1
+        loop = QtCore.QEventLoop()
+        progress = QtWidgets.QProgressDialog(
+            f"Retrying connection to server (#{self._retry}/{self._max_retry_connection})",
+            "Cancel",
+            0,
+            0,
+            self._main_window
+        )
+        progress.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        progress.setWindowModality(QtCore.Qt.ApplicationModal)
+        progress.canceled.connect(loop.quit)
+        progress.show()
+        timer = QtCore.QTimer(self)
+        timer.setSingleShot(True)
+        timer.timeout.connect(loop.quit)
+        timer.start(wait_time * 1000)
+        loop.exec_()
+        if progress.wasCanceled():
+            return
+        progress.close()
+        self.connectToServer()
+
     def connectToServer(self) -> None:
+        """
+        Connect to the GNS3 server
+        """
 
         try:
-            content = self._executeHTTPQuery("GET", "/version", timeout=60, wait=True)
-            if not content:
-                return  # operation cancelled
+            self._retry_connection = True
+            content = self._executeHTTPQuery("GET", "/version", wait=True)
             self._validateServerVersion(content)
+            self._retry_connection = False
             self._executeHTTPQuery("GET", "/users/me", wait=True)
+        except HttpClientCancelledRequestError:
+            return  # operation cancelled by user
         except HttpClientError as e:
+            if self._retry_connection and self._retry < self._max_retry_connection:
+                return self._retryConnectionToServer()
+            for request, callback in self._query_waiting_connections:
+                if callback is not None:
+                    callback({"message": str(e)}, error=True)
+            self._query_waiting_connections = []
             self.disconnect()
             error_dialog = QtWidgets.QMessageBox(self._main_window)
             error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -559,26 +608,26 @@ class HTTPClient(QtCore.QObject):
             error_dialog.show()
         else:
             self._connected = True
+            self._retry = 0
             self.connected_signal.emit()
             for request, callback in self._query_waiting_connections:
                 if request:
                     request()
             self._query_waiting_connections = []
 
-    def _prepareRequest(self, method, endpoint, params):
+    def _prepareRequest(self, method: str, endpoint: str, params: dict) -> QtNetwork.QNetworkRequest:
+        """
+        Return a QtNetwork.QNetworkRequest() instance
+        """
 
         protocol = self._protocol
         host = self._getHostForQuery()
         port = self._port
-        user = self._user
         prefix = self._prefix
         query_string = self._paramsToQueryString(params)
 
         log.debug(f"{method} {protocol}://{host}:{port}{prefix}{endpoint}{query_string}")
-        if user:
-            url = QtCore.QUrl(f"{protocol}://{user}@{host}:{port}{prefix}{endpoint}{query_string}")
-        else:
-            url = QtCore.QUrl(f"{protocol}://{host}:{port}{prefix}{endpoint}{query_string}")
+        url = QtCore.QUrl(f"{protocol}://{host}:{port}{prefix}{endpoint}{query_string}")
 
         request = self._request(url)
         request = self._addAuth(request)
@@ -587,32 +636,37 @@ class HTTPClient(QtCore.QObject):
 
     def _executeHTTPQuery(
             self,
-            method,
-            endpoint,
-            callback=None,
-            body=None,
-            context=None,
-            params=None,
-            show_progress=True,
-            wait=False,
-            ignore_erros=False,
-            raw=False,
-            timeout=60
-    ):
+            method: str,
+            endpoint: str,
+            callback: Callable = None,
+            body: Union[dict, pathlib.Path, str] = None,
+            context: dict = None,
+            download_progress_callback: Callable = None,
+            show_progress: bool = True,
+            progress_text: str = None,
+            disconnect_on_error: bool = False,
+            timeout: int = 60,
+            params: dict = None,
+            raw: bool = False,
+            wait: bool = False,
+
+    ) -> Optional[Union[str, bytes]]:
         """
-        Send HTTP request
+        Send an HTTP request
 
         :param method: HTTP method
         :param endpoint: API endpoint
-        :param body: params to send (dictionary)
         :param callback: callback method to call when the server replies
+        :param body: Body to send (dictionary, string or pathlib.Path)
         :param context: Pass a context to the response callback
-        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
-        :param show_progress: Display progress to the user
-        :param progressText: Text display to user in progress dialog. None for auto generated
-        :param ignoreErrors: Ignore connection error (usefull to not closing a connection when notification feed is broken)
+        :param download_progress_callback: Callback called when received something, it can be an incomplete reply
+        :param show_progress: Display a progress bar dialog
+        :param progress_text: Custom text to display in the progress bar dialog
+        :param disconnect_on_error: Disconnect from server if there is an error
         :param timeout: Delay in seconds before raising a timeout
-        :param params: Query arguments parameters
+        :param params: Query parameters
+        :param raw: Return the raw server reply body (bytes)
+        :param wait: Wait for server reply asynchronously
         """
 
         request = self._prepareRequest(method, endpoint, params)
@@ -632,9 +686,9 @@ class HTTPClient(QtCore.QObject):
             context["query_id"] = str(uuid.uuid4())
 
         if wait:
-            QNetworkReplyWatcher(show_progress).waitForReply(reply, timeout)
+            QNetworkReplyWatcher(show_progress, progress_text).waitForReply(reply, timeout)
             try:
-                content = self._processReply(reply, ignore_erros, raw)
+                content = self._processReply(reply, raw)
                 if callback:
                     callback(content, context=None)
                 else:
@@ -645,40 +699,59 @@ class HTTPClient(QtCore.QObject):
                 else:
                     raise
         else:
-            reply.finished.connect(qpartial(self._processAsyncReply, reply, callback, context, timeout, ignore_erros, raw))
+            reply.finished.connect(
+                qpartial(self._processAsyncReply, reply, callback, body, context, timeout, disconnect_on_error, raw)
+            )
+            if download_progress_callback is not None:
+                reply.readyRead.connect(qpartial(self._dataReadySlot, reply, download_progress_callback, context))
+
             if timeout is not None:
                 QtCore.QTimer.singleShot(timeout * 1000, qpartial(self._timeoutSlot, reply, timeout))
 
     def _processAsyncReply(
             self,
             reply: QtNetwork.QNetworkReply,
-            callback,
-            context=None,
-            timeout=None,
-            ignore_errors: bool = False,
+            callback: Callable,
+            body: Union[dict, pathlib.Path, str] = None,
+            context: dict = None,
+            timeout: int = None,
+            disconnect_on_error: bool = False,
             raw: bool = False
-    ):
+    ) -> None:
+
+        if body is not None:
+            body.close()
 
         try:
-            content = self._processReply(reply, ignore_errors, raw)
+            content = self._processReply(reply, disconnect_on_error, raw)
             if callback:
                 callback(content, context=context)
             if timeout is not None:
                 QtCore.QTimer.singleShot(timeout * 1000, qpartial(self._timeoutSlot, reply, timeout))
+        except HttpClientCancelledRequestError:
+            return  # operation cancelled by user
         except HttpClientError as e:
             if callback:
                 callback({"message": str(e)}, error=True, context=context)
             else:
-                # Because no callback is configured to handle the error we display it to the user
+                # display error because no callback is configured to handle it
                 log.error(f"{e}")
         finally:
             reply.deleteLater()
 
-    def _processReply(self, reply: QtNetwork.QNetworkReply, ignore_errors: bool = False, raw: bool = False):
+    def _processReply(
+            self,
+            reply: QtNetwork.QNetworkReply,
+            disconnect_on_error: bool = False,
+            raw: bool = False
+    ) -> Optional[Union[str, bytes]]:
+        """
+        Process the information returned by QtNetwork.QNetworkReply
+        """
 
         status = reply.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+        content_type = reply.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
         if reply.error() == QtNetwork.QNetworkReply.NoError:
-            content_type = reply.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
             try:
                 content = bytes(reply.readAll())
                 if raw is False:
@@ -693,18 +766,29 @@ class HTTPClient(QtCore.QObject):
             return content
         elif reply.error() == QtNetwork.QNetworkReply.NetworkSessionFailedError:
             return  # ignore the network session failed error to let the network manager recover from it
-        elif reply.error() != QtNetwork.QNetworkReply.OperationCanceledError:
-            error_message = f"Error with request to '{reply.url().toString()}': " \
-                            f"{reply.errorString()} (HTTP code {status})"
+        elif reply.error() == QtNetwork.QNetworkReply.OperationCanceledError:
+            raise HttpClientCancelledRequestError("Request cancelled")
+        else:
+            error_message = f"{reply.errorString()} (HTTP code {status})"
+            if content_type == "application/json":
+                try:
+                    custom_error_message = json.loads(bytes(reply.readAll()).decode("utf-8")).get("message")
+                    if custom_error_message:
+                        error_message = custom_error_message
+                except ValueError as e:
+                    log.debug("fCould not read server error message: {e}")
             log.debug(error_message)
             if status == 401:
                 self._handleUnauthorizedRequest(reply)
             else:
-                if not ignore_errors:
+                if disconnect_on_error:
                     self.disconnect()
                 raise HttpClientError(error_message)
 
     def handleSslError(self, reply: QtNetwork.QNetworkReply, ssl_errors: List[QtNetwork.QSslError]) -> None:
+        """
+        Handle SSL errors
+        """
 
         if self._accept_insecure_certificate:
             reply.ignoreSslErrors()
@@ -724,10 +808,7 @@ class HTTPClient(QtCore.QObject):
                 reply.ignoreSslErrors()
                 return
 
-        from gns3.main_window import MainWindow
-        main_window = MainWindow.instance()
-
-        msgbox = QtWidgets.QMessageBox(main_window)
+        msgbox = QtWidgets.QMessageBox(self._main_window)
         msgbox.setWindowTitle("SSL error detected")
         msgbox.setText(f"This server could not prove that it is {url.host()}:{url.port()}. Please carefully examine the certificate to make sure the server can be trusted.")
         msgbox.setInformativeText(f"{ssl_errors[0].errorString()}")
@@ -747,4 +828,4 @@ class HTTPClient(QtCore.QObject):
         else:
             for error in ssl_errors:
                 log.error(f"SSL error detected: {error.errorString()}")
-            main_window.close()
+            self._main_window.close()

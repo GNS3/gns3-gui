@@ -59,7 +59,13 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
         super().initializePage(page_id)
         if self.page(page_id) == self.uiVMwareWizardPage:
             self.uiVMListComboBox.clear()
-            Controller.instance().getCompute("/vmware/vms", self._compute_id, self._getVMwareVMsFromServerCallback, progressText="Listing VMware VMs...")
+            Controller.instance().getCompute(
+                "/vmware/vms",
+                self._compute_id,
+                self._getVMwareVMsFromServerCallback,
+                progressText="Listing VMware VMs...",
+                wait=True
+            )
 
     def _getVMwareVMsFromServerCallback(self, result, error=False, **kwargs):
         """

@@ -199,12 +199,6 @@ class LocalServer(QtCore.QObject):
                 return False
         return True
 
-    def _passwordGenerate(self):
-        """
-        Generate a random password
-        """
-        return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(64))
-
     def localServerSettings(self):
         """
         Returns the local server settings.
@@ -214,11 +208,6 @@ class LocalServer(QtCore.QObject):
 
         settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
         self._settings = copy.copy(settings)
-
-        # user & password
-        if settings["auth"] is True and not settings["user"].strip():
-            settings["user"] = "admin"
-            settings["password"] = self._passwordGenerate()
 
         # local GNS3 server path
         local_server_path = shutil.which(settings["path"].strip())

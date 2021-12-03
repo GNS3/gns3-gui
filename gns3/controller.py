@@ -324,9 +324,14 @@ class Controller(QtCore.QObject):
 
     def uploadSymbol(self, symbol_id, path):
 
-        self.post("/symbols/" + symbol_id + "/raw",
-                  qpartial(self._finishSymbolUpload, path),
-                  body=pathlib.Path(path), progressText="Uploading {}".format(symbol_id), timeout=None)
+        self.post(
+            "/symbols/" + symbol_id + "/raw",
+            qpartial(self._finishSymbolUpload, path),
+            body=pathlib.Path(path),
+            progress_text="Uploading {}".format(symbol_id),
+            timeout=None,
+            wait=True
+        )
 
     def _finishSymbolUpload(self, path, result, error=False, **kwargs):
 
@@ -371,8 +376,6 @@ class Controller(QtCore.QObject):
         if not self.connected():
             return
 
-        # Due to bug in Qt on some version we need a dedicated network manager
-        self._notification_network_manager = QtNetwork.QNetworkAccessManager()
         self._notification_stream = None
 
         # Qt websocket before Qt 5.6 doesn't support auth
@@ -381,11 +384,9 @@ class Controller(QtCore.QObject):
                 "GET",
                 "/notifications",
                 self._endListenNotificationCallback,
-                downloadProgressCallback=self._event_received,
-                networkManager=self._notification_network_manager,
+                download_progress_callback=self._event_received,
                 timeout=None,
-                show_progress=False,
-                ignoreErrors=True
+                show_progress=False
             )
         else:
             self._notification_stream = self._http_client.connectWebSocket(self._websocket, "/notifications/ws")
@@ -399,7 +400,6 @@ class Controller(QtCore.QObject):
             stream = self._notification_stream
             self._notification_stream = None
             stream.abort()
-            self._notification_network_manager = None
 
     def _endListenNotificationCallback(self, result, error=False, **kwargs):
         """

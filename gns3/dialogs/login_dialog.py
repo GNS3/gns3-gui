@@ -44,6 +44,10 @@ class LoginDialog(QtWidgets.QDialog, Ui_LoginDialog):
 
         return self._username
 
+    def setUsername(self, username):
+
+        self.uiUsernameLineEdit.setText(username)
+
     def getPassword(self):
 
         return self._password

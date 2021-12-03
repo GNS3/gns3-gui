@@ -102,11 +102,14 @@ class Router(Node):
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.controllerHttpGet("/nodes/{node_id}/dynamips/idlepc_proposals".format(node_id=self._node_id),
-                               callback,
-                               timeout=240,
-                               context={"router": self},
-                               progressText="Computing Idle-PC values, please wait...")
+        self.controllerHttpGet(
+            "/nodes/{node_id}/dynamips/idlepc_proposals".format(node_id=self._node_id),
+            callback,
+            context={"router": self},
+            progress_text="Computing Idle-PC values, please wait...",
+            timeout=240,
+            wait=True
+        )
 
     def computeAutoIdlepc(self, callback):
         """
@@ -114,11 +117,14 @@ class Router(Node):
         """
 
         log.debug("{} is requesting Idle-PC proposals".format(self.name()))
-        self.controllerHttpGet("/nodes/{node_id}/dynamips/auto_idlepc".format(node_id=self._node_id),
-                               callback,
-                               timeout=240,
-                               context={"router": self},
-                               progressText="Computing Idle-PC values, please wait...")
+        self.controllerHttpGet(
+            "/nodes/{node_id}/dynamips/auto_idlepc".format(node_id=self._node_id),
+            callback,
+            context={"router": self},
+            progress_text="Computing Idle-PC values, please wait...",
+            timeout = 240,
+            wait=True
+        )
 
     def idlepc(self):
         """

@@ -33,6 +33,11 @@ class HttpClientNotFoundError(HttpClientError):
         super().__init__(message)
 
 
+class HttpClientCancelledRequestError(HttpClientError):
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
 class HttpClientBadRequestError(HttpClientError):
     def __init__(self, message: str):
         super().__init__(message)

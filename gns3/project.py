@@ -78,8 +78,6 @@ class Project(QtCore.QObject):
         self._name = "untitled"
         self._filename = None
 
-        # Due to bug in Qt on some version we need a dedicated network manager
-        self._notification_network_manager = QtNetwork.QNetworkAccessManager()
         self._notification_stream = None
         self._websocket = QtWebSockets.QWebSocket()
 
@@ -324,11 +322,14 @@ class Project(QtCore.QObject):
         """
         Duplicate a project
         """
-        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id),
-                                   qpartial(self._duplicateCallback, callback),
-                                   body={"name": name, "path": path},
-                                   progressText="Duplicating project '{}'...".format(name),
-                                   timeout=None)
+        Controller.instance().post(
+            "/projects/{project_id}/duplicate".format(project_id=self._id),
+            qpartial(self._duplicateCallback, callback),
+            body={"name": name, "path": path},
+            progress_text="Duplicating project '{}'...".format(name),
+            timeout=None,
+            wait=True
+        )
 
     def _duplicateCallback(self, callback, result, error=False, **kwargs):
         if error:
@@ -587,7 +588,14 @@ class Project(QtCore.QObject):
         self._closing = True
         if self._id:
             self.project_about_to_close_signal.emit()
-            Controller.instance().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
+            Controller.instance().post(
+                "/projects/{project_id}/close".format(project_id=self._id),
+                self._projectClosedCallback,
+                body={},
+                progress_text="Closing the project",
+                wait=True
+
+            )
         else:
             # The project is not initialized when we close it
             self._closed = True
@@ -599,7 +607,13 @@ class Project(QtCore.QObject):
         Delete the project from all servers
         """
         self.project_about_to_close_signal.emit()
-        Controller.instance().delete("/projects/{project_id}".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Delete the project")
+        Controller.instance().delete(
+            "/projects/{project_id}".format(project_id=self._id),
+            self._projectClosedCallback,
+            body={},
+            progress_text="Deleting the project",
+            wait=True
+        )
 
     def _projectClosedCallback(self, result, error=False, server=None, **kwargs):
 
@@ -630,12 +644,11 @@ class Project(QtCore.QObject):
             path = "/projects/{project_id}/notifications".format(project_id=self._id)
             self._notification_stream = Controller.instance().request(
                 "GET",
-                path, self._endListenNotificationCallback,
-                downloadProgressCallback=self._event_received,
-                networkManager=self._notification_network_manager,
+                path,
+                self._endListenNotificationCallback,
+                download_progress_callback=self._event_received,
                 timeout=None,
                 show_progress=False,
-                ignoreErrors=True
             )
         else:
             path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
