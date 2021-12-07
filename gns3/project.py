@@ -385,6 +385,7 @@ class Project(QtCore.QObject):
 
         Full arg list in createHTTPQuery
         """
+
         self._projectHTTPQuery("GET", path, callback, **kwargs)
 
     def post(self, path, callback, body={}, **kwargs):
@@ -423,7 +424,7 @@ class Project(QtCore.QObject):
         """
         self._projectHTTPQuery("DELETE", path, callback, body=body, **kwargs)
 
-    def _projectHTTPQuery(self, method, path, callback, body={}, **kwargs):
+    def _projectHTTPQuery(self, method, path, callback, body=None, **kwargs):
         """
         HTTP query on the remote server
 

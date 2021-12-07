@@ -52,6 +52,7 @@ class ImageUploadManager(object):
             self._controller.post(
                 f"/images/upload/{self._image.filename}",
                 callback=None,
+                params={"image_type": self._image.type},
                 body=pathlib.Path(self._image.path),
                 context={"image_path": self._image.path},
                 progress_text="Uploading {}".format(self._image.filename),

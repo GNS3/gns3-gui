@@ -80,11 +80,12 @@ class QNetworkReplyWatcher(QtCore.QObject):
                 self._progress.setMaximum(100)
             self._progress.setValue(100 * bytes_sent / bytes_total)
 
-    def waitForReply(self, reply: QtNetwork.QNetworkReply, timeout=60) -> None:
+    def waitForReply(self, reply: QtNetwork.QNetworkReply, uploading: bool = False, timeout=60) -> None:
         """
         Wait for the QNetworkReply to be complete or for the timeout
 
         :param reply: QNetworkReply instance
+        :param uploading: Whether the reply is uploading or not
         :param timeout: Number of seconds before timeout
         """
 
@@ -100,7 +101,8 @@ class QNetworkReplyWatcher(QtCore.QObject):
 
         if self._progress:
             reply.finished.connect(self._progress.close)
-            reply.uploadProgress.connect(self._updateProgress)
+            if uploading:
+                reply.uploadProgress.connect(self._updateProgress)
             reply.downloadProgress.connect(self._updateProgress)
             self._progress.canceled.connect(reply.abort)
             self._progress.show()
@@ -685,12 +687,19 @@ class HTTPClient(QtCore.QObject):
             context = copy.copy(context)
             context["query_id"] = str(uuid.uuid4())
 
+        if download_progress_callback is not None:
+            reply.readyRead.connect(qpartial(self._dataReadySlot, reply, download_progress_callback, context))
+
         if wait:
-            QNetworkReplyWatcher(show_progress, progress_text).waitForReply(reply, timeout)
+            uploading = False
+            if request.header(QtNetwork.QNetworkRequest.ContentTypeHeader) == "application/octet-stream":
+                uploading = True
+
+            QNetworkReplyWatcher(show_progress, progress_text).waitForReply(reply, uploading, timeout)
             try:
-                content = self._processReply(reply, raw)
+                content = self._processReply(reply, disconnect_on_error, raw)
                 if callback:
-                    callback(content, context=None)
+                    callback(content, context=context)
                 else:
                     return content
             except HttpClientError as e:
@@ -702,8 +711,6 @@ class HTTPClient(QtCore.QObject):
             reply.finished.connect(
                 qpartial(self._processAsyncReply, reply, callback, body, context, timeout, disconnect_on_error, raw)
             )
-            if download_progress_callback is not None:
-                reply.readyRead.connect(qpartial(self._dataReadySlot, reply, download_progress_callback, context))
 
             if timeout is not None:
                 QtCore.QTimer.singleShot(timeout * 1000, qpartial(self._timeoutSlot, reply, timeout))
@@ -760,7 +767,7 @@ class HTTPClient(QtCore.QObject):
                         content = json.loads(content)
             except ValueError as e:
                 raise HttpClientBadRequestError(f"Could not read data with content type '{content_type}' returned from"
-                                                f" '{reply.url().toString()}': {e}")
+                                                f" '{reply.url().toString()}': {e} (raw={raw})")
             if status >= 400:
                 raise HttpClientError(f"Request to '{reply.url().toString()}' has returned HTTP code {status}")
             return content
