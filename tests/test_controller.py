@@ -33,13 +33,13 @@ def test_http_query_forwarded_to_http_client(controller):
     The HTTP query should be forwarded to the HTTP client
     """
     controller.get("/get")
-    controller._http_client.createHTTPQuery.assert_called_with("GET", "/get")
+    controller._http_client.sendRequest.assert_called_with("GET", "/get")
     controller.post("/post")
-    controller._http_client.createHTTPQuery.assert_called_with("POST", "/post")
+    controller._http_client.sendRequest.assert_called_with("POST", "/post")
     controller.put("/put")
-    controller._http_client.createHTTPQuery.assert_called_with("PUT", "/put")
+    controller._http_client.sendRequest.assert_called_with("PUT", "/put")
     controller.delete("/delete")
-    controller._http_client.createHTTPQuery.assert_called_with("DELETE", "/delete")
+    controller._http_client.sendRequest.assert_called_with("DELETE", "/delete")
 
 
 def test_connected(controller):

@@ -64,10 +64,10 @@ def test_askCopyUploadImage_remote(image_manager, remote_server):
 
 def test_uploadImageToRemoteServer(image_manager, remote_server, images_dir, controller):
     controller.post = MagicMock()
-    filename = image_manager._uploadImageToRemoteServer(str(images_dir / "QEMU" / "test"), remote_server.id(), 'QEMU')
+    filename = image_manager._uploadImageToRemoteServer(str(images_dir / "QEMU" / "test"), 'QEMU', None)
     assert filename == 'test'
     args, kwargs = controller.post.call_args
-    assert args[0] == '/computes/example.org/qemu/images/test'
+    assert args[0] == '/images/upload/test'
     assert kwargs['body'] == pathlib.Path(str(images_dir / "QEMU" / "test"))
 
 

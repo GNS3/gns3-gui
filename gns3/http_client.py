@@ -633,7 +633,7 @@ class HTTPClient(QtCore.QObject):
 
         request = self._request(url)
         request = self._addAuth(request)
-        request.setRawHeader(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
+        request.setHeader(QtNetwork.QNetworkRequest.UserAgentHeader, f"GNS3 QT Client v{__version__}")
         return request
 
     def _executeHTTPQuery(

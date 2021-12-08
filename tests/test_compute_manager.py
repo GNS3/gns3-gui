@@ -60,7 +60,7 @@ def test_deleteCompute(controller):
     cm.deleteCompute("test")
     assert "test" not in cm._computes
     assert callback_delete.called
-    controller._http_client.createHTTPQuery.assert_called_with("DELETE", "/computes/test", None)
+    controller._http_client.sendRequest.assert_called_with("DELETE", "/computes/test", None)
 
 
 def test_listComputesCallback():
@@ -156,7 +156,7 @@ def test_updateList_updated(controller):
     compute.setName("TEST2")
     cm.updateList(computes)
     assert cm._computes["test1"].name() == "TEST2"
-    controller._http_client.createHTTPQuery.assert_called_with("PUT", "/computes/test1", None, body=compute.__json__())
+    controller._http_client.sendRequest.assert_called_with("PUT", "/computes/test1", None, body=compute.__json__())
 
 
 def test_updateList_added(controller):
@@ -167,7 +167,7 @@ def test_updateList_added(controller):
     controller._http_client = MagicMock()
     cm.updateList(computes)
     assert compute.id() in cm._computes
-    controller._http_client.createHTTPQuery.assert_called_with("POST", "/computes", None, body=compute.__json__())
+    controller._http_client.sendRequest.assert_called_with("POST", "/computes", None, body=compute.__json__())
 
 
 def test_updateList_no_change(controller):
@@ -177,4 +177,4 @@ def test_updateList_no_change(controller):
     computes.append(compute)
     controller._http_client = MagicMock()
     cm.updateList(computes)
-    assert not controller._http_client.createHTTPQuery.called
+    assert not controller._http_client.sendRequest.called
