@@ -85,7 +85,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         pages = [
             GeneralPreferencesPage,
             ServerPreferencesPage,
-            GNS3VMPreferencesPage,
+            #GNS3VMPreferencesPage,
             PacketCapturePreferencesPage,
         ]
 

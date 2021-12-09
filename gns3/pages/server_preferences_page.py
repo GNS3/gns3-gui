@@ -195,8 +195,13 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteMainServerUserLineEdit.setText(servers_settings["username"])
         self.uiRemoteMainServerPasswordLineEdit.setText(servers_settings["password"])
 
-        self.uiLocalServerAutoStartCheckBox.setChecked(servers_settings["auto_start"])
-        self._useLocalServerAutoStartSlot(servers_settings["auto_start"])
+        #self.uiLocalServerAutoStartCheckBox.setChecked(servers_settings["auto_start"])
+        #self._useLocalServerAutoStartSlot(servers_settings["auto_start"])
+
+        # FIXME: only allow remote server (temporary)
+        self.uiLocalServerAutoStartCheckBox.setChecked(False)
+        self.uiLocalServerAutoStartCheckBox.setEnabled(False)
+        self._useLocalServerAutoStartSlot(False)
 
         self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(servers_settings["allow_console_from_anywhere"])
         self.uiConsoleStartPortSpinBox.setValue(servers_settings["console_start_port_range"])
