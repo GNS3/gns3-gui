@@ -220,13 +220,13 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         ram = self.uiRamSpinBox.value()
         Controller.instance().postCompute("/auto_idlepc",
                                           self._compute_id,
-                                          self._computeAutoIdlepcCallback,
+                                          callback=self._computeAutoIdlepcCallback,
                                           timeout=None,
                                           body={
                                               "image": image,
                                               "platform": platform,
-                                              "ram": ram})
-        self.uiIdlePCFinderPushButton.setEnabled(False)
+                                              "ram": ram},
+                                          wait=True)
 
     def _etherSwitchSlot(self, state):
         """

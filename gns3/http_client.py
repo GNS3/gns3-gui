@@ -525,7 +525,7 @@ class HTTPClient(QtCore.QObject):
             }
             content = self._executeHTTPQuery("POST", "/users/authenticate", body=body, wait=True)
             if content:
-                log.info(f"Authenticated with server")
+                log.info(f"Authenticated with server {self._host} on port {self._port}")
                 token = content.get("access_token")
                 if token:
                     self._jwt_token = token

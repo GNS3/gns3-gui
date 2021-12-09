@@ -122,7 +122,7 @@ class Router(Node):
             callback,
             context={"router": self},
             progress_text="Computing Idle-PC values, please wait...",
-            timeout = 240,
+            timeout=240,
             wait=True
         )
 

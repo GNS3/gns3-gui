@@ -59,7 +59,7 @@ class ShowReadmeDialog(QtWidgets.QDialog, Ui_ShowReadmeDialog):
             self._refreshSlot()
 
     def _refreshSlot(self):
-        self._project.get("/files/" + self._path, self._getCallback)
+        self._project.get("/files/" + self._path, self._getCallback, raw=True)
 
     def _getCallback(self, result, error=False, **kwargs):
 

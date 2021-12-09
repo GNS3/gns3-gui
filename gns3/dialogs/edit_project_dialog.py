@@ -57,7 +57,7 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
 
     def _loadReadme(self):
 
-        self._project.get("/files/{}".format(self._readme_filename), self._loadedReadme)
+        self._project.get("/files/{}".format(self._readme_filename), self._loadedReadme, raw=True)
 
     def _loadedReadme(self, result, error=False, context={}, **kwargs):
 
