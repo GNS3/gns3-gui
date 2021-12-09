@@ -92,7 +92,7 @@ class DrawingItem:
 
     def updateDrawing(self):
         if self._id and not self.deleting() and self._project:
-            self._project.put("/drawings/" + self._id, self.updateDrawingCallback, body=self.__json__(), showProgress=False)
+            self._project.put("/drawings/" + self._id, self.updateDrawingCallback, body=self.__json__(), show_progress=False)
 
     @qslot
     def updateDrawingCallback(self, result, error=False, **kwargs):

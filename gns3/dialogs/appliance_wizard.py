@@ -531,7 +531,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Can't access to the image file {}: {}.".format(path, str(e)))
             return
 
-        image_upload_manger = ImageUploadManager(image, Controller.instance(), self._compute_id)
+        image_upload_manger = ImageUploadManager(image, Controller.instance(), self.parent())
         image_upload_manger.upload()
 
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
@@ -626,26 +626,17 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             appliance_configuration = self._appliance.search_images_for_version(version)
         except ApplianceError as e:
             QtWidgets.QMessageBox.critical(self, "Appliance","Cannot install {} version {}: {}".format(name, version, e))
-            return
+            return False
         for image in appliance_configuration["images"]:
             if image["location"] == "local":
                 if not Controller.instance().isRemote() and self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
                     log.debug("{} is already on the local server".format(image["path"]))
                     return
                 image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
-                image_upload_manager = ImageUploadManager(image, Controller.instance(), self._compute_id, self._applianceImageUploadedCallback)
-                image_upload_manager.upload()
-                self._image_uploading_count += 1
-
-    def _applianceImageUploadedCallback(self, result, error=False, context=None, **kwargs):
-        if context is None:
-            context = {}
-        image_path = context.get("image_path", "unknown")
-        if error:
-            log.error("Error while uploading image '{}': {}".format(image_path, result["message"]))
-        else:
-            log.info("Image '{}' has been successfully uploaded".format(image_path))
-            self._image_uploading_count -= 1
+                image_upload_manager = ImageUploadManager(image, Controller.instance(), self.parent())
+                if not image_upload_manager.upload():
+                    return False
+        return True
 
     def nextId(self):
         if self.currentPage() == self.uiServerWizardPage:
@@ -684,7 +675,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if reply == QtWidgets.QMessageBox.No:
                 return False
 
-            self._uploadImages(appliance["name"], version["name"])
+            return self._uploadImages(appliance["name"], version["name"])
 
         elif self.currentPage() == self.uiUsageWizardPage:
             # validate the usage page

@@ -213,7 +213,7 @@ class TemplateManager(QtCore.QObject):
         self._controller.post("/projects/{project_id}/templates/{template_id}".format(project_id=project.id(), template_id=template_id),
                               self._createNodeFromTemplateCallback,
                               params,
-                              showProgress=False,
+                              show_progress=False,
                               timeout=None)
         return True
 

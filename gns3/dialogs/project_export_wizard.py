@@ -20,10 +20,9 @@ import datetime
 
 from gns3.qt import QtCore, QtWidgets, QtGui
 from gns3.utils import parse_version
-from ..local_server import LocalServer
-from ..utils.progress_dialog import ProgressDialog
-from ..utils.export_project_worker import ExportProjectWorker
-from ..ui.export_project_wizard_ui import Ui_ExportProjectWizard
+from gns3.http_client_error import HttpClientError, HttpClientCancelledRequestError
+from gns3.local_server import LocalServer
+from gns3.ui.export_project_wizard_ui import Ui_ExportProjectWizard
 
 import logging
 log = logging.getLogger(__name__)
@@ -70,12 +69,12 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
 
     def _loadReadme(self):
 
-        self._project.get("/files/{}".format(self._readme_filename), self._loadedReadme)
+        self._project.get("/files/{}".format(self._readme_filename), self._loadedReadme, raw=True)
 
-    def _loadedReadme(self, result, error=False, raw_body=None, context={}, **kwargs):
+    def _loadedReadme(self, result, error=False, context={}, **kwargs):
 
         if not error:
-            content = raw_body.decode("utf-8", errors="replace")
+            content = result.decode("utf-8", errors="replace")
             self.uiReadmeTextEdit.setPlainText(content)
         else:
             if self._use_markdown:
@@ -181,8 +180,44 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
                 reset_mac_addresses = "no"
             compression = self.uiCompressionComboBox.currentData()
             self.waitForReadme(self.readme_signal)
-            export_worker = ExportProjectWorker(self._project, self._path, include_images, include_snapshots, reset_mac_addresses, compression)
-            progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self, create_thread=False)
-            progress_dialog.show()
-            progress_dialog.exec_()
+
+            params = {
+                "include_images": include_images,
+                "include_snapshots": include_snapshots,
+                "reset_mac_addresses": reset_mac_addresses,
+                "compression": compression
+            }
+
+            try:
+                self._project.get(
+                    "/export",
+                    callback=None,
+                    download_progress_callback=self._downloadFileProgress,
+                    progress_text="Exporting portable project files...",
+                    params=params,
+                    timeout=None,
+                    wait=True,
+                    raw=True
+                )
+            except HttpClientCancelledRequestError:
+                pass
+            except HttpClientError as e:
+                QtWidgets.QMessageBox.critical(
+                    self,
+                    "Project export",
+                    f"Could not export project: {e}"
+                )
+
         super().done(result)
+
+    def _downloadFileProgress(self, content, **kwargs):
+        """
+        Called for each part of the file
+        """
+
+        try:
+            with open(self._path, 'ab') as f:
+                f.write(content)
+        except OSError as e:
+            self.error.emit("Can't write project file {}: {}".format(self._path, e), True)
+            return

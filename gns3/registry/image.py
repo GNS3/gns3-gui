@@ -30,14 +30,16 @@ class Image:
     # Cache md5sum in order to improve performances
     _cache = {}
 
-    def __init__(self, emulator, path, filename=None):
+    def __init__(self, image_type, path, filename=None):
         """
         :params: Emulator type
         :params: path of the image
         """
 
         self._location = "local"
-        self._emulator = emulator
+        if image_type == "dynamips":
+            image_type = "ios"  # rename to ios image type
+        self._image_type = image_type
         self._path = path
         if filename is None:
             self._filename = os.path.basename(self.path)
@@ -150,5 +152,5 @@ class Image:
         self._filesize = val
 
     @property
-    def emulator(self):
-        return self._emulator
+    def type(self):
+        return self._image_type

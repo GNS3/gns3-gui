@@ -39,54 +39,16 @@ def controller():
 def callback():
     return unittest.mock.MagicMock()
 
-
-def test_direct_file_upload(image, controller, callback):
-
-
-    manager = ImageUploadManager(image, controller, 'compute_id', callback, directFileUpload=True)
+def test_upload_controller(image, controller, callback):
+    manager = ImageUploadManager(image, controller, None)
     manager.upload()
-    controller.getEndpoint.assert_called_with(
-        '/QEMU/images/{}'.format(image.filename),
-        'compute_id',
-        manager._onLoadEndpointCallback,
-        showProgress=False
-    )
-
-    with unittest.mock.patch('gns3.image_upload_manager.HTTPClient') as client:
-        manager._onLoadEndpointCallback(dict(endpoint='/endpoint'))
-        client.fromUrl.return_value.createHTTPQuery.assert_called_with(
-            'POST', '/endpoint', manager._checkIfSuccessfulCallback, body=pathlib.Path(image.path),
-            prefix="", context={'image_path': image.path}, progressText='Uploading {}'.format(image.filename), timeout=None
-        )
-
-    manager._checkIfSuccessfulCallback({})
-    callback.assert_called_with({}, False)
-
-
-def test_direct_file_upload_fallback_to_controller(image, controller, callback):
-    manager = ImageUploadManager(image, controller, callback, directFileUpload=True)
-    manager._checkIfSuccessfulCallback({}, error=True, connection_error=True)
-    controller.postCompute.assert_called_with(
-        '/QEMU/images/{}'.format(image.filename),
-        callback,
-        None,
+    controller.post(
+        f"/images/upload/{image.filename}",
+        callback=callback,
+        params={"image_type": image.type},
         body=pathlib.Path(image.path),
-        context={'image_path': image.path},
-        progressText='Uploading {}'.format(image.filename),
-        timeout=None
+        context={"image_path": image.path},
+        progress_text="Uploading {}".format(image.filename),
+        timeout=None,
+        wait=False
     )
-
-
-def test_upload_via_controller(image, controller, callback):
-    manager = ImageUploadManager(image, controller, callback, directFileUpload=False)
-    manager.upload()
-    controller.postCompute.assert_called_with(
-        '/QEMU/images/{}'.format(image.filename),
-        callback,
-        None,
-        body=pathlib.Path(image.path),
-        context={'image_path': image.path},
-        progressText='Uploading {}'.format(image.filename),
-        timeout=None
-    )
-

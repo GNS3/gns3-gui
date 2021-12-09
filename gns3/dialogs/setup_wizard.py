@@ -214,13 +214,11 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             local_server_settings = LocalServer.instance().localServerSettings()
             if local_server_settings["host"] is None:
                 self.uiRemoteMainServerHostLineEdit.setText(DEFAULT_LOCAL_SERVER_HOST)
-                self.uiRemoteMainServerAuthCheckBox.setChecked(False)
                 self.uiRemoteMainServerUserLineEdit.setText("")
                 self.uiRemoteMainServerPasswordLineEdit.setText("")
             else:
                 self.uiRemoteMainServerHostLineEdit.setText(local_server_settings["host"])
-                self.uiRemoteMainServerAuthCheckBox.setChecked(local_server_settings["auth"])
-                self.uiRemoteMainServerUserLineEdit.setText(local_server_settings["user"])
+                self.uiRemoteMainServerUserLineEdit.setText(local_server_settings["username"])
                 self.uiRemoteMainServerPasswordLineEdit.setText(local_server_settings["password"])
             self.uiRemoteMainServerPortSpinBox.setValue(local_server_settings["port"])
         elif self.page(page_id) == self.uiLocalServerStatusWizardPage:
@@ -239,7 +237,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
                 self._addSummaryEntry("Server type:", "Remote")
                 self._addSummaryEntry("Host:", local_server_settings["host"])
                 self._addSummaryEntry("Port:", str(local_server_settings["port"]))
-                self._addSummaryEntry("User:", local_server_settings["user"])
+                self._addSummaryEntry("User:", local_server_settings["username"])
             else:
                 self._addSummaryEntry("Server type:", "GNS3 Virtual Machine")
                 self._addSummaryEntry("VM engine:", self._GNS3VMSettings()["engine"].capitalize())
@@ -341,9 +339,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             local_server_settings["host"] = self.uiRemoteMainServerHostLineEdit.text()
             local_server_settings["port"] = self.uiRemoteMainServerPortSpinBox.value()
             local_server_settings["protocol"] = "http"
-            local_server_settings["user"] = self.uiRemoteMainServerUserLineEdit.text()
+            local_server_settings["username"] = self.uiRemoteMainServerUserLineEdit.text()
             local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
-            local_server_settings["auth"] = self.uiRemoteMainServerAuthCheckBox.isChecked()
             LocalServer.instance().updateLocalServerSettings(local_server_settings)
 
         elif self.currentPage() == self.uiSummaryWizardPage:
@@ -365,9 +362,20 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         """
 
         if self.uiVmwareRadioButton.isChecked():
-            Controller.instance().get("/gns3vm/engines/vmware/vms", self._getVMsFromServerCallback, progressText="Retrieving VMware VM list from server...")
+            Controller.instance().get(
+                "/gns3vm/engines/vmware/vms",
+                self._getVMsFromServerCallback,
+                progress_text="Retrieving VMware VM list from server...",
+                wait=True
+
+            )
         elif self.uiVirtualBoxRadioButton.isChecked():
-            Controller.instance().get("/gns3vm/engines/virtualbox/vms", self._getVMsFromServerCallback, progressText="Retrieving VirtualBox VM list from server...")
+            Controller.instance().get(
+                "/gns3vm/engines/virtualbox/vms",
+                self._getVMsFromServerCallback,
+                progress_text="Retrieving VirtualBox VM list from server...",
+                wait=True
+            )
 
     def _getVMsFromServerCallback(self, result, error=False, **kwargs):
         """

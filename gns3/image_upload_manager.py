@@ -17,9 +17,11 @@
 
 import os
 import pathlib
-import urllib.parse
 
-from gns3.http_client import HTTPClient
+from gns3.http_client_error import HttpClientError, HttpClientCancelledRequestError
+from gns3.qt import QtWidgets
+from gns3.registry.image import Image
+from gns3.controller import Controller
 
 import logging
 log = logging.getLogger(__name__)
@@ -27,59 +29,43 @@ log = logging.getLogger(__name__)
 
 class ImageUploadManager(object):
     """
-    Manager over the image upload. Encapsulates file uploads to computes or via controller.
+    Manager over the image upload
     """
 
-    def __init__(self, image, controller, compute_id, callback=None):
-        self._image = image
-        self._compute_id = compute_id
-        self._callback = callback
-        self._controller = controller
+    def __init__(self, image: Image, controller: Controller, parent: QtWidgets.QWidget):
 
-    def upload(self):
+        self._image = image
+        self._controller = controller
+        self._parent = parent
+
+    def upload(self) -> bool:
+
         if not os.path.exists(self._image.path):
             log.error("Image '{}' could not be found".format(self._image.path))
-            return
-        self._fileUploadToController()
+            return False
+        return self._fileUploadToController()
 
-    def _getComputePath(self):
-        return '/{emulator}/images/{filename}'.format(emulator=self._image.emulator, filename=self._image.filename)
+    def _fileUploadToController(self) -> bool:
 
-    def _onLoadEndpointCallback(self, result, error=False, **kwargs):
-        if error:
-            if "message" in result:
-                log.error("Error while getting endpoint: {}".format(result["message"]))
-            return
-
-        # we know where is the endpoint and we trying to post there a file
-        endpoint = result['endpoint']
-        self._fileUploadToCompute(endpoint)
-
-    def _checkIfSuccessfulCallback(self, result, error=False, **kwargs):
-        if error:
-            connection_error = kwargs.get('connection_error', False)
-            if connection_error:
-                log.debug("During direct file upload compute is not visible. Fallback to upload via controller.")
-                # there was an issue with connection, probably we don't have a direct access to compute
-                # we need to fallback to uploading files via controller
-                self._fileUploadToController()
-            else:
-                if "message" in result:
-                    log.error("Error while direct file upload: {}".format(result["message"]))
-            return
-        self._callback(result, error, **kwargs)
-
-    def _fileUploadToCompute(self, endpoint):
-        log.debug("Uploading image '{}' to compute".format(self._image.path))
-        parse_results = urllib.parse.urlparse(endpoint)
-        network_manager = self._controller.getHttpClient().getNetworkManager()
-        client = HTTPClient.fromUrl(endpoint, network_manager=network_manager)
-        # We don't retry connection as in case of fail we try direct file upload
-        client.setMaxRetryConnection(0)
-        client.createHTTPQuery('POST', parse_results.path, self._checkIfSuccessfulCallback, body=pathlib.Path(self._image.path),
-                               context={"image_path": self._image.path}, progressText="Uploading {}".format(self._image.filename), timeout=None, prefix="")
-
-    def _fileUploadToController(self):
         log.debug("Uploading image '{}' to controller".format(self._image.path))
-        self._controller.postCompute(self._getComputePath(), self._compute_id, self._callback, body=pathlib.Path(self._image.path),
-                                     context={"image_path": self._image.path}, progressText="Uploading {}".format(self._image.filename), timeout=None)
+        try:
+            self._controller.post(
+                f"/images/upload/{self._image.filename}",
+                callback=None,
+                params={"image_type": self._image.type},
+                body=pathlib.Path(self._image.path),
+                context={"image_path": self._image.path},
+                progress_text="Uploading {}".format(self._image.filename),
+                timeout=None,
+                wait=True
+            )
+        except HttpClientCancelledRequestError:
+            return False
+        except HttpClientError as e:
+            QtWidgets.QMessageBox.critical(
+                self._parent,
+                "Image upload",
+                f"Could not upload image {self._image.filename}: {e}"
+            )
+            return False
+        return True

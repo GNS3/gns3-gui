@@ -196,11 +196,11 @@ class Topology(QtCore.QObject):
 
         settings = LocalConfig.instance().loadSectionSettings("MainWindow", GENERAL_SETTINGS)
         if settings["auto_open_readme"]:
-            self.project().get("/files/README.txt", self._getReadmeCallback)
+            self.project().get("/files/README.txt", self._getReadmeCallback, raw=True)
 
-    def _getReadmeCallback(self, result, error=False, raw_body=None, **kwargs):
+    def _getReadmeCallback(self, result, error=False, **kwargs):
         if not error:
-            content = raw_body.decode("utf-8", errors="ignore")
+            content = result.decode("utf-8", errors="ignore")
             dialog = ShowReadmeDialog(self.project(), "README.txt", content, parent=self._main_window)
             dialog.show()
             dialog.exec_()

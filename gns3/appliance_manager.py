@@ -49,7 +49,12 @@ class ApplianceManager(QtCore.QObject):
             settings = LocalConfig.instance().loadSectionSettings("MainWindow", GENERAL_SETTINGS)
             symbol_theme = settings["symbol_theme"]
             if update is True:
-                self._controller.get("/appliances?update=yes&symbol_theme={}".format(symbol_theme), self._listAppliancesCallback, progressText="Downloading appliances from online registry...")
+                self._controller.get(
+                    "/appliances?update=yes&symbol_theme={}".format(symbol_theme),
+                    self._listAppliancesCallback,
+                    progress_text="Downloading appliances from online registry...",
+                    wait=True
+                )
             else:
                 self._controller.get("/appliances?symbol_theme={}".format(symbol_theme), self._listAppliancesCallback)
 

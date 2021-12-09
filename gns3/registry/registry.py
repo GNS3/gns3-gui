@@ -51,7 +51,7 @@ class Registry(QtCore.QObject):
 
     def getRemoteImageList(self, emulator, compute_id):
         self._emulator = emulator
-        Controller.instance().getCompute("/{}/images".format(emulator), compute_id, self._getRemoteListCallback, progressText="Listing remote images...")
+        Controller.instance().getCompute("/{}/images".format(emulator), compute_id, self._getRemoteListCallback, progress_text="Listing remote images...")
 
     def _getRemoteListCallback(self, result, error=False, **kwargs):
         if error:

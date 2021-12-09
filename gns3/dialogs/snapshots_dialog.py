@@ -85,11 +85,14 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
         snapshot_name, ok = QtWidgets.QInputDialog.getText(self, "Snapshot", "Snapshot name:", QtWidgets.QLineEdit.Normal, "Unnamed")
         if ok and snapshot_name and self._project:
-            Controller.instance().post("/projects/{}/snapshots".format(self._project.id()),
-                                       self._createSnapshotsCallback,
-                                       {"name": snapshot_name},
-                                       progressText="Creation of snapshot '{}' in progress...".format(snapshot_name),
-                                       timeout=None)
+            Controller.instance().post(
+                "/projects/{}/snapshots".format(self._project.id()),
+                self._createSnapshotsCallback,
+                {"name": snapshot_name},
+                progress_text="Creation of snapshot '{}' in progress...".format(snapshot_name),
+                timeout=None,
+                wait=True
+            )
 
     def _createSnapshotsCallback(self, result, error=False, server=None, context={}, **kwargs):
         if error:
@@ -139,8 +142,13 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
         if reply == QtWidgets.QMessageBox.Cancel:
             return
 
-        Controller.instance().post("/projects/{}/snapshots/{}/restore".format(self._project.id(), snapshot_id),
-                                   self._restoreSnapshotsCallback, progressText="Restoring snapshot...", timeout=None)
+        Controller.instance().post(
+            "/projects/{}/snapshots/{}/restore".format(self._project.id(), snapshot_id),
+            self._restoreSnapshotsCallback,
+            progress_text="Restoring snapshot...",
+            timeout=None,
+            wait=True
+        )
 
     def _restoreSnapshotsCallback(self, result, error=False, server=None, context={}, **kwargs):
 

@@ -192,14 +192,12 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiRemoteMainServerHostLineEdit.setText(servers_settings["host"])
         self.uiRemoteMainServerPortSpinBox.setValue(servers_settings["port"])
         self.uiRemoteMainServerProtocolComboBox.setCurrentText(servers_settings["protocol"].upper())
-        self.uiRemoteMainServerUserLineEdit.setText(servers_settings["user"])
+        self.uiRemoteMainServerUserLineEdit.setText(servers_settings["username"])
         self.uiRemoteMainServerPasswordLineEdit.setText(servers_settings["password"])
-        self.uiRemoteMainServerAuthCheckBox.setChecked(servers_settings["auth"])
 
         self.uiLocalServerAutoStartCheckBox.setChecked(servers_settings["auto_start"])
         self._useLocalServerAutoStartSlot(servers_settings["auto_start"])
 
-        self.uiLocalServerAuthCheckBox.setChecked(servers_settings["auth"])
         self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(servers_settings["allow_console_from_anywhere"])
         self.uiConsoleStartPortSpinBox.setValue(servers_settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(servers_settings["console_end_port_range"])
@@ -253,7 +251,6 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
                                           "port": self.uiLocalServerPortSpinBox.value(),
                                           "auto_start": self.uiLocalServerAutoStartCheckBox.isChecked(),
                                           "allow_console_from_anywhere": self.uiConsoleConnectionsToAnyIPCheckBox.isChecked(),
-                                          "auth": self.uiLocalServerAuthCheckBox.isChecked(),
                                           "console_start_port_range": self.uiConsoleStartPortSpinBox.value(),
                                           "console_end_port_range": self.uiConsoleEndPortSpinBox.value(),
                                           "udp_start_port_range": self.uiUDPStartPortSpinBox.value(),
@@ -287,9 +284,8 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
             new_local_server_settings["host"] = self.uiRemoteMainServerHostLineEdit.text()
             new_local_server_settings["port"] = self.uiRemoteMainServerPortSpinBox.value()
             new_local_server_settings["protocol"] = self.uiRemoteMainServerProtocolComboBox.currentText().lower()
-            new_local_server_settings["user"] = self.uiRemoteMainServerUserLineEdit.text()
+            new_local_server_settings["username"] = self.uiRemoteMainServerUserLineEdit.text()
             new_local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
-            new_local_server_settings["auth"] = self.uiRemoteMainServerAuthCheckBox.isChecked()
 
             # Some users get confused by remote server and  main server and same
             # configure the same server twice

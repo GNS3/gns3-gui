@@ -59,10 +59,10 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
 
         self._project.get("/files/{}".format(self._readme_filename), self._loadedReadme)
 
-    def _loadedReadme(self, result, error=False, raw_body=None, context={}, **kwargs):
+    def _loadedReadme(self, result, error=False, context={}, **kwargs):
 
         if not error:
-            content = raw_body.decode("utf-8", errors="replace")
+            content = result.decode("utf-8", errors="replace")
             self.uiReadmeTextEdit.setPlainText(content)
 
     def _previewMarkdownSlot(self, index):

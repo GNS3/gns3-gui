@@ -35,7 +35,7 @@ def test_project_create(tmpdir, controller):
 
     project.create()
 
-    mock = controller._http_client.createHTTPQuery
+    mock = controller._http_client.sendRequest
     assert mock.called
     args, kwargs = mock.call_args
     assert args[0] == "POST"
@@ -65,7 +65,7 @@ def test_project_post_on_created_project(controller):
 
     project.post("/test", lambda: 0, body={"test": "test"})
 
-    mock = controller._http_client.createHTTPQuery
+    mock = controller._http_client.sendRequest
     args, kwargs = mock.call_args
     assert args[0] == "POST"
     assert args[1] == "/projects/{uuid}/test".format(uuid=uuid)
@@ -84,7 +84,7 @@ def test_project_get_on_created_project(controller):
     project.setId(uuid)
 
     project.get("/test", lambda: 0)
-    mock = controller._http_client.createHTTPQuery
+    mock = controller._http_client.sendRequest
 
     args, kwargs = mock.call_args
     assert args[0] == "GET"
@@ -103,7 +103,7 @@ def test_project_put_on_created_project(controller):
     project.setId(uuid)
 
     project.put("/test", lambda: 0, body={"test": "test"})
-    mock = controller._http_client.createHTTPQuery
+    mock = controller._http_client.sendRequest
 
     args, kwargs = mock.call_args
     assert args[0] == "PUT"
@@ -123,7 +123,7 @@ def test_project_delete_on_created_project(controller):
     project.setId(uuid)
 
     project.delete("/test", lambda: 0)
-    mock = controller._http_client.createHTTPQuery
+    mock = controller._http_client.sendRequest
 
     args, kwargs = mock.call_args
     assert args[0] == "DELETE"
@@ -135,7 +135,7 @@ def test_project_destroy(controller):
     project.setId(str(uuid4()))
     project.destroy()
 
-    mock = controller._http_client.createHTTPQuery
+    mock = controller._http_client.sendRequest
     assert mock.called
     args, kwargs = mock.call_args
 
@@ -181,7 +181,7 @@ def test_project_update(controller):
     project.setVariables([{'name': 'TEST'}])
     project.setSupplier({'logo': 'test.png', 'url':  'http://domain'})
     project.update()
-    mock = controller._http_client.createHTTPQuery
+    mock = controller._http_client.sendRequest
     args, kwargs = mock.call_args
     body = kwargs['body']
     assert body['variables'] == [{'name': 'TEST'}]

@@ -66,7 +66,7 @@ def test_fromEmptySvg(project, controller):
 def test_create(project, controller):
     rect = RectangleItem(width=400, height=280, project=project)
     rect.create()
-    controller._http_client.createHTTPQuery.assert_called_with(
+    controller._http_client.sendRequest.assert_called_with(
         "POST",
         "/projects/" + project.id() + "/drawings",
         rect._createDrawingCallback,

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1104</width>
-    <height>665</height>
+    <width>652</width>
+    <height>313</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -367,19 +367,36 @@
     <string>Everything will run on a remote server. No data will be saved on this computer.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_5">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_3">
       <property name="text">
-       <string>User:</string>
+       <string>Host:</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="uiRemoteMainServerPasswordLineEdit">
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
      <widget class="QLabel" name="label_6">
       <property name="text">
        <string>Password:</string>
       </property>
      </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Port:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="uiRemoteMainServerUserLineEdit"/>
     </item>
     <item row="1" column="1">
      <widget class="QSpinBox" name="uiRemoteMainServerPortSpinBox">
@@ -400,37 +417,13 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Host:</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1">
      <widget class="QLineEdit" name="uiRemoteMainServerHostLineEdit"/>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_4">
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_5">
       <property name="text">
-       <string>Port:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="uiRemoteMainServerUserLineEdit"/>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLineEdit" name="uiRemoteMainServerPasswordLineEdit">
-      <property name="echoMode">
-       <enum>QLineEdit::Password</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="2">
-     <widget class="QCheckBox" name="uiRemoteMainServerAuthCheckBox">
-      <property name="text">
-       <string>Enable authentication</string>
+       <string>Username:</string>
       </property>
      </widget>
     </item>

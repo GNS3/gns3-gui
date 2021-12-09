@@ -243,7 +243,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is starting".format(self.name()))
-        self.post("/start", self._startCallback, timeout=None, showProgress=False)
+        self.post("/start", self._startCallback, timeout=None, show_progress=False)
 
     def _startCallback(self, result, error=False, **kwargs):
         """
@@ -269,7 +269,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is stopping".format(self.name()))
-        self.post("/stop", self._stopCallback, timeout=None, showProgress=False)
+        self.post("/stop", self._stopCallback, timeout=None, show_progress=False)
 
     def _stopCallback(self, result, error=False, **kwargs):
         """
@@ -299,7 +299,7 @@ class Node(BaseNode):
             return
 
         log.debug("{} is being suspended".format(self.name()))
-        self.post("/suspend", self._suspendCallback, timeout=None, showProgress=False)
+        self.post("/suspend", self._suspendCallback, timeout=None, show_progress=False)
 
     def _suspendCallback(self, result, error=False, **kwargs):
         """
@@ -321,7 +321,7 @@ class Node(BaseNode):
         """
 
         log.debug("{} is being reloaded".format(self.name()))
-        self.post("/reload", self._reloadCallback, timeout=None, showProgress=False)
+        self.post("/reload", self._reloadCallback, timeout=None, show_progress=False)
 
     def _reloadCallback(self, result, error=False, **kwargs):
         """
@@ -343,7 +343,7 @@ class Node(BaseNode):
         """
 
         log.debug("{} is being isolated".format(self.name()))
-        self.post("/isolate", self._isolateCallback, timeout=None, showProgress=False)
+        self.post("/isolate", self._isolateCallback, timeout=None, show_progress=False)
 
     def _isolateCallback(self, result, error=False, **kwargs):
         """
@@ -365,7 +365,7 @@ class Node(BaseNode):
         """
 
         log.debug("{} is being un-isolated".format(self.name()))
-        self.post("/unisolate", self._unisolateCallback, timeout=None, showProgress=False)
+        self.post("/unisolate", self._unisolateCallback, timeout=None, show_progress=False)
 
     def _unisolateCallback(self, result, error=False, **kwargs):
         """
@@ -479,7 +479,7 @@ class Node(BaseNode):
 
         log.debug("{} is updating settings: {}".format(self.name(), params))
         body = self._prepareBodyForUpdate(params)
-        self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self._updateOnControllerCallback, body=body, timeout=timeout, showProgress=False)
+        self.controllerHttpPut("/nodes/{node_id}".format(node_id=self._node_id), self._updateOnControllerCallback, body=body, timeout=timeout, show_progress=False)
 
     def _updateOnControllerCallback(self, result, error=False, **kwargs):
         """
@@ -521,7 +521,7 @@ class Node(BaseNode):
         if not skip_controller:
             for link in self.links():
                 link.setDeleting()
-            self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback, showProgress=False)
+            self.controllerHttpDelete("/nodes/{node_id}".format(node_id=self._node_id), self._deleteCallback, show_progress=False)
         else:
             self.deleted_signal.emit()
             self._module.removeNode(self)
@@ -551,7 +551,7 @@ class Node(BaseNode):
                   "y": int(y),
                   "z": int(z)}
 
-        self.post("/duplicate", self._duplicateCallback, body=params, timeout=None, showProgress=False)
+        self.post("/duplicate", self._duplicateCallback, body=params, timeout=None, show_progress=False)
 
     def _duplicateCallback(self, result, error=False, **kwargs):
         """
@@ -831,7 +831,7 @@ class Node(BaseNode):
 
         self.get("/files/{path}".format(path=path), self._exportFileCallback, context={"path": output_path}, raw=True)
 
-    def _exportFileCallback(self, result, error=False, raw_body=None, context={}, **kwargs):
+    def _exportFileCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for export file.
         """
@@ -839,7 +839,7 @@ class Node(BaseNode):
         if not error:
             try:
                 with open(context["path"], "wb+") as f:
-                    f.write(raw_body)
+                    f.write(result)
             except OSError as e:
                 log.error("Cannot export file '{}': {}".format(context["path"], e))
 
@@ -859,7 +859,7 @@ class Node(BaseNode):
                      raw=True)
         return True
 
-    def _exportConfigsToDirectoryCallback(self, result, error=False, raw_body=None, context={}, **kwargs):
+    def _exportConfigsToDirectoryCallback(self, result, error=False, context={}, **kwargs):
         """
         Callback for exportConfigsToDirectory.
 
@@ -878,7 +878,7 @@ class Node(BaseNode):
         try:
             with open(config_path, "wb") as f:
                 log.debug("saving {} config to {}".format(self.name(), config_path))
-                f.write(raw_body)
+                f.write(result)
         except OSError as e:
             self.error_signal.emit(self.id(), "could not export config to {}: {}".format(config_path, e))
 

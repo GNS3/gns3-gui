@@ -25,6 +25,7 @@ from gns3.settings import LOCAL_SERVER_SETTINGS
 from gns3.controller import Controller
 from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.utils.progress_dialog import ProgressDialog
+from gns3.http_client_error import HttpClientError, HttpClientCancelledRequestError
 from gns3.registry.image import Image
 
 
@@ -69,7 +70,7 @@ class ImageManager:
         """
 
         if (server and server != "local") or Controller.instance().isRemote():
-            return self._uploadImageToRemoteServer(source_path, server, node_type)
+            return self._uploadImageToRemoteServer(source_path, node_type, parent)
         else:
             destination_directory = self.getDirectoryForType(node_type)
             destination_path = os.path.join(destination_directory, os.path.basename(source_path))
@@ -115,27 +116,45 @@ class ImageManager:
                         source_path = destination_path
             return source_path
 
-    def _uploadImageToRemoteServer(self, path, server, node_type):
+    def _uploadImageToRemoteServer(self, path, node_type, parent):
         """
         Upload image to remote server
 
         :param path: File path on computer
-        :param server: The server where the images should be located
         :param node_type: Image node_type
         :returns path: Final path
         """
 
         if node_type == 'QEMU':
-            upload_endpoint = '/qemu/images'
+            image_type = 'qemu'
         elif node_type == 'IOU':
-            upload_endpoint = '/iou/images'
+            image_type = 'iou'
         elif node_type == 'DYNAMIPS':
-            upload_endpoint = '/dynamips/images'
+            image_type = 'ios'
         else:
             raise Exception('Invalid node type')
 
         filename = self._getRelativeImagePath(path, node_type).replace("\\", "/")
-        Controller.instance().postCompute('{}/{}'.format(upload_endpoint, filename), server, None, body=pathlib.Path(path), progressText="Uploading {}".format(filename), timeout=None)
+
+        try:
+            Controller.instance().post(
+                f"/images/upload/{filename}",
+                callback=None,
+                params={"image_type": image_type},
+                body=pathlib.Path(path),
+                progress_text="Uploading {}".format(filename),
+                timeout=None,
+                wait=True
+            )
+        except HttpClientCancelledRequestError:
+            return
+        except HttpClientError as e:
+            QtWidgets.QMessageBox.critical(
+                parent,
+                "Image upload",
+                f"Could not upload image {filename}: {e}"
+            )
+
         return filename
 
     def _getRelativeImagePath(self, path, node_type):

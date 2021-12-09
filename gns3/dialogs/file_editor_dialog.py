@@ -64,9 +64,9 @@ class FileEditorDialog(QtWidgets.QDialog, Ui_FileEditorDialog):
     def _refreshSlot(self):
         self._target.get("/files/" + self._path, self._getCallback)
 
-    def _getCallback(self, result, error=False, raw_body=None, **kwargs):
+    def _getCallback(self, result, error=False, **kwargs):
         if not error:
-            self.uiFileTextEdit.setText(raw_body.decode("utf-8", errors="ignore"))
+            self.uiFileTextEdit.setText(result.decode("utf-8", errors="ignore"))
         elif result.get("status") == 404:
             if self._default:
                 self.uiFileTextEdit.setText(self._default)

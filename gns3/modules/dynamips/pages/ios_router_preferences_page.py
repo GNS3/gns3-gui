@@ -388,7 +388,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         try:
             compute_id = ios_router.get("compute_id")
             if compute_id:
-                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance(compute_id).getCompute().name()])
+                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
             else:
                 QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
         except KeyError:

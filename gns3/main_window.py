@@ -100,8 +100,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Controller.instance().setParent(self)
         LocalServer.instance().setParent(self)
 
-        HTTPClient.setProgressCallback(Progress.instance(self))
-
         self._first_file_load = True
         self._open_project_path = None
         self._loadSettings()
@@ -340,7 +338,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _openWebInterfaceActionSlot(self):
         if Controller.instance().connected():
             base_url = Controller.instance().httpClient().fullUrl()
-            webui_url = "{}/static/web-ui/bundled".format(base_url)
+            webui_url = f"{base_url}/static/web-ui/bundled"
             QtGui.QDesktopServices.openUrl(QtCore.QUrl(webui_url))
 
     def _showGridActionSlot(self):
