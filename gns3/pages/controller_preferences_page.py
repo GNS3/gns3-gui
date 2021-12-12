@@ -28,18 +28,18 @@ import logging
 log = logging.getLogger(__name__)
 
 from gns3.qt import QtNetwork, QtWidgets
-from ..ui.server_preferences_page_ui import Ui_ServerPreferencesPageWidget
+from ..ui.controller_preferences_page_ui import Ui_ControllerPreferencesPageWidget
 from ..topology import Topology
-from ..settings import LOCAL_SERVER_SETTINGS, DEFAULT_LOCAL_SERVER_HOST
+from ..settings import CONTROLLER_SETTINGS, DEFAULT_CONTROLLER_HOST
 from ..dialogs.edit_compute_dialog import EditComputeDialog
 from ..local_server import LocalServer
 from ..compute_manager import ComputeManager
 
 
-class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
+class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageWidget):
 
     """
-    QWidget configuration page for server preferences.
+    QWidget configuration page for controller preferences.
     """
 
     def __init__(self, parent=None):
@@ -72,7 +72,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         self.uiLocalServerHostComboBox.addItem("0.0.0.0", "0.0.0.0")  # all IPv4 addresses
 
         # default is 127.0.0.1
-        index = self.uiLocalServerHostComboBox.findText(DEFAULT_LOCAL_SERVER_HOST)
+        index = self.uiLocalServerHostComboBox.findText(DEFAULT_CONTROLLER_HOST)
         if index != -1:
             self.uiLocalServerHostComboBox.setCurrentIndex(index)
 
@@ -97,7 +97,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         Slot to restore default settings
         """
 
-        self._populateWidgets(LOCAL_SERVER_SETTINGS)
+        self._populateWidgets(CONTROLLER_SETTINGS)
 
     def _localServerBrowserSlot(self):
         """

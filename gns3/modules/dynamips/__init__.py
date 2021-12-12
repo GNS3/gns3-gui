@@ -25,7 +25,6 @@ import hashlib
 
 from gns3.local_config import LocalConfig
 from gns3.image_manager import ImageManager
-from gns3.local_server_config import LocalServerConfig
 from gns3.controller import Controller
 from gns3.template_manager import TemplateManager
 from gns3.template import Template
@@ -145,18 +144,19 @@ class Dynamips(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        # save some settings to the local server config file
-        server_settings = {
-            "allocate_aux_console_ports": self._settings["allocate_aux_console_ports"],
-            "ghost_ios_support": self._settings["ghost_ios_support"],
-            "sparse_memory_support": self._settings["sparse_memory_support"],
-            "mmap_support": self._settings["mmap_support"],
-        }
-
-        if self._settings["dynamips_path"]:
-            server_settings["dynamips_path"] = os.path.normpath(self._settings["dynamips_path"])
-        config = LocalServerConfig.instance()
-        config.saveSettings(self.__class__.__name__, server_settings)
+        # FIXME: handle server side config
+        # # save some settings to the local server config file
+        # server_settings = {
+        #     "allocate_aux_console_ports": self._settings["allocate_aux_console_ports"],
+        #     "ghost_ios_support": self._settings["ghost_ios_support"],
+        #     "sparse_memory_support": self._settings["sparse_memory_support"],
+        #     "mmap_support": self._settings["mmap_support"],
+        # }
+        #
+        # if self._settings["dynamips_path"]:
+        #     server_settings["dynamips_path"] = os.path.normpath(self._settings["dynamips_path"])
+        # config = LocalServerConfig.instance()
+        # config.saveSettings(self.__class__.__name__, server_settings)
 
     def updateImageIdlepc(self, image_path, idlepc):
         """

@@ -59,7 +59,7 @@ QEMU_VM_SETTINGS = {
     "replicate_network_connection_state": True,
     "create_config_disk": False,
     "on_close": "power_off",
-    "platform": "",
+    "platform": "x86_64",
     "cpu_throttling": 0,
     "process_priority": "normal",
     "options": "",

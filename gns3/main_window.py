@@ -86,6 +86,40 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setUnifiedTitleAndToolBarOnMac(True)
 
+        # This widgets will be disable when you have no project loaded
+        self.disableWhenNoProjectWidgets = [
+            self.uiGraphicsView,
+            self.uiAnnotateMenu,
+            self.uiAnnotationToolBar,
+            self.uiControlToolBar,
+            self.uiControlMenu,
+            self.uiSaveProjectAsAction,
+            self.uiExportProjectAction,
+            self.uiScreenshotAction,
+            self.uiSnapshotAction,
+            self.uiEditProjectAction,
+            self.uiDeleteProjectAction,
+            self.uiImportExportConfigsAction,
+            self.uiLockAllAction,
+            self.uiShowReadmeAction
+        ]
+
+        for widget in self.disableWhenNoProjectWidgets:
+            widget.setEnabled(False)
+
+        self.disableWhenControllerNotConnectedWidgets = [
+            self.uiNewProjectAction,
+            self.uiOpenProjectAction,
+            self.uiImportProjectAction,
+            self.uiNewTemplateAction,
+            self.uiOpenApplianceAction,
+            self.uiWebUIAction,
+            self.uiNodesDockWidget
+        ]
+
+        for widget in self.disableWhenControllerNotConnectedWidgets:
+            widget.setEnabled(False)
+
         self._notif_dialog = NotifDialog(self)
         # Setup logger
         logging.getLogger().addHandler(NotifDialogHandler(self._notif_dialog))
@@ -175,40 +209,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiNewTemplatePushButton.hide()
 
         self.setWindowTitle("[*] GNS3")
-
-        # This widgets will be disable when you have no project loaded
-        self.disableWhenNoProjectWidgets = [
-            self.uiGraphicsView,
-            self.uiAnnotateMenu,
-            self.uiAnnotationToolBar,
-            self.uiControlToolBar,
-            self.uiControlMenu,
-            self.uiSaveProjectAsAction,
-            self.uiExportProjectAction,
-            self.uiScreenshotAction,
-            self.uiSnapshotAction,
-            self.uiEditProjectAction,
-            self.uiDeleteProjectAction,
-            self.uiImportExportConfigsAction,
-            self.uiLockAllAction,
-            self.uiShowReadmeAction
-        ]
-
-        for widget in self.disableWhenNoProjectWidgets:
-            widget.setEnabled(False)
-
-        self.disableWhenControllerNotConnectedWidgets = [
-            self.uiNewProjectAction,
-            self.uiOpenProjectAction,
-            self.uiImportProjectAction,
-            self.uiNewTemplateAction,
-            self.uiOpenApplianceAction,
-            self.uiWebUIAction,
-            self.uiNodesDockWidget
-        ]
-
-        for widget in self.disableWhenControllerNotConnectedWidgets:
-            widget.setEnabled(False)
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
@@ -975,12 +975,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to open the setup wizard.
         """
 
-        with Progress.instance().context(min_duration=0):
-            setup_wizard = SetupWizard(self)
-            setup_wizard.show()
-            res = setup_wizard.exec_()
-            # start and connect to the local server if needed
-            LocalServer.instance().localServerAutoStartIfRequired()
+        setup_wizard = SetupWizard(self)
+        setup_wizard.show()
+        if setup_wizard.exec_():
+            if Controller.instance().isRemote():
+                Controller.instance().connect()
+            else:
+                # start and connect to the local server if needed
+                LocalServer.instance().localServerAutoStartIfRequired()
 
     def _aboutQtActionSlot(self):
         """
@@ -1255,8 +1257,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not self._settings["hide_setup_wizard"]:
             self._setupWizardActionSlot()
         else:
-            # start and connect to the local server if needed
-            LocalServer.instance().localServerAutoStartIfRequired()
+            if Controller.instance().isRemote():
+                Controller.instance().connect()
+            else:
+                # start and connect to the local server if needed
+                LocalServer.instance().localServerAutoStartIfRequired()
 
         if self._settings["check_for_update"]:
             # automatic check for update every week (604800 seconds)

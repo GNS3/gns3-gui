@@ -63,7 +63,7 @@ class QNetworkReplyWatcher(QtCore.QObject):
 
         if show_progress:
             if not progress_text:
-                progress_text = "Waiting for server"
+                progress_text = "Waiting for controller..."
             self._progress = QtWidgets.QProgressDialog(progress_text, "Cancel", 0, 0, parent)
             self._progress.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
             self._progress.setWindowModality(QtCore.Qt.ApplicationModal)
@@ -253,7 +253,7 @@ class HTTPClient(QtCore.QObject):
         """
 
         self._shutdown = True
-        self.sendRequest("POST", "/shutdown", show_progress=False)
+        self.sendRequest("POST", "/shutdown", callback=None, wait=False)
 
     def connected(self) -> bool:
         """
@@ -284,7 +284,7 @@ class HTTPClient(QtCore.QObject):
             self,
             method: str,
             endpoint: str,
-            callback: Callable,
+            callback: Callable = None,
             body: Union[dict, pathlib.Path, str] = None,
             context: dict = None,
             download_progress_callback: Callable = None,
@@ -525,7 +525,7 @@ class HTTPClient(QtCore.QObject):
             }
             content = self._executeHTTPQuery("POST", "/users/authenticate", body=body, wait=True)
             if content:
-                log.info(f"Authenticated with server {self._host} on port {self._port}")
+                log.info(f"Authenticated with controller {self._host} on port {self._port}")
                 token = content.get("access_token")
                 if token:
                     self._jwt_token = token
@@ -552,7 +552,7 @@ class HTTPClient(QtCore.QObject):
             log.warning(f"{msg}\nUsing different versions may result in unexpected problems.\n"
                         "Please upgrade or use at your own risk.")
 
-    def _retryConnectionToServer(self, wait_time: int = 5):
+    def _retryConnectionToServer(self, wait_time: int = 5) -> bool:
         """
         Retry a connection.
         """
@@ -576,11 +576,23 @@ class HTTPClient(QtCore.QObject):
         timer.start(wait_time * 1000)
         loop.exec_()
         if progress.wasCanceled():
-            return
+            return False
         progress.close()
-        self.connectToServer()
+        return self.connectToServer()
 
-    def connectToServer(self) -> None:
+    def checkServerRunning(self) -> bool:
+        """
+        Check if server is running.
+        """
+
+        try:
+            content = self._executeHTTPQuery("GET", "/version", wait=True, show_progress=False, timeout=2)
+            self._validateServerVersion(content)
+        except HttpClientError:
+            return False
+        return True
+
+    def connectToServer(self) -> bool:
         """
         Connect to the GNS3 server
         """
@@ -592,7 +604,7 @@ class HTTPClient(QtCore.QObject):
             self._retry_connection = False
             self._executeHTTPQuery("GET", "/users/me", wait=True)
         except HttpClientCancelledRequestError:
-            return  # operation cancelled by user
+            return False  # operation cancelled by user
         except HttpClientError as e:
             if self._retry_connection and self._retry < self._max_retry_connection:
                 return self._retryConnectionToServer()
@@ -616,6 +628,8 @@ class HTTPClient(QtCore.QObject):
                 if request:
                     request()
             self._query_waiting_connections = []
+            return True
+        return False
 
     def _prepareRequest(self, method: str, endpoint: str, params: dict) -> QtNetwork.QNetworkRequest:
         """

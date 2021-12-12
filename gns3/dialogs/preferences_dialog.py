@@ -21,7 +21,7 @@ Dialog to load module and built-in preference pages.
 
 from ..qt import QtCore, QtWidgets
 from ..ui.preferences_dialog_ui import Ui_PreferencesDialog
-from ..pages.server_preferences_page import ServerPreferencesPage
+from ..pages.controller_preferences_page import ControllerPreferencesPage
 from ..pages.general_preferences_page import GeneralPreferencesPage
 from ..pages.packet_capture_preferences_page import PacketCapturePreferencesPage
 from ..pages.gns3_vm_preferences_page import GNS3VMPreferencesPage
@@ -84,7 +84,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         # load built-in preference pages
         pages = [
             GeneralPreferencesPage,
-            ServerPreferencesPage,
+            ControllerPreferencesPage,
             #GNS3VMPreferencesPage,
             PacketCapturePreferencesPage,
         ]

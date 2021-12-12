@@ -23,7 +23,6 @@ import os
 import shutil
 
 from gns3.local_config import LocalConfig
-from gns3.local_server_config import LocalServerConfig
 from gns3.controller import Controller
 from gns3.template_manager import TemplateManager
 from gns3.template import Template
@@ -85,12 +84,13 @@ class VPCS(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
-        server_settings = {}
-        if self._settings["vpcs_path"]:
-            # save some settings to the server config file
-            server_settings["vpcs_path"] = os.path.normpath(self._settings["vpcs_path"])
-        config = LocalServerConfig.instance()
-        config.saveSettings(self.__class__.__name__, server_settings)
+        # FIXME: handle server side config
+        # server_settings = {}
+        # if self._settings["vpcs_path"]:
+        #     # save some settings to the server config file
+        #     server_settings["vpcs_path"] = os.path.normpath(self._settings["vpcs_path"])
+        # config = LocalServerConfig.instance()
+        # config.saveSettings(self.__class__.__name__, server_settings)
 
     @staticmethod
     def getNodeClass(node_type, platform=None):

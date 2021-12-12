@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
-    <height>313</height>
+    <width>603</width>
+    <height>287</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,16 +22,16 @@
   <property name="options">
    <set>QWizard::NoBackButtonOnStartPage</set>
   </property>
-  <widget class="QWizardPage" name="uiServerWizardPage">
+  <widget class="QWizardPage" name="uiControllerWizardPage">
    <property name="title">
-    <string>Server</string>
+    <string>Controller</string>
    </property>
    <property name="subTitle">
-    <string>Please choose how would like to run your GNS3 network simulations. The GNS3 VM option is strongly recommended on Windows and Mac OS X.</string>
+    <string>Please select an option to connect to the GNS3 controller</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
-     <widget class="QRadioButton" name="uiVMRadioButton">
+     <widget class="QRadioButton" name="uiLocalControllerRadioButton">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -45,52 +45,13 @@
        </font>
       </property>
       <property name="toolTip">
-       <string>Dynamips, IOU, VPCS and Qemu will use this virtual machine.</string>
+       <string>A local controller runs on the same machine as this graphical interface</string>
       </property>
       <property name="text">
-       <string>Run appliances in a virtual machine</string>
+       <string>Start and connect to a local controller (Linux only)</string>
       </property>
       <property name="checked">
        <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Requires to download and install the GNS3 VM (available for free) </string>
-      </property>
-      <property name="margin">
-       <number>0</number>
-      </property>
-      <property name="indent">
-       <number>17</number>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="uiLocalRadioButton">
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string>Everything that is supported by your system will run on your computer.</string>
-      </property>
-      <property name="text">
-       <string>Run appliances on my local computer</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="uiLocalLabel">
-      <property name="text">
-       <string>A limited number of appliances like the Cisco IOS routers &lt;= C7200 can be run</string>
-      </property>
-      <property name="indent">
-       <number>17</number>
       </property>
      </widget>
     </item>
@@ -102,21 +63,11 @@
         <bold>true</bold>
        </font>
       </property>
+      <property name="toolTip">
+       <string>A remote controller can run in a Virtual Machine (VM) or on a remote server</string>
+      </property>
       <property name="text">
-       <string>Run appliances on a remote server (advanced usage)</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>The server will be on a remote computer and can be shared with multiple users</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-      <property name="indent">
-       <number>17</number>
+       <string>Connect to a remote controller</string>
       </property>
      </widget>
     </item>
@@ -133,24 +84,14 @@
       </property>
      </spacer>
     </item>
-    <item>
-     <widget class="QCheckBox" name="uiShowCheckBox">
-      <property name="text">
-       <string>Don't show this again</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiLocalServerWizardPage">
+  <widget class="QWizardPage" name="uiLocalControllerWizardPage">
    <property name="title">
-    <string>Local server configuration</string>
+    <string>Local controller configuration</string>
    </property>
    <property name="subTitle">
-    <string>Please configure the following GNS3 local server settings</string>
+    <string>Please configure the following local server settings</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
@@ -209,162 +150,12 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiLocalServerStatusWizardPage">
-   <property name="title">
-    <string>Local server status</string>
-   </property>
-   <property name="subTitle">
-    <string>Validation of the configuration for the local server</string>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="0">
-     <widget class="QTextEdit" name="uiLocalServerTextEdit">
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWizardPage" name="uiVMWizardPage">
-   <property name="title">
-    <string>GNS3 VM</string>
-   </property>
-   <property name="subTitle">
-    <string>In order to run the GNS3 VM you must first have VMware or VirtualBox installed and the GNS3 VM.ova imported with one of these software.</string>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_3">
-    <item row="1" column="0">
-     <widget class="QRadioButton" name="uiVmwareRadioButton">
-      <property name="toolTip">
-       <string>VMware is recommended to run Qemu based appliances (required for KVM).</string>
-      </property>
-      <property name="text">
-       <string>VMware (recommended)</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="uiVirtualizationSoftwarLabel">
-      <property name="text">
-       <string>Virtualization software:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QRadioButton" name="uiVirtualBoxRadioButton">
-      <property name="toolTip">
-       <string>Use VirtualBox if you intend to only use Dynamips, IOU or VPCS.</string>
-      </property>
-      <property name="text">
-       <string>VirtualBox</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="uiVMNameLabel">
-      <property name="text">
-       <string>VM name:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="QLabel" name="uiCPULabel">
-      <property name="text">
-       <string>vCPU cores:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="0">
-     <widget class="QLabel" name="uiRAMLabel">
-      <property name="text">
-       <string>RAM size:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="uiGNS3VMDownloadLinkUrlLabel">
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The GNS3 VM can be &lt;a href=&quot;https://github.com/GNS3/gns3-gui/releases/download/v1.4.1/GNS3.VM.VMware.Workstation.1.4.1.zip&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;downloaded here&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="openExternalLinks">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="0" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QComboBox" name="uiVMListComboBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="uiRefreshPushButton">
-        <property name="text">
-         <string>&amp;Refresh</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="8" column="0" colspan="2">
-     <widget class="QSpinBox" name="uiCPUSpinBox">
-      <property name="minimum">
-       <number>1</number>
-      </property>
-      <property name="maximum">
-       <number>128</number>
-      </property>
-      <property name="value">
-       <number>1</number>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0" colspan="2">
-     <widget class="QSpinBox" name="uiRAMSpinBox">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="suffix">
-       <string> MB</string>
-      </property>
-      <property name="minimum">
-       <number>512</number>
-      </property>
-      <property name="maximum">
-       <number>1000000000</number>
-      </property>
-      <property name="singleStep">
-       <number>512</number>
-      </property>
-      <property name="value">
-       <number>2048</number>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWizardPage" name="uiRemoteControllerWizardPage">
    <property name="title">
-    <string>Remote server</string>
+    <string>Remote controller</string>
    </property>
    <property name="subTitle">
-    <string>Everything will run on a remote server. No data will be saved on this computer.</string>
+    <string>Please configure the settings to connect to a remote GNS3 controller</string>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
@@ -434,9 +225,9 @@
     <string>Summary</string>
    </property>
    <property name="subTitle">
-    <string>The server type has been configured, please see the summary of the settings below</string>
+    <string>The controller has been configured, please see the summary of the settings below</string>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTreeWidget" name="uiSummaryTreeWidget">
       <property name="rootIsDecorated">
@@ -455,6 +246,16 @@
         <string>2</string>
        </property>
       </column>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="uiShowCheckBox">
+      <property name="text">
+       <string>Don't show this setup wizard again</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>

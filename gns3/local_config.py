@@ -26,8 +26,6 @@ import psutil
 from .qt import QtCore, QtWidgets
 from .version import __version__, __version_info__
 from .utils import parse_version
-from .local_server_config import LocalServerConfig
-from .settings import LOCAL_SERVER_SETTINGS
 
 import logging
 log = logging.getLogger(__name__)
@@ -100,10 +98,10 @@ class LocalConfig(QtCore.QObject):
                     # migrate post version 2.2.0 configuration file
                     shutil.copyfile(old_config_path, self._config_file)
                     # reset the local server path and ubridge path
-                    settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
-                    settings["path"] = ""
-                    settings["ubridge_path"] = ""
-                    LocalServerConfig.instance().saveSettings("Server", settings)
+                    # settings = LocalServerConfig.instance().loadSettings("Controller", CONTROLLER_SETTINGS)
+                    # settings["path"] = ""
+                    # settings["ubridge_path"] = ""
+                    # LocalServerConfig.instance().saveSettings("Controller", settings)
                 else:
                     # create a new config
                     with open(self._config_file, "w", encoding="utf-8") as f:

@@ -25,7 +25,6 @@ import shutil
 import subprocess
 import codecs
 
-from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 from collections import OrderedDict
 from gns3.controller import Controller
@@ -216,19 +215,20 @@ class VMware(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
+        # FIXME: handle server side config
         # save some settings to the local server config file
-        server_settings = {
-            "host_type": self._settings["host_type"],
-            "vmnet_start_range": self._settings["vmnet_start_range"],
-            "vmnet_end_range": self._settings["vmnet_end_range"],
-            "block_host_traffic": self._settings["block_host_traffic"]
-        }
-
-        if self._settings["vmrun_path"]:
-            server_settings["vmrun_path"] = os.path.normpath(self._settings["vmrun_path"])
-
-        config = LocalServerConfig.instance()
-        config.saveSettings(self.__class__.__name__, server_settings)
+        # server_settings = {
+        #     "host_type": self._settings["host_type"],
+        #     "vmnet_start_range": self._settings["vmnet_start_range"],
+        #     "vmnet_end_range": self._settings["vmnet_end_range"],
+        #     "block_host_traffic": self._settings["block_host_traffic"]
+        # }
+        #
+        # if self._settings["vmrun_path"]:
+        #     server_settings["vmrun_path"] = os.path.normpath(self._settings["vmrun_path"])
+        #
+        # config = LocalServerConfig.instance()
+        # config.saveSettings(self.__class__.__name__, server_settings)
 
     @staticmethod
     def configurationPage():
