@@ -560,7 +560,7 @@ class HTTPClient(QtCore.QObject):
         self._retry += 1
         loop = QtCore.QEventLoop()
         progress = QtWidgets.QProgressDialog(
-            f"Retrying connection to server (#{self._retry}/{self._max_retry_connection})",
+            f"Retrying connection to controller (#{self._retry}/{self._max_retry_connection})",
             "Cancel",
             0,
             0,

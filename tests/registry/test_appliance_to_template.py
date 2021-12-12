@@ -20,16 +20,16 @@ import json
 import os
 
 from gns3.registry.config import Config
-from gns3.settings import LOCAL_SERVER_SETTINGS
+from gns3.settings import CONTROLLER_SETTINGS
 from gns3.registry.appliance_to_template import ApplianceToTemplate
 
 
 @pytest.fixture(scope="function")
-def empty_config(tmpdir, images_dir, symbols_dir, local_server_config):
-    settings = local_server_config.loadSettings("Server", LOCAL_SERVER_SETTINGS)
+def empty_config(tmpdir, images_dir, symbols_dir, local_config):
+    settings = local_config.loadSectionSettings("Controller", CONTROLLER_SETTINGS)
     settings["images_path"] = images_dir
     settings["symbols_path"] = symbols_dir
-    local_server_config.saveSettings("Server", settings)
+    local_config.saveSectionSettings("Controller", settings)
     config = {
         "Servers": {
         },

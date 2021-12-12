@@ -301,7 +301,7 @@ GENERAL_SETTINGS = {
     "state": "",
     "debug_level": 0,
     "multi_profiles": False,
-    "hdpi": not sys.platform.startswith("linux"),
+    "hdpi": True,
     "auto_open_readme": True,
     "symbol_theme": "Classic"
 }

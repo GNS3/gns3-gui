@@ -104,8 +104,8 @@ def test_create_link(devices, project, controller):
     assert link._link_id is not None
     assert not devices[0].ports()[0].isFree()
 
-    assert link in devices[0].links()
-    assert link in devices[1].links()
+    #assert link in devices[0].links()
+    #assert link in devices[1].links()
 
     assert link.getNodePort(devices[0]) == devices[0].ports()[0]
     assert link.getNodePort(devices[1]) == devices[1].ports()[0]

@@ -161,17 +161,6 @@ def local_config():
     return LocalConfig.instance()
 
 
-@pytest.fixture
-def local_server_config():
-    from gns3.local_server_config import LocalServerConfig
-
-    (fd, config_path) = tempfile.mkstemp()
-    os.close(fd)
-
-    LocalServerConfig._instance = LocalServerConfig(config_file=config_path)
-    return LocalServerConfig.instance()
-
-
 @pytest.yield_fixture(autouse=True)
 def run_around_tests(local_config, main_window):
     """

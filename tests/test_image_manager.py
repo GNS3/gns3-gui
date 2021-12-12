@@ -21,10 +21,7 @@ import os
 from unittest.mock import patch, MagicMock
 
 from gns3.image_manager import ImageManager
-from gns3.local_server import LocalServer
-from gns3.local_server_config import LocalServerConfig
-from gns3.controller import Controller
-from gns3.settings import LOCAL_SERVER_SETTINGS
+from gns3.settings import CONTROLLER_SETTINGS
 
 
 @pytest.fixture
@@ -37,10 +34,9 @@ def images_dir(tmpdir):
 @pytest.yield_fixture
 def image_manager(tmpdir, images_dir):
     ImageManager._instance = None
-    settings = LOCAL_SERVER_SETTINGS
+    settings = CONTROLLER_SETTINGS
     settings['images_path'] = str(images_dir)
-    LocalServerConfig.instance().setConfigFile(str(tmpdir / "test.cfg"))
-    with patch('gns3.local_server_config.LocalServerConfig.loadSettings', return_value=LOCAL_SERVER_SETTINGS):
+    with patch('gns3.local_config.LocalConfig.loadSectionSettings', return_value=CONTROLLER_SETTINGS):
         yield ImageManager.instance()
     ImageManager._instance = None
 
