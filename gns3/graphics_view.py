@@ -1663,11 +1663,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
                 x = left
                 while x < rect.right():
-                    painter.drawLine(x, rect.top(), x, rect.bottom())
+                    painter.drawLine(x, int(rect.top()), x, int(rect.bottom()))
                     x += grid
                 y = top
                 while y < rect.bottom():
-                    painter.drawLine(rect.left(), y, rect.right(), y)
+                    painter.drawLine(int(rect.left()), y, int(rect.right()), y)
                     y += grid
             painter.restore()
 
