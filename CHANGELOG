@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.28 15/12/2021
+
+* Fixed drawLine called with float arguments
+* Fixed dead VIX API link
+
 ## 2.2.27 12/11/2021
 
 * Fix symbols in "Symbol selection" dialog are not placed in alphabetical order. Fixes #3245
