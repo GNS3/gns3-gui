@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 from ..qt import sip
 import shutil
 
@@ -74,6 +75,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         # directories where to search for images
         images_directories = list()
+
+        # add the current directory
+        if hasattr(sys, "frozen"):
+            images_directories.append(os.path.dirname(os.path.abspath(sys.executable)))
+        else:
+            images_directories.append(os.path.abspath(os.curdir))
 
         for emulator in ("QEMU", "IOU", "DYNAMIPS"):
             emulator_images_dir = ImageManager.instance().getDirectoryForType(emulator)
