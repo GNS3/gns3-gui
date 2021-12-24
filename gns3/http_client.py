@@ -799,7 +799,7 @@ class HTTPClient(QtCore.QObject):
                 except ValueError as e:
                     log.debug("fCould not read server error message: {e}")
             log.debug(error_message)
-            if status == 401:
+            if status == 401 and reply.rawHeader(b"WWW-Authenticate") == b"Bearer":
                 self._handleUnauthorizedRequest(reply)
             else:
                 if disconnect_on_error:

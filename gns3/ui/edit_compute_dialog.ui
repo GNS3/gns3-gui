@@ -9,69 +9,29 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>353</height>
+    <width>439</width>
+    <height>280</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Edit server settings</string>
+   <string>Edit compute settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Server settings</string>
+      <string>Compute settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="3" column="0">
-       <widget class="QLabel" name="uiServerPortLabel">
-        <property name="text">
-         <string>Port:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="uiServerNameLineEdit"/>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QLineEdit" name="uiServerHostLineEdit">
-        <property name="text">
-         <string>192.168.56.101</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="uiServerHostLabel">
-        <property name="text">
-         <string>Host:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" colspan="2">
-       <widget class="QSpinBox" name="uiServerPortSpinBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="suffix">
-         <string notr="true"> TCP</string>
-        </property>
-        <property name="maximum">
-         <number>65535</number>
-        </property>
-        <property name="value">
-         <number>3080</number>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
          <string>Name:</string>
         </property>
        </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="uiServerNameLineEdit"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="uiServerProtocolLabel">
@@ -94,29 +54,54 @@
         </item>
        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="uiEnableAuthenticationCheckBox">
-     <property name="title">
-      <string>Enable authentication</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <layout class="QFormLayout" name="formLayout">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::ExpandingFieldsGrow</enum>
-      </property>
-      <item row="1" column="0">
-       <widget class="QLabel" name="uiServerUserLabel">
+      <item row="2" column="0">
+       <widget class="QLabel" name="uiServerHostLabel">
         <property name="text">
-         <string>User:</string>
+         <string>Host:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="uiServerHostLineEdit">
+        <property name="text">
+         <string>192.168.56.101</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="uiServerPortLabel">
+        <property name="text">
+         <string>Port:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSpinBox" name="uiServerPortSpinBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="suffix">
+         <string notr="true"> TCP</string>
+        </property>
+        <property name="maximum">
+         <number>65535</number>
+        </property>
+        <property name="value">
+         <number>3080</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="uiServerUserLabel">
+        <property name="text">
+         <string>Username:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
        <widget class="QLineEdit" name="uiServerUserLineEdit">
         <property name="enabled">
          <bool>true</bool>
@@ -126,14 +111,14 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="uiServerPasswordLabel">
         <property name="text">
          <string>Password:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="5" column="1">
        <widget class="QLineEdit" name="uiServerPasswordLineEdit">
         <property name="enabled">
          <bool>true</bool>
@@ -147,16 +132,6 @@
        </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="uiWarningLabel">
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;WARNING&lt;/span&gt;: Changing a server with authentication enabled will reset the password.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
     </widget>
    </item>
    <item>
@@ -188,9 +163,6 @@
   <tabstop>uiServerNameLineEdit</tabstop>
   <tabstop>uiServerHostLineEdit</tabstop>
   <tabstop>uiServerPortSpinBox</tabstop>
-  <tabstop>uiEnableAuthenticationCheckBox</tabstop>
-  <tabstop>uiServerUserLineEdit</tabstop>
-  <tabstop>uiServerPasswordLineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections>

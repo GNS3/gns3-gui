@@ -977,12 +977,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         setup_wizard = SetupWizard(self)
         setup_wizard.show()
-        if setup_wizard.exec_():
-            if Controller.instance().isRemote():
-                Controller.instance().connect()
-            else:
-                # start and connect to the local server if needed
-                LocalServer.instance().localServerAutoStartIfRequired()
+        setup_wizard.exec_()
 
     def _aboutQtActionSlot(self):
         """

@@ -34,42 +34,15 @@ class EditComputeDialog(QtWidgets.QDialog, Ui_EditComputeDialog):
 
         super().__init__(parent)
         self.setupUi(self)
-        self.uiEnableAuthenticationCheckBox.toggled.connect(self._enableAuthenticationSlot)
         self._compute = compute
+
         if self._compute:
             self.uiServerNameLineEdit.setText(self._compute.name())
             self.uiServerHostLineEdit.setText(self._compute.host())
             self.uiServerPortSpinBox.setValue(self._compute.port())
-
             index = self.uiServerProtocolComboBox.findText(self._compute.protocol().upper())
             self.uiServerProtocolComboBox.setCurrentIndex(index)
-
-            if self._compute.user():
-                self.uiEnableAuthenticationCheckBox.setChecked(True)
-                self.uiServerUserLineEdit.setText(self._compute.user())
-            else:
-                self.uiEnableAuthenticationCheckBox.setChecked(False)
-                self.uiWarningLabel.setVisible(False)
-        else:
-            self.uiEnableAuthenticationCheckBox.setChecked(False)
-            self.uiWarningLabel.setVisible(False)
-        self._enableAuthenticationSlot(self.uiEnableAuthenticationCheckBox.isChecked())
-
-    def _enableAuthenticationSlot(self, state):
-        """
-        Slot to enable or not the authentication.
-        """
-
-        if self.uiEnableAuthenticationCheckBox.isChecked():
-            self.uiServerUserLineEdit.setVisible(True)
-            self.uiServerPasswordLineEdit.setVisible(True)
-            self.uiServerUserLabel.setVisible(True)
-            self.uiServerPasswordLabel.setVisible(True)
-        else:
-            self.uiServerUserLineEdit.setVisible(False)
-            self.uiServerPasswordLineEdit.setVisible(False)
-            self.uiServerUserLabel.setVisible(False)
-            self.uiServerPasswordLabel.setVisible(False)
+            self.uiServerUserLineEdit.setText(self._compute.user())
 
     def compute(self):
         return self._compute
@@ -87,16 +60,16 @@ class EditComputeDialog(QtWidgets.QDialog, Ui_EditComputeDialog):
         password = self.uiServerPasswordLineEdit.text().strip()
 
         if not re.match(r"^[a-zA-Z0-9\.{}-]+$".format("\u0370-\u1CDF\u2C00-\u30FF\u4E00-\u9FBF"), host):
-            QtWidgets.QMessageBox.critical(self, "Remote compute", "Invalid remote server hostname {}".format(host))
+            QtWidgets.QMessageBox.critical(self, "Remote compute", "Invalid compute hostname {}".format(host))
             return
         if name == "gns3vm":
             QtWidgets.QMessageBox.critical(self, "Remote compute", "{} is a reserved name".format(name))
             return
         if len(name) == 0:
-            QtWidgets.QMessageBox.critical(self, "Remote compute", "Invalid remote server name {}".format(name))
+            QtWidgets.QMessageBox.critical(self, "Remote compute", "Invalid compute name {}".format(name))
             return
         if port is None or port < 1:
-            QtWidgets.QMessageBox.critical(self, "Remote compute", "Invalid remote server port {}".format(port))
+            QtWidgets.QMessageBox.critical(self, "Remote compute", "Invalid compute port {}".format(port))
             return
 
         if not self._compute:
@@ -105,12 +78,8 @@ class EditComputeDialog(QtWidgets.QDialog, Ui_EditComputeDialog):
         self._compute.setProtocol(protocol)
         self._compute.setHost(host)
         self._compute.setPort(port)
-        if self.uiEnableAuthenticationCheckBox.isChecked():
-            self._compute.setUser(user)
-            self._compute.setPassword(password)
-        else:
-            self._compute.setUser(None)
-            self._compute.setPassword(None)
+        self._compute.setUser(user)
+        self._compute.setPassword(password)
 
         super().accept()
 

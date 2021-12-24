@@ -504,6 +504,7 @@ class Project(QtCore.QObject):
         """
         Parse response from API and update the object
         """
+
         self._id = result["project_id"]
         self._name = result["name"]
         self._filename = result.get("filename")

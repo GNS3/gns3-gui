@@ -292,11 +292,11 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
             new_local_server_settings["username"] = self.uiRemoteMainServerUserLineEdit.text()
             new_local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
 
-            # Some users get confused by remote server and  main server and same
+            # Some users get confused by compute and controller and
             # configure the same server twice
             for compute in self._remote_computes.values():
                 if new_local_server_settings["host"] == compute.host() and new_local_server_settings["port"] == compute.port():
-                    QtWidgets.QMessageBox.critical(self, "Local server", "You can't use a server as main server and as a remote server.")
+                    QtWidgets.QMessageBox.critical(self, "Remote compute", "Is it not possible to use a controller as a remote compute")
                     return
             LocalServer.instance().updateLocalServerSettings(new_local_server_settings)
 

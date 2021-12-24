@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ControllerPreferencesPageWidget(object):
     def setupUi(self, ControllerPreferencesPageWidget):
         ControllerPreferencesPageWidget.setObjectName("ControllerPreferencesPageWidget")
-        ControllerPreferencesPageWidget.resize(663, 791)
+        ControllerPreferencesPageWidget.resize(614, 791)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -297,5 +297,5 @@ class Ui_ControllerPreferencesPageWidget(object):
         self.uiDeleteRemoteServerPushButton.setText(_translate("ControllerPreferencesPageWidget", "&Delete"))
         self.uiRemoteServersTreeWidget.headerItem().setText(0, _translate("ControllerPreferencesPageWidget", "Name"))
         self.uiRemoteServersTreeWidget.headerItem().setText(4, _translate("ControllerPreferencesPageWidget", "Username"))
-        self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ControllerPreferencesPageWidget", "Remote servers"))
+        self.uiServerPreferenceTabWidget.setTabText(self.uiServerPreferenceTabWidget.indexOf(self.uiRemoteTabWidget), _translate("ControllerPreferencesPageWidget", "Remote computes"))
         self.uiRestoreDefaultsPushButton.setText(_translate("ControllerPreferencesPageWidget", "Restore defaults"))

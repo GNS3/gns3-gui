@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>663</width>
+    <width>614</width>
     <height>791</height>
    </rect>
   </property>
@@ -401,7 +401,7 @@
        </sizepolicy>
       </property>
       <attribute name="title">
-       <string>Remote servers</string>
+       <string>Remote computes</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
        <property name="leftMargin">
