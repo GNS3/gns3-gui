@@ -473,7 +473,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             #QtWidgets.QApplication.sendEvent(self, context_event)
         elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
             pos = self.mapToScene(event.pos())
-            note = self.createDrawingItem("text", pos.x(), pos.y(), 2)
+            note = self.createDrawingItem("text", int(pos.x()), int(pos.y()), 2)
             pos_x = note.pos().x()
             pos_y = note.pos().y() - (note.boundingRect().height() / 2)
             note.setPos(pos_x, pos_y)
@@ -483,19 +483,19 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._adding_note = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_rectangle:
             pos = self.mapToScene(event.pos())
-            self.createDrawingItem("rect", pos.x(), pos.y(), 1)
+            self.createDrawingItem("rect", int(pos.x()), int(pos.y()), 1)
             self._main_window.uiDrawRectangleAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_rectangle = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_ellipse:
             pos = self.mapToScene(event.pos())
-            self.createDrawingItem("ellipse", pos.x(), pos.y(), 1)
+            self.createDrawingItem("ellipse", int(pos.x()), int(pos.y()), 1)
             self._main_window.uiDrawEllipseAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_ellipse = False
         elif event.button() == QtCore.Qt.LeftButton and self._adding_line:
             pos = self.mapToScene(event.pos())
-            self.createDrawingItem("line", pos.x(), pos.y(), 1)
+            self.createDrawingItem("line", int(pos.x()), int(pos.y()), 1)
             self._main_window.uiDrawLineAction.setChecked(False)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self._adding_line = False
