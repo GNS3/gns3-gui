@@ -723,8 +723,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 integer, ok = QtWidgets.QInputDialog.getInt(self, "Nodes", "Number of nodes:", 2, 1, 100, 1)
                 if ok:
                     for node_number in range(integer):
-                        x = int(event.pos().x() - (150 / 2) + (node_number % max_nodes_per_line) * offset)
-                        y = int(event.pos().y() - (70 / 2) + (node_number // max_nodes_per_line) * offset)
+                        x = event.pos().x() - (150 // 2) + (node_number % max_nodes_per_line) * offset
+                        y = event.pos().y() - (70 // 2) + (node_number // max_nodes_per_line) * offset
                         if self.createNodeFromTemplateId(template_id, QtCore.QPoint(x, y)) is False:
                             event.ignore()
                             break
