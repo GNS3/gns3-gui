@@ -554,14 +554,13 @@ class HTTPClient(QtCore.QObject):
         query_string = self._paramsToQueryString(params)
 
         log.debug("{method} {protocol}://{host}:{port}{prefix}{path} {body}{query_string}".format(method=method, protocol=self._protocol, host=host, port=self._port, path=path, body=body, prefix=prefix, query_string=query_string))
+        url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{path}{query_string}".format(protocol=self._protocol, host=host, port=self._port, path=path, prefix=prefix, query_string=query_string))
+
         if self._user:
-            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}{prefix}{path}{query_string}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, path=path, prefix=prefix, query_string=query_string))
-        else:
-            url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{path}{query_string}".format(protocol=self._protocol, host=host, port=self._port, path=path, prefix=prefix, query_string=query_string))
+            url.setUserName(self._user)
+
         request = self._request(url)
-
         request = self._addAuth(request)
-
         request.setRawHeader(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
 
         # By default QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
@@ -759,10 +758,10 @@ class HTTPClient(QtCore.QObject):
         host = self._getHostForQuery()
 
         log.debug("{method} {protocol}://{host}:{port}{prefix}{endpoint}".format(method=method, protocol=self._protocol, host=host, port=self._port, prefix=prefix, endpoint=endpoint))
+        url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{endpoint}".format(protocol=self._protocol, host=host, port=self._port, prefix=prefix, endpoint=endpoint))
+
         if self._user:
-            url = QtCore.QUrl("{protocol}://{user}@{host}:{port}{prefix}{endpoint}".format(protocol=self._protocol, user=self._user, host=host, port=self._port, prefix=prefix, endpoint=endpoint))
-        else:
-            url = QtCore.QUrl("{protocol}://{host}:{port}{prefix}{endpoint}".format(protocol=self._protocol, host=host, port=self._port, prefix=prefix, endpoint=endpoint))
+            url.setUserName(self._user)
 
         request = self._request(url)
         request = self._addAuth(request)
