@@ -70,7 +70,7 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
                                                                                                     self._border_color.green(),
                                                                                                     self._border_color.blue(),
                                                                                                     self._border_color.alpha()))
-        self.uiRotationSpinBox.setValue(first_item.rotation())
+        self.uiRotationSpinBox.setValue(int(first_item.rotation()))
         self.uiBorderWidthSpinBox.setValue(pen.width())
         index = self.uiBorderStyleComboBox.findData(pen.style())
         if index != -1:
