@@ -67,6 +67,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self._symbol_items = []
         self._parents = {}
 
+        Controller.instance().clearStaticCache()  # TODO: use etag to know when to refresh the cache
         Controller.instance().get("/symbols", self._listSymbolsCallback)
 
     def _listSymbolsCallback(self, result, error=False, **kwargs):
