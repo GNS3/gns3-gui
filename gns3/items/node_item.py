@@ -507,7 +507,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
             painter.setBrush(QtCore.Qt.red)
             painter.setPen(QtCore.Qt.red)
-            painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
+            painter.drawRect(QtCore.QRectF((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20))
             painter.setPen(QtCore.Qt.black)
             if self.show_layer:
                 text = str(int(self.zValue()))  # Z value
