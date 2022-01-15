@@ -1414,7 +1414,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
                 self.createDrawingItem(
                     type,
-                    int(item.pos().x() + 20),
+                    int(item.pos().x()) + 20,
                     int(item.pos().y()) + 20,
                     item.zValue(),
                     rotation=item.rotation(),
