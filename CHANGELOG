@@ -1,5 +1,18 @@
 # Change Log
 
+## 2.2.29 08/01/2022
+
+* Clear cache when opening symbol selection dialog. Fixes #3256
+* Fix @ in username issue with HTTP authentication. Fixes #3275
+* Use '//' operator instead of int()
+* Fix create drawing item calls since mapToScene() returns a QPointF https://doc.qt.io/qt-5/qgraphicsview.html#mapToScene-4
+* Fixed QPoint called with floats
+
+## 2.2.28 15/12/2021
+
+* Fixed drawLine called with float arguments
+* Fixed dead VIX API link
+
 ## 2.2.27 12/11/2021
 
 * Fix symbols in "Symbol selection" dialog are not placed in alphabetical order. Fixes #3245
