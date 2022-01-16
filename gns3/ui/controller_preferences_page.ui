@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ServerPreferencesPageWidget</class>
- <widget class="QWidget" name="ServerPreferencesPageWidget">
+ <class>ControllerPreferencesPageWidget</class>
+ <widget class="QWidget" name="ControllerPreferencesPageWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
+    <width>614</width>
     <height>791</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Server</string>
+   <string>Controller</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -39,7 +39,7 @@
        </sizepolicy>
       </property>
       <attribute name="title">
-       <string>Main server</string>
+       <string>Controller</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -57,7 +57,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Enable local server</string>
+          <string>Enable local controller</string>
          </property>
          <property name="checked">
           <bool>false</bool>
@@ -285,7 +285,7 @@
        <item>
         <widget class="QGroupBox" name="uiRemoteMainServerGroupBox">
          <property name="title">
-          <string>Remote main server</string>
+          <string>Remote controller</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="1" column="0">
@@ -401,7 +401,7 @@
        </sizepolicy>
       </property>
       <attribute name="title">
-       <string>Remote servers</string>
+       <string>Remote computes</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
        <property name="leftMargin">
@@ -416,44 +416,6 @@
        <property name="bottomMargin">
         <number>10</number>
        </property>
-       <item row="0" column="0" colspan="2">
-        <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="columnCount">
-          <number>5</number>
-         </property>
-         <column>
-          <property name="text">
-           <string>Name</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string notr="true">Protocol</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string notr="true">Host</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string notr="true">Port</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>User</string>
-          </property>
-         </column>
-        </widget>
-       </item>
        <item row="1" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -498,7 +460,45 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
+       <item row="0" column="0" colspan="2">
+        <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="columnCount">
+          <number>5</number>
+         </property>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string notr="true">Protocol</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string notr="true">Host</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string notr="true">Port</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Username</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="2" column="0">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -511,17 +511,9 @@
          </property>
         </spacer>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Note: Changes are not visible in other part of the settings or application until you apply them.</string>
-         </property>
-        </widget>
-       </item>
       </layout>
       <zorder>uiRemoteServersTreeWidget</zorder>
       <zorder>verticalSpacer_3</zorder>
-      <zorder>label_7</zorder>
      </widget>
     </widget>
    </item>

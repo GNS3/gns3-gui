@@ -24,7 +24,6 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from gns3.local_server import LocalServer
-from gns3.local_server_config import LocalServerConfig
 
 
 @pytest.fixture
@@ -39,34 +38,11 @@ def local_server(local_server_path, tmpdir):
 [Server]
 path={}""".format(local_server_path))
 
-    LocalServerConfig.instance().setConfigFile(str(tmpdir / "test.cfg"))
     LocalServer._instance = None
     with patch("gns3.local_server.LocalServer.localServerAutoStartIfRequired"):
         local_server = LocalServer.instance()
         local_server._config_directory = str(tmpdir)
         yield local_server
-
-
-def test_loadSettings_EmptySettings(tmpdir, local_server):
-
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        f.write("")
-    LocalServerConfig.instance().setConfigFile(str(tmpdir / "test.cfg"))
-
-    assert local_server.localServerSettings()["port"] == 3080
-    assert local_server.localServerSettings()["username"] == "admin"
-    assert local_server.localServerSettings()["password"] == "admin"
-
-def test_loadSettings(tmpdir, local_server):
-    with open(str(tmpdir / "test.cfg"), "w+") as f:
-        f.write("""
-[Server]
-auth=True
-user=world
-password=hello""")
-
-    LocalServerConfig.instance().setConfigFile(str(tmpdir / "test.cfg"))
-    assert local_server.localServerSettings()["password"] == "hello"
 
 
 @pytest.mark.skipif(sys.platform.startswith('win') is True, reason='Not for windows')
@@ -82,8 +58,9 @@ def test_startLocalServer(tmpdir, local_server, local_server_path):
         LocalServer.instance().startLocalServer()
         mock.assert_called_with([unittest.mock.ANY,
                                  '--local',
+                                 '--allow',
                                  '--debug',
-                                 '--log=' + str(tmpdir / "gns3_server.log"),
+                                 '--logfile=' + str(tmpdir / "gns3_server.log"),
                                  '--pid=' + str(tmpdir / "gns3_server.pid")
                                  ], stderr=unittest.mock.ANY)
 

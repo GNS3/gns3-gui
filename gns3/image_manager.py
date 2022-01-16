@@ -20,8 +20,6 @@ import copy
 import pathlib
 
 from gns3.qt import QtWidgets
-from gns3.local_server_config import LocalServerConfig
-from gns3.settings import LOCAL_SERVER_SETTINGS
 from gns3.controller import Controller
 from gns3.utils.file_copy_worker import FileCopyWorker
 from gns3.utils.progress_dialog import ProgressDialog
@@ -183,7 +181,7 @@ class ImageManager:
         :returns: path to the default images directory
         """
 
-        return copy.copy(LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)['images_path'])
+        return copy.copy(Controller.instance().settings()['images_path'])
 
     def getDirectoryForType(self, node_type):
         """

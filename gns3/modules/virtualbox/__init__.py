@@ -23,7 +23,6 @@ import os
 import sys
 import shutil
 
-from gns3.local_server_config import LocalServerConfig
 from gns3.local_config import LocalConfig
 from gns3.controller import Controller
 from gns3.template_manager import TemplateManager
@@ -112,10 +111,11 @@ class VirtualBox(Module):
         # save the settings
         LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
 
+        # FIXME: handle server side config
         # save some settings to the local server config file
-        if self._settings["vboxmanage_path"]:
-            server_settings = {"vboxmanage_path": os.path.normpath(self._settings["vboxmanage_path"])}
-            LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)
+        # if self._settings["vboxmanage_path"]:
+        #     server_settings = {"vboxmanage_path": os.path.normpath(self._settings["vboxmanage_path"])}
+        #     LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)
 
     @staticmethod
     def configurationPage():

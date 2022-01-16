@@ -19,7 +19,6 @@ import psutil
 import platform
 import os
 import stat
-import sys
 import struct
 
 from gns3.qt import QtWidgets
@@ -90,19 +89,6 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
         """Checking if experimental features are not enabled"""
         if LocalConfig.instance().experimental():
             return (1, "Experimental features are enabled. Turn them off by going to Preferences -> General -> Miscellaneous.")
-        return (0, None)
-
-    def checkAVGInstalled(self):
-        """Checking if AVG software is not installed"""
-
-        if sys.platform.startswith("win32"):
-            for proc in psutil.process_iter():
-                try:
-                    psinfo = proc.as_dict(["exe"])
-                    if psinfo["exe"] and "AVG\\" in psinfo["exe"]:
-                        return (2, "AVG has known issues with GNS3, even after you disable it. You must whitelist dynamips.exe in the AVG preferences.")
-                except psutil.NoSuchProcess:
-                    pass
         return (0, None)
 
     def checkFreeRam(self):
@@ -186,36 +172,6 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
             pass
         return (0, None)
 
-    def _checkWindowsService(self, service_name):
-
-        import pywintypes
-        import win32service
-        import win32serviceutil
-
-        try:
-            if win32serviceutil.QueryServiceStatus(service_name, None)[1] != win32service.SERVICE_RUNNING:
-                return False
-        except pywintypes.error as e:
-            if e.winerror == 1060:
-                return False
-            else:
-                raise
-        return True
-
-    def checkRPFServiceIsRunning(self):
-        """Check if the RPF service is running (required to use Ethernet NIOs)"""
-
-        if not sys.platform.startswith("win"):
-            return (0, None)
-
-        import pywintypes
-        try:
-            if not self._checkWindowsService("npf") and not self._checkWindowsService("npcap"):
-                return (2, "The NPF or NPCAP service is not installed, please install Winpcap or Npcap and reboot")
-        except pywintypes.error as e:
-            return (2, "Could not check if the NPF or Npcap service is running: {}".format(e.strerror))
-
-        return (0, None)
 
 if __name__ == '__main__':
     import sys

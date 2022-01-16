@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .qt import QtCore
+from .qt import QtCore, QtWidgets
 from .compute import Compute
 from .controller import Controller
 
@@ -50,11 +50,11 @@ class ComputeManager(QtCore.QObject):
         # No need to refresh via an API call if we received fresh data from the notification feed
         self._last_computes_refresh = datetime.datetime.now().timestamp()
 
-        self._timer = QtCore.QTimer()
-        self._timer.setInterval(1000)
         self._refreshingComputes = False
-        self._timer.timeout.connect(self._refreshComputesSlot)
-        self._timer.start()
+        # self._timer = QtCore.QTimer()
+        # self._timer.setInterval(1000)
+        # self._timer.timeout.connect(self._refreshComputesSlot)
+        # self._timer.start()
 
     def _refreshComputesSlot(self):
         """
@@ -79,7 +79,7 @@ class ComputeManager(QtCore.QObject):
 
     def _controllerDisconnectedSlot(self):
         """
-        Called when disconnected from a compute.
+        Called when disconnected from the controller.
         """
 
         for compute_id in list(self._computes):
@@ -96,8 +96,9 @@ class ComputeManager(QtCore.QObject):
             log.error("Error while getting compute list: {}".format(result["message"]))
             return
 
-        for compute in result:
-            self.computeDataReceivedCallback(compute)
+        if result:
+            for compute in result:
+                self.computeDataReceivedCallback(compute)
 
     def computeDataReceivedCallback(self, compute):
         """
@@ -113,16 +114,17 @@ class ComputeManager(QtCore.QObject):
             self._computes[compute_id] = Compute(compute_id)
 
         self._computes[compute_id].setName(compute["name"])
-        self._computes[compute_id].setConnected(compute["connected"])
         self._computes[compute_id].setProtocol(compute["protocol"])
         self._computes[compute_id].setHost(compute["host"])
         self._computes[compute_id].setPort(compute["port"])
         self._computes[compute_id].setUser(compute["user"])
-        self._computes[compute_id].setCpuUsagePercent(compute["cpu_usage_percent"])
-        self._computes[compute_id].setMemoryUsagePercent(compute["memory_usage_percent"])
-        self._computes[compute_id].setDiskUsagePercent(compute["disk_usage_percent"])
-        self._computes[compute_id].setCapabilities(compute["capabilities"])
-        self._computes[compute_id].setLastError(compute.get("last_error"))
+        if "connected" in compute:
+            self._computes[compute_id].setConnected(compute["connected"])
+            self._computes[compute_id].setCpuUsagePercent(compute["cpu_usage_percent"])
+            self._computes[compute_id].setMemoryUsagePercent(compute["memory_usage_percent"])
+            self._computes[compute_id].setDiskUsagePercent(compute["disk_usage_percent"])
+            self._computes[compute_id].setCapabilities(compute["capabilities"])
+            self._computes[compute_id].setLastError(compute.get("last_error"))
 
         if new_node:
             self.created_signal.emit(compute_id)
@@ -209,6 +211,20 @@ class ComputeManager(QtCore.QObject):
             self.created_signal.emit(compute_id)
         return self._computes[compute_id]
 
+    def connectToCompute(self, compute_id):
+        """
+        Connect to a compute
+        """
+
+        self._controller.post(f"/computes/{compute_id}/connect", callback=self._computeConnectCallback)
+
+    def _computeConnectCallback(self, result, error=False, **kwargs):
+
+        if error and "message" in result:
+            from gns3.main_window import MainWindow
+            parent = MainWindow.instance()
+            QtWidgets.QMessageBox.critical(parent, "Remote compute", result.get("message"))
+
     def deleteCompute(self, compute_id):
         """
         Deletes a compute by ID
@@ -246,9 +262,15 @@ class ComputeManager(QtCore.QObject):
         for compute in computes:
             if compute.id() not in self._computes:
                 log.debug("Create compute %s", compute.id())
-                self._controller.post("/computes", None, body=compute.__json__())
+                params = {"connect": True}
+                self._controller.post("/computes", callback=self._computeCreatedCallback, body=compute.__json__(), params=params)
                 self._computes[compute.id()] = compute
                 self.created_signal.emit(compute.id())
+
+    def _computeCreatedCallback(self, result, error=False, **kwargs):
+
+        if error:
+            log.error(result.get("message"))
 
     @staticmethod
     def reset():

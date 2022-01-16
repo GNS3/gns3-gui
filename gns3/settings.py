@@ -40,8 +40,8 @@ DEFAULT_CONFIGS_PATH = os.path.normpath(os.path.expanduser("~/GNS3/configs"))
 # Default appliances location
 DEFAULT_APPLIANCES_PATH = os.path.normpath(os.path.expanduser("~/GNS3/appliances"))
 
-DEFAULT_LOCAL_SERVER_HOST = "localhost"
-DEFAULT_LOCAL_SERVER_PORT = 3080
+DEFAULT_CONTROLLER_HOST = "localhost"
+DEFAULT_CONTROLLER_PORT = 3080
 DEFAULT_DELAY_CONSOLE_ALL = 500
 
 # Pre-configured Telnet console commands on various OSes
@@ -299,10 +299,9 @@ GENERAL_SETTINGS = {
     "recent_projects": [],
     "geometry": "",
     "state": "",
-    #"preferences_dialog_geometry": "",
     "debug_level": 0,
     "multi_profiles": False,
-    "hdpi": not sys.platform.startswith("linux"),
+    "hdpi": True,
     "auto_open_readme": True,
     "symbol_theme": "Classic"
 }
@@ -333,11 +332,13 @@ GRAPHICS_VIEW_SETTINGS = {
     "limit_size_node_symbols": True
 }
 
-LOCAL_SERVER_SETTINGS = {
+CONTROLLER_SETTINGS = {
+    "auto_start": False,
+    "remote": not sys.platform.startswith("linux"),  # Local controller only supported on Linux
     "path": "gns3server",
     "ubridge_path": "ubridge",
-    "host": "localhost",
-    "port": DEFAULT_LOCAL_SERVER_PORT,
+    "host": DEFAULT_CONTROLLER_HOST,
+    "port": DEFAULT_CONTROLLER_PORT,
     "images_path": DEFAULT_IMAGES_PATH,
     "projects_path": DEFAULT_PROJECTS_PATH,
     "appliances_path": DEFAULT_APPLIANCES_PATH,
@@ -345,7 +346,6 @@ LOCAL_SERVER_SETTINGS = {
     "symbols_path": DEFAULT_SYMBOLS_PATH,
     "configs_path": DEFAULT_CONFIGS_PATH,
     "report_errors": True,
-    "auto_start": True,
     "allow_console_from_anywhere": False,
     "username": "admin",
     "password": "admin",
@@ -355,7 +355,6 @@ LOCAL_SERVER_SETTINGS = {
     "udp_start_port_range": 10000,
     "udp_end_port_range": 20000,
 }
-
 
 PACKET_CAPTURE_SETTINGS = {
     "packet_capture_reader_command": DEFAULT_PACKET_CAPTURE_READER_COMMAND,

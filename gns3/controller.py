@@ -21,11 +21,12 @@ import tempfile
 import json
 import pathlib
 
-from .qt import QtCore, QtNetwork, QtGui, QtWidgets, QtWebSockets, qpartial, qslot
+from .qt import QtCore, QtGui, QtWebSockets, qpartial, qslot
 from .symbol import Symbol
-from .local_server_config import LocalServerConfig
-from .settings import LOCAL_SERVER_SETTINGS
+from .local_config import LocalConfig
+from .settings import CONTROLLER_SETTINGS
 from gns3.utils import parse_version
+from gns3.http_client import HTTPClient
 
 import logging
 log = logging.getLogger(__name__)
@@ -48,6 +49,7 @@ class Controller(QtCore.QObject):
         self._connecting = False
         self._notification_stream = None
         self._version = None
+        self._http_client = None
         self._cache_directory = tempfile.TemporaryDirectory(suffix="-gns3")
         self._http_client = None
         self._first_error = True
@@ -59,11 +61,41 @@ class Controller(QtCore.QObject):
         # If we do multiple call in order to download the same symbol we queue them
         self._static_asset_download_queue = {}
 
+        self._loadSettings()
+
+    def settings(self):
+        """
+        Returns the graphics view settings.
+
+        :returns: settings dictionary
+        """
+
+        return self._settings
+
+    def _loadSettings(self):
+        """
+        Loads the settings from the persistent settings file.
+        """
+
+        self._settings = LocalConfig.instance().loadSectionSettings(self.__class__.__name__, CONTROLLER_SETTINGS)
+
+    def setSettings(self, new_settings):
+        """
+        Set new controller settings.
+
+        :param new_settings: settings dictionary
+        """
+
+        # save the settings
+        self._settings.update(new_settings)
+        LocalConfig.instance().saveSectionSettings(self.__class__.__name__, self._settings)
+
     def host(self):
 
         return self._http_client.host()
 
     def version(self):
+
         return self._version
 
     def isRemote(self):
@@ -71,8 +103,7 @@ class Controller(QtCore.QObject):
         :returns Boolean: True if the controller is remote
         """
 
-        settings = LocalServerConfig.instance().loadSettings("Server", LOCAL_SERVER_SETTINGS)
-        return not settings["auto_start"]
+        return self._settings["remote"]
 
     def connecting(self):
         """
@@ -120,6 +151,14 @@ class Controller(QtCore.QObject):
 
         self._display_error = val
         self._first_error = True
+
+    def connect(self):
+        """
+        Connect to controller
+        """
+
+        self._http_client = HTTPClient(self._settings)
+        Controller.instance().setHttpClient(self._http_client)
 
     def _connectingToServer(self):
         """
