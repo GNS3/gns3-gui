@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.2.30 25/02/2022
+
+* Set setuptools to v60.6.0
+* Upgrade to pywin32 v303. Ref #3290
+* Fix int() call. Ref #3283
+* Fix QPoint() as unexpected type 'float'. Fixes #3283
+* Fix painter.drawRect() has unexpected type 'float'. Fixes #3282
+* Fix SpinBox.setValue() requires integer. Fixes #3281
+
 ## 2.2.29 08/01/2022
 
 * Clear cache when opening symbol selection dialog. Fixes #3256
