@@ -1443,7 +1443,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     type = "rect"
                 else:
                     type = "image"
-                self.createDrawingItem(type, item.pos().x() + 20, item.pos().y() + 20, item.zValue(), rotation=item.rotation(), svg=item.toSvg())
+
+                self.createDrawingItem(
+                    type,
+                    int(item.pos().x()) + 20,
+                    int(item.pos().y()) + 20,
+                    item.zValue(),
+                    rotation=item.rotation(),
+                    svg=item.toSvg()
+                )
             elif isinstance(item, NodeItem):
                 item.node().duplicate(item.pos().x() + 20, item.pos().y() + 20, item.zValue())
 

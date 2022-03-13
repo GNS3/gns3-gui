@@ -44,7 +44,7 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         # use the first item in the list as the model
         first_item = items[0]
         self._setColor(first_item.defaultTextColor())
-        self.uiRotationSpinBox.setValue(first_item.rotation())
+        self.uiRotationSpinBox.setValue(int(first_item.rotation()))
         self.uiPlainTextEdit.setPlainText(first_item.toPlainText())
         self.uiPlainTextEdit.setFont(first_item.font())
 

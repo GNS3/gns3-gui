@@ -246,7 +246,7 @@ class DrawingItem:
         center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
         painter.setBrush(QtCore.Qt.red)
         painter.setPen(QtCore.Qt.red)
-        painter.drawRect((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20)
+        painter.drawRect(QtCore.QRectF((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20))
         painter.setPen(QtCore.Qt.black)
         zval = str(int(self.zValue()))
         painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
