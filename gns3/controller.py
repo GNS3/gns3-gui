@@ -41,6 +41,7 @@ class Controller(QtCore.QObject):
     disconnected_signal = QtCore.Signal()
     connection_failed_signal = QtCore.Signal()
     project_list_updated_signal = QtCore.Signal()
+    image_list_updated_signal = QtCore.Signal()
 
     def __init__(self):
 
@@ -56,6 +57,7 @@ class Controller(QtCore.QObject):
         self._error_dialog = None
         self._display_error = True
         self._projects = []
+        self._images = []
         self._websocket = QtWebSockets.QWebSocket()
 
         # If we do multiple call in order to download the same symbol we queue them
@@ -410,6 +412,18 @@ class Controller(QtCore.QObject):
 
     def projects(self):
         return self._projects
+
+    @qslot
+    def refreshImageList(self, *args):
+        self.get("/images", self._imageListCallback)
+
+    def _imageListCallback(self, result, error=False, **kwargs):
+        if not error:
+            self._images = result
+        self.image_list_updated_signal.emit()
+
+    def images(self):
+        return self._images
 
     def _startListenNotifications(self):
         if not self.connected():
