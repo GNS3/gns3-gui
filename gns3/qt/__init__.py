@@ -76,39 +76,6 @@ def sip_is_deleted(obj):
     return False
 
 
-class QFileDialog(OldFileDialog):
-
-    @staticmethod
-    def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.ShowDirsOnly):
-        path = OldFileDialog.getExistingDirectory(parent, caption, dir, options)
-        if path:
-            path = os.path.normpath(path)
-        return path
-
-    @staticmethod
-    def getOpenFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-        path, _ = OldFileDialog.getOpenFileName(parent, caption, directory, filter, selectedFilter, options)
-        if path:
-            path = os.path.normpath(path)
-        return path, _
-
-    @staticmethod
-    def getOpenFileNames(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-        path, _ = OldFileDialog.getOpenFileNames(parent, caption, directory, filter, selectedFilter, options)
-        if path:
-            path = os.path.normpath(path)
-        return path, _
-
-    @staticmethod
-    def getSaveFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-        path, _ = OldFileDialog.getSaveFileName(parent, caption, directory, filter, selectedFilter, options)
-        if path:
-            path = os.path.normpath(path)
-        return path, _
-
-QtWidgets.QFileDialog = QFileDialog
-
-
 class LogQMessageBox(QtWidgets.QMessageBox):
     """
     Replace the standard message box for logging errors to console. And

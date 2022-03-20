@@ -21,7 +21,7 @@ Wizard for QEMU images.
 
 import os
 
-from gns3.qt import QtCore, QtGui, QtWidgets, QFileDialog
+from gns3.qt import QtCore, QtGui, QtWidgets
 from .. import Qemu
 from ..ui.qemu_image_wizard_ui import Ui_QemuImageWizard
 

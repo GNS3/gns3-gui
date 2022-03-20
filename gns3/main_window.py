@@ -39,6 +39,7 @@ from .dialogs.snapshots_dialog import SnapshotsDialog
 from .dialogs.export_debug_dialog import ExportDebugDialog
 from .dialogs.doctor_dialog import DoctorDialog
 from .dialogs.edit_project_dialog import EditProjectDialog
+from .dialogs.image_dialog import ImageDialog
 from .dialogs.setup_wizard import SetupWizard
 from .settings import GENERAL_SETTINGS
 from .items.node_item import NodeItem
@@ -112,6 +113,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiOpenProjectAction,
             self.uiImportProjectAction,
             self.uiNewTemplateAction,
+            self.uiImportProjectAction,
             self.uiOpenApplianceAction,
             self.uiWebUIAction,
             self.uiNodesDockWidget
@@ -223,6 +225,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiOpenProjectAction.triggered.connect(self.openProjectActionSlot)
         self.uiOpenApplianceAction.triggered.connect(self.openApplianceActionSlot)
         self.uiNewTemplateAction.triggered.connect(self._newTemplateActionSlot)
+        self.uiImageManagementAction.triggered.connect(self._imageManagementActionSlot)
         self.uiSaveProjectAsAction.triggered.connect(self._saveProjectAsActionSlot)
         self.uiExportProjectAction.triggered.connect(self._exportProjectActionSlot)
         self.uiImportProjectAction.triggered.connect(self._importProjectActionSlot)
@@ -414,6 +417,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         dialog = NewTemplateWizard(self)
+        dialog.show()
+        dialog.exec_()
+
+    def _imageManagementActionSlot(self):
+        """
+        Called when user wants to manage images
+        """
+
+        dialog = ImageDialog(self)
         dialog.show()
         dialog.exec_()
 
