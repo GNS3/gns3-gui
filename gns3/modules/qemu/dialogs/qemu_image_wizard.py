@@ -115,7 +115,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
         self.uiSizeAndLocationWizardPage.completeChanged.emit()
 
     def _browserSlot(self):
-        path, name_filter = QFileDialog.getSaveFileName(
+        path, name_filter = QtWidgets.QFileDialog.getSaveFileName(
             self,
             'Image location',
             self.uiLocationLineEdit.text(),
@@ -123,7 +123,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
                 self.uiFormatRadios.checkedButton().text(),
                 self._mappings[self.uiFormatRadios.checkedButton()][1]
             ),
-            options=QFileDialog.DontConfirmOverwrite
+            options=QtWidgets.QFileDialog.DontConfirmOverwrite
         )
         if path:
             self.uiLocationLineEdit.setText(path)
