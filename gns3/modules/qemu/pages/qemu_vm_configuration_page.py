@@ -235,24 +235,64 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiCdromImageLineEdit.setText(path)
 
     def _hdaDiskImageCreateSlot(self):
-        create_dialog = QemuImageWizard(self, self._compute_id, self.uiNameLineEdit.text() + '-hda')
-        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
-            self.uiHdaDiskImageLineEdit.setText(create_dialog.uiLocationLineEdit.text())
+
+        if self._node:
+            create_dialog = QemuImageWizard(self, self._node, self.uiNameLineEdit.text() + '-hda')
+            if QtWidgets.QDialog.Accepted == create_dialog.exec_():
+                self.uiHdaDiskImageLineEdit.setText(create_dialog.uiDiskFilenameLineEdit.text())
 
     def _hdbDiskImageCreateSlot(self):
-        create_dialog = QemuImageWizard(self, self._compute_id, self.uiNameLineEdit.text() + '-hdb')
-        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
-            self.uiHdbDiskImageLineEdit.setText(create_dialog.uiLocationLineEdit.text())
+
+        if self._node:
+            create_dialog = QemuImageWizard(self, self._node, self.uiNameLineEdit.text() + '-hdb')
+            if QtWidgets.QDialog.Accepted == create_dialog.exec_():
+                self.uiHdbDiskImageLineEdit.setText(create_dialog.uiDiskFilenameLineEdit.text())
 
     def _hdcDiskImageCreateSlot(self):
-        create_dialog = QemuImageWizard(self, self._compute_id, self.uiNameLineEdit.text() + '-hdc')
-        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
-            self.uiHdcDiskImageLineEdit.setText(create_dialog.uiLocationLineEdit.text())
+
+        if self._node:
+            create_dialog = QemuImageWizard(self, self._node, self.uiNameLineEdit.text() + '-hdc')
+            if QtWidgets.QDialog.Accepted == create_dialog.exec_():
+                self.uiHdcDiskImageLineEdit.setText(create_dialog.uiDiskFilenameLineEdit.text())
 
     def _hddDiskImageCreateSlot(self):
-        create_dialog = QemuImageWizard(self, self._compute_id, self.uiNameLineEdit.text() + '-hdd')
-        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
-            self.uiHddDiskImageLineEdit.setText(create_dialog.uiLocationLineEdit.text())
+
+        if self._node:
+            create_dialog = QemuImageWizard(self, self._node, self.uiNameLineEdit.text() + '-hdd')
+            if QtWidgets.QDialog.Accepted == create_dialog.exec_():
+                self.uiHddDiskImageLineEdit.setText(create_dialog.uiDiskFilenameLineEdit.text())
+
+    def _hdaDiskImageResizeSlot(self):
+
+        disk_image_filename = self.uiHdaDiskImageLineEdit.text().strip()
+        if disk_image_filename:
+            size, ok = QtWidgets.QInputDialog.getInt(self, "HDA disk size", "Increase hda disk size in MB:", 10000, 1, 1000000000, 1000)
+            if ok and self._node:
+                self._node.resizeDiskImage(disk_image_filename, size, self._resizeDiskImageCallback)
+
+    def _hdbDiskImageResizeSlot(self):
+
+        disk_image_filename = self.uiHdbDiskImageLineEdit.text()
+        if disk_image_filename:
+            size, ok = QtWidgets.QInputDialog.getInt(self, "HDB disk size", "Increase hdb disk size in MB:", 10000, 1, 1000000000, 1000)
+            if ok and self._node:
+                self._node.resizeDiskImage(disk_image_filename, size, self._resizeDiskImageCallback)
+
+    def _hdcDiskImageResizeSlot(self):
+
+        disk_image_filename = self.uiHdcDiskImageLineEdit.text()
+        if disk_image_filename:
+            size, ok = QtWidgets.QInputDialog.getInt(self, "HDC disk size", "Increase hdc disk size in MB:", 10000, 1, 1000000000, 1000)
+            if ok and self._node:
+                self._node.resizeDiskImage(disk_image_filename, size, self._resizeDiskImageCallback)
+
+    def _hddDiskImageResizeSlot(self):
+
+        disk_image_filename = self.uiHddDiskImageLineEdit.text()
+        if disk_image_filename:
+            size, ok = QtWidgets.QInputDialog.getInt(self, "HDD disk size", "Increase hdd disk size in MB:", 10000, 1, 1000000000, 1000)
+            if ok and self._node:
+                self._node.resizeDiskImage(disk_image_filename, size, self._resizeDiskImageCallback)
 
     def _resizeDiskImageCallback(self, result, error=False, **kwargs):
         """
@@ -267,25 +307,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         else:
             QtWidgets.QMessageBox.information(self, "Disk image", "The disk has been resized")
 
-    def _hdaDiskImageResizeSlot(self):
-        size, ok = QtWidgets.QInputDialog.getInt(self, "HDA disk size", "Increase hda disk size in MB:", 10000, 1, 1000000000, 1000)
-        if ok and self._node:
-            self._node.resizeDiskImage("hda", size, self._resizeDiskImageCallback)
-
-    def _hdbDiskImageResizeSlot(self):
-        size, ok = QtWidgets.QInputDialog.getInt(self, "HDB disk size", "Increase hdb disk size in MB:", 10000, 1, 1000000000, 1000)
-        if ok and self._node:
-            self._node.resizeDiskImage("hdb", size, self._resizeDiskImageCallback)
-
-    def _hdcDiskImageResizeSlot(self):
-        size, ok = QtWidgets.QInputDialog.getInt(self, "HDC disk size", "Increase hdc disk size in MB:", 10000, 1, 1000000000, 1000)
-        if ok and self._node:
-            self._node.resizeDiskImage("hdc", size, self._resizeDiskImageCallback)
-
-    def _hddDiskImageResizeSlot(self):
-        size, ok = QtWidgets.QInputDialog.getInt(self, "HDD disk size", "Increase hdd disk size in MB:", 10000, 1, 1000000000, 1000)
-        if ok and self._node:
-            self._node.resizeDiskImage("hdd", size, self._resizeDiskImageCallback)
 
     def _initrdBrowserSlot(self):
         """
@@ -481,6 +502,11 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiPortNameFormatLineEdit.setText(settings["port_name_format"])
             self.uiPortSegmentSizeSpinBox.setValue(settings["port_segment_size"])
             self.uiFirstPortNameLineEdit.setText(settings["first_port_name"])
+
+            self.uiHdaDiskImageCreateToolButton.hide()
+            self.uiHdbDiskImageCreateToolButton.hide()
+            self.uiHdcDiskImageCreateToolButton.hide()
+            self.uiHddDiskImageCreateToolButton.hide()
 
             self.uiHdaDiskImageResizeToolButton.hide()
             self.uiHdbDiskImageResizeToolButton.hide()

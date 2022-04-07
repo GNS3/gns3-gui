@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>535</width>
-    <height>369</height>
+    <width>493</width>
+    <height>314</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Qemu image creator</string>
+   <string>Qemu disk image creator</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -19,39 +19,22 @@
   <property name="wizardStyle">
    <enum>QWizard::ModernStyle</enum>
   </property>
-  <widget class="QWizardPage" name="uiBinaryWizardPage">
+  <widget class="QWizardPage" name="uiFormatWizardPage">
    <property name="title">
-    <string>Binary and format</string>
+    <string>Disk image format</string>
    </property>
    <property name="subTitle">
-    <string>Please select a qemu-img binary, and the format for your new image.</string>
+    <string>Please select the disk image format</string>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QLabel" name="uiBinaryLabel">
+     <widget class="QLabel" name="uiFormatLabel">
       <property name="text">
-       <string>Qemu-img binary:</string>
+       <string>Disk image format:</string>
       </property>
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QComboBox" name="uiBinaryComboBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="uiFormatLabel">
-      <property name="text">
-       <string>Image format:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="QRadioButton" name="uiFormatQcow2Radio">
@@ -682,31 +665,20 @@ Free space will be zero filled.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiSizeAndLocationWizardPage">
+  <widget class="QWizardPage" name="uiNameAndSizeWizardPage">
    <property name="title">
     <string>Size and location</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="0">
+    <item row="0" column="0" colspan="2">
      <widget class="QLabel" name="uiLocationLabel">
       <property name="text">
-       <string>File location:</string>
+       <string>Disk filename:</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLineEdit" name="uiLocationLineEdit"/>
-      </item>
-      <item>
-       <widget class="QToolButton" name="uiLocationBrowseToolButton">
-        <property name="text">
-         <string>Browse</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+    <item row="0" column="2">
+     <widget class="QLineEdit" name="uiDiskFilenameLineEdit"/>
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="uiSizeLabel">
@@ -715,34 +687,30 @@ Free space will be zero filled.</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
-      <item>
-       <widget class="QSpinBox" name="uiSizeSpinBox">
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::UpDownArrows</enum>
-        </property>
-        <property name="suffix">
-         <string> MiB</string>
-        </property>
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>2000000</number>
-        </property>
-        <property name="singleStep">
-         <number>1000</number>
-        </property>
-        <property name="value">
-         <number>30000</number>
-        </property>
-        <property name="showGroupSeparator" stdset="0">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
+    <item row="1" column="2">
+     <widget class="QSpinBox" name="uiSizeSpinBox">
+      <property name="buttonSymbols">
+       <enum>QAbstractSpinBox::UpDownArrows</enum>
+      </property>
+      <property name="showGroupSeparator" stdset="0">
+       <bool>true</bool>
+      </property>
+      <property name="suffix">
+       <string> MiB</string>
+      </property>
+      <property name="minimum">
+       <number>0</number>
+      </property>
+      <property name="maximum">
+       <number>2000000</number>
+      </property>
+      <property name="singleStep">
+       <number>1000</number>
+      </property>
+      <property name="value">
+       <number>30000</number>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -783,11 +751,11 @@ Free space will be zero filled.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="uiQcow2PreallocationRadios"/>
   <buttongroup name="uiVmdkAdapterRadios"/>
-  <buttongroup name="uiFormatRadios"/>
   <buttongroup name="uiVdiSizeModeRadios"/>
   <buttongroup name="uiVmdkSizeModeRadios"/>
+  <buttongroup name="uiFormatRadios"/>
   <buttongroup name="uiVhdSizeModeRadios"/>
+  <buttongroup name="uiQcow2PreallocationRadios"/>
  </buttongroups>
 </ui>
