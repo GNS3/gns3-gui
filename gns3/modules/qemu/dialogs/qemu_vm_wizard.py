@@ -89,7 +89,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
                 QtWidgets.QMessageBox.warning(self, "QEMU on Windows or Mac", "The recommended way to run QEMU on Windows and OSX is to use the GNS3 VM")
 
         if self.page(page_id) in [self.uiDiskWizardPage, self.uiInitrdKernelImageWizardPage]:
-            self.loadImagesList("/qemu/images")
+            self.loadImagesList("qemu")
         elif self.page(page_id) == self.uiBinaryMemoryWizardPage:
             try:
                 Qemu.instance().getQemuBinariesFromServer(self._compute_id, self._getQemuBinariesFromServerCallback)
