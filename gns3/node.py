@@ -233,6 +233,13 @@ class Node(BaseNode):
 
         return self.controllerHttpPost("/nodes/{node_id}{path}".format(node_id=self._node_id, path=path), *args, **kwargs)
 
+    def put(self, path, *args, **kwargs):
+        """
+        PUT on current server / project
+        """
+
+        return self.controllerHttpPut("/nodes/{node_id}{path}".format(node_id=self._node_id, path=path), *args, **kwargs)
+
     def start(self):
         """
         Starts this node instance.

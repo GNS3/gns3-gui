@@ -88,16 +88,24 @@ class QemuVM(Node):
 
         self.settings().update(qemu_vm_settings)
 
-    def resizeDiskImage(self, drive_name, size, callback):
+    def createDiskImage(self, disk_name, options, callback):
         """
-        Resize a disk image allocated to the VM.
+        Create a disk image attached to the VM.
 
         :param callback: callback for the reply from the server
         """
 
-        params = {"drive_name": drive_name,
-                  "extend": size}
-        self.post("/resize_disk", callback, body=params)
+        self.post(f"/qemu/disk_image/{disk_name}", callback, body=options)
+
+    def resizeDiskImage(self, disk_name, size, callback):
+        """
+        Resize a disk image attached to the VM.
+
+        :param callback: callback for the reply from the server
+        """
+
+        params = {"extend": size}
+        self.put(f"/qemu/disk_image/{disk_name}", callback, body=params)
 
     def info(self):
         """

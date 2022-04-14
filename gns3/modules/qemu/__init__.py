@@ -93,16 +93,6 @@ class Qemu(Module):
             request_body = {"archs": archs}
         Controller.instance().getCompute("/qemu/binaries", compute_id, callback, body=request_body)
 
-    def getQemuImgBinariesFromServer(self, compute_id, callback):
-        """
-        Gets the QEMU-img binaries list from a server.
-
-        :param server: server to send the request to
-        :param callback: callback for the reply from the server
-        """
-
-        Controller.instance().getCompute("/qemu/img-binaries", compute_id, callback)
-
     def getQemuCapabilitiesFromServer(self, compute_id, callback):
         """
         Gets the capabilities of Qemu at a server.
@@ -112,28 +102,6 @@ class Qemu(Module):
         """
 
         Controller.instance().getCompute("/qemu/capabilities", compute_id, callback)
-
-    def createDiskImage(self, compute_id, callback, options):
-        """
-        Create a disk image on the remote server
-
-        :param server: server to send the request to
-        :param callback: callback for the reply from the server
-        :param options: Options for the image creation
-        """
-
-        Controller.instance().postCompute("/qemu/img", compute_id, callback, body=options)
-
-    def updateDiskImage(self, compute_id, callback, options):
-        """
-        Update a disk image on the remote server
-
-        :param server: server to send the request to
-        :param callback: callback for the reply from the server
-        :param options: Options for the image update
-        """
-
-        Controller.instance().putCompute("/qemu/img", compute_id, callback, body=options)
 
     @staticmethod
     def getNodeClass(node_type, platform=None):
