@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/qemu/ui/qemu_vm_wizard.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_QemuVMWizard(object):
     def setupUi(self, QemuVMWizard):
@@ -60,35 +62,32 @@ class Ui_QemuVMWizard(object):
         self.uiNameLineEdit = QtWidgets.QLineEdit(self.uiNameWizardPage)
         self.uiNameLineEdit.setObjectName("uiNameLineEdit")
         self.gridLayout.addWidget(self.uiNameLineEdit, 0, 1, 1, 1)
-        self.uiLegacyASACheckBox = QtWidgets.QCheckBox(self.uiNameWizardPage)
-        self.uiLegacyASACheckBox.setObjectName("uiLegacyASACheckBox")
-        self.gridLayout.addWidget(self.uiLegacyASACheckBox, 1, 0, 1, 2)
         QemuVMWizard.addPage(self.uiNameWizardPage)
-        self.uiBinaryMemoryWizardPage = QtWidgets.QWizardPage()
-        self.uiBinaryMemoryWizardPage.setObjectName("uiBinaryMemoryWizardPage")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.uiBinaryMemoryWizardPage)
+        self.uiPlatformMemoryWizardPage = QtWidgets.QWizardPage()
+        self.uiPlatformMemoryWizardPage.setObjectName("uiPlatformMemoryWizardPage")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.uiPlatformMemoryWizardPage)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.uiQemuListLabel = QtWidgets.QLabel(self.uiBinaryMemoryWizardPage)
-        self.uiQemuListLabel.setObjectName("uiQemuListLabel")
-        self.gridLayout_2.addWidget(self.uiQemuListLabel, 0, 0, 1, 1)
-        self.uiQemuListComboBox = QtWidgets.QComboBox(self.uiBinaryMemoryWizardPage)
+        self.uiQemuPlatformLabel = QtWidgets.QLabel(self.uiPlatformMemoryWizardPage)
+        self.uiQemuPlatformLabel.setObjectName("uiQemuPlatformLabel")
+        self.gridLayout_2.addWidget(self.uiQemuPlatformLabel, 0, 0, 1, 1)
+        self.uiQemuPlatformComboBox = QtWidgets.QComboBox(self.uiPlatformMemoryWizardPage)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiQemuListComboBox.sizePolicy().hasHeightForWidth())
-        self.uiQemuListComboBox.setSizePolicy(sizePolicy)
-        self.uiQemuListComboBox.setObjectName("uiQemuListComboBox")
-        self.gridLayout_2.addWidget(self.uiQemuListComboBox, 0, 1, 1, 1)
-        self.uiRamLabel = QtWidgets.QLabel(self.uiBinaryMemoryWizardPage)
+        sizePolicy.setHeightForWidth(self.uiQemuPlatformComboBox.sizePolicy().hasHeightForWidth())
+        self.uiQemuPlatformComboBox.setSizePolicy(sizePolicy)
+        self.uiQemuPlatformComboBox.setObjectName("uiQemuPlatformComboBox")
+        self.gridLayout_2.addWidget(self.uiQemuPlatformComboBox, 0, 1, 1, 1)
+        self.uiRamLabel = QtWidgets.QLabel(self.uiPlatformMemoryWizardPage)
         self.uiRamLabel.setObjectName("uiRamLabel")
         self.gridLayout_2.addWidget(self.uiRamLabel, 1, 0, 1, 1)
-        self.uiRamSpinBox = QtWidgets.QSpinBox(self.uiBinaryMemoryWizardPage)
+        self.uiRamSpinBox = QtWidgets.QSpinBox(self.uiPlatformMemoryWizardPage)
         self.uiRamSpinBox.setMinimum(32)
         self.uiRamSpinBox.setMaximum(65535)
         self.uiRamSpinBox.setProperty("value", 256)
         self.uiRamSpinBox.setObjectName("uiRamSpinBox")
         self.gridLayout_2.addWidget(self.uiRamSpinBox, 1, 1, 1, 1)
-        QemuVMWizard.addPage(self.uiBinaryMemoryWizardPage)
+        QemuVMWizard.addPage(self.uiPlatformMemoryWizardPage)
         self.uiConsoleTypeWizardPage = QtWidgets.QWizardPage()
         self.uiConsoleTypeWizardPage.setObjectName("uiConsoleTypeWizardPage")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.uiConsoleTypeWizardPage)
@@ -206,8 +205,8 @@ class Ui_QemuVMWizard(object):
 
         self.retranslateUi(QemuVMWizard)
         QtCore.QMetaObject.connectSlotsByName(QemuVMWizard)
-        QemuVMWizard.setTabOrder(self.uiNameLineEdit, self.uiQemuListComboBox)
-        QemuVMWizard.setTabOrder(self.uiQemuListComboBox, self.uiRamSpinBox)
+        QemuVMWizard.setTabOrder(self.uiNameLineEdit, self.uiQemuPlatformComboBox)
+        QemuVMWizard.setTabOrder(self.uiQemuPlatformComboBox, self.uiRamSpinBox)
         QemuVMWizard.setTabOrder(self.uiRamSpinBox, self.uiHdaDiskImageLineEdit)
         QemuVMWizard.setTabOrder(self.uiHdaDiskImageLineEdit, self.uiHdaDiskImageToolButton)
 
@@ -225,10 +224,9 @@ class Ui_QemuVMWizard(object):
         self.uiNameWizardPage.setTitle(_translate("QemuVMWizard", "QEMU VM name"))
         self.uiNameWizardPage.setSubTitle(_translate("QemuVMWizard", "Please choose a descriptive name for your new QEMU virtual machine."))
         self.uiNameLabel.setText(_translate("QemuVMWizard", "Name:"))
-        self.uiLegacyASACheckBox.setText(_translate("QemuVMWizard", "This is a legacy ASA VM"))
-        self.uiBinaryMemoryWizardPage.setTitle(_translate("QemuVMWizard", "QEMU binary and memory"))
-        self.uiBinaryMemoryWizardPage.setSubTitle(_translate("QemuVMWizard", "Please check the Qemu binary is correctly set and the virtual machine has enough memory to work."))
-        self.uiQemuListLabel.setText(_translate("QemuVMWizard", "Qemu binary:"))
+        self.uiPlatformMemoryWizardPage.setTitle(_translate("QemuVMWizard", "QEMU platform and memory"))
+        self.uiPlatformMemoryWizardPage.setSubTitle(_translate("QemuVMWizard", "Please select the platform and check the virtual machine has enough memory to work."))
+        self.uiQemuPlatformLabel.setText(_translate("QemuVMWizard", "Platform:"))
         self.uiRamLabel.setText(_translate("QemuVMWizard", "RAM:"))
         self.uiRamSpinBox.setSuffix(_translate("QemuVMWizard", " MB"))
         self.uiConsoleTypeWizardPage.setTitle(_translate("QemuVMWizard", "Console type"))
@@ -254,4 +252,3 @@ class Ui_QemuVMWizard(object):
         self.uiKernelImageLabel.setText(_translate("QemuVMWizard", "Kernel image (vmlinuz):"))
         self.uiKernelImageToolButton.setText(_translate("QemuVMWizard", "&Browse..."))
         self.uiInitrdLabel.setText(_translate("QemuVMWizard", "Initial RAM disk (initrd):"))
-

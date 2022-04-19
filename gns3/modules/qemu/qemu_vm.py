@@ -43,7 +43,6 @@ class QemuVM(Node):
         self._linked_clone = True
 
         qemu_vm_settings = {"usage": "",
-                            "qemu_path": "",
                             "hda_disk_image": "",
                             "hdb_disk_image": "",
                             "hdc_disk_image": "",

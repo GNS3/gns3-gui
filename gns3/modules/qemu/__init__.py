@@ -79,20 +79,6 @@ class Qemu(Module):
         #                    "require_hardware_acceleration": self._settings["require_hardware_acceleration"]}
         # LocalServerConfig.instance().saveSettings(self.__class__.__name__, server_settings)
 
-    def getQemuBinariesFromServer(self, compute_id, callback, archs=None):
-        """
-        Gets the QEMU binaries list from a server.
-
-        :param compute_id: server to send the request to
-        :param callback: callback for the reply from the server
-        :param archs: A list of architectures. Only binaries matching the specified architectures are returned.
-        """
-
-        request_body = None
-        if archs is not None:
-            request_body = {"archs": archs}
-        Controller.instance().getCompute("/qemu/binaries", compute_id, callback, body=request_body)
-
     def getQemuCapabilitiesFromServer(self, compute_id, callback):
         """
         Gets the capabilities of Qemu at a server.
@@ -102,6 +88,45 @@ class Qemu(Module):
         """
 
         Controller.instance().getCompute("/qemu/capabilities", compute_id, callback)
+
+    @staticmethod
+    def getQemuPlatforms():
+        """
+        Returns all Qemu platforms
+
+        :return: list of Qemu platforms
+        """
+
+        return [
+            "aarch64",
+            "alpha",
+            "arm",
+            "cris",
+            "i386",
+            "lm32",
+            "m68k",
+            "microblaze",
+            "microblazeel",
+            "mips",
+            "mips64",
+            "mips64el",
+            "mipsel",
+            "moxie",
+            "or32",
+            "ppc",
+            "ppc64",
+            "ppcemb",
+            "s390x",
+            "sh4",
+            "sh4eb",
+            "sparc",
+            "sparc64",
+            "tricore",
+            "unicore32",
+            "x86_64",
+            "xtensa",
+            "xtensaeb"
+        ]
 
     @staticmethod
     def getNodeClass(node_type, platform=None):

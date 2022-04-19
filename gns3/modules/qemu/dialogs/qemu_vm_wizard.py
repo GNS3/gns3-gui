@@ -55,31 +55,6 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiInitrdImageListComboBox, self.uiInitrdImageLineEdit, self.uiInitrdImageToolButton, QemuVMConfigurationPage.getDiskImage)
         self.addImageSelector(self.uiLinuxExistingImageRadioButton, self.uiKernelImageListComboBox, self.uiKernelImageLineEdit, self.uiKernelImageToolButton, QemuVMConfigurationPage.getDiskImage)
 
-    def validateCurrentPage(self):
-        """
-        Validates the server.
-        """
-
-        if super().validateCurrentPage() is False:
-            return False
-
-        if self.currentPage() == self.uiNameWizardPage:
-            if self.uiLegacyASACheckBox.isChecked():
-                QtWidgets.QMessageBox.warning(self, "Legacy ASA VM", "Running ASA (with initrd/kernel) is not recommended and will not work on Windows 10, please use ASAv instead")
-                self.uiRamSpinBox.setValue(1024)
-            else:
-                self.uiRamSpinBox.setValue(256)
-
-        if self.currentPage() == self.uiBinaryMemoryWizardPage:
-            if not self.uiQemuListComboBox.count():
-                QtWidgets.QMessageBox.critical(self, "QEMU binaries", "Sorry, no QEMU binary has been found. Please make sure QEMU is installed before continuing")
-                return False
-            qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
-
-            if sys.platform.startswith("darwin") and "GNS3.app" in qemu_path:
-                QtWidgets.QMessageBox.warning(self, "Qemu binaries", "This version of qemu is obsolete and provided only for compatibility with old GNS3 versions.\nPlease use Qemu in the GNS3 VM for full Qemu support.")
-        return True
-
     def initializePage(self, page_id):
 
         super().initializePage(page_id)
@@ -90,52 +65,12 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
         if self.page(page_id) in [self.uiDiskWizardPage, self.uiInitrdKernelImageWizardPage]:
             self.loadImagesList("qemu")
-        elif self.page(page_id) == self.uiBinaryMemoryWizardPage:
-            try:
-                Qemu.instance().getQemuBinariesFromServer(self._compute_id, self._getQemuBinariesFromServerCallback)
-            except ModuleError as e:
-                QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
-
-    def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
-        """
-        Callback for getQemuBinariesFromServer.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
-        else:
-            self.uiQemuListComboBox.clear()
-            for qemu in result:
-                if qemu["version"]:
-                    self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
-                else:
-                    self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
-
-            is_64bit = sys.maxsize > 2 ** 32
-            if ComputeManager.instance().localPlatform().startswith("win") and self.uiLocalRadioButton.isChecked():
-                if self.uiLegacyASACheckBox.isChecked():
-                    search_string = r"qemu-0.13.0\qemu-system-i386w.exe"
-                elif is_64bit:
-                    # default is qemu-system-x86_64w.exe on Windows 64-bit with a remote server
-                    search_string = "x86_64w.exe"
-                else:
-                    # default is qemu-system-i386w.exe on Windows 32-bit with a remote server
-                    search_string = "i386w.exe"
-            elif ComputeManager.instance().localPlatform().startswith("darwin") and hasattr(sys, "frozen") and self.uiLocalRadioButton.isChecked():
-                search_string = "GNS3.app/Contents/MacOS/qemu/bin/qemu-system-x86_64"
-            elif is_64bit:
-                # default is qemu-system-x86_64 on other 64-bit platforms
-                search_string = "x86_64"
-            else:
-                # default is qemu-system-i386 on other platforms
-                search_string = "i386"
-
-            index = self.uiQemuListComboBox.findData(search_string, flags=QtCore.Qt.MatchEndsWith)
+        elif self.page(page_id) == self.uiPlatformMemoryWizardPage:
+            platforms = Qemu.getQemuPlatforms()
+            self.uiQemuPlatformComboBox.addItems(platforms)
+            index = self.uiQemuPlatformComboBox.findText("x86_64", flags=QtCore.Qt.MatchEndsWith)
             if index != -1:
-                self.uiQemuListComboBox.setCurrentIndex(index)
+                self.uiQemuPlatformComboBox.setCurrentIndex(index)
 
     def getSettings(self):
         """
@@ -145,11 +80,11 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         """
 
         console_type = self.uiQemuConsoleTypeComboBox.itemText(self.uiQemuConsoleTypeComboBox.currentIndex())
-        qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
+        qemu_platform = self.uiQemuPlatformComboBox.itemText(self.uiQemuPlatformComboBox.currentIndex())
         settings = {
             "name": self.uiNameLineEdit.text(),
             "ram": self.uiRamSpinBox.value(),
-            "qemu_path": qemu_path,
+            "platform": qemu_platform,
             "compute_id": self._compute_id,
             "category": Node.end_devices,
             "console_type": console_type
@@ -171,8 +106,6 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
         current_id = self.currentId()
         if self.page(current_id) == self.uiDiskWizardPage:
-            if self.uiLegacyASACheckBox.isChecked():
-                return self.uiDiskWizardPage.nextId()
             return -1
         elif self.page(current_id) == self.uiInitrdKernelImageWizardPage:
             return -1
