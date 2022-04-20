@@ -234,6 +234,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiShowGridAction.triggered.connect(self._showGridActionSlot)
         self.uiSnapToGridAction.triggered.connect(self._snapToGridActionSlot)
         self.uiLockAllAction.triggered.connect(self._lockActionSlot)
+        self.uiResetDocksAction.triggered.connect(self._resetDocksSlot)
 
         # tool menu connections
         self.uiWebUIAction.triggered.connect(self._openWebInterfaceActionSlot)
@@ -365,6 +366,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     if item.parentItem() is None:
                         item.updateNode()
                     item.update()
+
+    def _resetDocksSlot(self):
+        """
+        Reset the dock widgets.
+        """
+
+        self.uiTopologySummaryDockWidget.setFloating(False)
+        self.uiComputeSummaryDockWidget.setFloating(False)
+        self.uiConsoleDockWidget.setFloating(False)
+        self.uiNodesDockWidget.setFloating(False)
 
     def analyticsClient(self):
         """

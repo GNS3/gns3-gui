@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/ui/main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -48,7 +48,7 @@ class Ui_MainWindow(object):
         self.gridlayout.addWidget(self.uiGraphicsView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.uiCentralWidget)
         self.uiMenuBar = QtWidgets.QMenuBar(MainWindow)
-        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 986, 42))
+        self.uiMenuBar.setGeometry(QtCore.QRect(0, 0, 986, 22))
         self.uiMenuBar.setObjectName("uiMenuBar")
         self.uiEditMenu = QtWidgets.QMenu(self.uiMenuBar)
         self.uiEditMenu.setObjectName("uiEditMenu")
@@ -448,6 +448,8 @@ class Ui_MainWindow(object):
         self.uiNewTemplateAction = QtWidgets.QAction(MainWindow)
         self.uiNewTemplateAction.setIcon(icon)
         self.uiNewTemplateAction.setObjectName("uiNewTemplateAction")
+        self.uiResetDocksAction = QtWidgets.QAction(MainWindow)
+        self.uiResetDocksAction.setObjectName("uiResetDocksAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -488,6 +490,7 @@ class Ui_MainWindow(object):
         self.uiViewMenu.addAction(self.uiShowPortNamesAction)
         self.uiViewMenu.addAction(self.uiLockAllAction)
         self.uiViewMenu.addSeparator()
+        self.uiViewMenu.addAction(self.uiResetDocksAction)
         self.uiViewMenu.addAction(self.uiDocksMenu.menuAction())
         self.uiControlMenu.addAction(self.uiStartAllAction)
         self.uiControlMenu.addAction(self.uiSuspendAllAction)
@@ -711,6 +714,7 @@ class Ui_MainWindow(object):
         self.uiLockAllAction.setToolTip(_translate("MainWindow", "Lock or unlock all items"))
         self.uiWebUIAction.setText(_translate("MainWindow", "Web UI - beta"))
         self.uiNewTemplateAction.setText(_translate("MainWindow", "New template"))
+        self.uiResetDocksAction.setText(_translate("MainWindow", "Reset docks"))
 from ..compute_summary_view import ComputeSummaryView
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView

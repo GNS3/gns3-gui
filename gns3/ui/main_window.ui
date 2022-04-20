@@ -38,7 +38,16 @@ background-none;
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -62,7 +71,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>986</width>
-     <height>42</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -129,6 +138,7 @@ background-none;
     <addaction name="uiShowPortNamesAction"/>
     <addaction name="uiLockAllAction"/>
     <addaction name="separator"/>
+    <addaction name="uiResetDocksAction"/>
     <addaction name="uiDocksMenu"/>
    </widget>
    <widget class="QMenu" name="uiControlMenu">
@@ -228,7 +238,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -372,7 +391,16 @@ background-none;
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -438,7 +466,16 @@ background-none;
      </sizepolicy>
     </property>
     <layout class="QGridLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -482,7 +519,16 @@ background-none;
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <property name="spacing">
@@ -1241,6 +1287,11 @@ background-none;
    </property>
    <property name="text">
     <string>New template</string>
+   </property>
+  </action>
+  <action name="uiResetDocksAction">
+   <property name="text">
+    <string>Reset docks</string>
    </property>
   </action>
  </widget>
