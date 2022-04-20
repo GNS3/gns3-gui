@@ -650,10 +650,11 @@ class Node(BaseNode):
 
         if not console_type:
             console_type = self.consoleType()
-        if console_type == "vnc":
-            return general_settings["vnc_console_command"]
-        elif console_type.startswith("spice"):
-            return general_settings["spice_console_command"]
+        if console_type:
+            if console_type == "vnc":
+                return general_settings["vnc_console_command"]
+            elif console_type.startswith("spice"):
+                return general_settings["spice_console_command"]
         return general_settings["telnet_console_command"]
 
     def consoleType(self):
