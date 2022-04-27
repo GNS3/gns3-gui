@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.2.32 27/04/2022
+
+* Use public DSNs for Sentry
+* Fix exception when doubleclick on NAT node. Fixes #3312
+* Fix "Apply" button in the "Preferences" dialog stays gray when templates/nodes are opened by double-click. Fixes #3307
+* Add 'reset docks' in the view menu. Ref #3317
+
 ## 2.2.31 26/02/2022
 
 * Install setuptools v59.6.0 when using Python 3.6

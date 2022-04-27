@@ -456,6 +456,8 @@ class Ui_MainWindow(object):
         self.uiImageManagementAction = QtWidgets.QAction(MainWindow)
         self.uiImageManagementAction.setIcon(icon10)
         self.uiImageManagementAction.setObjectName("uiImageManagementAction")
+        self.uiResetDocksAction = QtWidgets.QAction(MainWindow)
+        self.uiResetDocksAction.setObjectName("uiResetDocksAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -498,6 +500,7 @@ class Ui_MainWindow(object):
         self.uiViewMenu.addAction(self.uiShowReadmeAction)
         self.uiViewMenu.addAction(self.uiLockAllAction)
         self.uiViewMenu.addSeparator()
+        self.uiViewMenu.addAction(self.uiResetDocksAction)
         self.uiViewMenu.addAction(self.uiDocksMenu.menuAction())
         self.uiControlMenu.addAction(self.uiStartAllAction)
         self.uiControlMenu.addAction(self.uiSuspendAllAction)
@@ -726,6 +729,7 @@ class Ui_MainWindow(object):
         self.uiEditReadmeAction.setToolTip(_translate("MainWindow", "Edit readme"))
         self.uiResetConsoleAllAction.setText(_translate("MainWindow", "Reset all console connections"))
         self.uiImageManagementAction.setText(_translate("MainWindow", "Image management"))
+        self.uiResetDocksAction.setText(_translate("MainWindow", "Reset docks"))
 from ..compute_summary_view import ComputeSummaryView
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView

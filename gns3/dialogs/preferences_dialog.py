@@ -131,6 +131,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             QtWidgets.QLineEdit: "textChanged",
             QtWidgets.QPlainTextEdit: "textChanged",
             # QtWidgets.QTreeWidget: "itemChanged",
+            QtWidgets.QTreeWidget: "itemDoubleClicked",
             QtWidgets.QComboBox: "currentIndexChanged",
             QtWidgets.QSpinBox: "valueChanged",
             QtWidgets.QAbstractButton: "pressed"

@@ -140,6 +140,7 @@ background-none;
     <addaction name="uiShowReadmeAction"/>
     <addaction name="uiLockAllAction"/>
     <addaction name="separator"/>
+    <addaction name="uiResetDocksAction"/>
     <addaction name="uiDocksMenu"/>
    </widget>
    <widget class="QMenu" name="uiControlMenu">
@@ -1315,6 +1316,11 @@ background-none;
    </property>
    <property name="text">
     <string>Image management</string>
+   </property>
+  </action>
+  <action name="uiResetDocksAction">
+   <property name="text">
+    <string>Reset docks</string>
    </property>
   </action>
  </widget>
