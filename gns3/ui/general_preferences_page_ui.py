@@ -465,6 +465,12 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiDirectFileUpload = QtWidgets.QCheckBox(self.uiMiscTab)
         self.uiDirectFileUpload.setObjectName("uiDirectFileUpload")
         self.verticalLayout_2.addWidget(self.uiDirectFileUpload)
+
+        self.uiDarkMode = QtWidgets.QCheckBox(self.uiMiscTab)
+        self.uiDarkMode.setObjectName("uiDarkMode")
+        self.verticalLayout_2.addWidget(self.uiDarkMode)
+
+
         spacerItem10 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem10)
         self.uiMiscTabWidget.addTab(self.uiMiscTab, "")
@@ -526,7 +532,8 @@ class Ui_GeneralPreferencesPageWidget(object):
         GeneralPreferencesPageWidget.setTabOrder(self.uiExperimentalFeaturesCheckBox, self.uiHdpiCheckBox)
         GeneralPreferencesPageWidget.setTabOrder(self.uiHdpiCheckBox, self.uiMultiProfilesCheckBox)
         GeneralPreferencesPageWidget.setTabOrder(self.uiMultiProfilesCheckBox, self.uiDirectFileUpload)
-        GeneralPreferencesPageWidget.setTabOrder(self.uiDirectFileUpload, self.uiRestoreDefaultsPushButton)
+        GeneralPreferencesPageWidget.setTabOrder(self.uiDirectFileUpload, self.uiDarkMode)
+        GeneralPreferencesPageWidget.setTabOrder(self.uiDarkMode, self.uiRestoreDefaultsPushButton)
         GeneralPreferencesPageWidget.setTabOrder(self.uiRestoreDefaultsPushButton, self.uiMiscTabWidget)
 
     def retranslateUi(self, GeneralPreferencesPageWidget):
@@ -608,5 +615,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Request for profile settings at application startup"))
         self.uiDirectFileUpload.setToolTip(_translate("GeneralPreferencesPageWidget", "Experimental, requires computes visibility from GUI network"))
         self.uiDirectFileUpload.setText(_translate("GeneralPreferencesPageWidget", "Upload files directly to computes (experimental)"))
+        self.uiDarkMode.setToolTip(_translate("GeneralPreferencesPageWidget", "Experimental, Makes the software dark for low light use"))
+        self.uiDarkMode.setText(_translate("GeneralPreferencesPageWidget", "Dark Mode (experimental)"))
         self.uiMiscTabWidget.setTabText(self.uiMiscTabWidget.indexOf(self.uiMiscTab), _translate("GeneralPreferencesPageWidget", "Miscellaneous"))
         self.uiRestoreDefaultsPushButton.setText(_translate("GeneralPreferencesPageWidget", "Restore defaults"))
