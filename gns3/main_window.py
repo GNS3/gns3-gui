@@ -1455,6 +1455,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             style.setCharcoalStyle()
         elif style_name == "Classic":
             style.setClassicStyle()
+        elif style_name == "Dark":
+            style.setDarkStyle()
         else:
             style.setLegacyStyle()
 

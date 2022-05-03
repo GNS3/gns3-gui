@@ -1014,22 +1014,6 @@
          </property>
         </widget>
        </item>
-
-
-
-       <item>
-        <widget class="QCheckBox" name="uiDarkMode">
-         <property name="toolTip">
-          <string>Experimental, Makes the software dark for low light use</string>
-         </property>
-         <property name="text">
-          <string>Dark Mode (experimental)</string>
-         </property>
-        </widget>
-       </item>
-
-
-
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
@@ -1120,7 +1104,6 @@
   <tabstop>uiHdpiCheckBox</tabstop>
   <tabstop>uiMultiProfilesCheckBox</tabstop>
   <tabstop>uiDirectFileUpload</tabstop>
-  <tabstop>uiDarkMode</tabstop>
   <tabstop>uiRestoreDefaultsPushButton</tabstop>
   <tabstop>uiMiscTabWidget</tabstop>
  </tabstops>
