@@ -218,9 +218,9 @@ class Style:
         Sets the Dark_Charcoal GUI style.
         """
 
-        style_file = QtCore.QFile(":/styles/charcoal.css")
-        style_file.open(QtCore.QFile.ReadOnly)
-        style = QtCore.QTextStream(style_file).readAll()
+        #style_file = QtCore.QFile(":/styles/charcoal.css")
+        #style_file.open(QtCore.QFile.ReadOnly)
+        #style = QtCore.QTextStream(style_file).readAll()
         if sys.platform.startswith("darwin"):
             style += "QDockWidget::title {text-align: center; background-color: #535353}"
 
