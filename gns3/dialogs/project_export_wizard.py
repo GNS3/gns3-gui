@@ -52,6 +52,7 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         self.uiCompressionComboBox.addItem("Bzip2 compression", "bzip2")
         self.uiCompressionComboBox.addItem("Lzma compression", "lzma")
         self.uiCompressionComboBox.addItem("Zstandard compression", "zstd")
+        self.uiCompressionComboBox.currentIndexChanged.connect(self._compressionChangedSlot)
 
         # set zstd compression by default
         self.uiCompressionComboBox.setCurrentIndex(4)
@@ -156,6 +157,24 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
             QtCore.QTimer.singleShot(timeout, loop.quit)
         loop.exec_()
 
+    def _compressionChangedSlot(self, index):
+        """
+        Set the default compression level.
+        """
+
+        compression = self.uiCompressionComboBox.itemData(index)
+        self.uiCompressionLevelSpinBox.setEnabled(True)
+        if compression == "zip":
+            self.uiCompressionLevelSpinBox.setValue(6)  # ZIP default compression level is 6
+        elif compression == "bzip2":
+            self.uiCompressionLevelSpinBox.setValue(9)  # BZIP2 default compression level is 9
+        elif compression == "zstd":
+            self.uiCompressionLevelSpinBox.setValue(3)  # ZSTD default compression level is 3
+        else:
+            # compression level is not supported
+            self.uiCompressionLevelSpinBox.setValue(0)
+            self.uiCompressionLevelSpinBox.setEnabled(False)
+
     def done(self, result):
         """
         This dialog is closed.
@@ -220,10 +239,5 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
             with open(self._path, 'ab') as f:
                 f.write(content)
         except OSError as e:
-            QtWidgets.QMessageBox.critical(
-                self,
-                "Project export",
-                f"Could not write project file: {e}"
-            )
+            log.error(f"Could not write project file: {e}")
             return
-
