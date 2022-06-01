@@ -51,9 +51,10 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         self.uiCompressionComboBox.addItem("Zip compression (deflate)", "zip")
         self.uiCompressionComboBox.addItem("Bzip2 compression", "bzip2")
         self.uiCompressionComboBox.addItem("Lzma compression", "lzma")
+        self.uiCompressionComboBox.addItem("Zstandard compression", "zstd")
 
-        # set zip compression by default
-        self.uiCompressionComboBox.setCurrentIndex(1)
+        # set zstd compression by default
+        self.uiCompressionComboBox.setCurrentIndex(4)
         self.helpRequested.connect(self._showHelpSlot)
         self.uiPathBrowserToolButton.clicked.connect(self._pathBrowserSlot)
 
@@ -219,5 +220,10 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
             with open(self._path, 'ab') as f:
                 f.write(content)
         except OSError as e:
-            self.error.emit("Can't write project file {}: {}".format(self._path, e), True)
+            QtWidgets.QMessageBox.critical(
+                self,
+                "Project export",
+                f"Could not write project file: {e}"
+            )
             return
+
