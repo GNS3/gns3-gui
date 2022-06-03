@@ -462,6 +462,8 @@ class HTTPClient(QtCore.QObject):
             return
 
         content = bytes(reply.readAll())
+        if not content:
+            return
         content_type = reply.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
         if content_type == "application/json":
             content = content.decode("utf-8")
@@ -797,7 +799,7 @@ class HTTPClient(QtCore.QObject):
                     if custom_error_message:
                         error_message = custom_error_message
                 except ValueError as e:
-                    log.debug("fCould not read server error message: {e}")
+                    log.debug(f"Could not read server error message: {e}")
             log.debug(error_message)
             if status == 401 and reply.rawHeader(b"WWW-Authenticate") == b"Bearer":
                 self._handleUnauthorizedRequest(reply)

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>785</width>
-    <height>545</height>
+    <width>687</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,6 +27,13 @@
     <string>Please select the location, whether to include base images or not and the compression type.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiCompressionLabel">
+      <property name="text">
+       <string>Compression:</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="uiPathLabel">
       <property name="sizePolicy">
@@ -37,6 +44,20 @@
       </property>
       <property name="text">
        <string>Path:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="uiCompressionLevelLabel">
+      <property name="text">
+       <string>Compression level:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QCheckBox" name="uiIncludeSnapshotsCheckBox">
+      <property name="text">
+       <string>&amp;Include snapshots</string>
       </property>
      </widget>
     </item>
@@ -53,30 +74,6 @@
        </widget>
       </item>
      </layout>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="uiCompressionLabel">
-      <property name="text">
-       <string>Compression:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" colspan="2">
-     <widget class="QComboBox" name="uiCompressionComboBox"/>
-    </item>
-    <item row="3" column="0" colspan="3">
-     <widget class="QCheckBox" name="uiIncludeImagesCheckBox">
-      <property name="text">
-       <string>&amp;Include base images</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0" colspan="2">
-     <widget class="QCheckBox" name="uiIncludeSnapshotsCheckBox">
-      <property name="text">
-       <string>&amp;Include snapshots</string>
-      </property>
-     </widget>
     </item>
     <item row="6" column="2">
      <spacer name="verticalSpacer">
@@ -95,6 +92,23 @@
      <widget class="QCheckBox" name="uiResetMacAddressesCheckBox">
       <property name="text">
        <string>&amp;Reset MAC addresses</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" colspan="2">
+     <widget class="QSpinBox" name="uiCompressionLevelSpinBox">
+      <property name="maximum">
+       <number>22</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" colspan="2">
+     <widget class="QComboBox" name="uiCompressionComboBox"/>
+    </item>
+    <item row="3" column="0" colspan="3">
+     <widget class="QCheckBox" name="uiIncludeImagesCheckBox">
+      <property name="text">
+       <string>&amp;Include base images</string>
       </property>
      </widget>
     </item>
