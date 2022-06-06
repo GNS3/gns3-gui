@@ -51,6 +51,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self._settings = None
         self._custom_adapters = []
 
+        self.uiQemuPlatformComboBox.addItems(Qemu.getQemuPlatforms())
+
         self.uiBootPriorityComboBox.addItem("HDD", "c")
         self.uiBootPriorityComboBox.addItem("CD/DVD-ROM", "d")
         self.uiBootPriorityComboBox.addItem("Network", "n")
@@ -328,40 +330,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiKernelImageLineEdit.clear()
             self.uiKernelImageLineEdit.setText(path)
 
-    def _getQemuBinariesFromServerCallback(self, result, error=False, qemu_path=None, **kwargs):
-        """
-        Callback for getQemuBinariesFromServer.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if sip_is_deleted(self.uiQemuListComboBox) or sip_is_deleted(self):
-            return
-
-        if error:
-            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
-        else:
-            self.uiQemuListComboBox.clear()
-            for qemu in result:
-                if qemu["version"]:
-                    self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
-                else:
-                    self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
-
-        if qemu_path and "/" not in qemu_path and "\\" not in qemu_path:
-            self.uiQemuListComboBox.addItem("{path}".format(path=qemu_path), qemu_path)
-
-        index = self.uiQemuListComboBox.findData("{path}".format(path=qemu_path))
-        if index != -1:
-            self.uiQemuListComboBox.setCurrentIndex(index)
-        else:
-            index = self.uiQemuListComboBox.findData("{path}".format(path=os.path.basename(qemu_path)), flags=QtCore.Qt.MatchEndsWith)
-            self.uiQemuListComboBox.setCurrentIndex(index)
-            if index == -1:
-                QtWidgets.QMessageBox.warning(self, "Qemu","Could not find '{}' in the Qemu binaries list, please select a new binary".format(qemu_path))
-            else:
-                QtWidgets.QMessageBox.warning(self, "Qemu","Could not find '{}' in the Qemu binaries list, an alternative path has been selected".format(qemu_path))
 
     def _cpuThrottlingChangedSlot(self, state):
         """
@@ -443,10 +411,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self._compute_id = settings["compute_id"]
             self._node = None
 
-        if self._compute_id is not None:
-            callback = qpartial(self._getQemuBinariesFromServerCallback, qemu_path=settings["qemu_path"])
-            Qemu.instance().getQemuBinariesFromServer(self._compute_id, callback)
-
         if not group:
             # set the device name
             self.uiNameLineEdit.setText(settings["name"])
@@ -527,6 +491,10 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiPortSegmentSizeSpinBox.hide()
             self.uiFirstPortNameLabel.hide()
             self.uiFirstPortNameLineEdit.hide()
+
+        index = self.uiQemuPlatformComboBox.findText(settings["platform"])
+        if index != -1:
+            self.uiQemuPlatformComboBox.setCurrentIndex(index)
 
         index = self.uiBootPriorityComboBox.findData(settings["boot_priority"])
         if index != -1:
@@ -653,14 +621,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             settings["port_segment_size"] = port_segment_size
             settings["first_port_name"] = first_port_name
 
-        if self.uiQemuListComboBox.currentIndex() != -1:
-            qemu_path = self.uiQemuListComboBox.itemData(self.uiQemuListComboBox.currentIndex())
-            settings["qemu_path"] = qemu_path
-        else:
-            QtWidgets.QMessageBox.critical(self, "Qemu binary", "Please select a Qemu binary")
-            if node:
-                raise ConfigurationError()
-
+        settings["platform"] = self.uiQemuPlatformComboBox.itemText(self.uiQemuPlatformComboBox.currentIndex())
         settings["boot_priority"] = self.uiBootPriorityComboBox.itemData(self.uiBootPriorityComboBox.currentIndex())
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
         settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()

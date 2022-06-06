@@ -36,7 +36,6 @@ QEMU_VM_SETTINGS = {
     "port_segment_size": 0,
     "first_port_name": "",
     "custom_adapters": [],
-    "qemu_path": "",
     "hda_disk_image": "",
     "hdb_disk_image": "",
     "hdc_disk_image": "",

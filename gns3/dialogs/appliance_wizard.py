@@ -53,7 +53,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         self.setupUi(self)
         self._refreshing = False
-        self._server_check = False
         self._template_created = False
         self._path = path
 
@@ -107,9 +106,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         # customize the server selection
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
-        if hasattr(self, "uiVMRadioButton"):
-            self.uiVMRadioButton.toggled.connect(self._vmToggledSlot)
-
         self.uiLocalRadioButton.toggled.connect(self._localToggledSlot)
         if Controller.instance().isRemote():
             self.uiLocalRadioButton.setText("Install the appliance on the main server")
@@ -174,31 +170,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 for compute in ComputeManager.instance().remoteComputes():
                     self.uiRemoteServersComboBox.addItem(compute.name(), compute)
 
-            if not ComputeManager.instance().vmCompute():
-                self.uiVMRadioButton.setEnabled(False)
+            #if ComputeManager.instance().localPlatform() is None:
+            #    self.uiLocalRadioButton.setEnabled(False)
 
-            if ComputeManager.instance().localPlatform() is None:
-                self.uiLocalRadioButton.setEnabled(False)
-            elif is_mac or is_win:
-                if emulator_type == "qemu":
-                    # disallow usage of the local server because Qemu has issues on OSX and Windows
-                    if not LocalConfig.instance().experimental():
-                        self.uiLocalRadioButton.setEnabled(False)
-                elif emulator_type != "dynamips":
-                    self.uiLocalRadioButton.setEnabled(False)
-
-            if ComputeManager.instance().vmCompute():
-                self.uiVMRadioButton.setChecked(True)
-            elif ComputeManager.instance().localCompute() and self.uiLocalRadioButton.isEnabled():
+            if ComputeManager.instance().localCompute() and self.uiLocalRadioButton.isEnabled():
                 self.uiLocalRadioButton.setChecked(True)
             elif self.uiRemoteRadioButton.isEnabled():
                 self.uiRemoteRadioButton.setChecked(True)
             else:
                 self.uiRemoteRadioButton.setChecked(False)
-
-            if is_mac or is_win:
-                if not self.uiRemoteRadioButton.isEnabled() and not self.uiVMRadioButton.isEnabled() and not self.uiLocalRadioButton.isEnabled():
-                    QtWidgets.QMessageBox.warning(self, "GNS3 VM", "The GNS3 VM is not available, please configure the GNS3 VM before adding a new appliance.")
 
         elif self.page(page_id) == self.uiFilesWizardPage:
             if Controller.instance().isRemote() or self._compute_id != "local":
@@ -206,34 +186,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             else:
                 self.images_changed_signal.emit()
 
-        elif self.page(page_id) == self.uiQemuWizardPage:
-            if self._appliance['qemu'].get('kvm', 'require') == 'require':
-                self._server_check = False
-                Qemu.instance().getQemuCapabilitiesFromServer(self._compute_id, qpartial(self._qemuServerCapabilitiesCallback))
-            else:
-                self._server_check = True
-            Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [self._appliance["qemu"]["arch"]])
-
         elif self.page(page_id) == self.uiUsageWizardPage:
             self.uiUsageTextEdit.setText("The template will be available in the {} category.\n\n{}".format(self._appliance["category"].replace("_", " "), self._appliance.get("usage", "")))
 
-    def _qemuServerCapabilitiesCallback(self, result, error=None, *args, **kwargs):
-        """
-        Check if the server supports KVM or not
-        """
-
-        if error is None and "kvm" in result and self._appliance["qemu"]["arch"] in result["kvm"]:
-            self._server_check = True
-        else:
-            if error:
-                msg = result["message"]
-            else:
-                msg = "The selected server does not support KVM. A Linux server or the GNS3 VM running in VMware is required."
-            QtWidgets.QMessageBox.critical(self, "KVM support", msg)
-            self._server_check = False
-
     def _uiServerWizardPage_isComplete(self):
-        return self.uiRemoteRadioButton.isEnabled() or self.uiVMRadioButton.isEnabled() or self.uiLocalRadioButton.isEnabled()
+        return self.uiRemoteRadioButton.isEnabled() or self.uiLocalRadioButton.isEnabled()
 
     def _imageUploadedCallback(self, result, error=False, context=None, **kwargs):
         if context is None:
@@ -541,30 +498,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         image_upload_manger = ImageUploadManager(image, Controller.instance(), self.parent())
         image_upload_manger.upload()
 
-    def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
-        """
-        Callback for getQemuBinariesFromServer.
-
-        :param result: server response
-        :param error: indicates an error (boolean)
-        """
-
-        if error:
-            QtWidgets.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
-        else:
-            self.uiQemuListComboBox.clear()
-            for qemu in result:
-                if qemu["version"]:
-                    self.uiQemuListComboBox.addItem("{path} (v{version})".format(path=qemu["path"], version=qemu["version"]), qemu["path"])
-                else:
-                    self.uiQemuListComboBox.addItem("{path}".format(path=qemu["path"]), qemu["path"])
-            if self.uiQemuListComboBox.count() == 1:
-                self.next()
-            else:
-                i = self.uiQemuListComboBox.findData(self._appliance["qemu"]["arch"], flags=QtCore.Qt.MatchEndsWith)
-                if i != -1:
-                    self.uiQemuListComboBox.setCurrentIndex(i)
-
     def _install(self, version):
         """
         Install the appliance in GNS3
@@ -591,9 +524,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if not ok:
                 return False
             appliance_configuration["name"] = appliance_configuration["name"].strip()
-
-        if "qemu" in appliance_configuration:
-            appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
         new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, self._symbols, parent=self)
         TemplateManager.instance().createTemplate(Template(new_template), callback=self._templateCreatedCallback)
@@ -649,9 +579,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if self.currentPage() == self.uiServerWizardPage:
             if "docker" in self._appliance:
                 # skip Qemu binary selection and files pages if this is a Docker appliance
-                return super().nextId() + 2
-            elif "qemu" not in self._appliance:
-                # skip the Qemu binary selection page if not a Qemu appliance
                 return super().nextId() + 1
         return super().nextId()
 
@@ -707,8 +634,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     QtWidgets.QMessageBox.critical(self, "Remote server", "There is no remote servers configured in your preferences")
                     return False
                 self._compute_id = self.uiRemoteServersComboBox.itemData(self.uiRemoteServersComboBox.currentIndex()).id()
-            elif hasattr(self, "uiVMRadioButton") and self.uiVMRadioButton.isChecked():
-                self._compute_id = "vm"
             else:
                 if ComputeManager.instance().localPlatform():
                     if (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
@@ -718,28 +643,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                                 return False
                 self._compute_id = "local"
 
-        elif self.currentPage() == self.uiQemuWizardPage:
-            # validate the Qemu
-
-            if self._server_check is False:
-                QtWidgets.QMessageBox.critical(self, "Checking for KVM support", "Please wait for the server to reply...")
-                return False
-            if self.uiQemuListComboBox.currentIndex() == -1:
-                QtWidgets.QMessageBox.critical(self, "Qemu binary", "No compatible Qemu binary selected")
-                return False
         return True
-
-    @qslot
-    def _vmToggledSlot(self, checked):
-        """
-        Slot for when the VM radio button is toggled.
-
-        :param checked: either the button is checked or not
-        """
-
-        if checked:
-            self.uiRemoteServersGroupBox.setEnabled(False)
-            self.uiRemoteServersGroupBox.hide()
 
     @qslot
     def _remoteServerToggledSlot(self, checked):

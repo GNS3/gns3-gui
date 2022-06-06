@@ -106,32 +106,25 @@
     <item row="0" column="1">
      <widget class="QLineEdit" name="uiNameLineEdit"/>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QCheckBox" name="uiLegacyASACheckBox">
-      <property name="text">
-       <string>This is a legacy ASA VM</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiBinaryMemoryWizardPage">
+  <widget class="QWizardPage" name="uiPlatformMemoryWizardPage">
    <property name="title">
-    <string>QEMU binary and memory</string>
+    <string>QEMU platform and memory</string>
    </property>
    <property name="subTitle">
-    <string>Please check the Qemu binary is correctly set and the virtual machine has enough memory to work.</string>
+    <string>Please select the platform and check the virtual machine has enough memory to work.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <widget class="QLabel" name="uiQemuListLabel">
+     <widget class="QLabel" name="uiQemuPlatformLabel">
       <property name="text">
-       <string>Qemu binary:</string>
+       <string>Platform:</string>
       </property>
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QComboBox" name="uiQemuListComboBox">
+     <widget class="QComboBox" name="uiQemuPlatformComboBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -423,7 +416,7 @@
  </widget>
  <tabstops>
   <tabstop>uiNameLineEdit</tabstop>
-  <tabstop>uiQemuListComboBox</tabstop>
+  <tabstop>uiQemuPlatformComboBox</tabstop>
   <tabstop>uiRamSpinBox</tabstop>
   <tabstop>uiHdaDiskImageLineEdit</tabstop>
   <tabstop>uiHdaDiskImageToolButton</tabstop>

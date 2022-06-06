@@ -234,15 +234,6 @@ class Controller(QtCore.QObject):
                 return compute_id
         return compute_id
 
-    def putCompute(self, path, compute_id, *args, **kwargs):
-        """
-        API put on a specific compute
-        """
-
-        compute_id = self.__fix_compute_id(compute_id)
-        path = "/computes/{}{}".format(compute_id, path)
-        return self.put(path, *args, **kwargs)
-
     def request(self, method, path, *args, **kwargs):
         """
         Forward the query to the HTTP client or controller depending of the path
