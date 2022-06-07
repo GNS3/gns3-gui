@@ -406,8 +406,10 @@ class HTTPClient(QtCore.QObject):
 
         if params["version"].split("-")[0] != __version__.split("-")[0]:
             msg = "Client version {} is not the same as server (controller) version {}".format(__version__, params["version"])
-            # We don't allow different major version to interact even with dev build
-            if parse_version(__version__)[:2] != parse_version(params["version"])[:2]:
+            # We don't allow different versions to interact even with dev build
+            # (excepting post release corrections e.g 2.2.32.1, occassionally done when fixing a packaging problem)
+            # TODO: we should probably follow this standard starting with v3.0: https://semver.org/
+            if parse_version(__version__)[:3] != parse_version(params["version"])[:3]:
                 log.error(msg)
                 for request, callback in self._query_waiting_connections:
                     if callback is not None:
