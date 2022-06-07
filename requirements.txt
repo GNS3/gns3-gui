@@ -4,4 +4,4 @@ psutil==5.9.0
 distro==1.7.0
 setuptools==60.6.0; python_version >= '3.7'  # don't upgrade because of https://github.com/pypa/setuptools/issues/3084
 setuptools==59.6.0; python_version < '3.7'  # v59.7.0 dropped support for Python 3.6
-QDarkStyle==3.0.3
+QDarkStyle==3.1
