@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file '/home/grossmj/PycharmProjects/gns3-gui/gns3/modules/docker/ui/docker_vm_configuration_page.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_dockerVMConfigPageWidget(object):
     def setupUi(self, dockerVMConfigPageWidget):
@@ -93,6 +95,9 @@ class Ui_dockerVMConfigPageWidget(object):
         self.gridLayout.addWidget(self.uiConsoleResolutionLabel, 8, 0, 1, 1)
         self.uiConsoleResolutionComboBox = QtWidgets.QComboBox(self.tab)
         self.uiConsoleResolutionComboBox.setObjectName("uiConsoleResolutionComboBox")
+        self.uiConsoleResolutionComboBox.addItem("")
+        self.uiConsoleResolutionComboBox.addItem("")
+        self.uiConsoleResolutionComboBox.addItem("")
         self.uiConsoleResolutionComboBox.addItem("")
         self.uiConsoleResolutionComboBox.addItem("")
         self.uiConsoleResolutionComboBox.addItem("")
@@ -190,13 +195,16 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiConsoleTypeComboBox.setItemText(4, _translate("dockerVMConfigPageWidget", "none"))
         self.uiConsoleAutoStartCheckBox.setText(_translate("dockerVMConfigPageWidget", "Auto start console"))
         self.uiConsoleResolutionLabel.setText(_translate("dockerVMConfigPageWidget", "VNC console resolution:"))
-        self.uiConsoleResolutionComboBox.setItemText(0, _translate("dockerVMConfigPageWidget", "1920x1080"))
-        self.uiConsoleResolutionComboBox.setItemText(1, _translate("dockerVMConfigPageWidget", "1366x768"))
-        self.uiConsoleResolutionComboBox.setItemText(2, _translate("dockerVMConfigPageWidget", "1280x1024"))
-        self.uiConsoleResolutionComboBox.setItemText(3, _translate("dockerVMConfigPageWidget", "1280x800"))
-        self.uiConsoleResolutionComboBox.setItemText(4, _translate("dockerVMConfigPageWidget", "1024x768"))
-        self.uiConsoleResolutionComboBox.setItemText(5, _translate("dockerVMConfigPageWidget", "800x600"))
-        self.uiConsoleResolutionComboBox.setItemText(6, _translate("dockerVMConfigPageWidget", "640x480"))
+        self.uiConsoleResolutionComboBox.setItemText(0, _translate("dockerVMConfigPageWidget", "2560 x 1440"))
+        self.uiConsoleResolutionComboBox.setItemText(1, _translate("dockerVMConfigPageWidget", "1920x1080"))
+        self.uiConsoleResolutionComboBox.setItemText(2, _translate("dockerVMConfigPageWidget", "1680x1050"))
+        self.uiConsoleResolutionComboBox.setItemText(3, _translate("dockerVMConfigPageWidget", "1440x900"))
+        self.uiConsoleResolutionComboBox.setItemText(4, _translate("dockerVMConfigPageWidget", "1366x768"))
+        self.uiConsoleResolutionComboBox.setItemText(5, _translate("dockerVMConfigPageWidget", "1280x1024"))
+        self.uiConsoleResolutionComboBox.setItemText(6, _translate("dockerVMConfigPageWidget", "1280x800"))
+        self.uiConsoleResolutionComboBox.setItemText(7, _translate("dockerVMConfigPageWidget", "1024x768"))
+        self.uiConsoleResolutionComboBox.setItemText(8, _translate("dockerVMConfigPageWidget", "800x600"))
+        self.uiConsoleResolutionComboBox.setItemText(9, _translate("dockerVMConfigPageWidget", "640x480"))
         self.label.setText(_translate("dockerVMConfigPageWidget", "HTTP port in the container:"))
         self.label_2.setText(_translate("dockerVMConfigPageWidget", "HTTP path:"))
         self.uiEnvironmentLabel.setText(_translate("dockerVMConfigPageWidget", "Environment variables:\n"
@@ -217,4 +225,3 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiExtraVolumeTextEdit.setPlaceholderText(_translate("dockerVMConfigPageWidget", "e.g. /etc/sysctl.d"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("dockerVMConfigPageWidget", "Advanced"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_3), _translate("dockerVMConfigPageWidget", "Usage"))
-
