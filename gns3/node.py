@@ -17,6 +17,7 @@
 
 import os
 import pathlib
+import re
 
 from gns3.controller import Controller
 from gns3.ports.ethernet_port import EthernetPort
@@ -863,6 +864,33 @@ class Node(BaseNode):
 
         if error and "message" in result:
             log.error("Error while import config: {}".format(result["message"]))
+
+    @staticmethod
+    def isValidRfc1123Hostname(hostname):
+        """
+        Validate a hostname according to RFC 1123
+
+        Each element of the hostname must be from 1 to 63 characters long
+        and the entire hostname, including the dots, can be at most 253
+        characters long.  Valid characters for hostnames are ASCII
+        letters from a to z, the digits from 0 to 9, and the hyphen (-).
+        A hostname may not start with a hyphen.
+        """
+
+        if hostname[-1] == ".":
+            hostname = hostname[:-1]  # strip exactly one dot from the right, if present
+
+        if len(hostname) > 253:
+            return False
+
+        labels = hostname.split(".")
+
+        # the TLD must be not all-numeric
+        if re.match(r"[0-9]+$", labels[-1]):
+            return False
+
+        allowed = re.compile(r"(?!-)[a-zA-Z0-9-]{1,63}(?<!-)$")
+        return all(allowed.match(label) for label in labels)
 
     @staticmethod
     def onCloseOptions():
