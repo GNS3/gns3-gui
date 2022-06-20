@@ -1,5 +1,16 @@
 # Change Log
 
+## 2.2.33 20/06/2022
+
+* Upgrade sentry-sdk and psutil
+* Check that node names for Qemu and Docker are valid
+* Backport reset all console connections. Fixes #2072
+* Add more video resolutions to Docker containers using VNC. Fixes #3329
+* Add python_requires=">=3.4" in setup.py. Fixes  #3326
+* Only allow post release corrective versions of GUI and server to interact
+* Allow minor versions of GUI and server to interact
+* Update VirtViewer path. Fixes #3334
+
 ## 2.2.32 27/04/2022
 
 * Use public DSNs for Sentry
