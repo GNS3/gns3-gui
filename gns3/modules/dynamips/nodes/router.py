@@ -319,8 +319,8 @@ class Router(Node):
 
         # IOS names must start with a letter, end with a letter or digit, and
         # have as interior characters only letters, digits, and hyphens.
-        # They must be 63 characters or fewer.
-        if re.search(r"""^[\-\w]+$""", hostname) and len(hostname) <= 63:
+        # They must be 63 characters or fewer (ARPANET rules).
+        if re.search(r"""^(?!-|[0-9])[a-zA-Z0-9-]{1,63}(?<!-)$""", hostname):
             return True
         return False
 

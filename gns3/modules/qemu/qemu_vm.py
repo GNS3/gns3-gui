@@ -19,6 +19,8 @@
 QEMU VM implementation.
 """
 
+import re
+
 from gns3.node import Node
 from .settings import QEMU_VM_SETTINGS
 
@@ -181,6 +183,18 @@ class QemuVM(Node):
 
         from .pages.qemu_vm_configuration_page import QemuVMConfigurationPage
         return QemuVMConfigurationPage
+
+    @staticmethod
+    def validateHostname(hostname):
+        """
+        Checks if the hostname is valid.
+
+        :param hostname: hostname to check
+
+        :returns: boolean
+        """
+
+        return QemuVM.isValidRfc1123Hostname(hostname)
 
     @staticmethod
     def defaultSymbol():

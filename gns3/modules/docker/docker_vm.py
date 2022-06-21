@@ -123,6 +123,18 @@ class DockerVM(Node):
         return DockerVMConfigurationPage
 
     @staticmethod
+    def validateHostname(hostname):
+        """
+        Checks if the hostname is valid.
+
+        :param hostname: hostname to check
+
+        :returns: boolean
+        """
+
+        return DockerVM.isValidRfc1123Hostname(hostname)
+
+    @staticmethod
     def defaultSymbol():
         """
         Returns the default symbol path for this node.

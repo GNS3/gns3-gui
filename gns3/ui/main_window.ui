@@ -1323,6 +1323,11 @@ background-none;
     <string>Reset docks</string>
    </property>
   </action>
+  <action name="uiResetConsoleAllAction">
+   <property name="text">
+    <string>Reset all console connections</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
