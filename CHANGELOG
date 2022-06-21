@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.33.1 21/06/2022
+
+* Match GNS3 server version
+
 ## 2.2.33 20/06/2022
 
 * Upgrade sentry-sdk and psutil
