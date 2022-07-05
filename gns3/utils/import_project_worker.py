@@ -34,20 +34,18 @@ class ImportProjectWorker(QtCore.QObject):
     updated = QtCore.pyqtSignal(int)
     imported = QtCore.pyqtSignal(str)
 
-    def __init__(self, source, name=None, path=None):
+    def __init__(self, source, name=None):
         """
         :param source: The project file
         :param name: Name of the project
-        :param path: Path to the project location
         """
         super().__init__()
         self._source = source
         self._project_uuid = str(uuid.uuid4())
         self._name = name
-        self._path = path
 
     def run(self):
-        Controller.instance().post("/projects/{}/import".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source), timeout=None, params={"name": self._name, "path": self._path})
+        Controller.instance().post("/projects/{}/import".format(self._project_uuid), self._importProjectCallback, body=pathlib.Path(self._source), timeout=None, params={"name": self._name})
         self.updated.emit(25)
 
     def _importProjectCallback(self, content, error=False, server=None, context={}, **kwargs):
