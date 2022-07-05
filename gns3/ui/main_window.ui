@@ -1193,7 +1193,7 @@ background-none;
      <normaloff>:/icons/export.svg</normaloff>:/icons/export.svg</iconset>
    </property>
    <property name="text">
-    <string>Export portable project</string>
+    <string>Export project</string>
    </property>
   </action>
   <action name="uiImportProjectAction">
@@ -1202,7 +1202,7 @@ background-none;
      <normaloff>:/icons/import.svg</normaloff>:/icons/import.svg</iconset>
    </property>
    <property name="text">
-    <string>Import portable project</string>
+    <string>Import project</string>
    </property>
   </action>
   <action name="uiShowReadmeAction">

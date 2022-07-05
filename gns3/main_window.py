@@ -536,7 +536,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self._appliance_wizard.exec_()
         elif path.endswith(".gns3"):
             if Controller.instance().isRemote():
-                QtWidgets.QMessageBox.critical(self, "Open project", "Cannot open a .gns3 file on a remote server, please use a portable project (.gns3p) instead")
+                QtWidgets.QMessageBox.critical(self, "Open project", "Cannot open a .gns3 file on a remote server, please use a project (.gns3p) instead")
                 return
             else:
                 Topology.instance().loadProject(path)
@@ -1455,20 +1455,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def _exportProjectActionSlot(self):
         """
-        Slot called to export a portable project
+        Slot called to export a project
         """
 
         Topology.instance().exportProject()
 
     def _importProjectActionSlot(self):
         """
-        Slot called to import a portable project
+        Slot called to import a project
         """
 
         directory = self._portable_project_dir
         if not os.path.exists(directory):
             directory = Topology.instance().projectsDirPath()
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open portable project", directory,
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", directory,
                                                         "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
                                                         "GNS3 Portable Project (*.gns3project *.gns3p)")
         if path:

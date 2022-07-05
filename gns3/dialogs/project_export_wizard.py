@@ -92,9 +92,9 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         if len(directory) == 0:
             directory = LocalServer.instance().localServerSettings()["projects_path"]
 
-        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export portable project", directory,
-                                                        "GNS3 Portable Project (*.gns3project *.gns3p)",
-                                                        "GNS3 Portable Project (*.gns3project *.gns3p)")
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Export project", directory,
+                                                        "GNS3 Project (*.gns3project *.gns3p)",
+                                                        "GNS3 Project (*.gns3project *.gns3p)")
         if path is None or len(path) == 0:
             return
 
@@ -213,7 +213,7 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
                     "/export",
                     callback=None,
                     download_progress_callback=self._downloadFileProgress,
-                    progress_text="Exporting portable project files...",
+                    progress_text="Exporting project files...",
                     params=params,
                     timeout=None,
                     wait=True,
