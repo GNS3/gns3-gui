@@ -301,7 +301,7 @@ class Topology(QtCore.QObject):
 
         import_worker = ImportProjectWorker(project_file, name=dialog.getProjectSettings()["project_name"])
         import_worker.imported.connect(self._projectImportedSlot)
-        progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing portable project files...", "Cancel", parent=self._main_window, create_thread=False)
+        progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing project files...", "Cancel", parent=self._main_window, create_thread=False)
         progress_dialog.show()
         progress_dialog.exec_()
 
