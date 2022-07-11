@@ -78,7 +78,7 @@ class QNetworkReplyWatcher(QtCore.QObject):
         if bytes_total > 0:
             if not self._progress.maximum():
                 self._progress.setMaximum(100)
-            self._progress.setValue(100 * bytes_sent / bytes_total)
+            self._progress.setValue(int(100 * bytes_sent / bytes_total))
 
     def waitForReply(self, reply: QtNetwork.QNetworkReply, uploading: bool = False, timeout=60) -> None:
         """
