@@ -1058,10 +1058,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     if not new_hostname.strip():
                         QtWidgets.QMessageBox.critical(self, "Change hostname", "Hostname cannot be blank")
                         continue
-                    if hasattr(item.node(), "validateHostname"):
-                        if not item.node().validateHostname(new_hostname):
-                            QtWidgets.QMessageBox.critical(self, "Change hostname", "Invalid name detected for this node: {}".format(new_hostname))
-                            continue
                     item.node().update({"name": new_hostname})
 
     def changeSymbolActionSlot(self):

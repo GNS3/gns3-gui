@@ -120,23 +120,6 @@ class IOUDevice(Node):
         return iouDeviceConfigurationPage
 
     @staticmethod
-    def validateHostname(hostname):
-        """
-        Checks if the hostname is valid.
-
-        :param hostname: hostname to check
-
-        :returns: boolean
-        """
-
-        # IOS names must start with a letter, end with a letter or digit, and
-        # have as interior characters only letters, digits, and hyphens.
-        # They must be 63 characters or fewer (ARPANET rules).
-        if re.search(r"""^(?!-|[0-9])[a-zA-Z0-9-]{1,63}(?<!-)$""", hostname):
-            return True
-        return False
-
-    @staticmethod
     def defaultSymbol():
         """
         Returns the default symbol path for this node.

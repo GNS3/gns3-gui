@@ -185,18 +185,6 @@ class QemuVM(Node):
         return QemuVMConfigurationPage
 
     @staticmethod
-    def validateHostname(hostname):
-        """
-        Checks if the hostname is valid.
-
-        :param hostname: hostname to check
-
-        :returns: boolean
-        """
-
-        return QemuVM.isValidRfc1123Hostname(hostname)
-
-    @staticmethod
     def defaultSymbol():
         """
         Returns the default symbol path for this node.
