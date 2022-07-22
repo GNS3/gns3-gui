@@ -63,7 +63,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
                 "/vmware/vms",
                 self._compute_id,
                 self._getVMwareVMsFromServerCallback,
-                progressText="Listing VMware VMs...",
+                progress_text="Listing VMware VMs...",
                 wait=True
             )
 
