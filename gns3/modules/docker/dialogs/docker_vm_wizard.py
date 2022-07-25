@@ -39,7 +39,7 @@ class DockerVMWizard(VMWizard, Ui_DockerVMWizard):
 
         super().__init__(docker_containers, parent)
         self._docker_containers = docker_containers
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/docker.png"))
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/docker_guest.svg"))
 
         self.uiNewImageRadioButton.setChecked(True)
         self._existingImageRadioButtonToggledSlot(False)

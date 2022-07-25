@@ -43,7 +43,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
     def __init__(self, qemu_vms, parent):
 
         super().__init__(qemu_vms, parent)
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/qemu_guest.svg"))
 
         # Mandatory fields
         self.uiNameWizardPage.registerField("vm_name*", self.uiNameLineEdit)

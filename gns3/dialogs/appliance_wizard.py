@@ -139,7 +139,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         # add symbol
         if self._appliance["category"] == "guest":
-            symbol = ":/symbols/computer.svg"
+            if self._appliance.emulator() == "docker":
+                symbol = ":/symbols/docker_guest.svg"
+            elif self._appliance.emulator() == "qemu":
+                symbol = ":/symbols/qemu_guest.svg"
+            else:
+                symbol = ":/symbols/computer.svg"
         else:
             symbol = ":/symbols/{}.svg".format(self._appliance["category"])
         self.page(page_id).setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(symbol))
@@ -147,21 +152,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if self.page(page_id) == self.uiServerWizardPage:
 
             Controller.instance().getSymbols(self._getSymbolsCallback)
-
-            if "qemu" in self._appliance:
-                emulator_type = "qemu"
-            elif "iou" in self._appliance:
-                emulator_type = "iou"
-            elif "docker" in self._appliance:
-                emulator_type = "docker"
-            elif "dynamips" in self._appliance:
-                emulator_type = "dynamips"
-            else:
-                QtWidgets.QMessageBox.warning(self, "Appliance", "Could not determine the emulator type")
-
-            is_mac = ComputeManager.instance().localPlatform().startswith("darwin")
-            is_win = ComputeManager.instance().localPlatform().startswith("win")
-
             self.uiRemoteServersComboBox.clear()
             if len(ComputeManager.instance().remoteComputes()) == 0:
                 self.uiRemoteRadioButton.setEnabled(False)

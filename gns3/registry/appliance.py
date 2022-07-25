@@ -187,8 +187,11 @@ class Appliance(collections.abc.Mapping):
             return False
 
     def emulator(self):
+
         if "qemu" in self._appliance:
             return "qemu"
-        if "iou" in self._appliance:
+        elif "iou" in self._appliance:
             return "iou"
+        elif "docker" in self._appliance:
+            return "docker"
         return "dynamips"
