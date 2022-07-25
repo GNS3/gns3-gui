@@ -57,7 +57,7 @@ class EthernetSwitchWizard(VMWizard, Ui_EthernetSwitchWizard):
                           "ethertype": ""})
 
         settings = {"name": self.uiNameLineEdit.text(),
-                    "symbol": ":/symbols/ethernet_switch.svg",
+                    "symbol": "ethernet_switch",
                     "category": Node.switches,
                     "compute_id": self._compute_id,
                     "ports_mapping": ports}

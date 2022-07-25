@@ -30,7 +30,7 @@ QEMU_VM_SETTINGS = {
     "name": "",
     "default_name_format": "{name}-{0}",
     "usage": "",
-    "symbol": ":/symbols/qemu_guest.svg",
+    "symbol": "qemu_guest",
     "category": Node.end_devices,
     "port_name_format": "Ethernet{0}",
     "port_segment_size": 0,

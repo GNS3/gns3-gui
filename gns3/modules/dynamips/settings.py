@@ -34,7 +34,7 @@ IOS_ROUTER_SETTINGS = {
     "default_name_format": "R{0}",
     "usage": "",
     "image": "",
-    "symbol": ":/symbols/router.svg",
+    "symbol": "router",
     "category": Node.routers,
     "startup_config": "",
     "private_config": "",
