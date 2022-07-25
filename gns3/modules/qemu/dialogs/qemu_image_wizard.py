@@ -40,7 +40,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
 
         self._node = node
         self.setupUi(self)
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
+        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/qemu_guest.svg"))
 
         # Initialize "constants"
         self._mappings = {

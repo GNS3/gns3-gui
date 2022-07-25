@@ -29,7 +29,7 @@ DOCKER_SETTINGS = {
 DOCKER_CONTAINER_SETTINGS = {
     "default_name_format": "{name}-{0}",
     "usage": "",
-    "symbol": ":/symbols/docker_guest.svg",
+    "symbol": "docker_guest",
     "category": Node.end_devices,
     "start_command": "",
     "name": "",

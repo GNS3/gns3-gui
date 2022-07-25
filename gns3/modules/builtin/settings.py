@@ -40,7 +40,7 @@ CLOUD_SETTINGS = {
     "remote_console_type": "none",
     "remote_console_http_path": "/",
     "default_name_format": "Cloud{0}",
-    "symbol": ":/symbols/cloud.svg",
+    "symbol": "cloud",
     "category": Node.end_devices,
     "ports_mapping": [],
     "node_type": "cloud"
@@ -49,7 +49,7 @@ CLOUD_SETTINGS = {
 ETHERNET_HUB_SETTINGS = {
     "name": "",
     "default_name_format": "Hub{0}",
-    "symbol": ":/symbols/hub.svg",
+    "symbol": "hub",
     "category": Node.switches,
     "ports_mapping": [],
     "node_type": "ethernet_hub"
@@ -58,7 +58,7 @@ ETHERNET_HUB_SETTINGS = {
 ETHERNET_SWITCH_SETTINGS = {
     "name": "",
     "default_name_format": "Switch{0}",
-    "symbol": ":/symbols/ethernet_switch.svg",
+    "symbol": "ethernet_switch",
     "category": Node.switches,
     "console_type": "none",
     "ports_mapping": [],

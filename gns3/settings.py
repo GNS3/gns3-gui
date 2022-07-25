@@ -303,7 +303,7 @@ GENERAL_SETTINGS = {
     "multi_profiles": False,
     "hdpi": True,
     "auto_open_readme": True,
-    "symbol_theme": "Classic"
+    "symbol_theme": "Affinity-square-blue"
 }
 
 NODES_VIEW_SETTINGS = {

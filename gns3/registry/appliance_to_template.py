@@ -61,17 +61,13 @@ class ApplianceToTemplate:
         if new_template.get("symbol") is None:
             if appliance_config["category"] == "guest":
                 if "docker" in appliance_config:
-                    new_template["symbol"] = ":/symbols/docker_guest.svg"
+                    new_template["symbol"] = "docker_guest"
                 else:
-                    new_template["symbol"] = ":/symbols/qemu_guest.svg"
-            elif appliance_config["category"] == "router":
-                new_template["symbol"] = ":/symbols/router.svg"
+                    new_template["symbol"] = "qemu_guest"
             elif appliance_config["category"] == "switch":
-                new_template["symbol"] = ":/symbols/ethernet_switch.svg"
-            elif appliance_config["category"] == "multilayer_switch":
-                new_template["symbol"] = ":/symbols/multilayer_switch.svg"
-            elif appliance_config["category"] == "firewall":
-                new_template["symbol"] = ":/symbols/firewall.svg"
+                new_template["symbol"] = "ethernet_switch"
+            else:
+                new_template["symbol"] = appliance_config["category"]
 
         if "qemu" in appliance_config:
             new_template["template_type"] = "qemu"

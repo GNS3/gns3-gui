@@ -50,7 +50,7 @@ class VPCSNodeWizard(VMWizard, Ui_VPCSNodeWizard):
 
         settings = {"name": self.uiNameLineEdit.text(),
                     "base_script_file": "vpcs_base_config.txt",
-                    "symbol": ":/symbols/vpcs_guest.svg",
+                    "symbol": "vpcs_guest",
                     "compute_id": self._compute_id}
 
         return settings
