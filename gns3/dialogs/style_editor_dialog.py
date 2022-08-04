@@ -70,6 +70,7 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
                                                                                                     self._border_color.green(),
                                                                                                     self._border_color.blue(),
                                                                                                     self._border_color.alpha()))
+        self.uiBorderRadiusSpinBox.setValue(int(first_item._borderRadius))
         self.uiRotationSpinBox.setValue(int(first_item.rotation()))
         self.uiBorderWidthSpinBox.setValue(pen.width())
         index = self.uiBorderStyleComboBox.findData(pen.style())
@@ -116,10 +117,11 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
         for item in self._items:
             item.setPen(pen)
-            # on multiselection it's possible to select many type of items
+            # on multi-selection it's possible to select many type of items
             # but brush can be applied only on ShapeItem,
             if brush and isinstance(item, ShapeItem):
                 item.setBrush(brush)
+                item.setBorderRadius(self.uiBorderRadiusSpinBox.value())
             item.setRotation(self.uiRotationSpinBox.value())
 
     def done(self, result):

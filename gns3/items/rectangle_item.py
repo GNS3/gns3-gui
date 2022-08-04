@@ -42,8 +42,9 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
         :param option: QStyleOptionGraphicsItem instance
         :param widget: QWidget instance
         """
-
-        super().paint(painter, option, widget)
+        painter.setPen(self.pen())
+        painter.setBrush(self.brush())
+        painter.drawRoundedRect(self.rect(), self._borderRadius, self._borderRadius)
         self.drawLayerInfo(painter)
 
     def toSvg(self):
@@ -53,10 +54,12 @@ class RectangleItem(QtWidgets.QGraphicsRectItem, ShapeItem):
         svg = ET.Element("svg")
         svg.set("width", str(int(self.rect().width())))
         svg.set("height", str(int(self.rect().height())))
+        svg.set("border_radius", str(int(self._borderRadius)))
 
         rect = ET.SubElement(svg, "rect")
         rect.set("width", str(int(self.rect().width())))
         rect.set("height", str(int(self.rect().height())))
+        rect.set("border_radius", str(int(self._borderRadius)))
 
         rect = self._styleSvg(rect)
 

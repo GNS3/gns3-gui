@@ -41,6 +41,7 @@ class ShapeItem(DrawingItem):
         self._border = 5
         self._edge = None
         self._originally_movable = True
+        self._borderRadius = 0
 
         if svg is None:
             self.setRect(0, 0, width, height)
@@ -52,6 +53,9 @@ class ShapeItem(DrawingItem):
             self.fromSvg(svg)
         if self._id is None:
             self.create()
+
+    def setBorderRadius(self, radius: int):
+        self._borderRadius = radius
 
     def mousePressEvent(self, event):
         """
@@ -178,6 +182,7 @@ class ShapeItem(DrawingItem):
         svg = ET.fromstring(svg)
         width = float(svg.get("width", self.rect().width()))
         height = float(svg.get("height", self.rect().height()))
+        self._borderRadius = int(svg.get("border_radius", 0))
         self.setRect(0, 0, width, height)
 
         pen = QtGui.QPen()
