@@ -1,5 +1,54 @@
 # Change Log
 
+## 3.0.0a1 04/08/2022
+
+* Set default symbol theme to "Affinity-square-blue"
+* Fix creating a custom Ethernet switch template
+* Update decorative symbols (for Wizards etc.)
+* Use generic symbol names
+* Set raw image param when uploading an image from the appliance wizard
+* Checks for valid hostname on server side for Dynamips, IOU, Qemu and Docker nodes
+* Support compression levels
+* Add zstandard compression
+* Remove Qemu binary requirement
+* Use controller API to list images
+* Use new API endpoints to create/resize Qemu disk images.
+* Image management dialog
+* Drop Python 3.6 support and require Python >= 3.7
+* Improvements when connecting and updating computes
+* Use current directory when searching for images. Fixes #3198
+* Refactor server settings and wizard
+* Disable local server and GNS3 VM preferences
+* Image uploading to controller and project export
+* HTTP client refactoring
+* Handle empty compute_id in preferences. Ref #3265
+* Remove direct upload to compute
+* Send JWT token in query string when connecting to websocket. Ref https://github.com/GNS3/gns3-server/pull/1992
+* Remove traceng code
+* Option to delete orphaned image files from disk when template is removed. Fixes #3249
+* Remove Qemu legacy networking code
+* Isolate and unisolate support. Fixes https://github.com/GNS3/gns3-gui/issues/3190
+* Support authentication using JWT tokens
+* Providing the path to create a project is now deprecated.
+* Client to use version 3 of the API.
+* Change Qemu disk descriptions. Fixes #3035
+* Edit only text mode config files
+* Hide config import/export when configFiles attribute is empty
+* Qemu disk interfaces must be set to "none" by default. Ref #3035
+* Do not allow image to be configured on Qemu VM secondary slave disk if create config disk option is enabled.
+* Add explicit option to automatically create or not the config disk. Off by default.
+* Auxiliary console support for Qemu. Ref #2873 Improvements for auxiliary console support for Docker and Dynamips.
+* Support to reset all console connections. Ref https://github.com/GNS3/gns3-server/issues/1619
+* Support to reset links. Fixes https://github.com/GNS3/gns3-server/issues/1620
+* Fix bug when recent files cannot be seen in the new project dialog.
+* Wait for the controller to be online before allowing actions like creating or opening a project. Fixes #2907
+* Show progress dialog immediately when connecting to server. Ref #2907
+* QEMU config disk - enable QEMU config import/export
+* Add total RAM, CPUs and disk size to servers summary as well as disk usage in percent. Fixes https://github.com/GNS3/gns3-server/issues/1532
+* Resource constraints for Docker VMs.
+* Support for "usage" for "Cloud" nodes. Fixes https://github.com/GNS3/gns3-gui/issues/2887 Allow "usage" for all builtin nodes (not exposed in Ui).
+* Markdown support in project Readme. Fixes #2550 #2289 Allow project README to be edited from "File->Edit project". Fixes #2829
+
 ## 2.2.33.1 21/06/2022
 
 * Match GNS3 server version
