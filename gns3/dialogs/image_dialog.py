@@ -52,8 +52,8 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         files, _ = QtWidgets.QFileDialog.getOpenFileNames(
             self,
             "Select one or more images to upload",
-            ".",
-            "Images (*.bin *.image, *.qcow2, *.vmdk);;All files (*.*)"
+            QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation),
+            "Images (*.bin *.image *.qcow2 *.vmdk);;All files (*.*)"
         )
         error_msgs = ""
         for path in files:
