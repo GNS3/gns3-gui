@@ -220,7 +220,7 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiConsoleTypeComboBox.setItemText(4, _translate("dockerVMConfigPageWidget", "none"))
         self.uiConsoleAutoStartCheckBox.setText(_translate("dockerVMConfigPageWidget", "Auto start console"))
         self.uiConsoleResolutionLabel.setText(_translate("dockerVMConfigPageWidget", "VNC console resolution:"))
-        self.uiConsoleResolutionComboBox.setItemText(0, _translate("dockerVMConfigPageWidget", "2560 x 1440"))
+        self.uiConsoleResolutionComboBox.setItemText(0, _translate("dockerVMConfigPageWidget", "2560x1440"))
         self.uiConsoleResolutionComboBox.setItemText(1, _translate("dockerVMConfigPageWidget", "1920x1080"))
         self.uiConsoleResolutionComboBox.setItemText(2, _translate("dockerVMConfigPageWidget", "1680x1050"))
         self.uiConsoleResolutionComboBox.setItemText(3, _translate("dockerVMConfigPageWidget", "1440x900"))
