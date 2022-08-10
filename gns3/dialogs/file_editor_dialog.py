@@ -65,8 +65,9 @@ class FileEditorDialog(QtWidgets.QDialog, Ui_FileEditorDialog):
         self._target.get("/files/" + self._path, self._getCallback)
 
     def _getCallback(self, result, error=False, **kwargs):
+
         if not error:
-            self.uiFileTextEdit.setText(result.decode("utf-8", errors="ignore"))
+            self.uiFileTextEdit.setText(result)
         elif result.get("status") == 404:
             if self._default:
                 self.uiFileTextEdit.setText(self._default)
