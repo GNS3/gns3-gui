@@ -22,7 +22,7 @@ import inspect
 import datetime
 import platform
 
-from .qt import QtCore
+from .qt import QtCore, QtWidgets
 from .topology import Topology
 from .version import __version__
 from .console_cmd import ConsoleCmd
@@ -108,6 +108,29 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         # required for Cmd module (do_help etc.)
         self.stdout = sys.stdout
         self._topology = Topology.instance()
+
+    def contextMenuEvent(self, event):
+        """
+        Handles all context menu events.
+
+        :param event: QContextMenuEvent instance
+        """
+
+        menu = self.createStandardContextMenu()
+        delete_all_action = QtWidgets.QAction("Delete All", menu)
+        delete_all_action.triggered.connect(self._deleteAllActionSlot)
+        menu.addAction(delete_all_action)
+        menu.exec_(event.globalPos());
+
+    def _deleteAllActionSlot(self):
+        """
+        Delete all action slot
+        """
+
+        self.clear()
+        self.write(self.prompt)
+        self.lines = []
+        self._clearLine()
 
     def _writeMessageSlot(self, message, level):
         """
