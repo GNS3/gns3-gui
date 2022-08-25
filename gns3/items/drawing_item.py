@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 class DrawingItem:
     # Map QT stroke to SVG style
     QT_DASH_TO_SVG = {
-        QtCore.Qt.SolidLine: "",
+        QtCore.Qt.SolidLine: "none",
         QtCore.Qt.NoPen: None,
         QtCore.Qt.DashLine: "25, 25",
         QtCore.Qt.DotLine: "5, 25",
