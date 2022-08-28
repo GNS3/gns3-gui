@@ -1,5 +1,5 @@
 -r requirements.txt
 
-pytest==6.2.5
-flake8==4.0.1
-pytest-timeout==2.0.1
+pytest==7.1.2
+flake8==5.0.4
+pytest-timeout==2.1.0
