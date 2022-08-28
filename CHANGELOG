@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.34 28/08/2022
+
+* Upgrade dev dependencies
+* Implement new option (Delete All) to contextual menu in "Console" dock. Fixes #3325
+* Fix 2560x1440 resolution for Docker container
+
 ## 2.2.33.1 21/06/2022
 
 * Match GNS3 server version
