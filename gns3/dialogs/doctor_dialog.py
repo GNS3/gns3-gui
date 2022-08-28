@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 import psutil
 import platform
 import os
@@ -174,7 +175,7 @@ class DoctorDialog(QtWidgets.QDialog, Ui_DoctorDialog):
 
 
 if __name__ == '__main__':
-    import sys
+
     app = QtWidgets.QApplication(sys.argv)
     main = QtWidgets.QMainWindow()
     dialog = DoctorDialog(main, console=True)
