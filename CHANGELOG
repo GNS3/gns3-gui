@@ -49,6 +49,12 @@
 * Support for "usage" for "Cloud" nodes. Fixes https://github.com/GNS3/gns3-gui/issues/2887 Allow "usage" for all builtin nodes (not exposed in Ui).
 * Markdown support in project Readme. Fixes #2550 #2289 Allow project README to be edited from "File->Edit project". Fixes #2829
 
+## 2.2.34 28/08/2022
+
+* Upgrade dev dependencies
+* Implement new option (Delete All) to contextual menu in "Console" dock. Fixes #3325
+* Fix 2560x1440 resolution for Docker container
+
 ## 2.2.33.1 21/06/2022
 
 * Match GNS3 server version
