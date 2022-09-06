@@ -1,5 +1,17 @@
 # Change Log
 
+## 3.0.0a2 06/09/2022
+
+* Add missing 'sys' module. Ref #3373
+* Upgrade dev dependencies
+* Dot not allow "no border" style for line items
+* Use "none" for solid line style in drawing items
+* Implement new option (Delete All) to contextual menu in "Console" dock. Fixes #3325
+* Fix editing Docker container config generates exception and empty config. Fixes #3371
+* Fix 2560x1440 resolution for Docker container
+* Fix cannot detect images by default when trying to upload them in the Image Manager. Fixes #3367
+* Fix unable to set VNC console resolution. Fixes  #3365
+
 ## 3.0.0a1 04/08/2022
 
 * Set default symbol theme to "Affinity-square-blue"
