@@ -22,7 +22,6 @@ Style editor to edit Shape items.
 from ..qt import QtCore, QtWidgets, QtGui
 from ..ui.style_editor_dialog_ui import Ui_StyleEditorDialog
 from ..items.shape_item import ShapeItem
-from ..items.line_item import LineItem
 
 
 class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
@@ -49,8 +48,7 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         self.uiBorderStyleComboBox.addItem("Dot", QtCore.Qt.DotLine)
         self.uiBorderStyleComboBox.addItem("Dash Dot", QtCore.Qt.DashDotLine)
         self.uiBorderStyleComboBox.addItem("Dash Dot Dot", QtCore.Qt.DashDotDotLine)
-        if True not in list(map(lambda item: isinstance(item, LineItem), items)):
-            self.uiBorderStyleComboBox.addItem("No border", QtCore.Qt.NoPen)
+        self.uiBorderStyleComboBox.addItem("No border", QtCore.Qt.NoPen)
 
         # use the first item in the list as the model
         first_item = items[0]
