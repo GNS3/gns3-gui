@@ -1,6 +1,6 @@
 jsonschema==3.2.0
-sentry-sdk==1.9.5
-psutil==5.9.1
+sentry-sdk==1.9.10
+psutil==5.9.2
 distro==1.7.0
 setuptools==60.6.0; python_version >= '3.7'  # don't upgrade because of https://github.com/pypa/setuptools/issues/3084
 setuptools==59.6.0; python_version < '3.7'  # v59.7.0 dropped support for Python 3.6
