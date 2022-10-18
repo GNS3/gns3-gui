@@ -10,6 +10,7 @@ environment:
 
 install:
    - cinst nmap
+   - "%PYTHON%\\python.exe -m pip install -U pip setuptools"  # upgrade pip & setuptools first
    - "%PYTHON%\\python.exe -m pip install -r dev-requirements.txt"
    - "%PYTHON%\\python.exe -m pip install -r win-requirements.txt"
 
