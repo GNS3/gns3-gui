@@ -197,9 +197,6 @@ class PacketCapture:
                 pass
             del self._capture_reader_process[link]
 
-        # PCAP capture file path
-        command = command.replace("%c", '"' + capture_file_path + '"')
-
         # Add description
         description = "{} {} to {} {}".format(link.sourceNode().name(),
                                               link.sourcePort().name(),
@@ -208,6 +205,15 @@ class PacketCapture:
         command = command.replace("%d", description)
 
         if "|" in command:
+
+            # PCAP capture file path
+            if sys.platform.startswith("win"):
+                # use the short path name on Windows because tail.exe doesn't support non-ascii characters
+                import win32api
+                command = command.replace("%c", '"' + win32api.GetShortPathName(capture_file_path) + '"')
+            else:
+                command = command.replace("%c", '"' + capture_file_path + '"')
+
             # live traffic capture (using tail)
             command1, command2 = command.split("|", 1)
             info = None
@@ -242,6 +248,10 @@ class PacketCapture:
                 QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't start packet capture program {}".format(str(e)))
                 return
         else:
+
+            # PCAP capture file path
+            command = command.replace("%c", '"' + capture_file_path + '"')
+
             # normal traffic capture
             if not sys.platform.startswith("win"):
                 command = shlex.split(command)
