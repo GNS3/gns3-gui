@@ -404,7 +404,7 @@ class HTTPClient(QtCore.QObject):
             self._query_waiting_connections = []
             return
 
-        if params["version"].split("-")[0] != __version__.split("-")[0]:
+        if params["version"].split("+")[0] != __version__.split("+")[0]:
             msg = "Client version {} is not the same as server (controller) version {}".format(__version__, params["version"])
             # We don't allow different versions to interact even with dev build
             # (excepting post release corrections e.g 2.2.32.1, occassionally done when fixing a packaging problem)
