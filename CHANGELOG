@@ -1,5 +1,15 @@
 # Change Log
 
+## 2.2.35 08/11/2022
+
+* Fix "variables": [] in project file leads to unlimited increase of empty name/value pairs in GUI. Fixes #3397
+* Make version PEP 440 compliant
+* Support for Python 3.11
+* Upgrade PyQt to 5.15.7 and pywin32 to v305
+* Allow for more dependency versions at patch level
+* Replace deprecated distro.linux_distribution() call
+* Add a fix for the CVE-2007-4559
+
 ## 2.2.34 28/08/2022
 
 * Upgrade dev dependencies

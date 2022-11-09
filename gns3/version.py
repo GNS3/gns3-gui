@@ -23,8 +23,8 @@
 # or negative for a release candidate or beta (after the base version
 # number has been incremented)
 
-__version__ = "2.2.34"
-__version_info__ = (2, 2, 34, 0)
+__version__ = "2.2.35"
+__version_info__ = (2, 2, 35, 0)
 
 if "dev" in __version__:
     try:
@@ -32,6 +32,6 @@ if "dev" in __version__:
         import subprocess
         if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".git")):
             r = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip("\n")
-            __version__ += "-" + r
+            __version__ += "+" + r
     except Exception as e:
         print(e)
