@@ -546,7 +546,7 @@ class HTTPClient(QtCore.QObject):
         if version is None or local is None:
             raise HttpClientBadRequestError(f"The server is not a GNS3 server: {content}")
 
-        if version.split("-")[0] != __version__.split("-")[0]:
+        if version.split("+")[0] != __version__.split("+")[0]:
             msg = f"Client version {__version__} is not the same as server version {version}"
             # We don't allow different major version to interact even with dev build
             if __version_info__[3] == 0 or parse_version(__version__)[:2] != parse_version(version)[:2]:

@@ -51,8 +51,9 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         self._readme_filename = "README.txt"
         self.uiTabWidget.currentChanged.connect(self._previewMarkdownSlot)
         self._loadReadme()
-
-        self._variables = self.setUpVariables()
+        self._variables = self._project.variables()
+        if not self._variables:
+            self._variables = [{"name": "", "value": ""}]
         self.updateGlobalVariables()
 
     def _loadReadme(self):
@@ -79,16 +80,6 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
             document = QtGui.QTextDocument()
             self.uiReadmePreview.setDocument(document)
             document.setMarkdown(self.uiReadmeTextEdit.toPlainText())
-
-    def setUpVariables(self):
-        new_variable = {"name": "", "value": ""}
-        variables = self._project.variables()
-
-        if variables is not None:
-            variables.append(new_variable)
-        else:
-            variables = [new_variable]
-        return variables
 
     def updateGlobalVariables(self):
         while True:

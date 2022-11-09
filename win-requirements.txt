@@ -1,4 +1,4 @@
 -r requirements.txt
 
 PyQt5==5.15.7 # pyup: ignore
-pywin32==304 # pyup: ignore
+pywin32==305 # pyup: ignore
