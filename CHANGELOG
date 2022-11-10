@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.35.1 10/11/2022
+
+* Re-release Web-Ui v2.2.35
+
 ## 2.2.35 08/11/2022
 
 * Fix "variables": [] in project file leads to unlimited increase of empty name/value pairs in GUI. Fixes #3397
