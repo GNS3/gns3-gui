@@ -350,7 +350,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
                 QtWidgets.QMessageBox.warning(self, "Qemu","Could not find '{}' in the Qemu binaries list, please select a new binary".format(qemu_path))
             else:
                 QtWidgets.QMessageBox.warning(self, "Qemu","Could not find '{}' in the Qemu binaries list, an alternative path has been selected".format(qemu_path))
-
+    
     def _cpuThrottlingChangedSlot(self, state):
         """
         Slot to enable or not CPU throttling.
@@ -478,6 +478,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiBiosImageLineEdit.setText(settings["bios_image"])
             self.uiInitrdLineEdit.setText(settings["initrd"])
             self.uiKernelImageLineEdit.setText(settings["kernel_image"])
+            self.uiSnapshotPathLineEdit.setText(settings["path_snapshot"])
         else:
             self.uiNameLabel.hide()
             self.uiNameLineEdit.hide()
@@ -614,6 +615,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             settings["bios_image"] = self.uiBiosImageLineEdit.text().strip()
             settings["initrd"] = self.uiInitrdLineEdit.text().strip()
             settings["kernel_image"] = self.uiKernelImageLineEdit.text().strip()
+            settings["path_snapshot"] = self.uiSnapshotPathLineEdit.text().strip()
 
             # check and save the MAC address
             mac = self.uiMacAddrLineEdit.text()

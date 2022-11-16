@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="uiQemutabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="uiGeneralSettingsTab">
       <attribute name="title">
@@ -222,6 +222,127 @@
        <string>HDD</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_11">
+       <item row="3" column="0">
+        <widget class="QGroupBox" name="uiHddGroupBox">
+         <property name="title">
+          <string>HDD (Secondary Slave)</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiCreateConfigDiskCheckBox">
+            <property name="text">
+             <string>Automatically create a config disk on HDD</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiHddDiskImageLabel">
+            <property name="text">
+             <string>Disk image:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <widget class="QLineEdit" name="uiHddDiskImageLineEdit"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiHddDiskImageToolButton">
+              <property name="text">
+               <string>&amp;Browse...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextOnly</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiHddDiskImageCreateToolButton">
+              <property name="text">
+               <string>Create...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiHddDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="uiHddDiskInterfaceLabel">
+            <property name="text">
+             <string>Disk interface:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="uiHddDiskInterfaceComboBox"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="uiHdcGroupBox">
+         <property name="title">
+          <string>HDC (Secondary Master)</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiHdcDiskImageLabel">
+            <property name="text">
+             <string>Disk image:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <widget class="QLineEdit" name="uiHdcDiskImageLineEdit"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiHdcDiskImageToolButton">
+              <property name="text">
+               <string>&amp;Browse...</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextOnly</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiHdcDiskImageCreateToolButton">
+              <property name="text">
+               <string>Create...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="uiHdcDiskImageResizeToolButton">
+              <property name="text">
+               <string>Resize...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiHdcDiskInterfaceLabel">
+            <property name="text">
+             <string>Disk interface:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="uiHdcDiskInterfaceComboBox"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QGroupBox" name="uiHdaGroupBox">
          <property name="title">
@@ -332,127 +453,6 @@
           </item>
           <item row="1" column="1">
            <widget class="QComboBox" name="uiHdbDiskInterfaceComboBox"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="uiHdcGroupBox">
-         <property name="title">
-          <string>HDC (Secondary Master)</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="0">
-           <widget class="QLabel" name="uiHdcDiskImageLabel">
-            <property name="text">
-             <string>Disk image:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <widget class="QLineEdit" name="uiHdcDiskImageLineEdit"/>
-            </item>
-            <item>
-             <widget class="QToolButton" name="uiHdcDiskImageToolButton">
-              <property name="text">
-               <string>&amp;Browse...</string>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextOnly</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="uiHdcDiskImageCreateToolButton">
-              <property name="text">
-               <string>Create...</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="uiHdcDiskImageResizeToolButton">
-              <property name="text">
-               <string>Resize...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="uiHdcDiskInterfaceLabel">
-            <property name="text">
-             <string>Disk interface:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="uiHdcDiskInterfaceComboBox"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QGroupBox" name="uiHddGroupBox">
-         <property name="title">
-          <string>HDD (Secondary Slave)</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_9">
-          <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="uiCreateConfigDiskCheckBox">
-            <property name="text">
-             <string>Automatically create a config disk on HDD</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="uiHddDiskImageLabel">
-            <property name="text">
-             <string>Disk image:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
-            <item>
-             <widget class="QLineEdit" name="uiHddDiskImageLineEdit"/>
-            </item>
-            <item>
-             <widget class="QToolButton" name="uiHddDiskImageToolButton">
-              <property name="text">
-               <string>&amp;Browse...</string>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextOnly</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="uiHddDiskImageCreateToolButton">
-              <property name="text">
-               <string>Create...</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="uiHddDiskImageResizeToolButton">
-              <property name="text">
-               <string>Resize...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="uiHddDiskInterfaceLabel">
-            <property name="text">
-             <string>Disk interface:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="uiHddDiskInterfaceComboBox"/>
           </item>
          </layout>
         </widget>
@@ -930,6 +930,26 @@
         <widget class="QPlainTextEdit" name="uiUsageTextEdit"/>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="uiSnapshotPath">
+      <attribute name="title">
+       <string>Snapshot Path</string>
+      </attribute>
+      <widget class="QWidget" name="verticalLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>90</y>
+         <width>891</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QLineEdit" name="uiSnapshotPathLineEdit"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </widget>
    </item>

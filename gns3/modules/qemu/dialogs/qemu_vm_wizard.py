@@ -95,7 +95,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
                 Qemu.instance().getQemuBinariesFromServer(self._compute_id, self._getQemuBinariesFromServerCallback)
             except ModuleError as e:
                 QtWidgets.QMessageBox.critical(self, "Qemu binaries", "Error while getting the QEMU binaries: {}".format(e))
-
+    
     def _getQemuBinariesFromServerCallback(self, result, error=False, **kwargs):
         """
         Callback for getQemuBinariesFromServer.
@@ -103,7 +103,6 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         :param result: server response
         :param error: indicates an error (boolean)
         """
-
         if error:
             QtWidgets.QMessageBox.critical(self, "Qemu binaries", "{}".format(result["message"]))
         else:
@@ -152,7 +151,8 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
             "qemu_path": qemu_path,
             "compute_id": self._compute_id,
             "category": Node.end_devices,
-            "console_type": console_type
+            "console_type": console_type,
+            "path_snapshot": self.uiSnaphotPathLineEdit.text() # this is save here in order to retrieve it when clicking on 'Apply' in configuration panel  
         }
 
         if self.uiHdaDiskImageLineEdit.text().strip():
@@ -190,7 +190,6 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         if self.page(current_id) == self.uiDiskWizardPage:
             if self.uiLegacyASACheckBox.isChecked():
                 return self.uiDiskWizardPage.nextId()
-            return -1
         elif self.page(current_id) == self.uiInitrdKernelImageWizardPage:
-            return -1
+            return self.uiInitrdKernelImageWizardPage.nextId()
         return QtWidgets.QWizard.nextId(self)

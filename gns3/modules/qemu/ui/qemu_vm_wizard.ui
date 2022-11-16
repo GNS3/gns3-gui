@@ -420,6 +420,36 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiSnapshotPath">
+   <property name="title">
+    <string>Path of snapshot</string>
+   </property>
+   <property name="subTitle">
+    <string>Please choose a path where the snapshot will be stored</string>
+   </property>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>621</width>
+      <height>72</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_5">
+     <item row="0" column="0">
+      <widget class="QLabel" name="uiPathSnapshotLabel">
+       <property name="text">
+        <string>Path: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="uiSnaphotPathLineEdit"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>uiNameLineEdit</tabstop>
