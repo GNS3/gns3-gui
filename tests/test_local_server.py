@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import json
 import pytest
 import logging
 import subprocess
@@ -45,8 +44,9 @@ path={}""".format(local_server_path))
         yield local_server
 
 
+# Windows GUI doesn't support a local server starting with v3.0
 @pytest.mark.skipif(sys.platform.startswith('win') is True, reason='Not for windows')
-def test_startLocalServer(tmpdir, local_server, local_server_path):
+def test_start_local_server(tmpdir, local_server, local_server_path):
     logging.getLogger().setLevel(logging.DEBUG)  # Make sure we are using debug level in order to get the --debug
 
     process_mock = MagicMock()
@@ -65,7 +65,9 @@ def test_startLocalServer(tmpdir, local_server, local_server_path):
                                  ], stderr=unittest.mock.ANY)
 
 
-def test_killAlreadyRunningServer(local_server, local_server_path):
+# Windows GUI doesn't support a local server starting with v3.0
+@pytest.mark.skipif(sys.platform.startswith('win') is True, reason='Not for windows')
+def test_kill_already_running_server(local_server):
     with open(local_server._pid_path(), "w+") as f:
         f.write("42")
 

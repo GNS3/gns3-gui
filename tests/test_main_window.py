@@ -23,8 +23,9 @@ from unittest.mock import MagicMock
 @pytest.fixture
 def real_main_window():
     from gns3.main_window import MainWindow
-    return MainWindow()
-
+    main_window = MainWindow()
+    main_window.local_config = MagicMock()
+    return main_window
 
 def test_main_window_settings_changed_signal(real_main_window):
     settings = real_main_window.settings()
@@ -38,6 +39,6 @@ def test_main_window_settings_changed_slot(real_main_window):
     instance = MagicMock()
     manager = MagicMock()
     manager.instance.return_value = instance
-    real_main_window._appliance_manager =  manager
+    real_main_window._appliance_manager = manager
     real_main_window.settingsChangedSlot()
     assert instance.refresh.called
