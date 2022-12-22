@@ -161,7 +161,7 @@ def local_config():
     return LocalConfig.instance()
 
 
-@pytest.yield_fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def run_around_tests(local_config, main_window):
     """
     This setup a temporay environnement around tests

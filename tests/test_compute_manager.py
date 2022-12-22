@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import copy
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, ANY
 
 from gns3.compute_manager import ComputeManager
 from gns3.compute import Compute
@@ -167,7 +167,7 @@ def test_updateList_added(controller):
     controller._http_client = MagicMock()
     cm.updateList(computes)
     assert compute.id() in cm._computes
-    controller._http_client.sendRequest.assert_called_with("POST", "/computes", None, body=compute.__json__())
+    controller._http_client.sendRequest.assert_called_with("POST", "/computes", callback=ANY, body=compute.__json__(), params={'connect': True})
 
 
 def test_updateList_no_change(controller):

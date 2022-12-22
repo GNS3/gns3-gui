@@ -50,7 +50,7 @@ def http_client(http_request, network_manager):
     return http_client
 
 
-@pytest.yield_fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def http_request():
 
     mock = unittest.mock.Mock()
