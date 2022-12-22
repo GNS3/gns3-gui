@@ -20,6 +20,7 @@ import sys
 
 from .qt import QtWidgets, QtGui, QtCore
 from gns3.utils import parse_version
+from gns3.local_config import LocalConfig
 from .version import __version__
 
 import logging
@@ -37,7 +38,9 @@ class Application(QtWidgets.QApplication):
             # only available starting Qt version 5.6
             if hdpi:
                 if sys.platform.startswith("linux"):
-                    log.warning("HDPI mode is enabled. HDPI support on Linux is not fully stable and GNS3 may crash depending of your version of Linux. To disabled HDPI mode please edit ~/.config/GNS3/gns3_gui.conf and set 'hdpi' to 'false'")
+                    local_config_path = LocalConfig.instance().configFilePath()
+                    log.warning("HDPI mode is enabled. HDPI support on Linux is not fully stable and GNS3 may crash depending of your version of Linux. "
+                                f"To disabled HDPI mode please edit '{local_config_path}' and set 'hdpi' to 'false'")
                 self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
                 self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
             else:
