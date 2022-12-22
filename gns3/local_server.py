@@ -179,7 +179,9 @@ class LocalServer(QtCore.QObject):
         self._settings = copy.copy(settings)
 
         # local GNS3 server path
-        local_server_path = shutil.which(settings["path"].strip())
+        local_server_path = None
+        if settings.get("path"):
+            local_server_path = shutil.which(settings["path"].strip())
         if local_server_path is None:
             default_server_path = shutil.which("gns3server")
             if default_server_path is not None:

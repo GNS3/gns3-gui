@@ -4,13 +4,12 @@ import os
 import uuid
 from unittest.mock import MagicMock
 import tempfile
-import urllib.request
 import sys
 sys._called_from_test = True
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# If the QT application is not initialized we can got segfault
+#  We can get segfault if the QT application is not initialized
 from gns3.qt.QtWidgets import QApplication
 app = QApplication([])
 
@@ -76,17 +75,6 @@ def controller():
     c = Controller.instance()
     c._http_client = MagicMock()
     return c
-
-
-@pytest.fixture
-def gns3vm_server():
-
-    from gns3.servers import Servers
-
-    Servers.instance()._settings["vm"]["auto_start"] = True
-    Servers.instance().initVMServer()
-    assert Servers.instance().vmServer() is not None
-    return Servers.instance().vmServer()
 
 
 @pytest.fixture
@@ -164,7 +152,7 @@ def local_config():
 @pytest.fixture(autouse=True)
 def run_around_tests(local_config, main_window):
     """
-    This setup a temporay environnement around tests
+    This setup a temporary environment around tests
     """
 
     from gns3.main_window import MainWindow

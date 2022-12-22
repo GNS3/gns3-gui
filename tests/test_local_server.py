@@ -65,7 +65,7 @@ def test_startLocalServer(tmpdir, local_server, local_server_path):
                                  ], stderr=unittest.mock.ANY)
 
 
-def test_killAlreadyRunningServer(local_server):
+def test_killAlreadyRunningServer(local_server, local_server_path):
     with open(local_server._pid_path(), "w+") as f:
         f.write("42")
 
