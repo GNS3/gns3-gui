@@ -189,7 +189,8 @@ def test_add_appliance_with_symbol(linux_microcore_img):
     assert new_template["symbol"] == ":/symbols/asa.svg"
 
 
-def test_add_appliance_with_symbol_from_symbols_dir(empty_config, linux_microcore_img, symbols_dir):
+def test_add_appliance_with_symbol_from_symbols_dir(linux_microcore_img, symbols_dir, controller):
+
     with open("tests/registry/appliances/microcore-linux.gns3a", encoding="utf-8") as f:
         config = json.load(f)
     config["images"] = [
@@ -201,6 +202,7 @@ def test_add_appliance_with_symbol_from_symbols_dir(empty_config, linux_microcor
     ]
     config["symbol"] = "linux_guest.svg"
 
+    controller.settings()["symbols_path"] = symbols_dir
     symbol_path = os.path.join(symbols_dir, "linux_guest.svg")
     open(symbol_path, 'w+').close()
 
