@@ -137,6 +137,7 @@ class HTTPClient(QtCore.QObject):
         self._protocol = settings.get("protocol", "http")
         self._host = settings["host"]
         self._prefix = prefix
+        self._auth_attempted = False
         self._jwt_token = None
         try:
             if self._host is None or self._host == "0.0.0.0":
@@ -501,21 +502,31 @@ class HTTPClient(QtCore.QObject):
             self.disconnected_signal.emit()
             self.close()
 
+    def _requestCredentialsFromUser(self):
+        """
+        Request credentials from user
+
+        :return: username, password
+        """
+
+        username = password = None
+        login_dialog = LoginDialog(self._main_window)
+        if self._username:
+            login_dialog.setUsername(self._username)
+        login_dialog.show()
+        login_dialog.raise_()
+        if login_dialog.exec_():
+            username = login_dialog.getUsername()
+            password = login_dialog.getPassword()
+        return username, password
+
     def _handleUnauthorizedRequest(self, reply: QtNetwork.QNetworkReply) -> None:
         """
         Request the username / password to authenticate with the server
         """
 
-        if not self._username or not self._password:
-            username = password = None
-            login_dialog = LoginDialog(self._main_window)
-            if self._username:
-                login_dialog.setUsername(self._username)
-            login_dialog.show()
-            login_dialog.raise_()
-            if login_dialog.exec_():
-                username = login_dialog.getUsername()
-                password = login_dialog.getPassword()
+        if not self._username or not self._password or self._auth_attempted is True:
+            username, password = self._requestCredentialsFromUser()
         else:
             username = self._username
             password = self._password
@@ -525,11 +536,13 @@ class HTTPClient(QtCore.QObject):
                 "username": username,
                 "password": password
             }
+            self._auth_attempted = True
             content = self._executeHTTPQuery("POST", "/users/authenticate", body=body, wait=True)
             if content:
                 log.info(f"Authenticated with controller {self._host} on port {self._port}")
                 token = content.get("access_token")
                 if token:
+                    self._auth_attempted = False
                     self._jwt_token = token
                     return
         else:
