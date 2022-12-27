@@ -1,5 +1,18 @@
 # Change Log
 
+## 3.0.0a3 27/12/2022
+
+* Catch timeout error while updating appliance files
+* Fix RecursionError with invalid credentials. Fixes #3374
+* Allow raw images by default. Fixes https://github.com/GNS3/gns3-server/issues/2097
+* Remove deprecated PuTTY option in preferences. Ref https://github.com/GNS3/gns3-gui/discussions/3415
+* Fix "variables": [] in project file leads to unlimited increase of empty name/value pairs in GUI. Fixes #3397
+* Ignore local revision when comparing versions.
+* Make version PEP 440 compliant
+* Support for Python 3.11
+* Replace deprecated distro.linux_distribution() call
+* Add a fix for the CVE-2007-4559
+
 ## 2.2.35.1 10/11/2022
 
 * Re-release Web-Ui v2.2.35
