@@ -19,6 +19,7 @@ from .qt import QtCore
 from .controller import Controller
 from .local_config import LocalConfig
 from .settings import GENERAL_SETTINGS
+from .http_client_error import HttpClientError
 
 
 import logging
@@ -49,12 +50,17 @@ class ApplianceManager(QtCore.QObject):
             settings = LocalConfig.instance().loadSectionSettings("MainWindow", GENERAL_SETTINGS)
             symbol_theme = settings["symbol_theme"]
             if update is True:
-                self._controller.get(
-                    "/appliances?update=yes&symbol_theme={}".format(symbol_theme),
-                    self._listAppliancesCallback,
-                    progress_text="Downloading appliances from online registry...",
-                    wait=True
-                )
+                try:
+                    self._controller.get(
+                        "/appliances?update=yes&symbol_theme={}".format(symbol_theme),
+                        self._listAppliancesCallback,
+                        progress_text="Downloading appliances from online registry...",
+                        wait=True,
+                        timeout=300
+                    )
+                except HttpClientError as e:
+                    log.error(f"Error while getting appliances list: {e}")
+                    return
             else:
                 self._controller.get("/appliances?symbol_theme={}".format(symbol_theme), self._listAppliancesCallback)
 
