@@ -450,6 +450,11 @@ class Ui_MainWindow(object):
         self.uiNewTemplateAction.setObjectName("uiNewTemplateAction")
         self.uiResetDocksAction = QtWidgets.QAction(MainWindow)
         self.uiResetDocksAction.setObjectName("uiResetDocksAction")
+        self.uiEditReadmeAction = QtWidgets.QAction(MainWindow)
+        self.uiEditReadmeAction.setIcon(icon31)
+        self.uiEditReadmeAction.setObjectName("uiEditReadmeAction")
+        self.uiResetConsoleAllAction = QtWidgets.QAction(MainWindow)
+        self.uiResetConsoleAllAction.setObjectName("uiResetConsoleAllAction")
         self.uiEditMenu.addAction(self.uiSelectAllAction)
         self.uiEditMenu.addAction(self.uiSelectNoneAction)
         self.uiEditMenu.addSeparator()
@@ -498,6 +503,7 @@ class Ui_MainWindow(object):
         self.uiControlMenu.addAction(self.uiReloadAllAction)
         self.uiControlMenu.addAction(self.uiAuxConsoleAllAction)
         self.uiControlMenu.addAction(self.uiConsoleAllAction)
+        self.uiControlMenu.addAction(self.uiResetConsoleAllAction)
         self.uiAnnotateMenu.addAction(self.uiAddNoteAction)
         self.uiAnnotateMenu.addAction(self.uiInsertImageAction)
         self.uiAnnotateMenu.addAction(self.uiDrawRectangleAction)
@@ -715,6 +721,9 @@ class Ui_MainWindow(object):
         self.uiWebUIAction.setText(_translate("MainWindow", "Web UI - beta"))
         self.uiNewTemplateAction.setText(_translate("MainWindow", "New template"))
         self.uiResetDocksAction.setText(_translate("MainWindow", "Reset docks"))
+        self.uiEditReadmeAction.setText(_translate("MainWindow", "Edit readme"))
+        self.uiEditReadmeAction.setToolTip(_translate("MainWindow", "Edit readme"))
+        self.uiResetConsoleAllAction.setText(_translate("MainWindow", "Reset all console connections"))
 from ..compute_summary_view import ComputeSummaryView
 from ..console_view import ConsoleView
 from ..graphics_view import GraphicsView

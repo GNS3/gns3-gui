@@ -78,6 +78,7 @@ setup(
     include_package_data=True,
     package_data={"gns3": ["configs/*.txt", "schemas/*.json"]},
     platforms="any",
+    python_requires=">=3.4",
     setup_requires=["setuptools>=17.1"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -98,6 +99,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
 )

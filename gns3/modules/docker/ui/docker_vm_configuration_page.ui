@@ -177,7 +177,22 @@
         <widget class="QComboBox" name="uiConsoleResolutionComboBox">
          <item>
           <property name="text">
+           <string>2560x1440</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>1920x1080</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1680x1050</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1440x900</string>
           </property>
          </item>
          <item>
