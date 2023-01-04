@@ -350,6 +350,10 @@
             "maximum": 100,
             "title": "Throttle the CPU"
         },
+        "tpm": {
+            "type": "boolean",
+            "title": "Enable the Trusted Platform Module (TPM)"
+        },
         "on_close": {
           "title": "Action to execute on the VM is closed",
           "enum": ["power_off", "shutdown_signal", "save_vm_state"]
