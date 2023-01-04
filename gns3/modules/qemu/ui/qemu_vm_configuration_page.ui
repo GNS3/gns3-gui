@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>941</width>
-    <height>939</height>
+    <width>478</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -890,7 +890,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
+          <item row="2" column="0" colspan="2">
            <widget class="QCheckBox" name="uiBaseVMCheckBox">
             <property name="enabled">
              <bool>true</bool>
@@ -900,10 +900,18 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiTPMCheckBox">
+            <property name="text">
+             <string>Enable Trusted Platform Module (TPM)</string>
+            </property>
+           </widget>
+          </item>
          </layout>
          <zorder>uiQemuOptionsLineEdit</zorder>
          <zorder>uiQemuOptionsLabel</zorder>
          <zorder>uiBaseVMCheckBox</zorder>
+         <zorder>uiTPMCheckBox</zorder>
         </widget>
        </item>
        <item>
