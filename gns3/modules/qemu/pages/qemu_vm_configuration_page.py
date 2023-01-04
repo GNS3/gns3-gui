@@ -578,6 +578,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             self.uiProcessPriorityComboBox.setCurrentIndex(index)
         self.uiQemuOptionsLineEdit.setText(settings["options"])
         self.uiUsageTextEdit.setPlainText(settings["usage"])
+        self.uiTPMCheckBox.setChecked(settings["tpm"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -692,4 +693,5 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         settings["process_priority"] = self.uiProcessPriorityComboBox.currentText().lower()
         settings["options"] = self.uiQemuOptionsLineEdit.text()
         settings["usage"] = self.uiUsageTextEdit.toPlainText()
+        settings["tpm"] = self.uiTPMCheckBox.isChecked()
         return settings
