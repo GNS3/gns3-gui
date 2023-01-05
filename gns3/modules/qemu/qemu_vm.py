@@ -73,6 +73,7 @@ class QemuVM(Node):
                             "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
                             "mac_address": QEMU_VM_SETTINGS["mac_address"],
                             "replicate_network_connection_state": QEMU_VM_SETTINGS["replicate_network_connection_state"],
+                            "tpm": QEMU_VM_SETTINGS["tpm"],
                             "create_config_disk": QEMU_VM_SETTINGS["create_config_disk"],
                             "platform": QEMU_VM_SETTINGS["platform"],
                             "on_close": QEMU_VM_SETTINGS["on_close"],

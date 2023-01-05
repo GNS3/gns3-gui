@@ -119,8 +119,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def setZoom(self, zoom):
         """
         Sets zoom of the Graphics View
-        :param zoom:
-        :return:
         """
         if zoom:
             factor = zoom / 100.
@@ -190,6 +188,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # clear all objects on the scene
         self.scene().clear()
+
+        # reset zoom / scale
+        self.resetTransform()
 
 
     def _loadSettings(self):

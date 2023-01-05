@@ -56,6 +56,7 @@ QEMU_VM_SETTINGS = {
     "adapter_type": "e1000",
     "mac_address": "",
     "replicate_network_connection_state": True,
+    "tpm": False,
     "create_config_disk": False,
     "on_close": "power_off",
     "platform": "x86_64",

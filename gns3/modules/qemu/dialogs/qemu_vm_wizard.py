@@ -92,6 +92,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
         if self.uiHdaDiskImageLineEdit.text().strip():
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text().strip()
+            settings["hda_disk_interface"] = "ide"
 
         if "options" not in settings:
             settings["options"] = ""
