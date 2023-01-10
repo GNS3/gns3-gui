@@ -311,7 +311,7 @@ def test_callbackConnect_major_version_invalid(http_client):
 
 def test_callbackConnect_minor_version_invalid(http_client):
 
-    new_version = "{}.{}.{}".format(__version_info__[0], __version_info__[1], __version_info__[2] + 1)
+    new_version = "{}.{}.{}".format(__version_info__[0], __version_info__[1] + 1, 0)
     params = {
         "local": True,
         "version": new_version
@@ -319,14 +319,23 @@ def test_callbackConnect_minor_version_invalid(http_client):
     mock = unittest.mock.MagicMock()
 
     http_client._query_waiting_connections.append((None, mock))
-    # Stable release
-    if __version_info__[3] == 0:
-        http_client._callbackConnect(params)
-        assert http_client._connected is False
-        mock.assert_called_with({"message": "Client version {} is not the same as server (controller) version {}".format(__version__, new_version)}, error=True, server=None)
-    else:
-        http_client._callbackConnect(params)
-        assert http_client._connected is True
+    http_client._callbackConnect(params)
+    assert http_client._connected is False
+    mock.assert_called_with({"message": "Client version {} is not the same as server (controller) version {}".format(__version__, new_version)}, error=True, server=None)
+
+
+def test_callbackConnect_patch_version(http_client):
+
+    new_version = "{}.{}.{}.{}".format(__version_info__[0], __version_info__[1], __version_info__[2], 42)
+    params = {
+        "local": True,
+        "version": new_version
+    }
+    mock = unittest.mock.MagicMock()
+
+    http_client._query_waiting_connections.append((None, mock))
+    http_client._callbackConnect(params)
+    assert http_client._connected is True
 
 
 def test_callbackConnect_non_gns3_server(http_client):
