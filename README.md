@@ -1,18 +1,14 @@
 GNS3-gui
 ========
 
-[![image](https://github.com/GNS3/gns3-gui/workflows/testing/badge.svg)](https://github.com/GNS3/gns3-gui/actions?query=workflow%3Atesting)
-
-[![image](https://img.shields.io/pypi/v/gns3-gui.svg)](https://pypi.python.org/pypi/gns3-gui)
-
-[![image](https://snyk.io/test/github/GNS3/gns3-gui/badge.svg)](https://snyk.io/test/github/GNS3/gns3-gui)
-
-GNS3 GUI repository.
+[![GitHub Actions tests](https://github.com/GNS3/gns3-gui/workflows/testing/badge.svg)](https://github.com/GNS3/gns3-gui/actions?query=workflow%3Atesting)
+[![Latest PyPi version](https://img.shields.io/pypi/v/gns3-gui.svg)](https://pypi.python.org/pypi/gns3-gui)
+[![Snyk scanning](https://snyk.io/test/github/GNS3/gns3-gui/badge.svg)](https://snyk.io/test/github/GNS3/gns3-gui)
 
 Installation
 ------------
 
-Please see <https://docs.gns3.com/>
+Please see the documentation on our [website](https://docs.gns3.com)
 
 Software dependencies
 ---------------------
@@ -20,7 +16,7 @@ Software dependencies
 PyQt5 which is either part of the Linux distribution or installable from
 PyPi. The other Python dependencies are automatically installed during
 the GNS3 GUI installation and are listed
-[here](https://github.com/GNS3/gns3-gui/blob/master/requirements.txt)
+[here](https://github.com/GNS3/gns3-gui/blob/3.0/requirements.txt)
 
 For connecting to nodes using Telnet, a Telnet client is required. On
 Linux that's a terminal emulator like xterm, gnome-terminal, konsole
@@ -43,7 +39,7 @@ cd scripts
 python build_pyqt.py
 ```
 
-### Debug
+### Debugging
 
 If you want to see the full logs in the internal shell you can type:
 
