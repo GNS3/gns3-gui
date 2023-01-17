@@ -64,6 +64,7 @@ if sys.platform.startswith("win"):
                                              'SecureCRT (personal profile)': r'"{}\AppData\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "%d" /TELNET %h %p'.format(userprofile),
                                              'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files_x86),
                                              'Telnet': 'telnet %h %p',
+                                             'Windows Terminal': 'wt.exe -w 1 new-tab --title %d telnet %h %p',
                                              'Xshell 4': r'"{}\NetSarang\Xshell 4\xshell.exe" -url telnet://%h:%p'.format(program_files_x86),
                                              'Xshell 5': r'"{}\NetSarang\Xshell 5\xshell.exe" -url telnet://%h:%p -newtab %d'.format(program_files_x86),
                                              'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:%h:%p" /TABBED "/TITLE:%d"'.format(program_files_x86)}
@@ -140,7 +141,6 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'end tell'""",
         'Royal TSX': "open 'rtsx://telnet%3A%2F%2F%h:%p'",
         'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "%d" /T /TELNET %h %p',
-        'Windows Terminal': 'wt.exe -w 1 new-tab --title %d telnet %h %p',
         'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"',
         'ZOC 7': '/Applications/zoc7.app/Contents/MacOS/zoc7 "/TELNET:%h:%p" /TABBED "/TITLE:%d"',
         'ZOC 8': '/Applications/zoc8.app/Contents/MacOS/zoc8 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
