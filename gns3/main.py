@@ -220,8 +220,12 @@ def main():
         if not options.debug:
             try:
                 # hide the console
-                console_window = win32console.GetConsoleWindow()
-                win32gui.ShowWindow(console_window, win32con.SW_HIDE)
+                # win32console.AllocConsole()
+                console_window = int(win32console.GetConsoleWindow())
+                if console_window:
+                    win32gui.ShowWindow(console_window, win32con.SW_HIDE)
+                else:
+                    print("warning: could not get the console window")
             except win32console.error as e:
                 print("warning: could not allocate console: {}".format(e))
 
