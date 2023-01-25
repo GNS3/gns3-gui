@@ -220,7 +220,7 @@ def main():
         if not options.debug:
             try:
                 # hide the console
-                win32console.AllocConsole()
+                # win32console.AllocConsole()
                 console_window = win32console.GetConsoleWindow()
                 if console_window:
                     win32gui.ShowWindow(console_window, win32con.SW_HIDE)
