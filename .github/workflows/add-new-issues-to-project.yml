@@ -1,0 +1,16 @@
+name: Add new issues to GNS3 project
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  add-to-project:
+    name: Add issue to project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v0.4.0
+        with:
+          project-url: https://github.com/orgs/GNS3/projects/3
+          github-token: ${{ secrets.ADD_NEW_ISSUES_TO_PROJECT }}
