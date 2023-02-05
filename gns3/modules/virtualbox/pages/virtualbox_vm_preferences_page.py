@@ -137,6 +137,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         Creates a new VirtualBox VM.
         """
 
+        QtWidgets.QMessageBox.warning(self, "VirtualBox VM", "VirtualBox VM support is deprecated and will be removed in a future version, please use Qemu VMs instead")
         wizard = VirtualBoxVMWizard(self._virtualbox_vms, parent=self)
         wizard.show()
         if wizard.exec_():
