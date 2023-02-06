@@ -134,6 +134,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         Creates a new VMware VM.
         """
 
+        QtWidgets.QMessageBox.warning(self, "VMware VM", "VMware VM support is deprecated and will be removed in a future version, please use Qemu VMs instead")
         wizard = VMwareVMWizard(self._vmware_vms, parent=self)
         wizard.show()
         if wizard.exec_():
