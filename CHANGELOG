@@ -1,5 +1,19 @@
 # Change Log
 
+## 2.2.37 25/01/2023
+
+* Upgrade to PyQt5 v5.15.7
+* Changed Windows Terminal telnet console profile from OS X to windows ref: issue #3193
+
+## 2.2.36 04/01/2023
+
+* Add Trusted Platform Module (TPM) support for Qemu VMs
+* Add "on_close" setting to appliance schema. Fixes https://github.com/GNS3/gns3-server/issues/2148
+* Add default 'ide' disk interface when manually creating Qemu VM template. Fixes #3360
+* Fix zoom factor is multiplied when loading projects. Fixes #3408
+* Remove deprecated PuTTY option in preferences. Ref https://github.com/GNS3/gns3-gui/discussions/3415
+
+
 ## 2.2.35.1 10/11/2022
 
 * Re-release Web-Ui v2.2.35

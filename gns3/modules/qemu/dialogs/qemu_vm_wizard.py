@@ -157,6 +157,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
 
         if self.uiHdaDiskImageLineEdit.text().strip():
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text().strip()
+            settings["hda_disk_interface"] = "ide"
 
         if self.uiLegacyASACheckBox.isChecked():
             # special settings for legacy ASA VM
