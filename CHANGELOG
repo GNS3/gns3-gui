@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.38 28/02/2023
+
+* Add long description content type in setup.py
+* Automatically add new issues to GNS3 project
+* Development 2.2.38.dev1
+
 ## 2.2.37 25/01/2023
 
 * Upgrade to PyQt5 v5.15.7
