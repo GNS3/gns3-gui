@@ -67,6 +67,7 @@ setup(
     author_email="package-maintainer@gns3.net",
     description="GNS3 graphical interface for the GNS3 server.",
     long_description=open("README.md", "r").read(),
+    long_description_content_type="text/markdown",
     install_requires=open("requirements.txt", "r").read().splitlines(),
     entry_points={
         "gui_scripts": [
