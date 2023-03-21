@@ -21,7 +21,6 @@ classifiers = [
         "Operating System :: POSIX",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
-        "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
@@ -51,8 +50,9 @@ test = [
 ]
 
 [project.urls]
-homepage = "http://gns3.com"
-repository = "http://github.com/GNS3/gns3-gui"
+"Homepage" = "http://gns3.com"
+"Repository" = "http://github.com/GNS3/gns3-gui"
+"Bug tracker" = "http://github.com/GNS3/gns3-gui/issues"
 
 [project.gui-scripts]
 gns3 = "gns3.main:main"
