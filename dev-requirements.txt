@@ -1,5 +1,5 @@
 -r requirements.txt
 
-pytest==7.2.2
+pytest==7.3.1
 flake8==5.0.4  # v5.0.4 is the last to support Python 3.7
 pytest-timeout==2.1.0
