@@ -23,8 +23,8 @@
 # or negative for a release candidate or beta (after the base version
 # number has been incremented)
 
-__version__ = "2.2.39.dev1"
-__version_info__ = (2, 2, 39, 99)
+__version__ = "2.2.39"
+__version_info__ = (2, 2, 39, 0)
 
 if "dev" in __version__:
     try:
