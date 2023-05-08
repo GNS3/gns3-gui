@@ -108,6 +108,9 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         if node.initialized():
             self.createdSlot(node.id())
 
+        if self._main_window.uiSnapToGridAction.isChecked():
+            self.setPos(QtCore.QPointF(self._node.x() + 0.1, self._node.y()))
+
     def updateNode(self):
         """
         Sync change to the node
@@ -466,7 +469,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param value: value of the change
         """
 
-        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
+        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked():
             grid_size = self._main_window.uiGraphicsView.nodeGridSize()
             mid_x = self.boundingRect().width() / 2
             value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)
