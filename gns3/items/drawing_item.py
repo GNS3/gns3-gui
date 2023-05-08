@@ -213,7 +213,7 @@ class DrawingItem:
 
     def itemChange(self, change, value):
 
-        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self.isActive() and self._main_window.uiSnapToGridAction.isChecked():
+        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked():
             grid_size = self._graphics_view.drawingGridSize()
             mid_x = self.boundingRect().width() / 2
             value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)
