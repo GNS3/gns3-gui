@@ -327,6 +327,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         current_item = self.currentItem()
         from .main_window import MainWindow
         view = MainWindow.instance().uiGraphicsView
+        link_item_hovered = None
         if current_item and not current_item.isHidden():
             menu.addSeparator()
             if isinstance(current_item, TopologyNodeItem):
@@ -335,10 +336,14 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                 link = current_item.data(0, QtCore.Qt.UserRole)
                 for item in view.scene().items():
                     if isinstance(item, LinkItem) and item.link() == link:
+                        item.setHovered(False)
                         item.populateLinkContextualMenu(menu)
+                        link_item_hovered = item
                         break
 
         menu.exec_(pos)
+        if link_item_hovered:
+            link_item_hovered.setHovered(True)
 
     @qslot
     def _expandAllSlot(self, *args):
