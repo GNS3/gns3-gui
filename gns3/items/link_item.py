@@ -332,13 +332,13 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         if not sip_is_deleted(self):
             # create the contextual menu
+            self.setHovered(True)
             self.setAcceptHoverEvents(False)
             menu = QtWidgets.QMenu()
             self.populateLinkContextualMenu(menu)
             menu.exec_(QtGui.QCursor.pos())
             self.setAcceptHoverEvents(True)
-            self._hovered = False
-            self.adjust()
+            self.setHovered(False)
 
     def keyPressEvent(self, event):
         """

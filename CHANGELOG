@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.39 08/05/2023
+
+* Fix nodes are not snapped to the grid at the moment of creation
+* Upgrade distro and aiohttp dependencies
+
 ## 2.2.38 28/02/2023
 
 * Add long description content type in setup.py
