@@ -17,7 +17,6 @@
 
 import os
 import pathlib
-import ipaddress
 import re
 
 from gns3.controller import Controller
@@ -679,14 +678,6 @@ class Node(BaseNode):
         host = self.settings()["console_host"]
         if host is None or host == "::" or host == "0.0.0.0" or host == "0:0:0:0:0:0:0:0":
             host = Controller.instance().host()
-        console_type = self.consoleType()
-        if console_type == "http" or console_type == "https":
-            try:
-                ip = ipaddress.ip_address(host)
-                if isinstance(ip, ipaddress.IPv6Address):
-                    host = '[' + host + ']'  # add brackets if it is IPv6 address
-            except ValueError:
-                pass
         return host
 
     def setStatus(self, status):
