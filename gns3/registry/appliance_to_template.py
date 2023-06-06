@@ -197,7 +197,8 @@ class ApplianceToTemplate:
 
         url = "https://raw.githubusercontent.com/GNS3/gns3-registry/master/symbols/{}".format(symbol_id)
         try:
-            self._downloadApplianceSymbol(url, path)
+            if not self._downloadApplianceSymbol(url, path):
+                return None
             controller.clearStaticCache()
             if controller.isRemote():
                 controller.uploadSymbol(symbol_id, path)
@@ -230,5 +231,7 @@ class ApplianceToTemplate:
                 log.debug("Error while saving appliance symbol to '{}': {}".format(path, e))
                 raise
             log.debug("Appliance symbol downloaded and saved to '{}'".format(path))
+            return True
         else:
-            log.warning("Error when downloading appliance symbol from '{}': {}".format(url, reply.errorString()))
+            log.error("Error when downloading appliance symbol from '{}': {}".format(url, reply.errorString()))
+        return False

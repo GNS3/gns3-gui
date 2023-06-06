@@ -58,7 +58,9 @@ class StyleEditorDialogLink(QtWidgets.QDialog, Ui_StyleEditorDialog):
         self.uiRotationLabel.hide()
         self.uiRotationSpinBox.hide()
 
+        link.setHovered(False)  # make sure we use the right style
         pen = link.pen()
+        link.setHovered(True)
 
         self._border_color = pen.color()
         self.uiBorderColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._border_color.red(),
@@ -102,6 +104,7 @@ class StyleEditorDialogLink(QtWidgets.QDialog, Ui_StyleEditorDialog):
         
         # Store values
         self._link.setLinkStyle(new_link_style)
+        self._link.setHovered(False)  # allow to see the new style
 
     def done(self, result):
         """
