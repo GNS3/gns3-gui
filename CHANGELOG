@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.2.40 06/06/2023
+
+* Change log messages for Websocket errors
+* Do not proceed if an appliance symbol cannot be downloaded. Ref #3466
+* Delete a node or link from topology summary view using Delete key. Ref #3445
+* Fix "Start the capture visualization program" checkbox works only one (first) time for a given link. Fixes #3442
+* Let the selected link style applied when editing a link. Fixes #3460
+* Fix hovered color shown in style editing dialog. Fixes #3460
+
 ## 2.2.39 08/05/2023
 
 * Fix nodes are not snapped to the grid at the moment of creation
