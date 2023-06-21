@@ -68,7 +68,7 @@ class DockerVM(Node):
 
         info = """Docker container {name} is {state}
   Running on server {host} with port {port}
-  Local ID is {id} and server ID is {node_id}
+  Local ID is {id} and node ID is {node_id}
   Docker image is "{image}"
   Console is on port {console} and type is {console_type}
   Aux console is on port {aux} and type is {aux_type}

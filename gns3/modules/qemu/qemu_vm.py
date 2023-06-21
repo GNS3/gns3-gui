@@ -119,7 +119,7 @@ class QemuVM(Node):
 
         info = """QEMU VM {name} is {state}
   Running on server {host} with port {port}
-  Local ID is {id} and server ID is {node_id}
+  Local ID is {id} and node ID is {node_id}
   Number of processors is {cpus} and amount of memory is {ram}MB
   Console is on port {console} and type is {console_type}
   Auxiliary console is on port {aux} and type is {aux_type}

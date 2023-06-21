@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>614</width>
+    <width>585</width>
     <height>791</height>
    </rect>
   </property>
@@ -416,6 +416,44 @@
        <property name="bottomMargin">
         <number>10</number>
        </property>
+       <item row="0" column="0" colspan="2">
+        <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="columnCount">
+          <number>5</number>
+         </property>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string notr="true">Protocol</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string notr="true">Host</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string notr="true">Port</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Username</string>
+          </property>
+         </column>
+        </widget>
+       </item>
        <item row="1" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -460,45 +498,7 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QTreeWidget" name="uiRemoteServersTreeWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="columnCount">
-          <number>5</number>
-         </property>
-         <column>
-          <property name="text">
-           <string>Name</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string notr="true">Protocol</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string notr="true">Host</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string notr="true">Port</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Username</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -511,9 +511,17 @@
          </property>
         </spacer>
        </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="uiDynamicComputeAllocationCheckBox">
+         <property name="text">
+          <string>Allow controller to dynamically allocate computes</string>
+         </property>
+        </widget>
+       </item>
       </layout>
       <zorder>uiRemoteServersTreeWidget</zorder>
       <zorder>verticalSpacer_3</zorder>
+      <zorder>uiDynamicComputeAllocationCheckBox</zorder>
      </widget>
     </widget>
    </item>

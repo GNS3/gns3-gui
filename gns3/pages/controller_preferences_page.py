@@ -204,6 +204,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
         self._useLocalServerAutoStartSlot(False)
 
         self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(servers_settings["allow_console_from_anywhere"])
+        self.uiDynamicComputeAllocationCheckBox.setChecked(servers_settings["dynamic_compute_allocation"])
         self.uiConsoleStartPortSpinBox.setValue(servers_settings["console_start_port_range"])
         self.uiConsoleEndPortSpinBox.setValue(servers_settings["console_end_port_range"])
         self.uiUDPStartPortSpinBox.setValue(servers_settings["udp_start_port_range"])
@@ -256,6 +257,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
                                           "port": self.uiLocalServerPortSpinBox.value(),
                                           "auto_start": self.uiLocalServerAutoStartCheckBox.isChecked(),
                                           "allow_console_from_anywhere": self.uiConsoleConnectionsToAnyIPCheckBox.isChecked(),
+                                          "dynamic_compute_allocation": self.uiDynamicComputeAllocationCheckBox.isChecked(),
                                           "console_start_port_range": self.uiConsoleStartPortSpinBox.value(),
                                           "console_end_port_range": self.uiConsoleEndPortSpinBox.value(),
                                           "udp_start_port_range": self.uiUDPStartPortSpinBox.value(),

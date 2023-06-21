@@ -73,7 +73,7 @@ class IOUDevice(Node):
 
         info = """Device {name} is {state}
   Running on server {host} with port {port}
-  Local ID is {id} and server ID is {node_id}
+  Local ID is {id} and node ID is {node_id}
   Hardware is Cisco IOU generic device with {memories_info}
   Console is on port {console} and type is {console_type}
   IOU image is "{image_name}"

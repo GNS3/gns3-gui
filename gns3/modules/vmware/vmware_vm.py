@@ -70,7 +70,7 @@ class VMwareVM(Node):
 
         info = """VMware VM {name} is {state}
   Running on server {host} with port {port}
-  Local ID is {id} and server ID is {node_id}
+  Local ID is {id} and node ID is {node_id}
   Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),

@@ -246,7 +246,7 @@ class Router(Node):
 
         info = """Router {name} is {state}
   Running on server {host} with port {port}
-  Local ID is {id} and server ID is {node_id}
+  Local ID is {id} and node ID is {node_id}
   Dynamips ID is {dynamips_id}
   Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram}MB RAM and {nvram}KB NVRAM
   Console is on port {console} and type is {console_type}

@@ -53,7 +53,7 @@ class ATMSwitch(Node):
 
         info = """ATM switch {name} is always-on
   Running on server {host} with port {port}
-  Local ID is {id} and server ID is {node_id}
+  Local ID is {id} and node ID is {node_id}
   Hardware is Dynamips emulated simple ATM switch
 """.format(name=self.name(),
            id=self.id(),
