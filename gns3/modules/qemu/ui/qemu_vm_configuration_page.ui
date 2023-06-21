@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>478</width>
-    <height>530</height>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -896,6 +896,13 @@
           <string>Additional settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiTPMCheckBox">
+            <property name="text">
+             <string>Enable Trusted Platform Module (TPM)</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="uiQemuOptionsLabel">
             <property name="text">
@@ -919,7 +926,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="2">
+          <item row="3" column="0" colspan="2">
            <widget class="QCheckBox" name="uiBaseVMCheckBox">
             <property name="enabled">
              <bool>true</bool>
@@ -929,10 +936,10 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QCheckBox" name="uiTPMCheckBox">
+          <item row="2" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiUEFICheckBox">
             <property name="text">
-             <string>Enable Trusted Platform Module (TPM)</string>
+             <string>Enable UEFI boot mode</string>
             </property>
            </widget>
           </item>
@@ -941,6 +948,7 @@
          <zorder>uiQemuOptionsLabel</zorder>
          <zorder>uiBaseVMCheckBox</zorder>
          <zorder>uiTPMCheckBox</zorder>
+         <zorder>uiUEFICheckBox</zorder>
         </widget>
        </item>
        <item>

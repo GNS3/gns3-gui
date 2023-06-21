@@ -354,6 +354,10 @@
             "type": "boolean",
             "title": "Enable the Trusted Platform Module (TPM)"
         },
+        "uefi": {
+            "type": "boolean",
+            "title": "Enable the UEFI boot mode"
+        },
         "on_close": {
           "title": "Action to execute on the VM is closed",
           "enum": ["power_off", "shutdown_signal", "save_vm_state"]
