@@ -38,6 +38,7 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
 
         super().__init__(virtualbox_vms, parent)
         self._virtualbox_vms = virtualbox_vms
+        self._allow_dynamic_compute_allocation = False
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/vbox_guest.svg"))
 
     def validateCurrentPage(self):

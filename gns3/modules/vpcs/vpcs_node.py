@@ -54,7 +54,7 @@ class VPCSNode(Node):
 
         info = """Node {name} is {state}
   Running on server {host} with port {port}
-  Local ID is {id} and server ID is {node_id}
+  Local ID is {id} and node ID is {node_id}
   Console is on port {console} and type is {console_type}
 """.format(name=self.name(),
            id=self.id(),

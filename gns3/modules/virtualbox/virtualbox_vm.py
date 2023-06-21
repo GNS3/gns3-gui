@@ -69,7 +69,7 @@ class VirtualBoxVM(Node):
 
         info = """VirtualBox VM {name} is {state}
   Running on server {host} with port {port}
-  Local ID is {id} and server ID is {node_id}
+  Local ID is {id} and node ID is {node_id}
   VirtualBox's name is "{vmname}"
   Amount of memory is {ram}MB
   Console is on port {console} and type is {console_type}

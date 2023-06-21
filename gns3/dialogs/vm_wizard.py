@@ -37,6 +37,7 @@ class VMWizard(QtWidgets.QWizard):
         self.setModal(True)
 
         self._devices = devices
+        self._allow_dynamic_compute_allocation = True
         self._local_server_disable = False
 
         self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
@@ -102,6 +103,8 @@ class VMWizard(QtWidgets.QWizard):
             if hasattr(self, "uiVMRadioButton"):
                 self.uiVMRadioButton.setEnabled(False)
             self.uiLocalRadioButton.setEnabled(False)
+            if self._allow_dynamic_compute_allocation:
+                self.uiRemoteServersComboBox.addItem("Any server", None)
             for compute in ComputeManager.instance().computes():
                 if compute.id() == "local":
                     self.uiLocalRadioButton.setEnabled(True)

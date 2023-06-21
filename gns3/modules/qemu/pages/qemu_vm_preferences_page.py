@@ -86,9 +86,13 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         try:
             compute_id = qemu_vm.get("compute_id")
             if compute_id:
-                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+                QtWidgets.QTreeWidgetItem(section_item, ["Compute:", ComputeManager.instance().getCompute(compute_id).name()])
             else:
-                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
+                if Controller.instance().settings()["dynamic_compute_allocation"]:
+                    msg = "Dynamically allocated by the controller"
+                else:
+                    msg = "Manually chosen"
+                QtWidgets.QTreeWidgetItem(section_item, ["Compute:", msg])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["QEMU platform:", os.path.basename(qemu_vm["platform"])])

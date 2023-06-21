@@ -85,9 +85,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         try:
             compute_id = vmware_vm.get("compute_id")
             if compute_id:
-                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
-            else:
-                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
+                QtWidgets.QTreeWidgetItem(section_item, ["Compute:", ComputeManager.instance().getCompute(compute_id).name()])
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Headless mode enabled:", "{}".format(vmware_vm["headless"])])

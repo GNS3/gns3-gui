@@ -38,6 +38,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
 
         super().__init__(vmware_vms, parent)
         self._vmware_vms = vmware_vms
+        self._allow_dynamic_compute_allocation = False
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/vmware_guest.svg"))
 
     def validateCurrentPage(self):

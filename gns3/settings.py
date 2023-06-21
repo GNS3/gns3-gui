@@ -346,6 +346,7 @@ CONTROLLER_SETTINGS = {
     "configs_path": DEFAULT_CONFIGS_PATH,
     "report_errors": True,
     "allow_console_from_anywhere": False,
+    "dynamic_compute_allocation": True,
     "username": "admin",
     "password": "admin",
     "protocol": "http",

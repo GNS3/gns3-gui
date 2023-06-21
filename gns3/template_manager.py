@@ -203,7 +203,7 @@ class TemplateManager(QtCore.QObject):
             return
 
         params = {"x": int(x), "y": int(y)}
-        if template.compute_id() is None:
+        if template.compute_id() is None and (Controller.instance().settings()["dynamic_compute_allocation"] is False or template.builtin()):
             from .main_window import MainWindow
             server = server_select(MainWindow.instance(), node_type=template.template_type())
             if server is None:

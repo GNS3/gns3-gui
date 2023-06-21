@@ -90,9 +90,13 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         try:
             compute_id = iou_device.get("compute_id")
             if compute_id:
-                QtWidgets.QTreeWidgetItem(section_item, ["Server:", ComputeManager.instance().getCompute(compute_id).name()])
+                QtWidgets.QTreeWidgetItem(section_item, ["Compute:", ComputeManager.instance().getCompute(compute_id).name()])
             else:
-                QtWidgets.QTreeWidgetItem(section_item, ["Server:", "Dynamically allocated by the controller"])
+                if Controller.instance().settings()["dynamic_compute_allocation"]:
+                    msg = "Dynamically allocated by the controller"
+                else:
+                    msg = "Manually chosen"
+                QtWidgets.QTreeWidgetItem(section_item, ["Compute:", msg])
         except KeyError:
             # Compute doesn't exists
             pass
