@@ -215,10 +215,8 @@ class DrawingItem:
 
         if change == QtWidgets.QGraphicsItem.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked():
             grid_size = self._graphics_view.drawingGridSize()
-            mid_x = self.boundingRect().width() / 2
-            value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)
-            mid_y = self.boundingRect().height() / 2
-            value.setY((grid_size * round((value.y()+mid_y)/grid_size)) - mid_y)
+            value.setX(grid_size * round(value.x() / grid_size))
+            value.setY(grid_size * round(value.y() / grid_size))
 
         if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
             if not value:
