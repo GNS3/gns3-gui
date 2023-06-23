@@ -579,6 +579,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         self.uiQemuOptionsLineEdit.setText(settings["options"])
         self.uiUsageTextEdit.setPlainText(settings["usage"])
         self.uiTPMCheckBox.setChecked(settings["tpm"])
+        self.uiUEFICheckBox.setChecked(settings["uefi"])
 
     def saveSettings(self, settings, node=None, group=False):
         """
@@ -694,4 +695,5 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         settings["options"] = self.uiQemuOptionsLineEdit.text()
         settings["usage"] = self.uiUsageTextEdit.toPlainText()
         settings["tpm"] = self.uiTPMCheckBox.isChecked()
+        settings["uefi"] = self.uiUEFICheckBox.isChecked()
         return settings
