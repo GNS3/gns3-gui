@@ -172,7 +172,8 @@ class ApplianceToTemplate:
 
         for image in appliance_config["images"]:
             new_config[image["type"]] = self._relative_image_path("IOS", image["path"])
-            new_config["idlepc"] = image.get("idlepc", "")
+            if self._registry_version < 8:
+                new_config["idlepc"] = image.get("idlepc", "")
 
     def _add_iou_config(self, new_config, emulator_properties, appliance_config):
 

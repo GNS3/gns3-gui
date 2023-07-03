@@ -109,7 +109,7 @@ class Appliance(collections.abc.Mapping):
                 for file in self._appliance["images"]:
                     file = copy.copy(file)
 
-                    if "idlepc" in version:
+                    if self._registry_version < 8 and "idlepc" in version:
                         file["idlepc"] = version["idlepc"]
 
                     if "/" in filename:
