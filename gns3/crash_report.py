@@ -20,6 +20,7 @@ import os
 import platform
 import struct
 import distro
+import urllib3
 
 try:
     import sentry_sdk
@@ -75,11 +76,15 @@ class CrashReport:
             # Don't send log records as events.
             sentry_logging = LoggingIntegration(level=logging.INFO, event_level=None)
 
-            sentry_sdk.init(dsn=CrashReport.DSN,
-                            release=__version__,
-                            ca_certs=cacert,
-                            default_integrations=False,
-                            integrations=[sentry_logging])
+            try:
+                sentry_sdk.init(dsn=CrashReport.DSN,
+                                release=__version__,
+                                ca_certs=cacert,
+                                default_integrations=False,
+                                integrations=[sentry_logging])
+            except urllib3.exceptions.HTTPError as e:
+                log.error("Crash report could not be sent: {}".format(e))
+                return
 
             tags = {
                 "os:name": platform.system(),
