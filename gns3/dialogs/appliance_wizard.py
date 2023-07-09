@@ -584,7 +584,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         else:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        new_template = ApplianceToTemplate().new_template(appliance_configuration, version, self._compute_id, self._symbols, parent=self)
+        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, version, self._symbols, parent=self)
         TemplateManager.instance().createTemplate(Template(new_template), callback=self._templateCreatedCallback)
         return False
 

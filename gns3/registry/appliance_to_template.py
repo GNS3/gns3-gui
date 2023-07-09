@@ -33,7 +33,7 @@ class ApplianceToTemplate:
     Appliance installation.
     """
 
-    def new_template(self, appliance_config, appliance_version, server, controller_symbols=None, parent=None):
+    def new_template(self, appliance_config, server, appliance_version=None, controller_symbols=None, parent=None):
         """
         Creates a new template from an appliance.
 
@@ -76,7 +76,7 @@ class ApplianceToTemplate:
 
         if self._registry_version >= 8:
             for version in appliance_config["versions"]:
-                if version["name"] == appliance_version:
+                if appliance_version and version["name"] == appliance_version:
                     settings = self._get_settings(appliance_config, version.get("settings"))
                     emulator_type = settings["emulator_type"]
                     if emulator_type == "qemu":
