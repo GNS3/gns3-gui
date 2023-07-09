@@ -3,6 +3,143 @@
   "type": "object",
   "title": "JSON schema validating a GNS3 appliance",
   "definitions": {
+    "categories": {
+      "enum": [
+        "router",
+        "multilayer_switch",
+        "firewall",
+        "guest"
+      ]
+    },
+    "docker_properties": {
+      "type": "object",
+      "title": "Docker template properties",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the template"
+        },
+        "category": {
+          "$ref": "#/definitions/categories",
+          "title": "Category of the template"
+        },
+        "default_name_format": {
+          "type": "string",
+          "title": "Default name format"
+        },
+        "usage": {
+          "type": "string",
+          "title": "How to use the template"
+        },
+        "symbol": {
+          "type": "string",
+          "title": "Symbol of the template"
+        },
+        "image": {
+          "type": "string",
+          "title": "Docker image"
+        },
+        "adapters": {
+          "type": "integer",
+          "title": "Number of ethernet adapters"
+        },
+        "start_command": {
+          "type": "string",
+          "title": "Command executed when the container start. Empty will use the default"
+        },
+        "environment": {
+          "type": "string",
+          "title": "One KEY=VAR environment by line"
+        },
+        "console_type": {
+          "enum": [
+            "telnet",
+            "vnc",
+            "http",
+            "https"
+          ],
+          "title": "Type of console"
+        },
+        "console_http_port": {
+          "title": "Internal port in the container of the HTTP server",
+          "type": "integer"
+        },
+        "console_http_path": {
+          "title": "Path of the web interface",
+          "type": "string"
+        },
+        "console_resolution": {
+          "title": "Console resolution for VNC, for example 1024x768",
+          "type": "string",
+          "pattern": "^[0-9]+x[0-9]+$"
+        },
+        "extra_hosts": {
+          "title": "Docker extra hosts (added to /etc/hosts)",
+          "type": "string"
+        },
+        "extra_volumes": {
+          "title": "Additional directories to make persistent",
+          "type": "array"
+        }
+      },
+      "required": [
+        "adapters",
+        "image"
+      ]
+    },
+    "iou_properties": {
+      "type": "object",
+      "title": "IOU template properties",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the template"
+        },
+        "category": {
+          "$ref": "#/definitions/categories",
+          "title": "Category of the template"
+        },
+        "default_name_format": {
+          "type": "string",
+          "title": "Default name format"
+        },
+        "usage": {
+          "type": "string",
+          "title": "How to use the template"
+        },
+        "symbol": {
+          "type": "string",
+          "title": "Symbol of the template"
+        },
+        "ethernet_adapters": {
+          "type": "integer",
+          "title": "Number of ethernet adapters"
+        },
+        "serial_adapters": {
+          "type": "integer",
+          "title": "Number of serial adapters"
+        },
+        "ram": {
+          "type": "integer",
+          "title": "Host RAM"
+        },
+        "nvram": {
+          "type": "integer",
+          "title": "Host NVRAM"
+        },
+        "startup_config": {
+          "type": "string",
+          "title": "Config loaded at startup"
+        }
+      },
+      "required": [
+        "ethernet_adapters",
+        "serial_adapters",
+        "nvram",
+        "ram",
+        "startup_config"
+      ]
+    },
     "dynamips_slot": {
       "enum": [
         "C2600-MB-2FE",
@@ -41,86 +178,30 @@
         ""
       ]
     },
-    "docker_properties": {
-      "type": "object",
-      "title": "Docker specific properties",
-      "properties": {
-        "adapters": {
-          "type": "integer",
-          "title": "Number of ethernet adapters"
-        },
-        "image": {
-          "type": "string",
-          "title": "Docker image in the Docker Hub"
-        },
-        "start_command": {
-          "type": "string",
-          "title": "Command executed when the container start. Empty will use the default"
-        },
-        "environment": {
-          "type": "string",
-          "title": "One KEY=VAR environment by line"
-        },
-        "console_type": {
-          "enum": [
-            "telnet",
-            "vnc",
-            "http",
-            "https"
-          ],
-          "title": "Type of console connection for the administration of the appliance"
-        },
-        "console_http_port": {
-          "description": "Internal port in the container of the HTTP server",
-          "type": "integer"
-        },
-        "console_http_path": {
-          "description": "Path of the web interface",
-          "type": "string"
-        }
-      },
-      "required": [
-        "adapters",
-        "image"
-      ]
-    },
-    "iou_properties": {
-      "type": "object",
-      "title": "IOU specific properties",
-      "properties": {
-        "ethernet_adapters": {
-          "type": "integer",
-          "title": "Number of ethernet adapters"
-        },
-        "serial_adapters": {
-          "type": "integer",
-          "title": "Number of serial adapters"
-        },
-        "nvram": {
-          "type": "integer",
-          "title": "Host NVRAM"
-        },
-        "ram": {
-          "type": "integer",
-          "title": "Host RAM"
-        },
-        "startup_config": {
-          "type": "string",
-          "title": "Config loaded at startup"
-        }
-      },
-      "required": [
-        "ethernet_adapters",
-        "serial_adapters",
-        "nvram",
-        "ram",
-        "startup_config"
-      ]
-    },
     "dynamips_properties": {
       "type": "object",
-      "title": "Dynamips specific properties",
+      "title": "Dynamips template properties",
       "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the template"
+        },
+        "category": {
+          "$ref": "#/definitions/categories",
+          "title": "Category of the template"
+        },
+        "default_name_format": {
+          "type": "string",
+          "title": "Default name format"
+        },
+        "usage": {
+          "type": "string",
+          "title": "How to use the template"
+        },
+        "symbol": {
+          "type": "string",
+          "title": "Symbol of the template"
+        },
         "chassis": {
           "title": "Chassis type",
           "enum": [
@@ -165,6 +246,10 @@
           "title": "Amount of nvram",
           "type": "integer",
           "minimum": 1
+        },
+        "idlepc": {
+          "type": "string",
+          "pattern": "^0x[0-9a-f]{8}"
         },
         "startup_config": {
           "type": "string",
@@ -225,10 +310,42 @@
         "nvram"
       ]
     },
+    "qemu_disk_interfaces": {
+      "enum": [
+        "ide",
+        "scsi",
+        "sd",
+        "mtd",
+        "floppy",
+        "pflash",
+        "virtio",
+        "sata"
+      ]
+    },
     "qemu_properties": {
       "type": "object",
-      "title": "Qemu specific properties",
+      "title": "Qemu template properties",
       "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the template"
+        },
+        "category": {
+          "$ref": "#/definitions/categories",
+          "title": "Category of the template"
+        },
+        "default_name_format": {
+          "type": "string",
+          "title": "Default name format"
+        },
+        "usage": {
+          "type": "string",
+          "title": "How to use the template"
+        },
+        "symbol": {
+          "type": "string",
+          "title": "Symbol of the template"
+        },
         "adapter_type": {
           "enum": [
             "e1000",
@@ -311,6 +428,22 @@
             ]
           }
         },
+        "first_port_name": {
+          "type": "string",
+          "title": "Optional name of the first networking port example: eth0"
+        },
+        "port_name_format": {
+          "type": "string",
+          "title": "Optional formating of the networking port example: eth{0}"
+        },
+        "port_segment_size": {
+          "type": "integer",
+          "title": "Optional port segment size. A port segment is a block of port. For example Ethernet0/0 Ethernet0/1 is the module 0 with a port segment size of 2"
+        },
+        "linked_clone": {
+          "type": "boolean",
+          "title": "False if you don't want to use a single image for all nodes"
+        },
         "ram": {
           "type": "integer",
           "title": "Ram allocated to the appliance (MB)"
@@ -320,58 +453,22 @@
           "title": "Number of Virtual CPU"
         },
         "hda_disk_interface": {
-          "enum": [
-            "ide",
-            "scsi",
-            "sd",
-            "mtd",
-            "floppy",
-            "pflash",
-            "virtio",
-            "sata"
-          ],
+          "$ref": "#/definitions/qemu_disk_interfaces",
           "title": "Disk interface for the installed hda_disk_image"
         },
         "hdb_disk_interface": {
-          "enum": [
-            "ide",
-            "scsi",
-            "sd",
-            "mtd",
-            "floppy",
-            "pflash",
-            "virtio",
-            "sata"
-          ],
+          "$ref": "#/definitions/qemu_disk_interfaces",
           "title": "Disk interface for the installed hdb_disk_image"
         },
         "hdc_disk_interface": {
-          "enum": [
-            "ide",
-            "scsi",
-            "sd",
-            "mtd",
-            "floppy",
-            "pflash",
-            "virtio",
-            "sata"
-          ],
+          "$ref": "#/definitions/qemu_disk_interfaces",
           "title": "Disk interface for the installed hdc_disk_image"
         },
         "hdd_disk_interface": {
-          "enum": [
-            "ide",
-            "scsi",
-            "sd",
-            "mtd",
-            "floppy",
-            "pflash",
-            "virtio",
-            "sata"
-          ],
+          "$ref": "#/definitions/qemu_disk_interfaces",
           "title": "Disk interface for the installed hdd_disk_image"
         },
-        "arch": {
+        "platform": {
           "enum": [
             "aarch64",
             "alpha",
@@ -402,13 +499,14 @@
             "xtensa",
             "xtensaeb"
           ],
-          "title": "Architecture emulated"
+          "title": "Platform to emulate"
         },
         "console_type": {
           "enum": [
             "telnet",
             "vnc",
-            "spice"
+            "spice",
+            "spice+agent"
           ],
           "title": "Type of console connection for the administration of the appliance"
         },
@@ -481,7 +579,7 @@
         "adapter_type",
         "adapters",
         "ram",
-        "arch",
+        "platform",
         "console_type",
         "kvm"
       ]
@@ -500,12 +598,7 @@
       "title": "Appliance name"
     },
     "category": {
-      "enum": [
-        "router",
-        "multilayer_switch",
-        "firewall",
-        "guest"
-      ],
+      "$ref": "#/definitions/categories",
       "title": "Category of the appliance"
     },
     "description": {
@@ -537,16 +630,9 @@
     },
     "registry_version": {
       "enum": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
         8
       ],
-      "title": "Version of the registry compatible with this appliance"
+      "title": "Version of the registry compatible with this appliance (version >=8 introduced breaking changes)"
     },
     "status": {
       "enum": [
@@ -594,22 +680,6 @@
       "type": "string",
       "title": "An optional symbol for the appliance"
     },
-    "first_port_name": {
-      "type": "string",
-      "title": "Optional name of the first networking port example: eth0"
-    },
-    "port_name_format": {
-      "type": "string",
-      "title": "Optional formating of the networking port example: eth{0}"
-    },
-    "port_segment_size": {
-      "type": "integer",
-      "title": "Optional port segment size. A port segment is a block of port. For example Ethernet0/0 Ethernet0/1 is the module 0 with a port segment size of 2"
-    },
-    "linked_clone": {
-      "type": "boolean",
-      "title": "False if you don't want to use a single image for all nodes"
-    },
     "settings": {
       "type": "array",
       "title": "Settings for running the appliance",
@@ -625,7 +695,12 @@
             "type": "boolean",
             "title": "Whether these are the default settings"
           },
-          "emulator_type": {
+          "inherit_default_settings": {
+            "type": "boolean",
+            "title": "Whether the default settings should be used",
+            "default": "true"
+          },
+          "template_type": {
             "enum": [
               "docker",
               "iou",
@@ -634,218 +709,211 @@
             ],
             "title": "Type of emulator properties"
           },
-          "emulator_versions": {
-            "type": "array",
-            "title": "Versions of the emulator",
-            "items": {
-              "type": "string",
-              "title": "Version of the emulator"
-            },
-            "emulator_properties": {
-              "type": "object",
-              "title": "Properties for the emulator",
-              "oneOf": [
-                {
-                  "$ref": "#/definitions/qemu_properties"
-                },
-                {
-                  "$ref": "#/definitions/dynamips_properties"
-                },
-                {
-                  "$ref": "#/definitions/iou_properties"
-                },
-                {
-                  "$ref": "#/definitions/docker_properties"
-                }
-              ]
-            }
-          },
+          "template_properties": {
+            "type": "object",
+            "title": "Properties for the template",
+            "oneOf": [
+              {
+                "$ref": "#/definitions/qemu_properties"
+              },
+              {
+                "$ref": "#/definitions/dynamips_properties"
+              },
+              {
+                "$ref": "#/definitions/iou_properties"
+              },
+              {
+                "$ref": "#/definitions/docker_properties"
+              }
+            ]
+          }
+        },
+        "required": [
+          "template_type",
+          "template_properties"
+        ]
+      }
+    }
+  },
+  "images": {
+    "type": "array",
+    "title": "Images for this appliance",
+    "items": {
+      "type": "object",
+      "title": "An image file",
+      "properties": {
+        "filename": {
+          "type": "string",
+          "title": "Filename"
+        },
+        "version": {
+          "type": "string",
+          "title": "Version of the image file"
+        },
+        "md5sum": {
+          "type": "string",
+          "title": "MD5 cheksum of the image file",
+          "pattern": "^[a-f0-9]{32}$"
+        },
+        "checksum": {
+          "type": "string",
+          "title": "checksum of the image file"
+        },
+        "checksum_type": {
+          "title": "checksum type of the image file",
+          "enum": [
+            "md5"
+          ]
+        },
+        "filesize": {
+          "type": "integer",
+          "title": "File size in bytes of the image file"
+        },
+        "download_url": {
+          "type": "string",
+          "format": "uri",
+          "title": "Download URL where you can download the image file from a browser"
+        },
+        "direct_download_url": {
+          "type": "string",
+          "format": "uri",
+          "title": "Optional. Non authenticated URL to the image file where you can download the image directly"
+        },
+        "compression": {
+          "enum": [
+            "bzip2",
+            "gzip",
+            "lzma",
+            "xz",
+            "rar",
+            "zip",
+            "7z"
+          ],
+          "title": "Optional, compression type of direct download URL image."
+        },
+        "compression_target": {
+          "type": "string",
+          "title": "Optional, file name of the image file inside the compressed file."
+        }
+      },
+      "anyOf": [
+        {
           "required": [
-            "emulator_type",
-            "emulator_properties"
+            "filename",
+            "version",
+            "md5sum",
+            "filesize"
+          ]
+        },
+        {
+          "required": [
+            "filename",
+            "version",
+            "checksum",
+            "filesize"
           ]
         }
-      }
-    },
-    "images": {
-      "type": "array",
-      "title": "Images for this appliance",
-      "items": {
-        "type": "object",
-        "title": "An image file",
-        "properties": {
-          "filename": {
-            "type": "string",
-            "title": "Filename"
-          },
-          "version": {
-            "type": "string",
-            "title": "Version of the file"
-          },
-          "checksum": {
-            "type": "string",
-            "title": "checksum of the file"
-          },
-          "checksum_type": {
-            "title": "checksum type",
-            "enum": [
-              "md5"
-            ]
-          },
-          "filesize": {
-            "type": "integer",
-            "title": "File size in bytes"
-          },
-          "download_url": {
-            "type": "string",
-            "format": "uri",
-            "title": "Download url where you can download the appliance from a browser"
-          },
-          "direct_download_url": {
-            "type": "string",
-            "format": "uri",
-            "title": "Optional. Non authenticated url to the image file where you can download the image."
-          },
-          "compression": {
-            "enum": [
-              "bzip2",
-              "gzip",
-              "lzma",
-              "xz",
-              "rar",
-              "zip",
-              "7z"
-            ],
-            "title": "Optional, compression type of direct download url image."
-          },
-          "compression_target": {
-            "type": "string",
-            "title": "Optional, file name of the image file inside the compressed file."
-          }
+      ]
+    }
+  },
+  "versions": {
+    "type": "array",
+    "title": "Versions of the appliance",
+    "items": {
+      "type": "object",
+      "title": "A version of the appliance",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the version"
         },
-        "required": [
-          "filename",
-          "version",
-          "checksum",
-          "filesize"
-        ]
-      }
-    },
-    "versions": {
-      "type": "array",
-      "title": "Versions of the appliance",
-      "items": {
-        "type": "object",
-        "title": "A version of the appliance",
-        "properties": {
-          "name": {
-            "type": "string",
-            "title": "Name of the version"
-          },
-          "settings": {
-            "type": "string",
-            "title": "Emulator settings to use to run the version"
-          },
-          "installation_instructions": {
-            "type": "string",
-            "title": "Optional installation instructions for the version"
-          },
-          "usage": {
-            "type": "string",
-            "title": "Optional instructions about using the version"
-          },
-          "default_username": {
-            "type": "string",
-            "title": "Default username for the version"
-          },
-          "default_password": {
-            "type": "string",
-            "title": "Default password for the version"
-          },
-          "symbol": {
-            "type": "string",
-            "title": "An optional symbol for the version"
-          },
-          "first_port_name": {
-            "type": "string",
-            "title": "Optional name of the first networking port example: eth0"
-          },
-          "port_name_format": {
-            "type": "string",
-            "title": "Optional formating of the networking port example: eth{0}"
-          },
-          "port_segment_size": {
-            "type": "integer",
-            "title": "Optional port segment size. A port segment is a block of port. For example Ethernet0/0 Ethernet0/1 is the module 0 with a port segment size of 2"
-          },
-          "linked_clone": {
-            "type": "boolean",
-            "title": "False if you don't want to use a single image for all nodes"
-          },
-          "idlepc": {
-            "type": "string",
-            "pattern": "^0x[0-9a-f]{8}"
-          },
-          "images": {
-            "type": "object",
-            "title": "Images used for this version",
-            "properties": {
-              "kernel_image": {
-                "type": "string",
-                "title": "Kernel image"
-              },
-              "initrd": {
-                "type": "string",
-                "title": "Initrd disk image"
-              },
-              "image": {
-                "type": "string",
-                "title": "OS image"
-              },
-              "bios_image": {
-                "type": "string",
-                "title": "Bios image"
-              },
-              "hda_disk_image": {
-                "type": "string",
-                "title": "Hda disk image"
-              },
-              "hdb_disk_image": {
-                "type": "string",
-                "title": "Hdc disk image"
-              },
-              "hdc_disk_image": {
-                "type": "string",
-                "title": "Hdd disk image"
-              },
-              "hdd_disk_image": {
-                "type": "string",
-                "title": "Hdd diskimage"
-              },
-              "cdrom_image": {
-                "type": "string",
-                "title": "cdrom image"
-              }
+        "settings": {
+          "type": "string",
+          "title": "Template settings to use to run the version"
+        },
+        "category": {
+          "$ref": "#/definitions/categories",
+          "title": "Category of the version"
+        },
+        "installation_instructions": {
+          "type": "string",
+          "title": "Optional installation instructions for the version"
+        },
+        "usage": {
+          "type": "string",
+          "title": "Optional instructions about using the version"
+        },
+        "default_username": {
+          "type": "string",
+          "title": "Default username for the version"
+        },
+        "default_password": {
+          "type": "string",
+          "title": "Default password for the version"
+        },
+        "symbol": {
+          "type": "string",
+          "title": "An optional symbol for the version"
+        },
+        "images": {
+          "type": "object",
+          "title": "Images used for this version",
+          "properties": {
+            "kernel_image": {
+              "type": "string",
+              "title": "Kernel image (Qemu only)"
+            },
+            "initrd": {
+              "type": "string",
+              "title": "Initrd disk image (Qemu only)"
+            },
+            "image": {
+              "type": "string",
+              "title": "OS image (IOU and Dynamips only)"
+            },
+            "bios_image": {
+              "type": "string",
+              "title": "Bios image (Qemu only)"
+            },
+            "hda_disk_image": {
+              "type": "string",
+              "title": "Hda disk image (Qemu only)"
+            },
+            "hdb_disk_image": {
+              "type": "string",
+              "title": "Hdc disk image (Qemu only)"
+            },
+            "hdc_disk_image": {
+              "type": "string",
+              "title": "Hdd disk image (Qemu only)"
+            },
+            "hdd_disk_image": {
+              "type": "string",
+              "title": "Hdd disk image (Qemu only)"
+            },
+            "cdrom_image": {
+              "type": "string",
+              "title": "cdrom image (Qemu only)"
             }
           }
-        },
-        "required": [
-          "name"
-        ]
-      }
-    },
-    "required": [
-      "appliance_id",
-      "name",
-      "category",
-      "description",
-      "vendor_name",
-      "vendor_url",
-      "product_name",
-      "registry_version",
-      "status",
-      "maintainer",
-      "maintainer_email"
-    ]
-  }
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  "required": [
+    "appliance_id",
+    "name",
+    "category",
+    "description",
+    "vendor_name",
+    "vendor_url",
+    "product_name",
+    "registry_version",
+    "status",
+    "maintainer",
+    "maintainer_email"
+  ]
 }
