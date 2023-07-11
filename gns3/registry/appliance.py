@@ -163,7 +163,7 @@ class Appliance(collections.abc.Mapping):
                             raise ApplianceError("Checksum type {} is not supported".format(checksum_type))
                         checksum = image.get("checksum")
 
-                    img = self._registry.search_image_file(self.emulator(), image["filename"], checksum, image.get("filesize"))
+                    img = self._registry.search_image_file(self.template_type(), image["filename"], checksum, image.get("filesize"))
                     if img is None:
                         if checksum:
                             raise ApplianceError("File {} with checksum {} not found for {}".format(image["filename"], checksum, appliance["name"]))
@@ -207,17 +207,17 @@ class Appliance(collections.abc.Mapping):
         except ApplianceError:
             return False
 
-    def emulator(self):
+    def template_type(self):
 
         if self._registry_version >= 8:
-            emulator_type = None
+            template_type = None
             for settings in self._appliance["settings"]:
-                if settings["emulator_type"] and not emulator_type:
-                    emulator_type = settings["emulator_type"]
-                elif settings["emulator_type"] and emulator_type != settings["emulator_type"]:
-                    # we are currently not supporting multiple different emulators in the same appliance
-                    raise ApplianceError("Multiple different emulator types found in appliance")
-            return emulator_type
+                if settings["template_type"] and not template_type:
+                    template_type = settings["template_type"]
+                elif settings["template_type"] and template_type != settings["template_type"]:
+                    # we are currently not supporting multiple different template types in the same appliance
+                    raise ApplianceError("Multiple different template types found in appliance")
+            return template_type
         else:
             if "qemu" in self._appliance:
                 return "qemu"
@@ -229,20 +229,20 @@ class Appliance(collections.abc.Mapping):
                 return "docker"
             return None
 
-    def emulator_properties(self):
+    def template_properties(self):
         """
-        Get emulator properties
+        Get template properties
         """
 
         if self._registry_version >= 8:
             # find the default settings if any
             for settings in self._appliance["settings"]:
                 if settings.get("default", False):
-                    return settings["emulator_properties"]
+                    return settings["template_properties"]
             # otherwise take the first settings we find
             for settings in self._appliance["settings"]:
-                if settings["emulator_type"]:
-                    return settings["emulator_properties"]
+                if settings["template_type"]:
+                    return settings["template_properties"]
         else:
             if "qemu" in self._appliance:
                 return self._appliance["qemu"]

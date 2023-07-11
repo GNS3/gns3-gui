@@ -78,15 +78,15 @@ class ApplianceToTemplate:
             for version in appliance_config["versions"]:
                 if appliance_version and version["name"] == appliance_version:
                     settings = self._get_settings(appliance_config, version.get("settings"))
-                    emulator_type = settings["emulator_type"]
-                    if emulator_type == "qemu":
-                        self._add_qemu_config(new_template, settings["emulator_properties"], appliance_config)
-                    elif emulator_type == "iou":
-                        self._add_iou_config(new_template, settings["emulator_properties"], appliance_config)
-                    elif emulator_type == "dynamips":
-                        self._add_dynamips_config(new_template, settings["emulator_properties"], appliance_config)
-                    elif emulator_type == "docker":
-                        self._add_docker_config(new_template, settings["emulator_properties"], appliance_config)
+                    template_type = settings["template_type"]
+                    if template_type == "qemu":
+                        self._add_qemu_config(new_template, settings["template_properties"], appliance_config)
+                    elif template_type == "iou":
+                        self._add_iou_config(new_template, settings["template_properties"], appliance_config)
+                    elif template_type == "dynamips":
+                        self._add_dynamips_config(new_template, settings["template_properties"], appliance_config)
+                    elif template_type == "docker":
+                        self._add_docker_config(new_template, settings["template_properties"], appliance_config)
         else:
             if "qemu" in appliance_config:
                 self._add_qemu_config(new_template, appliance_config["qemu"], appliance_config)
@@ -118,18 +118,18 @@ class ApplianceToTemplate:
         # if no default settings are specified, use the first available settings set
         return appliance_config["settings"][0]
 
-    def _add_qemu_config(self, new_config, emulator_properties, appliance_config):
+    def _add_qemu_config(self, new_config, template_properties, appliance_config):
 
         new_config["template_type"] = "qemu"
-        new_config.update(emulator_properties)
+        new_config.update(template_properties)
 
         # the following properties are not valid for a template
         new_config.pop("kvm", None)
         new_config.pop("path", None)
         new_config.pop("arch", None)
 
-        options = emulator_properties.get("options", "")
-        if emulator_properties.get("kvm", "allow") == "disable" and "-machine accel=tcg" not in options:
+        options = template_properties.get("options", "")
+        if template_properties.get("kvm", "allow") == "disable" and "-machine accel=tcg" not in options:
             options += " -machine accel=tcg"
         new_config["options"] = options.strip()
 
@@ -137,10 +137,14 @@ class ApplianceToTemplate:
             if image.get("path"):
                 new_config[image["type"]] = self._relative_image_path("QEMU", image["path"])
 
-        if "path" in emulator_properties:
-            new_config["qemu_path"] = emulator_properties["path"]
+        if "path" in template_properties:
+            new_config["qemu_path"] = template_properties["path"]
         else:
-            new_config["qemu_path"] = "qemu-system-{}".format(emulator_properties["arch"])
+            if self._registry_version >= 8:
+                # the "arch" field was replaced by the "platform" field in registry version 8
+                new_config["qemu_path"] = "qemu-system-{}".format(template_properties["platform"])
+            else:
+                new_config["qemu_path"] = "qemu-system-{}".format(template_properties["arch"])
 
         if "first_port_name" in appliance_config:
             new_config["first_port_name"] = appliance_config["first_port_name"]
@@ -157,28 +161,28 @@ class ApplianceToTemplate:
         if "linked_clone" in appliance_config:
             new_config["linked_clone"] = appliance_config["linked_clone"]
 
-    def _add_docker_config(self, new_config, emulator_properties, appliance_config):
+    def _add_docker_config(self, new_config, template_properties, appliance_config):
 
         new_config["template_type"] = "docker"
-        new_config.update(emulator_properties)
+        new_config.update(template_properties)
 
         if "custom_adapters" in appliance_config:
             new_config["custom_adapters"] = appliance_config["custom_adapters"]
 
-    def _add_dynamips_config(self, new_config, emulator_properties, appliance_config):
+    def _add_dynamips_config(self, new_config, template_properties, appliance_config):
 
         new_config["template_type"] = "dynamips"
-        new_config.update(emulator_properties)
+        new_config.update(template_properties)
 
         for image in appliance_config["images"]:
             new_config[image["type"]] = self._relative_image_path("IOS", image["path"])
             if self._registry_version < 8:
                 new_config["idlepc"] = image.get("idlepc", "")
 
-    def _add_iou_config(self, new_config, emulator_properties, appliance_config):
+    def _add_iou_config(self, new_config, template_properties, appliance_config):
 
         new_config["template_type"] = "iou"
-        new_config.update(emulator_properties)
+        new_config.update(template_properties)
         for image in appliance_config["images"]:
             if "path" not in image:
                 raise ConfigException("Disk image is missing")
