@@ -15,8 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+log = logging.getLogger(__name__)
+
 
 def macos_setuid(path):
+
+    # AuthorizationExecuteWithPrivileges() has been deprecated since macOS 10.7 but it still works
+    # and much simpler than using SMJobBless() which requires a separate helper tool
 
     import sys
     import ctypes
@@ -39,6 +45,7 @@ def macos_setuid(path):
         raise OSError("Could not create authorization: {}".format(err))
 
     exe = [sys.executable, "-c", "import os; os.chown('{path}', 0, 0); os.chmod('{path}', 0o4750)".format(path=path)]
+    log.info("Executing '{}' with privileges".format(exe))
     args = (ctypes.c_char_p * len(exe))()
     for i, arg in enumerate(exe[1:]):
         args[i] = arg.encode('utf8')
@@ -46,3 +53,5 @@ def macos_setuid(path):
     err = sec.AuthorizationExecuteWithPrivileges(auth, exe[0].encode('utf8'), 0, args, byref(io))
     if err:
         raise OSError("Could not setuid uBridge: {}".format(err))
+    else:
+        log.info("Successfully setuid uBridge")
