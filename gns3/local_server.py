@@ -193,9 +193,9 @@ class LocalServer(QtCore.QObject):
                         QtWidgets.QMessageBox.Yes,
                         QtWidgets.QMessageBox.No)
                     if proceed == QtWidgets.QMessageBox.Yes:
-                        from gns3.utils.macos_setuid import macos_setuid
-                        if sys.platform.startswith("darwin"):
-                            macos_setuid(path)
+                        from gns3.utils.macos_ubridge_setuid import macos_ubridge_setuid
+                        if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
+                            macos_ubridge_setuid()
                         else:
                             sudo(["chown", "root:admin", path], ["chmod", "4750", path])
             except OSError as e:
