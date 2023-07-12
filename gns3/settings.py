@@ -284,7 +284,6 @@ GENERAL_SETTINGS = {
     "check_for_update": True,
     "overlay_notifications": True,
     "experimental_features": False,
-    "send_stats": True,
     "stats_visitor_id": str(uuid.uuid4()),  # An anonymous id for stats
     "last_check_for_update": 0,
     "telnet_console_command": DEFAULT_TELNET_CONSOLE_COMMAND,

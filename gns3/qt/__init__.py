@@ -195,54 +195,6 @@ if hasattr(sys, '_called_from_test'):
     QtCore.pyqtSignal = FakeQtSignal
 
 
-class StatsQtWidgetsQWizard(QtWidgets.QWizard):
-    """
-    Send stats from all the QWizard
-    """
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-        from ..utils.analytics import AnalyticsClient
-        name = self.__class__.__name__
-        name = re.sub(r"([A-Z])", r" \1", name).strip()
-        AnalyticsClient.instance().sendScreenView(name)
-
-QtWidgets.QWizard = StatsQtWidgetsQWizard
-
-
-class StatsQtWidgetsQMainWindow(QtWidgets.QMainWindow):
-    """
-    Send stats from all the QMainWindow
-    """
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-        from ..utils.analytics import AnalyticsClient
-        name = self.__class__.__name__
-        name = re.sub(r"([A-Z])", r" \1", name).strip()
-        AnalyticsClient.instance().sendScreenView(name)
-
-QtWidgets.QMainWindow = StatsQtWidgetsQMainWindow
-
-
-class StatsQtWidgetsQDialog(QtWidgets.QDialog):
-    """
-    Send stats from all the QWizard
-    """
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-        from ..utils.analytics import AnalyticsClient
-        name = self.__class__.__name__
-        name = re.sub(r"([A-Z])", r" \1", name).strip()
-        AnalyticsClient.instance().sendScreenView(name)
-
-QtWidgets.QDialog = StatsQtWidgetsQDialog
-
-
 def qpartial(func, *args, **kwargs):
     """
     A functools partial that you can use on qobject. If the targeted qobject is
