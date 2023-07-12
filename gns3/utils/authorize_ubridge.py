@@ -28,7 +28,7 @@ def authorize_ubridge():
     if path is None:
         raise SystemExit("Could not find ubridge executable at {}".format(path))
     try:
-        os.chown(path, 0, 0)
+        shutil.chown(path, "root", "admin")
         os.chmod(path, 0o4750)
     except OSError as e:
         raise SystemExit("Could not authorize {}: {}".format(path, str(e)))
