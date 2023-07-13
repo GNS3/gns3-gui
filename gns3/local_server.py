@@ -162,7 +162,11 @@ class LocalServer(QtCore.QObject):
                         QtWidgets.QMessageBox.Yes,
                         QtWidgets.QMessageBox.No)
                     if proceed == QtWidgets.QMessageBox.Yes:
-                        sudo(["chown", "root:admin", path], ["chmod", "4750", path])
+                        from gns3.utils.macos_ubridge_setuid import macos_ubridge_setuid
+                        if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
+                            macos_ubridge_setuid()
+                        else:
+                            sudo(["chown", "root:admin", path], ["chmod", "4750", path])
             except OSError as e:
                 QtWidgets.QMessageBox.critical(self.parent(), "uBridge", "Can't set root permissions to uBridge {}: {}".format(path, str(e)))
                 return False

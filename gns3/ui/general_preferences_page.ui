@@ -1013,16 +1013,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="uiStatsCheckBox">
-         <property name="text">
-          <string>Send anonymous usage statistics</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QCheckBox" name="uiOverlayNotificationsCheckBox">
          <property name="text">
           <string>Display error, warning and info in an overlay popup</string>
@@ -1134,7 +1124,6 @@
   <tabstop>uiDefaultNoteColorPushButton</tabstop>
   <tabstop>uiCheckForUpdateCheckBox</tabstop>
   <tabstop>uiCrashReportCheckBox</tabstop>
-  <tabstop>uiStatsCheckBox</tabstop>
   <tabstop>uiOverlayNotificationsCheckBox</tabstop>
   <tabstop>uiExperimentalFeaturesCheckBox</tabstop>
   <tabstop>uiHdpiCheckBox</tabstop>

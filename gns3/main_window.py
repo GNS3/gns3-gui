@@ -50,7 +50,6 @@ from .topology import Topology
 from .http_client import HTTPClient
 from .progress import Progress
 from .update_manager import UpdateManager
-from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
 from .dialogs.new_template_wizard import NewTemplateWizard
 from .dialogs.notif_dialog import NotifDialog, NotifDialogHandler
@@ -150,7 +149,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._local_config_timer = QtCore.QTimer(self)
         self._local_config_timer.timeout.connect(local_config.checkConfigChanged)
         self._local_config_timer.start(1000)  # milliseconds
-        self._analytics_client = AnalyticsClient()
         self._template_manager = TemplateManager().instance()
         self._appliance_manager = ApplianceManager().instance()
 
@@ -396,13 +394,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiComputeSummaryDockWidget.setFloating(False)
         self.uiConsoleDockWidget.setFloating(False)
         self.uiNodesDockWidget.setFloating(False)
-
-    def analyticsClient(self):
-        """
-        Return the analytics client
-        """
-
-        return self._analytics_client
 
     def _newProjectActionSlot(self):
         """
@@ -1178,8 +1169,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         progress.setCancelButtonText("Force quit")
 
         log.debug("Close the Main Window")
-        self._analytics_client.sendScreenView("Main Window", session_start=False)
-
         self._finish_application_closing(close_windows=False)
         event.accept()
         self.uiConsoleTextEdit.closeIO()
@@ -1268,7 +1257,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Controller.instance().connected_signal.connect(self._controllerConnectedSlot)
         Controller.instance().project_list_updated_signal.connect(self.updateRecentProjectActions)
 
-        self._analytics_client.sendScreenView("Main Window")
         self.uiGraphicsView.setEnabled(False)
 
         # show the setup wizard
