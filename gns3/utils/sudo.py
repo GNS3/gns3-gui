@@ -17,6 +17,7 @@
 
 import shlex
 import subprocess
+import sys
 
 from gns3.qt import QtWidgets
 from gns3.utils.progress_dialog import ProgressDialog
