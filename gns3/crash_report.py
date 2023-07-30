@@ -15,13 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import os
-import platform
-import struct
-import distro
-import urllib3
-
 try:
     import sentry_sdk
     from sentry_sdk.integrations.logging import LoggingIntegration
@@ -29,6 +22,12 @@ try:
 except ImportError:
     # Sentry SDK is not installed with deb package in order to simplify packaging
     SENTRY_SDK_AVAILABLE = False
+
+import sys
+import os
+import platform
+import struct
+import distro
 
 from .utils.get_resource import get_resource
 from .version import __version__, __version_info__
@@ -82,7 +81,7 @@ class CrashReport:
                                 ca_certs=cacert,
                                 default_integrations=False,
                                 integrations=[sentry_logging])
-            except urllib3.exceptions.HTTPError as e:
+            except Exception as e:
                 log.error("Crash report could not be sent: {}".format(e))
                 return
 
