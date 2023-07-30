@@ -97,9 +97,13 @@ class ConsoleThread(QtCore.QThread):
                 return
 
             env = os.environ.copy()
-            if args[0] == "gnome-terminal" and \
-                    "GNOME_TERMINAL_SERVICE" not in env or "GNOME_TERMINAL_SCREEN" not in env:
-                env.update(gnome_terminal_env())  # inject gnome-terminal environment variables
+            if sys.platform.startswith("linux") and args[0] == "gnome-terminal":
+                dconf_command = "dconf read /org/gnome/terminal/legacy/new-terminal-mode"
+                p = subprocess.run(shlex.split(dconf_command), capture_output=True, check=True)
+                if "--tab" in command or "-t" in command and p.stdout.decode().strip() != "'tab'":
+                    log.warning("'Open new terminals in' should be set to 'Tab' in gnome-terminal preferences")
+                if "GNOME_TERMINAL_SERVICE" not in env or "GNOME_TERMINAL_SCREEN" not in env:
+                    env.update(gnome_terminal_env())  # inject gnome-terminal environment variables
             subprocess.call(args, env=env)
 
     def run(self):
