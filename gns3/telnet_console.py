@@ -25,6 +25,8 @@ import os
 import sys
 import shlex
 import subprocess
+import psutil
+
 from .main_window import MainWindow
 from .controller import Controller
 
@@ -32,6 +34,39 @@ import logging
 log = logging.getLogger(__name__)
 
 console_mutex = QtCore.QMutex()
+
+
+def gnome_terminal_env():
+
+    uid = os.getuid()
+
+    # get list of processes of current user
+    procs = [p.info for p in psutil.process_iter(
+        attrs=['name', 'pid', 'ppid', 'create_time', 'uids']
+    ) if p.info['uids'].real == uid]
+
+    # get pid of gnome-terminal-server process
+    gnome_terminal_server_pid = [p['pid'] for p in procs if p['name'] == "gnome-terminal-server"]
+    if not gnome_terminal_server_pid:
+        return {}
+    gnome_terminal_server_pid = gnome_terminal_server_pid[0]
+
+    # get subprocesses of gnome-terminal-server
+    gnome_terminal_server_children = [p for p in procs if p['ppid'] == gnome_terminal_server_pid]
+    gnome_terminal_server_children.sort(key=lambda p: p['create_time'], reverse=True)
+
+    # return the gnome-terminal environment variables of the first subprocess named telnet
+    for proc in gnome_terminal_server_children:
+        if proc['name'] == "telnet":
+            try:
+                env = psutil.Process(proc['pid']).environ()
+                if 'GNOME_TERMINAL_SERVICE' in env and \
+                   'GNOME_TERMINAL_SCREEN' in env:
+                    return {'GNOME_TERMINAL_SERVICE': env['GNOME_TERMINAL_SERVICE'],
+                            'GNOME_TERMINAL_SCREEN': env['GNOME_TERMINAL_SCREEN']}
+            except psutil.Error:
+                pass
+    return {}
 
 
 class ConsoleThread(QtCore.QThread):
@@ -60,7 +95,12 @@ class ConsoleThread(QtCore.QThread):
             except ValueError:
                 self.consoleError.emit("Syntax error in command: '{}'".format(command))
                 return
-            subprocess.call(args, env=os.environ)
+
+            env = os.environ.copy()
+            if args[0] == "gnome-terminal" and \
+                    "GNOME_TERMINAL_SERVICE" not in env or "GNOME_TERMINAL_SCREEN" not in env:
+                env.update(gnome_terminal_env())  # inject gnome-terminal environment variables
+            subprocess.call(args, env=env)
 
     def run(self):
 
