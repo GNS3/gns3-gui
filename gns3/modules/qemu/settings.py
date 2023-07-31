@@ -57,6 +57,8 @@ QEMU_VM_SETTINGS = {
     "mac_address": "",
     "legacy_networking": False,
     "replicate_network_connection_state": True,
+    "tpm": False,
+    "uefi": False,
     "create_config_disk": False,
     "on_close": "power_off",
     "platform": "",

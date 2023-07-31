@@ -654,7 +654,7 @@ class Project(QtCore.QObject):
     @qslot
     def _websocket_error(self, error):
         if self._notification_stream:
-            log.error(self._notification_stream.errorString())
+            log.error("Websocket project notification stream error: {}".format(self._notification_stream.errorString()))
             self._notification_stream = None
             self._startListenNotifications()
 

@@ -20,6 +20,7 @@ import os
 import platform
 import struct
 import distro
+import urllib3
 
 try:
     import sentry_sdk
@@ -51,7 +52,7 @@ class CrashReport:
     Report crash to a third party service
     """
 
-    DSN = "https://439b7b27129f4c46971fe7bdc38738de@o19455.ingest.sentry.io/38506"
+    DSN = "https://8e73913aea164a31a72e3a07fc455e26@o19455.ingest.sentry.io/38506"
     _instance = None
 
     def __init__(self):
@@ -75,18 +76,22 @@ class CrashReport:
             # Don't send log records as events.
             sentry_logging = LoggingIntegration(level=logging.INFO, event_level=None)
 
-            sentry_sdk.init(dsn=CrashReport.DSN,
-                            release=__version__,
-                            ca_certs=cacert,
-                            default_integrations=False,
-                            integrations=[sentry_logging])
+            try:
+                sentry_sdk.init(dsn=CrashReport.DSN,
+                                release=__version__,
+                                ca_certs=cacert,
+                                default_integrations=False,
+                                integrations=[sentry_logging])
+            except urllib3.exceptions.HTTPError as e:
+                log.error("Crash report could not be sent: {}".format(e))
+                return
 
             tags = {
                 "os:name": platform.system(),
                 "os:release": platform.release(),
                 "os:win_32": " ".join(platform.win32_ver()),
                 "os:mac": "{} {}".format(platform.mac_ver()[0], platform.mac_ver()[2]),
-                "os:linux": " ".join(distro.linux_distribution()),
+                "os:linux": distro.name(pretty=True),
 
             }
 

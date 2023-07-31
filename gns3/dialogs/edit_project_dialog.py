@@ -46,18 +46,10 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         self.uiNewVarButton.clicked.connect(self.onAddNewVariable)
         self.uiGlobalVariablesGrid.addWidget(self.uiNewVarButton, 0, 3, QtCore.Qt.AlignRight)
 
-        self._variables = self.setUpVariables()
+        self._variables = self._project.variables()
+        if not self._variables:
+            self._variables = [{"name": "", "value": ""}]
         self.updateGlobalVariables()
-
-    def setUpVariables(self):
-        new_variable = {"name": "", "value": ""}
-        variables = self._project.variables()
-
-        if variables is not None:
-            variables.append(new_variable)
-        else:
-            variables = [new_variable]
-        return variables
 
     def updateGlobalVariables(self):
         while True:

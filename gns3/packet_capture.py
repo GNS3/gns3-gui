@@ -112,15 +112,20 @@ class PacketCapture:
         """
         Starts the packet capture reader.
         """
+
         self._startPacketCommand(link, self.settings()["packet_capture_reader_command"])
 
     def stopPacketCaptureReader(self, link):
         """
         Stop the packet capture reader
         """
-        if link in self._tail_process and self._tail_process[link].poll() is None:
+
+        if link in self._tail_process:
             log.debug("Stopping packet capture reader for link {}".format(link.link_id()))
-            self._tail_process[link].kill()
+            try:
+                self._tail_process[link].kill()
+            except (PermissionError, OSError):
+                pass
             del self._tail_process[link]
 
     def startPacketCaptureAnalyzer(self, link):
@@ -183,14 +188,14 @@ class PacketCapture:
                 QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't create packet capture file {}: {}".format(capture_file_path, str(e)))
                 return
 
-        if link in self._tail_process and self._tail_process[link].poll() is None:
+        if link in self._tail_process:
             try:
                 self._tail_process[link].kill()
             except (PermissionError, OSError):
                 # Sometimes we have condition on windows where the process is in the process to quit
                 pass
             del self._tail_process[link]
-        if link in self._capture_reader_process and self._capture_reader_process[link].poll() is None:
+        if link in self._capture_reader_process:
             try:
                 self._capture_reader_process[link].kill()
             except (PermissionError, OSError):

@@ -56,7 +56,6 @@ if sys.platform.startswith("win"):
         program_files_x86 = program_files = os.environ["PROGRAMFILES"]
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (normal standalone version)': 'putty_standalone.exe -telnet %h %p -loghost "%d"',
-                                             'Putty (custom deprecated version)': 'putty.exe -telnet %h %p -wt "%d" -gns3 5 -skin 4',
                                              'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "telnet %h %p"'.format(program_files_x86),
                                              'Royal TS V3': r'{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:%h /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="%p" /p:Name="%d"'.format(program_files),
                                              'Royal TS V5': r'"{}\Royal TS V5\RoyalTS.exe" /protocol:terminal /using:adhoc /uri:"%h" /property:Port="%p" /property:IsTelnetConnection="true" /property:Name="%d"'.format(program_files_x86),
@@ -65,6 +64,7 @@ if sys.platform.startswith("win"):
                                              'SecureCRT (personal profile)': r'"{}\AppData\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "%d" /TELNET %h %p'.format(userprofile),
                                              'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files_x86),
                                              'Telnet': 'telnet %h %p',
+                                             'Windows Terminal': 'wt.exe -w 1 new-tab --title %d telnet %h %p',
                                              'Xshell 4': r'"{}\NetSarang\Xshell 4\xshell.exe" -url telnet://%h:%p'.format(program_files_x86),
                                              'Xshell 5': r'"{}\NetSarang\Xshell 5\xshell.exe" -url telnet://%h:%p -newtab %d'.format(program_files_x86),
                                              'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:%h:%p" /TABBED "/TITLE:%d"'.format(program_files_x86)}
@@ -141,7 +141,6 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'end tell'""",
         'Royal TSX': "open 'rtsx://telnet%3A%2F%2F%h:%p'",
         'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "%d" /T /TELNET %h %p',
-        'Windows Terminal': 'wt.exe -w 1 new-tab --title %d telnet %h %p',
         'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"',
         'ZOC 7': '/Applications/zoc7.app/Contents/MacOS/zoc7 "/TELNET:%h:%p" /TABBED "/TITLE:%d"',
         'ZOC 8': '/Applications/zoc8.app/Contents/MacOS/zoc8 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
@@ -285,7 +284,6 @@ GENERAL_SETTINGS = {
     "check_for_update": True,
     "overlay_notifications": True,
     "experimental_features": False,
-    "send_stats": True,
     "stats_visitor_id": str(uuid.uuid4()),  # An anonymous id for stats
     "last_check_for_update": 0,
     "telnet_console_command": DEFAULT_TELNET_CONSOLE_COMMAND,

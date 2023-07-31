@@ -63,3 +63,4 @@ __pycache__
 
 # Virtualenv
 env
+venv

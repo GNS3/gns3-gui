@@ -415,3 +415,22 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         for link in self._topology.links():
             if link.suspended():
                 link.toggleSuspend()
+
+    def keyPressEvent(self, event):
+        """
+        Handles key press events
+        """
+
+        from .main_window import MainWindow
+        view = MainWindow.instance().uiGraphicsView
+        # only deleting a link or node is supported for now
+        if event.key() == QtCore.Qt.Key_Delete:
+            current_item = self.currentItem()
+            if isinstance(current_item, TopologyNodeItem):
+                current_item.node().delete()
+            else:
+                link = current_item.data(0, QtCore.Qt.UserRole)
+                for item in view.scene().items():
+                    if isinstance(item, LinkItem) and item.link() == link:
+                        item.delete()
+        super().keyPressEvent(event)

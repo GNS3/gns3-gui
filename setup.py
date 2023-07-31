@@ -66,7 +66,8 @@ setup(
     author="Jeremy Grossmann",
     author_email="package-maintainer@gns3.net",
     description="GNS3 graphical interface for the GNS3 server.",
-    long_description=open("README.rst", "r").read(),
+    long_description=open("README.md", "r").read(),
+    long_description_content_type="text/markdown",
     install_requires=open("requirements.txt", "r").read().splitlines(),
     entry_points={
         "gui_scripts": [
@@ -99,6 +100,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
 )

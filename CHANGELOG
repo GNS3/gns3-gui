@@ -1,5 +1,71 @@
 # Change Log
 
+## 2.2.41 12/07/2023
+
+* Use alternative method to set the correct permissions for uBridge on macOS
+* Remove sending stats to GA
+* Catch urllib3 exceptions when sending crash report. Ref https://github.com/GNS3/gns3-gui/issues/3483
+* Backport UEFI boot mode support for Qemu VMs
+* Add debug for dropEvent. Ref https://github.com/GNS3/gns3-server/issues/2242
+
+## 2.2.40.1 10/06/2023
+
+* No changes
+
+## 2.2.40 06/06/2023
+
+* Change log messages for Websocket errors
+* Do not proceed if an appliance symbol cannot be downloaded. Ref #3466
+* Delete a node or link from topology summary view using Delete key. Ref #3445
+* Fix "Start the capture visualization program" checkbox works only one (first) time for a given link. Fixes #3442
+* Let the selected link style applied when editing a link. Fixes #3460
+* Fix hovered color shown in style editing dialog. Fixes #3460
+
+## 2.2.39 08/05/2023
+
+* Fix nodes are not snapped to the grid at the moment of creation
+* Upgrade distro and aiohttp dependencies
+
+## 2.2.38 28/02/2023
+
+* Add long description content type in setup.py
+* Automatically add new issues to GNS3 project
+* Development 2.2.38.dev1
+
+## 2.2.37 25/01/2023
+
+* Upgrade to PyQt5 v5.15.7
+* Changed Windows Terminal telnet console profile from OS X to windows ref: issue #3193
+
+## 2.2.36 04/01/2023
+
+* Add Trusted Platform Module (TPM) support for Qemu VMs
+* Add "on_close" setting to appliance schema. Fixes https://github.com/GNS3/gns3-server/issues/2148
+* Add default 'ide' disk interface when manually creating Qemu VM template. Fixes #3360
+* Fix zoom factor is multiplied when loading projects. Fixes #3408
+* Remove deprecated PuTTY option in preferences. Ref https://github.com/GNS3/gns3-gui/discussions/3415
+
+
+## 2.2.35.1 10/11/2022
+
+* Re-release Web-Ui v2.2.35
+
+## 2.2.35 08/11/2022
+
+* Fix "variables": [] in project file leads to unlimited increase of empty name/value pairs in GUI. Fixes #3397
+* Make version PEP 440 compliant
+* Support for Python 3.11
+* Upgrade PyQt to 5.15.7 and pywin32 to v305
+* Allow for more dependency versions at patch level
+* Replace deprecated distro.linux_distribution() call
+* Add a fix for the CVE-2007-4559
+
+## 2.2.34 28/08/2022
+
+* Upgrade dev dependencies
+* Implement new option (Delete All) to contextual menu in "Console" dock. Fixes #3325
+* Fix 2560x1440 resolution for Docker container
+
 ## 2.2.33.1 21/06/2022
 
 * Match GNS3 server version

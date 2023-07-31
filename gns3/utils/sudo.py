@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
 import shlex
 import subprocess
+import sys
 
 from gns3.qt import QtWidgets
 from gns3.utils.progress_dialog import ProgressDialog
