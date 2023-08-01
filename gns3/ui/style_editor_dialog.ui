@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>StyleEditorDialog</class>
  <widget class="QDialog" name="StyleEditorDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>270</width>
+    <height>294</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Style editor</string>
   </property>
@@ -76,14 +84,14 @@
       <item row="3" column="1">
        <widget class="QComboBox" name="uiBorderStyleComboBox"/>
       </item>
-      <item row="4" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="uiRotationLabel">
         <property name="text">
          <string>Rotation:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="5" column="1">
        <widget class="QSpinBox" name="uiRotationSpinBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -103,6 +111,23 @@ editing (notes only) with ALT and '+' (or P) / ALT and '-' (or M)</string>
         </property>
         <property name="maximum">
          <number>360</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="uiCornerRadiusLabel">
+        <property name="text">
+         <string>Corner radius:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="uiCornerRadiusSpinBox">
+        <property name="suffix">
+         <string>°</string>
+        </property>
+        <property name="maximum">
+         <number>100</number>
         </property>
        </widget>
       </item>
