@@ -55,8 +55,8 @@ class StyleEditorDialogLink(QtWidgets.QDialog, Ui_StyleEditorDialog):
         self.uiColorPushButton.hide()
         self._color = None
 
-        self.uiBorderRadiusLabel.hide()
-        self.uiBorderRadiusSpinBox.hide()
+        self.uiCornerRadiusLabel.hide()
+        self.uiCornerRadiusSpinBox.hide()
         self.uiRotationLabel.hide()
         self.uiRotationSpinBox.hide()
 
