@@ -22,6 +22,7 @@ Style editor to edit Shape items.
 from ..qt import QtCore, QtWidgets, QtGui
 from ..ui.style_editor_dialog_ui import Ui_StyleEditorDialog
 from ..items.shape_item import ShapeItem
+from ..items.rectangle_item import RectangleItem
 
 
 class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
@@ -70,6 +71,13 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
                                                                                                     self._border_color.green(),
                                                                                                     self._border_color.blue(),
                                                                                                     self._border_color.alpha()))
+        if isinstance(first_item, RectangleItem):
+            # use the horizontal corner radius first and then the vertical one if it's not set
+            # maybe we allow configuring them separately in the future
+            corner_radius = first_item.horizontalCornerRadius()
+            if not corner_radius:
+                corner_radius = first_item.verticalCornerRadius()
+            self.uiCornerRadiusSpinBox.setValue(corner_radius)
         self.uiRotationSpinBox.setValue(int(first_item.rotation()))
         self.uiBorderWidthSpinBox.setValue(pen.width())
         index = self.uiBorderStyleComboBox.findData(pen.style())
@@ -116,10 +124,16 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
         for item in self._items:
             item.setPen(pen)
-            # on multiselection it's possible to select many type of items
+            # on multi-selection it's possible to select many type of items
             # but brush can be applied only on ShapeItem,
             if brush and isinstance(item, ShapeItem):
                 item.setBrush(brush)
+            if isinstance(item, RectangleItem):
+                corner_radius = self.uiCornerRadiusSpinBox.value()
+                # use the corner radius for both horizontal (rx) and vertical (ry)
+                # maybe we support setting them separately in the future
+                item.setHorizontalCornerRadius(corner_radius)
+                item.setVerticalCornerRadius(corner_radius)
             item.setRotation(self.uiRotationSpinBox.value())
 
     def done(self, result):
