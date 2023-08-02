@@ -173,7 +173,7 @@ class ShapeItem(DrawingItem):
 
     def fromSvg(self, svg):
         """
-        Import element informations from an SVG
+        Import element information from SVG
         """
         svg = ET.fromstring(svg)
         width = float(svg.get("width", self.rect().width()))

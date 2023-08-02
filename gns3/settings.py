@@ -152,12 +152,12 @@ elif sys.platform.startswith("darwin"):
 else:
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Xterm': 'xterm -T "%d" -e "telnet %h %p"',
                                              'Putty': 'putty -telnet %h %p -title "%d" -sl 2500 -fg SALMON1 -bg BLACK',
-                                             'Gnome Terminal': 'gnome-terminal -t "%d" -e "telnet %h %p"',
+                                             'Gnome Terminal': 'gnome-terminal --tab -t "%d" -- telnet %h %p',
                                              'Xfce4 Terminal': 'xfce4-terminal --tab -T "%d" -e "telnet %h %p"',
                                              'ROXTerm': 'roxterm -n "%d" --tab -e "telnet %h %p"',
                                              'KDE Konsole': 'konsole --new-tab -p tabtitle="%d" -e "telnet %h %p"',
                                              'SecureCRT': 'SecureCRT /T /N "%d"  /TELNET %h %p',
-                                             'Mate Terminal': 'mate-terminal --tab -e "telnet %h %p"  -t "%d"',
+                                             'Mate Terminal': 'mate-terminal --tab -e "telnet %h %p" -t "%d"',
                                              'terminator': 'terminator -e "telnet %h %p" -T "%d"',
                                              'urxvt': 'urxvt -title %d -e telnet %h %p',
                                              'kitty': 'kitty -T %d telnet %h %p'}
@@ -168,7 +168,10 @@ else:
     if sys.platform.startswith("linux"):
         distro_name = distro.name()
         if distro_name == "Debian" or distro_name == "Ubuntu" or distro_name == "LinuxMint":
-            DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Gnome Terminal"]
+            if shutil.which("mate-terminal"):
+                DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Mate Terminal"]
+            else:
+                DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Gnome Terminal"]
 
 # Pre-configured VNC console commands on various OSes
 if sys.platform.startswith("win"):

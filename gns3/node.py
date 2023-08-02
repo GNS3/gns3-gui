@@ -752,7 +752,8 @@ class Node(BaseNode):
             return
         super().setStatus(status)
         if status == self.started and "console_auto_start" in self.settings() and self.settings()["console_auto_start"]:
-            self.openConsole()
+            # give the node some time to start before opening the console
+            QtCore.QTimer.singleShot(1000, self.openConsole)
 
     def openConsole(self, command=None, aux=False):
         """
