@@ -22,7 +22,9 @@ from ssl import CertificateError
 
 from ..qt import QtCore, QtWidgets, QtNetwork
 from ..controller import Controller
+from ..utils.cacert import get_cacert
 from .config import Config, ConfigException
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -213,6 +215,11 @@ class ApplianceToTemplate:
 
         network_manager = QtNetwork.QNetworkAccessManager()
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+        cacert = get_cacert()
+        if cacert:
+            ssl_config = QtNetwork.QSslConfiguration.defaultConfiguration()
+            ssl_config.setCaCertificates(QtNetwork.QSslCertificate.fromPath(cacert, QtNetwork.QSsl.Pem))
+            request.setSslConfiguration(ssl_config)
         request.setRawHeader(b'User-Agent', b'GNS3 symbol downloader')
         reply = network_manager.get(request)
         progress_dialog = QtWidgets.QProgressDialog("Downloading '{}' appliance symbol...".format(os.path.basename(path)), "Cancel", 0, 0, self._parent)
