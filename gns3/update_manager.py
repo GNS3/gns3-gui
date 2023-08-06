@@ -21,11 +21,10 @@ import os
 import shutil
 import json
 import re
+import certifi
 
 
 from gns3.utils import parse_version
-from gns3.utils.cacert import get_cacert
-
 from gns3 import version
 from gns3.qt import QtNetwork, QtCore, QtWidgets, QtGui, qslot
 from gns3.local_config import LocalConfig
@@ -72,7 +71,9 @@ class UpdateManager(QtCore.QObject):
         if self._network_manager is None:
             self._network_manager = QtNetwork.QNetworkAccessManager()
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
-        cacert = get_cacert()
+        cacert = None
+        if hasattr(sys, "frozen"):
+            cacert = certifi.where()
         if cacert:
             ssl_config = QtNetwork.QSslConfiguration.defaultConfiguration()
             ssl_config.setCaCertificates(QtNetwork.QSslCertificate.fromPath(cacert, QtNetwork.QSsl.Pem))

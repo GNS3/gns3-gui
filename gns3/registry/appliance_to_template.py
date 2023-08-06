@@ -17,12 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 import shutil
+import certifi
 from ssl import CertificateError
 
 from ..qt import QtCore, QtWidgets, QtNetwork
 from ..controller import Controller
-from ..utils.cacert import get_cacert
 from .config import Config, ConfigException
 
 
@@ -215,7 +216,9 @@ class ApplianceToTemplate:
 
         network_manager = QtNetwork.QNetworkAccessManager()
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
-        cacert = get_cacert()
+        cacert = None
+        if hasattr(sys, "frozen"):
+            cacert = certifi.where()
         if cacert:
             ssl_config = QtNetwork.QSslConfiguration.defaultConfiguration()
             ssl_config.setCaCertificates(QtNetwork.QSslCertificate.fromPath(cacert, QtNetwork.QSsl.Pem))
