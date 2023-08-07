@@ -17,9 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys
 import shutil
-import certifi
 from ssl import CertificateError
 
 from ..qt import QtCore, QtWidgets, QtNetwork
@@ -216,13 +214,6 @@ class ApplianceToTemplate:
 
         network_manager = QtNetwork.QNetworkAccessManager()
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
-        cacert = None
-        if hasattr(sys, "frozen"):
-            cacert = certifi.where()
-        if cacert:
-            ssl_config = QtNetwork.QSslConfiguration.defaultConfiguration()
-            ssl_config.setCaCertificates(QtNetwork.QSslCertificate.fromPath(cacert, QtNetwork.QSsl.Pem))
-            request.setSslConfiguration(ssl_config)
         request.setRawHeader(b'User-Agent', b'GNS3 symbol downloader')
         reply = network_manager.get(request)
         progress_dialog = QtWidgets.QProgressDialog("Downloading '{}' appliance symbol...".format(os.path.basename(path)), "Cancel", 0, 0, self._parent)

@@ -21,7 +21,6 @@ import os
 import shutil
 import json
 import re
-import certifi
 
 
 from gns3.utils import parse_version
@@ -71,13 +70,6 @@ class UpdateManager(QtCore.QObject):
         if self._network_manager is None:
             self._network_manager = QtNetwork.QNetworkAccessManager()
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
-        cacert = None
-        if hasattr(sys, "frozen"):
-            cacert = certifi.where()
-        if cacert:
-            ssl_config = QtNetwork.QSslConfiguration.defaultConfiguration()
-            ssl_config.setCaCertificates(QtNetwork.QSslCertificate.fromPath(cacert, QtNetwork.QSsl.Pem))
-            request.setSslConfiguration(ssl_config)
         request.setRawHeader(b'User-Agent', b'GNS3 Check For Update')
         request.setAttribute(QtNetwork.QNetworkRequest.User, user_attribute)
         if parse_version(QtCore.QT_VERSION_STR) >= parse_version("5.6.0") and parse_version(QtCore.PYQT_VERSION_STR) >= parse_version("5.6.0"):

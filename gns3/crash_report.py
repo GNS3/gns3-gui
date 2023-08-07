@@ -28,7 +28,6 @@ import os
 import platform
 import struct
 import distro
-import certifi
 
 from .version import __version__, __version_info__
 
@@ -66,13 +65,9 @@ class CrashReport:
         if SENTRY_SDK_AVAILABLE:
             # Don't send log records as events.
             sentry_logging = LoggingIntegration(level=logging.INFO, event_level=None)
-            cacert = None
-            if hasattr(sys, "frozen"):
-                cacert = certifi.where()
             try:
                 sentry_sdk.init(dsn=CrashReport.DSN,
                                 release=__version__,
-                                ca_certs=cacert,
                                 default_integrations=False,
                                 integrations=[sentry_logging])
             except Exception as e:

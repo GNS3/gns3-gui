@@ -48,6 +48,16 @@ import argparse
 import signal
 import psutil
 
+import logging
+log = logging.getLogger(__name__)
+
+try:
+    import truststore
+    truststore.inject_into_ssl()
+    log.info("Using system certificate store for SSL connections")
+except ImportError:
+    pass
+
 try:
     from gns3.qt import QtCore, QtWidgets
 except ImportError:
@@ -60,10 +70,6 @@ from gns3.local_config import LocalConfig
 from gns3.application import Application
 from gns3.utils import parse_version
 from gns3.dialogs.profile_select import ProfileSelectDialog
-
-import logging
-log = logging.getLogger(__name__)
-
 from gns3.version import __version__
 
 
