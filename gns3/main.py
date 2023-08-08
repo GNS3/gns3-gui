@@ -48,16 +48,6 @@ import argparse
 import signal
 import psutil
 
-import logging
-log = logging.getLogger(__name__)
-
-try:
-    import truststore
-    truststore.inject_into_ssl()
-    log.info("Using system certificate store for SSL connections")
-except ImportError:
-    pass
-
 try:
     from gns3.qt import QtCore, QtWidgets
 except ImportError:
@@ -71,6 +61,10 @@ from gns3.application import Application
 from gns3.utils import parse_version
 from gns3.dialogs.profile_select import ProfileSelectDialog
 from gns3.version import __version__
+
+
+import logging
+log = logging.getLogger(__name__)
 
 
 def locale_check():
@@ -140,6 +134,13 @@ def main():
 
     if options.project:
         options.project = os.path.abspath(options.project)
+
+    try:
+        import truststore
+        truststore.inject_into_ssl()
+        log.info("Using system certificate store for SSL connections")
+    except ImportError:
+        pass
 
     if hasattr(sys, "frozen"):
         # We add to the path where the OS search executable our binary location starting by GNS3
