@@ -15,13 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import os
-import platform
-import struct
-import distro
-import urllib3
-
 try:
     import sentry_sdk
     from sentry_sdk.integrations.logging import LoggingIntegration
@@ -30,7 +23,12 @@ except ImportError:
     # Sentry SDK is not installed with deb package in order to simplify packaging
     SENTRY_SDK_AVAILABLE = False
 
-from .utils.get_resource import get_resource
+import sys
+import os
+import platform
+import struct
+import distro
+
 from .version import __version__, __version_info__
 
 import logging
@@ -52,7 +50,7 @@ class CrashReport:
     Report crash to a third party service
     """
 
-    DSN = "https://8e73913aea164a31a72e3a07fc455e26@o19455.ingest.sentry.io/38506"
+    DSN = "https://bae0411a1718612ee8c25cdb12ec7f02@o19455.ingest.sentry.io/38506"
     _instance = None
 
     def __init__(self):
@@ -65,24 +63,14 @@ class CrashReport:
         self._sentry_initialized = False
 
         if SENTRY_SDK_AVAILABLE:
-            cacert = None
-            if hasattr(sys, "frozen"):
-                cacert_resource = get_resource("cacert.pem")
-                if cacert_resource is not None and os.path.isfile(cacert_resource):
-                    cacert = cacert_resource
-                else:
-                    log.error("The SSL certificate bundle file '{}' could not be found".format(cacert_resource))
-
             # Don't send log records as events.
             sentry_logging = LoggingIntegration(level=logging.INFO, event_level=None)
-
             try:
                 sentry_sdk.init(dsn=CrashReport.DSN,
                                 release=__version__,
-                                ca_certs=cacert,
                                 default_integrations=False,
                                 integrations=[sentry_logging])
-            except urllib3.exceptions.HTTPError as e:
+            except Exception as e:
                 log.error("Crash report could not be sent: {}".format(e))
                 return
 

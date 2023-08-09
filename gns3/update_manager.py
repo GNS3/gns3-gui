@@ -24,7 +24,6 @@ import re
 
 
 from gns3.utils import parse_version
-
 from gns3 import version
 from gns3.qt import QtNetwork, QtCore, QtWidgets, QtGui, qslot
 from gns3.local_config import LocalConfig
