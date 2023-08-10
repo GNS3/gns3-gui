@@ -29,7 +29,6 @@ except ImportError:
     # Sentry SDK is not installed with deb package in order to simplify packaging
     SENTRY_SDK_AVAILABLE = False
 
-from .utils.get_resource import get_resource
 from .version import __version__, __version_info__
 
 import logging
@@ -64,21 +63,11 @@ class CrashReport:
         self._sentry_initialized = False
 
         if SENTRY_SDK_AVAILABLE:
-            cacert = None
-            if hasattr(sys, "frozen"):
-                cacert_resource = get_resource("cacert.pem")
-                if cacert_resource is not None and os.path.isfile(cacert_resource):
-                    cacert = cacert_resource
-                else:
-                    log.error("The SSL certificate bundle file '{}' could not be found".format(cacert_resource))
-
             # Don't send log records as events.
             sentry_logging = LoggingIntegration(level=logging.INFO, event_level=None)
-
             try:
                 sentry_sdk.init(dsn=CrashReport.DSN,
                                 release=__version__,
-                                ca_certs=cacert,
                                 default_integrations=False,
                                 integrations=[sentry_logging])
             except Exception as e:

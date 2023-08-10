@@ -1,5 +1,15 @@
 # Change Log
 
+## 2.2.42 09/08/2023
+
+* Use the system's certificate store for SSL connections
+* Give a node some time to start before opening the console (for console auto start). Fixes #3474
+* Use Mate Terminal by default if installed on Debian, Ubuntu and Linux Mint.
+* Support for gnome-terminal tabs to be opened in the same window.
+* Remove import urllib3 and let sentry_sdk import and patch it. Fixes https://github.com/GNS3/gns3-gui/issues/3498
+* Add import sys in sudo.py
+* Rounded Rectangle support
+
 ## 2.2.41 12/07/2023
 
 * Use alternative method to set the correct permissions for uBridge on macOS
