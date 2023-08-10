@@ -82,5 +82,5 @@ if __name__ == '__main__':
     gns3_path = os.path.abspath(os.path.join(cwd, "../gns3/"))
     ui_path = os.path.abspath(os.path.join(cwd, "../gns3/ui"))
     recursive(build_ui, gns3_path)
-    rcc_path = os.path.abspath(os.path.join(cwd, "../qt_resources"))
+    rcc_path = os.path.abspath(os.path.join(cwd, "../resources"))
     build_resources(rcc_path, ui_path)
