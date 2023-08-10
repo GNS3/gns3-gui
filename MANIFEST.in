@@ -1,5 +1,5 @@
 include README.md
-include LICENSE.txt
+include LICENSE
 include CHANGELOG
 recursive-include gns3 *
 recursive-exclude * __pycache__

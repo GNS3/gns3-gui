@@ -43,7 +43,7 @@ version = {attr = "gns3.version.__version__"}
 dependencies = {file = "requirements.txt"}
 
 [tool.setuptools.dynamic.optional-dependencies]
-development = {file = ['dev-requirements.txt']}
+dev = {file = ['dev-requirements.txt']}
 
 [project.urls]
 "Homepage" = "http://gns3.com"
