@@ -30,16 +30,6 @@ try:
 except Exception as e:
     print("Fail update installation: {}".format(str(e)))
 
-
-# WARNING
-# Due to buggy user machines we choose to put this as the first loading modules
-# otherwise the egg cache is initialized in his standard location and
-# if is not writetable the application crash. It's the user fault
-# because one day the user as used sudo to run an egg and break his
-# filesystem permissions, but it's a common mistake.
-from gns3.utils.get_resource import get_resource
-
-
 import datetime
 import traceback
 import time
@@ -59,6 +49,7 @@ from gns3.crash_report import CrashReport
 from gns3.local_config import LocalConfig
 from gns3.application import Application
 from gns3.utils import parse_version
+from gns3.utils.install_mime_types import install_mime_types
 from gns3.dialogs.profile_select import ProfileSelectDialog
 from gns3.version import __version__
 
@@ -129,8 +120,13 @@ def main():
     parser.add_argument("-q", "--quiet", action="store_true", help="do not show logs on stdout")
     parser.add_argument("--config", help="Configuration file")
     parser.add_argument("--profile", help="Settings profile (blank will use default settings files)")
+    parser.add_argument("--install-mime-types", help="Install mime types (Linux only)", action="store_true", default=False)
     options = parser.parse_args()
     exception_file_path = "exceptions.log"
+
+    if options.install_mime_types:
+        install_mime_types()
+        return
 
     if options.project:
         options.project = os.path.abspath(options.project)
