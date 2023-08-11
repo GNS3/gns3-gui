@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,7 @@ name = "gns3-gui"
 description = "GNS3 graphical interface for the GNS3 server."
 license = {file = "LICENSE"}
 authors = [
-  { name="Jeremy Grossmann" }
+  { name = "Jeremy Grossmann", email = "developers@gns3.com" }
 ]
 readme = "README.md"
 requires-python = ">=3.4"
@@ -33,7 +33,7 @@ classifiers = [
         "Programming Language :: Python :: Implementation :: CPython",
 ]
 
-dynamic = ["version", "dependencies"]
+dynamic = ["version", "dependencies", "optional-dependencies"]
 
 [tool.setuptools]
 packages = ["gns3"]
@@ -42,12 +42,8 @@ packages = ["gns3"]
 version = {attr = "gns3.version.__version__"}
 dependencies = {file = "requirements.txt"}
 
-[project.optional-dependencies]
-test = [
-        "pytest==7.2.2",
-        "flake8==5.0.4",  # v5.0.4 is the last to support Python 3.7
-        "pytest-timeout==2.1.0"
-]
+[tool.setuptools.dynamic.optional-dependencies]
+dev = {file = ['dev-requirements.txt']}
 
 [project.urls]
 "Homepage" = "http://gns3.com"

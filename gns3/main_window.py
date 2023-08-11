@@ -86,7 +86,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setUnifiedTitleAndToolBarOnMac(True)
 
-        # This widgets will be disable when you have no project loaded
+        # This widgets will be disabled when you have no project loaded
         self.disableWhenNoProjectWidgets = [
             self.uiGraphicsView,
             self.uiAnnotateMenu,
