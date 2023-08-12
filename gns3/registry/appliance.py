@@ -62,7 +62,7 @@ class Appliance(collections.abc.Mapping):
         if self._appliance["registry_version"] > 7:
             raise ApplianceError("Please update GNS3 in order to install this appliance")
 
-        with open(get_resource(os.path.join("schemas", "appliance.json"))) as f:
+        with open(get_resource("schemas/appliance.json")) as f:
             schema = json.load(f)
         v = jsonschema.Draft4Validator(schema)
         try:
