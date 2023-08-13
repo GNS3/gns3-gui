@@ -24,6 +24,7 @@ from ..qt import QtCore, QtWidgets, QtNetwork
 from ..controller import Controller
 from .config import Config, ConfigException
 
+
 import logging
 log = logging.getLogger(__name__)
 

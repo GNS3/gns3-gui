@@ -74,7 +74,7 @@ class Appliance(collections.abc.Mapping):
         else:
             appliance_file = "appliance.json"
 
-        with open(get_resource(os.path.join("schemas", appliance_file))) as f:
+        with open(get_resource("schemas/appliance.json")) as f:
             schema = json.load(f)
         v = jsonschema.Draft4Validator(schema)
         try:
