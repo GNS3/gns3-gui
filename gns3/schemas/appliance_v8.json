@@ -14,6 +14,7 @@
     "docker_properties": {
       "type": "object",
       "title": "Docker template properties",
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -83,13 +84,13 @@
         }
       },
       "required": [
-        "adapters",
         "image"
       ]
     },
     "iou_properties": {
       "type": "object",
       "title": "IOU template properties",
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -131,14 +132,7 @@
           "type": "string",
           "title": "Config loaded at startup"
         }
-      },
-      "required": [
-        "ethernet_adapters",
-        "serial_adapters",
-        "nvram",
-        "ram",
-        "startup_config"
-      ]
+      }
     },
     "dynamips_slot": {
       "enum": [
@@ -181,6 +175,7 @@
     "dynamips_properties": {
       "type": "object",
       "title": "Dynamips template properties",
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -305,9 +300,7 @@
         }
       },
       "required": [
-        "platform",
-        "ram",
-        "nvram"
+        "platform"
       ]
     },
     "qemu_disk_interfaces": {
@@ -325,6 +318,7 @@
     "qemu_properties": {
       "type": "object",
       "title": "Qemu template properties",
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -566,14 +560,7 @@
             "null"
           ]
         }
-      },
-      "required": [
-        "adapter_type",
-        "adapters",
-        "ram",
-        "platform",
-        "console_type"
-      ]
+      }
     }
   },
   "properties": {
@@ -686,9 +673,9 @@
             "type": "boolean",
             "title": "Whether these are the default settings"
           },
-          "inherit_default_settings": {
+          "inherit_default_properties": {
             "type": "boolean",
-            "title": "Whether the default settings should be used",
+            "title": "Whether the default properties should be used",
             "default": "true"
           },
           "template_type": {
@@ -905,6 +892,7 @@
     "registry_version",
     "status",
     "maintainer",
-    "maintainer_email"
+    "maintainer_email",
+    "settings"
   ]
 }

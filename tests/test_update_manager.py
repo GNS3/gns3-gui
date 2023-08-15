@@ -26,14 +26,14 @@ from gns3.update_manager import UpdateManager
 from gns3 import version
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def frozen():
     sys.frozen = True
     yield
     delattr(sys, 'frozen')
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def devVersion():
     old_version_info = version.__version_info__
     old_version = version.__version__
@@ -44,7 +44,7 @@ def devVersion():
     version.__version__ = old_version
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def stableVersion():
     old_version_info = version.__version_info__
     old_version = version.__version__

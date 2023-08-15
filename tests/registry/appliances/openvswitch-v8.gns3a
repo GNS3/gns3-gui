@@ -7,13 +7,18 @@
     "vendor_url": "http://openvswitch.org/",
     "documentation_url": "http://openvswitch.org/support/",
     "product_name": "Open vSwitch",
-    "registry_version": 3,
+    "registry_version": 8,
     "status": "stable",
     "maintainer": "GNS3 Team",
     "maintainer_email": "developers@gns3.net",
     "usage": "By default all interfaces are connected to the br0",
-    "docker": {
-        "adapters": 16,
-        "image": "gns3/openvswitch:latest"
-    }
+    "settings": [
+        {
+            "template_type": "docker",
+            "template_properties": {
+            "adapters": 16,
+            "image": "gns3/openvswitch:latest"
+            }
+        }
+    ]
 }

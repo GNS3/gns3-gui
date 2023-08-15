@@ -94,9 +94,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.setWindowTitle("Install {} appliance".format(self._appliance["name"]))
 
         # add a custom button to show appliance information
-        self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Appliance info")
-        self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
-        #self.customButtonClicked.connect(self._showApplianceInfoSlot)
+        if self._appliance["registry_version"] < 8:
+            # FIXME: show appliance info for v8
+            self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Appliance info")
+            self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
+            self.customButtonClicked.connect(self._showApplianceInfoSlot)
 
         # customize the server selection
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
@@ -591,8 +593,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if self._appliance["registry_version"] >= 8:
             if "settings" in appliance_configuration:
                 for settings in appliance_configuration["settings"]:
-                    if settings["emulator_type"] == "qemu":
-                        settings["emulator_properties"]["path"] = self.uiQemuListComboBox.currentData()
+                    if settings["template_type"] == "qemu":
+                        settings["template_properties"]["path"] = self.uiQemuListComboBox.currentData()
         else:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 

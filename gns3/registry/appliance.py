@@ -74,7 +74,7 @@ class Appliance(collections.abc.Mapping):
         else:
             appliance_file = "appliance.json"
 
-        with open(get_resource("schemas/appliance.json")) as f:
+        with open(get_resource("schemas/{}".format(appliance_file))) as f:
             schema = json.load(f)
         v = jsonschema.Draft4Validator(schema)
         try:
@@ -161,7 +161,7 @@ class Appliance(collections.abc.Mapping):
                         checksum_type = image.get("checksum_type", "md5")  # md5 is the default and only supported type
                         if checksum_type != "md5":
                             raise ApplianceError("Checksum type {} is not supported".format(checksum_type))
-                        checksum = image.get("checksum")
+                        checksum = image.pop("checksum")
 
                     img = self._registry.search_image_file(self.template_type(), image["filename"], checksum, image.get("filesize"))
                     if img is None:
@@ -173,7 +173,7 @@ class Appliance(collections.abc.Mapping):
                     image["path"] = img.path
                     image["location"] = img.location
 
-                    if not checksum:
+                    if "md5sum" not in image:
                         image["md5sum"] = img.md5sum
                         image["filesize"] = img.filesize
 
@@ -217,6 +217,8 @@ class Appliance(collections.abc.Mapping):
                 elif settings["template_type"] and template_type != settings["template_type"]:
                     # we are currently not supporting multiple different template types in the same appliance
                     raise ApplianceError("Multiple different template types found in appliance")
+            if not template_type:
+                raise ApplianceError("No template type found in appliance {}".format(self._appliance["name"]))
             return template_type
         else:
             if "qemu" in self._appliance:
