@@ -34,7 +34,7 @@ def images_dir(tmpdir):
     return path
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def image_manager(tmpdir, images_dir):
     ImageManager._instance = None
     settings = LOCAL_SERVER_SETTINGS

@@ -94,9 +94,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.setWindowTitle("Install {} appliance".format(self._appliance["name"]))
 
         # add a custom button to show appliance information
-        self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Appliance info")
-        self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
-        self.customButtonClicked.connect(self._showApplianceInfoSlot)
+        if self._appliance["registry_version"] < 8:
+            # FIXME: show appliance info for v8
+            self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Appliance info")
+            self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
+            self.customButtonClicked.connect(self._showApplianceInfoSlot)
 
         # customize the server selection
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
@@ -144,18 +146,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if self.page(page_id) == self.uiServerWizardPage:
 
             Controller.instance().getSymbols(self._getSymbolsCallback)
-
-            if "qemu" in self._appliance:
-                emulator_type = "qemu"
-            elif "iou" in self._appliance:
-                emulator_type = "iou"
-            elif "docker" in self._appliance:
-                emulator_type = "docker"
-            elif "dynamips" in self._appliance:
-                emulator_type = "dynamips"
-            else:
-                QtWidgets.QMessageBox.warning(self, "Appliance", "Could not determine the emulator type")
-
+            template_type = self._appliance.template_type()
+            if not template_type:
+                raise ApplianceError("No template type found for appliance {}".format(self._appliance["name"]))
             is_mac = ComputeManager.instance().localPlatform().startswith("darwin")
             is_win = ComputeManager.instance().localPlatform().startswith("win")
 
@@ -173,11 +166,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if ComputeManager.instance().localPlatform() is None:
                 self.uiLocalRadioButton.setEnabled(False)
             elif is_mac or is_win:
-                if emulator_type == "qemu":
+                if template_type == "qemu":
                     # disallow usage of the local server because Qemu has issues on OSX and Windows
                     if not LocalConfig.instance().experimental():
                         self.uiLocalRadioButton.setEnabled(False)
-                elif emulator_type != "dynamips":
+                elif template_type != "dynamips":
                     self.uiLocalRadioButton.setEnabled(False)
 
             if ComputeManager.instance().vmCompute():
@@ -195,27 +188,55 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.page(page_id) == self.uiFilesWizardPage:
             if Controller.instance().isRemote() or self._compute_id != "local":
-                self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+                self._registry.getRemoteImageList(self._appliance.template_type(), self._compute_id)
             else:
                 self.images_changed_signal.emit()
 
         elif self.page(page_id) == self.uiQemuWizardPage:
-            if self._appliance['qemu'].get('kvm', 'require') == 'require':
+            if self._appliance.template_properties().get('kvm', 'require') == 'require':
                 self._server_check = False
                 Qemu.instance().getQemuCapabilitiesFromServer(self._compute_id, qpartial(self._qemuServerCapabilitiesCallback))
             else:
                 self._server_check = True
-            Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [self._appliance["qemu"]["arch"]])
+            if self._appliance["registry_version"] >= 8:
+                qemu_platform = self._appliance.template_properties()["platform"]
+            else:
+                qemu_platform = self._appliance.template_properties()["arch"]
+            Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [qemu_platform])
+
+        elif self.page(page_id) == self.uiInstructionsPage:
+
+            installation_instructions = self._appliance.get("installation_instructions", "No installation instructions available")
+            self.uiInstructionsTextEdit.setText(installation_instructions.strip())
 
         elif self.page(page_id) == self.uiUsageWizardPage:
-            self.uiUsageTextEdit.setText("The template will be available in the {} category.\n\n{}".format(self._appliance["category"].replace("_", " "), self._appliance.get("usage", "")))
+            # TODO: allow taking these info fields at the version level in v8
+            category = self._appliance["category"].replace("_", " ")
+            usage = self._appliance.get("usage", "No usage information available")
+            if self._appliance["registry_version"] >= 8:
+                default_username = self._appliance.get("default_username")
+                default_password = self._appliance.get("default_password")
+                if default_username and default_password:
+                    usage += "\n\nDefault username: {}\nDefault password: {}".format(default_username, default_password)
+
+            usage_info = """
+The template will be available in the {} category.
+            
+Usage: {}
+""".format(category, usage)
+
+            self.uiUsageTextEdit.setText(usage_info.strip())
 
     def _qemuServerCapabilitiesCallback(self, result, error=None, *args, **kwargs):
         """
         Check if the server supports KVM or not
         """
 
-        if error is None and "kvm" in result and self._appliance["qemu"]["arch"] in result["kvm"]:
+        if self._appliance["registry_version"] >= 8:
+            qemu_platform = self._appliance.template_properties()["platform"]
+        else:
+            qemu_platform = self._appliance.template_properties()["arch"]
+        if error is None and "kvm" in result and qemu_platform in result["kvm"]:
             self._server_check = True
         else:
             if error:
@@ -236,7 +257,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             log.error("Error while uploading image '{}': {}".format(image_path, result["message"]))
         else:
             log.info("Image '{}' has been successfully uploaded".format(image_path))
-            self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+            self._registry.getRemoteImageList(self._appliance.template_type(), self._compute_id)
 
     def _showApplianceInfoSlot(self):
         """
@@ -407,7 +428,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         for version in self._appliance["versions"]:
             for image in version["images"].values():
-                img = self._registry.search_image_file(self._appliance.emulator(),
+                img = self._registry.search_image_file(self._appliance.template_type(),
                                                        image["filename"],
                                                        image.get("md5sum"),
                                                        image.get("filesize"),
@@ -519,7 +540,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if len(path) == 0:
             return
 
-        image = Image(self._appliance.emulator(), path, filename=disk["filename"])
+        image = Image(self._appliance.template_type(), path, filename=disk["filename"])
         try:
             if "md5sum" in disk and image.md5sum != disk["md5sum"]:
                 reply = QtWidgets.QMessageBox.question(self, "Add appliance",
@@ -554,7 +575,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if self.uiQemuListComboBox.count() == 1:
                 self.next()
             else:
-                i = self.uiQemuListComboBox.findData(self._appliance["qemu"]["arch"], flags=QtCore.Qt.MatchEndsWith)
+                if self._appliance["registry_version"] >= 8:
+                    qemu_platform = self._appliance.template_properties()["platform"]
+                else:
+                    qemu_platform = self._appliance.template_properties()["arch"]
+                i = self.uiQemuListComboBox.findData(qemu_platform, flags=QtCore.Qt.MatchEndsWith)
                 if i != -1:
                     self.uiQemuListComboBox.setCurrentIndex(i)
 
@@ -567,8 +592,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         if version is None:
             appliance_configuration = self._appliance.copy()
-            if "docker" not in appliance_configuration:
-                # only Docker do not have version
+            if self._appliance.template_type() != "docker":
+                # only Docker do not have versions
                 return False
         else:
             try:
@@ -585,10 +610,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 return False
             appliance_configuration["name"] = appliance_configuration["name"].strip()
 
-        if "qemu" in appliance_configuration:
+        if self._appliance["registry_version"] >= 8:
+            if "settings" in appliance_configuration:
+                for settings in appliance_configuration["settings"]:
+                    if settings["template_type"] == "qemu":
+                        settings["template_properties"]["path"] = self.uiQemuListComboBox.currentData()
+        elif "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, self._symbols, parent=self)
+        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, version, self._symbols, parent=self)
         TemplateManager.instance().createTemplate(Template(new_template), callback=self._templateCreatedCallback)
         return False
 
@@ -632,7 +662,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 if not Controller.instance().isRemote() and self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
                     log.debug("{} is already on the local server".format(image["path"]))
                     return
-                image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
+                image = Image(self._appliance.template_type(), image["path"], filename=image["filename"])
                 image_upload_manager = ImageUploadManager(image, Controller.instance(), self._compute_id, self._applianceImageUploadedCallback, LocalConfig.instance().directFileUpload())
                 image_upload_manager.upload()
                 self._image_uploading_count += 1
@@ -649,11 +679,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
     def nextId(self):
         if self.currentPage() == self.uiServerWizardPage:
-            if "docker" in self._appliance:
+            if self._appliance.template_type() == "docker":
                 # skip Qemu binary selection and files pages if this is a Docker appliance
-                return super().nextId() + 2
-            elif "qemu" not in self._appliance:
+                return super().nextId() + 3
+            elif self._appliance.template_type() != "qemu":
                 # skip the Qemu binary selection page if not a Qemu appliance
+                return super().nextId() + 1
+        if self.currentPage() == self.uiQemuWizardPage:
+            if not self._appliance.get("installation_instructions"):
+                # skip the installation instructions page if there are no instructions
                 return super().nextId() + 1
         return super().nextId()
 
@@ -722,7 +756,6 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.currentPage() == self.uiQemuWizardPage:
             # validate the Qemu
-
             if self._server_check is False:
                 QtWidgets.QMessageBox.critical(self, "Checking for KVM support", "Please wait for the server to reply...")
                 return False
