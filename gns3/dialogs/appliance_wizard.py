@@ -204,8 +204,28 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 qemu_platform = self._appliance.template_properties()["arch"]
             Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [qemu_platform])
 
+        elif self.page(page_id) == self.uiInstructionsPage:
+
+            installation_instructions = self._appliance.get("installation_instructions", "No installation instructions available")
+            self.uiInstructionsTextEdit.setText(installation_instructions.strip())
+
         elif self.page(page_id) == self.uiUsageWizardPage:
-            self.uiUsageTextEdit.setText("The template will be available in the {} category.\n\n{}".format(self._appliance["category"].replace("_", " "), self._appliance.get("usage", "")))
+            # TODO: allow taking these info fields at the version level in v8
+            category = self._appliance["category"].replace("_", " ")
+            usage = self._appliance.get("usage", "No usage information available")
+            if self._appliance["registry_version"] >= 8:
+                default_username = self._appliance.get("default_username")
+                default_password = self._appliance.get("default_password")
+                if default_username and default_password:
+                    usage += "\n\nDefault username: {}\nDefault password: {}".format(default_username, default_password)
+
+            usage_info = """
+The template will be available in the {} category.
+            
+Usage: {}
+""".format(category, usage)
+
+            self.uiUsageTextEdit.setText(usage_info.strip())
 
     def _qemuServerCapabilitiesCallback(self, result, error=None, *args, **kwargs):
         """
@@ -572,8 +592,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         if version is None:
             appliance_configuration = self._appliance.copy()
-            if "docker" not in appliance_configuration:
-                # only Docker do not have version
+            if self._appliance.template_type() != "docker":
+                # only Docker do not have versions
                 return False
         else:
             try:
@@ -595,7 +615,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 for settings in appliance_configuration["settings"]:
                     if settings["template_type"] == "qemu":
                         settings["template_properties"]["path"] = self.uiQemuListComboBox.currentData()
-        else:
+        elif "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
         new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, version, self._symbols, parent=self)
@@ -661,9 +681,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if self.currentPage() == self.uiServerWizardPage:
             if self._appliance.template_type() == "docker":
                 # skip Qemu binary selection and files pages if this is a Docker appliance
-                return super().nextId() + 2
+                return super().nextId() + 3
             elif self._appliance.template_type() != "qemu":
                 # skip the Qemu binary selection page if not a Qemu appliance
+                return super().nextId() + 1
+        if self.currentPage() == self.uiQemuWizardPage:
+            if not self._appliance.get("installation_instructions"):
+                # skip the installation instructions page if there are no instructions
                 return super().nextId() + 1
         return super().nextId()
 
