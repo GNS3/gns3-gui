@@ -21,9 +21,11 @@ import copy
 import os
 import collections.abc
 import jsonschema
-
-
 from gns3.utils.get_resource import get_resource
+
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class ApplianceError(Exception):
@@ -38,6 +40,7 @@ class Appliance(collections.abc.Mapping):
         :params path: Path of the appliance file on disk or file content
         """
         self._registry = registry
+        self._registry_version = None
 
         if os.path.isabs(path):
             try:
@@ -58,16 +61,25 @@ class Appliance(collections.abc.Mapping):
         :param appliance: Sanity check on the appliance configuration
         """
         if "registry_version" not in self._appliance:
-            raise ApplianceError("Invalid appliance configuration please report the issue on https://github.com/GNS3/gns3-registry")
-        if self._appliance["registry_version"] > 7:
-            raise ApplianceError("Please update GNS3 in order to install this appliance")
+            raise ApplianceError("Invalid appliance configuration please report the issue on https://github.com/GNS3/gns3-registry/issues")
 
-        with open(get_resource(os.path.join("schemas", "appliance.json"))) as f:
+        self._registry_version = self._appliance["registry_version"]
+        if self._registry_version > 8:
+            # we only support registry version 8 and below
+            raise ApplianceError("Registry version {} is not supported in this version of GNS3".format(self._registry_version))
+
+        if self._registry_version == 8:
+            # registry version 8 has a different schema with support for multiple settings sets
+            appliance_file = "appliance_v8.json"
+        else:
+            appliance_file = "appliance.json"
+
+        with open(get_resource("schemas/{}".format(appliance_file))) as f:
             schema = json.load(f)
         v = jsonschema.Draft4Validator(schema)
         try:
             v.validate(self._appliance)
-        except jsonschema.ValidationError as e:
+        except jsonschema.ValidationError:
             error = jsonschema.exceptions.best_match(v.iter_errors(self._appliance)).message
             raise ApplianceError("Invalid appliance file: {}".format(error))
 
@@ -82,10 +94,11 @@ class Appliance(collections.abc.Mapping):
 
     def _resolve_version(self):
         """
-        Replace image field in versions by their the complete information from images
+        Replace image field in versions by the complete information from images
         """
 
         if "versions" not in self._appliance:
+            log.debug("No versions found in appliance")
             return
 
         for version in self._appliance["versions"]:
@@ -96,7 +109,7 @@ class Appliance(collections.abc.Mapping):
                 for file in self._appliance["images"]:
                     file = copy.copy(file)
 
-                    if "idlepc" in version:
+                    if self._registry_version < 8 and "idlepc" in version:
                         file["idlepc"] = version["idlepc"]
 
                     if "/" in filename:
@@ -127,7 +140,7 @@ class Appliance(collections.abc.Mapping):
     def search_images_for_version(self, version_name):
         """
         Search on disk the images required by this version.
-        And keep only the require images in the images fields. Add to the images
+        And keep only the required images in the images fields. Add to the images
         their disk type and path.
 
         :param version_name: Version name
@@ -142,10 +155,18 @@ class Appliance(collections.abc.Mapping):
                 for image_type, image in version["images"].items():
                     image["type"] = image_type
 
-                    img = self._registry.search_image_file(self.emulator(), image["filename"], image.get("md5sum"), image.get("filesize"))
+                    checksum = image.get("md5sum")
+                    if checksum is None and self._registry_version >= 8:
+                        # registry version >= 8 has the checksum and checksum_type fields
+                        checksum_type = image.get("checksum_type", "md5")  # md5 is the default and only supported type
+                        if checksum_type != "md5":
+                            raise ApplianceError("Checksum type {} is not supported".format(checksum_type))
+                        checksum = image.pop("checksum")
+
+                    img = self._registry.search_image_file(self.template_type(), image["filename"], checksum, image.get("filesize"))
                     if img is None:
-                        if "md5sum" in image:
-                            raise ApplianceError("File {} with checksum {} not found for {}".format(image["filename"], image["md5sum"], appliance["name"]))
+                        if checksum:
+                            raise ApplianceError("File {} with checksum {} not found for {}".format(image["filename"], checksum, appliance["name"]))
                         else:
                             raise ApplianceError("File {} not found for {}".format(image["filename"], appliance["name"]))
 
@@ -186,12 +207,51 @@ class Appliance(collections.abc.Mapping):
         except ApplianceError:
             return False
 
-    def emulator(self):
+    def template_type(self):
 
-        if "qemu" in self._appliance:
-            return "qemu"
-        elif "iou" in self._appliance:
-            return "iou"
-        elif "docker" in self._appliance:
-            return "docker"
-        return "dynamips"
+        if self._registry_version >= 8:
+            template_type = None
+            for settings in self._appliance["settings"]:
+                if settings["template_type"] and not template_type:
+                    template_type = settings["template_type"]
+                elif settings["template_type"] and template_type != settings["template_type"]:
+                    # we are currently not supporting multiple different template types in the same appliance
+                    raise ApplianceError("Multiple different template types found in appliance")
+            if not template_type:
+                raise ApplianceError("No template type found in appliance {}".format(self._appliance["name"]))
+            return template_type
+        else:
+            if "qemu" in self._appliance:
+                return "qemu"
+            if "iou" in self._appliance:
+                return "iou"
+            if "dynamips" in self._appliance:
+                return "dynamips"
+            if "docker" in self._appliance:
+                return "docker"
+            return None
+
+    def template_properties(self):
+        """
+        Get template properties
+        """
+
+        if self._registry_version >= 8:
+            # find the default settings if any
+            for settings in self._appliance["settings"]:
+                if settings.get("default", False):
+                    return settings["template_properties"]
+            # otherwise take the first settings we find
+            for settings in self._appliance["settings"]:
+                if settings["template_type"]:
+                    return settings["template_properties"]
+        else:
+            if "qemu" in self._appliance:
+                return self._appliance["qemu"]
+            if "iou" in self._appliance:
+                return self._appliance["iou"]
+            if "dynamips" in self._appliance:
+                return self._appliance["dynamips"]
+            if "docker" in self._appliance:
+                return self._appliance["docker"]
+        return None

@@ -100,9 +100,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.setWindowTitle("Install {} appliance".format(self._appliance["name"]))
 
         # add a custom button to show appliance information
-        self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Appliance info")
-        self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
-        self.customButtonClicked.connect(self._showApplianceInfoSlot)
+        if self._appliance["registry_version"] < 8:
+            # FIXME: show appliance info for v8
+            self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Appliance info")
+            self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
+            self.customButtonClicked.connect(self._showApplianceInfoSlot)
 
         # customize the server selection
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
@@ -172,12 +174,32 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.page(page_id) == self.uiFilesWizardPage:
             if Controller.instance().isRemote() or self._compute_id != "local":
-                self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+                self._registry.getRemoteImageList(self._appliance.template_type(), self._compute_id)
             else:
                 self.images_changed_signal.emit()
 
+        elif self.page(page_id) == self.uiInstructionsPage:
+
+            installation_instructions = self._appliance.get("installation_instructions", "No installation instructions available")
+            self.uiInstructionsTextEdit.setText(installation_instructions.strip())
+
         elif self.page(page_id) == self.uiUsageWizardPage:
-            self.uiUsageTextEdit.setText("The template will be available in the {} category.\n\n{}".format(self._appliance["category"].replace("_", " "), self._appliance.get("usage", "")))
+            # TODO: allow taking these info fields at the version level in v8
+            category = self._appliance["category"].replace("_", " ")
+            usage = self._appliance.get("usage", "No usage information available")
+            if self._appliance["registry_version"] >= 8:
+                default_username = self._appliance.get("default_username")
+                default_password = self._appliance.get("default_password")
+                if default_username and default_password:
+                    usage += "\n\nDefault username: {}\nDefault password: {}".format(default_username, default_password)
+
+            usage_info = """
+The template will be available in the {} category.
+            
+Usage: {}
+""".format(category, usage)
+
+            self.uiUsageTextEdit.setText(usage_info.strip())
 
     def _uiServerWizardPage_isComplete(self):
         return self.uiRemoteRadioButton.isEnabled() or self.uiLocalRadioButton.isEnabled()
@@ -190,7 +212,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             log.error("Error while uploading image '{}': {}".format(image_path, result["message"]))
         else:
             log.info("Image '{}' has been successfully uploaded".format(image_path))
-            self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+            self._registry.getRemoteImageList(self._appliance.template_type(), self._compute_id)
 
     def _showApplianceInfoSlot(self):
         """
@@ -361,7 +383,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         for version in self._appliance["versions"]:
             for image in version["images"].values():
-                img = self._registry.search_image_file(self._appliance.emulator(),
+                img = self._registry.search_image_file(self._appliance.template_type(),
                                                        image["filename"],
                                                        image.get("md5sum"),
                                                        image.get("filesize"),
@@ -473,7 +495,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if len(path) == 0:
             return
 
-        image = Image(self._appliance.emulator(), path, filename=disk["filename"])
+        image = Image(self._appliance.template_type(), path, filename=disk["filename"])
         try:
             if "md5sum" in disk and image.md5sum != disk["md5sum"]:
                 reply = QtWidgets.QMessageBox.question(self, "Add appliance",
@@ -497,8 +519,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         if version is None:
             appliance_configuration = self._appliance.copy()
-            if "docker" not in appliance_configuration:
-                # only Docker do not have version
+            if self._appliance.template_type() != "docker":
+                # only Docker do not have versions
                 return False
         else:
             try:
@@ -559,7 +581,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 if not Controller.instance().isRemote() and self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
                     log.debug("{} is already on the local server".format(image["path"]))
                     return
-                image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
+                image = Image(self._appliance.template_type(), image["path"], filename=image["filename"])
                 image_upload_manager = ImageUploadManager(image, Controller.instance(), self.parent())
                 if not image_upload_manager.upload():
                     return False
@@ -567,8 +589,12 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
     def nextId(self):
         if self.currentPage() == self.uiServerWizardPage:
-            if "docker" in self._appliance:
+            if self._appliance.template_type() == "docker":
                 # skip Qemu binary selection and files pages if this is a Docker appliance
+                return super().nextId() + 2
+        if self.currentPage() == self.uiServerWizardPage:
+            if not self._appliance.get("installation_instructions"):
+                # skip the installation instructions page if there are no instructions
                 return super().nextId() + 1
         return super().nextId()
 

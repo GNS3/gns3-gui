@@ -8,15 +8,20 @@
     "product_name": "Cisco IOU L3",
     "vendor_url": "http://www.cisco.com",
     "description": "Cisco IOS on UNIX Layer 3 image.",
-    "registry_version": 2,
+    "registry_version": 8,
     "maintainer_email": "developers@gns3.net",
-    "iou": {
-        "ethernet_adapters": 2,
-        "serial_adapters": 2,
-        "nvram": 128,
-        "ram": 256,
-        "startup_config": "iou_l3_base_startup-config.txt"
-    },
+    "settings": [
+        {
+            "template_type": "iou",
+            "template_properties": {
+                "ethernet_adapters": 2,
+                "serial_adapters": 2,
+                "nvram": 128,
+                "ram": 256,
+                "startup_config": "iou_l3_base_startup-config.txt"
+            }
+        }
+    ],
     "versions": [
         {
             "images": {

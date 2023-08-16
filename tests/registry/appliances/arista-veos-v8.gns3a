@@ -8,17 +8,22 @@
     "documentation_url": "http://www.arista.com/docs/Manuals/ConfigGuide.pdf", 
     "product_name": "Arista vEOS",
     "product_url": "https://eos.arista.com/",
-    "registry_version": 1,
+    "registry_version": 8,
     "status": "stable",
     "maintainer": "GNS3 Team",
     "maintainer_email": "developers@gns3.net",
-    "qemu": {
-        "adapter_type": "e1000",
-        "adapters": 8,
-        "ram": 2048,
-        "arch": "x86_64",
-        "console_type": "telnet"
-    },
+    "settings": [
+        {
+            "template_type": "qemu",
+            "template_properties": {
+                "adapter_type": "e1000",
+                "adapters": 8,
+                "ram": 2048,
+                "platform": "x86_64",
+                "console_type": "telnet"
+            }
+        }
+    ],
     "images": [
         {
             "filename": "Aboot-veos-serial-2.1.0.iso",

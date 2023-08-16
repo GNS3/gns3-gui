@@ -34,7 +34,7 @@ class ApplianceToTemplate:
     Appliance installation.
     """
 
-    def new_template(self, appliance_config, server, controller_symbols=None, parent=None):
+    def new_template(self, appliance_config, server, appliance_version=None, controller_symbols=None, parent=None):
         """
         Creates a new template from an appliance.
 
@@ -43,6 +43,7 @@ class ApplianceToTemplate:
         """
 
         self._parent = parent
+        self._registry_version = appliance_config["registry_version"]
         new_template = {
             "compute_id": server,
             "name": appliance_config["name"]
@@ -70,36 +71,88 @@ class ApplianceToTemplate:
             else:
                 new_template["symbol"] = appliance_config["category"]
 
-        if "qemu" in appliance_config:
-            new_template["template_type"] = "qemu"
-            self._add_qemu_config(new_template, appliance_config)
-        elif "iou" in appliance_config:
-            new_template["template_type"] = "iou"
-            self._add_iou_config(new_template, appliance_config)
-        elif "dynamips" in appliance_config:
-            new_template["template_type"] = "dynamips"
-            self._add_dynamips_config(new_template, appliance_config)
-        elif "docker" in appliance_config:
-            new_template["template_type"] = "docker"
-            self._add_docker_config(new_template, appliance_config)
+        if self._registry_version >= 8:
+            if appliance_version:
+                for version in appliance_config["versions"]:
+                    if appliance_version and version["name"] == appliance_version:
+                        # inject "usage", "category" and "symbol" specified at the version
+                        # level into the template properties
+                        usage = version.get("usage")
+                        if usage:
+                            new_template["usage"] = usage
+                        new_template["symbol"] = version.get("symbol", new_template["symbol"])
+                        new_template["category"] = version.get("category", new_template["category"])
+                        settings = self._get_settings(appliance_config, version.get("settings"))
+                        template_type = settings["template_type"]
+                        if template_type == "qemu":
+                            self._add_qemu_config(new_template, settings["template_properties"], appliance_config)
+                        elif template_type == "iou":
+                            self._add_iou_config(new_template, settings["template_properties"], appliance_config)
+                        elif template_type == "dynamips":
+                            self._add_dynamips_config(new_template, settings["template_properties"], appliance_config)
+            else:
+                # docker appliances have no version
+                settings = self._get_settings(appliance_config)
+                if settings["template_type"] == "docker":
+                    self._add_docker_config(new_template, settings["template_properties"], appliance_config)
         else:
-            raise ConfigException("{} no configuration found for known emulators".format(new_template["name"]))
+            if "qemu" in appliance_config:
+                self._add_qemu_config(new_template, appliance_config["qemu"], appliance_config)
+            elif "iou" in appliance_config:
+                self._add_iou_config(new_template, appliance_config["iou"], appliance_config)
+            elif "dynamips" in appliance_config:
+                self._add_dynamips_config(new_template, appliance_config["dynamips"], appliance_config)
+            elif "docker" in appliance_config:
+                self._add_docker_config(new_template, appliance_config["docker"], appliance_config)
+            else:
+                raise ConfigException("{} no configuration found for known emulators".format(new_template["name"]))
 
         return new_template
 
-    def _add_qemu_config(self, new_config, appliance_config):
+    def _get_settings(self, appliance_config, settings_name=None):
 
-        new_config.update(appliance_config["qemu"])
+        default_settings = None
+        # first look for default settings, if any ('default' = true, first set that has it)
+        for settings in appliance_config["settings"]:
+            if settings.get("default", False):
+                default_settings = settings
+                break
+
+        # then look for specific settings set if a name is provided
+        if settings_name:
+            for settings in appliance_config["settings"]:
+                if settings.get("name") == settings_name:
+                    if settings.get("inherit_default_properties", True) and \
+                            default_settings and default_settings["template_type"] == settings["template_type"]:
+                        default_settings["template_properties"].update(settings["template_properties"])
+                        return default_settings
+                    return settings
+            raise ConfigException("Settings '{}' cannot be found in the appliance file", settings_name)
+        elif default_settings:
+            return default_settings
+
+        if not appliance_config.get("settings"):
+            raise ConfigException("No settings found in the appliance file")
+
+        # if no default settings are specified, use the first available settings set
+        return appliance_config["settings"][0]
+
+    def _add_qemu_config(self, new_config, template_properties, appliance_config):
+
+        new_config["template_type"] = "qemu"
+        new_config.update(template_properties)
 
         # the following properties are not valid for a template
-        new_config.pop("kvm", None)
-        new_config.pop("path", None)
-        new_config.pop("arch", None)
+        new_config.pop("kvm", None)  # To check KVM setting against the server capabilities
+        new_config.pop("path", None)  # Qemu binary selected in previous step
+        new_config.pop("arch", None)  # Used for selecting the Qemu binary
 
-        options = appliance_config["qemu"].get("options", "")
-        if appliance_config["qemu"].get("kvm", "allow") == "disable" and "-machine accel=tcg" not in options:
+        options = template_properties.get("options", "")
+        if template_properties.get("kvm", "allow") == "disable" and "-machine accel=tcg" not in options:
             options += " -machine accel=tcg"
-        new_config["options"] = options.strip()
+        options = options.strip()
+        if options:
+            new_config["options"] = options
 
         for image in appliance_config["images"]:
             if image.get("path"):
@@ -123,24 +176,28 @@ class ApplianceToTemplate:
         if "linked_clone" in appliance_config:
             new_config["linked_clone"] = appliance_config["linked_clone"]
 
-    def _add_docker_config(self, new_config, appliance_config):
+    def _add_docker_config(self, new_config, template_properties, appliance_config):
 
-        new_config.update(appliance_config["docker"])
+        new_config["template_type"] = "docker"
+        new_config.update(template_properties)
 
         if "custom_adapters" in appliance_config:
             new_config["custom_adapters"] = appliance_config["custom_adapters"]
 
-    def _add_dynamips_config(self, new_config, appliance_config):
+    def _add_dynamips_config(self, new_config, template_properties, appliance_config):
 
-        new_config.update(appliance_config["dynamips"])
+        new_config["template_type"] = "dynamips"
+        new_config.update(template_properties)
 
         for image in appliance_config["images"]:
             new_config[image["type"]] = self._relative_image_path("IOS", image["path"])
-            new_config["idlepc"] = image.get("idlepc", "")
+            if self._registry_version < 8:
+                new_config["idlepc"] = image.get("idlepc", "")
 
-    def _add_iou_config(self, new_config, appliance_config):
+    def _add_iou_config(self, new_config, template_properties, appliance_config):
 
-        new_config.update(appliance_config["iou"])
+        new_config["template_type"] = "iou"
+        new_config.update(template_properties)
         for image in appliance_config["images"]:
             if "path" not in image:
                 raise ConfigException("Disk image is missing")
