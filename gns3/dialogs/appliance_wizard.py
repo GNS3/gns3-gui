@@ -141,9 +141,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         # add symbol
         if self._appliance["category"] == "guest":
-            if self._appliance.emulator() == "docker":
+            if self._appliance.template_type() == "docker":
                 symbol = ":/symbols/docker_guest.svg"
-            elif self._appliance.emulator() == "qemu":
+            elif self._appliance.template_type() == "qemu":
                 symbol = ":/symbols/qemu_guest.svg"
             else:
                 symbol = ":/symbols/computer.svg"
@@ -592,8 +592,7 @@ Usage: {}
             if self._appliance.template_type() == "docker":
                 # skip Qemu binary selection and files pages if this is a Docker appliance
                 return super().nextId() + 2
-        if self.currentPage() == self.uiServerWizardPage:
-            if not self._appliance.get("installation_instructions"):
+            elif not self._appliance.get("installation_instructions"):
                 # skip the installation instructions page if there are no instructions
                 return super().nextId() + 1
         return super().nextId()

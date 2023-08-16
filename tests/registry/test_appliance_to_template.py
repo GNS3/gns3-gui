@@ -187,7 +187,6 @@ def test_add_appliance_guest(linux_microcore_img):
         "symbol": "qemu_guest",
         "hda_disk_image": "linux-microcore-3.4.1.img",
         "name": "Micro Core Linux",
-        "qemu_path": "qemu-system-i386",
         "usage": "Just start the appliance",
         "ram": 32,
         "compute_id": "local"
@@ -294,7 +293,6 @@ def test_add_appliance_router_two_disk(images_dir, appliance_file):
         "hda_disk_image": "a",
         "hdb_disk_image": "b",
         "name": "Arista vEOS",
-        "qemu_path": "qemu-system-x86_64",
         "ram": 2048,
         "console_type": "telnet",
         "compute_id": "local"
@@ -313,12 +311,11 @@ def test_add_appliance_v8_default_properties_inheritance(images_dir):
     expected_result = {
         "name": "Empty VM",
         "template_type": "qemu",
-        "symbol": ":/symbols/qemu_guest.svg",
+        "symbol": "qemu_guest",
         "category": "guest",
         "adapter_type": "e1000",
         "adapters": 1,
         "ram": 1024,
-        "qemu_path": "qemu-system-x86_64",
         "hda_disk_interface": "sata",
         "platform": "x86_64",
         "console_type": "vnc",
@@ -333,7 +330,6 @@ def test_add_appliance_v8_default_properties_inheritance(images_dir):
     expected_result.update(
         {
             "adapters": 8,
-            "qemu_path": "qemu-system-i386",
             "platform": "i386",
         }
     )
@@ -344,10 +340,9 @@ def test_add_appliance_v8_default_properties_inheritance(images_dir):
     expected_result = {
         "name": "Empty VM",
         "template_type": "qemu",
-        "symbol": ":/symbols/qemu_guest.svg",
+        "symbol": "qemu_guest",
         "category": "guest",
         "ram": 512,
-        "qemu_path": "qemu-system-arm",
         "platform": "arm",
         "compute_id": "local",
         "usage": "Default at first boot the VM will start from the cdrom."

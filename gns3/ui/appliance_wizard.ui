@@ -167,39 +167,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="uiQemuWizardPage">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="title">
-    <string>Qemu settings</string>
-   </property>
-   <property name="subTitle">
-    <string>Please choose the qemu binary that will be used to run this appliance.</string>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QLabel" name="uiQemuListLabel">
-      <property name="text">
-       <string>Qemu binary:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="uiQemuListComboBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWizardPage" name="uiInstructionsPage">
    <property name="title">
     <string>Installation instructions</string>
