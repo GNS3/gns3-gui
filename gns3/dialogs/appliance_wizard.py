@@ -537,7 +537,7 @@ Usage: {}
                 return False
             appliance_configuration["name"] = appliance_configuration["name"].strip()
 
-        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, self._symbols, parent=self)
+        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, version, self._symbols, parent=self)
         TemplateManager.instance().createTemplate(Template(new_template), callback=self._templateCreatedCallback)
         return False
 
