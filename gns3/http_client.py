@@ -537,7 +537,7 @@ class HTTPClient(QtCore.QObject):
                 "password": password
             }
             self._auth_attempted = True
-            content = self._executeHTTPQuery("POST", "/users/authenticate", body=body, wait=True)
+            content = self._executeHTTPQuery("POST", "/access/users/authenticate", body=body, wait=True)
             if content:
                 log.info(f"Authenticated with controller {self._host} on port {self._port}")
                 token = content.get("access_token")
@@ -617,7 +617,7 @@ class HTTPClient(QtCore.QObject):
             content = self._executeHTTPQuery("GET", "/version", wait=True)
             self._validateServerVersion(content)
             self._retry_connection = False
-            self._executeHTTPQuery("GET", "/users/me", wait=True)
+            self._executeHTTPQuery("GET", "/access/users/me", wait=True)
         except HttpClientCancelledRequestError:
             return False  # operation cancelled by user
         except HttpClientError as e:
