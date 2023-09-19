@@ -202,6 +202,62 @@ def test_create_new_version():
     os.remove(wrong_appliance_file)
 
 
-def test_emulator():
-    assert Appliance(registry, os.path.abspath("tests/registry/appliances/microcore-linux.gns3a")).emulator() == "qemu"
-    assert Appliance(registry, os.path.abspath("tests/registry/appliances/cisco-iou-l3.gns3a")).emulator() == "iou"
+def test_template_type():
+    assert Appliance(registry, os.path.abspath("tests/registry/appliances/microcore-linux.gns3a")).template_type() == "qemu"
+    assert Appliance(registry, os.path.abspath("tests/registry/appliances/cisco-iou-l3.gns3a")).template_type() == "iou"
+
+
+def test_checksum_in_appliance_format_v8(registry, images_dir):
+
+    path_empty_8g = os.path.join(images_dir, "QEMU", "empty8G.qcow2")
+    with open(path_empty_8g, 'w+') as f:
+        f.write("hello")
+
+    appliance = Appliance(registry, os.path.abspath("tests/registry/appliances/empty-vm-v8.gns3a"))
+    appliance._appliance['versions'][0]['images']['hda_disk_image']['filesize'] = 5
+    appliance._appliance['versions'][0]['images']['hda_disk_image']['md5sum'] = "5d41402abc4b2a76b9719d911017c592"
+
+    detected = appliance.search_images_for_version("8G")
+    assert detected["images"][0]["md5sum"] == "5d41402abc4b2a76b9719d911017c592"
+    assert detected["images"][0]["filesize"] == 5
+
+    path_empty_30g = os.path.join(images_dir, "QEMU", "empty30G.qcow2")
+    os.rename(path_empty_8g, path_empty_30g)
+    appliance._appliance['versions'][1]['images']['hda_disk_image']['filesize'] = 5
+    appliance._appliance['versions'][1]['images']['hda_disk_image']['checksum'] = "5d41402abc4b2a76b9719d911017c592"
+    detected = appliance.search_images_for_version("30G")
+    assert detected["images"][0]["md5sum"] == "5d41402abc4b2a76b9719d911017c592"
+    assert detected["images"][0]["filesize"] == 5
+
+    with pytest.raises(ApplianceError):
+        appliance.search_images_for_version("100G")
+
+
+def test_multiple_different_template_types_found():
+
+    appliance_path = "tests/registry/appliances/empty-vm-v8.gns3a"
+    wrong_appliance_fp, wrong_appliance_file = tempfile.mkstemp()
+
+    with open(appliance_path, encoding='utf-8') as f:
+        appliance = json.loads(f.read())
+        appliance["settings"][0]["template_type"] = "dynamips"
+        os.write(wrong_appliance_fp, json.dumps(appliance).encode())
+        os.close(wrong_appliance_fp)
+
+    with pytest.raises(ApplianceError):
+        Appliance(registry, wrong_appliance_file).template_type()
+
+
+def test_appliance_without_settings():
+
+    appliance_path = "tests/registry/appliances/empty-vm-v8.gns3a"
+    wrong_appliance_fp, wrong_appliance_file = tempfile.mkstemp()
+
+    with open(appliance_path, encoding='utf-8') as f:
+        appliance = json.loads(f.read())
+        del appliance["settings"]
+        os.write(wrong_appliance_fp, json.dumps(appliance).encode())
+        os.close(wrong_appliance_fp)
+
+    with pytest.raises(ApplianceError):
+        Appliance(registry, wrong_appliance_file).template_type()

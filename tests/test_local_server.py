@@ -32,7 +32,7 @@ def local_server_path(tmpdir):
     return str(tmpdir / "gns3server")
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def local_server(local_server_path, tmpdir):
     with open(str(tmpdir / "test.cfg"), "w+") as f:
         f.write("""

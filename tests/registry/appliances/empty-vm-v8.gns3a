@@ -1,0 +1,115 @@
+{
+    "appliance_id": "1cfdf900-7c30-4cb7-8f03-3f61d2581633",
+    "name": "Empty VM",
+    "category": "guest",
+    "description": "A empty VM with empty hard disks 8G, 30G, 100G & 200G.",
+    "vendor_name": "GNS3",
+    "vendor_url": "https://gns3.com",
+    "documentation_url": "",
+    "product_name": "QEMU",
+    "product_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/",
+    "registry_version": 8,
+    "status": "experimental",
+    "maintainer": "GNS3 Team",
+    "maintainer_email": "developers@gns3.net",
+    "usage": "Default at first boot the VM will start from the cdrom.",
+    "settings": [
+        {
+            "default": true,
+            "template_type": "qemu",
+            "template_properties": {
+                "adapter_type": "e1000",
+                "adapters": 1,
+                "ram": 1024,
+                "hda_disk_interface": "sata",
+                "platform": "x86_64",
+                "console_type": "vnc",
+                "boot_priority": "d"
+            }
+        },
+        {
+            "name": "i386 settings",
+            "template_type": "qemu",
+            "template_properties": {
+                "platform": "i386",
+                "adapters": 8
+            }
+        },
+        {
+            "name": "ARM settings",
+            "inherit_default_properties": false,
+            "template_type": "qemu",
+            "template_properties": {
+                "platform": "arm",
+                "ram": 512
+            }
+        }
+    ],
+    "images": [
+        {
+            "filename": "empty8G.qcow2",
+            "version": "8G",
+            "md5sum": "f1d2c25b6990f99bd05b433ab603bdb4",
+            "filesize": 197120,
+            "download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/",
+            "direct_download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/empty8G.qcow2/download"
+        },
+        {
+            "filename": "empty30G.qcow2",
+            "version": "30G",
+            "checksum": "3411a599e822f2ac6be560a26405821a",
+            "filesize": 197120,
+            "download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/",
+            "direct_download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/empty30G.qcow2/download"
+        },
+        {
+            "filename": "empty100G.qcow2",
+            "version": "100G",
+            "checksum": "d08fdec95fffbda3f04e9a00db49295df73ae4a507396e442ba9e4ad5c14ce5a",
+            "checksum_type": "sha256",
+            "filesize": 198656,
+            "download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/",
+            "direct_download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/empty100G.qcow2/download"
+        },
+        {
+            "filename": "empty200G.qcow2",
+            "version": "200G",
+            "md5sum": "d1686d2f25695dee32eab9a6f4652c7c",
+            "filesize": 200192,
+            "download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/",
+            "direct_download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/empty200G.qcow2/download"
+        }
+    ],
+    "versions": [
+        {
+            "name": "8G",
+            "images": {
+                "hda_disk_image": "empty8G.qcow2"
+            }
+        },
+        {
+            "name": "30G",
+            "settings": "i386 settings",
+            "images": {
+                "hda_disk_image": "empty30G.qcow2"
+            }
+        },
+        {
+            "name": "100G",
+            "settings": "ARM settings",
+            "images": {
+                "hda_disk_image": "empty100G.qcow2"
+            }
+        },
+        {
+            "name": "200G",
+            "settings": "ARM settings",
+            "usage": "This is how to use this version",
+            "symbol": "ethernet_switch",
+            "category": "switch",
+            "images": {
+                "hda_disk_image": "empty200G.qcow2"
+            }
+        }
+    ]
+}
