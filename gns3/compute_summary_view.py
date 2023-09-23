@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Compute summary view that list all the compute, their status.
+Compute summary view that list all the computes and their status.
 """
 
 from .qt import QtGui, QtCore, QtWidgets
@@ -145,7 +145,7 @@ class ComputeSummaryView(QtWidgets.QTreeWidget):
     def _showContextualMenu(self, pos):
 
         item = self.currentItem()
-        if item:
+        if item and isinstance(item, ComputeItem):
             compute = item.getCompute()
             if not compute.connected():
                 menu = QtWidgets.QMenu()
