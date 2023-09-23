@@ -49,6 +49,9 @@ class Application(QtWidgets.QApplication):
 
         super().__init__(argv)
 
+        # this is tell Wayland what is the name of the desktop file (gns3.desktop)
+        self.setDesktopFileName("gns3")
+
         # this info is necessary for QSettings
         self.setOrganizationName("GNS3")
         self.setOrganizationDomain("gns3.net")

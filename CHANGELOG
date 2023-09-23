@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.2.43 19/09/2023
+
+* Add KiTTY to preconfigured telnet consoles. Fixes #3507
+* Fix generic icon in Wayland. Ref #3501
+* Support for appliance format version 8.
+* Use importlib instead of pkg_resources
+* Upgrade to PyQt 5.15.9 and pywin32
+* Add support for appliance version 8 format
+
 ## 2.2.42 09/08/2023
 
 * Use the system's certificate store for SSL connections
