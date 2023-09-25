@@ -88,9 +88,10 @@ class VMWithImagesWizard(VMWizard):
         self._radio_existing_images_buttons.add(radio_button)
 
     def _imageCreateSlot(self, line_edit, create_image_wizard, image_suffix):
-        create_dialog = create_image_wizard(self, self.getSettings()["compute_id"], self.uiNameLineEdit.text() + image_suffix)
-        if QtWidgets.QDialog.Accepted == create_dialog.exec_():
-            line_edit.setText(create_dialog.uiLocationLineEdit.text())
+
+        create_dialog = create_image_wizard(self, Controller.instance(), self.uiNameLineEdit.text() + image_suffix)
+        if create_dialog.exec_() == QtWidgets.QDialog.Accepted:
+            line_edit.setText(create_dialog.uiDiskFilenameLineEdit.text())
 
     def _imageBrowserSlot(self, line_edit, image_selector):
         """

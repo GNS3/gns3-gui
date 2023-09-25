@@ -29,16 +29,16 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
     Wizard to create a Qemu VM.
 
     :param parent: parent widget
-    :param node: node where the image should be created
+    :param node_or_server: node or server where the image should be created
     :param filename: Default filename of image.
     :param size: Default size (in MiB) for the image.
     """
 
-    def __init__(self, parent, node, filename="disk", size=30000):
+    def __init__(self, parent, node_or_server, filename="disk", size=30000):
 
         super().__init__(parent)
 
-        self._node = node
+        self._node_or_server = node_or_server
         self.setupUi(self)
         self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/qemu_guest.svg"))
 
@@ -173,7 +173,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
                     }
                     options['subformat'] = two + size_mode_mappings[size_mode]
 
-        self._node.createDiskImage(disk_image_filename, options, self._getCreateDiskServerCallback)
+        self._node_or_server.createDiskImage(disk_image_filename, options, self._getCreateDiskServerCallback)
         return True
 
     def nextId(self):

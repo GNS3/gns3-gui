@@ -391,6 +391,17 @@ class Controller(QtCore.QObject):
         if callback:
             callback(result, error=error, **kwargs)
 
+
+    def createDiskImage(self, disk_name, options, callback):
+        """
+        Create a disk image on the controller
+
+        :param callback: callback for the reply from the server
+        """
+
+        self.post(f"/images/{disk_name}", callback, body=options)
+
+
     @qslot
     def refreshProjectList(self, *args):
         self.get("/projects", self._projectListCallback)
