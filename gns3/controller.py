@@ -399,7 +399,7 @@ class Controller(QtCore.QObject):
         :param callback: callback for the reply from the server
         """
 
-        self.post(f"/images/{disk_name}", callback, body=options)
+        self.post(f"/images/qemu/{disk_name}", callback, body=options)
 
 
     @qslot
