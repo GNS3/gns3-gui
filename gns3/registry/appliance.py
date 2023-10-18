@@ -179,7 +179,7 @@ class Appliance(collections.abc.Mapping):
 
                     appliance["images"].append(image)
                     found = True
-                appliance["name"] = "{} {}".format(appliance["name"], version_name)
+                # appliance["name"] = "{} {}".format(appliance["name"], version_name)
                 break
 
         if not found:
