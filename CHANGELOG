@@ -1,5 +1,71 @@
 # Change Log
 
+## 3.0.0a4 18/10/2023
+
+* New packaging relying only pyproject.toml
+* Apply Snap-to-grid of drawing items not on their center position. Fixes #3465
+* Allow computes to be dynamically or manually allocated
+* Add UEFI boot mode option for Qemu VMs
+* Adjust some values in pyproject.toml
+* Migrate to pyproject.toml
+* Mark VMware and VirtualBox support as deprecated
+* Fix RecursionError with invalid credentials. Fixes #3374
+* Allow raw images by default. Fixes https://github.com/GNS3/gns3-server/issues/2097
+* Dot not allow "no border" style for line items
+* Use "none" for solid line style in drawing items
+* Fix editing Docker container config generates exception and empty config. Fixes #3371
+* Fix cannot detect images by default when trying to upload them in the Image Manager. Fixes #3367
+* Fix unable to set VNC console resolution. Fixes  #3365
+* Set default symbol theme to "Affinity-square-blue"
+* Fix creating a custom Ethernet switch template
+* Update decorative symbols (for Wizards etc.)
+* Use generic symbol names
+* Set raw image param when uploading an image from the appliance wizard
+* Fix incorrect param in getCompute()
+* Checks for valid hostname on server side for Dynamips, IOU, Qemu and Docker nodes
+* Fix incorrect call to QProgress.setValue() with float
+* Reactivate project importation
+* Support compression levels
+* Add zstandard compression
+* Upgrade dependencies
+* Remove Qemu binary requirement
+* Use controller API to list images
+* Use new API endpoints to create/resize Qemu disk images.
+* Drop Python 3.6 support and require Python >= 3.7
+* Improvements when connecting and updating computes
+* Use current directory when searching for images. Fixes #3198
+* Refactor server settings and wizard
+* Disable local server and GNS3 VM preferences
+* Image uploading to controller and project export
+* HTTP client refactoring completed
+* Start HTTP client refactoring
+* Upgrade dependencies
+* Handle empty compute_id in preferences. Ref #3265
+* Remove direct upload to compute
+* Send JWT token in query string when connecting to websocket. Ref https://github.com/GNS3/gns3-server/pull/1992
+* Option to delete orphaned image files from disk when template is removed. Fixes #3249
+* Remove Qemu legacy networking code
+* Isolate and unisolate support. Fixes https://github.com/GNS3/gns3-gui/issues/3190
+* Support authentication using JWT tokens
+* Change Qemu disk descriptions. Fixes #3035
+* Edit only text mode config files
+* Hide config import/export when configFiles attribute is empty
+* Qemu disk interfaces must be set to "none" by default. Ref #3035
+* Do not allow image to be configured on Qemu VM secondary slave disk if create config disk option is enabled.
+* Add explicit option to automatically create or not the config disk. Off by default.
+* Auxiliary console support for Qemu. Ref #2873 Improvements for auxiliary console support for Docker and Dynamips.
+* Support to reset all console connections. Ref https://github.com/GNS3/gns3-server/issues/1619
+* Support to reset links. Fixes https://github.com/GNS3/gns3-server/issues/1620
+* Fix bug when recent files cannot be seen in the new project dialog.
+* Wait for the controller to be online before allowing actions like creating or opening a project. Fixes #2907
+* Show progress dialog immediately when connecting to server. Ref #2907
+* QEMU config disk - enable QEMU config import/export
+* Add total RAM, CPUs and disk size to servers summary as well as disk usage in percent. Fixes https://github.com/GNS3/gns3-server/issues/1532
+* Resource constraints for Docker VMs.
+* Wait for readme to be updated before exporting the project.
+* Support for "usage" for "Cloud" nodes. Fixes https://github.com/GNS3/gns3-gui/issues/2887 Allow "usage" for all builtin nodes (not exposed in Ui).
+
+
 ## 2.2.43 19/09/2023
 
 * Add KiTTY to preconfigured telnet consoles. Fixes #3507
