@@ -127,7 +127,7 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         if port_type == "qinq":
             port_ethertype = self.uiPortEtherTypeComboBox.currentText()
         else:
-            port_ethertype = None
+            port_ethertype = "0x8100"
 
         if port in self._ports:
             # update a given entry in the tree widget
