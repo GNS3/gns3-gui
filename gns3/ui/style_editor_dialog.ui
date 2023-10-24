@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>270</width>
-    <height>294</height>
+    <width>288</width>
+    <height>358</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -84,14 +84,14 @@
       <item row="3" column="1">
        <widget class="QComboBox" name="uiBorderStyleComboBox"/>
       </item>
-      <item row="5" column="0">
+      <item row="7" column="0">
        <widget class="QLabel" name="uiRotationLabel">
         <property name="text">
          <string>Rotation:</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
+      <item row="7" column="1">
        <widget class="QSpinBox" name="uiRotationSpinBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -114,20 +114,60 @@ editing (notes only) with ALT and '+' (or P) / ALT and '-' (or M)</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="6" column="0">
        <widget class="QLabel" name="uiCornerRadiusLabel">
         <property name="text">
          <string>Corner radius:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="6" column="1">
        <widget class="QSpinBox" name="uiCornerRadiusSpinBox">
         <property name="suffix">
          <string>°</string>
         </property>
         <property name="maximum">
          <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="uiWidthLabel">
+        <property name="text">
+         <string>Width:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="uiWidthSpinBox">
+        <property name="suffix">
+         <string> px</string>
+        </property>
+        <property name="minimum">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="uiHeightLabel">
+        <property name="text">
+         <string>Height:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QSpinBox" name="uiHeightSpinBox">
+        <property name="suffix">
+         <string> px</string>
+        </property>
+        <property name="minimum">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
         </property>
        </widget>
       </item>
