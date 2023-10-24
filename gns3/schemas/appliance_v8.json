@@ -594,6 +594,11 @@
       "format": "uri",
       "title": "Website of the vendor"
     },
+    "vendor_logo_url": {
+      "type": "string",
+      "format": "uri",
+      "title": "Link to the vendor logo (used by the GNS3 marketplace)"
+    },
     "documentation_url": {
       "type": "string",
       "format": "uri",
