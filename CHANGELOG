@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.0.0a5 27/10/2023
+
+* Upgrade to actions/checkout@v3 and actions/setup-python@v3
+* Fix cannot change default VLAN for an access port for builtin Ethernet switch. Fixes #3528
+* Add Qemu IGB network device
+
 ## 3.0.0a4 18/10/2023
 
 * New packaging relying only pyproject.toml
