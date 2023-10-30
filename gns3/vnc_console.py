@@ -57,7 +57,7 @@ def vncConsole(node, port, command):
         log.debug('starting VNC program "{}"'.format(command))
         if sys.platform.startswith("win"):
             # use the string on Windows
-            subprocess.Popen(command)
+            subprocess.Popen(command, env=os.environ)
         else:
             # use arguments on other platforms
             args = shlex.split(command)
