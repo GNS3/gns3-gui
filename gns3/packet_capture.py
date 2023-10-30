@@ -160,7 +160,7 @@ class PacketCapture:
             QtWidgets.QMessageBox.critical(self.parent(), "Packet Capture Analyzer", "No packet capture analyzer program configured")
             return
         try:
-            subprocess.Popen(command)
+            subprocess.Popen(command, env=os.environ)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self.parent(), "Packet Capture Analyzer", "Can't start packet capture analyzer program {}".format(str(e)))
             return
