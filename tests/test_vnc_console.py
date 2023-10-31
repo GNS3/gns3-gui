@@ -17,7 +17,7 @@
 
 import os
 import shlex
-import pytest
+import unittest
 
 from unittest.mock import patch
 from gns3.vnc_console import vncConsole
@@ -32,11 +32,11 @@ def test_vnc_console_on_linux_and_mac(vpcs_device):
 
 
 def test_vnc_console_on_windows(vpcs_device):
-    with patch('subprocess.Popen') as popen, \
+    with patch('subprocess.call') as popen, \
             patch('sys.platform', new="win"):
             vpcs_device.settings()["console_host"] = "localhost"
             vncConsole(vpcs_device, 6000, 'command %h %p %P')
-            popen.assert_called_once_with('command localhost 6000 100')
+            popen.assert_called_once_with('command localhost 6000 100', env=unittest.mock.ANY)
 
 
 # def test_vnc_console_on_linux_with_popen_issues():

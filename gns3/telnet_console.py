@@ -87,7 +87,7 @@ class ConsoleThread(QtCore.QThread):
 
         if sys.platform.startswith("win"):
             # use the string on Windows
-            subprocess.call(command)
+            subprocess.call(command, env=os.environ)
         else:
             # use arguments on other platforms
             try:
