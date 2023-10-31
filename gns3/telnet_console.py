@@ -113,9 +113,18 @@ class ConsoleThread(QtCore.QThread):
         command = self._command.replace("%h", host)
         command = command.replace("%p", str(port))
         command = command.replace("%d", self._name.replace('"', '\\"'))
+        command = command.replace("%P", self._node.project().name().replace('"', '\\"'))
         command = command.replace("%i", self._node.project().id())
         command = command.replace("%n", str(self._node.id()))
         command = command.replace("%c", Controller.instance().httpClient().fullUrl())
+
+        command = command.replace("{host}", host)
+        command = command.replace("{port}", str(port))
+        command = command.replace("{name}", self._name.replace('"', '\\"'))
+        command = command.replace("{project}", self._node.project().name().replace('"', '\\"'))
+        command = command.replace("{project_id}", self._node.project().id())
+        command = command.replace("{node_id}", str(self._node.id()))
+        command = command.replace("{url}", Controller.instance().httpClient().fullUrl())
 
         # If the console use an apple script we lock to avoid multiple console
         # to interact at the same time

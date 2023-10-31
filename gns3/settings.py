@@ -55,29 +55,29 @@ if sys.platform.startswith("win"):
         # windows 32-bit
         program_files_x86 = program_files = os.environ["PROGRAMFILES"]
 
-    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (normal standalone version)': 'putty_standalone.exe -telnet %h %p -loghost "%d"',
-                                             'KiTTY': r'kitty -title "%d" telnet://%h %p',
-                                             'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "telnet %h %p"'.format(program_files_x86),
-                                             'Royal TS V3': r'{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:%h /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="%p" /p:Name="%d"'.format(program_files),
-                                             'Royal TS V5': r'"{}\Royal TS V5\RoyalTS.exe" /protocol:terminal /using:adhoc /uri:"%h" /property:Port="%p" /property:IsTelnetConnection="true" /property:Name="%d"'.format(program_files_x86),
-                                             'SuperPutty': r'SuperPutty.exe -telnet "%h -P %p -wt \"%d\""',
-                                             'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /N "%d" /T /TELNET %h %p'.format(program_files),
-                                             'SecureCRT (personal profile)': r'"{}\AppData\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "%d" /TELNET %h %p'.format(userprofile),
-                                             'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="%d" /M="ttstart.macro" /T=1 %h %p'.format(program_files_x86),
-                                             'Telnet': 'telnet %h %p',
-                                             'Windows Terminal': 'wt.exe -w 1 new-tab --title %d telnet %h %p',
-                                             'Xshell 4': r'"{}\NetSarang\Xshell 4\xshell.exe" -url telnet://%h:%p'.format(program_files_x86),
-                                             'Xshell 5': r'"{}\NetSarang\Xshell 5\xshell.exe" -url telnet://%h:%p -newtab %d'.format(program_files_x86),
-                                             'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:%h:%p" /TABBED "/TITLE:%d"'.format(program_files_x86)}
+    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (normal standalone version)': 'putty_standalone.exe -telnet {host} {port} -loghost "{name}"',
+                                             'KiTTY': r'kitty -title "{name}" telnet://{host} {port}',
+                                             'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "telnet {{host}} {{port}}"'.format(program_files_x86),
+                                             'Royal TS V3': r'{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:{{host}} /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="{{port}}" /p:Name="{{name}}"'.format(program_files),
+                                             'Royal TS V5': r'"{}\Royal TS V5\RoyalTS.exe" /protocol:terminal /using:adhoc /uri:"{{host}}" /property:Port="{{port}}" /property:IsTelnetConnection="true" /property:Name="{{name}}"'.format(program_files_x86),
+                                             'SuperPutty': r'SuperPutty.exe -telnet "{host} -P {port} -wt \"{name}\""',
+                                             'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /N "{{name}}" /T /TELNET {{host}} {{port}}'.format(program_files),
+                                             'SecureCRT (personal profile)': r'"{}\AppData\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "{{name}}" /TELNET {{host}} {{port}}'.format(userprofile),
+                                             'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="{{name}}" /M="ttstart.macro" /T=1 {{host}} {{port}}'.format(program_files_x86),
+                                             'Telnet': 'telnet {host} {port}',
+                                             'Windows Terminal': 'wt.exe -w 1 new-tab --title {name} telnet {host} {port}',
+                                             'Xshell 4': r'"{}\NetSarang\Xshell 4\xshell.exe" -url telnet://{{host}}:{{port}}'.format(program_files_x86),
+                                             'Xshell 5': r'"{}\NetSarang\Xshell 5\xshell.exe" -url telnet://{{host}}:{{port}} -newtab {{name}}'.format(program_files_x86),
+                                             'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:{{host}}:{{port}}" /TABBED "/TITLE:{{name}}"'.format(program_files_x86)}
 
     # default on Windows
     if shutil.which("Solar-PuTTY.exe"):
         # Solar-Putty is the default if it is installed.
-        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"] = 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"'
+        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"] = 'Solar-PuTTY.exe --telnet --hostname {host} --port {port}  --name "{name}"'
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3)"]
         DEFAULT_DELAY_CONSOLE_ALL = 1500
     else:
-        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3 downloaded from gns3.com)"] = 'Solar-PuTTY.exe --telnet --hostname %h --port %p  --name "%d"'
+        PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Solar-Putty (included with GNS3 downloaded from gns3.com)"] = 'Solar-PuTTY.exe --telnet --hostname {host} --port {port}  --name "{name}"'
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Putty (normal standalone version)"]
 
 elif sys.platform.startswith("darwin"):
@@ -87,7 +87,7 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
                     r""" -e 'tell application "Terminal"'"""
                     r""" -e 'activate'"""
-                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=" & quoted form of posix_path & " telnet %h %p ; exit"'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;{name}\\007\"; clear; PATH=" & quoted form of posix_path & " telnet {host} {port} ; exit"'"""
                     r""" -e 'end tell'""",
         'Terminal tabbed (experimental)': r"""osascript"""
                     r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
@@ -103,7 +103,7 @@ elif sys.platform.startswith("darwin"):
                     r""" -e 'repeat while the busy of window 1 = true'"""
                     r""" -e 'delay 0.01'"""
                     r""" -e 'end repeat'"""
-                    r""" -e 'do script "echo -n -e \"\\033]0;%d\\007\"; clear; PATH=" & quoted form of posix_path & " telnet %h %p ; exit" in window 1'"""
+                    r""" -e 'do script "echo -n -e \"\\033]0;{name}\\007\"; clear; PATH=" & quoted form of posix_path & " telnet {host} {port} ; exit" in window 1'"""
                     r""" -e 'end tell'""",
         'iTerm2 2.x': r"""osascript"""
                     r""" -e 'set posix_path to do shell script "echo \"$PATH\""'"""
@@ -118,7 +118,7 @@ elif sys.platform.startswith("darwin"):
                     r""" -e '  set s to (make new session at the end of sessions)'"""
                     r""" -e '  tell s'"""
                     r""" -e '    exec command "sh"'"""
-                    r""" -e '    write text "PATH=" & quoted form of posix_path & " exec telnet %h %p"'"""
+                    r""" -e '    write text "PATH=" & quoted form of posix_path & " exec telnet {host} {port}"'"""
                     r""" -e '  end tell'"""
                     r""" -e 'end tell'"""
                     r""" -e 'end tell'""",
@@ -135,33 +135,33 @@ elif sys.platform.startswith("darwin"):
                     r""" -e '    create tab with default profile command "sh"'"""
                     r""" -e '    set s to current session'"""
                     r""" -e '    tell s'"""
-                    r""" -e '        set name to "%d"'"""
-                    r""" -e '        write text "PATH=" & quoted form of posix_path & " exec telnet %h %p"'"""
+                    r""" -e '        set name to "{name}"'"""
+                    r""" -e '        write text "PATH=" & quoted form of posix_path & " exec telnet {host} {port}"'"""
                     r""" -e '    end tell'"""
                     r""" -e 'end tell'"""
                     r""" -e 'end tell'""",
-        'Royal TSX': "open 'rtsx://telnet%3A%2F%2F%h:%p'",
-        'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "%d" /T /TELNET %h %p',
-        'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:%h:%p" /TABBED "/TITLE:%d"',
-        'ZOC 7': '/Applications/zoc7.app/Contents/MacOS/zoc7 "/TELNET:%h:%p" /TABBED "/TITLE:%d"',
-        'ZOC 8': '/Applications/zoc8.app/Contents/MacOS/zoc8 "/TELNET:%h:%p" /TABBED "/TITLE:%d"'
+        'Royal TSX': "open 'rtsx://telnet%3A%2F%2F{host}:{port}'",
+        'SecureCRT': '/Applications/SecureCRT.app/Contents/MacOS/SecureCRT /N "{name}" /T /TELNET {host} {port}',
+        'ZOC 6': '/Applications/zoc6.app/Contents/MacOS/zoc6 "/TELNET:{host}:{port}" /TABBED "/TITLE:{name}"',
+        'ZOC 7': '/Applications/zoc7.app/Contents/MacOS/zoc7 "/TELNET:{host}:{port}" /TABBED "/TITLE:{name}"',
+        'ZOC 8': '/Applications/zoc8.app/Contents/MacOS/zoc8 "/TELNET:{host}:{port}" /TABBED "/TITLE:{name}"'
     }
 
     # default Mac OS X Telnet console command
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Terminal"]
 
 else:
-    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Xterm': 'xterm -T "%d" -e "telnet %h %p"',
-                                             'Putty': 'putty -telnet %h %p -title "%d" -sl 2500 -fg SALMON1 -bg BLACK',
-                                             'Gnome Terminal': 'gnome-terminal --tab -t "%d" -- telnet %h %p',
-                                             'Xfce4 Terminal': 'xfce4-terminal --tab -T "%d" -e "telnet %h %p"',
-                                             'ROXTerm': 'roxterm -n "%d" --tab -e "telnet %h %p"',
-                                             'KDE Konsole': 'konsole --new-tab -p tabtitle="%d" -e "telnet %h %p"',
-                                             'SecureCRT': 'SecureCRT /T /N "%d"  /TELNET %h %p',
-                                             'Mate Terminal': 'mate-terminal --tab -e "telnet %h %p" -t "%d"',
-                                             'terminator': 'terminator -e "telnet %h %p" -T "%d"',
-                                             'urxvt': 'urxvt -title %d -e telnet %h %p',
-                                             'kitty': 'kitty -T %d telnet %h %p'}
+    PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Xterm': 'xterm -T "{name}" -e "telnet {host} {port}"',
+                                             'Putty': 'putty -telnet {host} {port} -title "{name}" -sl 2500 -fg SALMON1 -bg BLACK',
+                                             'Gnome Terminal': 'gnome-terminal --tab -t "{name}" -- telnet {host} {port}',
+                                             'Xfce4 Terminal': 'xfce4-terminal --tab -T "{name}" -e "telnet {host} {port}"',
+                                             'ROXTerm': 'roxterm -n "{name}" --tab -e "telnet {host} {port}"',
+                                             'KDE Konsole': 'konsole --new-tab -p tabtitle="{name}" -e "telnet {host} {port}"',
+                                             'SecureCRT': 'SecureCRT /T /N "{name}"  /TELNET {host} {port}',
+                                             'Mate Terminal': 'mate-terminal --tab -e "telnet {host} {port}" -t "{name}"',
+                                             'terminator': 'terminator -e "telnet {host} {port}" -T "{name}"',
+                                             'urxvt': 'urxvt -title {name} -e telnet {host} {port}',
+                                             'kitty': 'kitty -T {name} telnet {host} {port}'}
 
     # default Telnet console command on other systems
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]
@@ -178,8 +178,8 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
-        'TightVNC (included with GNS3)': 'tvnviewer.exe %h:%p',
-        'UltraVNC': r'"{}\uvnc bvba\UltraVNC\vncviewer.exe" %h:%p'.format(program_files)
+        'TightVNC (included with GNS3)': 'tvnviewer.exe {host}:{port}',
+        'UltraVNC': r'"{}\uvnc bvba\UltraVNC\vncviewer.exe" {{host}}:{{port}}'.format(program_files)
     }
 
     # default Windows VNC console command
@@ -191,11 +191,11 @@ elif sys.platform.startswith("darwin"):
         'OSX builtin screen sharing': "osascript"
         " -e 'tell application \"Screen Sharing\"'"
         " -e '   display dialog \"WARNING OSX VNC support is limited if you have trouble connecting to a device please use an alternative client like Chicken of the VNC.\" buttons {\"OK\"} default button 1 with icon caution with title \"GNS3\"'"
-        " -e '  open location \"vnc://%h:%p\"'"
+        " -e '  open location \"vnc://{host}:{port}\"'"
         " -e 'end tell'",
-        'Chicken of the VNC': "/Applications/Chicken.app/Contents/MacOS/Chicken %h:%p",
-        'Chicken of the VNC < 2.2': r"/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC %h:%p",
-        'Royal TSX': "open 'rtsx://vnc%3A%2F%2F%h:%p'",
+        'Chicken of the VNC': "/Applications/Chicken.app/Contents/MacOS/Chicken {host}:{port}",
+        'Chicken of the VNC < 2.2': r"/Applications/Chicken\ of\ the\ VNC.app/Contents/MacOS/Chicken\ of\ the\ VNC {host}:{port}",
+        'Royal TSX': "open 'rtsx://vnc%3A%2F%2F{host}:{port}'",
     }
 
     # default Mac OS X VNC console command
@@ -203,10 +203,10 @@ elif sys.platform.startswith("darwin"):
 
 else:
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
-        'TightVNC': 'vncviewer %h:%p',
-        'Vinagre': 'vinagre %h::%p',
-        'gvncviewer': 'gvncviewer %h:%P',
-        'Remote Viewer': 'remote-viewer vnc://%h:%p'
+        'TightVNC': 'vncviewer {host}:{port}',
+        'Vinagre': 'vinagre {host}::{port}',
+        'gvncviewer': 'gvncviewer {host}:{display}',
+        'Remote Viewer': 'remote-viewer vnc://{host}:{port}'
     }
 
     # default VNC console command on other systems
@@ -216,7 +216,7 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer': r'"{}\VirtViewer v11.0-256\bin\remote-viewer.exe" spice://%h:%p'.format(program_files),
+        'Remote Viewer': r'"{}\VirtViewer v11.0-256\bin\remote-viewer.exe" spice://{{host}}:{{port}}'.format(program_files),
     }
 
     # default Windows SPICE console command
@@ -225,7 +225,7 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer': '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer spice://%h:%p',
+        'Remote Viewer': '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer spice://{host}:{port}',
     }
 
     # default Mac OS X SPICE console command
@@ -233,7 +233,7 @@ elif sys.platform.startswith("darwin"):
 
 else:
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer': 'remote-viewer spice://%h:%p',
+        'Remote Viewer': 'remote-viewer spice://{host}:{port}',
     }
 
     # default SPICE console command on other systems
@@ -244,29 +244,28 @@ WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
 
 if sys.platform.startswith("win"):
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: r"{}\Wireshark\wireshark.exe %c".format(program_files),
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: r'tail.exe -f -c +0b %c | "{}\Wireshark\wireshark.exe" -o "gui.window_title:%d" -k -i -'.format(program_files)}
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: r'{}\Wireshark\wireshark.exe {{pcap_file}} --capture-comment "{{project}} {{link_description}}"'.format(program_files),
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: r'tail.exe -f -c +0b {{pcap_file}} | "{}\Wireshark\wireshark.exe" --capture-comment "{{project}} {{link_description}}" -o "gui.window_title:{{link_description}}" -k -i -'.format(program_files)}
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "/usr/bin/open -a /Applications/Wireshark.app %c",
-                                                    "Wireshark V1.X Live Traffic Capture": 'tail -f -c +0 %c | /Applications/Wireshark.app/Contents/Resources/bin/wireshark -o "gui.window_title:%d" -k -i -',
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 %c | /Applications/Wireshark.app/Contents/MacOS/Wireshark -o "gui.window_title:%d" -k -i -'}
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: '/usr/bin/open -a /Applications/Wireshark.app {pcap_file} --capture-comment {project} {link_description}"',
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 {pcap_file} | /Applications/Wireshark.app/Contents/MacOS/Wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
 
 elif sys.platform.startswith("freebsd"):
     # FreeBSD
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "wireshark %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'gtail -f -c +0b %c | wireshark -o "gui.window_title:%d" -k -i -'}
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: 'wireshark {pcap_file} --capture-comment "{project} {link_description}"',
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'gtail -f -c +0b {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
 else:
-    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: "wireshark %c",
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0b %c | wireshark -o "gui.window_title:%d" -k -i -'}
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: 'wireshark {pcap_file} --capture-comment "{project} {link_description}"',
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0b {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
 
 DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
 
 DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = ""
 if sys.platform.startswith("win"):
     # Windows 64-bit
-    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" %c'.format(program_files_x86)
+    DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" {{pcap_file}}'.format(program_files_x86)
 
 STYLES = ["Charcoal", "Classic", "Legacy"]
 
