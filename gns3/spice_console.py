@@ -55,7 +55,17 @@ def spiceConsole(node, port, command):
     command = command.replace("%p", str(port))
     command = command.replace("%d", name.replace('"', '\\"'))
     command = command.replace("%i", node.project().id())
+    command = command.replace("%P", node.project().name())
     command = command.replace("%n", str(node.id()))
+    command = command.replace("%c", Controller.instance().httpClient().fullUrl())
+
+    command = command.replace("{host}", host)
+    command = command.replace("{port}", str(port))
+    command = command.replace("{name}", name.replace('"', '\\"'))
+    command = command.replace("{project}", node.project().name())
+    command = command.replace("{project_id}", node.project().id())
+    command = command.replace("{node_id}", str(node.id()))
+    command = command.replace("{url}", Controller.instance().httpClient().fullUrl())
 
     try:
         log.debug('starting SPICE program "{}"'.format(command))

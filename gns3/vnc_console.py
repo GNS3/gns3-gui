@@ -51,7 +51,17 @@ def vncConsole(node, port, command):
     command = command.replace("%P", str(port - 5900))
     command = command.replace("%d", name.replace('"', '\\"'))
     command = command.replace("%i", node.project().id())
+    command = command.replace("%T", node.project().name())
     command = command.replace("%n", str(node.id()))
+
+    command = command.replace("{host}", host)
+    command = command.replace("{port}", str(port))
+    command = command.replace("{display}", str(port - 5900))
+    command = command.replace("{name}", name.replace('"', '\\"'))
+    command = command.replace("{project}", node.project().name())
+    command = command.replace("{project_id}", node.project().id())
+    command = command.replace("{node_id}", str(node.id()))
+    command = command.replace("{url}", Controller.instance().httpClient().fullUrl())
 
     try:
         log.debug('starting VNC program "{}"'.format(command))
