@@ -53,6 +53,7 @@ def vncConsole(node, port, command):
     command = command.replace("%P", node.project().name().replace('"', '\\"'))
     command = command.replace("%i", node.project().id())
     command = command.replace("%n", str(node.id()))
+    command = command.replace("%c", Controller.instance().httpClient().fullUrl())
 
     command = command.replace("{host}", host)
     command = command.replace("{port}", str(port))
