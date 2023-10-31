@@ -54,8 +54,8 @@ def spiceConsole(node, port, command):
     command = command.replace("%h", host)
     command = command.replace("%p", str(port))
     command = command.replace("%d", name.replace('"', '\\"'))
+    command = command.replace("%P", node.project().name().replace('"', '\\"'))
     command = command.replace("%i", node.project().id())
-    command = command.replace("%P", node.project().name())
     command = command.replace("%n", str(node.id()))
     command = command.replace("%c", Controller.instance().httpClient().fullUrl())
 

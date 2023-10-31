@@ -150,7 +150,7 @@ class PacketCapture:
 
         # Add project name
         command = command.replace("%P", link.project().name())
-        command = command.replace("{project}", link.project().name())
+        command = command.replace("{project}", link.project().name().replace('"', '\\"'))
 
         # Add link description
         description = "{}[{}]->{}[{}]".format(link.sourceNode().name(),
@@ -214,7 +214,7 @@ class PacketCapture:
 
         # Add project name
         command = command.replace("%P", link.project().name())
-        command = command.replace("{project}", link.project().name())
+        command = command.replace("{project}", link.project().name().replace('"', '\\"'))
 
         # Add link description
         description = "{} {} to {} {}".format(link.sourceNode().name(),
