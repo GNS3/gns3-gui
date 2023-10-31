@@ -17,7 +17,7 @@
 
 import os
 import shlex
-import pytest
+import unittest
 
 from unittest.mock import patch
 from gns3.spice_console import spiceConsole
@@ -33,11 +33,11 @@ def test_spice_console_on_linux_and_mac(vpcs_device):
 
 
 def test_spice_console_on_windows(vpcs_device):
-    with patch('subprocess.Popen') as popen, \
+    with patch('subprocess.call') as popen, \
             patch('sys.platform', new="win"):
         vpcs_device.settings()["console_host"] = "localhost"
         spiceConsole(vpcs_device, '2525', 'command %h %p')
-        popen.assert_called_once_with('command localhost 2525')
+        popen.assert_called_once_with('command localhost 2525', env=unittest.mock.ANY)
 
 
 # def test_spice_console_on_linux_with_popen_issues():

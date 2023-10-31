@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import json
 import pytest
 import logging
 import subprocess
@@ -87,7 +86,7 @@ def test_startLocalServer(tmpdir, local_server, local_server_path):
                                  '--debug',
                                  '--log=' + str(tmpdir / "gns3_server.log"),
                                  '--pid=' + str(tmpdir / "gns3_server.pid")
-                                 ], stderr=unittest.mock.ANY)
+                                 ], stderr=unittest.mock.ANY, env=unittest.mock.ANY)
 
 
 def test_killAlreadyRunningServer(local_server):
