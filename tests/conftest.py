@@ -74,6 +74,7 @@ def controller():
     Controller._instance = None
     c = Controller.instance()
     c._http_client = MagicMock()
+    c._http_client.fullUrl.return_value = "http://localhost:3080"
     return c
 
 

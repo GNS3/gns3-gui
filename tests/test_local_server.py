@@ -62,7 +62,7 @@ def test_start_local_server(tmpdir, local_server, local_server_path):
                                  '--debug',
                                  '--logfile=' + str(tmpdir / "gns3_server.log"),
                                  '--pid=' + str(tmpdir / "gns3_server.pid")
-                                 ], stderr=unittest.mock.ANY)
+                                 ], stderr=unittest.mock.ANY, env=unittest.mock.ANY)
 
 
 # Windows GUI doesn't support a local server starting with v3.0

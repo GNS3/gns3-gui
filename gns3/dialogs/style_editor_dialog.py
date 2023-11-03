@@ -80,8 +80,20 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
             if not corner_radius:
                 corner_radius = first_item.verticalCornerRadius()
             self.uiCornerRadiusSpinBox.setValue(corner_radius)
+        else:
+            self.uiCornerRadiusLabel.hide()
+            self.uiCornerRadiusSpinBox.hide()
         self.uiRotationSpinBox.setValue(int(first_item.rotation()))
         self.uiBorderWidthSpinBox.setValue(pen.width())
+        if isinstance(first_item, ShapeItem):
+            rect = first_item.rect()
+            self.uiWidthSpinBox.setValue(int(rect.width()))
+            self.uiHeightSpinBox.setValue(int(rect.height()))
+        else:
+            self.uiWidthSpinBox.hide()
+            self.uiWidthLabel.hide()
+            self.uiHeightSpinBox.hide()
+            self.uiHeightLabel.hide()
         index = self.uiBorderStyleComboBox.findData(pen.style())
         if index != -1:
             self.uiBorderStyleComboBox.setCurrentIndex(index)
@@ -136,6 +148,8 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
                 # maybe we support setting them separately in the future
                 item.setHorizontalCornerRadius(corner_radius)
                 item.setVerticalCornerRadius(corner_radius)
+            if isinstance(item, ShapeItem):
+                item.setWidthAndHeight(self.uiWidthSpinBox.value(), self.uiHeightSpinBox.value())
             item.setRotation(self.uiRotationSpinBox.value())
 
     def done(self, result):

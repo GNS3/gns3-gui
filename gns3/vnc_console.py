@@ -48,16 +48,27 @@ def vncConsole(node, port, command):
     # replace the place-holders by the actual values
     command = command.replace("%h", host)
     command = command.replace("%p", str(port))
-    command = command.replace("%P", str(port - 5900))
+    command = command.replace("%D", str(port - 5900))
     command = command.replace("%d", name.replace('"', '\\"'))
+    command = command.replace("%P", node.project().name().replace('"', '\\"'))
     command = command.replace("%i", node.project().id())
     command = command.replace("%n", str(node.id()))
+    command = command.replace("%c", Controller.instance().httpClient().fullUrl())
+
+    command = command.replace("{host}", host)
+    command = command.replace("{port}", str(port))
+    command = command.replace("{display}", str(port - 5900))
+    command = command.replace("{name}", name.replace('"', '\\"'))
+    command = command.replace("{project}", node.project().name().replace('"', '\\"'))
+    command = command.replace("{project_id}", node.project().id())
+    command = command.replace("{node_id}", str(node.id()))
+    command = command.replace("{url}", Controller.instance().httpClient().fullUrl())
 
     try:
         log.debug('starting VNC program "{}"'.format(command))
         if sys.platform.startswith("win"):
             # use the string on Windows
-            subprocess.Popen(command)
+            subprocess.Popen(command, env=os.environ)
         else:
             # use arguments on other platforms
             args = shlex.split(command)

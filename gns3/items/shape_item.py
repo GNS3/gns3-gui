@@ -171,6 +171,9 @@ class ShapeItem(DrawingItem):
         if not self.locked():
             self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
 
+    def setWidthAndHeight(self, width, height):
+        self.setRect(0, 0, width, height)
+
     def fromSvg(self, svg):
         """
         Import element information from SVG

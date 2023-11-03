@@ -419,11 +419,15 @@ class LocalServer(QtCore.QObject):
         try:
             if sys.platform.startswith("win"):
                 # use the string on Windows
-                self._local_server_process = subprocess.Popen(command, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP, stderr=subprocess.PIPE)
+                self._local_server_process = subprocess.Popen(
+                    command,
+                    creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
+                    stderr=subprocess.PIPE,
+                    env=os.environ)
             else:
                 # use arguments on other platforms
                 args = shlex.split(command)
-                self._local_server_process = subprocess.Popen(args, stderr=subprocess.PIPE)
+                self._local_server_process = subprocess.Popen(args, stderr=subprocess.PIPE, env=os.environ)
         except (OSError, subprocess.SubprocessError) as e:
             log.warning('Could not start local server "{}": {}'.format(command, e))
             return False
