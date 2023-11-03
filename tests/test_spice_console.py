@@ -34,7 +34,7 @@ def test_spice_console_on_linux_and_mac(vpcs_device):
 
 def test_spice_console_on_windows(vpcs_device):
 
-    with patch('subprocess.call') as p, \
+    with patch('subprocess.Popen') as p, \
             patch('sys.platform', new="win"):
         vpcs_device.settings()["console_host"] = "localhost"
         spiceConsole(vpcs_device, '2525', 'command %h %p')

@@ -87,7 +87,7 @@ class ConsoleThread(QtCore.QThread):
 
         if sys.platform.startswith("win"):
             # use the string on Windows
-            subprocess.call(command, env=os.environ)
+            subprocess.Popen(command, env=os.environ)
         else:
             # use arguments on other platforms
             try:
@@ -102,7 +102,7 @@ class ConsoleThread(QtCore.QThread):
                 # inject gnome-terminal environment variables
                 if "GNOME_TERMINAL_SERVICE" not in env or "GNOME_TERMINAL_SCREEN" not in env:
                     env.update(gnome_terminal_env())
-            subprocess.call(args, env=env)
+            subprocess.Popen(args, env=env)
 
     def run(self):
 

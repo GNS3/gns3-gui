@@ -23,7 +23,7 @@ from gns3.vnc_console import vncConsole
 
 def test_vnc_console_on_linux_and_mac(vpcs_device):
 
-    with patch('subprocess.call') as p, \
+    with patch('subprocess.Popen') as p, \
             patch('sys.platform', new="linux"):
             vpcs_device.settings()["console_host"] = "localhost"
             vncConsole(vpcs_device, 6000, 'command %h %p %D')
@@ -34,7 +34,7 @@ def test_vnc_console_on_linux_and_mac(vpcs_device):
 
 def test_vnc_console_on_windows(vpcs_device):
 
-    with patch('subprocess.call') as p, \
+    with patch('subprocess.Popen') as p, \
             patch('sys.platform', new="win"):
             vpcs_device.settings()["console_host"] = "localhost"
             vncConsole(vpcs_device, 6000, 'command %h %p %D')
@@ -44,7 +44,7 @@ def test_vnc_console_on_windows(vpcs_device):
 
 
 # def test_vnc_console_on_linux_with_popen_issues(vpcs_device):
-#     with patch('subprocess.call', side_effect=subprocess.SubprocessError()), \
+#     with patch('subprocess.Popen', side_effect=subprocess.SubprocessError()), \
 #             patch('sys.platform', new="linux"):
 #         vpcs_device.settings()["console_host"] = "localhost"
 #
