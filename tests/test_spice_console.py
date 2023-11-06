@@ -17,28 +17,30 @@
 
 import os
 import shlex
-import pytest
 
 from unittest.mock import patch
 from gns3.spice_console import spiceConsole
 
 
 def test_spice_console_on_linux_and_mac(vpcs_device):
+
     with patch('subprocess.Popen') as popen, \
             patch('sys.platform', new="linux"):
-
         vpcs_device.settings()["console_host"] = "localhost"
         spiceConsole(vpcs_device, '2525', 'command %h %p')
-        popen.assert_called_once_with(shlex.split('command localhost 2525'), env=os.environ)
-
+        popen.assert_called_with(shlex.split('command localhost 2525'), env=os.environ)
+        spiceConsole(vpcs_device, '2525', 'command {host} {port}')
+        popen.assert_called_with(shlex.split('command localhost 2525'), env=os.environ)
 
 def test_spice_console_on_windows(vpcs_device):
-    with patch('subprocess.Popen') as popen, \
+
+    with patch('subprocess.Popen') as p, \
             patch('sys.platform', new="win"):
         vpcs_device.settings()["console_host"] = "localhost"
         spiceConsole(vpcs_device, '2525', 'command %h %p')
-        popen.assert_called_once_with('command localhost 2525')
-
+        p.assert_called_with('command localhost 2525', env=os.environ)
+        spiceConsole(vpcs_device, '2525', 'command {host} {port}')
+        p.assert_called_with('command localhost 2525', env=os.environ)
 
 # def test_spice_console_on_linux_with_popen_issues():
 #     with patch('subprocess.Popen', side_effect=OSError("Dummy")), \
@@ -49,9 +51,11 @@ def test_spice_console_on_windows(vpcs_device):
 
 
 def test_spice_console_with_ipv6_support(vpcs_device):
+
     with patch('subprocess.Popen') as popen, \
             patch('sys.platform', new="linux"):
-
         vpcs_device.settings()["console_host"] = "::1"
         spiceConsole(vpcs_device, '2525', 'command %h %p')
-        popen.assert_called_once_with(shlex.split('command [::1] 2525'), env=os.environ)
+        popen.assert_called_with(shlex.split('command [::1] 2525'), env=os.environ)
+        spiceConsole(vpcs_device, '2525', 'command {host} {port}')
+        popen.assert_called_with(shlex.split('command [::1] 2525'), env=os.environ)
