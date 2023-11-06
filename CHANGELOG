@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.2.44 06/11/2023
+
+* Fix timeout issue when creating Qemu disk image. Fixes https://github.com/GNS3/gns3-server/issues/2313
+* Refactor command variables support
+* Add vendor_logo_url in appliance schemas. Ref https://github.com/GNS3/gns3-registry/pull/825
+* Add Qemu IGB network device
+* Add the ability to edit width and height in the style edit dialog.
+
 ## 2.2.43 19/09/2023
 
 * Add KiTTY to preconfigured telnet consoles. Fixes #3507
