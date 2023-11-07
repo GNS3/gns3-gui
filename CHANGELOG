@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.44.1 07/11/2023
+
+* No changes
+
 ## 2.2.44 06/11/2023
 
 * Fix timeout issue when creating Qemu disk image. Fixes https://github.com/GNS3/gns3-server/issues/2313
