@@ -103,7 +103,8 @@ class QNetworkReplyWatcher(QtCore.QObject):
             reply.finished.connect(self._progress.close)
             if uploading:
                 reply.uploadProgress.connect(self._updateProgress)
-            reply.downloadProgress.connect(self._updateProgress)
+            else:
+                reply.downloadProgress.connect(self._updateProgress)
             self._progress.canceled.connect(reply.abort)
             self._progress.show()
 
