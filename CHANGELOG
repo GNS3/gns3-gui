@@ -1,5 +1,15 @@
 # Change Log
 
+## 3.0.0a6 15/11/2023
+
+* Possible fix for stuck image upload. Ref https://github.com/GNS3/gns3-server/issues/2310
+* Fix timeout issue when creating Qemu disk image. Fixes https://github.com/GNS3/gns3-server/issues/2313
+* Add ISO file to images filter in Image Manager. Ref https://github.com/GNS3/gns3-server/issues/2310
+* Update custom command help and protect against double quote in project name
+* Refactor command variables support
+* Pass os.environ in Popen()
+* Add the ability to edit width and height in the style edit dialog.
+
 ## 2.2.44 06/11/2023
 
 * Fix timeout issue when creating Qemu disk image. Fixes https://github.com/GNS3/gns3-server/issues/2313
