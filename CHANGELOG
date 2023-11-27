@@ -1,5 +1,10 @@
 # Change Log
 
+## 3.0.0b1 27/11/2023
+
+* Upgrade sentry-sdk to v1.37.1
+* Deactivate showing a percentage in progress bar. Ref #3543
+
 ## 3.0.0a6 15/11/2023
 
 * Possible fix for stuck image upload. Ref https://github.com/GNS3/gns3-server/issues/2310
