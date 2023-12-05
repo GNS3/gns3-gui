@@ -142,6 +142,7 @@ def main():
             frozen_dirs = [
                 frozen_dir,
                 os.path.normpath(os.path.join(frozen_dir, 'dynamips')),
+                os.path.normpath(os.path.join(frozen_dir, 'ubridge')),
                 os.path.normpath(os.path.join(frozen_dir, 'vpcs')),
                 os.path.normpath(os.path.join(frozen_dir, 'traceng'))
             ]
