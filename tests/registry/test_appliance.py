@@ -129,7 +129,7 @@ def test_resolve_version_ova(tmpdir):
 def test_search_images_for_version(linux_microcore_img, microcore_appliance):
 
     detected = microcore_appliance.search_images_for_version("3.4.1")
-    assert detected["name"] == "Micro Core Linux 3.4.1"
+    assert detected["name"] == "Micro Core Linux"
     assert detected["images"][0]["type"] == "hda_disk_image"
     assert detected["images"][0]["path"] == linux_microcore_img
     assert detected["images"][0]["md5sum"] == "5d41402abc4b2a76b9719d911017c592"
@@ -141,7 +141,7 @@ def test_search_images_for_version_no_md5(linux_microcore_img, microcore_applian
     microcore_appliance._appliance['versions'][0]['images']['hda_disk_image'].pop('filesize')
     microcore_appliance._appliance['versions'][0]['images']['hda_disk_image'].pop('md5sum')
     detected = microcore_appliance.search_images_for_version("3.4.1")
-    assert detected["name"] == "Micro Core Linux 3.4.1"
+    assert detected["name"] == "Micro Core Linux"
     assert detected["images"][0]["type"] == "hda_disk_image"
     assert detected["images"][0]["path"] == linux_microcore_img
     assert detected["images"][0]["md5sum"] == "5d41402abc4b2a76b9719d911017c592"
