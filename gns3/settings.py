@@ -65,7 +65,7 @@ if sys.platform.startswith("win"):
                                              'SecureCRT (personal profile)': r'"{}\AppData\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "{{name}}" /TELNET {{host}} {{port}}'.format(userprofile),
                                              'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="{{name}}" /M="ttstart.macro" /T=1 {{host}} {{port}}'.format(program_files_x86),
                                              'Telnet': 'telnet {host} {port}',
-                                             'Windows Terminal': 'wt.exe -w 1 new-tab --title {name} telnet {host} {port}',
+                                             'Windows Terminal': 'wt.exe -w 1 new-tab --suppressApplicationTitle --title {name} telnet {host} {port}',
                                              'Xshell 4': r'"{}\NetSarang\Xshell 4\xshell.exe" -url telnet://{{host}}:{{port}}'.format(program_files_x86),
                                              'Xshell 5': r'"{}\NetSarang\Xshell 5\xshell.exe" -url telnet://{{host}}:{{port}} -newtab {{name}}'.format(program_files_x86),
                                              'ZOC 6': r'"{}\ZOC6\zoc.exe" "/TELNET:{{host}}:{{port}}" /TABBED "/TITLE:{{name}}"'.format(program_files_x86)}
