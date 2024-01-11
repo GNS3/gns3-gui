@@ -148,6 +148,7 @@ def main():
             ]
 
         os.environ["PATH"] = os.pathsep.join(frozen_dirs) + os.pathsep + os.environ.get("PATH", "")
+        log.debug("PATH content: {}".format(os.environ["PATH"]))
 
         if options.project:
             os.chdir(frozen_dir)
