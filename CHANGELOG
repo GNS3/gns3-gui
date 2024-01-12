@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.2.45 12/01/2024
+
+* Add missing console_type values in appliance_v8.json. Ref https://github.com/GNS3/gns3-registry/issues/849
+* Handle moved project notifications on controller stream
+* Add debug for PATH env variable
+* Add custom executable paths on Windows
+* Add --suppressApplicationTitle for Windows terminal. Fixes https://github.com/GNS3/gns3-gui/issues/3544
+* Upgrade sentry-sdk and aiohttp
+
 ## 2.2.44.1 07/11/2023
 
 * No changes
