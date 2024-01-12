@@ -475,9 +475,9 @@ class Project(QtCore.QObject):
             "variables": self._variables,
             "supplier": self._supplier
         }
-        self.put("", self._projectUpdatedCallback, body=body)
+        self.put("", self.projectUpdatedCallback, body=body)
 
-    def _projectUpdatedCallback(self, result, error=False, **kwargs):
+    def projectUpdatedCallback(self, result, error=False, **kwargs):
         if error:
             self.project_creation_error_signal.emit(result["message"])
             return
@@ -712,10 +712,13 @@ class Project(QtCore.QObject):
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is not None:
                 drawing.delete(skip_controller=True)
+        # project.closed and project.updated notifications have been moved to the controller
+        # because they are not project specific, keeping it there for backward compatibility
+        # when connected to an older controller version
         elif result["action"] == "project.closed":
             Topology.instance().setProject(None)
         elif result["action"] == "project.updated":
-            self._projectUpdatedCallback(result["event"])
+            self.projectUpdatedCallback(result["event"])
         elif result["action"] == "snapshot.restored":
             Topology.instance().restoreSnapshot(result["event"]["project_id"])
         elif result["action"] == "log.error":
