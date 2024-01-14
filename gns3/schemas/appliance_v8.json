@@ -57,7 +57,8 @@
             "telnet",
             "vnc",
             "http",
-            "https"
+            "https",
+            "none"
           ],
           "title": "Type of console"
         },
@@ -502,7 +503,8 @@
             "telnet",
             "vnc",
             "spice",
-            "spice+agent"
+            "spice+agent",
+            "none"
           ],
           "title": "Type of console connection for the administration of the appliance"
         },
