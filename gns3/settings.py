@@ -267,7 +267,7 @@ if sys.platform.startswith("win"):
     # Windows 64-bit
     DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" {{pcap_file}}'.format(program_files_x86)
 
-STYLES = ["Charcoal", "Classic", "Legacy"]
+STYLES = ["Charcoal", "Classic", "Dark", "Legacy"]
 
 SYMBOL_THEMES = ["Classic",
                  "Affinity-square-blue",
