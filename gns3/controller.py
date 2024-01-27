@@ -495,6 +495,16 @@ class Controller(QtCore.QObject):
         elif result["action"] == "compute.created" or result["action"] == "compute.updated":
             from .compute_manager import ComputeManager
             ComputeManager.instance().computeDataReceivedCallback(result["event"])
+        elif result["action"] == "project.closed":
+            from .topology import Topology
+            project = Topology.instance().project()
+            if project and project.id() == result["event"]["project_id"]:
+                Topology.instance().setProject(None)
+        elif result["action"] == "project.updated":
+            from .topology import Topology
+            project = Topology.instance().project()
+            if project and project.id() == result["event"]["project_id"]:
+                project.projectUpdatedCallback(result["event"])
         elif result["action"] == "log.error":
             log.error(result["event"]["message"])
         elif result["action"] == "log.warning":
