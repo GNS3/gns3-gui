@@ -221,8 +221,11 @@ def main():
                 # hide the console
                 # win32console.AllocConsole()
                 console_window = win32console.GetConsoleWindow()
-                if console_window:
+                parent_window = win32gui.GetParent(console_window)
+                if not parent_window and console_window:
                     win32gui.ShowWindow(console_window, win32con.SW_HIDE)
+                elif parent_window:
+                    win32gui.ShowWindow(parent_window, win32con.SW_HIDE)
                 else:
                     log.warning("Could not get the console window")
             except win32console.error as e:
