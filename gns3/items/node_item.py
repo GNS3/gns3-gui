@@ -540,11 +540,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param event: QKeyEvent
         """
 
-        modifiers = event.modifiers()
-        if modifiers & QtCore.Qt.AltModifier:
+        if event.modifiers() & QtCore.Qt.AltModifier:
             self._allow_snap_to_grid = False
         else:
-            self.keyPressEvent(self, event)
+            super().keyPressEvent(event)
 
     def keyReleaseEvent(self, event):
         """
