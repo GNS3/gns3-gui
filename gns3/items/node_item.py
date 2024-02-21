@@ -51,6 +51,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self._links = []
         self._symbol = None
         self._locked = False
+        self._allow_snap_to_grid = True
 
         # says if the attached node has been initialized
         # by the server.
@@ -469,7 +470,8 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param value: value of the change
         """
 
-        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked():
+        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked() \
+                and self._allow_snap_to_grid:
             grid_size = self._main_window.uiGraphicsView.nodeGridSize()
             mid_x = self.boundingRect().width() / 2
             value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)
@@ -530,6 +532,27 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         super().setZValue(value)
         for link in self._links:
             link.adjust()
+
+    def keyPressEvent(self, event):
+        """
+        Handles all key press events
+
+        :param event: QKeyEvent
+        """
+
+        if event.modifiers() & QtCore.Qt.AltModifier:
+            self._allow_snap_to_grid = False
+        else:
+            super().keyPressEvent(event)
+
+    def keyReleaseEvent(self, event):
+        """
+        Handles all key release events
+
+        :param event: QKeyEvent
+        """
+
+        self._allow_snap_to_grid = True
 
     def locked(self):
 

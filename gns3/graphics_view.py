@@ -436,6 +436,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         item = self.itemAt(event.pos())
         if item and sip.isdeleted(item):
             return
+        elif not item:
+            self._main_window.uiStatusBar.clearMessage()  # reset the status bar message when clicking on the scene
 
         if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
             is_not_link = False
@@ -593,7 +595,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if factor < 0.10 or factor > 10:
             return
         self.scale(scale_factor, scale_factor)
-        self._main_window.uiStatusBar.showMessage("Zoom: {}%".format(round(self.transform().m11() * 100)), 2000)
+        self._main_window.uiStatusBar.showMessage("Zoom: {}%".format(round(self.transform().m11() * 100)), 5000)
 
     def keyPressEvent(self, event):
         """
@@ -638,7 +640,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if item:
                 # show item coords in the status bar
                 coords = "X: {} Y: {} Z: {}".format(item.x(), item.y(), item.zValue())
-                self._main_window.uiStatusBar.showMessage(coords, 2000)
+                self._main_window.uiStatusBar.showMessage(coords)
 
             # force the children to redraw because of a problem with QGraphicsEffect
             for item in self.scene().selectedItems():
