@@ -10,7 +10,7 @@ authors = [
   { name = "Jeremy Grossmann", email = "developers@gns3.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.4"
+requires-python = ">=3.7"
 classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Environment :: X11 Applications :: Qt",
@@ -22,9 +22,6 @@ classifiers = [
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
