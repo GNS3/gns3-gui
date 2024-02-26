@@ -1,5 +1,16 @@
 # Change Log
 
+## 2.2.46 26/02/2024
+
+* Add GNS3 console command "env" to show what environment variables are used. Ref https://github.com/GNS3/gns3-server/issues/2306
+* Add CTRL+C shortcut to copy status bar message. Ref #3561
+* Key modifier (ALT) to ignore snap to grid. Fixes #3538
+* Increase timeout to 5s for status bar messages. The coordinates message has no timeout and can be reset when clicking on the scene. Ref #3561
+* Add reset GUI state feature. Ref #3549
+* Fix for hiding Windows terminal. Ref #3290
+* Drop support for Python 3.6
+* Upgrade sentry-sdk, psutil and distro dependencies
+
 ## 2.2.45 12/01/2024
 
 * Add missing console_type values in appliance_v8.json. Ref https://github.com/GNS3/gns3-registry/issues/849
