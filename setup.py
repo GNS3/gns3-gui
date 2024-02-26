@@ -19,9 +19,9 @@ import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
-# we only support Python 3 version >= 3.4
-if len(sys.argv) >= 2 and sys.argv[1] == "install" and sys.version_info < (3, 4):
-    raise SystemExit("Python 3.4 or higher is required")
+# we only support Python 3 version >= 3.7
+if len(sys.argv) >= 2 and sys.argv[1] == "install" and sys.version_info < (3, 7):
+    raise SystemExit("Python 3.7 or higher is required")
 
 
 class PyTest(TestCommand):
@@ -79,7 +79,7 @@ setup(
     include_package_data=True,
     package_data={"gns3": ["configs/*.txt", "schemas/*.json"]},
     platforms="any",
-    python_requires=">=3.4",
+    python_requires='>=3.7',
     setup_requires=["setuptools>=17.1"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -93,9 +93,6 @@ setup(
         "Operating System :: Microsoft :: Windows",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",

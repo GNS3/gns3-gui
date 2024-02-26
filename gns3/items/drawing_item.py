@@ -44,6 +44,7 @@ class DrawingItem:
     def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, locked=False, rotation=0, **kws):
         self._id = drawing_id
         self._deleting = False
+        self._allow_snap_to_grid = True
         self._locked = locked
         if self._id is None:
             self._id = str(uuid.uuid4())
@@ -135,6 +136,9 @@ class DrawingItem:
             if self.rotation() < 360.0:
                 self.setRotation(self.rotation() + 1)
                 return True
+        elif modifiers & QtCore.Qt.AltModifier:
+            self._allow_snap_to_grid = False
+            return True
         return False
 
     def keyPressEvent(self, event):
@@ -146,6 +150,15 @@ class DrawingItem:
 
         if not self.handleKeyPressEvent(event):
             QtWidgets.QGraphicsItem.keyPressEvent(self, event)
+
+    def keyReleaseEvent(self, event):
+        """
+        Handles all key release events
+
+        :param event: QKeyEvent
+        """
+
+        self._allow_snap_to_grid = True
 
     def __json__(self):
         data = {
@@ -213,7 +226,8 @@ class DrawingItem:
 
     def itemChange(self, change, value):
 
-        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked():
+        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked() \
+                and self._allow_snap_to_grid:
             grid_size = self._graphics_view.drawingGridSize()
             mid_x = self.boundingRect().width() / 2
             value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)

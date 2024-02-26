@@ -184,9 +184,9 @@ def main():
     # catch exceptions to write them in a file
     sys.excepthook = exceptionHook
 
-    # we only support Python 3 version >= 3.4
-    if sys.version_info < (3, 4):
-        raise SystemExit("Python 3.4 or higher is required")
+    # we only support Python 3 version >= 3.7
+    if sys.version_info < (3, 7):
+        raise SystemExit("Python 3.7 or higher is required")
 
     if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.5.0"):
         raise SystemExit("Requirement is PyQt5 version 5.5.0 or higher, got version {}".format(QtCore.QT_VERSION_STR))
@@ -221,8 +221,11 @@ def main():
                 # hide the console
                 # win32console.AllocConsole()
                 console_window = win32console.GetConsoleWindow()
-                if console_window:
+                parent_window = win32gui.GetParent(console_window)
+                if not parent_window and console_window:
                     win32gui.ShowWindow(console_window, win32con.SW_HIDE)
+                elif parent_window:
+                    win32gui.ShowWindow(parent_window, win32con.SW_HIDE)
                 else:
                     log.warning("Could not get the console window")
             except win32console.error as e:

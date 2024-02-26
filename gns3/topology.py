@@ -209,11 +209,11 @@ class Topology(QtCore.QObject):
             project.setId(project_settings["project_id"])
             self.setProject(project)
             project.load()
-            self._main_window.uiStatusBar.showMessage("Project loaded", 2000)
+            self._main_window.uiStatusBar.showMessage("Project loaded", 5000)
         else:
             self.setProject(project)
             project.create()
-            self._main_window.uiStatusBar.showMessage("Project created", 2000)
+            self._main_window.uiStatusBar.showMessage("Project created", 5000)
         return project
 
     def restoreSnapshot(self, project_id):
@@ -225,7 +225,7 @@ class Topology(QtCore.QObject):
         project = self._project
         self.setProject(project, snapshot=True)
         project.load()
-        self._main_window.uiStatusBar.showMessage("Snapshot restored", 2000)
+        self._main_window.uiStatusBar.showMessage("Snapshot restored", 5000)
 
     def loadProject(self, path):
         """
@@ -241,7 +241,7 @@ class Topology(QtCore.QObject):
         from .project import Project
         self.setProject(Project())
         self._project.load(path)
-        self._main_window.uiStatusBar.showMessage("Project loaded {}".format(path), 2000)
+        self._main_window.uiStatusBar.showMessage("Project loaded {}".format(path), 5000)
         return True
 
     def editReadme(self):

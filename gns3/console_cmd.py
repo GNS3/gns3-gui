@@ -19,6 +19,7 @@
 Handles commands typed in the GNS3 console.
 """
 
+import os
 import sys
 import cmd
 import struct
@@ -33,6 +34,14 @@ log = logging.getLogger(__name__)
 
 
 class ConsoleCmd(cmd.Cmd):
+
+    def do_env(self, args):
+        """
+        Show the environment variables used by GNS3.
+        """
+
+        for key, val in os.environ.items():
+            print("{}={}".format(key, val))
 
     def do_version(self, args):
         """

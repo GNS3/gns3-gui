@@ -136,6 +136,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._appliance_manager = ApplianceManager().instance()
 
         # restore the geometry and state of the main window.
+        self._save_gui_state_geometry = True
         self.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["geometry"].encode()))
         self.restoreState(QtCore.QByteArray().fromBase64(self._settings["state"].encode()))
 
@@ -232,6 +233,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiShowGridAction.triggered.connect(self._showGridActionSlot)
         self.uiSnapToGridAction.triggered.connect(self._snapToGridActionSlot)
         self.uiLockAllAction.triggered.connect(self._lockActionSlot)
+        self.uiResetGUIStateAction.triggered.connect(self._resetGUIState)
         self.uiResetDocksAction.triggered.connect(self._resetDocksSlot)
 
         # tool menu connections
@@ -365,6 +367,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     if item.parentItem() is None:
                         item.updateNode()
                     item.update()
+
+    def _resetGUIState(self):
+        """
+        Reset the GUI state.
+        """
+
+        self._save_gui_state_geometry = False
+        self.close()
+        if hasattr(sys, "frozen"):
+            QtCore.QProcess.startDetached(os.path.abspath(sys.executable), sys.argv)
+        else:
+            QtWidgets.QMessageBox.information(self, "GUI state","The GUI state has been reset, please restart the application")
 
     def _resetDocksSlot(self):
         """
@@ -1113,6 +1127,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.uiAddLinkAction.isChecked() and key == QtCore.Qt.Key_Escape:
             self.uiAddLinkAction.setChecked(False)
             self._addLinkActionSlot()
+        elif key == QtCore.Qt.Key_C and event.modifiers() & QtCore.Qt.ControlModifier:
+            status_bar_message = self.uiStatusBar.currentMessage()
+            if status_bar_message:
+                QtWidgets.QApplication.clipboard().setText(status_bar_message)
         else:
             super().keyPressEvent(event)
 
@@ -1149,8 +1167,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         log.debug("_finish_application_closing")
 
-        self._settings["geometry"] = bytes(self.saveGeometry().toBase64()).decode()
-        self._settings["state"] = bytes(self.saveState().toBase64()).decode()
+        if self._save_gui_state_geometry:
+            self._settings["geometry"] = bytes(self.saveGeometry().toBase64()).decode()
+            self._settings["state"] = bytes(self.saveState().toBase64()).decode()
+        else:
+            self._settings["geometry"] = ""
+            self._settings["state"] = ""
         self.setSettings(self._settings)
 
         Controller.instance().stopListenNotifications()

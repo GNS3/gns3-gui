@@ -138,6 +138,7 @@ background-none;
     <addaction name="uiShowPortNamesAction"/>
     <addaction name="uiLockAllAction"/>
     <addaction name="separator"/>
+    <addaction name="uiResetGUIStateAction"/>
     <addaction name="uiResetDocksAction"/>
     <addaction name="uiDocksMenu"/>
    </widget>
@@ -1298,6 +1299,11 @@ background-none;
   <action name="uiResetConsoleAllAction">
    <property name="text">
     <string>Reset all console connections</string>
+   </property>
+  </action>
+  <action name="uiResetGUIStateAction">
+   <property name="text">
+    <string>Reset GUI state</string>
    </property>
   </action>
  </widget>
