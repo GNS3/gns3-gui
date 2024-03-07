@@ -721,11 +721,11 @@ class Project(QtCore.QObject):
             self.projectUpdatedCallback(result["event"])
         elif result["action"] == "snapshot.restored":
             Topology.instance().restoreSnapshot(result["event"]["project_id"])
-        elif result["action"] == "log.error":
-            log.error(result["event"]["message"])
-        elif result["action"] == "log.warning":
-            log.warning(result["event"]["message"])
-        elif result["action"] == "log.info":
-            log.info(result["event"]["message"], extra={"show": True})
+        elif result["action"] == "log.error" and result["event"].get("message"):
+            log.error(result["event"].get("message"))
+        elif result["action"] == "log.warning" and result["event"].get("message"):
+            log.warning(result["event"].get("message"))
+        elif result["action"] == "log.info" and result["event"].get("message"):
+            log.info(result["event"].get("message"), extra={"show": True})
         elif result["action"] == "ping":
             pass
