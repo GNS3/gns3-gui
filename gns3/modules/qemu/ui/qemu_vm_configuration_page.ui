@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>478</width>
-    <height>579</height>
+    <width>518</width>
+    <height>618</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -896,21 +896,7 @@
           <string>Additional settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="1" column="0" colspan="2">
-           <widget class="QCheckBox" name="uiTPMCheckBox">
-            <property name="text">
-             <string>Enable Trusted Platform Module (TPM)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="uiQemuOptionsLabel">
-            <property name="text">
-             <string>Options:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
+          <item row="1" column="1">
            <widget class="QLineEdit" name="uiQemuOptionsLineEdit">
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Variable replacements:&lt;/p&gt;
@@ -926,7 +912,14 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0" colspan="2">
+          <item row="4" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiUEFICheckBox">
+            <property name="text">
+             <string>Enable UEFI boot mode</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
            <widget class="QCheckBox" name="uiBaseVMCheckBox">
             <property name="enabled">
              <bool>true</bool>
@@ -936,12 +929,29 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="QCheckBox" name="uiUEFICheckBox">
+          <item row="0" column="0">
+           <widget class="QLabel" name="uiQemuPathLabel">
             <property name="text">
-             <string>Enable UEFI boot mode</string>
+             <string>Qemu binary path:</string>
             </property>
            </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="uiQemuOptionsLabel">
+            <property name="text">
+             <string>Command line options:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QCheckBox" name="uiTPMCheckBox">
+            <property name="text">
+             <string>Enable Trusted Platform Module (TPM)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="uiQemuPathLineEdit"/>
           </item>
          </layout>
          <zorder>uiQemuOptionsLineEdit</zorder>
@@ -949,6 +959,8 @@
          <zorder>uiBaseVMCheckBox</zorder>
          <zorder>uiTPMCheckBox</zorder>
          <zorder>uiUEFICheckBox</zorder>
+         <zorder>uiQemuPathLabel</zorder>
+         <zorder>uiQemuPathLineEdit</zorder>
         </widget>
        </item>
        <item>

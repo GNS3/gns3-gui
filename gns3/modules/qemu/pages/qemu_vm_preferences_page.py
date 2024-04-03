@@ -96,6 +96,8 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         except KeyError:
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["QEMU platform:", os.path.basename(qemu_vm["platform"])])
+        if qemu_vm["qemu_path"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Custom QEMU path:", qemu_vm["qemu_path"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", qemu_vm["console_type"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(qemu_vm["console_auto_start"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Auxiliary console type:", qemu_vm["aux_type"]])
