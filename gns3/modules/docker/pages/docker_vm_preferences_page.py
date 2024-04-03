@@ -97,14 +97,16 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         QtWidgets.QTreeWidgetItem(section_item, ["Auxiliary console type:", str(docker_container["aux_type"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_container["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(docker_container["adapters"])])
+        if docker_container["cpus"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["CPUs:", str(docker_container["cpus"])])
+        if docker_container["memory"]:
+            QtWidgets.QTreeWidgetItem(section_item, ["Memory:", str(docker_container["memory"]) + " MB"])
         if docker_container["start_command"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Start command:", str(docker_container["start_command"])])
         if docker_container["environment"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Environment:", str(docker_container["environment"])])
-
         if docker_container["extra_hosts"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Extra hosts:", str(docker_container["extra_hosts"])])
-
         if docker_container["extra_volumes"]:
             QtWidgets.QTreeWidgetItem(section_item, ["Extra volumes:", "\n".join(docker_container["extra_volumes"])])
 

@@ -183,7 +183,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         # only tidy input here, validation is performed server side
         settings["extra_volumes"] = [ y for x in self.uiExtraVolumeTextEdit.toPlainText().split("\n") for y in [ x.strip() ] if y ]
         settings["memory"] = self.uiMaxMemorySpinBox.value()
-        settings["cpus"] = self.uiMaxCPUsDoubleSpinBox.value()
+        settings["cpus"] = round(self.uiMaxCPUsDoubleSpinBox.value(), self.uiMaxCPUsDoubleSpinBox.decimals())
 
         if not group:
             adapters = self.uiAdapterSpinBox.value()
