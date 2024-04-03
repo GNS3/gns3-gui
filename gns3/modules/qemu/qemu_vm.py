@@ -77,6 +77,7 @@ class QemuVM(Node):
                             "uefi": QEMU_VM_SETTINGS["uefi"],
                             "create_config_disk": QEMU_VM_SETTINGS["create_config_disk"],
                             "platform": QEMU_VM_SETTINGS["platform"],
+                            "qemu_path": "",
                             "on_close": QEMU_VM_SETTINGS["on_close"],
                             "cpu_throttling": QEMU_VM_SETTINGS["cpu_throttling"],
                             "process_priority": QEMU_VM_SETTINGS["process_priority"],

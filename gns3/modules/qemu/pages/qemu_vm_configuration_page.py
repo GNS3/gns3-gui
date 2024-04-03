@@ -543,6 +543,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         index = self.uiProcessPriorityComboBox.findText(settings["process_priority"], QtCore.Qt.MatchFixedString)
         if index != -1:
             self.uiProcessPriorityComboBox.setCurrentIndex(index)
+        self.uiQemuPathLineEdit.setText(settings["qemu_path"])
         self.uiQemuOptionsLineEdit.setText(settings["options"])
         self.uiUsageTextEdit.setPlainText(settings["usage"])
         self.uiTPMCheckBox.setChecked(settings["tpm"])
@@ -652,6 +653,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         else:
             settings["cpu_throttling"] = 0
         settings["process_priority"] = self.uiProcessPriorityComboBox.currentText().lower()
+        settings["qemu_path"] = self.QemuPathLineEdit.text().strip()
         settings["options"] = self.uiQemuOptionsLineEdit.text()
         settings["usage"] = self.uiUsageTextEdit.toPlainText()
         settings["tpm"] = self.uiTPMCheckBox.isChecked()

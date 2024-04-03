@@ -61,6 +61,7 @@ QEMU_VM_SETTINGS = {
     "create_config_disk": False,
     "on_close": "power_off",
     "platform": "x86_64",
+    "qemu_path": "",
     "cpu_throttling": 0,
     "process_priority": "normal",
     "options": "",
