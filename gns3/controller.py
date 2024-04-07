@@ -447,9 +447,10 @@ class Controller(QtCore.QObject):
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
             self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
-            self._notification_stream.disconnected.connect(self.disconnectEndpoint)
+            self._notification_stream.disconnected.connect(self._websocket_disconnected)
 
-    def disconnectEndpoint(self):
+    def _websocket_disconnected(self):
+
         self._connected = False
         self.disconnected_signal.emit()
         self.stopListenNotifications()
