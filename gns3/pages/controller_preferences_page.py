@@ -34,6 +34,8 @@ from ..settings import CONTROLLER_SETTINGS, DEFAULT_CONTROLLER_HOST
 from ..dialogs.edit_compute_dialog import EditComputeDialog
 from ..local_server import LocalServer
 from ..compute_manager import ComputeManager
+from gns3.http_client import HTTPClient
+from gns3.controller import Controller
 
 
 class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageWidget):
@@ -54,6 +56,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
         self.uiAddRemoteServerPushButton.clicked.connect(self._remoteServerAddSlot)
         self.uiDeleteRemoteServerPushButton.clicked.connect(self._remoteServerDeleteSlot)
         self.uiUpdateRemoteServerPushButton.clicked.connect(self._remoteServerUpdateSlot)
+        self.uiConnectPushButton.clicked.connect(self._connectSlot)
 
         self.uiRemoteServersTreeWidget.itemSelectionChanged.connect(self._remoteServerChangedSlot)
         self.uiRestoreDefaultsPushButton.clicked.connect(self._restoreDefaultsSlot)
@@ -175,6 +178,24 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
         if dialog.exec_():
             self._populateRemoteServersTree()
 
+    def _connectSlot(self):
+        """
+        Connects to a remote controller.
+        """
+
+        controller_settings = {
+            "host": self.uiRemoteMainServerHostLineEdit.text(),
+            "port": self.uiRemoteMainServerPortSpinBox.value(),
+            "protocol": self.uiRemoteMainServerProtocolComboBox.currentText().lower(),
+            "username": self.uiRemoteMainServerUserLineEdit.text(),
+            "password": self.uiRemoteMainServerPasswordLineEdit.text(),
+            "remote": True
+        }
+        http_client = HTTPClient(controller_settings)
+        Controller.instance().setHttpClient(http_client)
+        if http_client.connected():
+            QtWidgets.QMessageBox.information(self, "Controller", "Successfully connected to controller {}".format(controller_settings["host"]))
+
     def _populateWidgets(self, servers_settings):
         """
         Populates the widgets with the settings.
@@ -195,13 +216,14 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
         self.uiRemoteMainServerUserLineEdit.setText(servers_settings["username"])
         self.uiRemoteMainServerPasswordLineEdit.setText(servers_settings["password"])
 
-        #self.uiLocalServerAutoStartCheckBox.setChecked(servers_settings["auto_start"])
-        #self._useLocalServerAutoStartSlot(servers_settings["auto_start"])
-
-        # FIXME: only allow remote server (temporary)
         self.uiLocalServerAutoStartCheckBox.setChecked(False)
         self.uiLocalServerAutoStartCheckBox.setEnabled(False)
         self._useLocalServerAutoStartSlot(False)
+        if sys.platform.startswith("linux"):
+            # Local controller only supported on Linux
+            self.uiLocalServerAutoStartCheckBox.setChecked(servers_settings["auto_start"])
+            self.uiLocalServerAutoStartCheckBox.setEnabled(True)
+            self._useLocalServerAutoStartSlot(servers_settings["auto_start"])
 
         self.uiConsoleConnectionsToAnyIPCheckBox.setChecked(servers_settings["allow_console_from_anywhere"])
         self.uiDynamicComputeAllocationCheckBox.setChecked(servers_settings["dynamic_compute_allocation"])
@@ -256,6 +278,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
                                           "host": self.uiLocalServerHostComboBox.itemData(self.uiLocalServerHostComboBox.currentIndex()),
                                           "port": self.uiLocalServerPortSpinBox.value(),
                                           "auto_start": self.uiLocalServerAutoStartCheckBox.isChecked(),
+                                          "remote": False,
                                           "allow_console_from_anywhere": self.uiConsoleConnectionsToAnyIPCheckBox.isChecked(),
                                           "dynamic_compute_allocation": self.uiDynamicComputeAllocationCheckBox.isChecked(),
                                           "console_start_port_range": self.uiConsoleStartPortSpinBox.value(),
@@ -293,6 +316,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
             new_local_server_settings["protocol"] = self.uiRemoteMainServerProtocolComboBox.currentText().lower()
             new_local_server_settings["username"] = self.uiRemoteMainServerUserLineEdit.text()
             new_local_server_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
+            new_local_server_settings["remote"] = True
 
             # Some users get confused by compute and controller and
             # configure the same server twice
