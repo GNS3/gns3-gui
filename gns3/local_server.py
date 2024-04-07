@@ -220,7 +220,7 @@ class LocalServer(QtCore.QObject):
         Controller.instance().setSettings(self._settings)
 
         # Settings have changed we need to restart the server
-        if old_settings != self._settings:
+        if not Controller.instance().connected() or old_settings != self._settings:
             if self._settings["auto_start"]:
                 # We restart the local server only if we really need. Auth can be hot change
                 settings_require_restart = ('host', 'port', 'path')
@@ -236,6 +236,8 @@ class LocalServer(QtCore.QObject):
             # If the controller is remote:
             else:
                 self.stopLocalServer(wait=True)
+                if Controller.instance().isRemote() and not Controller.instance().connected():
+                    Controller.instance().connect()
 
     def shouldLocalServerAutoStart(self):
         """

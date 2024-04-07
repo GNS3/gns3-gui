@@ -1450,7 +1450,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if self._open_file_at_startup:
                 self.loadPath(self._open_file_at_startup)
                 self._open_file_at_startup = None
-            elif Topology.instance().project() is None:
+            elif Topology.instance().project() is None and QtWidgets.QApplication.activeModalWidget() is None:
                 self._newProjectActionSlot()
 
     def run_later(self, counter, callback):
