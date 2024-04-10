@@ -13,6 +13,7 @@ class Ui_CaptureDialog(object):
     def setupUi(self, CaptureDialog):
         CaptureDialog.setObjectName("CaptureDialog")
         CaptureDialog.setWindowModality(QtCore.Qt.WindowModal)
+        CaptureDialog.setMinimumSize(QtCore.QSize(500, 147))
         CaptureDialog.resize(500, 147)
         CaptureDialog.setMaximumSize(QtCore.QSize(500, 147))
         CaptureDialog.setModal(False)
