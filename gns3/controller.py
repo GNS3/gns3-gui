@@ -513,11 +513,11 @@ class Controller(QtCore.QObject):
             project = Topology.instance().project()
             if project and project.id() == result["event"]["project_id"]:
                 project.projectUpdatedCallback(result["event"])
-        elif result["action"] == "log.error":
-            log.error(result["event"]["message"])
-        elif result["action"] == "log.warning":
-            log.warning(result["event"]["message"])
-        elif result["action"] == "log.info":
-            log.info(result["event"]["message"], extra={"show": True})
+        elif result["action"] == "log.error" and result["event"].get("message"):
+            log.error(result["event"].get("message"))
+        elif result["action"] == "log.warning" and result["event"].get("message"):
+            log.warning(result["event"].get("message"))
+        elif result["action"] == "log.info" and result["event"].get("message"):
+            log.info(result["event"].get("message"), extra={"show": True})
         elif result["action"] == "ping":
             pass
