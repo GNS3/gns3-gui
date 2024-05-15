@@ -8,7 +8,7 @@ RUN apt-get clean
 
 ADD dev-requirements.txt /dev-requirements.txt
 ADD requirements.txt /requirements.txt
-RUN python3 -m pip install --no-cache-dir -r /dev-requirements.txt
+RUN python3 -m pip install --break-system-packages --no-cache-dir -r /dev-requirements.txt
 
 ADD . /src
 WORKDIR /src
