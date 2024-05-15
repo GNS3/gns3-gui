@@ -73,7 +73,7 @@ class Nat(Node):
         :returns: symbol path (or resource).
         """
 
-        return ":/symbols/cloud.svg"
+        return ":/symbols/nat.svg"
 
     @staticmethod
     def categories():
