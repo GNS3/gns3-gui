@@ -1,9 +1,9 @@
 # Run tests inside a container
-FROM ubuntu:18.04
+FROM ubuntu:latest
 MAINTAINER GNS3 Team
 
 RUN apt-get update
-RUN apt-get install -y --force-yes python3.6 python3-pyqt5 python3-pip python3-pyqt5.qtsvg python3-pyqt5.qtwebsockets python3.6-dev xvfb
+RUN apt-get install -y --force-yes python3 python3-pyqt5 python3-pip python3-pyqt5.qtsvg python3-pyqt5.qtwebsockets python3-dev xvfb
 RUN apt-get clean
 
 ADD dev-requirements.txt /dev-requirements.txt
@@ -13,4 +13,4 @@ RUN pip3 install --no-cache-dir -r /dev-requirements.txt
 ADD . /src
 WORKDIR /src
 
-CMD xvfb-run python3.6 -m pytest -vv
+CMD xvfb-run python3 -m pytest -vv
