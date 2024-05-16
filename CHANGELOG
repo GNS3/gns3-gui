@@ -1,5 +1,16 @@
 # Change Log
 
+## 2.2.47 15/05/2024
+
+* Remove maximum size for capture dialog. Ref #3576
+* Change sentry-sdk version
+* Upgrade aiohttp, sentry-sdk and truststore
+* Upgrade jsonschema and aiohttp
+* Drop Python 3.7
+* Remove dev requirements for Python 3.6
+* Add NAT symbols
+* Only show log message if event has "message"
+
 ## 3.0.0b2 07/04/2024
 
 * Enable local controller support on Linux
