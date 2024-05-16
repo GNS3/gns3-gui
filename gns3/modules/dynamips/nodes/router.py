@@ -50,7 +50,6 @@ class Router(Node):
 
         router_settings = {"platform": platform,
                            "usage": "",
-                           "chassis": "",
                            "image": "",
                            "image_md5sum": "",
                            "startup_config": "",
