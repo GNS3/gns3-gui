@@ -1,5 +1,10 @@
 # Change Log
 
+## 3.0.0b3 19/05/2024
+
+* Fix updating IOS router
+* Ensure Python >= 3.8 is used in pyproject.toml
+
 ## 2.2.47 15/05/2024
 
 * Remove maximum size for capture dialog. Ref #3576
