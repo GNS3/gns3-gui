@@ -126,20 +126,18 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         """
 
         if result:
+            include_images = include_snapshots = reset_mac_addresses = keep_compute_ids = "no"
             if self.uiIncludeImagesCheckBox.isChecked():
                 include_images = "yes"
-            else:
-                include_images = "no"
             if self.uiIncludeSnapshotsCheckBox.isChecked():
                 include_snapshots = "yes"
-            else:
-                include_snapshots = "no"
             if self.uiResetMacAddressesCheckBox.isChecked():
                 reset_mac_addresses = "yes"
-            else:
-                reset_mac_addresses = "no"
+            if self.uiKeepComputeIdsCheckBox.isChecked():
+                keep_compute_ids = "yes"
+
             compression = self.uiCompressionComboBox.currentData()
-            export_worker = ExportProjectWorker(self._project, self._path, include_images, include_snapshots, reset_mac_addresses, compression)
+            export_worker = ExportProjectWorker(self._project, self._path, include_images, include_snapshots, reset_mac_addresses, keep_compute_ids, compression)
             progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self, create_thread=False)
             progress_dialog.show()
             progress_dialog.exec_()
