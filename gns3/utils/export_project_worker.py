@@ -28,21 +28,24 @@ class ExportProjectWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
     updated = QtCore.pyqtSignal(int)
 
-    def __init__(self, project, path, include_images, include_snapshots, reset_mac_addresses, compression):
+    def __init__(self, project, path, include_images, include_snapshots, reset_mac_addresses, keep_compute_ids, compression):
         super().__init__()
         self._project = project
+        self._path = path
         self._include_images = include_images
         self._include_snapshots = include_snapshots
         self._reset_mac_addresses = reset_mac_addresses
-        self._path = path
+        self._keep_compute_ids = keep_compute_ids
         self._compression = compression
 
     def run(self):
         if self._project:
-            self._project.get("/export?include_images={}&include_snapshots={}&reset_mac_addresses={}&compression={}".format(self._include_images, self._include_snapshots, self._reset_mac_addresses, self._compression),
-                              self._exportReceived,
-                              downloadProgressCallback=self._downloadFileProgress,
-                              timeout=None)
+            self._project.get(
+                "/export?include_images={}&include_snapshots={}&reset_mac_addresses={}&keep_compute_ids={}&compression={}".format(self._include_images, self._include_snapshots, self._reset_mac_addresses, self._keep_compute_ids, self._compression),
+                self._exportReceived,
+                downloadProgressCallback=self._downloadFileProgress,
+                timeout=None
+            )
 
     def _exportReceived(self, content, error=False, server=None, context={}, **kwargs):
         if error:
