@@ -27,12 +27,8 @@
     <string>Please select the location, whether to include base images or not and the compression type.</string>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
-     <widget class="QLabel" name="uiCompressionLabel">
-      <property name="text">
-       <string>Compression:</string>
-      </property>
-     </widget>
+    <item row="1" column="1" colspan="2">
+     <widget class="QComboBox" name="uiCompressionComboBox"/>
     </item>
     <item row="0" column="0">
      <widget class="QLabel" name="uiPathLabel">
@@ -47,17 +43,30 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="uiCompressionLevelLabel">
+    <item row="1" column="0">
+     <widget class="QLabel" name="uiCompressionLabel">
       <property name="text">
-       <string>Compression level:</string>
+       <string>Compression:</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="0" colspan="2">
-     <widget class="QCheckBox" name="uiIncludeSnapshotsCheckBox">
-      <property name="text">
-       <string>&amp;Include snapshots</string>
+    <item row="7" column="2">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>247</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="1" colspan="2">
+     <widget class="QSpinBox" name="uiCompressionLevelSpinBox">
+      <property name="maximum">
+       <number>22</number>
       </property>
      </widget>
     </item>
@@ -75,19 +84,6 @@
       </item>
      </layout>
     </item>
-    <item row="6" column="2">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>247</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="5" column="0" colspan="2">
      <widget class="QCheckBox" name="uiResetMacAddressesCheckBox">
       <property name="text">
@@ -95,20 +91,31 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="1" colspan="2">
-     <widget class="QSpinBox" name="uiCompressionLevelSpinBox">
-      <property name="maximum">
-       <number>22</number>
+    <item row="2" column="0">
+     <widget class="QLabel" name="uiCompressionLevelLabel">
+      <property name="text">
+       <string>Compression level:</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="1" colspan="2">
-     <widget class="QComboBox" name="uiCompressionComboBox"/>
+    <item row="4" column="0" colspan="2">
+     <widget class="QCheckBox" name="uiIncludeSnapshotsCheckBox">
+      <property name="text">
+       <string>&amp;Include snapshots</string>
+      </property>
+     </widget>
     </item>
     <item row="3" column="0" colspan="3">
      <widget class="QCheckBox" name="uiIncludeImagesCheckBox">
       <property name="text">
        <string>&amp;Include base images</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="3">
+     <widget class="QCheckBox" name="uiKeepComputeIdsCheckBox">
+      <property name="text">
+       <string>&amp;Keep the original compute IDs</string>
       </property>
      </widget>
     </item>
