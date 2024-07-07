@@ -186,18 +186,16 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
             if content:
                 self._project.post("/files/{}".format(self._readme_filename), self._saveReadmeCallback, body=content)
 
+            include_images = include_snapshots = reset_mac_addresses = keep_compute_ids = "no"
             if self.uiIncludeImagesCheckBox.isChecked():
                 include_images = "yes"
-            else:
-                include_images = "no"
             if self.uiIncludeSnapshotsCheckBox.isChecked():
                 include_snapshots = "yes"
-            else:
-                include_snapshots = "no"
             if self.uiResetMacAddressesCheckBox.isChecked():
                 reset_mac_addresses = "yes"
-            else:
-                reset_mac_addresses = "no"
+            if self.uiKeepComputeIdsCheckBox.isChecked():
+                keep_compute_ids = "yes"
+
             compression = self.uiCompressionComboBox.currentData()
             self.waitForReadme(self.readme_signal)
 
@@ -205,6 +203,7 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
                 "include_images": include_images,
                 "include_snapshots": include_snapshots,
                 "reset_mac_addresses": reset_mac_addresses,
+                "keep_compute_ids": keep_compute_ids,
                 "compression": compression
             }
 
