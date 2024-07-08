@@ -1,5 +1,13 @@
 # Change Log
 
+## 2.2.48 08/07/2024
+
+* Use "experimental features" to allow bypassing hostname validation. Ref #3524
+* Update appliance_v8.json. Ref https://github.com/GNS3/gns3-registry/pull/897
+* Option to keep the compute IDs unchanged when exporting a project
+* Upgrade sentry-sdk and psutil packages
+* Switch to PyQt5 5.15.10 for macOS build
+
 ## 2.2.47 15/05/2024
 
 * Remove maximum size for capture dialog. Ref #3576

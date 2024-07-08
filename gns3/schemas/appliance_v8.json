@@ -720,174 +720,174 @@
           "template_properties"
         ]
       }
-    }
-  },
-  "images": {
-    "type": "array",
-    "title": "Images for this appliance",
-    "items": {
-      "type": "object",
-      "title": "An image file",
-      "properties": {
-        "filename": {
-          "type": "string",
-          "title": "Filename"
+    },
+    "images": {
+      "type": "array",
+      "title": "Images for this appliance",
+      "items": {
+        "type": "object",
+        "title": "An image file",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version of the image file"
+          },
+          "md5sum": {
+            "type": "string",
+            "title": "MD5 cheksum of the image file",
+            "pattern": "^[a-f0-9]{32}$"
+          },
+          "checksum": {
+            "type": "string",
+            "title": "checksum of the image file"
+          },
+          "checksum_type": {
+            "title": "checksum type of the image file",
+            "enum": [
+              "md5"
+            ]
+          },
+          "filesize": {
+            "type": "integer",
+            "title": "File size in bytes of the image file"
+          },
+          "download_url": {
+            "type": "string",
+            "format": "uri",
+            "title": "Download URL where you can download the image file from a browser"
+          },
+          "direct_download_url": {
+            "type": "string",
+            "format": "uri",
+            "title": "Optional. Non authenticated URL to the image file where you can download the image directly"
+          },
+          "compression": {
+            "enum": [
+              "bzip2",
+              "gzip",
+              "lzma",
+              "xz",
+              "rar",
+              "zip",
+              "7z"
+            ],
+            "title": "Optional, compression type of direct download URL image."
+          },
+          "compression_target": {
+            "type": "string",
+            "title": "Optional, file name of the image file inside the compressed file."
+          }
         },
-        "version": {
-          "type": "string",
-          "title": "Version of the image file"
-        },
-        "md5sum": {
-          "type": "string",
-          "title": "MD5 cheksum of the image file",
-          "pattern": "^[a-f0-9]{32}$"
-        },
-        "checksum": {
-          "type": "string",
-          "title": "checksum of the image file"
-        },
-        "checksum_type": {
-          "title": "checksum type of the image file",
-          "enum": [
-            "md5"
-          ]
-        },
-        "filesize": {
-          "type": "integer",
-          "title": "File size in bytes of the image file"
-        },
-        "download_url": {
-          "type": "string",
-          "format": "uri",
-          "title": "Download URL where you can download the image file from a browser"
-        },
-        "direct_download_url": {
-          "type": "string",
-          "format": "uri",
-          "title": "Optional. Non authenticated URL to the image file where you can download the image directly"
-        },
-        "compression": {
-          "enum": [
-            "bzip2",
-            "gzip",
-            "lzma",
-            "xz",
-            "rar",
-            "zip",
-            "7z"
-          ],
-          "title": "Optional, compression type of direct download URL image."
-        },
-        "compression_target": {
-          "type": "string",
-          "title": "Optional, file name of the image file inside the compressed file."
-        }
-      },
-      "anyOf": [
-        {
-          "required": [
-            "filename",
-            "version",
-            "md5sum",
-            "filesize"
-          ]
-        },
-        {
-          "required": [
-            "filename",
-            "version",
-            "checksum",
-            "filesize"
-          ]
-        }
-      ]
-    }
-  },
-  "versions": {
-    "type": "array",
-    "title": "Versions of the appliance",
-    "items": {
-      "type": "object",
-      "title": "A version of the appliance",
-      "properties": {
-        "name": {
-          "type": "string",
-          "title": "Name of the version"
-        },
-        "settings": {
-          "type": "string",
-          "title": "Template settings to use to run the version"
-        },
-        "category": {
-          "$ref": "#/definitions/categories",
-          "title": "Category of the version"
-        },
-        "installation_instructions": {
-          "type": "string",
-          "title": "Optional installation instructions for the version"
-        },
-        "usage": {
-          "type": "string",
-          "title": "Optional instructions about using the version"
-        },
-        "default_username": {
-          "type": "string",
-          "title": "Default username for the version"
-        },
-        "default_password": {
-          "type": "string",
-          "title": "Default password for the version"
-        },
-        "symbol": {
-          "type": "string",
-          "title": "An optional symbol for the version"
-        },
-        "images": {
-          "type": "object",
-          "title": "Images used for this version",
-          "properties": {
-            "kernel_image": {
-              "type": "string",
-              "title": "Kernel image (Qemu only)"
-            },
-            "initrd": {
-              "type": "string",
-              "title": "Initrd disk image (Qemu only)"
-            },
-            "image": {
-              "type": "string",
-              "title": "OS image (IOU and Dynamips only)"
-            },
-            "bios_image": {
-              "type": "string",
-              "title": "Bios image (Qemu only)"
-            },
-            "hda_disk_image": {
-              "type": "string",
-              "title": "Hda disk image (Qemu only)"
-            },
-            "hdb_disk_image": {
-              "type": "string",
-              "title": "Hdc disk image (Qemu only)"
-            },
-            "hdc_disk_image": {
-              "type": "string",
-              "title": "Hdd disk image (Qemu only)"
-            },
-            "hdd_disk_image": {
-              "type": "string",
-              "title": "Hdd disk image (Qemu only)"
-            },
-            "cdrom_image": {
-              "type": "string",
-              "title": "cdrom image (Qemu only)"
+        "anyOf": [
+          {
+            "required": [
+              "filename",
+              "version",
+              "md5sum",
+              "filesize"
+            ]
+          },
+          {
+            "required": [
+              "filename",
+              "version",
+              "checksum",
+              "filesize"
+            ]
+          }
+        ]
+      }
+    },
+    "versions": {
+      "type": "array",
+      "title": "Versions of the appliance",
+      "items": {
+        "type": "object",
+        "title": "A version of the appliance",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name of the version"
+          },
+          "settings": {
+            "type": "string",
+            "title": "Template settings to use to run the version"
+          },
+          "category": {
+            "$ref": "#/definitions/categories",
+            "title": "Category of the version"
+          },
+          "installation_instructions": {
+            "type": "string",
+            "title": "Optional installation instructions for the version"
+          },
+          "usage": {
+            "type": "string",
+            "title": "Optional instructions about using the version"
+          },
+          "default_username": {
+            "type": "string",
+            "title": "Default username for the version"
+          },
+          "default_password": {
+            "type": "string",
+            "title": "Default password for the version"
+          },
+          "symbol": {
+            "type": "string",
+            "title": "An optional symbol for the version"
+          },
+          "images": {
+            "type": "object",
+            "title": "Images used for this version",
+            "properties": {
+              "kernel_image": {
+                "type": "string",
+                "title": "Kernel image (Qemu only)"
+              },
+              "initrd": {
+                "type": "string",
+                "title": "Initrd disk image (Qemu only)"
+              },
+              "image": {
+                "type": "string",
+                "title": "OS image (IOU and Dynamips only)"
+              },
+              "bios_image": {
+                "type": "string",
+                "title": "Bios image (Qemu only)"
+              },
+              "hda_disk_image": {
+                "type": "string",
+                "title": "Hda disk image (Qemu only)"
+              },
+              "hdb_disk_image": {
+                "type": "string",
+                "title": "Hdc disk image (Qemu only)"
+              },
+              "hdc_disk_image": {
+                "type": "string",
+                "title": "Hdd disk image (Qemu only)"
+              },
+              "hdd_disk_image": {
+                "type": "string",
+                "title": "Hdd disk image (Qemu only)"
+              },
+              "cdrom_image": {
+                "type": "string",
+                "title": "cdrom image (Qemu only)"
+              }
             }
           }
-        }
-      },
-      "required": [
-        "name"
-      ]
+        },
+        "required": [
+          "name"
+        ]
+      }
     }
   },
   "required": [
