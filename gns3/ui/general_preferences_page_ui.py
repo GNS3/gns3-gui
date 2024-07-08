@@ -598,7 +598,7 @@ class Ui_GeneralPreferencesPageWidget(object):
         self.uiCheckForUpdateCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Automatically check for update"))
         self.uiCrashReportCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Send anonymous crash reports"))
         self.uiOverlayNotificationsCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Display error, warning and info in an overlay popup"))
-        self.uiExperimentalFeaturesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable experimental features (dangerous, restart required)"))
+        self.uiExperimentalFeaturesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable experimental features"))
         self.uiHdpiCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Enable HDPI mode (this may crash on Linux, restart required)"))
         self.uiMultiProfilesCheckBox.setText(_translate("GeneralPreferencesPageWidget", "Request for profile settings at application startup"))
         self.uiDirectFileUpload.setToolTip(_translate("GeneralPreferencesPageWidget", "Experimental, requires computes visibility from GUI network"))

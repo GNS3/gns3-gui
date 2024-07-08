@@ -1032,7 +1032,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     if not new_hostname.strip():
                         QtWidgets.QMessageBox.critical(self, "Change hostname", "Hostname cannot be blank")
                         continue
-                    if hasattr(item.node(), "validateHostname"):
+                    if hasattr(item.node(), "validateHostname") and not LocalConfig.instance().experimental():
                         if not item.node().validateHostname(new_hostname):
                             QtWidgets.QMessageBox.critical(self, "Change hostname", "Invalid name detected for this node: {}".format(new_hostname))
                             continue

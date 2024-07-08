@@ -24,6 +24,7 @@ import re
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.local_server import LocalServer
+from gns3.local_config import LocalConfig
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.controller import Controller
@@ -488,7 +489,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             name = self.uiNameLineEdit.text()
             if not name:
                 QtWidgets.QMessageBox.critical(self, "Name", "IOS router name cannot be empty!")
-            elif node and not node.validateHostname(name):
+            elif node and not node.validateHostname(name) and not LocalConfig.instance().experimental():
                 QtWidgets.QMessageBox.critical(self, "Name", "Invalid name detected for IOS router: {}".format(name))
             else:
                 settings["name"] = name

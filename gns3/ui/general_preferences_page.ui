@@ -1012,7 +1012,7 @@
        <item>
         <widget class="QCheckBox" name="uiExperimentalFeaturesCheckBox">
          <property name="text">
-          <string>Enable experimental features (dangerous, restart required)</string>
+          <string>Enable experimental features</string>
          </property>
         </widget>
        </item>
