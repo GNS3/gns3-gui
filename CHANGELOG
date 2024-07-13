@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.48.1 12/07/2024
+
+* No changes
+
 ## 2.2.48 08/07/2024
 
 * Use "experimental features" to allow bypassing hostname validation. Ref #3524
