@@ -102,7 +102,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         width = self._settings["scene_width"]
         height = self._settings["scene_height"]
         self.setScene(scene)
-        self.setSceneSize(width, height)
+        self.setSceneSize(width + 1000, height + 1000)
 
         # set the custom flags for this view
         self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
