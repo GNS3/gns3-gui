@@ -65,7 +65,7 @@ from .items.image_item import ImageItem
 from .items.logo_item import  LogoItem
 
 log = logging.getLogger(__name__)
-
+isctrlcpressed = False
 
 class GraphicsView(QtWidgets.QGraphicsView):
     """
