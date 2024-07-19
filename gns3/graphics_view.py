@@ -612,8 +612,47 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 if (isinstance(item, LabelItem) or isinstance(item, TextItem)) and item.hasFocus():
                     super().keyPressEvent(event)
                     return
-            self.deleteActionSlot()
+        elif event.key() == QtCore.Qt.Key_C and event.modifiers() == QtCore.Qt.ControlModifier:
+                # Copy selected items to clipboard
+                self.copySelectedItems()
+            
+        elif event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier:
+                # Paste items from clipboard
+                self.pasteItemsFromClipboard()
+                self.deleteActionSlot()
         super().keyPressEvent(event)
+    def copySelectedItems():
+        isctrlcpressed = True
+
+    def pasteItemsFromClipboard(self):  
+        if isctrlcpressed == False:
+            return
+        else:
+            for item in self.scene().selectedItems():
+                if isinstance(item, DrawingItem):
+                    if isinstance(item, EllipseItem):
+                        type = "ellipse"
+                    elif isinstance(item, TextItem):
+                        type = "text"
+                    elif isinstance(item, RectangleItem):
+                        type = "rect"
+                    else:
+                        type = "image"
+                    
+
+                    self.createDrawingItem(
+                        type,
+                        int(item.pos().x()) + 20,
+                        int(item.pos().y()) + 20,
+                        item.zValue(),
+                        rotation=item.rotation(),
+                        svg=item.toSvg()
+                    )
+                elif isinstance(item, NodeItem):
+                    item.node().duplicate(item.pos().x() + 20, item.pos().y() + 20, item.zValue())
+                elif isinstance(item, LinkItem):
+                    for item in self.scene().selectedItems():
+                        self.addLinkSlot(link.id())      
 
     def mouseMoveEvent(self, event):
         """
