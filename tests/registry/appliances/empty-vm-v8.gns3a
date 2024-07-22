@@ -65,8 +65,8 @@
         {
             "filename": "empty100G.qcow2",
             "version": "100G",
-            "checksum": "d08fdec95fffbda3f04e9a00db49295df73ae4a507396e442ba9e4ad5c14ce5a",
-            "checksum_type": "sha256",
+            "checksum": "1e6409a4523ada212dea2ebc50e50a65",
+            "checksum_type": "md5",
             "filesize": 198656,
             "download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/",
             "direct_download_url": "https://sourceforge.net/projects/gns-3/files/Empty%20Qemu%20disk/empty100G.qcow2/download"
