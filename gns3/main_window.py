@@ -1131,8 +1131,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             status_bar_message = self.uiStatusBar.currentMessage()
             if status_bar_message:
                 QtWidgets.QApplication.clipboard().setText(status_bar_message)
-        elif key == QtCore.Qt.Key_1 and event.modifiers() & QtCore.Qt.ControlModifier:
-            self._fitInViewActionSlot()
         else:
             super().keyPressEvent(event)
 
