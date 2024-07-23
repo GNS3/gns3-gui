@@ -635,6 +635,9 @@ background-none;
      <normaloff>:/icons/start.svg</normaloff>
      <activeoff>:/icons/start-hover.svg</activeoff>:/icons/start.svg</iconset>
    </property>
+   <property name="shortcut">
+     <string>Ctrl+F5</string>
+   </property>
    <property name="text">
     <string>Start/Resume all nodes</string>
    </property>
@@ -653,6 +656,9 @@ background-none;
     <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/stop.svg</normaloff>
      <activeoff>:/icons/stop-hover.svg</activeoff>:/icons/stop.svg</iconset>
+   </property>
+   <property name="shortcut">
+     <string>Shift+F5</string>
    </property>
    <property name="text">
     <string>Stop all nodes</string>
@@ -787,6 +793,9 @@ background-none;
     <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/pause.svg</normaloff>
      <activeoff>:/icons/pause-hover.svg</activeoff>:/icons/pause.svg</iconset>
+   </property>
+   <property name="shortcut">
+     <string>Ctrl+Alt+F5</string>
    </property>
    <property name="text">
     <string>Suspend all nodes</string>
