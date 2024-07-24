@@ -102,7 +102,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         width = self._settings["scene_width"]
         height = self._settings["scene_height"]
         self.setScene(scene)
-        self.setSceneSize(width + 1000, height + 1000)
+        self.setSceneSize(width, height)
 
         # set the custom flags for this view
         self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
@@ -125,6 +125,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if zoom:
             factor = zoom / 100.
             self.scale(factor, factor)
+
+            # Calculate the bounding rectangle of all items
+            bounding_rect = self.scene.itemsBoundingRect()
+
+            # Set the scene rectangle to the bounding rectangle
+            self.scene.setSceneRect(bounding_rect)
 
     def setNodeGridSize(self, grid_size):
         """

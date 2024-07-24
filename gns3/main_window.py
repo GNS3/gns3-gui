@@ -754,6 +754,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiGraphicsView.scaleView(factor_in)
         self._updateZoomSettings()
 
+        # Calculate the bounding rectangle of all items
+        bounding_rect = self.scene.itemsBoundingRect()
+
+        # Set the scene rectangle to the bounding rectangle
+        self.scene.setSceneRect(bounding_rect)
+
     def _zoomOutActionSlot(self):
         """
         Slot called to scale out the view.
@@ -763,6 +769,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiGraphicsView.scaleView(factor_out)
         self._updateZoomSettings()
 
+        # Calculate the bounding rectangle of all items
+        bounding_rect = self.scene.itemsBoundingRect()
+
+        # Set the scene rectangle to the bounding rectangle
+        self.scene.setSceneRect(bounding_rect)
+
     def _zoomResetActionSlot(self):
         """
         Slot called to reset the zoom.
@@ -770,6 +782,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.uiGraphicsView.resetTransform()
         self._updateZoomSettings()
+
+        # Calculate the bounding rectangle of all items
+        bounding_rect = self.scene.itemsBoundingRect()
+
+        # Set the scene rectangle to the bounding rectangle
+        self.scene.setSceneRect(bounding_rect)
 
     def _fitInViewActionSlot(self):
         """
