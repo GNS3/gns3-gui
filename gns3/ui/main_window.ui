@@ -636,7 +636,7 @@ background-none;
      <activeoff>:/icons/start-hover.svg</activeoff>:/icons/start.svg</iconset>
    </property>
    <property name="shortcut">
-     <string>Ctrl+F5</string>
+     <string>Ctrl+B</string>
    </property>
    <property name="text">
     <string>Start/Resume all nodes</string>
@@ -658,7 +658,7 @@ background-none;
      <activeoff>:/icons/stop-hover.svg</activeoff>:/icons/stop.svg</iconset>
    </property>
    <property name="shortcut">
-     <string>Shift+F5</string>
+     <string>Ctrl+E</string>
    </property>
    <property name="text">
     <string>Stop all nodes</string>
@@ -795,7 +795,7 @@ background-none;
      <activeoff>:/icons/pause-hover.svg</activeoff>:/icons/pause.svg</iconset>
    </property>
    <property name="shortcut">
-     <string>Ctrl+Alt+F5</string>
+     <string>Ctrl+J</string>
    </property>
    <property name="text">
     <string>Suspend all nodes</string>
