@@ -1147,6 +1147,9 @@ background-none;
    <property name="text">
     <string>Fit in view</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
+   </property>
   </action>
   <action name="uiActionFullscreen">
    <property name="text">
