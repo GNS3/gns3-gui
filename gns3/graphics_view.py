@@ -612,6 +612,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 if (isinstance(item, LabelItem) or isinstance(item, TextItem)) and item.hasFocus():
                     super().keyPressEvent(event)
                     return
+                self.deleteActionSlot()
         elif event.key() == QtCore.Qt.Key_C and event.modifiers() == QtCore.Qt.ControlModifier:
                 # Copy selected items to clipboard
                 self.copySelectedItems()
@@ -619,7 +620,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         elif event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier:
                 # Paste items from clipboard
                 self.pasteItemsFromClipboard()
-                self.deleteActionSlot()
+                
         super().keyPressEvent(event)
     def copySelectedItems():
         isctrlcpressed = True
