@@ -112,6 +112,7 @@ background-none;
     <addaction name="uiAcademyAction"/>
     <addaction name="uiDoctorAction"/>
     <addaction name="uiExportDebugInformationAction"/>
+    <addaction name="uiShortcutsAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>
    </widget>
@@ -635,9 +636,6 @@ background-none;
      <normaloff>:/icons/start.svg</normaloff>
      <activeoff>:/icons/start-hover.svg</activeoff>:/icons/start.svg</iconset>
    </property>
-   <property name="shortcut">
-     <string>Ctrl+B</string>
-   </property>
    <property name="text">
     <string>Start/Resume all nodes</string>
    </property>
@@ -646,6 +644,9 @@ background-none;
    </property>
    <property name="statusTip">
     <string>Start/Resume all devices</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
    </property>
   </action>
   <action name="uiStopAllAction">
@@ -657,9 +658,6 @@ background-none;
      <normaloff>:/icons/stop.svg</normaloff>
      <activeoff>:/icons/stop-hover.svg</activeoff>:/icons/stop.svg</iconset>
    </property>
-   <property name="shortcut">
-     <string>Ctrl+E</string>
-   </property>
    <property name="text">
     <string>Stop all nodes</string>
    </property>
@@ -668,6 +666,9 @@ background-none;
    </property>
    <property name="statusTip">
     <string>Stop all devices</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="uiConsoleAllAction">
@@ -794,9 +795,6 @@ background-none;
      <normaloff>:/icons/pause.svg</normaloff>
      <activeoff>:/icons/pause-hover.svg</activeoff>:/icons/pause.svg</iconset>
    </property>
-   <property name="shortcut">
-     <string>Ctrl+J</string>
-   </property>
    <property name="text">
     <string>Suspend all nodes</string>
    </property>
@@ -805,6 +803,9 @@ background-none;
    </property>
    <property name="statusTip">
     <string>Suspend all devices</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
    </property>
   </action>
   <action name="uiAddNoteAction">
@@ -1316,6 +1317,11 @@ background-none;
   <action name="uiResetGUIStateAction">
    <property name="text">
     <string>Reset GUI state</string>
+   </property>
+  </action>
+  <action name="uiShortcutsAction">
+   <property name="text">
+    <string>&amp;Shortcuts</string>
    </property>
   </action>
  </widget>
