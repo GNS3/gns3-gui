@@ -127,10 +127,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self.scale(factor, factor)
 
             # Calculate the bounding rectangle of all items
-            bounding_rect = self.scene.itemsBoundingRect()
+            bounding_rect = self.scene().itemsBoundingRect()
 
             # Set the scene rectangle to the bounding rectangle
-            self.scene.setSceneRect(bounding_rect)
+            self.scene().setSceneRect(bounding_rect)
 
     def setNodeGridSize(self, grid_size):
         """
