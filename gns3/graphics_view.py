@@ -65,7 +65,7 @@ from .items.image_item import ImageItem
 from .items.logo_item import  LogoItem
 
 log = logging.getLogger(__name__)
-isctrlcpressed = False
+
 
 class GraphicsView(QtWidgets.QGraphicsView):
     """
@@ -96,7 +96,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._topology = Topology.instance()
         self._background_warning_msgbox = QtWidgets.QErrorMessage(self)
         self._background_warning_msgbox.setWindowTitle("Layer position")
-
+        self._isctrlpressed = False
         # set the scene
         scene = QtWidgets.QGraphicsScene(parent=self)
         width = self._settings["scene_width"]
@@ -615,45 +615,22 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 self.deleteActionSlot()
         elif event.key() == QtCore.Qt.Key_C and event.modifiers() == QtCore.Qt.ControlModifier:
                 # Copy selected items to clipboard
-                self.copySelectedItems()
-            
-        elif event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier:
-                # Paste items from clipboard
-                self.pasteItemsFromClipboard()
-                
+                self.copySelectedItems(self,event);        
         super().keyPressEvent(event)
-    def copySelectedItems():
-        isctrlcpressed = True
 
-    def pasteItemsFromClipboard(self):  
-        if isctrlcpressed == False:
-            return
+    def copySelectedItems(self,event):
+        self._isctrlcpressed = True           
+        if event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier:
+                self.pasteItemsFromClipboard(self)
         else:
-            for item in self.scene().selectedItems():
-                if isinstance(item, DrawingItem):
-                    if isinstance(item, EllipseItem):
-                        type = "ellipse"
-                    elif isinstance(item, TextItem):
-                        type = "text"
-                    elif isinstance(item, RectangleItem):
-                        type = "rect"
-                    else:
-                        type = "image"
-                    
+            return
+        
+    def pasteItemsFromClipboard(self):  
+        self.duplicateActionSlot(self)
 
-                    self.createDrawingItem(
-                        type,
-                        int(item.pos().x()) + 20,
-                        int(item.pos().y()) + 20,
-                        item.zValue(),
-                        rotation=item.rotation(),
-                        svg=item.toSvg()
-                    )
-                elif isinstance(item, NodeItem):
-                    item.node().duplicate(item.pos().x() + 20, item.pos().y() + 20, item.zValue())
-                elif isinstance(item, LinkItem):
-                    for item in self.scene().selectedItems():
-                        self.addLinkSlot(link.id())      
+        if isinstance(item, LinkItem):
+            for item in self.scene().selectedItems():
+                self.addLinkSlot(self.link.id())      
 
     def mouseMoveEvent(self, event):
         """
