@@ -19,9 +19,9 @@ import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
-# we only support Python 3 version >= 3.7
-if len(sys.argv) >= 2 and sys.argv[1] == "install" and sys.version_info < (3, 7):
-    raise SystemExit("Python 3.7 or higher is required")
+# we only support Python 3 version >= 3.8
+if len(sys.argv) >= 2 and sys.argv[1] == "install" and sys.version_info < (3, 8):
+    raise SystemExit("Python 3.8 or higher is required")
 
 
 class PyTest(TestCommand):
@@ -79,7 +79,7 @@ setup(
     include_package_data=True,
     package_data={"gns3": ["configs/*.txt", "schemas/*.json"]},
     platforms="any",
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     setup_requires=["setuptools>=17.1"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
