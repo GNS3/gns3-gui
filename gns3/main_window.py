@@ -287,6 +287,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
         self.uiDoctorAction.triggered.connect(self._doctorSlot)
         self.uiAcademyAction.triggered.connect(self._academyActionSlot)
+        self.uiShortcutsAction.triggered.connect(self._shortcutsActionSlot)
 
         # browsers tool bar connections
         self.uiBrowseRoutersAction.triggered.connect(self._browseRoutersActionSlot)
@@ -1006,6 +1007,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         setup_wizard = SetupWizard(self)
         setup_wizard.show()
         setup_wizard.exec_()
+
+    def _shortcutsActionSlot(self):
+
+        shortcuts_text = ""
+        for action in self.findChildren(QtWidgets.QAction):
+            shortcut = action.shortcut().toString()
+            if shortcut:
+                shortcuts_text += f"{action.toolTip()}: {shortcut}\n"
+        QtWidgets.QMessageBox.information(self, "Shortcuts", shortcuts_text)
 
     def _aboutQtActionSlot(self):
         """

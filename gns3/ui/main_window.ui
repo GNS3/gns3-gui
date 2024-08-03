@@ -113,6 +113,7 @@ background-none;
     <addaction name="uiAcademyAction"/>
     <addaction name="uiDoctorAction"/>
     <addaction name="uiExportDebugInformationAction"/>
+    <addaction name="uiShortcutsAction"/>
     <addaction name="uiAboutQtAction"/>
     <addaction name="uiAboutAction"/>
    </widget>
@@ -646,6 +647,9 @@ background-none;
    <property name="statusTip">
     <string>Start/Resume all devices</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
   </action>
   <action name="uiStopAllAction">
    <property name="enabled">
@@ -664,6 +668,9 @@ background-none;
    </property>
    <property name="statusTip">
     <string>Stop all devices</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="uiConsoleAllAction">
@@ -798,6 +805,9 @@ background-none;
    </property>
    <property name="statusTip">
     <string>Suspend all devices</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
    </property>
   </action>
   <action name="uiAddNoteAction">
@@ -1149,6 +1159,9 @@ background-none;
    <property name="text">
     <string>Fit in view</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
+   </property>
   </action>
   <action name="uiActionFullscreen">
    <property name="text">
@@ -1332,6 +1345,11 @@ background-none;
   <action name="uiResetGUIStateAction">
    <property name="text">
     <string>Reset GUI state</string>
+   </property>
+  </action>
+  <action name="uiShortcutsAction">
+   <property name="text">
+    <string>&amp;Shortcuts</string>
    </property>
   </action>
  </widget>

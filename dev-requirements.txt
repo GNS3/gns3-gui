@@ -1,3 +1,2 @@
-pytest==8.1.1
-flake8==5.0.4  # v5.0.4 is the last to support Python 3.7
+pytest==8.3.2
 pytest-timeout==2.3.1
