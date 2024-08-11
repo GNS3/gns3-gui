@@ -1,5 +1,9 @@
 # Change Log
 
+## 3.0.0rc1 11/08/2024
+
+* Add keep the original compute IDs option when exporting a project
+
 ## 2.2.49 06/08/2024
 
 * Upgrade jsonschema and sentry-sdk packages
