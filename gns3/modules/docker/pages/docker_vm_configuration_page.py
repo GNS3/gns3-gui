@@ -19,6 +19,8 @@
 Configuration page for Docker images.
 """
 
+import re
+
 from gns3.qt import QtWidgets
 from gns3.node import Node
 from gns3.dialogs.custom_adapters_configuration_dialog import CustomAdaptersConfigurationDialog
@@ -69,15 +71,25 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
 
         if self._node:
             adapters = self._settings["adapters"]
+            base_mac_address = self._settings["mac_address"]
         else:
             adapters = self.uiAdapterSpinBox.value()
+            mac = self.uiMacAddrLineEdit.text()
+            if mac != ":::::":
+                if not re.search(r"""^([0-9a-fA-F]{2}[:]){5}[0-9a-fA-F]{2}$""", mac):
+                    QtWidgets.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hh:hh:hh:hh:hh:hh)")
+                    return
+                else:
+                    base_mac_address = mac
+            else:
+                base_mac_address = ""
 
         ports = []
         for adapter_number in range(0, adapters):
             port_name = "eth{}".format(adapter_number)
             ports.append(port_name)
 
-        dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, parent=self)
+        dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, "TAP", {"TAP": "Default"}, base_mac_address, parent=self)
         dialog.show()
         dialog.exec_()
 
@@ -153,6 +165,13 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
             self.uiSymbolLineEdit.hide()
             self.uiSymbolToolButton.hide()
 
+        # load the MAC address setting
+        self.uiMacAddrLineEdit.setInputMask("HH:HH:HH:HH:HH:HH;_")
+        if settings["mac_address"]:
+            self.uiMacAddrLineEdit.setText(settings["mac_address"])
+        else:
+            self.uiMacAddrLineEdit.clear()
+
         self.uiUsageTextEdit.setPlainText(settings["usage"])
 
     def _networkConfigEditSlot(self):
@@ -204,6 +223,18 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
                 QtWidgets.QMessageBox.critical(self, "Name", "Docker name cannot be empty!")
             else:
                 settings["name"] = name
+
+            # check and save the MAC address
+            mac = self.uiMacAddrLineEdit.text()
+            if mac != ":::::":
+                if not re.search(r"""^([0-9a-fA-F]{2}[:]){5}[0-9a-fA-F]{2}$""", mac):
+                    QtWidgets.QMessageBox.critical(self, "MAC address", "Invalid MAC address (format required: hh:hh:hh:hh:hh:hh)")
+                    if node:
+                        raise ConfigurationError()
+                else:
+                    settings["mac_address"] = mac
+            else:
+                settings["mac_address"] = None
 
         if not node:
             # these are template settings

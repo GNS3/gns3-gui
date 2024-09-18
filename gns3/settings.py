@@ -206,7 +206,8 @@ else:
         'TightVNC': 'vncviewer {host}:{port}',
         'Vinagre': 'vinagre {host}::{port}',
         'gvncviewer': 'gvncviewer {host}:{display}',
-        'Remote Viewer': 'remote-viewer vnc://{host}:{port}'
+        'Remote Viewer': 'remote-viewer vnc://{host}:{port}',
+        'KRDC': 'krdc vnc://{host}:{port}'
     }
 
     # default VNC console command on other systems
