@@ -35,6 +35,7 @@ DOCKER_CONTAINER_SETTINGS = {
     "name": "",
     "image": "",
     "adapters": 1,
+    "mac_address": "",
     "custom_adapters": [],
     "environment": "",
     "console_type": "telnet",
