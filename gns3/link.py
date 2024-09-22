@@ -20,10 +20,12 @@ Manages and stores everything needed for a connection between 2 devices.
 """
 
 import re
+
+from tests.test_http_client import network_manager
 from .qt import sip
 import uuid
 
-from .qt import QtCore
+from .qt import QtCore, QtNetwork
 from .controller import Controller
 
 
@@ -78,6 +80,7 @@ class Link(QtCore.QObject):
         self._deleting = False
         self._capture_file_path = None
         self._capture_file = None
+        self._network_manager = None
         self._response_stream = None
         self._capture_compute_id = None
         self._initialized = False
@@ -117,12 +120,16 @@ class Link(QtCore.QObject):
                 else:
                     self._capture_file = QtCore.QFile(self._capture_file_path)
                     self._capture_file.open(QtCore.QFile.WriteOnly)
+
+                if self._network_manager is None:
+                    self._network_manager = QtNetwork.QNetworkAccessManager(self)
                 self._response_stream = Controller.instance().get(
                     "/projects/{project_id}/links/{link_id}/capture/stream".format(project_id=self.project().id(), link_id=self._link_id),
                     callback=None,
                     show_progress=False,
                     download_progress_callback=self._downloadPcapProgress,
-                    timeout=None
+                    timeout=None,
+                    network_manager=self._network_manager
                 )
             log.debug("Has successfully started capturing packets on link {} to '{}'".format(self._link_id, self._capture_file_path))
         else:
