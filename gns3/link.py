@@ -20,8 +20,6 @@ Manages and stores everything needed for a connection between 2 devices.
 """
 
 import re
-
-from tests.test_http_client import network_manager
 from .qt import sip
 import uuid
 

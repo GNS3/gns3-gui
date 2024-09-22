@@ -298,7 +298,8 @@ class HTTPClient(QtCore.QObject):
             timeout: int = 120,
             params: dict = None,
             raw: bool = False,
-            wait: bool = False
+            wait: bool = False,
+            network_manager: QtNetwork.QNetworkAccessManager = None
     ) -> Optional[Union[str, bytes]]:
         """
         Send a request to the server
@@ -316,6 +317,7 @@ class HTTPClient(QtCore.QObject):
         :param params: Query parameters
         :param raw: Return the raw server reply body (bytes)
         :param wait: Wait for server reply asynchronously
+        :param network_manager: custom QtNetwork.QNetworkAccessManager instance
         """
 
         # Shutdown in progress do not execute the request
@@ -336,7 +338,8 @@ class HTTPClient(QtCore.QObject):
             timeout=timeout,
             params=params,
             raw=raw,
-            wait=wait
+            wait=wait,
+            network_manager=network_manager
         )
 
         if self._connected:
@@ -683,6 +686,7 @@ class HTTPClient(QtCore.QObject):
             params: dict = None,
             raw: bool = False,
             wait: bool = False,
+            network_manager: QtNetwork.QNetworkAccessManager = None
 
     ) -> Optional[Union[str, bytes]]:
         """
@@ -701,6 +705,7 @@ class HTTPClient(QtCore.QObject):
         :param params: Query parameters
         :param raw: Return the raw server reply body (bytes)
         :param wait: Wait for server reply asynchronously
+        :param network_manager: custom QtNetwork.QNetworkAccessManager instance
         """
 
         request = self._prepareRequest(method, endpoint, params)
@@ -709,8 +714,11 @@ class HTTPClient(QtCore.QObject):
         # even if it's in the RFC that's why we need to use sendCustomRequest
         body = self._addBodyToRequest(body, request)
 
+        if not network_manager:
+            network_manager = self._network_manager
+
         try:
-            reply = self._network_manager.sendCustomRequest(request, method.encode(), body)
+            reply = network_manager.sendCustomRequest(request, method.encode(), body)
         except SystemError as e:
             log.error("Can't send query: {}".format(str(e)))
             return
