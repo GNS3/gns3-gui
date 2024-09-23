@@ -450,6 +450,8 @@ class Node(BaseNode):
         general_node_properties = ("name",
                                    "console",
                                    "console_type",
+                                   "aux",
+                                   "aux_type",
                                    "x",
                                    "y",
                                    "z",
@@ -610,7 +612,7 @@ class Node(BaseNode):
             del result["properties"]
 
         # Update common element of all nodes
-        for key in ["x", "y", "z", "locked", "symbol", "label", "console_host", "console", "console_type", "console_auto_start", "custom_adapters", "first_port_name", "port_name_format", "port_segment_size"]:
+        for key in ["x", "y", "z", "locked", "symbol", "label", "console_host", "console", "console_type", "console_auto_start", "aux", "aux_type", "custom_adapters", "first_port_name", "port_name_format", "port_segment_size"]:
             if key in result:
                 self._settings[key] = result[key]
 
@@ -731,6 +733,16 @@ class Node(BaseNode):
             host = Controller.instance().host()
         return host
 
+    def auxType(self):
+        """
+        Get the auxiliary console type (serial, telnet or VNC)
+        """
+
+        aux_type = "none"
+        if "aux_type" in self.settings():
+            return self.settings()["aux_type"]
+        return aux_type
+
     def setStatus(self, status):
         """
         Overloaded setStatus() method for console auto start.
@@ -753,7 +765,7 @@ class Node(BaseNode):
 
         if command is None:
             if aux:
-                command = self.consoleCommand(console_type="telnet")
+                command = self.consoleCommand(console_type=self.auxType())
             else:
                 command = self.consoleCommand()
 
@@ -763,8 +775,8 @@ class Node(BaseNode):
             console_port = self.auxConsole()
             if console_port is None:
                 raise ValueError("AUX console port not allocated for {}".format(self.name()))
-            # AUX console is always telnet
-            console_type = "telnet"
+            if "aux_type" in self.settings():
+                console_type = self.auxType()
         else:
             console_port = self.console()
             if console_port is None:

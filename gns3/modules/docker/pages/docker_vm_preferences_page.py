@@ -94,6 +94,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
             pass
         QtWidgets.QTreeWidgetItem(section_item, ["Console type:", str(docker_container["console_type"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Auto start console:", "{}".format(docker_container["console_auto_start"])])
+        QtWidgets.QTreeWidgetItem(section_item, ["Auxiliary console type:", str(docker_container["aux_type"])])
         QtWidgets.QTreeWidgetItem(section_item, ["Default name format:", docker_container["default_name_format"]])
         QtWidgets.QTreeWidgetItem(section_item, ["Adapters:", str(docker_container["adapters"])])
         if docker_container["cpus"]:
