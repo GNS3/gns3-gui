@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>601</height>
+    <width>980</width>
+    <height>734</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,61 @@
        <string>General</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="uiNameLabel">
+         <property name="text">
+          <string>Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLineEdit" name="uiNameLineEdit"/>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QLabel" name="uiDefaultNameFormatLabel">
+         <property name="text">
+          <string>Default name format:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiPlatformLabel">
+         <property name="text">
+          <string>Platform:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="uiPlatformTextLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="uiChassisLabel">
+         <property name="text">
+          <string>Chassis:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLabel" name="uiChassisTextLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="uiSymbolLabel">
+         <property name="text">
+          <string>Symbol:</string>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
@@ -41,74 +96,20 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="2">
-        <widget class="QLabel" name="uiPlatformTextLabel">
+       <item row="5" column="0">
+        <widget class="QLabel" name="uiCategoryLabel">
          <property name="text">
-          <string/>
+          <string>Category:</string>
          </property>
         </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QComboBox" name="uiCategoryComboBox"/>
        </item>
        <item row="6" column="0" colspan="2">
         <widget class="QLabel" name="uiIOSImageLabel">
          <property name="text">
           <string>IOS image path:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="uiPlatformLabel">
-         <property name="text">
-          <string>Platform:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLineEdit" name="uiNameLineEdit"/>
-       </item>
-       <item row="11" column="0" colspan="2">
-        <widget class="QLabel" name="uiConsoleTypeLabel">
-         <property name="text">
-          <string>Console type:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="uiSymbolLabel">
-         <property name="text">
-          <string>Symbol:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="2">
-        <widget class="QLabel" name="uiPrivateConfigLabel">
-         <property name="text">
-          <string>Initial private-config:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="2">
-        <widget class="QComboBox" name="uiMidplaneComboBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="2">
-        <widget class="QComboBox" name="uiNPEComboBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
          </property>
         </widget>
        </item>
@@ -129,65 +130,10 @@
          </item>
         </layout>
        </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="uiNPELabel">
-         <property name="text">
-          <string>NPE:</string>
-         </property>
-        </widget>
-       </item>
        <item row="7" column="0" colspan="2">
         <widget class="QLabel" name="uiStartupConfigLabel">
          <property name="text">
           <string>Initial startup-config:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="uiNameLabel">
-         <property name="text">
-          <string>Name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="uiChassisLabel">
-         <property name="text">
-          <string>Chassis:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <item>
-          <widget class="QLineEdit" name="uiPrivateConfigLineEdit"/>
-         </item>
-         <item>
-          <widget class="QToolButton" name="uiPrivateConfigToolButton">
-           <property name="text">
-            <string>&amp;Browse...</string>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextOnly</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="3" column="2">
-        <widget class="QLabel" name="uiChassisTextLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="2">
-        <widget class="QComboBox" name="uiCategoryComboBox"/>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="uiMidplaneLabel">
-         <property name="text">
-          <string>Midplane:</string>
          </property>
         </widget>
        </item>
@@ -208,15 +154,76 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QLabel" name="uiDefaultNameFormatLabel">
+       <item row="8" column="0" colspan="2">
+        <widget class="QLabel" name="uiPrivateConfigLabel">
          <property name="text">
-          <string>Default name format:</string>
+          <string>Initial private-config:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
-        <widget class="QLineEdit" name="uiDefaultNameFormatLineEdit"/>
+       <item row="8" column="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLineEdit" name="uiPrivateConfigLineEdit"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="uiPrivateConfigToolButton">
+           <property name="text">
+            <string>&amp;Browse...</string>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="uiMidplaneLabel">
+         <property name="text">
+          <string>Midplane:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="2">
+        <widget class="QComboBox" name="uiMidplaneComboBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="uiNPELabel">
+         <property name="text">
+          <string>NPE:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="2">
+        <widget class="QComboBox" name="uiNPEComboBox">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0" colspan="2">
+        <widget class="QLabel" name="uiConsoleTypeLabel">
+         <property name="text">
+          <string>Console type:</string>
+         </property>
+        </widget>
        </item>
        <item row="11" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -243,14 +250,7 @@
          </item>
         </layout>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="uiCategoryLabel">
-         <property name="text">
-          <string>Category:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="0" colspan="3">
+       <item row="12" column="1" colspan="2">
         <spacer>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -263,27 +263,6 @@
          </property>
         </spacer>
        </item>
-       <item row="12" column="2">
-        <widget class="QComboBox" name="uiAuxTypeComboBox">
-         <item>
-          <property name="text">
-           <string>telnet</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>none</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="12" column="0" colspan="2">
-        <widget class="QLabel" name="uiAuxTypeLabel">
-         <property name="text">
-          <string>Auxiliary console type:</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="uiMemoriesPageWidget">
@@ -291,16 +270,7 @@
        <string>Memories and disks</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item row="0" column="0">
@@ -478,16 +448,7 @@
        <string>Slots</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -688,16 +649,7 @@
        <string>Advanced</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>
@@ -876,16 +828,7 @@
        <string>Environment</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <property name="topMargin">
-        <number>10</number>
-       </property>
-       <property name="rightMargin">
-        <number>10</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>10</number>
        </property>
        <item>

@@ -375,11 +375,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
 
         self.uiConsoleAutoStartCheckBox.setChecked(settings["console_auto_start"])
 
-        # load the auxiliary console type
-        index = self.uiAuxTypeComboBox.findText(settings["aux_type"])
-        if index != -1:
-            self.uiAuxTypeComboBox.setCurrentIndex(index)
-
         # load the memories and disks settings
         self.uiRamSpinBox.setValue(settings["ram"])
         self.uiNvramSpinBox.setValue(settings["nvram"])
@@ -584,9 +579,6 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         # save console type
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
         settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
-
-        # save auxiliary console type
-        settings["aux_type"] = self.uiAuxTypeComboBox.currentText().lower()
 
         # save the memories and disks settings
         settings["ram"] = self.uiRamSpinBox.value()

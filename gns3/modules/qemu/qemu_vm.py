@@ -68,7 +68,6 @@ class QemuVM(Node):
                             "cpus": QEMU_VM_SETTINGS["cpus"],
                             "console_type": QEMU_VM_SETTINGS["console_type"],
                             "console_auto_start": QEMU_VM_SETTINGS["console_auto_start"],
-                            "aux_type": QEMU_VM_SETTINGS["aux_type"],
                             "adapters": QEMU_VM_SETTINGS["adapters"],
                             "custom_adapters": QEMU_VM_SETTINGS["custom_adapters"],
                             "adapter_type": QEMU_VM_SETTINGS["adapter_type"],
@@ -116,7 +115,6 @@ class QemuVM(Node):
   Local ID is {id} and server ID is {node_id}
   Number of processors is {cpus} and amount of memory is {ram}MB
   Console is on port {console} and type is {console_type}
-  Auxiliary console is on port {aux} and type is {aux_type}
 """.format(name=self.name(),
            id=self.id(),
            node_id=self._node_id,
@@ -126,9 +124,7 @@ class QemuVM(Node):
            cpus=self._settings["cpus"],
            ram=self._settings["ram"],
            console=self._settings["console"],
-           console_type=self._settings["console_type"],
-           aux = self._settings["aux"],
-           aux_type = self._settings["aux_type"])
+           console_type=self._settings["console_type"])
 
         port_info = ""
         for port in self._ports:
@@ -160,14 +156,6 @@ class QemuVM(Node):
         """
 
         return None
-
-    def auxConsole(self):
-        """
-        Returns the console port for this Docker VM instance.
-        :returns: port (integer)
-        """
-
-        return self._settings["aux"]
 
     def configPage(self):
         """
