@@ -505,10 +505,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         if index != -1:
             self.uiConsoleTypeComboBox.setCurrentIndex(index)
 
-        index = self.uiAuxTypeComboBox.findText(settings["aux_type"])
-        if index != -1:
-            self.uiAuxTypeComboBox.setCurrentIndex(index)
-
         self.uiConsoleAutoStartCheckBox.setChecked(settings["console_auto_start"])
         self.uiKernelCommandLineEdit.setText(settings["kernel_command_line"])
         self.uiAdaptersSpinBox.setValue(settings["adapters"])
@@ -629,7 +625,6 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         settings["boot_priority"] = self.uiBootPriorityComboBox.itemData(self.uiBootPriorityComboBox.currentIndex())
         settings["console_type"] = self.uiConsoleTypeComboBox.currentText().lower()
         settings["console_auto_start"] = self.uiConsoleAutoStartCheckBox.isChecked()
-        settings["aux_type"] = self.uiAuxTypeComboBox.currentText().lower()
         settings["adapter_type"] = self.uiAdapterTypesComboBox.itemData(self.uiAdapterTypesComboBox.currentIndex())
         settings["kernel_command_line"] = self.uiKernelCommandLineEdit.text()
 

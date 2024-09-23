@@ -70,7 +70,6 @@ class Router(Node):
                            "console_type": "telnet",
                            "console_auto_start": False,
                            "aux": None,
-                           "aux_type": "none",
                            "mac_addr": None,
                            "system_id": "FTX0945W0MY",
                            "slot0": None,
@@ -248,8 +247,7 @@ class Router(Node):
   Local ID is {id} and node ID is {node_id}
   Dynamips ID is {dynamips_id}
   Hardware is Dynamips emulated Cisco {platform} {specific_info} with {ram}MB RAM and {nvram}KB NVRAM
-  Console is on port {console} and type is {console_type}
-  Auxiliary console is on port {aux} and type is {aux_type}
+  Console is on port {console} and type is {console_type}, AUX console is on port {aux}
   IOS image is "{image_name}"
   {idlepc_info}
   PCMCIA disks: disk0 is {disk0}MB and disk1 is {disk1}MB
@@ -267,7 +265,6 @@ class Router(Node):
            console=self._settings["console"],
            console_type=self._settings["console_type"],
            aux=self._settings["aux"],
-           aux_type=self._settings["aux_type"],
            image_name=os.path.basename(self._settings["image"]),
            idlepc_info=idlepc_info,
            disk0=self._settings["disk0"],
