@@ -627,21 +627,24 @@ class Project(QtCore.QObject):
             return
 
         # Qt websocket before Qt 5.6 doesn't support auth
-        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0") or LocalConfig.instance().experimental():
             path = "/projects/{project_id}/notifications".format(project_id=self._id)
             self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
-                                                                              downloadProgressCallback=self._event_received,
-                                                                              networkManager=self._notification_network_manager,
-                                                                              timeout=None,
-                                                                              showProgress=False,
-                                                                              ignoreErrors=True)
+                                                                                  downloadProgressCallback=self._event_received,
+                                                                                  networkManager=self._notification_network_manager,
+                                                                                  timeout=None,
+                                                                                  showProgress=False,
+                                                                                  ignoreErrors=True)
+            url = Controller.instance().getHttpClient().url() + path
+            log.info("Listening for project notifications on '{}'".format(url))
 
         else:
-            path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
-            self._notification_stream = Controller.instance().httpClient().connectWebSocket(self._websocket, path)
-            self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
-            self._notification_stream.error.connect(self._websocket_error)
-            self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
+           path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
+           self._notification_stream = Controller.instance().httpClient().connectWebSocket(self._websocket, path)
+           self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
+           self._notification_stream.error.connect(self._websocket_error)
+           self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
+           log.info("Listening for project notifications on '{}'".format(self._notification_stream.requestUrl().toString()))
 
     def _endListenNotificationCallback(self, result, error=False, **kwargs):
         """
