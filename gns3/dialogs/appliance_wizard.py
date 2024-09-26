@@ -543,9 +543,19 @@ Usage: {}
         image = Image(self._appliance.template_type(), path, filename=disk["filename"])
         try:
             if "md5sum" in disk and image.md5sum != disk["md5sum"]:
-                reply = QtWidgets.QMessageBox.question(self, "Add appliance",
-                                                       "This is not the correct file. The MD5 sum is {} and should be {}.\nDo you want to accept it at your own risks?".format(image.md5sum, disk["md5sum"]),
-                                                       QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                reply = QtWidgets.QMessageBox.question(
+                    self,
+                    "Add appliance",
+                    "This is not the correct file.\n\n"
+                    "MD5 checksum\n"
+                    f"actual:\t{image.md5sum}\n"
+                    f"expected:\t{disk["md5sum"]}\n\n"
+                    "File size\n"
+                    f"actual:\t{image.filesize} bytes\n"
+                    f"expected:\t{disk["filesize"]} bytes\n\n"
+                    "Do you want to accept it at your own risks?",
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
+                )
                 if reply == QtWidgets.QMessageBox.No:
                     return
         except OSError as e:
