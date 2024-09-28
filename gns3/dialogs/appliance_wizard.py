@@ -549,10 +549,10 @@ Usage: {}
                     "This is not the correct file.\n\n"
                     "MD5 checksum\n"
                     f"actual:\t{image.md5sum}\n"
-                    f"expected:\t{disk["md5sum"]}\n\n"
+                    f"expected:\t{disk['md5sum']}\n\n"
                     "File size\n"
                     f"actual:\t{image.filesize} bytes\n"
-                    f"expected:\t{disk["filesize"]} bytes\n\n"
+                    f"expected:\t{disk['filesize']} bytes\n\n"
                     "Do you want to accept it at your own risks?",
                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
                 )
