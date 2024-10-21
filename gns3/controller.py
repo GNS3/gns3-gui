@@ -25,6 +25,8 @@ from .qt import QtCore, QtNetwork, QtGui, QtWidgets, QtWebSockets, qpartial, qsl
 from .symbol import Symbol
 from .local_server_config import LocalServerConfig
 from .settings import LOCAL_SERVER_SETTINGS
+
+from gns3.local_config import LocalConfig
 from gns3.utils import parse_version
 
 import logging
@@ -416,19 +418,23 @@ class Controller(QtCore.QObject):
         self._notification_stream = None
 
         # Qt websocket before Qt 5.6 doesn't support auth
-        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0") or LocalConfig.instance().experimental():
+
             self._notification_stream = Controller.instance().createHTTPQuery("GET", "/notifications", self._endListenNotificationCallback,
                                                                               downloadProgressCallback=self._event_received,
                                                                               networkManager=self._notification_network_manager,
                                                                               timeout=None,
                                                                               showProgress=False,
                                                                               ignoreErrors=True)
+            url = self._http_client.url() + '/notifications'
+            log.info("Listening for controller notifications on '{}'".format(url))
 
         else:
             self._notification_stream = self._http_client.connectWebSocket(self._websocket, "/notifications/ws")
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
             self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
+            log.info("Listening for controller notifications on '{}'".format(self._notification_stream.requestUrl().toString()))
 
     def stopListenNotifications(self):
         if self._notification_stream:

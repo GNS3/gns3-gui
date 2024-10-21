@@ -1,5 +1,15 @@
 # Change Log
 
+## 2.2.50 21/10/2024
+
+* Fix issue when pid file contains invalid data
+* Add comment to indicate sentry-sdk is optional. Ref https://github.com/GNS3/gns3-server/issues/2423
+* Improve information provided when uploading invalid appliance image. Fixes #3637
+* Use "experimental features" option to force listening for HTTP notification streams. Ref #3579
+* Fix to allow packet capture on more than 6 links. Fixes #3594
+* Support for configuring MAC address in Docker containers
+* Add KRDC to pre-configured VNC console commands
+
 ## 2.2.49 06/08/2024
 
 * Upgrade jsonschema and sentry-sdk packages
