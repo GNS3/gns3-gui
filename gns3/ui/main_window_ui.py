@@ -707,6 +707,7 @@ class Ui_MainWindow(object):
         self.uiAddLinkAction.setText(_translate("MainWindow", "Add a link"))
         self.uiAddLinkAction.setToolTip(_translate("MainWindow", "Add a link"))
         self.uiAddLinkAction.setStatusTip(_translate("MainWindow", "Add a link"))
+        self.uiAddLinkAction.setShortcut(_translate("MainWindow", "Ctrl+L"))
         self.uiFitInViewAction.setText(_translate("MainWindow", "Fit in view"))
         self.uiFitInViewAction.setShortcut(_translate("MainWindow", "Ctrl+1"))
         self.uiActionFullscreen.setText(_translate("MainWindow", "Fullscreen"))
