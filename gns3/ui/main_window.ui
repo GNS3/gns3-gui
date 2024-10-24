@@ -1152,6 +1152,9 @@ background-none;
    <property name="statusTip">
     <string>Add a link</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
   </action>
   <action name="uiFitInViewAction">
    <property name="text">
