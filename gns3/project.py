@@ -17,7 +17,9 @@
 
 import os
 import json
-from .qt import QtCore, qpartial, QtNetwork, QtWebSockets, qslot
+
+from urllib.parse import urlparse
+from .qt import QtCore, qpartial, QtWebSockets, qslot
 
 from gns3.controller import Controller
 from gns3.topology import Topology
@@ -649,19 +651,19 @@ class Project(QtCore.QObject):
                 path,
                 self._endListenNotificationCallback,
                 download_progress_callback=self._event_received,
-                networkManager=self._notification_network_manager,
                 timeout=None,
                 show_progress=False,
             )
-            url = Controller.instance().getHttpClient().url() + path
-            log.info("Listening for project notifications on '{}'".format(url))
+            url = urlparse(Controller.instance().getHttpClient().url() + path)
+            log.info(f"Listening for project notifications on {url.scheme}://{url.netloc}{url.path}")
         else:
             path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
             self._notification_stream = Controller.instance().httpClient().connectWebSocket(self._websocket, path)
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
             self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
-            log.info("Listening for project notifications on '{}'".format(self._notification_stream.requestUrl().toString()))
+            url = urlparse(self._notification_stream.requestUrl().toString())
+            log.info(f"Listening for project notifications on {url.scheme}://{url.netloc}{url.path}")
 
     def _endListenNotificationCallback(self, result, error=False, **kwargs):
         """

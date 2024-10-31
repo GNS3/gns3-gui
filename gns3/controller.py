@@ -21,7 +21,9 @@ import tempfile
 import json
 import pathlib
 
+from urllib.parse import urlparse
 from .qt import QtCore, QtGui, QtWebSockets, qpartial, qslot
+
 from .symbol import Symbol
 from .local_config import LocalConfig
 from .settings import CONTROLLER_SETTINGS
@@ -439,19 +441,19 @@ class Controller(QtCore.QObject):
                 "/notifications",
                 self._endListenNotificationCallback,
                 download_progress_callback=self._event_received,
-                network_manager=self._notification_network_manager,
                 timeout=None,
                 show_progress=False
             )
-            url = self._http_client.url() + '/notifications'
-            log.info("Listening for controller notifications on '{}'".format(url))
+            url = urlparse(self._http_client.url() + '/notifications')
+            log.info(f"Listening for controller notifications on {url.scheme}://{url.netloc}{url.path}")
         else:
             self._notification_stream = self._http_client.connectWebSocket(self._websocket, "/notifications/ws")
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
             self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
             self._notification_stream.disconnected.connect(self._websocket_disconnected)
-            log.info("Listening for controller notifications on '{}'".format(self._notification_stream.requestUrl().toString()))
+            url = urlparse(self._notification_stream.requestUrl().toString())
+            log.info(f"Listening for controller notifications on {url.scheme}://{url.netloc}{url.path}")
 
     def _websocket_disconnected(self):
 
