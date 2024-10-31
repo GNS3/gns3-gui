@@ -467,7 +467,7 @@ class LocalConfig(QtCore.QObject):
 
         if os.path.exists(pid_path):
             try:
-                with open(pid_path) as f:
+                with open(pid_path, encoding="utf-8") as f:
                     pid = int(f.read())
                     if pid != my_pid:
                         try:
@@ -482,9 +482,17 @@ class LocalConfig(QtCore.QObject):
                                     return False
                     else:
                         return True
-            except (OSError, ValueError) as e:
+            except OSError as e:
                 log.critical("Can't read pid file %s: %s", pid_path, str(e))
                 return False
+            except ValueError as e:
+                log.warning("Invalid data in pid file %s: %s", pid_path, str(e))
+                try:
+                    # try removing the file since it contains invalid data
+                    os.remove(pid_path)
+                except OSError:
+                    log.critical("Can't remove pid file %s", pid_path)
+                    return False
 
         try:
             with open(pid_path, 'w+') as f:

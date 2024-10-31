@@ -433,21 +433,25 @@ class Controller(QtCore.QObject):
         self._notification_stream = None
 
         # Qt websocket before Qt 5.6 doesn't support auth
-        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0") or LocalConfig.instance().experimental():
             self._notification_stream = Controller.instance().request(
                 "GET",
                 "/notifications",
                 self._endListenNotificationCallback,
                 download_progress_callback=self._event_received,
+                network_manager=self._notification_network_manager,
                 timeout=None,
                 show_progress=False
             )
+            url = self._http_client.url() + '/notifications'
+            log.info("Listening for controller notifications on '{}'".format(url))
         else:
             self._notification_stream = self._http_client.connectWebSocket(self._websocket, "/notifications/ws")
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
             self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
             self._notification_stream.disconnected.connect(self._websocket_disconnected)
+            log.info("Listening for controller notifications on '{}'".format(self._notification_stream.requestUrl().toString()))
 
     def _websocket_disconnected(self):
 
