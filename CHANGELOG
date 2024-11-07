@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.51 07/11/2024
+
+* Python 3.13 support
+* Upgrade dependencies
+* Add keyboard shortcut for Add Link
+
 ## 2.2.50 21/10/2024
 
 * Fix issue when pid file contains invalid data
