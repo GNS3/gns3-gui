@@ -26,6 +26,7 @@ import sys
 import shlex
 import subprocess
 import psutil
+import shutil
 
 from .main_window import MainWindow
 from .controller import Controller
@@ -102,7 +103,16 @@ class ConsoleThread(QtCore.QThread):
                 # inject gnome-terminal environment variables
                 if "GNOME_TERMINAL_SERVICE" not in env or "GNOME_TERMINAL_SCREEN" not in env:
                     env.update(gnome_terminal_env())
-            subprocess.Popen(args, env=env)
+            proc = subprocess.Popen(args, env=env)
+            if sys.platform.startswith("linux"):
+                wmctrl_path = shutil.which("wmctrl")
+                if wmctrl_path:
+                    proc.wait() # wait for the terminal to open
+                    try:
+                        # use wmctrl to raise the window based on the node name
+                        subprocess.run([wmctrl_path, "-a", self._name], env=os.environ)
+                    except OSError as e:
+                        self.consoleError.emit("Count not focus on terminal window: '{}'".format(e))
 
     def run(self):
 
