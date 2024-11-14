@@ -474,7 +474,7 @@ class HTTPClient(QtCore.QObject):
         content_type = reply.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
         if content_type == "application/json":
             content = content.decode("utf-8")
-            if context["query_id"] in self._buffer:
+            if "query_id" in context and context["query_id"] in self._buffer:
                 content = self._buffer[context["query_id"]] + content
             try:
                 while True:
