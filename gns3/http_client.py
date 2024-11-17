@@ -474,7 +474,7 @@ class HTTPClient(QtCore.QObject):
         content_type = reply.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
         if content_type == "application/json":
             content = content.decode("utf-8")
-            if "query_id" in context and context["query_id"] in self._buffer:
+            if context["query_id"] in self._buffer:
                 content = self._buffer[context["query_id"]] + content
             try:
                 while True:
@@ -483,6 +483,7 @@ class HTTPClient(QtCore.QObject):
                     callback(answer, context=context)
                     content = content[index:]
             except ValueError:  # Partial JSON
+                print(content)
                 self._buffer[context["query_id"]] = content
         else:
             callback(content, context=context)
@@ -725,7 +726,9 @@ class HTTPClient(QtCore.QObject):
 
         if context:
             context = copy.copy(context)
-            context["query_id"] = str(uuid.uuid4())
+        else:
+            context = dict()
+        context["query_id"] = str(uuid.uuid4())
 
         if download_progress_callback is not None:
             reply.readyRead.connect(qpartial(self._dataReadySlot, reply, download_progress_callback, context))
