@@ -483,7 +483,6 @@ class HTTPClient(QtCore.QObject):
                     callback(answer, context=context)
                     content = content[index:]
             except ValueError:  # Partial JSON
-                print(content)
                 self._buffer[context["query_id"]] = content
         else:
             callback(content, context=context)
