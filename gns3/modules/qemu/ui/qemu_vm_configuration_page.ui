@@ -94,7 +94,10 @@
           <number>32</number>
          </property>
          <property name="maximum">
-          <number>65535</number>
+          <number>2147483647</number>
+         </property>
+         <property name="singleStep">
+          <number>1024</number>
          </property>
          <property name="value">
           <number>256</number>
