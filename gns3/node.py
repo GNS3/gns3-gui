@@ -16,8 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 import pathlib
 import re
+import shutil
+import subprocess
 
 from gns3.controller import Controller
 from gns3.ports.ethernet_port import EthernetPort
@@ -803,18 +806,30 @@ class Node(BaseNode):
         """
 
         if self.status() == Node.started:
-            console_command = self.consoleCommand()
-            if console_command:
-                process_name = console_command.split()[0]
-                if bring_window_to_front_from_process_name(process_name, self.name()):
+            if sys.platform.startswith("linux"):
+                wmctrl_path = shutil.which("wmctrl")
+                if wmctrl_path:
+                    try:
+                        # use wmctrl to raise the window based on the node name (this doesn't work well with window having multiple tabs)
+                        subprocess.run([wmctrl_path, "-a", self.name()], check=True, env=os.environ)
+                        return True
+                    except subprocess.CalledProcessError:
+                        log.debug("Could not find window title '{}' to bring it to front".format(self.name()))
+                    except OSError as e:
+                        log.warning("Count not focus on terminal window: '{}'".format(e))
+            elif sys.platform.startswith("win"):
+                console_command = self.consoleCommand()
+                if console_command:
+                    process_name = console_command.split()[0]
+                    if bring_window_to_front_from_process_name(process_name, self.name()):
+                        return True
+                    else:
+                        log.debug("Could not find process name '' and window title '{}' to bring it to front".format(process_name, self.name()))
+
+                if bring_window_to_front_from_title(self.name()):
                     return True
                 else:
-                    log.debug("Could not find process name '' and window title '{}' to bring it to front".format(process_name, self.name()))
-
-            if bring_window_to_front_from_title(self.name()):
-                return True
-            else:
-                log.debug("Could not find window title '{}' to bring it to front".format(self.name()))
+                    log.debug("Could not find window title '{}' to bring it to front".format(self.name()))
         return False
 
     def importFile(self, path, source_path):
