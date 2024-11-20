@@ -1,5 +1,15 @@
 # Change Log
 
+## 3.0.0rc2 20/11/2024
+
+* Remove maximum 64GB RAM limitation for QEMU VMs. Fixes #3658
+* Fix GUI connection to server.
+* Bring to front support for consoles on Linux.
+* Relax setuptools requirement to allow for easier Debian packaging on Ubuntu Focal & Jammy
+* Do not include tokens in notification logs
+* Python 3.13 support
+
+
 ## 2.2.51 07/11/2024
 
 * Python 3.13 support
