@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.2.52 02/12/2024
+
+* Add iol extension filter. Ref #3664
+* Remove maximum 64GB RAM limitation for QEMU VMs. Fixes #3658
+* Bring to front support for consoles on Linux.
+* Relax setuptools requirement to allow for easier Debian packaging on Ubuntu Focal & Jammy
+
 ## 3.0.0rc2 20/11/2024
 
 * Remove maximum 64GB RAM limitation for QEMU VMs. Fixes #3658

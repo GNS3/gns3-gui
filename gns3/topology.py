@@ -282,7 +282,7 @@ class Topology(QtCore.QObject):
         if self._project:
             self._project.project_creation_error_signal.disconnect(self._projectCreationErrorSlot)
             self.setProject(None)
-            QtWidgets.QMessageBox.critical(self._main_window, "New project", message)
+            QtWidgets.QMessageBox.critical(self._main_window, "Project", message)
 
     def exportProject(self):
         if self._project is None:
