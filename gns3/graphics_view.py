@@ -666,7 +666,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     self.configureSlot()
                     return
                 else:
-                    if sys.platform.startswith("win") and item.node().bringToFront():
+                    if item.node().bringToFront():
                         return
                     self.consoleFromItems(self.scene().selectedItems())
                     return
@@ -860,8 +860,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             show_in_file_manager_action.triggered.connect(self.showInFileManagerSlot)
             menu.addAction(show_in_file_manager_action)
 
-        if sys.platform.startswith("win") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
-            # Action: bring console or window to front (Windows only)
+        if not sys.platform.startswith("darwin") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
+            # Action: bring console or window to front (Windows and Linux only)
             bring_to_front_action = QtWidgets.QAction("Bring to front", menu)
             bring_to_front_action.setIcon(get_icon("front.svg"))
             bring_to_front_action.triggered.connect(self.bringToFrontSlot)

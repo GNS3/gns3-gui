@@ -80,7 +80,7 @@ setup(
     package_data={"gns3": ["configs/*.txt", "schemas/*.json"]},
     platforms="any",
     python_requires=">=3.8",
-    setup_requires=["setuptools>=61.0"],
+    setup_requires=["setuptools>=45.2"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: X11 Applications :: Qt",
