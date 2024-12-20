@@ -1,5 +1,9 @@
 # Change Log
 
+## 3.0.0 20/12/2024
+
+* Change title of QMessageBox
+
 ## 2.2.52 02/12/2024
 
 * Add iol extension filter. Ref #3664
