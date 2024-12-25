@@ -168,7 +168,7 @@ else:
 
     if sys.platform.startswith("linux"):
         distro_name = distro.name()
-        if distro_name == "Debian" or distro_name == "Ubuntu" or distro_name == "LinuxMint":
+        if distro_name == "Debian" or distro_name == "Ubuntu" or distro_name == "Linux Mint":
             if shutil.which("mate-terminal"):
                 DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Mate Terminal"]
             else:
