@@ -237,7 +237,7 @@ class Controller(QtCore.QObject):
 
     def request(self, method, path, *args, **kwargs):
         """
-        Forward the query to the HTTP client or controller depending of the path
+        Forward the query to the HTTP client or controller depending on the path
         """
 
         if self._http_client:

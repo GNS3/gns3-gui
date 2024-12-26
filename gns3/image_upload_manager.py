@@ -63,7 +63,7 @@ class ImageUploadManager(object):
         except HttpClientError as e:
             QtWidgets.QMessageBox.critical(
                 self._parent,
-                "Image upload",
+                "Image upload to controller",
                 f"Could not upload image {self._image.filename}: {e}"
             )
             return False
