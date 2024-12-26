@@ -575,7 +575,7 @@ Usage: {}
             if image["location"] == "local":
                 if not Controller.instance().isRemote() and self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
                     log.debug("{} is already on the local server".format(image["path"]))
-                    return
+                    return True
                 image = Image(self._appliance.template_type(), image["path"], filename=image["filename"])
                 image_upload_manager = ImageUploadManager(image, Controller.instance(), self.parent())
                 if not image_upload_manager.upload():
