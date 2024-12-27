@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.0.1 27/12/2024
+
+* Fix issue when image is already on the local server. Fixes https://github.com/GNS3/gns3-gui/issues/3678
+* Fix image uploading when image name differs with the image name recorded in the appliance. Fixes https://github.com/GNS3/gns3-gui/issues/3682
+* Fix Linux Mint default terminal configuration
+
 ## 3.0.0 20/12/2024
 
 * Change title of QMessageBox
