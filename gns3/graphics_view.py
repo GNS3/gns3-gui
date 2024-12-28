@@ -74,6 +74,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
     :param parent: parent widget
     """
 
+    # Class-level constants for default colors
+    DEFAULT_DRAWING_GRID_COLOR = QtGui.QColor(208, 208, 208)  # #D0D0D0
+    DEFAULT_NODE_GRID_COLOR = QtGui.QColor(190, 190, 190)     # #BEBEBE
+
     def __init__(self, parent):
 
         # Our parent is the central widget which parent is the main window.
@@ -92,6 +96,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._dragging = False
         self._grid_size = 75
         self._drawing_grid_size = 25
+        self._drawing_grid_color = self.DEFAULT_DRAWING_GRID_COLOR
+        self._node_grid_color = self.DEFAULT_NODE_GRID_COLOR
         self._last_mouse_position = None
         self._topology = Topology.instance()
 
@@ -1685,11 +1691,39 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._topology.addDrawing(item)
         return item
 
+    @QtCore.Property(QtGui.QColor)
+    def drawingGridColor(self):
+        """Returns the drawing grid color"""
+        return self._drawing_grid_color
+
+    @drawingGridColor.setter
+    def drawingGridColor(self, color):
+        """Sets the drawing grid color"""
+        self._drawing_grid_color = color
+        self.viewport().update()
+
+    @QtCore.Property(QtGui.QColor)
+    def nodeGridColor(self):
+        """Returns the node grid color"""
+        return self._node_grid_color
+
+    @nodeGridColor.setter
+    def nodeGridColor(self, color):
+        """Sets the node grid color"""
+        self._node_grid_color = color
+        self.viewport().update()
+
+    def resetGridColors(self):
+        """Reset grid colors to defaults"""
+        self._drawing_grid_color = self.DEFAULT_DRAWING_GRID_COLOR
+        self._node_grid_color = self.DEFAULT_NODE_GRID_COLOR
+        self.viewport().update()
+
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)
         if self._main_window.uiShowGridAction.isChecked():
-            grids = [(self.drawingGridSize(), QtGui.QColor(208, 208, 208)),
-                     (self.nodeGridSize(), QtGui.QColor(190, 190, 190))]
+            grids = [(self.drawingGridSize(), self._drawing_grid_color),
+                     (self.nodeGridSize(), self._node_grid_color)]
             painter.save()
             for (grid, colour) in grids:
                 if not grid:

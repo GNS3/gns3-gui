@@ -47,6 +47,10 @@ class Style:
         Sets the legacy GUI style.
         """
 
+        graphics_view = self._mw.uiGraphicsView
+        if hasattr(graphics_view, 'resetGridColors'):
+            graphics_view.resetGridColors()
+
         self._mw.setStyleSheet("")
         self._mw.uiNewProjectAction.setIcon(QtGui.QIcon(":/icons/new-project.svg"))
         self._mw.uiOpenProjectAction.setIcon(QtGui.QIcon(":/icons/open.svg"))
@@ -99,6 +103,10 @@ class Style:
         """
         Sets the classic GUI style.
         """
+
+        graphics_view = self._mw.uiGraphicsView
+        if hasattr(graphics_view, 'resetGridColors'):
+            graphics_view.resetGridColors()
 
         self._mw.setStyleSheet("")
         self._mw.uiNewProjectAction.setIcon(self._getStyleIcon(":/classic_icons/new-project.svg", ":/classic_icons/new-project-hover.svg"))
@@ -156,6 +164,10 @@ class Style:
         """
         Sets the charcoal GUI style.
         """
+
+        graphics_view = self._mw.uiGraphicsView
+        if hasattr(graphics_view, 'resetGridColors'):
+            graphics_view.resetGridColors()
 
         style_file = QtCore.QFile(":/styles/charcoal.css")
         style_file.open(QtCore.QFile.ReadOnly)
