@@ -18,7 +18,7 @@
 import os
 import pathlib
 from gns3.http_client_error import HttpClientError, HttpClientCancelledRequestError
-from ..qt import QtCore, QtWidgets, qslot, sip_is_deleted
+from ..qt import QtCore, QtGui, QtWidgets, qslot, sip_is_deleted
 from ..ui.image_dialog_ui import Ui_ImageDialog
 from ..utils import human_size
 from ..controller import Controller
@@ -146,6 +146,7 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         for image in Controller.instance().images():
             item = QtWidgets.QTreeWidgetItem([image["filename"], image["image_type"], human_size(image["image_size"])])
             item.setData(0, QtCore.Qt.UserRole, image["filename"])
+            item.setToolTip(0, f'{image["filename"]} {image["checksum"]}')
             items.append(item)
 
         self.uiImagesTreeWidget.addTopLevelItems(items)
@@ -159,6 +160,31 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         self.uiImagesTreeWidget.sortItems(0, QtCore.Qt.AscendingOrder)
         self.uiImagesTreeWidget.setUpdatesEnabled(True)
 
+    def contextMenuEvent(self, event):
+        """
+        Handles all context menu events.
+
+        :param event: QContextMenuEvent instance
+        """
+
+        items = self.uiImagesTreeWidget.selectedItems()
+        if items:
+            menu = QtWidgets.QMenu()
+            copy = QtWidgets.QAction("&Copy image information to clipboard", menu)
+            copy.triggered.connect(self._copyToClipboardSlot)
+            menu.addAction(copy)
+            menu.exec_(event.globalPos())
+
+    def _copyToClipboardSlot(self):
+        """
+        Copies the selected image tooltip to the clipboard.
+        """
+
+        items = self.uiImagesTreeWidget.selectedItems()
+        if items:
+            QtWidgets.QApplication.clipboard().setText(items[0].toolTip(0))
+            log.info(f"'{items[0].toolTip(0)}' copied to clipboard")
+
     def keyPressEvent(self, e):
         """
         Event handler in order to properly handle escape.
@@ -166,3 +192,5 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
 
         if e.key() == QtCore.Qt.Key_Escape:
             self.close()
+        elif e.matches(QtGui.QKeySequence.Copy):
+            self._copyToClipboardSlot()
