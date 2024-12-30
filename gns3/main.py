@@ -189,9 +189,9 @@ def main():
     # catch exceptions to write them in a file
     sys.excepthook = exceptionHook
 
-    # we only support Python 3 version >= 3.8
-    if sys.version_info < (3, 8):
-        raise SystemExit("Python 3.8 or higher is required")
+    # we only support Python 3 version >= 3.9
+    if sys.version_info < (3, 9):
+        raise SystemExit("Python 3.9 or higher is required")
 
     if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.5.0"):
         raise SystemExit("Requirement is PyQt5 version 5.5.0 or higher, got version {}".format(QtCore.QT_VERSION_STR))
