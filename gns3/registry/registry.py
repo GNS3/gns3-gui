@@ -47,23 +47,25 @@ class Registry(QtCore.QObject):
 
         :param image_directory: Folder we need to add
         """
+
         self._images_dirs.append(image_directory)
 
-    def getRemoteImageList(self, emulator, compute_id):
-        self._emulator = emulator
-        Controller.instance().getCompute("/{}/images".format(emulator), compute_id, self._getRemoteListCallback, progress_text="Listing remote images...")
+    def getRemoteImageList(self):
+
+        Controller.instance().get("/images", self._getRemoteListCallback, progress_text="Listing remote images...")
 
     def _getRemoteListCallback(self, result, error=False, **kwargs):
+
         if error:
             if "message" in result:
                 log.error("Error while getting the list of remote images: {}".format(result["message"]))
             return
         self._remote_images = []
         for res in result:
-            image = Image(self._emulator, res["path"])
+            image = Image(res["image_type"], res["path"])
             image.location = "remote"
-            image.md5sum = res.get("md5sum")
-            image.filesize = res.get("filesize")
+            image.md5sum = res.get("checksum")
+            image.filesize = res.get("image_size")
             self._remote_images.append(image)
         self.image_list_changed_signal.emit()
 

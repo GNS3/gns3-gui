@@ -174,7 +174,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.page(page_id) == self.uiFilesWizardPage:
             if Controller.instance().isRemote() or self._compute_id != "local":
-                self._registry.getRemoteImageList(self._appliance.template_type(), self._compute_id)
+                self._registry.getRemoteImageList()
             else:
                 self.images_changed_signal.emit()
 
@@ -212,7 +212,7 @@ Usage: {}
             log.error("Error while uploading image '{}': {}".format(image_path, result["message"]))
         else:
             log.info("Image '{}' has been successfully uploaded".format(image_path))
-            self._registry.getRemoteImageList(self._appliance.template_type(), self._compute_id)
+            self._registry.getRemoteImageList()
 
     def _showApplianceInfoSlot(self):
         """
@@ -329,7 +329,7 @@ Usage: {}
                     image_widget.setForeground(2, QtGui.QBrush(QtGui.QColor("red")))
                 else:
                     image_widget.setForeground(2, QtGui.QBrush(QtGui.QColor("green")))
-                    image_widget.setToolTip(2, image["path"])
+                    image_widget.setToolTip(0, f'{image["status"]} with path: {image["path"]}')
 
                 # Associated data stored are col 0: version, col 1: image
                 image_widget.setData(0, QtCore.Qt.UserRole, version)
@@ -383,11 +383,13 @@ Usage: {}
 
         for version in self._appliance["versions"]:
             for image in version["images"].values():
-                img = self._registry.search_image_file(self._appliance.template_type(),
-                                                       image["filename"],
-                                                       image.get("md5sum"),
-                                                       image.get("filesize"),
-                                                       strict_md5_check=not self.allowCustomFiles.isChecked())
+                img = self._registry.search_image_file(
+                    self._appliance.template_type(),
+                    image["filename"],
+                    image.get("md5sum"),
+                    image.get("filesize"),
+                    strict_md5_check=not self.allowCustomFiles.isChecked()
+                )
                 if img:
                     if img.location == "local":
                         image["status"] = "Found locally"
