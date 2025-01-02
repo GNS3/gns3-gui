@@ -91,6 +91,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="uiPruneImagesPushButton">
+       <property name="text">
+        <string>&amp;Prune</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="uiRefreshImagesPushButton">
        <property name="text">
         <string>&amp;Refresh</string>

@@ -232,7 +232,7 @@ class NodesView(QtWidgets.QTreeWidget):
         msgbox.setText(f"Do you want to delete template '{template.name()}'?\n\n"
                        f"Deleting templates and images is irreversible!\n\n")
         msgbox.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        delete_all_button = QtWidgets.QPushButton(f"&Delete the template and orphaned images", msgbox)
+        delete_all_button = QtWidgets.QPushButton(f"&Delete the template and its image(s)", msgbox)
         msgbox.addButton(delete_all_button, QtWidgets.QMessageBox.YesRole)
         delete_template_only_button = QtWidgets.QPushButton(f"&Only delete the template", msgbox)
         msgbox.addButton(delete_template_only_button, QtWidgets.QMessageBox.NoRole)

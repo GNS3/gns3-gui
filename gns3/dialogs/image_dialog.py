@@ -41,6 +41,7 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         self.setupUi(self)
         self.uiUploadImagePushButton.clicked.connect(self._uploadImageSlot)
         self.uiDeleteImagePushButton.clicked.connect(self._deleteImageSlot)
+        self.uiPruneImagesPushButton.clicked.connect(self._pruneImagesSlot)
         self.uiRefreshImagesPushButton.clicked.connect(Controller.instance().refreshImageList)
         Controller.instance().image_list_updated_signal.connect(self._updateImageListSlot)
         self._updateImageListSlot()
@@ -129,6 +130,44 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
             error_dialog = QtWidgets.QMessageBox(self)
             error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
             error_dialog.setWindowTitle("Image deletion")
+            error_dialog.setText(f"Error while deleting images on the controller")
+            error_dialog.setDetailedText(error_msgs)
+            error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+            error_dialog.show()
+
+        Controller.instance().refreshImageList()
+
+    @qslot
+    def _pruneImagesSlot(self, *args):
+
+        reply = QtWidgets.QMessageBox.warning(
+            self,
+            "Prune image(s)",
+            "Delete all images not used by a template?\nThis cannot be reverted.",
+            QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.No
+        )
+
+        if reply == QtWidgets.QMessageBox.No:
+            return
+
+        error_msgs = ""
+        try:
+            Controller.instance().delete(
+                f"/images/prune",
+                progress_text=f"Pruning images",
+                timeout=None,
+                wait=True
+            )
+        except HttpClientCancelledRequestError:
+            return
+        except HttpClientError as e:
+            error_msgs += f"{e}\n"
+
+        if error_msgs:
+            error_dialog = QtWidgets.QMessageBox(self)
+            error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+            error_dialog.setWindowTitle("Image pruning")
             error_dialog.setText(f"Error while deleting images on the controller")
             error_dialog.setDetailedText(error_msgs)
             error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
