@@ -41,6 +41,7 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         self.setupUi(self)
         self.uiUploadImagePushButton.clicked.connect(self._uploadImageSlot)
         self.uiDeleteImagePushButton.clicked.connect(self._deleteImageSlot)
+        self.uiInstallAllPushButton.clicked.connect(self._installAllSlot)
         self.uiPruneImagesPushButton.clicked.connect(self._pruneImagesSlot)
         self.uiRefreshImagesPushButton.clicked.connect(Controller.instance().refreshImageList)
         Controller.instance().image_list_updated_signal.connect(self._updateImageListSlot)
@@ -136,6 +137,26 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
             error_dialog.show()
 
         Controller.instance().refreshImageList()
+
+    def _installAllSlot(self, *args):
+
+        reply = QtWidgets.QMessageBox.warning(
+            self,
+            "Install appliance(s)",
+            "This will attempt to automatically create templates based on image checksums.\nContinue?",
+            QtWidgets.QMessageBox.Yes,
+            QtWidgets.QMessageBox.No
+        )
+
+        if reply == QtWidgets.QMessageBox.No:
+            return
+
+        Controller.instance().post(
+            f"/images/install",
+            progress_text=f"Installing appliances",
+            timeout=None,
+            wait=True
+        )
 
     @qslot
     def _pruneImagesSlot(self, *args):

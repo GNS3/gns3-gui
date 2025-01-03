@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>732</width>
-    <height>329</height>
+    <width>849</width>
+    <height>328</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -89,6 +89,13 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="uiInstallAllPushButton">
+       <property name="text">
+        <string>&amp;Install all</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="uiPruneImagesPushButton">
