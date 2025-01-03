@@ -1,5 +1,15 @@
 # Change Log
 
+## 3.0.2 03/01/2025
+
+* Add button to create templates based on images that are not used by any yet.
+* Add "prune" images button in image management dialog.
+* Use the controller image endpoint to install appliances
+* Drop Python 3.8
+* Add image info tooltip in image management dialog.
+* Upgrade dependencies
+* Apply grid color via css property
+
 ## 3.0.1 27/12/2024
 
 * Fix issue when image is already on the local server. Fixes https://github.com/GNS3/gns3-gui/issues/3678
