@@ -109,7 +109,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
 
         filter = ""
         if sys.platform.startswith("win"):
-            filter = "Executable (*.exe);;All files (*.*)"
+            filter = "Executable (*.exe);;All files (*)"
         server_path = shutil.which("gns3server")
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the local server", server_path, filter)
         if not path:
@@ -124,7 +124,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
 
         filter = ""
         if sys.platform.startswith("win"):
-            filter = "Executable (*.exe);;All files (*.*)"
+            filter = "Executable (*.exe);;All files (*)"
 
         ubridge_path = shutil.which("ubridge")
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select ubridge executable", ubridge_path, filter)
