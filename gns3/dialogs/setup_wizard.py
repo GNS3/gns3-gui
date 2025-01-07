@@ -83,7 +83,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         filter = ""
         if sys.platform.startswith("win"):
-            filter = "Executable (*.exe);;All files (*.*)"
+            filter = "Executable (*.exe);;All files (*)"
         server_path = shutil.which("gns3server")
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the local server", server_path, filter)
         if not path:

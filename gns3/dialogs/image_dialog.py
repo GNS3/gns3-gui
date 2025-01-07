@@ -55,7 +55,7 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
             self,
             "Select one or more images to upload",
             QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation),
-            "Images (*.bin *.image *.iol *.qcow2 *.vmdk *.iso);;All files (*.*)"
+            "Images (*.bin *.image *.iol *.qcow2 *.vmdk *.iso x86_64* i86bi*);;All files (*)"
         )
         error_msgs = ""
         for path in files:
