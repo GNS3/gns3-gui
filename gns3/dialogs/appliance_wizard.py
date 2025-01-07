@@ -522,6 +522,12 @@ Usage: {}
         image_upload_manger = ImageUploadManager(image, Controller.instance(), self.parent())
         image_upload_manger.upload()
 
+        # refresh the images list
+        if Controller.instance().isRemote() or self._compute_id != "local":
+            self._registry.getRemoteImageList()
+        else:
+            self.images_changed_signal.emit()
+
     def _install(self, version):
         """
         Install the appliance in GNS3
