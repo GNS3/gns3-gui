@@ -51,7 +51,7 @@ class TraceNGPreferencesPage(QtWidgets.QWidget, Ui_TraceNGPreferencesPageWidget)
 
         filter = ""
         if sys.platform.startswith("win"):
-            filter = "Executable (*.exe);;All files (*.*)"
+            filter = "Executable (*.exe);;All files (*)"
         traceng_path = shutil.which("traceng")
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select TraceNG", traceng_path, filter)
         if not path:
