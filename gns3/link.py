@@ -121,6 +121,8 @@ class Link(QtCore.QObject):
 
                 if self._network_manager is None:
                     self._network_manager = QtNetwork.QNetworkAccessManager(self)
+                    self._network_manager.sslErrors.connect(Controller.instance().httpClient().handleSslError)
+
                 self._response_stream = Controller.instance().get(
                     "/projects/{project_id}/links/{link_id}/capture/stream".format(project_id=self.project().id(), link_id=self._link_id),
                     callback=None,
