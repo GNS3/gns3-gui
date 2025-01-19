@@ -286,6 +286,12 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
                                           "udp_start_port_range": self.uiUDPStartPortSpinBox.value(),
                                           "udp_end_port_range": self.uiUDPEndPortSpinBox.value()})
 
+        # reset the accept_insecure_ssl_certificate setting if the host or port has changed
+        current_host_port_key = f"{local_server_settings['host']}:{local_server_settings['port']}"
+        new_host_port_key = f"{new_local_server_settings['host']}:{new_local_server_settings['port']}"
+        if current_host_port_key != new_host_port_key:
+            new_local_server_settings["accept_insecure_ssl_certificate"] = False
+
         if new_local_server_settings["console_end_port_range"] <= new_local_server_settings["console_start_port_range"]:
             QtWidgets.QMessageBox.critical(self, "Port range", "Invalid console port range from {} to {}".format(new_local_server_settings["console_start_port_range"],
                                                                                                                  new_local_server_settings["console_end_port_range"]))

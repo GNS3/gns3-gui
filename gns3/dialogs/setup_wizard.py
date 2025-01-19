@@ -204,7 +204,8 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             remote_controller_settings["remote"] = True
             remote_controller_settings["host"] = self.uiRemoteMainServerHostLineEdit.text()
             remote_controller_settings["port"] = self.uiRemoteMainServerPortSpinBox.value()
-            remote_controller_settings["protocol"] = "http"
+            remote_controller_settings["protocol"] = self.uiRemoteMainServerProtocolComboBox.currentText().lower()
+            remote_controller_settings["accept_insecure_ssl_certificate"] = False
             remote_controller_settings["username"] = self.uiRemoteMainServerUserLineEdit.text()
             remote_controller_settings["password"] = self.uiRemoteMainServerPasswordLineEdit.text()
             Controller.instance().setSettings(remote_controller_settings)

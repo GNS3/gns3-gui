@@ -158,7 +158,7 @@ class HTTPClient(QtCore.QObject):
         self._retry_connection = False
         self._connected = False
         self._shutdown = False  # shutdown in progress
-        self._accept_insecure_certificate = settings.get("accept_insecure_certificate", False)
+        self._accept_insecure_ssl_certificate = settings.get("accept_insecure_ssl_certificate", False)
 
         # Add custom CA
         # ssl_config = QtNetwork.QSslConfiguration.defaultConfiguration()
@@ -224,12 +224,12 @@ class HTTPClient(QtCore.QObject):
 
         return self._protocol
 
-    def setAcceptInsecureCertificate(self, certificate: bool) -> None:
+    def setAcceptInsecureCertificate(self, accept_insecure_ssl_certificate: bool) -> None:
         """
         Does the server accept this insecure SSL certificate digest
         """
 
-        self._accept_insecure_certificate = certificate
+        self._accept_insecure_ssl_certificate = accept_insecure_ssl_certificate
 
     def url(self) -> str:
         """
@@ -545,7 +545,12 @@ class HTTPClient(QtCore.QObject):
             self._auth_attempted = True
             content = self._executeHTTPQuery("POST", "/access/users/authenticate", body=body, wait=True)
             if content:
-                log.info(f"Authenticated with controller {self._host} on port {self._port}")
+                additional_ssl_info = ""
+                if self._protocol == "https":
+                    additional_ssl_info = "using SSL"
+                    if self._accept_insecure_ssl_certificate:
+                        additional_ssl_info += " with insecure certificate"
+                log.info(f"Authenticated with controller {self._host} on port {self._port} {additional_ssl_info}")
                 token = content.get("access_token")
                 if token:
                     self._auth_attempted = False
@@ -839,7 +844,7 @@ class HTTPClient(QtCore.QObject):
         Handle SSL errors
         """
 
-        if self._accept_insecure_certificate:
+        if self._accept_insecure_ssl_certificate:
             reply.ignoreSslErrors()
             return
 
@@ -852,7 +857,6 @@ class HTTPClient(QtCore.QObject):
         digest = peer_cert.digest()
 
         if host_port_key in self._ssl_exceptions:
-
             if self._ssl_exceptions[host_port_key] == digest:
                 reply.ignoreSslErrors()
                 return
@@ -865,6 +869,8 @@ class HTTPClient(QtCore.QObject):
         msgbox.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         connect_button = QtWidgets.QPushButton(f"&Connect to {url.host()}:{url.port()}", msgbox)
         msgbox.addButton(connect_button, QtWidgets.QMessageBox.YesRole)
+        checkbox = QtWidgets.QCheckBox("Accept insecure certificate for future connections", parent=msgbox)
+        msgbox.setCheckBox(checkbox)
         abort_button = QtWidgets.QPushButton("&Abort", msgbox)
         msgbox.addButton(abort_button, QtWidgets.QMessageBox.RejectRole)
         msgbox.setDefaultButton(abort_button)
@@ -873,6 +879,12 @@ class HTTPClient(QtCore.QObject):
 
         if msgbox.clickedButton() == connect_button:
             self._ssl_exceptions[host_port_key] = digest
+            if checkbox.isChecked():
+                log.warning(f"Accepting insecure SSL certificate for future connections to {host_port_key}")
+                from gns3.controller import Controller
+                self._accept_insecure_ssl_certificate = True
+                controller_settings = {"accept_insecure_ssl_certificate": True}
+                Controller.instance().setSettings(controller_settings)
             reply.ignoreSslErrors()
         else:
             for error in ssl_errors:

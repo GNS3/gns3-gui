@@ -340,6 +340,7 @@ CONTROLLER_SETTINGS = {
     "ubridge_path": "ubridge",
     "host": DEFAULT_CONTROLLER_HOST,
     "port": DEFAULT_CONTROLLER_PORT,
+    "accept_insecure_ssl_certificate": False,
     "images_path": DEFAULT_IMAGES_PATH,
     "projects_path": DEFAULT_PROJECTS_PATH,
     "appliances_path": DEFAULT_APPLIANCES_PATH,
