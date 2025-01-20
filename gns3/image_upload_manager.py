@@ -47,7 +47,7 @@ class ImageUploadManager(object):
 
     def _fileUploadToController(self) -> bool:
 
-        log.debug("Uploading image '{}' to controller".format(self._image.path))
+        log.info("Uploading image '{}' to controller".format(self._image.filename))
         try:
             self._controller.post(
                 f"/images/upload/{self._image.filename}",

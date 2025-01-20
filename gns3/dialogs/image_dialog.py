@@ -59,9 +59,9 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         )
         error_msgs = ""
         for path in files:
-            log.debug("Uploading image '{}' to controller".format(path))
             image_filename = os.path.basename(path)
             install_appliances = self.uiInstallApplianceCheckBox.isChecked()
+            log.info("Uploading image '{}' to controller".format(image_filename))
             try:
                 Controller.instance().post(
                     f"/images/upload/{image_filename}",
