@@ -67,6 +67,7 @@ class QNetworkReplyWatcher(QtCore.QObject):
             self._progress = QtWidgets.QProgressDialog(progress_text, "Cancel", 0, 0, parent)
             self._progress.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
             self._progress.setWindowModality(QtCore.Qt.ApplicationModal)
+            self._progress.setMinimumDuration(0)
         else:
             self._progress = None
 
