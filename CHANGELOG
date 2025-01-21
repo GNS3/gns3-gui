@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.53 21/01/2025
+
+* Update file browser filters for all files and IOU images
+* Upgrade dependencies
+* Fix Linux Mint default terminal configuration
+
 ## 2.2.52 02/12/2024
 
 * Add iol extension filter. Ref #3664
