@@ -229,7 +229,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         path, _ = QtWidgets.QFileDialog.getOpenFileName(parent,
                                                         "Select an IOS image",
                                                         cls._default_images_dir,
-                                                        "All files (*.*);;IOS image (*.bin *.image)",
+                                                        "All files (*);;IOS image (*.bin *.image)",
                                                         "IOS image (*.bin *.image)")
 
         if not path:

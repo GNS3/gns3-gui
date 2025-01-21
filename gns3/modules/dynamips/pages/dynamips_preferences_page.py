@@ -51,7 +51,7 @@ class DynamipsPreferencesPage(QtWidgets.QWidget, Ui_DynamipsPreferencesPageWidge
 
         file_filter = ""
         if sys.platform.startswith("win"):
-            file_filter = "Executable (*.exe);;All files (*.*)"
+            file_filter = "Executable (*.exe);;All files (*)"
 
         dynamips_path = shutil.which("dynamips")
         if sys.platform.startswith("darwin") and dynamips_path is None:

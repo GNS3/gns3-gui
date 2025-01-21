@@ -1255,7 +1255,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                             "Import {}".format(os.path.basename(config_file)),
                                                             self._import_config_directory,
-                                                            "All files (*.*);;Config files (*.cfg)",
+                                                            "All files (*);;Config files (*.cfg)",
                                                             "Config files (*.cfg)")
             if not path:
                 continue
@@ -1302,7 +1302,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in items:
             for config_file in item.node().configFiles():
-                path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_config_directory, item.node().name() + "_" + os.path.basename(config_file)), "All files (*.*);;Config files (*.cfg)")
+                path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_config_directory, item.node().name() + "_" + os.path.basename(config_file)), "All files (*);;Config files (*.cfg)")
                 if not path:
                     continue
                 self._export_config_directory = os.path.dirname(path)

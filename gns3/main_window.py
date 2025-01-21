@@ -428,7 +428,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not os.path.exists(self._appliance_dir):
             directory = Topology.instance().projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Import appliance", directory,
-                                                        "All files (*.*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
+                                                        "All files (*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
                                                         "GNS3 Appliance (*.gns3appliance *.gns3a)")
         if path:
             self.loadPath(path)
@@ -447,7 +447,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if self._project_dir is None or not os.path.exists(self._project_dir):
                 directory = Topology.instance().projectsDirPath()
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", directory,
-                                                            "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
+                                                            "All files (*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
                                                             "GNS3 Project (*.gns3)")
             if path:
                 self.loadPath(path)
@@ -920,7 +920,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when inserting an image on the scene.
         """
         # supported image file formats
-        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.gif *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)"
+        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.gif *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*)"
 
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._pictures_dir, file_formats)
         if not path:
@@ -1449,7 +1449,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not os.path.exists(directory):
             directory = Topology.instance().projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open portable project", directory,
-                                                        "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
+                                                        "All files (*);;GNS3 Portable Project (*.gns3project *.gns3p)",
                                                         "GNS3 Portable Project (*.gns3project *.gns3p)")
         if path:
             Topology.instance().importProject(path)

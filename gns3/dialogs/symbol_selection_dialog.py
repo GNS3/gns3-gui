@@ -184,7 +184,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
     def _symbolBrowserSlot(self):
 
         # supported image file formats
-        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm *.gif);;All files (*.*)"
+        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm *.gif);;All files (*)"
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", SymbolSelectionDialog._symbols_dir, file_formats)
         if not path:
             return
