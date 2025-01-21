@@ -102,7 +102,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._topology = Topology.instance()
         self._background_warning_msgbox = QtWidgets.QErrorMessage(self)
         self._background_warning_msgbox.setWindowTitle("Layer position")
-
+        self._isctrlpressed = False
         # set the scene
         scene = QtWidgets.QGraphicsScene(parent=self)
         width = self._settings["scene_width"]
@@ -618,8 +618,25 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 if (isinstance(item, LabelItem) or isinstance(item, TextItem)) and item.hasFocus():
                     super().keyPressEvent(event)
                     return
-            self.deleteActionSlot()
+                self.deleteActionSlot()
+        elif event.key() == QtCore.Qt.Key_C and event.modifiers() == QtCore.Qt.ControlModifier:
+                # Copy selected items to clipboard
+                self.copySelectedItems(self,event);        
         super().keyPressEvent(event)
+
+    def copySelectedItems(self,event):
+        self._isctrlcpressed = True           
+        if event.key() == QtCore.Qt.Key_V and event.modifiers() == QtCore.Qt.ControlModifier:
+                self.pasteItemsFromClipboard(self)
+        else:
+            return
+        
+    def pasteItemsFromClipboard(self):  
+        self.duplicateActionSlot(self)
+
+        if isinstance(item, LinkItem):
+            for item in self.scene().selectedItems():
+                self.addLinkSlot(self.link.id())      
 
     def mouseMoveEvent(self, event):
         """
