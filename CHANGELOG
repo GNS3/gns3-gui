@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.53 21/01/2025
+
+* Update file browser filters for all files and IOU images
+* Upgrade dependencies
+* Fix Linux Mint default terminal configuration
+
 ## 3.0.2 03/01/2025
 
 * Add button to create templates based on images that are not used by any yet.
