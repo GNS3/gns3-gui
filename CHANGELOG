@@ -1,5 +1,15 @@
 # Change Log
 
+## 3.0.3 22/01/2025
+
+* Set minimum duration for progress dialog when uploading. Ref https://github.com/GNS3/gns3-gui/issues/3682
+* Add logs when uploading images to the controller
+* Option to disable SSL certificate verification for future connections. Fixes https://github.com/GNS3/gns3-gui/issues/3694
+* Fix packet capture when connected to a controller with SSL. Fixes https://github.com/GNS3/gns3-gui/issues/3696
+* Update status after importing an image when installing a new appliance. Fixes #3691
+* Update file browser filters to find IOU images without extension. Fixes #3692
+* Upgrade dependencies
+
 ## 2.2.53 21/01/2025
 
 * Update file browser filters for all files and IOU images
