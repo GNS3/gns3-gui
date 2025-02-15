@@ -110,7 +110,7 @@ class ConsoleThread(QtCore.QThread):
                     proc.wait() # wait for the terminal to open
                     try:
                         # use wmctrl to raise the window based on the node name
-                        subprocess.run([wmctrl_path, "-a", self._name], env=os.environ)
+                        subprocess.run([wmctrl_path, "-Fa", self._name], env=os.environ)
                     except OSError as e:
                         self.consoleError.emit("Count not focus on terminal window: '{}'".format(e))
 
