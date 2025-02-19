@@ -252,6 +252,13 @@ class HTTPClient(QtCore.QObject):
 
         return "{}://{}:{}".format(self.protocol(), host, self.port())
 
+    def getToken(self):
+        """
+        Return the JWT token
+        """
+
+        return self._jwt_token
+
     def shutdown(self) -> None:
         """
         Stop the server and stop to accept queries
