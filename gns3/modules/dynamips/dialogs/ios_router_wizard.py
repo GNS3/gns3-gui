@@ -218,15 +218,20 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         image = self.uiIOSImageLineEdit.text()
         platform = self.uiPlatformComboBox.currentText()
         ram = self.uiRamSpinBox.value()
-        Controller.instance().postCompute("/auto_idlepc",
-                                          self._compute_id,
-                                          callback=self._computeAutoIdlepcCallback,
-                                          timeout=None,
-                                          body={
-                                              "image": image,
-                                              "platform": platform,
-                                              "ram": ram},
-                                          wait=True)
+
+        Controller.instance().postCompute(
+            "/dynamips/auto_idlepc",
+            self._compute_id,
+            callback=self._computeAutoIdlepcCallback,
+            body={
+                "image": image,
+                "platform": platform,
+                "ram": ram
+            },
+            timeout=None,
+            progress_text="Finding an Idle-PC value...",
+            wait=True
+        )
 
     def _etherSwitchSlot(self, state):
         """
