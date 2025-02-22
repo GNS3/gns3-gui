@@ -1,6 +1,6 @@
 jsonschema>=4.23,<4.24
-sentry-sdk>=2.19.2,<2.20  # optional dependency
-psutil>=6.1.1
+sentry-sdk>=2.22,<2.23  # optional dependency
+psutil>=7.0.0
 distro>=1.9.0
-truststore>=0.10.0; python_version >= '3.10'
+truststore>=0.10.1; python_version >= '3.10'
 importlib-resources>=1.3; python_version < '3.9'
