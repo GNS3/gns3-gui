@@ -1,5 +1,11 @@
 # Change Log
 
+## 3.0.4 25/02/2025
+
+* Upgrade dependencies
+* Fix auto idle-pc for IOS templates
+* Add user info and password change for logged-in user. Fixes #3698
+
 ## 3.0.3 22/01/2025
 
 * Set minimum duration for progress dialog when uploading. Ref https://github.com/GNS3/gns3-gui/issues/3682

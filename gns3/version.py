@@ -24,7 +24,7 @@
 # number has been incremented)
 
 __version__ = "3.0.4"
-__version_info__ = (3, 0, 4, 99)
+__version_info__ = (3, 0, 4, 0)
 
 if "dev" in __version__:
     try:
