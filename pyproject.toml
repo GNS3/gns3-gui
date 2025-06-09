@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gns3-gui"
 description = "GNS3 graphical interface for the GNS3 server."
-license = {file = "LICENSE"}
+license-files = ["LICENSE"]
 authors = [
   { name = "Jeremy Grossmann", email = "developers@gns3.com" }
 ]
