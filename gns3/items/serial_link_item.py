@@ -50,16 +50,28 @@ class SerialLinkItem(LinkItem):
 
         LinkItem.adjust(self)
 
+        width = self._pen_width
+        color = self._default_link_color
+        pen_style_value = int(self._default_link_pen_style)
+
+        if self._link and isinstance(self._link._link_style, dict):
+            width = self._link._link_style.get("width", width)
+            color = self._link._link_style.get("color", color)
+            pen_style_value = self._link._link_style.get("type", pen_style_value)
+
         try:
-            if self._hovered:
-                self.setPen(QtGui.QPen(QtCore.Qt.red, self._link._link_style["width"] + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-            else:
-                self.setPen(QtGui.QPen(QtGui.QColor(self._link._link_style["color"]), self._link._link_style["width"], self._link._link_style["type"], QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-        except:
-            if self._hovered:
-                self.setPen(QtGui.QPen(QtCore.Qt.red, self._pen_width + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-            else:
-                self.setPen(QtGui.QPen(QtCore.Qt.darkRed, self._pen_width, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+            pen_style = QtCore.Qt.PenStyle(int(pen_style_value))
+        except (ValueError, TypeError):
+            pen_style = QtCore.Qt.SolidLine
+
+        pen_color = QtGui.QColor(color)
+        if not pen_color.isValid():
+            pen_color = QtGui.QColor(self._default_link_color)
+
+        if self._hovered:
+            self.setPen(QtGui.QPen(QtCore.Qt.red, float(width) + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+        else:
+            self.setPen(QtGui.QPen(pen_color, float(width), pen_style, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
 
         # get source to destination angle
         vector_angle = math.atan2(self.dy, self.dx)

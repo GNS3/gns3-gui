@@ -99,11 +99,12 @@ class StyleEditorDialogLink(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
         self._link.setPen(pen)
 
-        new_link_style = {}
-        new_link_style["color"] = self._border_color.name()
-        new_link_style["width"] = self.uiBorderWidthSpinBox.value()
-        new_link_style["type"]  = border_style
-        
+        new_link_style = {
+            "color": self._border_color.name(),
+            "width": self.uiBorderWidthSpinBox.value(),
+            "type": int(border_style)
+        }
+
         # Store values
         self._link.setLinkStyle(new_link_style)
         self._link.setHovered(False)  # allow to see the new style

@@ -25,6 +25,7 @@ from gns3.ports.ethernet_port import EthernetPort
 from gns3.modules.vpcs.vpcs_node import VPCSNode
 from gns3.modules.vpcs import VPCS
 from gns3.controller import Controller
+from gns3.settings import GRAPHICS_VIEW_SETTINGS
 
 
 @pytest.fixture
@@ -65,7 +66,11 @@ def link(devices, controller, project):
             {"node_id": devices[0].node_id(), "adapter_number": 0, "port_number": 0},
             {"node_id": devices[1].node_id(), "adapter_number": 0, "port_number": 0}
         ],
-        "link_style": {},
+        "link_style": {
+            "width": GRAPHICS_VIEW_SETTINGS["default_link_width"],
+            "color": GRAPHICS_VIEW_SETTINGS["default_link_color"],
+            "type": GRAPHICS_VIEW_SETTINGS["default_link_style"],
+        },
         "filters": {},
     }
 
@@ -90,7 +95,11 @@ def test_create_link(devices, project, controller):
             {"node_id": devices[0].node_id(), "adapter_number": 0, "port_number": 0},
             {"node_id": devices[1].node_id(), "adapter_number": 0, "port_number": 0},
         ],
-        "link_style": {},
+        "link_style": {
+            "width": GRAPHICS_VIEW_SETTINGS["default_link_width"],
+            "color": GRAPHICS_VIEW_SETTINGS["default_link_color"],
+            "type": GRAPHICS_VIEW_SETTINGS["default_link_style"],
+        },
         "filters": {},
     }
 

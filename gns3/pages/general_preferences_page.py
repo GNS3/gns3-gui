@@ -63,12 +63,22 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
         self.uiDefaultNoteFontPushButton.clicked.connect(self._setDefaultNoteFontSlot)
         self.uiDefaultNoteColorPushButton.clicked.connect(self._setDefaultNoteColorSlot)
+        self.uiDefaultLinkColorPushButton.clicked.connect(self._setDefaultLinkColorSlot)
         self.uiBrowseConfigurationPushButton.clicked.connect(self._browseConfigurationDirectorySlot)
         self._default_label_color = QtGui.QColor(QtCore.Qt.black)
+        self._default_note_color = QtGui.QColor(QtCore.Qt.black)
+        self._default_link_color = QtGui.QColor(QtCore.Qt.black)
         self.uiStyleComboBox.addItems(STYLES)
         self.uiSymbolThemeComboBox.addItems(SYMBOL_THEMES)
         self.uiImageDirectoriesAddPushButton.clicked.connect(self._imageDirectoriesAddPushButtonSlot)
         self.uiImageDirectoriesDeletePushButton.clicked.connect(self._imageDirectoriesDeletePushButtonSlot)
+        self.uiDefaultLinkStyleComboBox.setItemData(0, int(QtCore.Qt.SolidLine))
+        self.uiDefaultLinkStyleComboBox.setItemData(1, int(QtCore.Qt.DashLine))
+        self.uiDefaultLinkStyleComboBox.setItemData(2, int(QtCore.Qt.DotLine))
+        self.uiDefaultLinkStyleComboBox.setItemData(3, int(QtCore.Qt.DashDotLine))
+        self.uiDefaultLinkStyleComboBox.setItemData(4, int(QtCore.Qt.DashDotDotLine))
+        self.uiDefaultLinkStyleComboBox.setItemData(5, int(QtCore.Qt.NoPen))
+        self._refreshDefaultLinkColorButton()
 
     def _imageDirectoriesAddPushButtonSlot(self):
         path = QtWidgets.QFileDialog.getExistingDirectory(self, "My images directory", options=QtWidgets.QFileDialog.ShowDirsOnly)
@@ -288,6 +298,20 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             self._default_note_color = color
             self.uiDefaultNoteStylePlainTextEdit.setStyleSheet("color : {}".format(color.name()))
 
+    def _setDefaultLinkColorSlot(self):
+        """
+        Slot to select the default link color.
+        """
+
+        color = QtWidgets.QColorDialog.getColor(self._default_link_color, self)
+        if color.isValid():
+            self._default_link_color = color
+            self._refreshDefaultLinkColorButton()
+
+    def _refreshDefaultLinkColorButton(self):
+        self.uiDefaultLinkColorPushButton.setStyleSheet("background-color: {};".format(self._default_link_color.name()))
+        self.uiDefaultLinkColorPushButton.setText(self._default_link_color.name())
+
     def _populateGeneralSettingWidgets(self, settings):
         """
         Populates the widgets with the settings.
@@ -350,6 +374,17 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiLimitSizeNodeSymbolCheckBox.setChecked(settings["limit_size_node_symbols"])
         self.uiShowGridOnNewProject.setChecked(settings["show_grid_on_new_project"])
         self.uiSnapToGridOnNewProject.setChecked(settings["snap_to_grid_on_new_project"])
+        self.uiDefaultLinkWidthSpinBox.setValue(settings.get("default_link_width", 2))
+        link_color = QtGui.QColor(settings.get("default_link_color", "#000000"))
+        if link_color.isValid():
+            self._default_link_color = link_color
+        self._refreshDefaultLinkColorButton()
+        link_style_value = int(settings.get("default_link_style", int(QtCore.Qt.SolidLine)))
+        index = self.uiDefaultLinkStyleComboBox.findData(link_style_value)
+        if index != -1:
+            self.uiDefaultLinkStyleComboBox.setCurrentIndex(index)
+        else:
+            self.uiDefaultLinkStyleComboBox.setCurrentIndex(0)
 
         qt_font = QtGui.QFont()
         if qt_font.fromString(settings["default_label_font"]):
@@ -416,6 +451,10 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         from ..main_window import MainWindow
         MainWindow.instance().setSettings(new_general_settings)
 
+        link_style_value = self.uiDefaultLinkStyleComboBox.currentData()
+        if link_style_value is None:
+            link_style_value = int(QtCore.Qt.SolidLine)
+
         new_graphics_view_settings = {"scene_width": self.uiSceneWidthSpinBox.value(),
                                       "scene_height": self.uiSceneHeightSpinBox.value(),
                                       "draw_rectangle_selected_item": self.uiRectangleSelectedItemCheckBox.isChecked(),
@@ -427,7 +466,10 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
                                       "default_label_font": self.uiDefaultLabelStylePlainTextEdit.font().toString(),
                                       "default_label_color": self._default_label_color.name(),
                                       "default_note_font": self.uiDefaultNoteStylePlainTextEdit.font().toString(),
-                                      "default_note_color": self._default_note_color.name()}
+                                      "default_note_color": self._default_note_color.name(),
+                                      "default_link_width": self.uiDefaultLinkWidthSpinBox.value(),
+                                      "default_link_color": self._default_link_color.name(),
+                                      "default_link_style": int(link_style_value)}
 
         node_grid_size = self.uiNodeGridSizeSpinBox.value()
         drawing_grid_size = self.uiDrawingGridSizeSpinBox.value()

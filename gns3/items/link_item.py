@@ -69,6 +69,13 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         self._main_window = MainWindow.instance()
         self._settings = self._main_window.uiGraphicsView.settings()
 
+        self._default_link_color = self._settings.get("default_link_color", "#000000")
+        try:
+            default_pen_style_value = int(self._settings.get("default_link_style", int(QtCore.Qt.SolidLine)))
+        except (TypeError, ValueError):
+            default_pen_style_value = int(QtCore.Qt.SolidLine)
+        self._default_link_pen_style = QtCore.Qt.PenStyle(default_pen_style_value)
+
         # indicates link is being added:
         # source has been chosen but not its destination yet
         self._adding_flag = adding_flag
@@ -77,7 +84,10 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         self._point_size = 10
 
         # default pen size
-        self._pen_width = 2.0
+        try:
+            self._pen_width = float(self._settings.get("default_link_width", 2))
+        except (TypeError, ValueError):
+            self._pen_width = 2.0
 
         # source & destination items and ports
         self._source_item = source_item
@@ -145,12 +155,13 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         style_dialog.exec_()
 
     def setLinkStyle(self, link_style):
-        self._link._link_style["color"] = link_style["color"]
-        self._link._link_style["width"] = link_style["width"]
-        self._link._link_style["type"]  = link_style["type"]
+        normalized_style = {
+            "color": str(link_style["color"]),
+            "width": int(link_style["width"]),
+            "type": int(link_style["type"])
+        }
 
-        # This refers to functions in link.py!
-        self._link.setLinkStyle(link_style)
+        self._link.setLinkStyle(normalized_style)
         self._link.update()
 
     def delete(self):

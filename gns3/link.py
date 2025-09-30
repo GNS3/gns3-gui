@@ -25,6 +25,8 @@ import uuid
 
 from .qt import QtCore, QtNetwork
 from .controller import Controller
+from .local_config import LocalConfig
+from .settings import GRAPHICS_VIEW_SETTINGS
 
 
 import logging
@@ -93,6 +95,27 @@ class Link(QtCore.QObject):
         self._nodes = []
         self._link_style = {}
 
+        if "link_style" in link_data and isinstance(link_data["link_style"], dict):
+            self._link_style.update(link_data["link_style"])
+
+        graphics_settings = LocalConfig.instance().loadSectionSettings("GraphicsView", GRAPHICS_VIEW_SETTINGS)
+        default_link_style = {
+            "width": graphics_settings.get("default_link_width", 2),
+            "color": graphics_settings.get("default_link_color", "#000000"),
+            "type": int(graphics_settings.get("default_link_style", int(QtCore.Qt.SolidLine)))
+        }
+
+        for key, value in default_link_style.items():
+            if key not in self._link_style or self._link_style[key] in (None, ""):
+                self._link_style[key] = value
+
+        if "type" in self._link_style:
+            self._link_style["type"] = int(self._link_style["type"])
+        if "width" in self._link_style:
+            self._link_style["width"] = int(self._link_style["width"])
+        if "color" in self._link_style:
+            self._link_style["color"] = str(self._link_style["color"])
+
         body = self._prepareParams()
         if self._link_id:
             link_data["link_id"] = self._link_id
@@ -142,6 +165,13 @@ class Link(QtCore.QObject):
             self._filters = result["filters"]
         if "link_style" in result:
             self._link_style = result["link_style"]
+            if isinstance(self._link_style, dict):
+                if "type" in self._link_style:
+                    self._link_style["type"] = int(self._link_style["type"])
+                if "width" in self._link_style:
+                    self._link_style["width"] = int(self._link_style["width"])
+                if "color" in self._link_style:
+                    self._link_style["color"] = str(self._link_style["color"])
         if "suspend" in result:
             self._suspend = result["suspend"]
         self.updated_link_signal.emit(self._id)
@@ -507,4 +537,11 @@ class Link(QtCore.QObject):
         """
         :params _link_style: Set link style attributes
         """
-        self._link_style = link_style
+        normalized_style = dict(link_style)
+        if "type" in normalized_style:
+            normalized_style["type"] = int(normalized_style["type"])
+        if "width" in normalized_style:
+            normalized_style["width"] = int(normalized_style["width"])
+        if "color" in normalized_style:
+            normalized_style["color"] = str(normalized_style["color"])
+        self._link_style = normalized_style
