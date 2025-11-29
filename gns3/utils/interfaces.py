@@ -40,7 +40,7 @@ def _get_windows_interfaces_from_registry():
             hkeycard = winreg.OpenKey(hkey, network_card_id)
             guid, _ = winreg.QueryValueEx(hkeycard, "ServiceName")
             netcard, _ = winreg.QueryValueEx(hkeycard, "Description")
-            connection = r"SYSTEM\CurrentControlSet\Control\Network\{4D36E972-E325-11CE-BFC1-08002BE10318}" + "\{}\Connection".format(guid)
+            connection = r"SYSTEM\CurrentControlSet\Control\Network\{4D36E972-E325-11CE-BFC1-08002BE10318}" + r"\{}\Connection".format(guid)
             hkeycon = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, connection)
             name, _ = winreg.QueryValueEx(hkeycon, "Name")
             interface = r"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\{}".format(guid)
@@ -85,7 +85,7 @@ def get_windows_interfaces():
     try:
         import win32com.client
         locator = win32com.client.Dispatch("WbemScripting.SWbemLocator")
-        service = locator.ConnectServer(".", "root\cimv2")
+        service = locator.ConnectServer(".", r"root\cimv2")
         network_configs = service.InstancesOf("Win32_NetworkAdapterConfiguration")
         # more info on Win32_NetworkAdapter: http://msdn.microsoft.com/en-us/library/aa394216%28v=vs.85%29.aspx
         for adapter in service.InstancesOf("Win32_NetworkAdapter"):

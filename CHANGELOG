@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.55 19/11/2025
+
+* Fix SyntaxWarning: invalid escape sequence. Fixes #3760
+* Support for Python 3.14
+* Clicking the "console connect to all nodes" opens all consoles in name order with case-insensitively
+
 ## 3.0.5 14/05/2025
 
 * Merge remote-tracking branch 'origin/2.2' into 3.0

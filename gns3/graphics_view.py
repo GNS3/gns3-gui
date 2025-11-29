@@ -1163,7 +1163,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         delay = self._main_window.settings()["delay_console_all"]
         counter = 0
-        for name in sorted(nodes.keys()):
+        for name in sorted(nodes.keys(), key=str.casefold):
             node = nodes[name]
             callback = qpartial(self.consoleToNode, node)
             self._main_window.run_later(counter, callback)
@@ -1242,7 +1242,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         delay = self._main_window.settings()["delay_console_all"]
         counter = 0
-        for name in sorted(nodes.keys()):
+        for name in sorted(nodes.keys(), key=str.casefold):
             node = nodes[name]
             callback = qpartial(self.consoleToNode, node, aux=True)
             self._main_window.run_later(counter, callback)
