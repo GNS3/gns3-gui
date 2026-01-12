@@ -165,8 +165,16 @@ class Ui_dockerVMConfigPageWidget(object):
         self.uiExtraVolumeTextEdit.setPlainText("")
         self.uiExtraVolumeTextEdit.setObjectName("uiExtraVolumeTextEdit")
         self.gridLayout_2.addWidget(self.uiExtraVolumeTextEdit, 1, 1, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 388, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem, 2, 1, 1, 1)
+      
+        self.uiExtraParametersLabel = QtWidgets.QLabel(self.tab_2)
+        self.uiExtraParametersLabel.setObjectName("uiExtraParametersLabel")
+        self.uiExtraParametersLabel.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignLeading | QtCore.Qt.AlignTop)
+        self.gridLayout_2.addWidget(self.uiExtraParametersLabel, 2, 0, 1, 1)
+        
+        self.uiExtraParametersTextEdit = QtWidgets.QPlainTextEdit(self.tab_2)
+        self.uiExtraParametersTextEdit.setPlainText("")
+        self.uiExtraParametersTextEdit.setObjectName("uiExtraParametersTextEdit")
+        self.gridLayout_2.addWidget(self.uiExtraParametersTextEdit, 2, 1, 1, 1)
         self.uiTabWidget.addTab(self.tab_2, "")
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -231,5 +239,29 @@ class Ui_dockerVMConfigPageWidget(object):
 "VOLUMES config. One\n"
 "directory per line."))
         self.uiExtraVolumeTextEdit.setPlaceholderText(_translate("dockerVMConfigPageWidget", "e.g. /etc/sysctl.d"))
+        self.uiExtraParametersLabel.setText(_translate("dockerVMConfigPageWidget", "Modify parameters to\n"
+"create the container\n"
+"using the JSON format of\n"
+"the Docker API, use only\n"
+"if you have a specific\n"
+"requirement"))
+        self.uiExtraParametersTextEdit.setPlaceholderText(_translate("dockerVMConfigPageWidget", """e.g. systemd
+{
+    "StopSignal": "SIGRTMIN+3",
+    "HostConfig": {
+        "CapAdd": ["ALL"],
+        "Runtime": "runc",
+        "Privileged": true,
+        "Binds": [
+            "/sys/fs/cgroup:/sys/fs/cgroup:ro",
+            "/sys/fs/fuse:/sys/fs/fuse"
+        ],
+        "Tmpfs": {
+            "/tmp": "",
+            "/run": "",
+            "/run/lock": ""
+        }
+    }
+}"""))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_2), _translate("dockerVMConfigPageWidget", "Advanced"))
         self.uiTabWidget.setTabText(self.uiTabWidget.indexOf(self.tab_3), _translate("dockerVMConfigPageWidget", "Usage"))

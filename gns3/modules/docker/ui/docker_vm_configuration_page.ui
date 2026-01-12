@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="uiTabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -349,18 +349,53 @@ directory per line.</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
+       <item row="2" column="0">
+        <widget class="QLabel" name="uiExtraParametersLabel">
+         <property name="minimumSize">
           <size>
-           <width>20</width>
+           <width>10</width>
            <height>388</height>
           </size>
          </property>
-        </spacer>
+         <property name="text">
+          <string>Modify parameters to
+create the container
+using the JSON format of
+the Docker API, use only
+if you have a specific
+requirement e.g. systemd.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPlainTextEdit" name="uiExtraParametersTextEdit">
+         <property name="plainText">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>e.g. systemd
+{
+    &quot;StopSignal&quot;: &quot;SIGRTMIN+3&quot;,
+    &quot;HostConfig&quot;: {
+        &quot;CapAdd&quot;: [&quot;ALL&quot;],
+        &quot;Runtime&quot;: &quot;runc&quot;,
+        &quot;Privileged&quot;: true,
+        &quot;Binds&quot;: [
+            &quot;/sys/fs/cgroup:/sys/fs/cgroup:ro&quot;,
+            &quot;/sys/fs/fuse:/sys/fs/fuse&quot;
+        ],
+        &quot;Tmpfs&quot;: {
+            &quot;/tmp&quot;: &quot;&quot;,
+            &quot;/run&quot;: &quot;&quot;,
+            &quot;/run/lock&quot;: &quot;&quot;
+        }
+    }
+}</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
