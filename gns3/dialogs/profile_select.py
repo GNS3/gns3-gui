@@ -19,7 +19,7 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtWidgets, QtGui
 from gns3.local_config import LocalConfig
 from gns3.ui.profile_select_dialog_ui import Ui_ProfileSelectDialog
 from gns3.version import __version_info__
@@ -46,7 +46,7 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
         self.uiDeletePushButton.clicked.connect(self._deletePushButtonSlot)
 
         # Center on screen
-        screen = QtWidgets.QApplication.desktop().screenGeometry()
+        screen = QtGui.QGuiApplication.primaryScreen().geometry()
         self.move(screen.center() - self.rect().center())
 
         version = "{}.{}".format(__version_info__[0], __version_info__[1])
