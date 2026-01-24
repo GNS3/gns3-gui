@@ -118,14 +118,14 @@ class NodesView(QtWidgets.QTreeWidget):
             display_templates.add(template.name())
             item = QtWidgets.QTreeWidgetItem(self)
             item.setText(0, template.name())
-            item.setData(0, QtCore.Qt.UserRole, template.id())
-            item.setData(1, QtCore.Qt.UserRole, "template")
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, template.id())
+            item.setData(1, QtCore.Qt.ItemDataRole.UserRole, "template")
             item.setSizeHint(0, QtCore.QSize(32, 32))
             Controller.instance().getSymbolIcon(template.symbol(),
                                                 qpartial(self._setItemIcon, item),
                                                 fallback=":/symbols/{}.svg".format(template.category()))
 
-        self.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
 
     def _setItemIcon(self, item, icon):
         if not sip.isdeleted(item):
@@ -158,7 +158,7 @@ class NodesView(QtWidgets.QTreeWidget):
 
         item = self.itemAt(event.pos())
         if item:
-            template = TemplateManager.instance().getTemplate(item.data(0, QtCore.Qt.UserRole))
+            template = TemplateManager.instance().getTemplate(item.data(0, QtCore.Qt.ItemDataRole.UserRole))
             if template:
                 configuration_page = TEMPLATE_TYPE_TO_CONFIGURATION_PAGE.get(template.template_type())
                 if not template.builtin() and configuration_page:
@@ -174,55 +174,55 @@ class NodesView(QtWidgets.QTreeWidget):
         """
 
         # Check that an item has been selected and left button clicked
-        if self.currentItem() is not None and event.buttons() == QtCore.Qt.LeftButton:
+        if self.currentItem() is not None and event.buttons() == QtCore.Qt.MouseButton.LeftButton:
             item = self.currentItem()
             icon = item.icon(0)
             mimedata = QtCore.QMimeData()
 
-            assert item.data(1, QtCore.Qt.UserRole) == "template"
-            template_id = item.data(0, QtCore.Qt.UserRole)
+            assert item.data(1, QtCore.Qt.ItemDataRole.UserRole) == "template"
+            template_id = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
 
             mimedata.setData("application/x-gns3-template", template_id.encode())
             drag = QtGui.QDrag(self)
             drag.setMimeData(mimedata)
             drag.setPixmap(icon.pixmap(self.iconSize()))
             drag.setHotSpot(QtCore.QPoint(drag.pixmap().width(), drag.pixmap().height()))
-            drag.exec_(QtCore.Qt.CopyAction)
+            drag.exec(QtCore.Qt.DropAction.CopyAction)
             event.accept()
 
     def _showContextualMenu(self, pos):
 
         menu = QtWidgets.QMenu()
-        refresh_action = QtWidgets.QAction("Refresh templates", menu)
+        refresh_action = QtGui.QAction("Refresh templates", menu)
         refresh_action.setIcon(get_icon("reload.svg"))
         refresh_action.triggered.connect(self.refresh)
         menu.addAction(refresh_action)
 
         item = self.currentItem()
         if item:
-            template = TemplateManager.instance().getTemplate(item.data(0, QtCore.Qt.UserRole))
+            template = TemplateManager.instance().getTemplate(item.data(0, QtCore.Qt.ItemDataRole.UserRole))
             if not template:
                 return
 
             configuration_page = TEMPLATE_TYPE_TO_CONFIGURATION_PAGE.get(template.template_type())
             if not template.builtin() and configuration_page:
-                configure_action = QtWidgets.QAction("Configure template", menu)
+                configure_action = QtGui.QAction("Configure template", menu)
                 configure_action.setIcon(get_icon("configuration.svg"))
                 configure_action.triggered.connect(qpartial(self._configurationSlot, template, configuration_page))
                 menu.addAction(configure_action)
 
-                delete_action = QtWidgets.QAction("Delete template", menu)
+                delete_action = QtGui.QAction("Delete template", menu)
                 delete_action.setIcon(get_icon("delete.svg"))
                 delete_action.triggered.connect(qpartial(self._deleteSlot, template))
                 menu.addAction(delete_action)
 
-        menu.exec_(pos)
+        menu.exec(pos)
 
     def _configurationSlot(self, template, configuration_page, source=None):
 
         dialog = ConfigurationDialog(template.name(), template.settings(), configuration_page(), parent=self)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             TemplateManager.instance().updateTemplate(template)
 
     def _deleteSlot(self, template, source=None):
@@ -240,7 +240,7 @@ class NodesView(QtWidgets.QTreeWidget):
         msgbox.addButton(abort_button, QtWidgets.QMessageBox.RejectRole)
         msgbox.setDefaultButton(abort_button)
         msgbox.setIcon(QtWidgets.QMessageBox.Question)
-        msgbox.exec_()
+        msgbox.exec()
 
         if msgbox.clickedButton() == delete_template_only_button:
             TemplateManager.instance().deleteTemplate(template.id())

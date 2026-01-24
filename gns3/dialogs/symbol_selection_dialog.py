@@ -50,16 +50,16 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         self.setupUi(self)
 
         self._items = items
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).clicked.connect(self._applyPreferencesSlot)
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
         self.uiCustomSymbolRadioButton.toggled.connect(self._customSymbolToggledSlot)
         self.uiBuiltInSymbolRadioButton.toggled.connect(self._builtInSymbolToggledSlot)
         self.uiSearchLineEdit.textChanged.connect(self._searchTextChangedSlot)
         if not SymbolSelectionDialog._symbols_dir:
-            SymbolSelectionDialog._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
+            SymbolSelectionDialog._symbols_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.PicturesLocation)
 
         if not self._items:
-            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).hide()
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).hide()
 
         self.uiBuiltInSymbolRadioButton.setChecked(True)
         self.uiSymbolTreeWidget.setFocus()
@@ -85,14 +85,14 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                 font = parent.font(0)
                 font.setBold(True)
                 parent.setFont(0, font)
-                parent.setFlags(parent.flags() & ~QtCore.Qt.ItemIsSelectable)
+                parent.setFlags(parent.flags() & ~QtCore.Qt.ItemFlag.ItemIsSelectable)
                 self._parents[theme] = parent
             else:
                 parent = self._parents[theme]
 
             name = os.path.splitext(symbol.filename())[0]
             item = QtWidgets.QTreeWidgetItem(parent)
-            item.setData(0, QtCore.Qt.UserRole, symbol)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, symbol)
             item.setToolTip(0, symbol.id())
             self._symbol_items.append(item)
             item.setText(0, name)
@@ -101,7 +101,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
                 if sip_is_deleted(item):
                     return
                 svg_renderer = QImageSvgRenderer(path)
-                image = QtGui.QImage(64, 64, QtGui.QImage.Format_ARGB32)
+                image = QtGui.QImage(64, 64, QtGui.QImage.Format.Format_ARGB32)
                 # Set the ARGB to 0 to prevent rendering artifacts
                 image.fill(0x00000000)
                 svg_renderer.render(QtGui.QPainter(image))
@@ -111,7 +111,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
             Controller.instance().getStatic(symbol.url(), qpartial(render, item))
 
         for parent in self._parents.values():
-            parent.sortChildren(0, QtCore.Qt.AscendingOrder)
+            parent.sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.adjustSize()
 
     def _searchTextChangedSlot(self, text):
@@ -123,7 +123,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         """
         text = self.uiSearchLineEdit.text()
         for item in self._symbol_items:
-            # if not item.data(0, QtCore.Qt.UserRole).builtin():
+            # if not item.data(0, QtCore.Qt.ItemDataRole.UserRole).builtin():
             #     item.setHidden(True)
             # else:
             if not text.strip() or text.strip().lower() in item.text(0).lower():
@@ -176,7 +176,7 @@ class SymbolSelectionDialog(QtWidgets.QDialog, Ui_SymbolSelectionDialog):
         if self.uiSymbolTreeWidget.isEnabled():
             current = self.uiSymbolTreeWidget.currentItem()
             if current and current.parent():
-                return current.data(0, QtCore.Qt.UserRole).id()
+                return current.data(0, QtCore.Qt.ItemDataRole.UserRole).id()
         else:
             return os.path.basename(self.uiSymbolLineEdit.text())
         return None

@@ -44,7 +44,7 @@ class ShapeItem(DrawingItem):
 
         if svg is None:
             self.setRect(0, 0, width, height)
-            pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+            pen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 2, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
             self.setPen(pen)
             brush = QtGui.QBrush(QtGui.QColor(255, 255, 255, 255))  # default color is white and not transparent
             self.setBrush(brush)
@@ -61,21 +61,21 @@ class ShapeItem(DrawingItem):
         """
 
         self.update()
-        self._originally_movable = self.flags() & QtWidgets.QGraphicsItem.ItemIsMovable
+        self._originally_movable = bool(self.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
         if event.pos().x() > (self.rect().right() - self._border):
-            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
             self._edge = "right"
 
         elif event.pos().x() < (self.rect().left() + self._border):
-            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
             self._edge = "left"
 
         elif event.pos().y() < (self.rect().top() + self._border):
-            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
             self._edge = "top"
 
         elif event.pos().y() > (self.rect().bottom() - self._border):
-            self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
             self._edge = "bottom"
         QtWidgets.QGraphicsItem.mousePressEvent(self, event)
 
@@ -87,7 +87,7 @@ class ShapeItem(DrawingItem):
         """
 
         self.update()
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, self._originally_movable)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, self._originally_movable)
         self._edge = None
         QtWidgets.QGraphicsItem.mouseReleaseEvent(self, event)
 
@@ -150,15 +150,15 @@ class ShapeItem(DrawingItem):
         # locked objects don't need cursors
         if not self.locked():
             if event.pos().x() > (self.rect().right() - self._border):
-                self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
+                self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeHorCursor)
             elif event.pos().x() < (self.rect().left() + self._border):
-                self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
+                self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeHorCursor)
             elif event.pos().y() < (self.rect().top() + self._border):
-                self._graphics_view.setCursor(QtCore.Qt.SizeVerCursor)
+                self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeVerCursor)
             elif event.pos().y() > (self.rect().bottom() - self._border):
-                self._graphics_view.setCursor(QtCore.Qt.SizeVerCursor)
+                self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeVerCursor)
             else:
-                self._graphics_view.setCursor(QtCore.Qt.SizeAllCursor)
+                self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeAllCursor)
 
     def hoverLeaveEvent(self, event):
         """
@@ -169,7 +169,7 @@ class ShapeItem(DrawingItem):
 
         # locked objects don't need cursors
         if not self.locked():
-            self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
+            self._graphics_view.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
     def setWidthAndHeight(self, width, height):
         self.setRect(0, 0, width, height)
@@ -184,7 +184,7 @@ class ShapeItem(DrawingItem):
         self.setRect(0, 0, width, height)
 
         pen = QtGui.QPen()
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+        brush = QtGui.QBrush(QtCore.Qt.BrushStyle.SolidPattern)
 
         if len(svg):
             pen = self._penFromSVGElement(svg[0])

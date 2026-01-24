@@ -38,7 +38,7 @@ class EthernetSwitchWizard(VMWizard, Ui_EthernetSwitchWizard):
 
         super().__init__(ethernet_switches, parent)
 
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/ethernet_switch.svg"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/ethernet_switch.svg"))
         self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)
 
     def getSettings(self):

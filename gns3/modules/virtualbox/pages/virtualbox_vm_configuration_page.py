@@ -74,7 +74,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
         symbol_path = self.uiSymbolLineEdit.text()
         dialog = SymbolSelectionDialog(self, symbol=symbol_path)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             new_symbol_path = dialog.getSymbol()
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
@@ -105,7 +105,7 @@ class VirtualBoxVMConfigurationPage(QtWidgets.QWidget, Ui_virtualBoxVMConfigPage
 
         dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, default_adapter, self._adapter_types, parent=self)
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     def loadSettings(self, settings, node=None, group=False):
         """

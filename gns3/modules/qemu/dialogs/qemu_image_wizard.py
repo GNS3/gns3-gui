@@ -40,7 +40,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
 
         self._node_or_server = node_or_server
         self.setupUi(self)
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/qemu_guest.svg"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/qemu_guest.svg"))
 
         # Initialize "constants"
         self._mappings = {
@@ -128,7 +128,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
             if not '<default>' == refcount_bits:
                 options["refcount_bits"] = int(refcount_bits)
 
-            options["lazy_refcounts"] = 'on' if QtCore.Qt.Checked == self.uiLazyRefcountsCheckBox.checkState() else 'off'
+            options["lazy_refcounts"] = 'on' if QtCore.Qt.CheckState.Checked == self.uiLazyRefcountsCheckBox.checkState() else 'off'
 
         elif selected_format == self.uiFormatVhdRadio:
             size_mode = self.uiVhdSizeModeRadios.checkedButton()
@@ -145,7 +145,7 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
                 options["static"] = 'on' if size_mode == self.uiVhdFileSizeModeFixedRadio else 'off'
 
         elif selected_format == self.uiFormatVmdkRadio:
-            options["zeroed_grain"] = 'on' if QtCore.Qt.Checked == self.uiVmdkZeroedGrainCheckBox.checkState() else 'off'
+            options["zeroed_grain"] = 'on' if QtCore.Qt.CheckState.Checked == self.uiVmdkZeroedGrainCheckBox.checkState() else 'off'
 
             adapter_type = self.uiVmdkAdapterRadios.checkedButton()
             if adapter_type is not None:
@@ -158,10 +158,10 @@ class QemuImageWizard(QtWidgets.QWizard, Ui_QemuImageWizard):
                 options['adapter_type'] = adapter_type_mappings[adapter_type]
 
             stream_optimized = self.uiVmdkStreamOptimizedCheckBox.checkState()
-            if QtCore.Qt.Checked == stream_optimized:
+            if QtCore.Qt.CheckState.Checked == stream_optimized:
                 options['subformat'] = 'streamOptimized'
             else:
-                two = 'twoGbMaxExtent' if QtCore.Qt.Checked == self.uiVmdkSplit2gCheckBox.checkState() else 'monolithic'
+                two = 'twoGbMaxExtent' if QtCore.Qt.CheckState.Checked == self.uiVmdkSplit2gCheckBox.checkState() else 'monolithic'
                 size_mode = self.uiVmdkSizeModeRadios.checkedButton()
                 if size_mode is not None or two == 'twoGbMaxExtent':
                     if size_mode is None:

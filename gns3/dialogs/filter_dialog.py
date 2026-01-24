@@ -38,9 +38,9 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
         self._link.listAvailableFilters(self._listAvailableFiltersCallback)
         self._initialized = False
         self._filter_items = {}
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).clicked.connect(self._helpSlot)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).clicked.connect(self._resetSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Help).clicked.connect(self._helpSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Reset).clicked.connect(self._resetSlot)
 
     def _listAvailableFiltersCallback(self, result, error=False, *args, **kwargs):
         if error:
@@ -91,7 +91,7 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                     spinBox.setMinimum(param["minimum"])
                     spinBox.setMaximum(param["maximum"])
 
-                    sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+                    sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
                     sizePolicy.setHorizontalStretch(0)
                     sizePolicy.setVerticalStretch(0)
                     sizePolicy.setHeightForWidth(spinBox.sizePolicy().hasHeightForWidth())
@@ -112,7 +112,7 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
                     textEdit = QtWidgets.QTextEdit()
                     textEdit.setAcceptRichText(False)
                     filter["textEdits"].append(textEdit)
-                    sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+                    sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
                     sizePolicy.setHorizontalStretch(0)
                     sizePolicy.setVerticalStretch(0)
                     textEdit.setMinimumWidth(300)
@@ -128,7 +128,7 @@ class FilterDialog(QtWidgets.QDialog, Ui_FilterDialog):
 
                 line += 1
 
-            spacerItem = QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+            spacerItem = QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
             gridLayout.addItem(spacerItem, line, 0, 1, 1)
             vlayout.addLayout(gridLayout)
             tab.setLayout(vlayout)

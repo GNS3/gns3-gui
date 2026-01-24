@@ -85,7 +85,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         self.uiDecompressIOSPushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             ios_router = self._ios_routers[key]
             self._refreshInfo(ios_router)
         else:
@@ -99,7 +99,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
 
         wizard = IOSRouterWizard(self._ios_routers, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
 
             ios_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=ios_settings["compute_id"], name=ios_settings["name"])
@@ -127,7 +127,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, self._ios_routers[key]["name"])
             Controller.instance().getSymbolIcon(self._ios_routers[key]["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiIOSRoutersTreeWidget.setCurrentItem(item)
 
@@ -138,9 +138,9 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
 
         item = self.uiIOSRoutersTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             copied_ios_router_settings = copy.deepcopy(self._ios_routers[key])
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOS router template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_ios_router_settings["name"]))
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOS router template", "Template name:", QtWidgets.QLineEdit.EchoMode.Normal, "Copy of {}".format(copied_ios_router_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_ios_router_settings["compute_id"], name=new_name)
                 if key in self._ios_routers:
@@ -154,7 +154,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
                 item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
                 item.setText(0, self._ios_routers[key]["name"])
                 Controller.instance().getSymbolIcon(self._ios_routers[key]["symbol"], qpartial(self._setItemIcon, item))
-                item.setData(0, QtCore.Qt.UserRole, key)
+                item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
                 self._items.append(item)
                 self.uiIOSRoutersTreeWidget.setCurrentItem(item)
 
@@ -165,11 +165,11 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
 
         item = self.uiIOSRoutersTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             ios_router = self._ios_routers[key]
             dialog = ConfigurationDialog(ios_router["name"], ios_router, IOSRouterConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(self._ios_routers[key]["symbol"], qpartial(self._setItemIcon, item))
 
@@ -184,7 +184,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
                     self._ios_routers[new_key] = self._ios_routers[key]
                     del self._ios_routers[key]
                     item.setText(0, ios_router["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
 
                 self._refreshInfo(ios_router)
 
@@ -195,7 +195,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
 
         for item in self.uiIOSRoutersTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
 
                 del self._ios_routers[key]
                 self.uiIOSRoutersTreeWidget.takeTopLevelItem(self.uiIOSRoutersTreeWidget.indexOfTopLevelItem(item))
@@ -272,8 +272,8 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
         except (OSError, ValueError):
             pass  # ignore errors if we cannot find out the IOS image is compressed.
         if compressed:
-            reply = QtWidgets.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
+            reply = QtWidgets.QMessageBox.question(parent, "IOS image", "Would you like to decompress this IOS image?", QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                 decompressed_image_path = os.path.join(cls.getImageDirectory(), os.path.basename(os.path.splitext(path)[0] + ".image"))
                 worker = DecompressIOSWorker(path, decompressed_image_path)
                 progress_dialog = ProgressDialog(worker,
@@ -281,7 +281,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
                                                  "Decompressing IOS image {}...".format(os.path.basename(path)),
                                                  "Cancel", busy=True, parent=parent)
                 progress_dialog.show()
-                if progress_dialog.exec_() is not False:
+                if progress_dialog.exec() is not False:
                     path = decompressed_image_path
 
         path = ImageManager.instance().askCopyUploadImage(parent, path, server, "DYNAMIPS")
@@ -321,7 +321,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
 
         item = self.uiIOSRoutersTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             ios_router = self._ios_routers[key]
             path = ios_router["image"]
             if not os.path.isabs(path):
@@ -355,7 +355,7 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
                                              "Decompressing IOS image {}...".format(path),
                                              "Cancel", busy=True, parent=self)
             progress_dialog.show()
-            if progress_dialog.exec_() is not False:
+            if progress_dialog.exec() is not False:
                 ios_router["image"] = decompressed_image_path
                 self._refreshInfo(ios_router)
 
@@ -467,12 +467,12 @@ class IOSRouterPreferencesPage(QtWidgets.QWidget, Ui_IOSRouterPreferencesPageWid
             item = QtWidgets.QTreeWidgetItem(self.uiIOSRoutersTreeWidget)
             item.setText(0, ios_router["name"])
             Controller.instance().getSymbolIcon(ios_router["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiIOSRoutersTreeWidget.setCurrentItem(self._items[0])
-            self.uiIOSRoutersTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiIOSRoutersTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiIOSRoutersTreeWidget.setMaximumWidth(self.uiIOSRoutersTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):

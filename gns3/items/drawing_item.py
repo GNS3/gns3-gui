@@ -27,12 +27,12 @@ log = logging.getLogger(__name__)
 class DrawingItem:
     # Map QT stroke to SVG style
     QT_DASH_TO_SVG = {
-        QtCore.Qt.SolidLine: "none",
-        QtCore.Qt.NoPen: None,
-        QtCore.Qt.DashLine: "25, 25",
-        QtCore.Qt.DotLine: "5, 25",
-        QtCore.Qt.DashDotLine: "5, 25, 25",
-        QtCore.Qt.DashDotDotLine: "25, 25, 5, 25, 5"
+        QtCore.Qt.PenStyle.SolidLine: "none",
+        QtCore.Qt.PenStyle.NoPen: None,
+        QtCore.Qt.PenStyle.DashLine: "25, 25",
+        QtCore.Qt.PenStyle.DotLine: "5, 25",
+        QtCore.Qt.PenStyle.DashDotLine: "5, 25, 25",
+        QtCore.Qt.PenStyle.DashDotDotLine: "25, 25, 5, 25, 5"
     }
 
     show_layer = False
@@ -48,7 +48,7 @@ class DrawingItem:
         self._locked = locked
         if self._id is None:
             self._id = str(uuid.uuid4())
-        self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsFocusable | QtWidgets.QGraphicsItem.ItemIsSelectable | QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
+        self.setFlags(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable | QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsFocusable | QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsSelectable | QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges)
 
         from ..main_window import MainWindow
         self._graphics_view = MainWindow.instance().uiGraphicsView
@@ -57,7 +57,7 @@ class DrawingItem:
         self._project = project
 
         # Store a hash of the SVG to avoid him
-        # to be send if he doesn't change
+        # to be sent if he doesn't change
         self._hash_svg = None
 
         if pos:
@@ -108,7 +108,7 @@ class DrawingItem:
         if error:
             log.error("Error while updating drawing: {}".format(result["message"]))
             return False
-        self.setPos(QtCore.QPoint(result["x"], result["y"]))
+        self.setPos(QtCore.QPointF(result["x"], result["y"]))
         self.setZValue(result["z"])
         self.setLocked(result["locked"])
         self.setRotation(result["rotation"])
@@ -124,19 +124,19 @@ class DrawingItem:
         """
         key = event.key()
         modifiers = event.modifiers()
-        if key in (QtCore.Qt.Key_P, QtCore.Qt.Key_Plus, QtCore.Qt.Key_Equal) and modifiers & QtCore.Qt.AltModifier \
-                or key == QtCore.Qt.Key_Plus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
+        if key in (QtCore.Qt.Key.Key_P, QtCore.Qt.Key.Key_Plus, QtCore.Qt.Key.Key_Equal) and modifiers & QtCore.Qt.KeyboardModifier.AltModifier \
+                or key == QtCore.Qt.Key.Key_Plus and modifiers & QtCore.Qt.KeyboardModifier.AltModifier and modifiers & QtCore.Qt.KeyboardModifier.KeypadModifier:
             if self.rotation() == 0:
                 self.setRotation(359)
             else:
                 self.setRotation(self.rotation() - 1)
             return True
-        elif key in (QtCore.Qt.Key_M, QtCore.Qt.Key_Minus) and modifiers & QtCore.Qt.AltModifier \
-                or key == QtCore.Qt.Key_Minus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
+        elif key in (QtCore.Qt.Key.Key_M, QtCore.Qt.Key.Key_Minus) and modifiers & QtCore.Qt.KeyboardModifier.AltModifier \
+                or key == QtCore.Qt.Key.Key_Minus and modifiers & QtCore.Qt.KeyboardModifier.AltModifier and modifiers & QtCore.Qt.KeyboardModifier.KeypadModifier:
             if self.rotation() < 360.0:
                 self.setRotation(self.rotation() + 1)
                 return True
-        elif modifiers & QtCore.Qt.AltModifier:
+        elif modifiers & QtCore.Qt.KeyboardModifier.AltModifier:
             self._allow_snap_to_grid = False
             return True
         return False
@@ -191,9 +191,9 @@ class DrawingItem:
         """
 
         if locked is True:
-            self.setFlag(self.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
         else:
-            self.setFlag(self.ItemIsMovable, True)
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
         self._locked = locked
 
     def deleting(self):
@@ -226,13 +226,13 @@ class DrawingItem:
 
     def itemChange(self, change, value):
 
-        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked() \
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked() \
                 and self._allow_snap_to_grid:
             grid_size = self._graphics_view.drawingGridSize()
             value.setX(grid_size * round(value.x() / grid_size))
             value.setY(grid_size * round(value.y() / grid_size))
 
-        if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemSelectedChange:
             if not value:
                 self.updateDrawing()
         return QtWidgets.QGraphicsItem.itemChange(self, change, value)
@@ -256,10 +256,10 @@ class DrawingItem:
             return
 
         center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
-        painter.setBrush(QtCore.Qt.red)
-        painter.setPen(QtCore.Qt.red)
+        painter.setBrush(QtCore.Qt.GlobalColor.red)
+        painter.setPen(QtCore.Qt.GlobalColor.red)
         painter.drawRect(QtCore.QRectF((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20))
-        painter.setPen(QtCore.Qt.black)
+        painter.setPen(QtCore.Qt.GlobalColor.black)
         zval = str(int(self.zValue()))
         painter.drawText(QtCore.QPointF(center.x() - 4, center.y() + 4), zval)
 
@@ -298,9 +298,9 @@ class DrawingItem:
             pen.setColor(colorFromSvg(svg.get("stroke")))
         # Map SVG stroke style (border of the element to the Qt version)
         if not svg.get("stroke"):
-            pen.setStyle(QtCore.Qt.NoPen)
+            pen.setStyle(QtCore.Qt.PenStyle.NoPen)
         else:
-            pen.setStyle(QtCore.Qt.SolidLine)
+            pen.setStyle(QtCore.Qt.PenStyle.SolidLine)
             stroke = svg.get("stroke-dasharray")
             if stroke:
                 for (qt_stroke, svg_stroke) in self.QT_DASH_TO_SVG.items():

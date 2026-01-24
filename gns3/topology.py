@@ -192,7 +192,7 @@ class Topology(QtCore.QObject):
             if len(missing) > 0:
                 dialog = ProjectWelcomeDialog(self._main_window, self.project())
                 dialog.show()
-                dialog.exec_()
+                dialog.exec()
 
         settings = LocalConfig.instance().loadSectionSettings("MainWindow", GENERAL_SETTINGS)
         if settings["auto_open_readme"]:
@@ -276,7 +276,7 @@ class Topology(QtCore.QObject):
 
         dialog = ShowReadmeDialog(self.project(), "README.txt", parent=self._main_window)
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     def _projectCreationErrorSlot(self, message):
         if self._project:
@@ -290,20 +290,20 @@ class Topology(QtCore.QObject):
             return
         export_wizard = ExportProjectWizard(self.project(), parent=self._main_window)
         export_wizard.show()
-        export_wizard.exec_()
+        export_wizard.exec()
 
     def importProject(self, project_file):
         from .dialogs.project_dialog import ProjectDialog
         dialog = ProjectDialog(self._main_window, default_project_name=os.path.basename(project_file).split(".")[0], show_open_options=False)
         dialog.show()
-        if not dialog.exec_():
+        if not dialog.exec():
             return
 
         import_worker = ImportProjectWorker(project_file, name=dialog.getProjectSettings()["project_name"])
         import_worker.imported.connect(self._projectImportedSlot)
         progress_dialog = ProgressDialog(import_worker, "Importing project", "Importing project files...", "Cancel", parent=self._main_window, create_thread=False)
         progress_dialog.show()
-        progress_dialog.exec_()
+        progress_dialog.exec()
 
     def saveProjectAs(self):
         project = self._project
@@ -313,7 +313,7 @@ class Topology(QtCore.QObject):
         from .dialogs.project_dialog import ProjectDialog
         dialog = ProjectDialog(self._main_window, default_project_name=project.name(), show_open_options=False)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             project.duplicate(
                 name=dialog.getProjectSettings()["project_name"],
                 path=dialog.getProjectSettings().get("project_files_dir"),  # None when using remote controller

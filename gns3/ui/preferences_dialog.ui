@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>680</width>
-    <height>517</height>
+    <width>900</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,13 +28,6 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
       </property>
       <property name="focusPolicy">
        <enum>Qt::ClickFocus</enum>
@@ -64,7 +57,6 @@
          <property name="font">
           <font>
            <pointsize>14</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
            <underline>false</underline>
           </font>
@@ -87,8 +79,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>269</width>
-            <height>457</height>
+            <width>433</width>
+            <height>538</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">

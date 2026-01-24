@@ -36,9 +36,9 @@ class WaitForLambdaWorker(QtCore.QObject):
     :param lambda_runner: lambda to execute in background
     """
 
-    error = QtCore.pyqtSignal(str, bool)
-    finished = QtCore.pyqtSignal()
-    updated = QtCore.pyqtSignal(int)
+    error = QtCore.Signal(str, bool)
+    finished = QtCore.Signal()
+    updated = QtCore.Signal(int)
 
     def __init__(self, lambda_runner, allowed_exceptions=[]):
         """

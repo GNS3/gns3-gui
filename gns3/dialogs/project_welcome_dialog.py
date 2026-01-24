@@ -35,7 +35,7 @@ class ProjectWelcomeDialog(QtWidgets.QDialog, Ui_ProjectWelcomeDialog):
         self._project = project
         self.setupUi(self)
         self.uiOkButton.clicked.connect(self._okButtonClickedSlot)
-        self.gridLayout.setAlignment(QtCore.Qt.AlignTop)
+        self.gridLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.label.setOpenExternalLinks(True)
         self._variables = self._getVariables(project)
         self._loadReadme()
@@ -76,9 +76,9 @@ class ProjectWelcomeDialog(QtWidgets.QDialog, Ui_ProjectWelcomeDialog):
             reply = QtWidgets.QMessageBox.warning(self,
                                                   "Missing values",
                                                   "Are you sure you want to continue without providing missing values?",
-                                                  QtWidgets.QMessageBox.Yes,
-                                                  QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.No:
+                                                  QtWidgets.QMessageBox.StandardButton.Yes,
+                                                  QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.No:
                 return
 
         self._project.setVariables(self._variables)

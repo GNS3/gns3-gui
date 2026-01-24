@@ -54,14 +54,14 @@ class EthernetLinkItem(LinkItem):
 
         try:
             if self._hovered:
-                self.setPen(QtGui.QPen(QtCore.Qt.red, self._link._link_style["width"] + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+                self.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.red, self._link._link_style["width"] + 1, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin))
             else:
-                self.setPen(QtGui.QPen(QtGui.QColor(self._link._link_style["color"]), self._link._link_style["width"], self._link._link_style["type"], QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+                self.setPen(QtGui.QPen(QtGui.QColor(self._link._link_style["color"]), self._link._link_style["width"], self._link._link_style["type"], QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin))
         except:
             if self._hovered:
-                self.setPen(QtGui.QPen(QtCore.Qt.red, self._pen_width + 1, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+                self.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.red, self._pen_width + 1, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin))
             else:
-                self.setPen(QtGui.QPen(QtGui.QColor("#000000"), self._pen_width, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+                self.setPen(QtGui.QPen(QtGui.QColor("#000000"), self._pen_width, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin))
 
         # draw a line between nodes
         path = QtGui.QPainterPath(self.source)
@@ -121,17 +121,17 @@ class EthernetLinkItem(LinkItem):
 
             if self._link.suspended() or self._source_port.status() == Port.suspended:
                 # link or port is suspended
-                color = QtCore.Qt.yellow
-                shape = QtCore.Qt.RoundCap
+                color = QtCore.Qt.GlobalColor.yellow
+                shape = QtCore.Qt.PenCapStyle.RoundCap
             elif self._source_port.status() == Port.started:
                 # port is active
-                color = QtCore.Qt.green
-                shape = QtCore.Qt.RoundCap
+                color = QtCore.Qt.GlobalColor.green
+                shape = QtCore.Qt.PenCapStyle.RoundCap
             else:
-                color = QtCore.Qt.red
-                shape = QtCore.Qt.SquareCap
+                color = QtCore.Qt.GlobalColor.red
+                shape = QtCore.Qt.PenCapStyle.SquareCap
 
-            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, shape, QtCore.Qt.MiterJoin))
+            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.PenStyle.SolidLine, shape, QtCore.Qt.PenJoinStyle.MiterJoin))
             point1 = QtCore.QPointF(self.source + self.edge_offset) + QtCore.QPointF((self.dx * self._source_collision_offset) / self.length, (self.dy * self._source_collision_offset) / self.length)
 
             # avoid any collision of the status point with the source node
@@ -154,27 +154,27 @@ class EthernetLinkItem(LinkItem):
                 self._source_port.setLabel(source_port_label)
 
             if self._draw_port_labels:
-                source_port_label.setFlag(source_port_label.ItemIsMovable, not self._source_item.locked())
+                source_port_label.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, not self._source_item.locked())
                 source_port_label.show()
             else:
                 source_port_label.hide()
 
-            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.NoPen:
+            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.PenStyle.NoPen:
                 painter.drawPoint(point1)
 
             if self._link.suspended() or self._destination_port.status() == Port.suspended:
                 # link or port is suspended
-                color = QtCore.Qt.yellow
-                shape = QtCore.Qt.RoundCap
+                color = QtCore.Qt.GlobalColor.yellow
+                shape = QtCore.Qt.PenCapStyle.RoundCap
             elif self._destination_port.status() == Port.started:
                 # port is active
-                color = QtCore.Qt.green
-                shape = QtCore.Qt.RoundCap
+                color = QtCore.Qt.GlobalColor.green
+                shape = QtCore.Qt.PenCapStyle.RoundCap
             else:
-                color = QtCore.Qt.red
-                shape = QtCore.Qt.SquareCap
+                color = QtCore.Qt.GlobalColor.red
+                shape = QtCore.Qt.PenCapStyle.SquareCap
 
-            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.SolidLine, shape, QtCore.Qt.MiterJoin))
+            painter.setPen(QtGui.QPen(color, self._point_size, QtCore.Qt.PenStyle.SolidLine, shape, QtCore.Qt.PenJoinStyle.MiterJoin))
             point2 = QtCore.QPointF(self.destination - self.edge_offset) - QtCore.QPointF((self.dx * self._destination_collision_offset) / self.length, (self.dy * self._destination_collision_offset) / self.length)
 
             # avoid any collision of the status point with the destination node
@@ -197,12 +197,12 @@ class EthernetLinkItem(LinkItem):
                 self._destination_port.setLabel(destination_port_label)
 
             if self._draw_port_labels:
-                destination_port_label.setFlag(destination_port_label.ItemIsMovable, not self._destination_item.locked())
+                destination_port_label.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, not self._destination_item.locked())
                 destination_port_label.show()
             else:
                 destination_port_label.hide()
 
-            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.NoPen:
+            if self._settings["draw_link_status_points"] and self.pen().style() != QtCore.Qt.PenStyle.NoPen:
                 painter.drawPoint(point2)
 
         self._drawSymbol()

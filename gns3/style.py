@@ -38,8 +38,8 @@ class Style:
     def _getStyleIcon(self, normal_file, active_file):
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(normal_file), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(active_file), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(normal_file), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap(active_file), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
         return icon
 
     def setLegacyStyle(self):
@@ -92,10 +92,10 @@ class Style:
 
         # Lock action has 4 different icons
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.On)
+        icon.addPixmap(QtGui.QPixmap(":/icons/lock.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.On)
+        icon.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
         self._mw.uiLockAllAction.setIcon(icon)
 
 
@@ -147,17 +147,17 @@ class Style:
         self._mw.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/classic_icons/browse-all-icons.svg", ":/classic_icons/browse-all-icons-hover.svg"))
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link-cancel.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link-hover.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/add-link-cancel.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.On)
         self._mw.uiAddLinkAction.setIcon(icon)
 
         # Lock action has 4 different icons
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/lock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/classic_icons/unlock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/lock.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.On)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/lock-hover.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.On)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/unlock.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap(":/classic_icons/unlock-hover.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
         self._mw.uiLockAllAction.setIcon(icon)
 
     def setCharcoalStyle(self):
@@ -170,7 +170,7 @@ class Style:
             graphics_view.resetGridColors()
 
         style_file = QtCore.QFile(":/styles/charcoal.css")
-        style_file.open(QtCore.QFile.ReadOnly)
+        style_file.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
         style = QtCore.QTextStream(style_file).readAll()
         if sys.platform.startswith("darwin"):
             style += "QDockWidget::title {text-align: center; background-color: #535353}"
@@ -214,15 +214,15 @@ class Style:
         self._mw.uiBrowseAllDevicesAction.setIcon(self._getStyleIcon(":/charcoal_icons/browse-all-icons.svg", ":/charcoal_icons/browse-all-icons-hover.svg"))
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1-cancel.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1-hover.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/add-link-1-cancel.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.On)
         self._mw.uiAddLinkAction.setIcon(icon)
 
         # Lock action has 4 different icons
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/lock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/unlock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/unlock-hover.svg"), QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/lock.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.On)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/lock-hover.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.On)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/unlock.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/unlock-hover.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
         self._mw.uiLockAllAction.setIcon(icon)

@@ -43,15 +43,15 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         self._items = items
         self.uiColorPushButton.clicked.connect(self._setColorSlot)
         self.uiBorderColorPushButton.clicked.connect(self._setBorderColorSlot)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).clicked.connect(self._applyPreferencesSlot)
 
-        self.uiBorderStyleComboBox.addItem("Solid", QtCore.Qt.SolidLine)
-        self.uiBorderStyleComboBox.addItem("Dash", QtCore.Qt.DashLine)
-        self.uiBorderStyleComboBox.addItem("Dot", QtCore.Qt.DotLine)
-        self.uiBorderStyleComboBox.addItem("Dash Dot", QtCore.Qt.DashDotLine)
-        self.uiBorderStyleComboBox.addItem("Dash Dot Dot", QtCore.Qt.DashDotDotLine)
+        self.uiBorderStyleComboBox.addItem("Solid", QtCore.Qt.PenStyle.SolidLine)
+        self.uiBorderStyleComboBox.addItem("Dash", QtCore.Qt.PenStyle.DashLine)
+        self.uiBorderStyleComboBox.addItem("Dot", QtCore.Qt.PenStyle.DotLine)
+        self.uiBorderStyleComboBox.addItem("Dash Dot", QtCore.Qt.PenStyle.DashDotLine)
+        self.uiBorderStyleComboBox.addItem("Dash Dot Dot", QtCore.Qt.PenStyle.DashDotDotLine)
         if True not in list(map(lambda item: isinstance(item, LineItem), items)):
-            self.uiBorderStyleComboBox.addItem("No border", QtCore.Qt.NoPen)
+            self.uiBorderStyleComboBox.addItem("No border", QtCore.Qt.PenStyle.NoPen)
 
         # use the first item in the list as the model
         first_item = items[0]
@@ -103,7 +103,7 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         Slot to select the filling color.
         """
 
-        color = QtWidgets.QColorDialog.getColor(self._color, self, "Select Color", QtWidgets.QColorDialog.ShowAlphaChannel)
+        color = QtWidgets.QColorDialog.getColor(self._color, self, "Select Color", QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)
         if color.isValid():
             self._color = color
             self.uiColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._color.red(),
@@ -116,7 +116,7 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         Slot to select the border color.
         """
 
-        color = QtWidgets.QColorDialog.getColor(self._border_color, self, "Select Color", QtWidgets.QColorDialog.ShowAlphaChannel)
+        color = QtWidgets.QColorDialog.getColor(self._border_color, self, "Select Color", QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)
         if color.isValid():
             self._border_color = color
             self.uiBorderColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._border_color.red(),
@@ -130,7 +130,7 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         """
 
         border_style = QtCore.Qt.PenStyle(self.uiBorderStyleComboBox.itemData(self.uiBorderStyleComboBox.currentIndex()))
-        pen = QtGui.QPen(self._border_color, self.uiBorderWidthSpinBox.value(), border_style, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+        pen = QtGui.QPen(self._border_color, self.uiBorderWidthSpinBox.value(), border_style, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
         if self._color:
             brush = QtGui.QBrush(self._color)
         else:

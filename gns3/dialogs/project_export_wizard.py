@@ -42,10 +42,10 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
 
         self._project = project
         self._path = None
-        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
+        self.setWizardStyle(QtWidgets.QWizard.WizardStyle.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
-            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
+            self.setOptions(QtWidgets.QWizard.WizardOption.NoDefaultButton)
 
         self.uiCompressionComboBox.addItem("None", "none")
         self.uiCompressionComboBox.addItem("Zip compression (deflate)", "zip")
@@ -88,7 +88,7 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
 
     def _pathBrowserSlot(self):
 
-        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DocumentsLocation)
         if len(directory) == 0:
             directory = LocalServer.instance().localServerSettings()["projects_path"]
 

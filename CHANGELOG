@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.2.56 21/01/2026
+
+* Fixing tab name in MobaXterm
+* PyQt6 migration
+* Add XDG Config Home support
+
 ## 2.2.55 19/11/2025
 
 * Fix SyntaxWarning: invalid escape sequence. Fixes #3760

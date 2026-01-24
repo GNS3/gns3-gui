@@ -41,12 +41,12 @@ class EditProjectDialog(QtWidgets.QDialog, Ui_EditProjectDialog):
         self.uiNodeGridSizeSpinBox.setValue(self._project.nodeGridSize())
         self.uiDrawingGridSizeSpinBox.setValue(self._project.drawingGridSize())
 
-        self.uiGlobalVariablesGrid.setAlignment(QtCore.Qt.AlignTop)
+        self.uiGlobalVariablesGrid.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
 
         self.uiNewVarButton = QtWidgets.QPushButton('Add new variable', self)
-        self.uiNewVarButton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        self.uiNewVarButton.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
         self.uiNewVarButton.clicked.connect(self.onAddNewVariable)
-        self.uiGlobalVariablesGrid.addWidget(self.uiNewVarButton, 0, 3, QtCore.Qt.AlignRight)
+        self.uiGlobalVariablesGrid.addWidget(self.uiNewVarButton, 0, 3, QtCore.Qt.AlignmentFlag.AlignRight)
 
         self._readme_filename = "README.txt"
         self.uiTabWidget.currentChanged.connect(self._previewMarkdownSlot)

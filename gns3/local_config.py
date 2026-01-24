@@ -91,7 +91,12 @@ class LocalConfig(QtCore.QObject):
                 if sys.platform.startswith("win"):
                     old_config_path = os.path.join(os.path.expandvars("%APPDATA%"), "GNS3", filename)
                 else:
-                    old_config_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", filename)
+                    xgd_config_var = "$XDG_CONFIG_HOME"
+                    xdg_config_res = os.path.expandvars(xgd_config_var)
+                    if xdg_config_res  != xgd_config_var:
+                        old_config_path = os.path.join(xdg_config_res, "GNS3", filename)
+                    else:
+                        old_config_path = os.path.join(os.path.expanduser("~"), ".config", "GNS3", filename)
 
                 # TODO: migrate versioned config file from a previous version of GNS3 (for instance 2.2 -> 2.3) + support profiles
                 if os.path.exists(old_config_path):
@@ -141,8 +146,13 @@ class LocalConfig(QtCore.QObject):
             appdata = os.path.expandvars("%APPDATA%")
             path = os.path.join(appdata, "GNS3", version)
         else:
-            home = os.path.expanduser("~")
-            path = os.path.join(home, ".config", "GNS3", version)
+            xgd_config_var = "$XDG_CONFIG_HOME"
+            xdg_config_res = os.path.expandvars(xgd_config_var)
+            if xdg_config_res != xgd_config_var:
+                path = os.path.join(xdg_config_res, "GNS3", version)
+            else:
+                home = os.path.expanduser("~")
+                path = os.path.join(home, ".config", "GNS3", version)
 
         if self._profile is not None:
             path = os.path.join(path, "profiles", self._profile)
@@ -188,7 +198,7 @@ class LocalConfig(QtCore.QObject):
                 QtWidgets.QMessageBox.critical(False, "Version error", error_message)
                 # Exit immediately not clean but we want to avoid any side effect that could corrupt the file
                 QtCore.QTimer.singleShot(0, app.quit)
-                app.exec_()
+                app.exec()
                 sys.exit(1)
 
         if "version" not in self._settings or parse_version(self._settings["version"]) < parse_version("1.4.0alpha1"):
@@ -391,14 +401,6 @@ class LocalConfig(QtCore.QObject):
 
         from gns3.settings import GENERAL_SETTINGS
         return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["experimental_features"]
-
-    def hdpi(self):
-        """
-        :returns: Boolean. True if hdpi is allowed
-        """
-
-        from gns3.settings import GENERAL_SETTINGS
-        return self.loadSectionSettings("MainWindow", GENERAL_SETTINGS)["hdpi"]
 
     def multiProfiles(self):
         """

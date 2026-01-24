@@ -56,7 +56,7 @@ class ProgressDialog(QtWidgets.QProgressDialog):
 
         super().__init__(label_text, cancel_button_text, minimum, maximum, parent)
         self.setModal(True)
-        self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
         self._errors = []
         self.setWindowTitle(title)
         self.canceled.connect(self._canceledSlot)

@@ -48,9 +48,9 @@ class StopLocalServerWorker(QtCore.QObject):
     the server
     """
     # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str, bool)
-    finished = QtCore.pyqtSignal()
-    updated = QtCore.pyqtSignal(int)
+    error = QtCore.Signal(str, bool)
+    finished = QtCore.Signal()
+    updated = QtCore.Signal(int)
 
     def __init__(self, local_server_process):
         super().__init__()
@@ -140,9 +140,9 @@ class LocalServer(QtCore.QObject):
                         self.parent(),
                         "uBridge",
                         "uBridge requires CAP_NET_RAW capability to interact with network interfaces. Set the capability to uBridge? All users on the system will be able to read packet from the network interfaces.",
-                        QtWidgets.QMessageBox.Yes,
-                        QtWidgets.QMessageBox.No)
-                    if proceed == QtWidgets.QMessageBox.Yes:
+                        QtWidgets.QMessageBox.StandardButton.Yes,
+                        QtWidgets.QMessageBox.StandardButton.No)
+                    if proceed == QtWidgets.QMessageBox.StandardButton.Yes:
                         sudo(["setcap", "cap_net_admin,cap_net_raw=ep", path])
             except AttributeError:
                 # Due to a Python bug, os.listxattr could be missing: https://github.com/GNS3/gns3-gui/issues/2010
@@ -159,9 +159,9 @@ class LocalServer(QtCore.QObject):
                         self.parent(),
                         "uBridge",
                         "uBridge requires root permissions to interact with network interfaces. Set root permissions to uBridge? All admin users on the system will be able to read packet from the network interfaces.",
-                        QtWidgets.QMessageBox.Yes,
-                        QtWidgets.QMessageBox.No)
-                    if proceed == QtWidgets.QMessageBox.Yes:
+                        QtWidgets.QMessageBox.StandardButton.Yes,
+                        QtWidgets.QMessageBox.StandardButton.No)
+                    if proceed == QtWidgets.QMessageBox.StandardButton.Yes:
                         from gns3.utils.macos_ubridge_setuid import macos_ubridge_setuid
                         if sys.platform.startswith("darwin") and hasattr(sys, "frozen"):
                             macos_ubridge_setuid()
@@ -311,7 +311,7 @@ class LocalServer(QtCore.QObject):
                                              "Starting local controller {} on port {}...".format(self._settings["host"], self._port),
                                              "Cancel", busy=True, parent=self.parent())
             progress_dialog.show()
-            if not progress_dialog.exec_():
+            if not progress_dialog.exec():
                 return False
         self._server_started_by_me = True
         Controller.instance().connect()
@@ -489,7 +489,7 @@ class LocalServer(QtCore.QObject):
                 worker = StopLocalServerWorker(self._local_server_process)
                 progress_dialog = ProgressDialog(worker, "Local server", "Waiting for the local controller to stop...", None, busy=True, parent=self.parent())
                 progress_dialog.show()
-                progress_dialog.exec_()
+                progress_dialog.exec()
                 if self._local_server_process.returncode is None:
                     self._killLocalServer()
             self._server_started_by_me = False
@@ -512,10 +512,10 @@ class LocalServer(QtCore.QObject):
             proceed = QtWidgets.QMessageBox.question(self.parent(),
                                                      "Local controller",
                                                      "The local controller cannot be stopped, would you like to kill it?",
-                                                     QtWidgets.QMessageBox.Yes,
-                                                     QtWidgets.QMessageBox.No)
+                                                     QtWidgets.QMessageBox.StandardButton.Yes,
+                                                     QtWidgets.QMessageBox.StandardButton.No)
 
-            if proceed == QtWidgets.QMessageBox.Yes:
+            if proceed == QtWidgets.QMessageBox.StandardButton.Yes:
                 self._local_server_process.kill()
 
     @staticmethod

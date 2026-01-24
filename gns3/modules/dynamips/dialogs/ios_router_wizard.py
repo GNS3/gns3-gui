@@ -65,7 +65,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
     def __init__(self, ios_routers, parent):
 
         super().__init__(ios_routers, parent)
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.svg"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/router.svg"))
 
         self.uiTestIOSImagePushButton.clicked.connect(self._testIOSImageSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
@@ -80,8 +80,8 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         # True if we have create a temporary project for computing IDLE PC
         self._project_created = False
 
-        idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]{8})?$")
-        validator = QtGui.QRegExpValidator(idle_pc_rgx, self)
+        idle_pc_rgx = QtCore.QRegularExpression("^(0x[0-9a-fA-F]{8})?$")
+        validator = QtGui.QRegularExpressionValidator(idle_pc_rgx, self)
         self.uiIdlepcLineEdit.setValidator(validator)
         self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
@@ -200,10 +200,10 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         validator = self.uiIdlepcLineEdit.validator()
         text_input = self.uiIdlepcLineEdit.text()
         state = validator.validate(text_input, len(text_input))[0]
-        if state == QtGui.QValidator.Acceptable:
+        if state == QtGui.QValidator.State.Acceptable:
             color = '#A2C964'  # green
             self._idle_valid = True
-        elif state == QtGui.QValidator.Intermediate:
+        elif state == QtGui.QValidator.State.Intermediate:
             color = '#fff79a'  # yellow
             self._idle_valid = False
         else:

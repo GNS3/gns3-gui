@@ -48,8 +48,8 @@ class FileEditorDialog(QtWidgets.QDialog, Ui_FileEditorDialog):
         self.setWindowTitle(target.name() + " " + os.path.basename(path))
 
         self.uiRefreshButton.pressed.connect(self._refreshSlot)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Save).clicked.connect(self._okButtonClickedSlot)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel).clicked.connect(self.reject)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Save).clicked.connect(self._okButtonClickedSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Cancel).clicked.connect(self.reject)
 
         self._refreshSlot()
 

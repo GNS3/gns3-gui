@@ -42,7 +42,7 @@ class FrameRelaySwitchConfigurationPage(QtWidgets.QWidget, Ui_frameRelaySwitchCo
         self.uiMappingTreeWidget.itemSelectionChanged.connect(self._mappingSelectionChangedSlot)
 
         # enable sorting
-        self.uiMappingTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.uiMappingTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.uiMappingTreeWidget.setSortingEnabled(True)
 
     def _mappingSelectedSlot(self, item, column):

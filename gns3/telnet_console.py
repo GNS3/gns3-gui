@@ -72,7 +72,7 @@ def gnome_terminal_env():
 
 class ConsoleThread(QtCore.QThread):
 
-    consoleError = QtCore.pyqtSignal(str)
+    consoleError = QtCore.Signal(str)
 
     def __init__(self, parent, command, node, port):
         super().__init__(parent)

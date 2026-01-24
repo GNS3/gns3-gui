@@ -256,9 +256,9 @@ class ApplianceToTemplate:
         QtCore.QTimer.singleShot(timeout * 1000, progress_dialog.close)
         log.debug("Downloading appliance symbol from '{}'".format(url))
         progress_dialog.show()
-        progress_dialog.exec_()
-        status = reply.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
-        if reply.error() == QtNetwork.QNetworkReply.NoError and status == 200:
+        progress_dialog.exec()
+        status = reply.attribute(QtNetwork.QNetworkRequest.Attribute.HttpStatusCodeAttribute)
+        if reply.error() == QtNetwork.QNetworkReply.NetworkError.NoError and status == 200:
             try:
                 with open(path, 'wb+') as f:
                     f.write(reply.readAll())

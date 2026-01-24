@@ -42,7 +42,7 @@ class LabelItem(QtWidgets.QGraphicsTextItem):
         qt_font.fromString(view_settings["default_label_font"])
         self.setDefaultTextColor(QtGui.QColor(view_settings["default_label_color"]))
         self.setFont(qt_font)
-        self.setFlags(QtWidgets.QGraphicsItem.ItemIsMovable | QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setFlags(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable | QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
         self.setZValue(2)
         self._editable = True
 
@@ -91,12 +91,12 @@ class LabelItem(QtWidgets.QGraphicsTextItem):
 
         key = event.key()
         modifiers = event.modifiers()
-        if key in (QtCore.Qt.Key_P, QtCore.Qt.Key_Plus, QtCore.Qt.Key_Equal) and modifiers & QtCore.Qt.AltModifier \
-                or key == QtCore.Qt.Key_Plus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
+        if key in (QtCore.Qt.Key.Key_P, QtCore.Qt.Key.Key_Plus, QtCore.Qt.Key.Key_Equal) and modifiers & QtCore.Qt.KeyboardModifier.AltModifier \
+                or key == QtCore.Qt.Key.Key_Plus and modifiers & QtCore.Qt.KeyboardModifier.AltModifier and modifiers & QtCore.Qt.KeyboardModifier.KeypadModifier:
             if self.rotation() > -360.0:
                 self.setRotation(self.rotation() - 1)
-        elif key in (QtCore.Qt.Key_M, QtCore.Qt.Key_Minus) and modifiers & QtCore.Qt.AltModifier \
-                or key == QtCore.Qt.Key_Minus and modifiers & QtCore.Qt.AltModifier and modifiers & QtCore.Qt.KeypadModifier:
+        elif key in (QtCore.Qt.Key.Key_M, QtCore.Qt.Key.Key_Minus) and modifiers & QtCore.Qt.KeyboardModifier.AltModifier \
+                or key == QtCore.Qt.Key.Key_Minus and modifiers & QtCore.Qt.KeyboardModifier.AltModifier and modifiers & QtCore.Qt.KeyboardModifier.KeypadModifier:
             if self.rotation() < 360.0:
                 self.setRotation(self.rotation() + 1)
         else:
@@ -107,11 +107,11 @@ class LabelItem(QtWidgets.QGraphicsTextItem):
         Edit mode for this note.
         """
 
-        self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction)
+        self.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextEditorInteraction)
         self.setSelected(True)
         self.setFocus()
         cursor = self.textCursor()
-        cursor.select(QtGui.QTextCursor.Document)
+        cursor.select(QtGui.QTextCursor.SelectionType.Document)
         self.setTextCursor(cursor)
 
     def mouseDoubleClickEvent(self, event):
@@ -131,12 +131,12 @@ class LabelItem(QtWidgets.QGraphicsTextItem):
         :param event: QFocusEvent instance
         """
 
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, False)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsFocusable, False)
         cursor = self.textCursor()
         if cursor.hasSelection():
             cursor.clearSelection()
             self.setTextCursor(cursor)
-        self.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.NoTextInteraction)
         if not self.toPlainText():
             # delete the note if empty
             self.delete()
@@ -163,10 +163,10 @@ class LabelItem(QtWidgets.QGraphicsTextItem):
             return
 
         center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
-        painter.setBrush(QtCore.Qt.red)
-        painter.setPen(QtCore.Qt.red)
+        painter.setBrush(QtCore.Qt.GlobalColor.red)
+        painter.setPen(QtCore.Qt.GlobalColor.red)
         painter.drawRect(QtCore.QRectF((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20))
-        painter.setPen(QtCore.Qt.black)
+        painter.setPen(QtCore.Qt.GlobalColor.black)
         zval = str(int(self.zValue()))
         painter.drawText(QtCore.QPointF(center.x(), center.y()), zval)
 
@@ -213,7 +213,7 @@ class LabelItem(QtWidgets.QGraphicsTextItem):
         :param change: GraphicsItemChange type
         :param value: value of the change
         """
-        if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemSelectedChange:
             if value == 0:
                 self.item_unselected_signal.emit()
         return super().itemChange(change, value)

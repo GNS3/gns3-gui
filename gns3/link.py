@@ -112,12 +112,12 @@ class Link(QtCore.QObject):
                 # We need to stream the pcap file content if the controller or compute is remote
                 if Controller.instance().isRemote() or self._capture_file_path is None:
                     self._capture_file = QtCore.QTemporaryFile()
-                    self._capture_file.open(QtCore.QFile.WriteOnly)
+                    self._capture_file.open(QtCore.QIODeviceBase.OpenModeFlag.WriteOnly)
                     self._capture_file.setAutoRemove(True)
                     self._capture_file_path = self._capture_file.fileName()
                 else:
                     self._capture_file = QtCore.QFile(self._capture_file_path)
-                    self._capture_file.open(QtCore.QFile.WriteOnly)
+                    self._capture_file.open(QtCore.QIODeviceBase.OpenModeFlag.WriteOnly)
 
                 if self._network_manager is None:
                     self._network_manager = QtNetwork.QNetworkAccessManager(self)

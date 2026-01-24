@@ -36,9 +36,9 @@ class DecompressIOSWorker(QtCore.QObject):
     """
 
     # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str, bool)
-    finished = QtCore.pyqtSignal()
-    updated = QtCore.pyqtSignal(int)
+    error = QtCore.Signal(str, bool)
+    finished = QtCore.Signal()
+    updated = QtCore.Signal(int)
 
     def __init__(self, ios_image, destination_file):
 

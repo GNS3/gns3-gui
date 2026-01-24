@@ -21,7 +21,7 @@ Graphical representation of a node on the QGraphicsScene.
 
 from ..qt import sip
 
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot
+from ..qt import QtCore, QtGui, QtWidgets, QtSvgWidgets, qslot
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from .label_item import LabelItem
 from ..symbol import Symbol
@@ -32,7 +32,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class NodeItem(QtSvg.QGraphicsSvgItem):
+class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
 
     """
     Node for the scene.
@@ -60,7 +60,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # node label
         self._node_label = None
 
-        self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
+        self.setPos(QtCore.QPointF(self._node.x(), self._node.y()))
 
         # Temporary symbol during loading
         renderer = QImageSvgRenderer(":/icons/reload.svg")
@@ -74,10 +74,10 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self.graphicsEffect().setEnabled(False)
 
         # set graphical settings for this node
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable)
-        self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsFocusable)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
 
         # update z value and locked state
@@ -223,7 +223,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param base_node_id: base node identifier (integer)
         """
 
-        self.setPos(QtCore.QPoint(self._node.x(), self._node.y()))
+        self.setPos(QtCore.QPointF(self._node.x(), self._node.y()))
         self.setSymbol(self._node.symbol())
         self.update()
 
@@ -384,7 +384,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         self._node_label.setRotation(label_data.get("rotation", 0))
 
         if self._node.locked():
-            self._node_label.setFlag(self.ItemIsMovable, False)
+            self._node_label.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
 
         if label_data["x"] is None:
             self._centerLabel()
@@ -443,7 +443,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         # add some delay before showing the menu
         # https://github.com/GNS3/gns3-gui/issues/3169
         QtCore.QThread.msleep(100)
-        menu.exec_(pos)
+        menu.exec(pos)
         return self._selected_port
 
     def selectedPortSlot(self, action):
@@ -470,7 +470,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param value: value of the change
         """
 
-        if change == QtWidgets.QGraphicsItem.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked() \
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked() \
                 and self._allow_snap_to_grid:
             grid_size = self._main_window.uiGraphicsView.nodeGridSize()
             mid_x = self.boundingRect().width() / 2
@@ -479,7 +479,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
             value.setY((grid_size * round((value.y() + mid_y) / grid_size)) - mid_y)
 
         # dynamically change the renderer when this node item is selected/unselected.
-        if change == QtWidgets.QGraphicsItem.ItemSelectedChange:
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemSelectedChange:
             if value:
                 self.graphicsEffect().setEnabled(True)
             else:
@@ -487,7 +487,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
                 self.updateNode()
 
         # adjust link item positions when this node is moving or has changed.
-        if change == QtWidgets.QGraphicsItem.ItemPositionChange or change == QtWidgets.QGraphicsItem.ItemPositionHasChanged:
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionChange or change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionHasChanged:
             for link in self._links:
                 link.adjust()
 
@@ -504,16 +504,16 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
 
         # don't show the selection rectangle
         if not self._settings["draw_rectangle_selected_item"]:
-            option.state = QtWidgets.QStyle.State_None
+            option.state = QtWidgets.QStyle.StateFlag.State_None
         super().paint(painter, option, widget)
 
         if not self._initialized or self.show_layer:
             brect = self.boundingRect()
             center = self.mapFromItem(self, brect.width() / 2.0, brect.height() / 2.0)
-            painter.setBrush(QtCore.Qt.red)
-            painter.setPen(QtCore.Qt.red)
+            painter.setBrush(QtCore.Qt.GlobalColor.red)
+            painter.setPen(QtCore.Qt.GlobalColor.red)
             painter.drawRect(QtCore.QRectF((brect.width() / 2.0) - 10, (brect.height() / 2.0) - 10, 20, 20))
-            painter.setPen(QtCore.Qt.black)
+            painter.setPen(QtCore.Qt.GlobalColor.black)
             if self.show_layer:
                 text = str(int(self.zValue()))  # Z value
             elif self._last_error:
@@ -540,7 +540,7 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         :param event: QKeyEvent
         """
 
-        if event.modifiers() & QtCore.Qt.AltModifier:
+        if event.modifiers() & QtCore.Qt.KeyboardModifier.AltModifier:
             self._allow_snap_to_grid = False
         else:
             super().keyPressEvent(event)
@@ -566,13 +566,13 @@ class NodeItem(QtSvg.QGraphicsSvgItem):
         """
 
         if locked is True:
-            self.setFlag(self.ItemIsMovable, False)
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
             if self._node_label:
-                self._node_label.setFlag(self.ItemIsMovable, False)
+                self._node_label.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
         else:
-            self.setFlag(self.ItemIsMovable, True)
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
             if self._node_label:
-                self._node_label.setFlag(self.ItemIsMovable, True)
+                self._node_label.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
         for link in self._links:
             link.adjust()
         self._locked = locked

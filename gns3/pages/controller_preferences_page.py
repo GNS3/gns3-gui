@@ -64,7 +64,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
-            if address.protocol() in [QtNetwork.QAbstractSocket.IPv4Protocol, QtNetwork.QAbstractSocket.IPv6Protocol]:
+            if address.protocol() in [QtNetwork.QAbstractSocket.NetworkLayerProtocol.IPv4Protocol, QtNetwork.QAbstractSocket.NetworkLayerProtocol.IPv6Protocol]:
                 address_string = address.toString()
                 if address_string.startswith("169.254") or address_string.startswith("fe80"):
                     # ignore link-local addresses
@@ -153,7 +153,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
 
         dialog = EditComputeDialog(self.parent())
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             self._remote_computes[dialog.compute().id()] = dialog.compute()
             self._populateRemoteServersTree()
 
@@ -175,7 +175,7 @@ class ControllerPreferencesPage(QtWidgets.QWidget, Ui_ControllerPreferencesPageW
         item = self.uiRemoteServersTreeWidget.currentItem()
         dialog = EditComputeDialog(self.parent(), item.compute)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             self._populateRemoteServersTree()
 
     def _connectSlot(self):

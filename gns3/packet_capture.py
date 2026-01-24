@@ -84,7 +84,7 @@ class PacketCapture:
         else:
             ethernet_link = True
         dialog = CaptureDialog(self.parent(), link.capture_file_name(), self.settings()["command_auto_start"], ethernet_link)
-        if dialog.exec_():
+        if dialog.exec():
             self._autostart[link] = dialog.commandAutoStart()
             link.startCapture(dialog.dataLink(), dialog.fileName() + ".pcap")
 

@@ -19,12 +19,12 @@
 Graphical representation of an image on the QGraphicsScene.
 """
 
-from ..qt import QtSvg
+from ..qt import QtSvgWidgets
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from .drawing_item import DrawingItem
 
 
-class ImageItem(QtSvg.QGraphicsSvgItem, DrawingItem):
+class ImageItem(QtSvgWidgets.QGraphicsSvgItem, DrawingItem):
 
     """
     Class to insert an image on the scene.

@@ -43,7 +43,7 @@ def sudo(*commands, parent=None, shell=False):
                 worker = WaitForRunAsWorker(command)
                 progress_dialog = ProgressDialog(worker, "Run as administrator", "Executing command...", "Cancel", busy=True, parent=parent)
                 progress_dialog.show()
-                if not progress_dialog.exec_():
+                if not progress_dialog.exec():
                     return False
         elif sys.platform.startswith("darwin"):
             cmd = []
@@ -58,7 +58,7 @@ def sudo(*commands, parent=None, shell=False):
                 log.info(line)
             progress_dialog = ProgressDialog(worker, "Run as administrator", "Executing command...", "Cancel", busy=True, parent=parent)
             progress_dialog.show()
-            if not progress_dialog.exec_():
+            if not progress_dialog.exec():
                 return False
 
         else:
@@ -70,7 +70,7 @@ def sudo(*commands, parent=None, shell=False):
             password, ok = QtWidgets.QInputDialog.getText(parent,
                                                           "Run as administrator",
                                                           "Please enter your password to proceed.\nCommand:\n{}".format('\n'.join(command_detail)),
-                                                          QtWidgets.QLineEdit.Password, "")
+                                                          QtWidgets.QLineEdit.EchoMode.Password, "")
             if not ok:
                 return False
 
@@ -93,7 +93,7 @@ def sudo(*commands, parent=None, shell=False):
                     log.info(line)
                 progress_dialog = ProgressDialog(worker, "Run as administrator", "Executing command...", "Cancel", busy=True, parent=parent)
                 progress_dialog.show()
-                if not progress_dialog.exec_():
+                if not progress_dialog.exec():
                     return False
         return True
 

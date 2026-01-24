@@ -33,11 +33,11 @@ import logging
 log = logging.getLogger("qt/__init__.py")
 
 try:
-    from PyQt5 import sip
+    from PyQt6 import sip
 except ImportError:
     import sip
 
-from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets
+from PyQt6 import QtCore, QtGui, QtNetwork, QtWidgets
 sys.modules[__name__ + '.QtCore'] = QtCore
 sys.modules[__name__ + '.QtGui'] = QtGui
 sys.modules[__name__ + '.QtNetwork'] = QtNetwork
@@ -45,23 +45,28 @@ sys.modules[__name__ + '.QtWidgets'] = QtWidgets
 sys.modules[__name__ + '.sip'] = sip
 
 try:
-    from PyQt5 import QtSvg
+    from PyQt6 import QtSvg
     sys.modules[__name__ + '.QtSvg'] = QtSvg
 except ImportError:
-    raise SystemExit("Please install the PyQt5.QtSvg module")
+    raise SystemExit("Please install the PyQt6.QtSvg module")
 
 try:
-    from PyQt5 import QtWebSockets
+    from PyQt6 import QtSvgWidgets
+    sys.modules[__name__ + '.QtSvgWidgets'] = QtSvgWidgets
+except ImportError:
+    raise SystemExit("Please install the PyQt6.QtSvgWidgets module")
+
+try:
+    from PyQt6 import QtWebSockets
     sys.modules[__name__ + '.QtWebSockets'] = QtWebSockets
 except ImportError:
-    raise SystemExit("Please install the PyQt5.QtWebSockets module")
+    raise SystemExit("Please install the PyQt6.QtWebSockets module")
 
 QtCore.Signal = QtCore.pyqtSignal
 QtCore.Slot = QtCore.pyqtSlot
 QtCore.Property = QtCore.pyqtProperty
 
-from PyQt5.QtWidgets import QFileDialog as OldFileDialog
-from PyQt5.QtNetwork import QNetworkAccessManager
+from PyQt6.QtWidgets import QFileDialog as OldFileDialog
 
 # Do not use system proxy because it could be a parental control, virus or "Security software"...
 QtNetwork.QNetworkProxyFactory.setUseSystemConfiguration(False)
@@ -158,7 +163,6 @@ if hasattr(sys, '_called_from_test'):
                 instance._callbacks = set()
 
     QtCore.Signal = FakeQtSignal
-    QtCore.pyqtSignal = FakeQtSignal
 
 
 def qpartial(func, *args, **kwargs):

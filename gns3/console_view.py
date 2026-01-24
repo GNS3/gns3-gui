@@ -22,7 +22,7 @@ import inspect
 import datetime
 import platform
 
-from .qt import QtCore, QtWidgets
+from .qt import QtCore, QtGui
 from .topology import Topology
 from .version import __version__
 from .console_cmd import ConsoleCmd
@@ -117,10 +117,10 @@ class ConsoleView(PyCutExt, ConsoleCmd):
         """
 
         menu = self.createStandardContextMenu()
-        delete_all_action = QtWidgets.QAction("Delete All", menu)
+        delete_all_action = QtGui.QAction("Delete All", menu)
         delete_all_action.triggered.connect(self._deleteAllActionSlot)
         menu.addAction(delete_all_action)
-        menu.exec_(event.globalPos());
+        menu.exec(event.globalPos())
 
     def _deleteAllActionSlot(self):
         """

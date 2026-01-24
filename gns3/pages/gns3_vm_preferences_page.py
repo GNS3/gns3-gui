@@ -53,7 +53,7 @@ class GNS3VMPreferencesPage(QtWidgets.QWidget, Ui_GNS3VMPreferencesPageWidget):
 
     def _engineChangedSlot(self, index):
         index = self.uiGNS3VMEngineComboBox.currentIndex()
-        engine_id = self.uiGNS3VMEngineComboBox.itemData(index, QtCore.Qt.UserRole)
+        engine_id = self.uiGNS3VMEngineComboBox.itemData(index, QtCore.Qt.ItemDataRole.UserRole)
         for engine in self._engines:
             if engine["engine_id"] == engine_id:
                 break

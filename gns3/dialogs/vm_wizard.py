@@ -40,10 +40,10 @@ class VMWizard(QtWidgets.QWizard):
         self._allow_dynamic_compute_allocation = True
         self._local_server_disable = False
 
-        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
+        self.setWizardStyle(QtWidgets.QWizard.WizardStyle.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
-            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
+            self.setOptions(QtWidgets.QWizard.WizardOption.NoDefaultButton)
 
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
         if hasattr(self, "uiVMRadioButton"):

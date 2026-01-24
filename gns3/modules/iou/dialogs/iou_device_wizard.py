@@ -38,7 +38,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
     def __init__(self, iou_devices, parent):
 
         super().__init__(iou_devices, parent)
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.svg"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.svg"))
 
         self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
 
@@ -81,10 +81,10 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
 
         if image_type == "L2 image":
             #  L2 image
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.svg"))
+            self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.svg"))
         else:
             #  L3 image
-            self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/router.svg"))
+            self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/router.svg"))
 
     def initializePage(self, page_id):
 

@@ -59,7 +59,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
         symbol_path = self.uiSymbolLineEdit.text()
         dialog = SymbolSelectionDialog(self, symbol=symbol_path)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             new_symbol_path = dialog.getSymbol()
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
@@ -91,7 +91,7 @@ class DockerVMConfigurationPage(QtWidgets.QWidget, Ui_dockerVMConfigPageWidget):
 
         dialog = CustomAdaptersConfigurationDialog(ports, self._custom_adapters, "TAP", {"TAP": "Default"}, base_mac_address, parent=self)
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     def loadSettings(self, settings, node=None, group=False):
         """

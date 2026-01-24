@@ -71,10 +71,7 @@ class UpdateManager(QtCore.QObject):
             self._network_manager = QtNetwork.QNetworkAccessManager()
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
         request.setRawHeader(b'User-Agent', b'GNS3 Check For Update')
-        request.setAttribute(QtNetwork.QNetworkRequest.User, user_attribute)
-        if parse_version(QtCore.QT_VERSION_STR) >= parse_version("5.6.0") and parse_version(QtCore.PYQT_VERSION_STR) >= parse_version("5.6.0"):
-            # follow redirects only supported starting with Qt 5.6.0
-            request.setAttribute(QtNetwork.QNetworkRequest.FollowRedirectsAttribute, True)
+        request.setAttribute(QtNetwork.QNetworkRequest.Attribute.User, user_attribute)
         reply = self._network_manager.get(request)
         reply.finished.connect(finished_slot)
         log.debug('Download %s', url)
@@ -102,7 +99,7 @@ class UpdateManager(QtCore.QObject):
         network_reply = self.sender()
         if network_reply is None:
             return
-        if network_reply.error() != QtNetwork.QNetworkReply.NoError:
+        if network_reply.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
             if not self._silent:
                 QtWidgets.QMessageBox.critical(self._parent, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
             return
@@ -118,16 +115,16 @@ class UpdateManager(QtCore.QObject):
             reply = QtWidgets.QMessageBox.question(self._parent,
                                                    "Check For Update",
                                                    "Newer GNS3 version {} is available, do you want to visit our website to download it?".format(latest_release),
-                                                   QtWidgets.QMessageBox.Yes,
-                                                   QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
+                                                   QtWidgets.QMessageBox.StandardButton.Yes,
+                                                   QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                 QtGui.QDesktopServices.openUrl(QtCore.QUrl("http://www.gns3.com/software"))
         elif not self._silent:
             QtWidgets.QMessageBox.information(self._parent, "Check For Update", "GNS3 is up-to-date!")
 
     def _pypiReplySlot(self):
         network_reply = self.sender()
-        if network_reply.error() != QtNetwork.QNetworkReply.NoError:
+        if network_reply.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
             if not self._silent:
                 QtWidgets.QMessageBox.critical(self._parent, "Check For Update", "Cannot check for update: {}".format(network_reply.errorString()))
             return
@@ -144,9 +141,9 @@ class UpdateManager(QtCore.QObject):
             reply = QtWidgets.QMessageBox.question(self._parent,
                                                    "Check For Update",
                                                    "Newer GNS3 version {} is available, do you want to to download it in background and install it at next application launch?".format(last_version),
-                                                   QtWidgets.QMessageBox.Yes,
-                                                   QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
+                                                   QtWidgets.QMessageBox.StandardButton.Yes,
+                                                   QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                 try:
                     self.downloadUpdates(last_version)
                 except OSError as e:
@@ -191,8 +188,8 @@ class UpdateManager(QtCore.QObject):
 
     def _fileDownloadedSlot(self):
         network_reply = self.sender()
-        file_path = network_reply.request().attribute(QtNetwork.QNetworkRequest.User)
-        if network_reply.error() == QtNetwork.QNetworkReply.NoError:
+        file_path = network_reply.request().attribute(QtNetwork.QNetworkRequest.Attribute.User)
+        if network_reply.error() == QtNetwork.QNetworkReply.NetworkError.NoError:
             log.debug('File downloaded %s', file_path)
             with open(file_path, 'wb+') as f:
                 f.write(network_reply.readAll())
@@ -201,9 +198,9 @@ class UpdateManager(QtCore.QObject):
                 reply = QtWidgets.QMessageBox.question(self._parent,
                                                        "Check For Update",
                                                        "GNS3 upgrade downloaded do you want to quit the application?",
-                                                       QtWidgets.QMessageBox.Yes,
-                                                       QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.Yes:
+                                                       QtWidgets.QMessageBox.StandardButton.Yes,
+                                                       QtWidgets.QMessageBox.StandardButton.No)
+                if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                     QtWidgets.QApplication.instance().closeAllWindows()
         else:
             log.debug('Error when downloading %s', file_path)

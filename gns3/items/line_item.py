@@ -44,7 +44,7 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
                              0,
                              dst.x(),
                              dst.y())
-                pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+                pen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 2, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
                 self.setPen(pen)
         else:
             self.fromSvg(svg)
@@ -124,19 +124,19 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
 
             if self._isHorizontalLine():
                 if event.pos().x() > (self.line().x2() - self._border):
-                    self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
+                    self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeHorCursor)
                 elif event.pos().x() < self._border:
-                    self._graphics_view.setCursor(QtCore.Qt.SizeHorCursor)
+                    self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeHorCursor)
                 else:
-                    self._graphics_view.setCursor(QtCore.Qt.SizeAllCursor)
+                    self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeAllCursor)
             # Vertical line
             else:
                 if event.pos().y() > (self.line().y2() - self._border):
-                    self._graphics_view.setCursor(QtCore.Qt.SizeVerCursor)
+                    self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeVerCursor)
                 elif event.pos().y() < self._border:
-                    self._graphics_view.setCursor(QtCore.Qt.SizeVerCursor)
+                    self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeVerCursor)
                 else:
-                    self._graphics_view.setCursor(QtCore.Qt.SizeAllCursor)
+                    self._graphics_view.setCursor(QtCore.Qt.CursorShape.SizeAllCursor)
 
     def mouseMoveEvent(self, event):
         """
@@ -177,17 +177,17 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
         self.update()
         if self._isHorizontalLine():
             if event.pos().x() > (self.line().x2() - self._border):
-                self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+                self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
                 self._edge = "right"
             elif event.pos().x() < (self.line().x1() + self._border):
-                self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+                self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
                 self._edge = "left"
         else:
             if event.pos().y() > (self.line().y2() - self._border):
-                self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+                self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
                 self._edge = "top"
             elif event.pos().y() < (self.line().y1() + self._border):
-                self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, False)
+                self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
                 self._edge = "bottom"
         super().mousePressEvent(event)
 
@@ -199,7 +199,7 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
         """
 
         self.update()
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
 
         self._edge = None
         super().mouseReleaseEvent(event)
@@ -213,4 +213,4 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
 
         # locked objects don't need cursors
         if not self.locked():
-            self._graphics_view.setCursor(QtCore.Qt.ArrowCursor)
+            self._graphics_view.setCursor(QtCore.Qt.CursorShape.ArrowCursor)

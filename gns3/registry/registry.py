@@ -31,7 +31,7 @@ class RegistryError(Exception):
 
 
 class Registry(QtCore.QObject):
-    image_list_changed_signal = QtCore.pyqtSignal()
+    image_list_changed_signal = QtCore.Signal()
 
     def __init__(self, images_dirs):
         """

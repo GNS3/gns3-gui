@@ -379,24 +379,24 @@ class HTTPClient(QtCore.QObject):
             data = QtCore.QByteArray(body.encode())
             body = QtCore.QBuffer(self)
             body.setData(data)
-            body.open(QtCore.QIODevice.ReadOnly)
-            request.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, "application/json")
-            request.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, str(data.size()))
+            body.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+            request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader, "application/json")
+            request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentLengthHeader, str(data.size()))
             #request.setRawHeader(b"Content-Length", str(data.size()).encode())
             return body
         elif isinstance(body, pathlib.Path):
             body = QtCore.QFile(str(body), self)
-            body.open(QtCore.QFile.ReadOnly)
-            request.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, "application/octet-stream")
-            request.setHeader(QtNetwork.QNetworkRequest.ContentLengthHeader, str(body.size()))
+            body.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+            request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader, "application/octet-stream")
+            request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentLengthHeader, str(body.size()))
             #request.setRawHeader(b"Content-Length", str(body.size()).encode())
             return body
         elif isinstance(body, str):
             data = QtCore.QByteArray(body.encode())
             body = QtCore.QBuffer(self)
             body.setData(data)
-            body.open(QtCore.QIODevice.ReadOnly)
-            request.setHeader(QtNetwork.QNetworkRequest.ContentTypeHeader, "application/octet-stream")
+            body.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+            request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader, "application/octet-stream")
             #request.setRawHeader(b"Content-Length", str(data.size()).encode())
             return body
         else:
@@ -468,18 +468,18 @@ class HTTPClient(QtCore.QObject):
         JSON, we keep it for the next packet
         """
 
-        if reply.error() != QtNetwork.QNetworkReply.NoError:
+        if reply.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
             return
 
         # HTTP error
-        status = reply.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+        status = reply.attribute(QtNetwork.QNetworkRequest.Attribute.HttpStatusCodeAttribute)
         if status >= 300:
             return
 
         content = bytes(reply.readAll())
         if not content:
             return
-        content_type = reply.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+        content_type = reply.header(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader)
         if content_type == "application/json":
             content = content.decode("utf-8")
             if context["query_id"] in self._buffer:
@@ -502,7 +502,7 @@ class HTTPClient(QtCore.QObject):
 
         # We check if we received HTTP headers
         if not sip.isdeleted(reply) and reply.isRunning() and not len(reply.rawHeaderList()) > 0:
-            if not reply.error() != QtNetwork.QNetworkReply.NoError:
+            if not reply.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
                 log.warning(f"Timeout after {timeout} seconds for request {reply.url().toString()}. \
                 Please check the connection is not blocked by a firewall or an anti-virus.")
                 reply.abort()
@@ -874,16 +874,16 @@ class HTTPClient(QtCore.QObject):
         msgbox.setText(f"This server could not prove that it is {url.host()}:{url.port()}. Please carefully examine the certificate to make sure the server can be trusted.")
         msgbox.setInformativeText(f"{ssl_errors[0].errorString()}")
         msgbox.setDetailedText(peer_cert.toText())
-        msgbox.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        msgbox.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         connect_button = QtWidgets.QPushButton(f"&Connect to {url.host()}:{url.port()}", msgbox)
-        msgbox.addButton(connect_button, QtWidgets.QMessageBox.YesRole)
+        msgbox.addButton(connect_button, QtWidgets.QMessageBox.ButtonRole.YesRole)
         checkbox = QtWidgets.QCheckBox("Accept insecure certificate for future connections", parent=msgbox)
         msgbox.setCheckBox(checkbox)
         abort_button = QtWidgets.QPushButton("&Abort", msgbox)
-        msgbox.addButton(abort_button, QtWidgets.QMessageBox.RejectRole)
+        msgbox.addButton(abort_button, QtWidgets.QMessageBox.ButtonRole.RejectRole)
         msgbox.setDefaultButton(abort_button)
-        msgbox.setIcon(QtWidgets.QMessageBox.Critical)
-        msgbox.exec_()
+        msgbox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+        msgbox.exec()
 
         if msgbox.clickedButton() == connect_button:
             self._ssl_exceptions[host_port_key] = digest

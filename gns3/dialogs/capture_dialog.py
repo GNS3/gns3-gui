@@ -31,8 +31,8 @@ class CaptureDialog(QtWidgets.QDialog, Ui_CaptureDialog):
 
         super().__init__(parent)
         self.setupUi(self)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Ok).clicked.connect(self._okButtonClickedSlot)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel).clicked.connect(self.reject)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Ok).clicked.connect(self._okButtonClickedSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Cancel).clicked.connect(self.reject)
 
         if ethernet_link:
             self.uiDataLinkTypeComboBox.addItem("Ethernet", "DLT_EN10MB")
@@ -70,6 +70,6 @@ if __name__ == '__main__':
     main = QtWidgets.QMainWindow()
     dialog = CaptureDialog(main, "test.pcap")
     dialog.show()
-    exit_code = app.exec_()
+    exit_code = app.exec()
     print(dialog.dataLink())
     print(dialog.fileName())

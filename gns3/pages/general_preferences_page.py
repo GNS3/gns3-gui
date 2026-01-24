@@ -64,16 +64,16 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiDefaultNoteFontPushButton.clicked.connect(self._setDefaultNoteFontSlot)
         self.uiDefaultNoteColorPushButton.clicked.connect(self._setDefaultNoteColorSlot)
         self.uiBrowseConfigurationPushButton.clicked.connect(self._browseConfigurationDirectorySlot)
-        self._default_label_color = QtGui.QColor(QtCore.Qt.black)
+        self._default_label_color = QtGui.QColor(QtCore.Qt.GlobalColor.black)
         self.uiStyleComboBox.addItems(STYLES)
         self.uiSymbolThemeComboBox.addItems(SYMBOL_THEMES)
         self.uiImageDirectoriesAddPushButton.clicked.connect(self._imageDirectoriesAddPushButtonSlot)
         self.uiImageDirectoriesDeletePushButton.clicked.connect(self._imageDirectoriesDeletePushButtonSlot)
 
     def _imageDirectoriesAddPushButtonSlot(self):
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My images directory", options=QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My images directory", options=QtWidgets.QFileDialog.Option.ShowDirsOnly)
         if path:
-            if self.uiImageDirectoriesListWidget.findItems(path, QtCore.Qt.MatchFixedString):
+            if self.uiImageDirectoriesListWidget.findItems(path, QtCore.Qt.MatchFlag.MatchFixedString):
                 QtWidgets.QMessageBox.critical(self, "Images directory", "This directory has already been added")
                 return
             count = 0
@@ -96,7 +96,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         local_server = LocalServer.instance().localServerSettings()
         directory = local_server["projects_path"]
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My projects directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My projects directory", directory, QtWidgets.QFileDialog.Option.ShowDirsOnly)
         if path:
             self.uiProjectsPathLineEdit.setText(path)
             self.uiProjectsPathLineEdit.setCursorPosition(0)
@@ -108,7 +108,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         local_server = LocalServer.instance().localServerSettings()
         directory = local_server["symbols_path"]
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My symbols directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My symbols directory", directory, QtWidgets.QFileDialog.Option.ShowDirsOnly)
         if path:
             self.uiSymbolsPathLineEdit.setText(path)
             self.uiSymbolsPathLineEdit.setCursorPosition(0)
@@ -120,7 +120,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         local_server = LocalServer.instance().localServerSettings()
         directory = local_server["images_path"]
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My images directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My images directory", directory, QtWidgets.QFileDialog.Option.ShowDirsOnly)
         if path:
             self.uiImagesPathLineEdit.setText(path)
             self.uiImagesPathLineEdit.setCursorPosition(0)
@@ -132,7 +132,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         local_server = LocalServer.instance().localServerSettings()
         directory = local_server["configs_path"]
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My configs directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My configs directory", directory, QtWidgets.QFileDialog.Option.ShowDirsOnly)
         if path:
             self.uiConfigsPathLineEdit.setText(path)
             self.uiConfigsPathLineEdit.setCursorPosition(0)
@@ -144,7 +144,7 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
 
         local_server = LocalServer.instance().localServerSettings()
         directory = local_server["appliances_path"]
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My custom appliances directory", directory, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "My custom appliances directory", directory, QtWidgets.QFileDialog.Option.ShowDirsOnly)
         if path:
             self.uiAppliancesPathLineEdit.setText(path)
             self.uiAppliancesPathLineEdit.setCursorPosition(0)
@@ -306,7 +306,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiCrashReportCheckBox.setChecked(local_server["report_errors"])
         self.uiCheckForUpdateCheckBox.setChecked(settings["check_for_update"])
         self.uiExperimentalFeaturesCheckBox.setChecked(settings["experimental_features"])
-        self.uiHdpiCheckBox.setChecked(settings["hdpi"])
         self.uiTelnetConsoleCommandLineEdit.setText(settings["telnet_console_command"])
         self.uiTelnetConsoleCommandLineEdit.setCursorPosition(0)
 
@@ -402,7 +401,6 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             "style": self.uiStyleComboBox.currentText(),
             "symbol_theme": self.uiSymbolThemeComboBox.currentText(),
             "experimental_features": self.uiExperimentalFeaturesCheckBox.isChecked(),
-            "hdpi": self.uiHdpiCheckBox.isChecked(),
             "check_for_update": self.uiCheckForUpdateCheckBox.isChecked(),
             "overlay_notifications": self.uiOverlayNotificationsCheckBox.isChecked(),
             "telnet_console_command": self.uiTelnetConsoleCommandLineEdit.text(),

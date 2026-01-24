@@ -57,7 +57,7 @@ if sys.platform.startswith("win"):
 
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Putty (normal standalone version)': 'putty_standalone.exe -telnet {host} {port} -loghost "{name}"',
                                              'KiTTY': r'kitty -title "{name}" telnet://{host} {port}',
-                                             'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "telnet {{host}} {{port}}"'.format(program_files_x86),
+                                             'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "title {{name}} & telnet {{host}} {{port}}"'.format(program_files_x86),
                                              'Royal TS V3': r'{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:{{host}} /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="{{port}}" /p:Name="{{name}}"'.format(program_files),
                                              'Royal TS V5': r'"{}\Royal TS V5\RoyalTS.exe" /protocol:terminal /using:adhoc /uri:"{{host}}" /property:Port="{{port}}" /property:IsTelnetConnection="true" /property:Name="{{name}}"'.format(program_files_x86),
                                              'SuperPutty': r'SuperPutty.exe -telnet "{host} -P {port} -wt \"{name}\""',
@@ -302,7 +302,6 @@ GENERAL_SETTINGS = {
     "state": "",
     "debug_level": 0,
     "multi_profiles": False,
-    "hdpi": True,
     "auto_open_readme": True,
     "symbol_theme": "Affinity-square-blue"
 }

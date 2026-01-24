@@ -108,7 +108,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         else:
             self.setText(1, "none")
         self.refreshLinks()
-        self._parent.invisibleRootItem().sortChildren(0, QtCore.Qt.AscendingOrder)
+        self._parent.invisibleRootItem().sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
 
     def refreshLinks(self):
         """
@@ -123,7 +123,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
             item = QtWidgets.QTreeWidgetItem()
             port = link.getNodePort(self._node)
             item.setText(0, "{} {}".format(port.shortName(), port.description(short=True)))
-            item.setData(0, QtCore.Qt.UserRole, link)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, link)
             if link.capturing():
                 item.setIcon(0, QtGui.QIcon(':/icons/inspect.svg'))
                 capturing = True
@@ -143,7 +143,7 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         else:
             self.setHidden(False)
 
-        self.sortChildren(0, QtCore.Qt.AscendingOrder)
+        self.sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
 
     @qslot
     def _deletedNodeSlot(self, *args):
@@ -245,7 +245,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                 elif isinstance(item, LinkItem):
                     item.setHovered(False)
                     if not isinstance(current_item, TopologyNodeItem):
-                        link = current_item.data(0, QtCore.Qt.UserRole)
+                        link = current_item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                         if item.link() == link:
                             item.setHovered(True)
 
@@ -263,7 +263,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                         view.centerOn(item)
                 elif isinstance(item, LinkItem):
                     if not isinstance(current_item, TopologyNodeItem):
-                        link = current_item.data(0, QtCore.Qt.UserRole)
+                        link = current_item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                         if item.link() == link:
                             view.centerOn(item)
 
@@ -282,44 +282,44 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         """
 
         menu = QtWidgets.QMenu()
-        expand_all = QtWidgets.QAction("Expand all", menu)
+        expand_all = QtGui.QAction("Expand all", menu)
         expand_all.setIcon(get_icon("plus.svg"))
         expand_all.triggered.connect(self._expandAllSlot)
         menu.addAction(expand_all)
 
-        collapse_all = QtWidgets.QAction("Collapse all", menu)
+        collapse_all = QtGui.QAction("Collapse all", menu)
         collapse_all.setIcon(get_icon("minus.svg"))
         collapse_all.triggered.connect(self._collapseAllSlot)
         menu.addAction(collapse_all)
 
         if self.show_only_devices_with_capture is False and self.show_only_devices_with_filters is False:
-            devices_with_capture = QtWidgets.QAction("Show devices with capture(s)", menu)
+            devices_with_capture = QtGui.QAction("Show devices with capture(s)", menu)
             devices_with_capture.setIcon(get_icon("inspect.svg"))
             devices_with_capture.triggered.connect(self._devicesWithCaptureSlot)
             menu.addAction(devices_with_capture)
 
-            devices_with_filters = QtWidgets.QAction("Show devices with packet filter(s)", menu)
+            devices_with_filters = QtGui.QAction("Show devices with packet filter(s)", menu)
             devices_with_filters.setIcon(get_icon("filter.svg"))
             devices_with_filters.triggered.connect(self._devicesWithFiltersSlot)
             menu.addAction(devices_with_filters)
 
         else:
-            show_all_devices = QtWidgets.QAction("Show all devices", menu)
+            show_all_devices = QtGui.QAction("Show all devices", menu)
             # show_all_devices.setIcon(QtGui.QIcon(":/icons/inspect.svg"))
             show_all_devices.triggered.connect(self._showAllDevicesSlot)
             menu.addAction(show_all_devices)
 
-        stop_all_captures = QtWidgets.QAction("Stop all captures", menu)
+        stop_all_captures = QtGui.QAction("Stop all captures", menu)
         stop_all_captures.setIcon(get_icon("capture-stop.svg"))
         stop_all_captures.triggered.connect(self._stopAllCapturesSlot)
         menu.addAction(stop_all_captures)
 
-        reset_all_filters = QtWidgets.QAction("Reset all packet filters", menu)
+        reset_all_filters = QtGui.QAction("Reset all packet filters", menu)
         reset_all_filters.setIcon(get_icon("filter-reset.svg"))
         reset_all_filters.triggered.connect(self._resetAllFiltersSlot)
         menu.addAction(reset_all_filters)
 
-        resume_suspended_links = QtWidgets.QAction("Resume all suspended links", menu)
+        resume_suspended_links = QtGui.QAction("Resume all suspended links", menu)
         resume_suspended_links.setIcon(get_icon("start.svg"))
         resume_suspended_links.triggered.connect(self._resumeAllLinksSlot)
         menu.addAction(resume_suspended_links)
@@ -332,13 +332,13 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
             if isinstance(current_item, TopologyNodeItem):
                 view.populateDeviceContextualMenu(menu)
             else:
-                link = current_item.data(0, QtCore.Qt.UserRole)
+                link = current_item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 for item in view.scene().items():
                     if isinstance(item, LinkItem) and item.link() == link:
                         item.populateLinkContextualMenu(menu)
                         break
 
-        menu.exec_(pos)
+        menu.exec(pos)
 
     @qslot
     def _expandAllSlot(self, *args):
@@ -424,12 +424,12 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         from .main_window import MainWindow
         view = MainWindow.instance().uiGraphicsView
         # only deleting a link or node is supported for now
-        if event.key() == QtCore.Qt.Key_Delete:
+        if event.key() == QtCore.Qt.Key.Key_Delete:
             current_item = self.currentItem()
             if isinstance(current_item, TopologyNodeItem):
                 current_item.node().delete()
             else:
-                link = current_item.data(0, QtCore.Qt.UserRole)
+                link = current_item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 for item in view.scene().items():
                     if isinstance(item, LinkItem) and item.link() == link:
                         item.delete()
