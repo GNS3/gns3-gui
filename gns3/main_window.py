@@ -215,7 +215,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         supported_image_formats = [fmt.data().decode('utf-8') for fmt in QtGui.QImageReader().supportedImageFormats()]
         log.debug("Supported image formats: %s", ", ".join(supported_image_formats))
         if "svg" not in supported_image_formats:
-            log.warning("SVG image format is not supported, is the Qt SVG module installed?")
+            log.warning("SVG image format is not supported, is the Qt SVG module installed? (qt6-svg-plugins)")
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
