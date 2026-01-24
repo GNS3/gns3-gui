@@ -203,7 +203,7 @@ class Topology(QtCore.QObject):
             content = result.decode("utf-8", errors="ignore")
             dialog = ShowReadmeDialog(self.project(), "README.txt", content, parent=self._main_window)
             dialog.show()
-            dialog.exec_()
+            dialog.exec()
 
     def createLoadProject(self, project_settings):
         """
@@ -268,7 +268,7 @@ class Topology(QtCore.QObject):
         dialog = EditProjectDialog(self._main_window)
         dialog.show()
         dialog.tabWidget.setCurrentIndex(1)
-        dialog.exec_()
+        dialog.exec()
 
     def showReadme(self):
         if self.project() is None:

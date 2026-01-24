@@ -107,7 +107,7 @@ class UserPreferencesPage(QtWidgets.QWidget, Ui_UserPreferencesPageWidget):
         """
 
         dialog = PasswordDialog(self)
-        if dialog.exec_():
+        if dialog.exec():
             password = dialog.getPassword()
             new_settings = {"password": password}
             Controller.instance().put("/access/users/me", self._saveUserSettingsCallback, new_settings)

@@ -155,7 +155,7 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         signal.connect(loop.quit)
         if timeout is not None:
             QtCore.QTimer.singleShot(timeout, loop.quit)
-        loop.exec_()
+        loop.exec()
 
     def _compressionChangedSlot(self, index):
         """

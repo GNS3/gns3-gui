@@ -90,7 +90,7 @@ class VMWithImagesWizard(VMWizard):
     def _imageCreateSlot(self, line_edit, create_image_wizard, image_suffix):
 
         create_dialog = create_image_wizard(self, Controller.instance(), self.uiNameLineEdit.text() + image_suffix)
-        if create_dialog.exec_() == QtWidgets.QDialog.Accepted:
+        if create_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             line_edit.setText(create_dialog.uiDiskFilenameLineEdit.text())
 
     def _imageBrowserSlot(self, line_edit, image_selector):

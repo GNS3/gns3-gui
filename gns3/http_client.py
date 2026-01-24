@@ -65,8 +65,8 @@ class QNetworkReplyWatcher(QtCore.QObject):
             if not progress_text:
                 progress_text = "Waiting for controller..."
             self._progress = QtWidgets.QProgressDialog(progress_text, "Cancel", 0, 0, parent)
-            self._progress.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-            self._progress.setWindowModality(QtCore.Qt.ApplicationModal)
+            self._progress.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
+            self._progress.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
             self._progress.setMinimumDuration(0)
         else:
             self._progress = None
@@ -112,7 +112,7 @@ class QNetworkReplyWatcher(QtCore.QObject):
             self._progress.show()
 
         if not loop.isRunning():
-            if loop.exec_() == 1:
+            if loop.exec() == 1:
                 raise HttpClientTimeoutError(
                     f"Request to '{reply.url().toString()}' timed out after {timeout} seconds")
 
@@ -529,7 +529,7 @@ class HTTPClient(QtCore.QObject):
             login_dialog.setUsername(self._username)
         login_dialog.show()
         login_dialog.raise_()
-        if login_dialog.exec_():
+        if login_dialog.exec():
             username = login_dialog.getUsername()
             password = login_dialog.getPassword()
         return username, password
@@ -600,15 +600,15 @@ class HTTPClient(QtCore.QObject):
             0,
             self._main_window
         )
-        progress.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        progress.setWindowModality(QtCore.Qt.ApplicationModal)
+        progress.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
+        progress.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
         progress.canceled.connect(loop.quit)
         progress.show()
         timer = QtCore.QTimer(self)
         timer.setSingleShot(True)
         timer.timeout.connect(loop.quit)
         timer.start(wait_time * 1000)
-        loop.exec_()
+        loop.exec()
         if progress.wasCanceled():
             return False
         progress.close()
@@ -681,7 +681,7 @@ class HTTPClient(QtCore.QObject):
 
         request = self._request(url)
         request = self._addAuth(request)
-        request.setHeader(QtNetwork.QNetworkRequest.UserAgentHeader, f"GNS3 QT Client v{__version__}")
+        request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.UserAgentHeader, f"GNS3 QT Client v{__version__}")
         return request
 
     def _executeHTTPQuery(
@@ -747,7 +747,7 @@ class HTTPClient(QtCore.QObject):
 
         if wait:
             uploading = False
-            if request.header(QtNetwork.QNetworkRequest.ContentTypeHeader) == "application/octet-stream":
+            if request.header(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader) == "application/octet-stream":
                 uploading = True
 
             QNetworkReplyWatcher(show_progress, progress_text).waitForReply(reply, uploading, timeout)
@@ -811,9 +811,9 @@ class HTTPClient(QtCore.QObject):
         Process the information returned by QtNetwork.QNetworkReply
         """
 
-        status = reply.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
-        content_type = reply.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
-        if reply.error() == QtNetwork.QNetworkReply.NoError:
+        status = reply.attribute(QtNetwork.QNetworkRequest.Attribute.HttpStatusCodeAttribute)
+        content_type = reply.header(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader)
+        if reply.error() == QtNetwork.QNetworkReply.NetworkError.NoError:
             try:
                 content = bytes(reply.readAll())
                 if raw is False:
@@ -826,9 +826,9 @@ class HTTPClient(QtCore.QObject):
             if status >= 400:
                 raise HttpClientError(f"Request to '{reply.url().toString()}' has returned HTTP code {status}")
             return content
-        elif reply.error() == QtNetwork.QNetworkReply.NetworkSessionFailedError:
+        elif reply.error() == QtNetwork.QNetworkReply.NetworkError.NetworkSessionFailedError:
             return  # ignore the network session failed error to let the network manager recover from it
-        elif reply.error() == QtNetwork.QNetworkReply.OperationCanceledError:
+        elif reply.error() == QtNetwork.QNetworkReply.NetworkError.OperationCanceledError:
             raise HttpClientCancelledRequestError("Request cancelled")
         else:
             error_message = f"{reply.errorString()} (HTTP code {status})"
