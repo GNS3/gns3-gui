@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 
 class CaptureDialog(QtWidgets.QDialog, Ui_CaptureDialog):
     """
-    This dialog allow configure the packet capture
+    This dialog allow to configure the packet capture
     """
 
     def __init__(self, parent, file_name, auto_start, ethernet_link=True):

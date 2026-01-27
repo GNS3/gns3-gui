@@ -70,7 +70,7 @@ class IOSRouterWizard(VMWithImagesWizard, Ui_IOSRouterWizard):
         self.uiTestIOSImagePushButton.clicked.connect(self._testIOSImageSlot)
         self.uiIdlePCFinderPushButton.clicked.connect(self._idlePCFinderSlot)
         self.uiEtherSwitchCheckBox.stateChanged.connect(self._etherSwitchSlot)
-        self.uiPlatformComboBox.currentIndexChanged[str].connect(self._platformChangedSlot)
+        self.uiPlatformComboBox.currentTextChanged.connect(self._platformChangedSlot)
         self.uiPlatformComboBox.addItems(list(PLATFORMS_DEFAULT_RAM.keys()))
 
         self._router = None
