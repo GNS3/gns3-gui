@@ -54,7 +54,7 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         files, _ = QtWidgets.QFileDialog.getOpenFileNames(
             self,
             "Select one or more images to upload",
-            QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation),
+            QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DownloadLocation),
             "Images (*.bin *.image *.iol *.qcow2 *.vmdk *.iso x86_64* i86bi*);;All files (*)"
         )
         error_msgs = ""
@@ -79,11 +79,11 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
 
         if error_msgs:
             error_dialog = QtWidgets.QMessageBox(self)
-            error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+            error_dialog.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
             error_dialog.setWindowTitle("Image upload")
             error_dialog.setText(f"Error while uploading images to the controller")
             error_dialog.setDetailedText(error_msgs)
-            error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+            error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
             error_dialog.show()
 
         Controller.instance().refreshImageList()
@@ -99,18 +99,18 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
             self,
             "Delete image(s)",
             "Delete the selected images?\nThis cannot be reverted.",
-            QtWidgets.QMessageBox.Yes,
-            QtWidgets.QMessageBox.No
+            QtWidgets.QMessageBox.StandardButton.Yes,
+            QtWidgets.QMessageBox.StandardButton.No
         )
 
-        if reply == QtWidgets.QMessageBox.No:
+        if reply == QtWidgets.QMessageBox.StandardButton.No:
             return
 
         images_to_delete = set()
         for image in self.uiImagesTreeWidget.selectedItems():
             if sip_is_deleted(image):
                 continue
-            image_filename = image.data(0, QtCore.Qt.UserRole)
+            image_filename = image.data(0, QtCore.Qt.ItemDataRole.UserRole)
             images_to_delete.add(image_filename)
 
         error_msgs = ""
@@ -129,11 +129,11 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
 
         if error_msgs:
             error_dialog = QtWidgets.QMessageBox(self)
-            error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+            error_dialog.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
             error_dialog.setWindowTitle("Image deletion")
             error_dialog.setText(f"Error while deleting images on the controller")
             error_dialog.setDetailedText(error_msgs)
-            error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+            error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
             error_dialog.show()
 
         Controller.instance().refreshImageList()
@@ -144,11 +144,11 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
             self,
             "Install appliance(s)",
             "This will attempt to automatically create templates based on image checksums.\nContinue?",
-            QtWidgets.QMessageBox.Yes,
-            QtWidgets.QMessageBox.No
+            QtWidgets.QMessageBox.StandardButton.Yes,
+            QtWidgets.QMessageBox.StandardButton.No
         )
 
-        if reply == QtWidgets.QMessageBox.No:
+        if reply == QtWidgets.QMessageBox.StandardButton.No:
             return
 
         Controller.instance().post(
@@ -165,11 +165,11 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
             self,
             "Prune image(s)",
             "Delete all images not used by a template?\nThis cannot be reverted.",
-            QtWidgets.QMessageBox.Yes,
-            QtWidgets.QMessageBox.No
+            QtWidgets.QMessageBox.StandardButton.Yes,
+            QtWidgets.QMessageBox.StandardButton.No
         )
 
-        if reply == QtWidgets.QMessageBox.No:
+        if reply == QtWidgets.QMessageBox.StandardButton.No:
             return
 
         error_msgs = ""
@@ -187,11 +187,11 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
 
         if error_msgs:
             error_dialog = QtWidgets.QMessageBox(self)
-            error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+            error_dialog.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
             error_dialog.setWindowTitle("Image pruning")
             error_dialog.setText(f"Error while deleting images on the controller")
             error_dialog.setDetailedText(error_msgs)
-            error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+            error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
             error_dialog.show()
 
         Controller.instance().refreshImageList()
@@ -205,7 +205,7 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         items = []
         for image in Controller.instance().images():
             item = QtWidgets.QTreeWidgetItem([image["filename"], image["image_type"], human_size(image["image_size"])])
-            item.setData(0, QtCore.Qt.UserRole, image["filename"])
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, image["filename"])
             item.setToolTip(0, f'{image["filename"]} {image["checksum"]}')
             items.append(item)
 
@@ -217,7 +217,7 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         self.uiImagesTreeWidget.resizeColumnToContents(0)
         self.uiImagesTreeWidget.resizeColumnToContents(1)
         self.uiImagesTreeWidget.resizeColumnToContents(2)
-        self.uiImagesTreeWidget.sortItems(0, QtCore.Qt.AscendingOrder)
+        self.uiImagesTreeWidget.sortItems(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.uiImagesTreeWidget.setUpdatesEnabled(True)
 
     def contextMenuEvent(self, event):
@@ -230,10 +230,10 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         items = self.uiImagesTreeWidget.selectedItems()
         if items:
             menu = QtWidgets.QMenu()
-            copy = QtWidgets.QAction("&Copy image information to clipboard", menu)
+            copy = QtGui.QAction("&Copy image information to clipboard", menu)
             copy.triggered.connect(self._copyToClipboardSlot)
             menu.addAction(copy)
-            menu.exec_(event.globalPos())
+            menu.exec(event.globalPos())
 
     def _copyToClipboardSlot(self):
         """
@@ -250,7 +250,7 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
         Event handler in order to properly handle escape.
         """
 
-        if e.key() == QtCore.Qt.Key_Escape:
+        if e.key() == QtCore.Qt.Key.Key_Escape:
             self.close()
-        elif e.matches(QtGui.QKeySequence.Copy):
+        elif e.matches(QtGui.QKeySequence.StandardKey.Copy):
             self._copyToClipboardSlot()
