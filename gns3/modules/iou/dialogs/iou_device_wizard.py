@@ -40,7 +40,7 @@ class IOUDeviceWizard(VMWithImagesWizard, Ui_IOUDeviceWizard):
         super().__init__(iou_devices, parent)
         self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/multilayer_switch.svg"))
 
-        self.uiTypeComboBox.currentIndexChanged[str].connect(self._typeChangedSlot)
+        self.uiTypeComboBox.currentTextChanged.connect(self._typeChangedSlot)
 
         if ComputeManager.instance().localPlatform().startswith("win") or ComputeManager.instance().localPlatform().startswith("darwin"):
             # Cannot use IOU locally on Windows and Mac
