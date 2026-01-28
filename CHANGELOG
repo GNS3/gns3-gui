@@ -1,5 +1,14 @@
 # Change Log
 
+## 3.0.6 28/01/2026
+
+* Fixing tab name in MobaXterm
+* PyQt6 migration
+* Add XDG Config Home support
+* Support for Python 3.14
+* Clicking the "console connect to all nodes" opens all consoles in name order with case-insensitively
+
+
 ## 2.2.56 21/01/2026
 
 * Fixing tab name in MobaXterm
