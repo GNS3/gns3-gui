@@ -68,7 +68,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
         elif self.page(page_id) == self.uiPlatformMemoryWizardPage:
             platforms = Qemu.getQemuPlatforms()
             self.uiQemuPlatformComboBox.addItems(platforms)
-            index = self.uiQemuPlatformComboBox.findText("x86_64", flags=QtCore.Qt.MatchEndsWith)
+            index = self.uiQemuPlatformComboBox.findText("x86_64", flags=QtCore.Qt.MatchFlag.MatchEndsWith)
             if index != -1:
                 self.uiQemuPlatformComboBox.setCurrentIndex(index)
 
