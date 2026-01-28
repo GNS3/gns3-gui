@@ -54,7 +54,7 @@ class SerialLinkItem(LinkItem):
             if self._hovered:
                 self.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.red, self._link._link_style["width"] + 1, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin))
             else:
-                self.setPen(QtGui.QPen(QtGui.QColor(self._link._link_style["color"]), self._link._link_style["width"], self._link._link_style["type"], QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin))
+                self.setPen(QtGui.QPen(QtGui.QColor(self._link._link_style["color"]), self._link._link_style["width"], QtCore.Qt.PenStyle(self._link._link_style["type"]), QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin))
         except:
             if self._hovered:
                 self.setPen(QtGui.QPen(QtCore.Qt.GlobalColor.red, self._pen_width + 1, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin))

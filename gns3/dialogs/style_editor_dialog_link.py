@@ -65,10 +65,13 @@ class StyleEditorDialogLink(QtWidgets.QDialog, Ui_StyleEditorDialog):
         link.setHovered(True)
 
         self._border_color = pen.color()
-        self.uiBorderColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._border_color.red(),
-                                                                                                    self._border_color.green(),
-                                                                                                    self._border_color.blue(),
-                                                                                                    self._border_color.alpha()))
+        self.uiBorderColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(
+            self._border_color.red(),
+            self._border_color.green(),
+            self._border_color.blue(),
+            self._border_color.alpha())
+        )
+
         self.uiBorderWidthSpinBox.setValue(pen.width())
         index = self.uiBorderStyleComboBox.findData(pen.style())
         if index != -1:
@@ -102,8 +105,8 @@ class StyleEditorDialogLink(QtWidgets.QDialog, Ui_StyleEditorDialog):
         new_link_style = {}
         new_link_style["color"] = self._border_color.name()
         new_link_style["width"] = self.uiBorderWidthSpinBox.value()
-        new_link_style["type"]  = border_style
-        
+        new_link_style["type"]  = border_style.value
+
         # Store values
         self._link.setLinkStyle(new_link_style)
         self._link.setHovered(False)  # allow to see the new style
