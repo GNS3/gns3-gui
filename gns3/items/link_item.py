@@ -289,7 +289,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
             menu.addAction(resume_action)
 
         # reset
-        reset_action = QtWidgets.QAction("Reset", menu)
+        reset_action = QtGui.QAction("Reset", menu)
         reset_action.setIcon(get_icon('reload.svg'))
         reset_action.triggered.connect(self._resetActionSlot)
         menu.addAction(reset_action)

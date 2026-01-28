@@ -149,11 +149,11 @@ class ComputeSummaryView(QtWidgets.QTreeWidget):
             compute = item.getCompute()
             if not compute.connected():
                 menu = QtWidgets.QMenu()
-                connect_action = QtWidgets.QAction("Connect to server", menu)
+                connect_action = QtGui.QAction("Connect to server", menu)
                 connect_action.setIcon(get_icon("start.svg"))
                 connect_action.triggered.connect(lambda: ComputeManager.instance().connectToCompute(compute.id()))
                 menu.addAction(connect_action)
-                menu.exec_(pos)
+                menu.exec(pos)
 
     def _computeConnectSlot(self, compute_id):
         """

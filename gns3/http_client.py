@@ -648,11 +648,11 @@ class HTTPClient(QtCore.QObject):
             self._query_waiting_connections = []
             self.disconnect()
             error_dialog = QtWidgets.QMessageBox(self._main_window)
-            error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+            error_dialog.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
             error_dialog.setWindowTitle("Connecting to server")
             error_dialog.setText(f"Error while connecting to the server")
             error_dialog.setDetailedText(f"{e}")
-            error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+            error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
             error_dialog.show()
         else:
             self._connected = True
