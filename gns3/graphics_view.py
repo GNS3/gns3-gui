@@ -636,8 +636,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             hBar = self.horizontalScrollBar()
             vBar = self.verticalScrollBar()
             delta = mapped_global_pos - self._last_mouse_position
-            hBar.setValue(hBar.value() + (delta.x() if QtWidgets.QApplication.isRightToLeft() else -delta.x()))
-            vBar.setValue(vBar.value() - delta.y())
+            hBar.setValue(int(hBar.value() + (delta.x() if QtWidgets.QApplication.isRightToLeft() else - delta.x())))
+            vBar.setValue(int(vBar.value() - delta.y()))
             self._last_mouse_position = mapped_global_pos
         if self._adding_link and self._newlink and self._newlink in self.scene().items():
             # update the mouse position when the user is adding a link.
