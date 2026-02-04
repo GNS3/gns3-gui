@@ -23,8 +23,8 @@ from gns3.qt import QtGui, QtCore
 
 def test_toSvg(project, controller):
     ellipse = EllipseItem(width=400, height=100, project=project)
-    pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-    pen.setStyle(QtCore.Qt.DashLine)
+    pen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 2, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
+    pen.setStyle(QtCore.Qt.PenStyle.DashLine)
     ellipse.setPen(pen)
     svg = ET.fromstring(ellipse.toSvg())
     assert float(svg.get("width")) ==  400.0
