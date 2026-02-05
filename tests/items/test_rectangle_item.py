@@ -23,8 +23,8 @@ from gns3.qt import QtGui, QtCore
 
 def test_toSvg(project, controller):
     rect = RectangleItem(width=400, height=280, project=project)
-    pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-    pen.setStyle(QtCore.Qt.DashLine)
+    pen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 2, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
+    pen.setStyle(QtCore.Qt.PenStyle.DashLine)
     rect.setPen(pen)
     svg = ET.fromstring(rect.toSvg())
     assert float(svg.get("width")) == 400.0
@@ -49,13 +49,13 @@ def test_fromSvg(project, controller):
     assert rect.pen().width() == 5
     assert hex(rect.pen().color().rgba()) == "0xff0000ff"
     assert hex(rect.brush().color().rgba()) == "0x80ff00ff"
-    assert rect.pen().style() == QtCore.Qt.DashDotLine
+    assert rect.pen().style() == QtCore.Qt.PenStyle.DashDotLine
 
 
 def test_fromSvg_solid_stroke(project, controller):
     rect = RectangleItem(project=project)
     rect.fromSvg('<svg height="150" width="250"><rect height="150" stroke-width="5" stroke="#0000ff" fill="#ff00ff" width="150" /></svg>')
-    assert rect.pen().style() == QtCore.Qt.SolidLine
+    assert rect.pen().style() == QtCore.Qt.PenStyle.SolidLine
 
 
 def test_fromEmptySvg(project, controller):
