@@ -194,6 +194,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.setWindowTitle("[*] GNS3")
 
+        # detect if the SVG module is correctly installed
+        supported_image_formats = [fmt.data().decode('utf-8') for fmt in QtGui.QImageReader().supportedImageFormats()]
+        log.debug("Supported image formats: %s", ", ".join(supported_image_formats))
+        if "svg" not in supported_image_formats:
+            log.warning("SVG image format is not supported, is the Qt SVG module installed?")
+
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
 
