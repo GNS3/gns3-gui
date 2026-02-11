@@ -35,7 +35,7 @@ def network_manager(response):
 def response():
     response = unittest.mock.MagicMock()
     type(response).finished = unittest.mock.PropertyMock(return_value=FakeQtSignal())
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 200
     response.header.return_value = "application/json"
     return response
@@ -155,7 +155,7 @@ def test_post_not_connected_connection_failed(http_client, http_request, network
 
     # Trigger the completion of /version
     response.finished.emit()
-    response.error.emit(QtNetwork.QNetworkReply.ConnectionRefusedError)
+    response.error.emit(QtNetwork.QNetworkReply.NetworkError.ConnectionRefusedError)
 
     assert callback.called
 
@@ -178,7 +178,7 @@ def test_post_not_connected_connection_failed_retry(http_client, http_request, n
 
     # Trigger the completion of /version
     response.finished.emit()
-    response.error.emit(QtNetwork.QNetworkReply.ConnectionRefusedError)
+    response.error.emit(QtNetwork.QNetworkReply.NetworkError.ConnectionRefusedError)
 
     assert http_client._retryConnection.called
     assert not callback.called
@@ -206,7 +206,7 @@ def test_readyReadySlot(http_client):
     response = unittest.mock.MagicMock()
     server = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 200
 
     response.readAll.return_value = b'{"action": "ping"}'
@@ -224,7 +224,7 @@ def test_readyReadySlotHTTPError(http_client):
     response = unittest.mock.MagicMock()
     server = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 404
 
     http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
@@ -238,7 +238,7 @@ def test_readyReadySlotConnectionRefusedError(http_client):
     response = unittest.mock.MagicMock()
     server = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
-    response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.ConnectionRefusedError
     response.attribute.return_value = 200
 
     http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
@@ -255,7 +255,7 @@ def test_readyReadySlotPartialJSON(http_client):
     server = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
     response.readAll.return_value = b'{"action": "ping"'
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 200
 
     http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
@@ -276,7 +276,7 @@ def test_readyReadySlotPartialBytes(http_client):
     server = unittest.mock.MagicMock()
     response.header.return_value = "application/octet-stream"
     response.readAll.return_value = b'hello'
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 200
 
     http_client._readyReadySlot(response, callback, {"query_id": "bla"}, server)
