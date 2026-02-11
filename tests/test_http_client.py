@@ -36,7 +36,7 @@ def network_manager(response):
 def response():
     response = unittest.mock.MagicMock()
     type(response).finished = unittest.mock.PropertyMock(return_value=FakeQtSignal())
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 200
     response.header.return_value = "application/json"
     return response
@@ -115,7 +115,7 @@ def test_dataReadySlot(http_client):
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 200
     response.readAll.return_value = b'{"action": "ping"}'
     http_client._dataReadySlot(response, callback, {"query_id": "bla"})
@@ -130,7 +130,7 @@ def test_dataReadySlotHTTPError(http_client):
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 404
     http_client._dataReadySlot(response, callback, {"query_id": "bla"})
     assert not callback.called
@@ -141,7 +141,7 @@ def test_dataReadySlotConnectionRefusedError(http_client):
     callback = unittest.mock.MagicMock()
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
-    response.error.return_value = QtNetwork.QNetworkReply.ConnectionRefusedError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.ConnectionRefusedError
     response.attribute.return_value = 200
     http_client._dataReadySlot(response, callback, {"query_id": "bla"})
     assert not callback.called
@@ -155,7 +155,7 @@ def test_dataReadySlotPartialJSON(http_client):
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/json"
     response.readAll.return_value = b'{"action": "ping"'
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 200
     http_client._dataReadySlot(response, callback, {"query_id": "bla"})
     assert not callback.called
@@ -172,7 +172,7 @@ def test_dataReadySlotPartialBytes(http_client):
     response = unittest.mock.MagicMock()
     response.header.return_value = "application/octet-stream"
     response.readAll.return_value = b'hello'
-    response.error.return_value = QtNetwork.QNetworkReply.NoError
+    response.error.return_value = QtNetwork.QNetworkReply.NetworkError.NoError
     response.attribute.return_value = 200
 
     http_client._dataReadySlot(response, callback, {"query_id": "bla"})

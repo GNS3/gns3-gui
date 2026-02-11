@@ -1,2 +1,3 @@
-pytest==8.4.2  # version 8.4.2 is the last one supporting Python 3.9
+pytest==8.4.2; python_version == '3.9'  # version 8.4.2 is the last one supporting Python 3.9
+pytest==9.0.2; python_version >= '3.10'
 pytest-timeout==2.4.0

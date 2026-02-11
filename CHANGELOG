@@ -1,5 +1,15 @@
 # Change Log
 
+## 2.2.56.1 28/01/2026
+
+* Fix line style support for links
+* Fix cannot add IOS in preferences
+* Fix cannot add IOU in preferences
+* Upgrade dependencies
+* Drop Python 3.8 support
+* Display a warning if a SVG image format isn't supported
+* Fix error in profile selection window after PyQt6 migration
+
 ## 3.0.6 28/01/2026
 
 * Fixing tab name in MobaXterm

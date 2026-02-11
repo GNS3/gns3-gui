@@ -23,8 +23,8 @@ from gns3.qt import QtGui, QtCore
 
 def test_toSvg(project, controller):
     line = LineItem(dst=QtCore.QPointF(400, 280), project=project)
-    pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-    pen.setStyle(QtCore.Qt.DashLine)
+    pen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 2, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
+    pen.setStyle(QtCore.Qt.PenStyle.DashLine)
     line.setPen(pen)
     svg = ET.fromstring(line.toSvg())
     assert float(svg.get("width")) == 400.0
@@ -42,8 +42,8 @@ def test_toSvg(project, controller):
 
 def test_toSvg_negative_y(project, controller):
     line = LineItem(dst=QtCore.QPointF(400, -280), project=project)
-    pen = QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-    pen.setStyle(QtCore.Qt.DashLine)
+    pen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 2, QtCore.Qt.PenStyle.SolidLine, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
+    pen.setStyle(QtCore.Qt.PenStyle.DashLine)
     line.setPen(pen)
     svg = ET.fromstring(line.toSvg())
     assert float(svg.get("width")) == 400.0
@@ -69,7 +69,7 @@ def test_fromSvg(project, controller):
     assert line.line().x2() == 250
     assert line.line().y2() == 150
     assert hex(line.pen().color().rgba()) == "0xff0000ff"
-    assert line.pen().style() == QtCore.Qt.DashDotLine
+    assert line.pen().style() == QtCore.Qt.PenStyle.DashDotLine
     assert line.pos().x() == 50
     assert line.pos().y() == 84
 
@@ -84,7 +84,7 @@ def test_fromSvg_top_direction(project, controller):
     assert line.line().x2() == 250
     assert line.line().y2() == 0
     assert hex(line.pen().color().rgba()) == "0xff0000ff"
-    assert line.pen().style() == QtCore.Qt.DashDotLine
+    assert line.pen().style() == QtCore.Qt.PenStyle.DashDotLine
     assert line.pos().x() == 50
     assert line.pos().y() == 84
 
@@ -92,7 +92,7 @@ def test_fromSvg_top_direction(project, controller):
 def test_fromSvg_solid_stroke(project, controller):
     line = LineItem(project=project)
     line.fromSvg('<svg height="150" width="250"><line x1="0" y1="0" x2="250" y2="150" stroke-width="5" stroke="#0000ff" /></svg>')
-    assert line.pen().style() == QtCore.Qt.SolidLine
+    assert line.pen().style() == QtCore.Qt.PenStyle.SolidLine
 
 
 def test_fromEmptySvg(project, controller):

@@ -46,7 +46,7 @@ def test_fromSvg(project, controller):
     font.setItalic(True)
     font.setStrikeOut(True)
     text.setFont(font)
-    text.setDefaultTextColor(QtCore.Qt.red)
+    text.setDefaultTextColor(QtCore.Qt.GlobalColor.red)
     text.setPlainText("Hello")
 
     text2 = TextItem(project=project)

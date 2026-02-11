@@ -1,5 +1,6 @@
-jsonschema>=4.25.1,<4.26  # version 4.25.1 is the last to support Python 3.9
-sentry-sdk>=2.50.0,<3  # optional dependency
-psutil>=7.2.1
+jsonschema==4.25.1; python_version == '3.9'  # version 4.25.1 is the last to support Python 3.9
+jsonschema>=4.26.0,<4.27; python_version >= '3.10'
+sentry-sdk>=2.52.0,<3  # optional dependency
+psutil>=7.2.2
 distro>=1.9.0
 truststore>=0.10.4; python_version >= '3.10'
