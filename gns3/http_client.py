@@ -382,14 +382,12 @@ class HTTPClient(QtCore.QObject):
             body.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
             request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader, "application/json")
             request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentLengthHeader, str(data.size()))
-            #request.setRawHeader(b"Content-Length", str(data.size()).encode())
             return body
         elif isinstance(body, pathlib.Path):
             body = QtCore.QFile(str(body), self)
             body.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
             request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader, "application/octet-stream")
             request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentLengthHeader, str(body.size()))
-            #request.setRawHeader(b"Content-Length", str(body.size()).encode())
             return body
         elif isinstance(body, str):
             data = QtCore.QByteArray(body.encode())
@@ -397,7 +395,6 @@ class HTTPClient(QtCore.QObject):
             body.setData(data)
             body.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
             request.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader, "application/octet-stream")
-            #request.setRawHeader(b"Content-Length", str(data.size()).encode())
             return body
         else:
             return None
@@ -762,6 +759,9 @@ class HTTPClient(QtCore.QObject):
                     callback({"message": str(e)}, error=True, context=context)
                 else:
                     raise
+            finally:
+                if body is not None:
+                    body.close()
         else:
             reply.finished.connect(
                 qpartial(self._processAsyncReply, reply, callback, body, context, timeout, disconnect_on_error, raw)
