@@ -43,7 +43,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
     def __init__(self, qemu_vms, parent):
 
         super().__init__(qemu_vms, parent)
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/icons/qemu.svg"))
 
         # Mandatory fields
         self.uiNameWizardPage.registerField("vm_name*", self.uiNameLineEdit)
@@ -133,7 +133,7 @@ class QemuVMWizard(VMWithImagesWizard, Ui_QemuVMWizard):
                 # default is qemu-system-i386 on other platforms
                 search_string = "i386"
 
-            index = self.uiQemuListComboBox.findData(search_string, flags=QtCore.Qt.MatchEndsWith)
+            index = self.uiQemuListComboBox.findData(search_string, flags=QtCore.Qt.MatchFlag.MatchEndsWith)
             if index != -1:
                 self.uiQemuListComboBox.setCurrentIndex(index)
 

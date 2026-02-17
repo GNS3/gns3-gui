@@ -18,9 +18,9 @@
 import sys
 import tempfile
 import json
-import sip
 import os
 
+from ..qt import sip
 from gns3.qt import QtCore, QtWidgets, qpartial
 from gns3.controller import Controller
 from gns3.appliance_manager import ApplianceManager
@@ -41,16 +41,16 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         super().__init__(parent)
         self.setupUi(self)
 
-        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
+        self.setWizardStyle(QtWidgets.QWizard.WizardStyle.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
-            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
+            self.setOptions(QtWidgets.QWizard.WizardOption.NoDefaultButton)
 
         # add a custom button to show appliance information
-        self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Update from online registry")
-        self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
+        self.setButtonText(QtWidgets.QWizard.WizardButton.CustomButton1, "&Update from online registry")
+        self.setOption(QtWidgets.QWizard.WizardOption.HaveCustomButton1, True)
         self.customButtonClicked.connect(self._downloadAppliancesSlot)
-        self.button(QtWidgets.QWizard.CustomButton1).hide()
+        self.button(QtWidgets.QWizard.WizardButton.CustomButton1).hide()
         self.uiFilterLineEdit.textChanged.connect(self._filterTextChangedSlot)
         ApplianceManager.instance().appliances_changed_signal.connect(self._appliancesChangedSlot)
 
@@ -154,16 +154,16 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
         self.uiAppliancesTreeWidget.clear()
         parent_routers = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
         parent_routers.setText(0, "Routers")
-        parent_routers.setFlags(parent_routers.flags() & ~QtCore.Qt.ItemIsSelectable)
+        parent_routers.setFlags(parent_routers.flags() & ~QtCore.Qt.ItemFlag.ItemIsSelectable)
         parent_switches = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
         parent_switches.setText(0, "Switches")
-        parent_switches.setFlags(parent_switches.flags() & ~QtCore.Qt.ItemIsSelectable)
+        parent_switches.setFlags(parent_switches.flags() & ~QtCore.Qt.ItemFlag.ItemIsSelectable)
         parent_guests = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
         parent_guests.setText(0, "Guests")
-        parent_guests.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemIsSelectable)
+        parent_guests.setFlags(parent_guests.flags() & ~QtCore.Qt.ItemFlag.ItemIsSelectable)
         parent_firewalls = QtWidgets.QTreeWidgetItem(self.uiAppliancesTreeWidget)
         parent_firewalls.setText(0, "Firewalls")
-        parent_firewalls.setFlags(parent_firewalls.flags() & ~QtCore.Qt.ItemIsSelectable)
+        parent_firewalls.setFlags(parent_firewalls.flags() & ~QtCore.Qt.ItemFlag.ItemIsSelectable)
         self.uiAppliancesTreeWidget.expandAll()
 
         for appliance in ApplianceManager.instance().appliances():
@@ -200,14 +200,14 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
                 item.setText(1, "N/A")
 
             item.setText(2, appliance["vendor_name"])
-            item.setData(0, QtCore.Qt.UserRole, appliance)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, appliance)
 
             #item.setSizeHint(0, QtCore.QSize(32, 32))
             item.setToolTip(0, self._get_tooltip_text(appliance))
             Controller.instance().getSymbolIcon(appliance.get("symbol"), qpartial(self._setItemIcon, item),
                                                 fallback=":/symbols/" + appliance["category"] + ".svg")
 
-        self.uiAppliancesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.uiAppliancesTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.uiAppliancesTreeWidget.resizeColumnToContents(0)
         if not appliance_filter:
             self.uiAppliancesTreeWidget.collapseAll()
@@ -221,19 +221,19 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
 
         super().initializePage(page_id)
         if self.page(page_id) == self.uiApplianceFromServerWizardPage:
-            self.button(QtWidgets.QWizard.CustomButton1).show()
-            self.setButtonText(QtWidgets.QWizard.FinishButton, "&Install")
+            self.button(QtWidgets.QWizard.WizardButton.CustomButton1).show()
+            self.setButtonText(QtWidgets.QWizard.WizardButton.FinishButton, "&Install")
             self._get_appliances_from_server()
         else:
-            self.button(QtWidgets.QWizard.CustomButton1).hide()
+            self.button(QtWidgets.QWizard.WizardButton.CustomButton1).hide()
 
     def cleanupPage(self, page_id):
         """
         Restore button default settings on the first page.
         """
 
-        self.button(QtWidgets.QWizard.CustomButton1).hide()
-        self.setButtonText(QtWidgets.QWizard.FinishButton, "&Finish")
+        self.button(QtWidgets.QWizard.WizardButton.CustomButton1).hide()
+        self.setButtonText(QtWidgets.QWizard.WizardButton.FinishButton, "&Finish")
         super().cleanupPage(page_id)
 
     def validateCurrentPage(self):
@@ -274,7 +274,7 @@ class NewTemplateWizard(QtWidgets.QWizard, Ui_NewTemplateWizard):
                 items = self.uiAppliancesTreeWidget.selectedItems()
                 for item in items:
                     f = tempfile.NamedTemporaryFile(mode="w+", suffix=".builtin.gns3a", delete=False)
-                    json.dump(item.data(0, QtCore.Qt.UserRole), f)
+                    json.dump(item.data(0, QtCore.Qt.ItemDataRole.UserRole), f)
                     f.close()
                     MainWindow.instance().loadPath(f.name)
                     try:

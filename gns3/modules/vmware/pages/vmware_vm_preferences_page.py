@@ -119,7 +119,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
         self.uiEditVMwareVMPushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             vmware_vm = self._vmware_vms[key]
             self._refreshInfo(vmware_vm)
         else:
@@ -132,7 +132,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
 
         wizard = VMwareVMWizard(self._vmware_vms, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
 
             new_vm_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_vm_settings["compute_id"], name=new_vm_settings["name"])
@@ -142,7 +142,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
             item = QtWidgets.QTreeWidgetItem(self.uiVMwareVMsTreeWidget)
             item.setText(0, self._vmware_vms[key]["name"])
             Controller.instance().getSymbolIcon(self._vmware_vms[key]["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiVMwareVMsTreeWidget.setCurrentItem(item)
 
@@ -153,11 +153,11 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
 
         item = self.uiVMwareVMsTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             vmware_vm = self._vmware_vms[key]
             dialog = ConfigurationDialog(vmware_vm["name"], vmware_vm, VMwareVMConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(vmware_vm["symbol"], qpartial(self._setItemIcon, item))
 
@@ -171,7 +171,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
                     self._vmware_vms[new_key] = self._vmware_vms[key]
                     del self._vmware_vms[key]
                     item.setText(0, vmware_vm["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
                 self._refreshInfo(vmware_vm)
 
     def _vmwareVMDeleteSlot(self):
@@ -181,7 +181,7 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
 
         for item in self.uiVMwareVMsTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._vmware_vms[key]
                 self.uiVMwareVMsTreeWidget.takeTopLevelItem(self.uiVMwareVMsTreeWidget.indexOfTopLevelItem(item))
 
@@ -206,12 +206,12 @@ class VMwareVMPreferencesPage(QtWidgets.QWidget, Ui_VMwareVMPreferencesPageWidge
             item.setText(0, vmware_vm["name"])
             Controller.instance().getSymbolIcon(vmware_vm["symbol"], qpartial(self._setItemIcon, item))
 
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiVMwareVMsTreeWidget.setCurrentItem(self._items[0])
-            self.uiVMwareVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiVMwareVMsTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiVMwareVMsTreeWidget.setMaximumWidth(self.uiVMwareVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):

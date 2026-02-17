@@ -41,10 +41,10 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
 
         self._project = project
         self._path = None
-        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
+        self.setWizardStyle(QtWidgets.QWizard.WizardStyle.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
-            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
+            self.setOptions(QtWidgets.QWizard.WizardOption.NoDefaultButton)
 
         self.uiCompressionComboBox.addItem("None", "none")
         self.uiCompressionComboBox.addItem("Zip compression (deflate)", "zip")
@@ -71,7 +71,7 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
 
     def _pathBrowserSlot(self):
 
-        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DocumentsLocation)
         if len(directory) == 0:
             directory = LocalServer.instance().localServerSettings()["projects_path"]
 
@@ -126,21 +126,19 @@ class ExportProjectWizard(QtWidgets.QWizard, Ui_ExportProjectWizard):
         """
 
         if result:
+            include_images = include_snapshots = reset_mac_addresses = keep_compute_ids = "no"
             if self.uiIncludeImagesCheckBox.isChecked():
                 include_images = "yes"
-            else:
-                include_images = "no"
             if self.uiIncludeSnapshotsCheckBox.isChecked():
                 include_snapshots = "yes"
-            else:
-                include_snapshots = "no"
             if self.uiResetMacAddressesCheckBox.isChecked():
                 reset_mac_addresses = "yes"
-            else:
-                reset_mac_addresses = "no"
+            if self.uiKeepComputeIdsCheckBox.isChecked():
+                keep_compute_ids = "yes"
+
             compression = self.uiCompressionComboBox.currentData()
-            export_worker = ExportProjectWorker(self._project, self._path, include_images, include_snapshots, reset_mac_addresses, compression)
+            export_worker = ExportProjectWorker(self._project, self._path, include_images, include_snapshots, reset_mac_addresses, keep_compute_ids, compression)
             progress_dialog = ProgressDialog(export_worker, "Exporting project", "Exporting portable project files...", "Cancel", parent=self, create_thread=False)
             progress_dialog.show()
-            progress_dialog.exec_()
+            progress_dialog.exec()
         super().done(result)

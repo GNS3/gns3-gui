@@ -169,7 +169,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
         self.uiCopyQemuVMPushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             qemu_vm = self._qemu_vms[key]
             self._refreshInfo(qemu_vm)
         else:
@@ -182,7 +182,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         wizard = QemuVMWizard(self._qemu_vms, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
 
             new_vm_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_vm_settings["compute_id"], name=new_vm_settings["name"])
@@ -195,7 +195,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, self._qemu_vms[key]["name"])
             Controller.instance().getSymbolIcon(self._qemu_vms[key]["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiQemuVMsTreeWidget.setCurrentItem(item)
 
@@ -206,9 +206,9 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         item = self.uiQemuVMsTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             copied_vm_settings = copy.deepcopy(self._qemu_vms[key])
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Qemu template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_vm_settings["name"]))
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Qemu template", "Template name:", QtWidgets.QLineEdit.EchoMode.Normal, "Copy of {}".format(copied_vm_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_vm_settings["compute_id"], name=new_name)
                 if key in self._qemu_vms:
@@ -222,7 +222,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
                 item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
                 item.setText(0, self._qemu_vms[key]["name"])
                 Controller.instance().getSymbolIcon(self._qemu_vms[key]["symbol"], qpartial(self._setItemIcon, item))
-                item.setData(0, QtCore.Qt.UserRole, key)
+                item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
                 self._items.append(item)
                 self.uiQemuVMsTreeWidget.setCurrentItem(item)
 
@@ -233,11 +233,11 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         item = self.uiQemuVMsTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             qemu_vm = self._qemu_vms[key]
             dialog = ConfigurationDialog(qemu_vm["name"], qemu_vm, QemuVMConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(qemu_vm["symbol"], qpartial(self._setItemIcon, item))
 
@@ -251,7 +251,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
                     self._qemu_vms[new_key] = self._qemu_vms[key]
                     del self._qemu_vms[key]
                     item.setText(0, qemu_vm["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
 
                 self._refreshInfo(qemu_vm)
 
@@ -262,7 +262,7 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
 
         for item in self.uiQemuVMsTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._qemu_vms[key]
                 self.uiQemuVMsTreeWidget.takeTopLevelItem(self.uiQemuVMsTreeWidget.indexOfTopLevelItem(item))
 
@@ -286,12 +286,12 @@ class QemuVMPreferencesPage(QtWidgets.QWidget, Ui_QemuVMPreferencesPageWidget):
             item = QtWidgets.QTreeWidgetItem(self.uiQemuVMsTreeWidget)
             item.setText(0, qemu_vm["name"])
             Controller.instance().getSymbolIcon(qemu_vm["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiQemuVMsTreeWidget.setCurrentItem(self._items[0])
-            self.uiQemuVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiQemuVMsTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiQemuVMsTreeWidget.setMaximumWidth(self.uiQemuVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def _setItemIcon(self, item, icon):

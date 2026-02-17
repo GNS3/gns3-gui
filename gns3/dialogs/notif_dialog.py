@@ -54,12 +54,12 @@ class NotifDialog(QtWidgets.QWidget):
         super().__init__(parent)
         self._notifs = []
 
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint |
-                            QtCore.Qt.WindowDoesNotAcceptFocus |
-                            QtCore.Qt.SubWindow)
-        # QtCore.Qt.Tool)
-        # QtCore.Qt.WindowStaysOnTopHint)
-        self.setAttribute(QtCore.Qt.WA_ShowWithoutActivating)  # | QtCore.Qt.WA_TranslucentBackground)
+        self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint |
+                            QtCore.Qt.WindowType.WindowDoesNotAcceptFocus |
+                            QtCore.Qt.WindowType.SubWindow)
+        # QtCore.Qt.WindowType.Tool)
+        # QtCore.Qt.WindowType.WindowStaysOnTopHint)
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_ShowWithoutActivating)  # | QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
 
         self._layout = QtWidgets.QVBoxLayout()
 
@@ -70,7 +70,7 @@ class NotifDialog(QtWidgets.QWidget):
 
         for i in range(0, MAX_ELEMENTS):
             l = QtWidgets.QLabel()
-            l.setAlignment(QtCore.Qt.AlignTop)
+            l.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
             l.setWordWrap(True)
             l.hide()
             self._layout.addWidget(l)
@@ -187,4 +187,4 @@ if __name__ == '__main__':
     main.setMinimumWidth(600)
     main.setMinimumHeight(600)
     main.show()
-    exit_code = app.exec_()
+    exit_code = app.exec()

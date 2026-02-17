@@ -39,7 +39,7 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         self._items = items
         self.uiFontPushButton.clicked.connect(self._setFontSlot)
         self.uiColorPushButton.clicked.connect(self._setColorSlot)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).clicked.connect(self._applyPreferencesSlot)
 
         # use the first item in the list as the model
         first_item = items[0]
@@ -49,7 +49,7 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         self.uiPlainTextEdit.setFont(first_item.font())
 
         if not first_item.editable():
-            self.uiPlainTextEdit.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+            self.uiPlainTextEdit.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.NoTextInteraction)
 
         if len(self._items) == 1:
             self.uiApplyColorToAllItemsCheckBox.setChecked(True)
@@ -77,7 +77,7 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         """
 
         selected_font, ok = QtWidgets.QFontDialog.getFont(self.uiPlainTextEdit.font(), self,
-                                                          options=QtWidgets.QFontDialog.DontUseNativeDialog)
+                                                          options=QtWidgets.QFontDialog.FontDialogOption.DontUseNativeDialog)
         if ok:
             self.uiPlainTextEdit.setFont(selected_font)
 
@@ -87,7 +87,7 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
         Slot to select the color.
         """
 
-        color = QtWidgets.QColorDialog.getColor(self._color, self, None, QtWidgets.QColorDialog.ShowAlphaChannel)
+        color = QtWidgets.QColorDialog.getColor(self._color, self, None, QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)
         if color.isValid():
             self._setColor(color)
 

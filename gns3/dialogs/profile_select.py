@@ -19,7 +19,7 @@ import os
 import sys
 import shutil
 
-from gns3.qt import QtWidgets
+from gns3.qt import QtWidgets, QtGui
 from gns3.local_config import LocalConfig
 from gns3.ui.profile_select_dialog_ui import Ui_ProfileSelectDialog
 from gns3.version import __version_info__
@@ -46,7 +46,7 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
         self.uiDeletePushButton.clicked.connect(self._deletePushButtonSlot)
 
         # Center on screen
-        screen = QtWidgets.QApplication.desktop().screenGeometry()
+        screen = QtGui.QGuiApplication.primaryScreen().geometry()
         self.move(screen.center() - self.rect().center())
 
         version = "{}.{}".format(__version_info__[0], __version_info__[1])
@@ -54,8 +54,14 @@ class ProfileSelectDialog(QtWidgets.QDialog, Ui_ProfileSelectDialog):
             appdata = os.path.expandvars("%APPDATA%")
             path = os.path.join(appdata, "GNS3", version)
         else:
-            home = os.path.expanduser("~")
-            path = os.path.join(home, ".config", "GNS3", version)
+            xgd_config_var = "$XDG_CONFIG_HOME"
+            xdg_config_res = os.path.expandvars(xgd_config_var)
+            if xdg_config_res != xgd_config_var:
+                path = os.path.join(xdg_config_res, "GNS3", version)
+            else:
+                home = os.path.expanduser("~")
+                path = os.path.join(home, ".config", "GNS3", version)
+
         self.profiles_path = os.path.join(path, "profiles")
 
         self.uiShowAtStartupCheckBox.setChecked(LocalConfig.instance().multiProfiles())
@@ -103,4 +109,4 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     dialog = ProfileSelectDialog()
     dialog.show()
-    exit_code = app.exec_()
+    exit_code = app.exec()

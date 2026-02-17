@@ -43,7 +43,7 @@ class ATMSwitchConfigurationPage(QtWidgets.QWidget, Ui_atmSwitchConfigPageWidget
         self.uiMappingTreeWidget.itemSelectionChanged.connect(self._mappingSelectionChangedSlot)
 
         # enable sorting
-        self.uiMappingTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.uiMappingTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.uiMappingTreeWidget.setSortingEnabled(True)
 
     def _mappingSelectedSlot(self, item, column):
@@ -61,11 +61,11 @@ class ATMSwitchConfigurationPage(QtWidgets.QWidget, Ui_atmSwitchConfigPageWidget
         match_destination_mapping = mapping.search(destination)
 
         if match_source_mapping and match_destination_mapping:
-            self.uiVPICheckBox.setCheckState(QtCore.Qt.Unchecked)
+            self.uiVPICheckBox.setCheckState(QtCore.Qt.CheckState.Unchecked)
             (source_port, source_vpi, source_vci) = match_source_mapping.group(1, 2, 3)
             (destination_port, destination_vpi, destination_vci) = match_destination_mapping.group(1, 2, 3)
         else:
-            self.uiVPICheckBox.setCheckState(QtCore.Qt.Checked)
+            self.uiVPICheckBox.setCheckState(QtCore.Qt.CheckState.Checked)
             (source_port, source_vpi) = source.split(':')
             (destination_port, destination_vpi) = destination.split(':')
             source_vci = destination_vci = 0
@@ -103,7 +103,7 @@ class ATMSwitchConfigurationPage(QtWidgets.QWidget, Ui_atmSwitchConfigPageWidget
         destination_vpi = self.uiDestinationVPISpinBox.value()
         destination_vci = self.uiDestinationVCISpinBox.value()
 
-        if self.uiVPICheckBox.checkState() == QtCore.Qt.Unchecked:
+        if self.uiVPICheckBox.checkState() == QtCore.Qt.CheckState.Unchecked:
             source = "{port}:{vpi}:{vci}".format(port=source_port,
                                                  vpi=source_vpi,
                                                  vci=source_vci)

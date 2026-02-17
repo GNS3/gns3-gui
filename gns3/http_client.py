@@ -445,11 +445,11 @@ class HTTPClient(QtCore.QObject):
             data = QtCore.QByteArray(body.encode())
             body = QtCore.QBuffer(self)
             body.setData(data)
-            body.open(QtCore.QIODevice.ReadOnly)
+            body.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
             return body
         elif isinstance(body, pathlib.Path):
             body = QtCore.QFile(str(body), self)
-            body.open(QtCore.QFile.ReadOnly)
+            body.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
             request.setRawHeader(b"Content-Type", b"application/octet-stream")
             # QT is smart and will compute the Content-Lenght for us
             return body
@@ -458,7 +458,7 @@ class HTTPClient(QtCore.QObject):
             data = QtCore.QByteArray(body.encode())
             body = QtCore.QBuffer(self)
             body.setData(data)
-            body.open(QtCore.QIODevice.ReadOnly)
+            body.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
             return body
         else:
             return None
@@ -574,7 +574,8 @@ class HTTPClient(QtCore.QObject):
         context["query_id"] = str(uuid.uuid4())
 
         response.finished.connect(qpartial(self._processResponse, response, server, callback, context, body, ignoreErrors))
-        response.error.connect(qpartial(self._processError, response, server, callback, context, body, ignoreErrors))
+        #FIXME:
+        #response.error.connect(qpartial(self._processError, response, server, callback, context, body, ignoreErrors))
 
         if downloadProgressCallback is not None:
             response.readyRead.connect(qpartial(self._readyReadySlot, response, downloadProgressCallback, context, server))
@@ -601,19 +602,19 @@ class HTTPClient(QtCore.QObject):
     def _readyReadySlot(self, response, callback, context, server, *args):
         """
         Process a packet receive on the notification feed.
-        The feed can contains qpartial JSON. If we found a
+        The feed can contain qpartial JSON. If we found a
         part of a JSON we keep it for the next packet
         """
-        if response.error() != QtNetwork.QNetworkReply.NoError:
+        if response.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
             return
 
         # HTTP error
-        status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+        status = response.attribute(QtNetwork.QNetworkRequest.Attribute.HttpStatusCodeAttribute)
         if status >= 300:
             return
 
         content = bytes(response.readAll())
-        content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+        content_type = response.header(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader)
         if content_type == "application/json":
             content = content.decode("utf-8")
             if context["query_id"] in self._buffer:
@@ -635,7 +636,7 @@ class HTTPClient(QtCore.QObject):
         """
         # We check if we received HTTP headers
         if not sip.isdeleted(response) and response.isRunning() and not len(response.rawHeaderList()) > 0:
-            if not response.error() != QtNetwork.QNetworkReply.NoError:
+            if not response.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
                 log.warning("Timeout after {} seconds for request {}. Please check the connection is not blocked by a firewall or an anti-virus.".format(timeout, response.url().toString()))
                 response.abort()
 
@@ -648,14 +649,14 @@ class HTTPClient(QtCore.QObject):
 
     def _requestCanceled(self, response, context):
 
-        if response.isRunning() and not response.error() != QtNetwork.QNetworkReply.NoError:
+        if response.isRunning() and not response.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
             log.warning("Aborting request for {}".format(response.url().toString()))
             response.abort()
         if "query_id" in context:
             self._notify_progress_end_query(context["query_id"])
 
     def _processError(self, response, server, callback, context, request_body, ignore_errors, error_code):
-        if error_code != QtNetwork.QNetworkReply.NoError:
+        if error_code != QtNetwork.QNetworkReply.NetworkError.NoError:
             error_message = "{} ({}:{})".format(response.errorString(), self._host, self._port)
 
             if not ignore_errors:
@@ -665,9 +666,9 @@ class HTTPClient(QtCore.QObject):
                 self._notify_progress_end_query(context["query_id"])
 
             if error_code < 200 or error_code == 403:
-                if error_code == QtNetwork.QNetworkReply.OperationCanceledError:  # It's legit to cancel do not disconnect
+                if error_code == QtNetwork.QNetworkReply.NetworkError.OperationCanceledError:  # It's legit to cancel do not disconnect
                     error_message = "Operation timeout"  # It's clearer than cancel because cancel is triggered by us when we timeout
-                elif error_code == QtNetwork.QNetworkReply.NetworkSessionFailedError:
+                elif error_code == QtNetwork.QNetworkReply.NetworkError.NetworkSessionFailedError:
                     # ignore the network session failed error to let the network manager recover from it
                     return
                 elif not ignore_errors:
@@ -676,7 +677,7 @@ class HTTPClient(QtCore.QObject):
                     callback({"message": error_message}, error=True, server=server, context=context)
                 return
             else:
-                status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+                status = response.attribute(QtNetwork.QNetworkRequest.Attribute.HttpStatusCodeAttribute)
                 if status == 401:
                     log.error(error_message)
 
@@ -685,7 +686,7 @@ class HTTPClient(QtCore.QObject):
                 # Some time antivirus intercept our query and reply with garbage content
             except UnicodeError:
                 body = None
-            content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+            content_type = response.header(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader)
             if callback is not None:
                 if not body or content_type != "application/json":
                     callback({"message": error_message}, error=True, server=server, context=context)
@@ -710,8 +711,8 @@ class HTTPClient(QtCore.QObject):
         if "query_id" in context:
             self._notify_progress_end_query(context["query_id"])
 
-        if response.error() == QtNetwork.QNetworkReply.NoError:
-            status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
+        if response.error() == QtNetwork.QNetworkReply.NetworkError.NoError:
+            status = response.attribute(QtNetwork.QNetworkRequest.Attribute.HttpStatusCodeAttribute)
             log.debug("Decoding response from {} response {}".format(response.url().toString(), status))
             try:
                 raw_body = bytes(response.readAll())
@@ -719,7 +720,7 @@ class HTTPClient(QtCore.QObject):
             # Some time anti-virus intercept our query and reply with garbage content
             except UnicodeDecodeError:
                 body = None
-            content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+            content_type = response.header(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader)
             if body and len(body.strip(" \n\t")) > 0 and content_type == "application/json":
                 try:
                     params = json.loads(body)
@@ -775,13 +776,13 @@ class HTTPClient(QtCore.QObject):
             QtCore.QTimer.singleShot(timeout * 1000, qpartial(self._timeoutSlot, response, timeout))
 
         if not loop.isRunning():
-            loop.exec_()
+            loop.exec()
 
-        status = response.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
-        if response.error() != QtNetwork.QNetworkReply.NoError:
+        status = response.attribute(QtNetwork.QNetworkRequest.Attribute.HttpStatusCodeAttribute)
+        if response.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
             log.debug("Error while connecting to local server {}".format(response.errorString()))
         else:
-            content_type = response.header(QtNetwork.QNetworkRequest.ContentTypeHeader)
+            content_type = response.header(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader)
             if status == 200 and content_type == "application/json":
                 content = bytes(response.readAll())
                 try:
@@ -824,14 +825,14 @@ class HTTPClient(QtCore.QObject):
         msgbox.setText(f"This server could not prove that it is {url.host()}:{url.port()}. Please carefully examine the certificate to make sure the server can be trusted.")
         msgbox.setInformativeText(f"{ssl_errors[0].errorString()}")
         msgbox.setDetailedText(peer_cert.toText())
-        msgbox.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        msgbox.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         connect_button = QtWidgets.QPushButton(f"&Connect to {url.host()}:{url.port()}", msgbox)
-        msgbox.addButton(connect_button, QtWidgets.QMessageBox.YesRole)
+        msgbox.addButton(connect_button, QtWidgets.QMessageBox.ButtonRole.YesRole)
         abort_button = QtWidgets.QPushButton("&Abort", msgbox)
-        msgbox.addButton(abort_button, QtWidgets.QMessageBox.RejectRole)
+        msgbox.addButton(abort_button, QtWidgets.QMessageBox.ButtonRole.RejectRole)
         msgbox.setDefaultButton(abort_button)
-        msgbox.setIcon(QtWidgets.QMessageBox.Critical)
-        msgbox.exec_()
+        msgbox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+        msgbox.exec()
 
         if msgbox.clickedButton() == connect_button:
             self._ssl_exceptions[host_port_key] = digest

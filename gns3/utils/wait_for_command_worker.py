@@ -37,9 +37,9 @@ class WaitForCommandWorker(QtCore.QObject):
     """
 
     # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str, bool)
-    finished = QtCore.pyqtSignal()
-    updated = QtCore.pyqtSignal(int)
+    error = QtCore.Signal(str, bool)
+    finished = QtCore.Signal()
+    updated = QtCore.Signal(int)
 
     def __init__(self, command, timeout=120, shell=False):
 

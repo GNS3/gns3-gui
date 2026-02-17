@@ -67,7 +67,7 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
         self._custom_adapters = custom_adapters
         self._base_mac_address = base_mac_address
 
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).clicked.connect(self._resetSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Reset).clicked.connect(self._resetSlot)
 
         if self._default_adapter_type and self._adapter_types:
             self.uiAdaptersTreeWidget.setColumnCount(3)
@@ -115,10 +115,10 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
         adapter_number = 0
         for port_name in self._ports:
             item = TreeWidgetItem(self.uiAdaptersTreeWidget)
-            item.setFlags(item.flags() | QtCore.Qt.ItemIsEditable)
+            item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
             item.setText(0, "Adapter {}".format(adapter_number))
-            item.setData(0, QtCore.Qt.UserRole, adapter_number)
-            item.setData(1, QtCore.Qt.UserRole, port_name)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, adapter_number)
+            item.setData(1, QtCore.Qt.ItemDataRole.UserRole, port_name)
             custom_adapter = self._getCustomAdapterSettings(adapter_number)
             item.setText(1, custom_adapter.get("port_name", port_name))
 
@@ -131,7 +131,7 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
                     index = 0
                     for adapter_type, adapter_description in self._adapter_types.items():
                         combobox.addItem("{}".format(adapter_type))
-                        combobox.setItemData(index, adapter_description, QtCore.Qt.ToolTipRole)
+                        combobox.setItemData(index, adapter_description, QtCore.Qt.ItemDataRole.ToolTipRole)
                         index += 1
                 adapter_type_index = combobox.findText(custom_adapter.get("adapter_type", self._default_adapter_type))
                 combobox.setCurrentIndex(adapter_type_index)
@@ -147,7 +147,7 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
             adapter_number += 1
 
         self.uiAdaptersTreeWidget.setItemDelegateForColumn(0, NoEditDelegate(self))
-        self.uiAdaptersTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.uiAdaptersTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.uiAdaptersTreeWidget.setSortingEnabled(True)
 
         for column in range(self.uiAdaptersTreeWidget.columnCount()):
@@ -166,9 +166,9 @@ class CustomAdaptersConfigurationDialog(QtWidgets.QDialog, Ui_CustomAdaptersConf
             custom_adapter_settings = {}
             item = self.uiAdaptersTreeWidget.topLevelItem(row)
             port_name = item.text(1)
-            adapter_number = item.data(0, QtCore.Qt.UserRole)
+            adapter_number = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             custom_adapter_settings["adapter_number"] = adapter_number
-            original_port_name = item.data(1, QtCore.Qt.UserRole)
+            original_port_name = item.data(1, QtCore.Qt.ItemDataRole.UserRole)
             if not port_name:
                 QtWidgets.QMessageBox.critical(self, "Port name", "Port name cannot be empty for adapter {}".format(adapter_number))
                 return False

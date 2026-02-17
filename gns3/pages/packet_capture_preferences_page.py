@@ -64,7 +64,7 @@ class PacketCapturePreferencesPage(QtWidgets.QWidget, Ui_PacketCapturePreference
         """
 
         self.uiCaptureReaderCommandLineEdit.clear()
-        command = self.uiPreconfiguredCaptureReaderCommandComboBox.itemData(self.uiPreconfiguredCaptureReaderCommandComboBox.currentIndex(), QtCore.Qt.UserRole)
+        command = self.uiPreconfiguredCaptureReaderCommandComboBox.itemData(self.uiPreconfiguredCaptureReaderCommandComboBox.currentIndex(), QtCore.Qt.ItemDataRole.UserRole)
         self.uiCaptureReaderCommandLineEdit.setText(command)
         self.uiCaptureReaderCommandLineEdit.setCursorPosition(0)
 

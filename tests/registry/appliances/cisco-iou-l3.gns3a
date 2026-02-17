@@ -1,4 +1,5 @@
 {
+    "appliance_id": "a8f5935d-7229-4b32-8a01-24ef41758f2f",
     "category": "router",
     "status": "experimental",
     "maintainer": "GNS3 Team",
@@ -9,7 +10,6 @@
     "description": "Cisco IOS on UNIX Layer 3 image.",
     "registry_version": 2,
     "maintainer_email": "developers@gns3.net",
-
     "iou": {
         "ethernet_adapters": 2,
         "serial_adapters": 2,
@@ -17,7 +17,6 @@
         "ram": 256,
         "startup_config": "iou_l3_base_startup-config.txt"
     },
-
     "versions": [
         {
             "images": {

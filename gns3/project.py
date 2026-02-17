@@ -475,9 +475,9 @@ class Project(QtCore.QObject):
             "variables": self._variables,
             "supplier": self._supplier
         }
-        self.put("", self._projectUpdatedCallback, body=body)
+        self.put("", self.projectUpdatedCallback, body=body)
 
-    def _projectUpdatedCallback(self, result, error=False, **kwargs):
+    def projectUpdatedCallback(self, result, error=False, **kwargs):
         if error:
             self.project_creation_error_signal.emit(result["message"])
             return
@@ -627,21 +627,24 @@ class Project(QtCore.QObject):
             return
 
         # Qt websocket before Qt 5.6 doesn't support auth
-        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0") or LocalConfig.instance().experimental():
             path = "/projects/{project_id}/notifications".format(project_id=self._id)
             self._notification_stream = Controller.instance().createHTTPQuery("GET", path, self._endListenNotificationCallback,
-                                                                              downloadProgressCallback=self._event_received,
-                                                                              networkManager=self._notification_network_manager,
-                                                                              timeout=None,
-                                                                              showProgress=False,
-                                                                              ignoreErrors=True)
+                                                                                  downloadProgressCallback=self._event_received,
+                                                                                  networkManager=self._notification_network_manager,
+                                                                                  timeout=None,
+                                                                                  showProgress=False,
+                                                                                  ignoreErrors=True)
+            url = Controller.instance().getHttpClient().url() + path
+            log.info("Listening for project notifications on '{}'".format(url))
 
         else:
-            path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
-            self._notification_stream = Controller.instance().httpClient().connectWebSocket(self._websocket, path)
-            self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
-            self._notification_stream.error.connect(self._websocket_error)
-            self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
+           path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
+           self._notification_stream = Controller.instance().httpClient().connectWebSocket(self._websocket, path)
+           self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
+           self._notification_stream.error.connect(self._websocket_error)
+           self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
+           log.info("Listening for project notifications on '{}'".format(self._notification_stream.requestUrl().toString()))
 
     def _endListenNotificationCallback(self, result, error=False, **kwargs):
         """
@@ -654,7 +657,7 @@ class Project(QtCore.QObject):
     @qslot
     def _websocket_error(self, error):
         if self._notification_stream:
-            log.error(self._notification_stream.errorString())
+            log.error("Websocket project notification stream error: {}".format(self._notification_stream.errorString()))
             self._notification_stream = None
             self._startListenNotifications()
 
@@ -712,17 +715,20 @@ class Project(QtCore.QObject):
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is not None:
                 drawing.delete(skip_controller=True)
+        # project.closed and project.updated notifications have been moved to the controller
+        # because they are not project specific, keeping it there for backward compatibility
+        # when connected to an older controller version
         elif result["action"] == "project.closed":
             Topology.instance().setProject(None)
         elif result["action"] == "project.updated":
-            self._projectUpdatedCallback(result["event"])
+            self.projectUpdatedCallback(result["event"])
         elif result["action"] == "snapshot.restored":
             Topology.instance().restoreSnapshot(result["event"]["project_id"])
-        elif result["action"] == "log.error":
-            log.error(result["event"]["message"])
-        elif result["action"] == "log.warning":
-            log.warning(result["event"]["message"])
-        elif result["action"] == "log.info":
-            log.info(result["event"]["message"], extra={"show": True})
+        elif result["action"] == "log.error" and result["event"].get("message"):
+            log.error(result["event"].get("message"))
+        elif result["action"] == "log.warning" and result["event"].get("message"):
+            log.warning(result["event"].get("message"))
+        elif result["action"] == "log.info" and result["event"].get("message"):
+            log.info(result["event"].get("message"), extra={"show": True})
         elif result["action"] == "ping":
             pass

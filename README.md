@@ -17,7 +17,7 @@ Please see <https://docs.gns3.com/>
 Software dependencies
 ---------------------
 
-PyQt5 which is either part of the Linux distribution or installable from
+PyQt6 which is either part of the Linux distribution or installable from
 PyPi. The other Python dependencies are automatically installed during
 the GNS3 GUI installation and are listed
 [here](https://github.com/GNS3/gns3-gui/blob/master/requirements.txt)

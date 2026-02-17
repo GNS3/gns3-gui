@@ -15,12 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import os
-import platform
-import struct
-import distro
-
 try:
     import sentry_sdk
     from sentry_sdk.integrations.logging import LoggingIntegration
@@ -29,7 +23,12 @@ except ImportError:
     # Sentry SDK is not installed with deb package in order to simplify packaging
     SENTRY_SDK_AVAILABLE = False
 
-from .utils.get_resource import get_resource
+import sys
+import os
+import platform
+import struct
+import distro
+
 from .version import __version__, __version_info__
 
 import logging
@@ -51,7 +50,7 @@ class CrashReport:
     Report crash to a third party service
     """
 
-    DSN = "https://433337b5780f4fe8abec8ee5e85c5897@o19455.ingest.sentry.io/38506"
+    DSN = "https://2173ac82d30385607ee40ae11973e298@o19455.ingest.us.sentry.io/38506"
     _instance = None
 
     def __init__(self):
@@ -64,22 +63,16 @@ class CrashReport:
         self._sentry_initialized = False
 
         if SENTRY_SDK_AVAILABLE:
-            cacert = None
-            if hasattr(sys, "frozen"):
-                cacert_resource = get_resource("cacert.pem")
-                if cacert_resource is not None and os.path.isfile(cacert_resource):
-                    cacert = cacert_resource
-                else:
-                    log.error("The SSL certificate bundle file '{}' could not be found".format(cacert_resource))
-
             # Don't send log records as events.
             sentry_logging = LoggingIntegration(level=logging.INFO, event_level=None)
-
-            sentry_sdk.init(dsn=CrashReport.DSN,
-                            release=__version__,
-                            ca_certs=cacert,
-                            default_integrations=False,
-                            integrations=[sentry_logging])
+            try:
+                sentry_sdk.init(dsn=CrashReport.DSN,
+                                release=__version__,
+                                default_integrations=False,
+                                integrations=[sentry_logging])
+            except Exception as e:
+                log.error("Crash report could not be sent: {}".format(e))
+                return
 
             tags = {
                 "os:name": platform.system(),

@@ -93,7 +93,7 @@
     <string>Docker Virtual Machine</string>
    </property>
    <property name="subTitle">
-    <string>Please choose a Docker virtual machine from the list or provide an image name on Docker hub.</string>
+    <string>Please choose a Docker virtual machine from the list or provide an image name on a Docker repository.</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>

@@ -61,6 +61,7 @@ def test_toSvg_negative_y(project, controller):
 
 def test_fromSvg(project, controller):
     line = LineItem(project=project)
+    line._main_window.uiSnapToGridAction.isChecked = lambda: False
     line.setPos(50, 84)
     line.fromSvg('<svg height="150" width="250"><line x1="0" y1="0" x2="250" y2="150" stroke-width="5" stroke="#0000ff" stroke-dasharray="5, 25, 25" /></svg>')
     assert line.line().x1() == 0
@@ -75,6 +76,7 @@ def test_fromSvg(project, controller):
 
 def test_fromSvg_top_direction(project, controller):
     line = LineItem(project=project)
+    line._main_window.uiSnapToGridAction.isChecked = lambda: False
     line.setPos(50, 84)
     line.fromSvg('<svg height="150" width="250"><line x1="0" y1="150" x2="250" y2="0" stroke-width="5" stroke="#0000ff" stroke-dasharray="5, 25, 25" /></svg>')
     assert line.line().x1() == 0

@@ -107,7 +107,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
         self.uiEditCloudNodePushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             cloud_node = self._cloud_nodes[key]
             self._refreshInfo(cloud_node)
         else:
@@ -120,7 +120,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
         wizard = CloudWizard(self._cloud_nodes, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
             new_cloud_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_cloud_settings["compute_id"], name=new_cloud_settings["name"])
             self._cloud_nodes[key] = CLOUD_SETTINGS.copy()
@@ -130,7 +130,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
             item.setText(0, self._cloud_nodes[key]["name"])
             Controller.instance().getSymbolIcon(self._cloud_nodes[key]["symbol"], qpartial(self._setItemIcon, item))
 
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiCloudNodesTreeWidget.setCurrentItem(item)
 
@@ -141,11 +141,11 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
         item = self.uiCloudNodesTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             cloud_node = self._cloud_nodes[key]
             dialog = ConfigurationDialog(cloud_node["name"], cloud_node, CloudConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(cloud_node["symbol"], qpartial(self._setItemIcon, item))
                 if cloud_node["name"] != item.text(0):
@@ -158,7 +158,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
                     self._cloud_nodes[new_key] = self._cloud_nodes[key]
                     del self._cloud_nodes[key]
                     item.setText(0, cloud_node["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
                 self._refreshInfo(cloud_node)
 
     def _deleteCloudNodeSlot(self):
@@ -168,7 +168,7 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
 
         for item in self.uiCloudNodesTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._cloud_nodes[key]
                 self.uiCloudNodesTreeWidget.takeTopLevelItem(self.uiCloudNodesTreeWidget.indexOfTopLevelItem(item))
 
@@ -192,12 +192,12 @@ class CloudPreferencesPage(QtWidgets.QWidget, Ui_CloudPreferencesPageWidget):
             item = QtWidgets.QTreeWidgetItem(self.uiCloudNodesTreeWidget)
             item.setText(0, cloud_node["name"])
             Controller.instance().getSymbolIcon(cloud_node["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiCloudNodesTreeWidget.setCurrentItem(self._items[0])
-            self.uiCloudNodesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiCloudNodesTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiCloudNodesTreeWidget.setMaximumWidth(self.uiCloudNodesTreeWidget.sizeHintForColumn(0) + 20)
 
     def _setItemIcon(self, item, icon):

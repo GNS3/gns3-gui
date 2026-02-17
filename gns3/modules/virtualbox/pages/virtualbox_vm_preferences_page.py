@@ -122,7 +122,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
         self.uiEditVirtualBoxVMPushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             vbox_vm = self._virtualbox_vms[key]
             self._refreshInfo(vbox_vm)
         else:
@@ -135,7 +135,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         wizard = VirtualBoxVMWizard(self._virtualbox_vms, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
 
             new_vm_settings = wizard.getSettings()
             key = "{server}:{vmname}".format(server=new_vm_settings["compute_id"], vmname=new_vm_settings["vmname"])
@@ -145,7 +145,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, self._virtualbox_vms[key]["name"])
             Controller.instance().getSymbolIcon(self._virtualbox_vms[key]["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiVirtualBoxVMsTreeWidget.setCurrentItem(item)
 
@@ -156,11 +156,11 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         item = self.uiVirtualBoxVMsTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             vbox_vm = self._virtualbox_vms[key]
             dialog = ConfigurationDialog(vbox_vm["vmname"], vbox_vm, VirtualBoxVMConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(vbox_vm["symbol"], qpartial(self._setItemIcon, item))
 
@@ -175,7 +175,7 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
 
         for item in self.uiVirtualBoxVMsTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._virtualbox_vms[key]
                 self.uiVirtualBoxVMsTreeWidget.takeTopLevelItem(self.uiVirtualBoxVMsTreeWidget.indexOfTopLevelItem(item))
 
@@ -199,12 +199,12 @@ class VirtualBoxVMPreferencesPage(QtWidgets.QWidget, Ui_VirtualBoxVMPreferencesP
             item = QtWidgets.QTreeWidgetItem(self.uiVirtualBoxVMsTreeWidget)
             item.setText(0, vbox_vm["name"])
             Controller.instance().getSymbolIcon(vbox_vm["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiVirtualBoxVMsTreeWidget.setCurrentItem(self._items[0])
-            self.uiVirtualBoxVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiVirtualBoxVMsTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiVirtualBoxVMsTreeWidget.setMaximumWidth(self.uiVirtualBoxVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):

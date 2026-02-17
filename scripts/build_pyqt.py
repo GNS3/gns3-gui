@@ -5,7 +5,7 @@ Script to build all the PyQt user interfaces and resources for this project.
 """
 
 import os
-import sys
+import platform
 import stat
 import shutil
 import subprocess
@@ -13,21 +13,11 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--force", help="force rebuild all files", action="store_true")
-parser.add_argument("--ressources", help="force rebuild ressources", action="store_true")
+parser.add_argument("--resources", help="force rebuild resources", action="store_true")
 args = parser.parse_args()
 
-if sys.platform.startswith('win'):
-    PATH = os.path.join(os.path.dirname(sys.executable), "Lib\\site-packages\\PyQt5")
-    if os.access(os.path.join(PATH, "bin"), os.R_OK):
-        PATH = os.path.join(PATH, "bin")
-    PYUIC = os.path.join(PATH, "pyuic5")
-    PYRCC = os.path.join(PATH, "pyrcc5")
-
-    if not os.path.exists(PYUIC):
-        PYUIC = "pyuic5.exe"
-else:
-    PYUIC = shutil.which("pyuic5")
-    PYRCC = shutil.which("pyrcc5")
+PYUIC = shutil.which("pyuic6")
+PYRCC = shutil.which("pyrcc5")  # Using PyQt5's rcc as PyQt6's pyrcc6 does not exist
 
 
 def build_ui(path):
@@ -36,36 +26,38 @@ def build_ui(path):
         if source.endswith(".ui"):
             target = os.path.join(path, file.replace(".ui", "_ui.py"))
             if not os.access(target, os.F_OK) or (os.stat(source)[stat.ST_MTIME] > os.stat(target)[stat.ST_MTIME]) or args.force:
-                command = [PYUIC, "--from-imports", "-o", target, source]
+                command = [PYUIC, "-o", target, source]
                 print("Building UI {}".format(source))
                 if args.force and os.access(target, os.F_OK):
                     os.remove(target)
+                subprocess.call(command)
 
-                if sys.platform.startswith('win'):
-                    for i, arg in enumerate(command):
-                        command[i] = '"' + arg.replace('"', '"""') + '"'
-                    command = ' '.join(command)
-                    subprocess.call(command, shell=True)
-                else:
-                    subprocess.call(command)
-
+                if target == os.path.join(path, "main_window_ui.py"):
+                    # Patch the main_window_ui.py to import resources_rc
+                    # could potentially use https://github.com/domarm-comat/pyqt6rc instead
+                    print("Patching UI {} to import resources".format(target))
+                    with open(target, "a") as f:
+                        f.write("from . import resources_rc")
 
 def build_resources(path, target):
     for file in os.listdir(path):
         source = os.path.join(path, file)
         if source.endswith(".qrc"):
             target = os.path.join(target, file.replace(".qrc", "_rc.py"))
-            if not os.access(target, os.F_OK) or (os.stat(source)[stat.ST_MTIME] > os.stat(target)[stat.ST_MTIME]) or args.force or args.ressources:
+            if not os.access(target, os.F_OK) or (os.stat(source)[stat.ST_MTIME] > os.stat(target)[stat.ST_MTIME]) or args.force or args.resources:
                 command = [PYRCC, "-compress", "9", "-o", target, source]
                 print("Building resources {}".format(source))
                 if args.force and os.access(target, os.F_OK):
                     os.remove(target)
-                if sys.platform.startswith('win'):
-                    for i, arg in enumerate(command):
-                        command[i] = '"' + arg.replace('"', '"""') + '"'
-                    command = ' '.join(command)
                 subprocess.call(command)
 
+                # patch the .py resource file to replace PyQt5 by PyQt6
+                print("Patching resources {}".format(target))
+                with open(target, "r") as f:
+                    content = f.read()
+                content = content.replace("PyQt5", "PyQt6")
+                with open(target, "w") as f:
+                    f.write(content)
 
 def recursive(function, path):
     for root, dirs, _ in os.walk(path):
@@ -75,8 +67,11 @@ def recursive(function, path):
 
 if __name__ == '__main__':
 
+    if platform.system() != "Linux":
+        raise SystemExit("This script can only be run on Linux.")
+
     if not PYUIC or not PYRCC:
-        raise SystemExit("pyuic5 or pyrcc5 could't be found, please install PyQt5 development tools (e.g. pyqt5-dev-tools)")
+        raise SystemExit("pyuic6 or pyrcc5 couldn't be found, please install PyQt5 and PyQt6 development tools (e.g. pyqt5-dev-tools)")
 
     cwd = os.path.dirname(os.path.abspath(__file__))
     gns3_path = os.path.abspath(os.path.join(cwd, "../gns3/"))

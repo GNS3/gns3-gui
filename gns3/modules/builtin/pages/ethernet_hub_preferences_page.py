@@ -104,7 +104,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
         self.uiEditEthernetHubPushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             ethernet_hub = self._ethernet_hubs[key]
             self._refreshInfo(ethernet_hub)
         else:
@@ -117,7 +117,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
         wizard = EthernetHubWizard(self._ethernet_hubs, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
             new_ethernet_hub_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_ethernet_hub_settings["compute_id"], name=new_ethernet_hub_settings["name"])
             self._ethernet_hubs[key] = ETHERNET_HUB_SETTINGS.copy()
@@ -126,7 +126,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
             item = QtWidgets.QTreeWidgetItem(self.uiEthernetHubsTreeWidget)
             item.setText(0, self._ethernet_hubs[key]["name"])
             Controller.instance().getSymbolIcon(self._ethernet_hubs[key]["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiEthernetHubsTreeWidget.setCurrentItem(item)
 
@@ -137,11 +137,11 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
         item = self.uiEthernetHubsTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             ethernet_hub = self._ethernet_hubs[key]
             dialog = ConfigurationDialog(ethernet_hub["name"], ethernet_hub, EthernetHubConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(ethernet_hub["symbol"], qpartial(self._setItemIcon, item))
                 if ethernet_hub["name"] != item.text(0):
@@ -154,7 +154,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
                     self._ethernet_hubs[new_key] = self._ethernet_hubs[key]
                     del self._ethernet_hubs[key]
                     item.setText(0, ethernet_hub["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
                 self._refreshInfo(ethernet_hub)
 
     def _deleteEthernetHubSlot(self):
@@ -164,7 +164,7 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
 
         for item in self.uiEthernetHubsTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._ethernet_hubs[key]
                 self.uiEthernetHubsTreeWidget.takeTopLevelItem(self.uiEthernetHubsTreeWidget.indexOfTopLevelItem(item))
 
@@ -188,12 +188,12 @@ class EthernetHubPreferencesPage(QtWidgets.QWidget, Ui_EthernetHubPreferencesPag
             item = QtWidgets.QTreeWidgetItem(self.uiEthernetHubsTreeWidget)
             item.setText(0, ethernet_hub["name"])
             Controller.instance().getSymbolIcon(ethernet_hub["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiEthernetHubsTreeWidget.setCurrentItem(self._items[0])
-            self.uiEthernetHubsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiEthernetHubsTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiEthernetHubsTreeWidget.setMaximumWidth(self.uiEthernetHubsTreeWidget.sizeHintForColumn(0) + 20)
 
     def _setItemIcon(self, item, icon):

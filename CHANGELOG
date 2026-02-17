@@ -1,5 +1,176 @@
 # Change Log
 
+## 2.2.56.1 28/01/2026
+
+* Fix line style support for links
+* Fix cannot add IOS in preferences
+* Fix cannot add IOU in preferences
+* Upgrade dependencies
+* Drop Python 3.8 support
+* Display a warning if a SVG image format isn't supported
+* Fix error in profile selection window after PyQt6 migration
+
+## 2.2.56 21/01/2026
+
+* Fixing tab name in MobaXterm
+* PyQt6 migration
+* Add XDG Config Home support
+
+## 2.2.55 19/11/2025
+
+* Fix SyntaxWarning: invalid escape sequence. Fixes #3760
+* Support for Python 3.14
+* Clicking the "console connect to all nodes" opens all consoles in name order with case-insensitively
+
+## 2.2.54 21/04/2025
+
+* Replace "Docker hub" by "Docker repository" because it is possible to use different repositories
+* Upgrade dependencies
+* Fix bring console in front when clicking on "Open all consoles". Fixes #3706
+* Add -F arg to wmctrl. Ref #3706
+
+## 2.2.53 21/01/2025
+
+* Update file browser filters for all files and IOU images
+* Upgrade dependencies
+* Fix Linux Mint default terminal configuration
+
+## 2.2.52 02/12/2024
+
+* Add iol extension filter. Ref #3664
+* Remove maximum 64GB RAM limitation for QEMU VMs. Fixes #3658
+* Bring to front support for consoles on Linux.
+* Relax setuptools requirement to allow for easier Debian packaging on Ubuntu Focal & Jammy
+
+## 2.2.51 07/11/2024
+
+* Python 3.13 support
+* Upgrade dependencies
+* Add keyboard shortcut for Add Link
+
+## 2.2.50 21/10/2024
+
+* Fix issue when pid file contains invalid data
+* Add comment to indicate sentry-sdk is optional. Ref https://github.com/GNS3/gns3-server/issues/2423
+* Improve information provided when uploading invalid appliance image. Fixes #3637
+* Use "experimental features" option to force listening for HTTP notification streams. Ref #3579
+* Fix to allow packet capture on more than 6 links. Fixes #3594
+* Support for configuring MAC address in Docker containers
+* Add KRDC to pre-configured VNC console commands
+
+## 2.2.49 06/08/2024
+
+* Upgrade jsonschema and sentry-sdk packages
+* Upgrade to PyQt5 v5.15.11
+* Add shortcuts info dialog
+* Added Key Shortcuts
+
+## 2.2.48.1 12/07/2024
+
+* No changes
+
+## 2.2.48 08/07/2024
+
+* Use "experimental features" to allow bypassing hostname validation. Ref #3524
+* Update appliance_v8.json. Ref https://github.com/GNS3/gns3-registry/pull/897
+* Option to keep the compute IDs unchanged when exporting a project
+* Upgrade sentry-sdk and psutil packages
+* Switch to PyQt5 5.15.10 for macOS build
+
+## 2.2.47 15/05/2024
+
+* Remove maximum size for capture dialog. Ref #3576
+* Change sentry-sdk version
+* Upgrade aiohttp, sentry-sdk and truststore
+* Upgrade jsonschema and aiohttp
+* Drop Python 3.7
+* Remove dev requirements for Python 3.6
+* Add NAT symbols
+* Only show log message if event has "message"
+
+## 2.2.46 26/02/2024
+
+* Add GNS3 console command "env" to show what environment variables are used. Ref https://github.com/GNS3/gns3-server/issues/2306
+* Add CTRL+C shortcut to copy status bar message. Ref #3561
+* Key modifier (ALT) to ignore snap to grid. Fixes #3538
+* Increase timeout to 5s for status bar messages. The coordinates message has no timeout and can be reset when clicking on the scene. Ref #3561
+* Add reset GUI state feature. Ref #3549
+* Fix for hiding Windows terminal. Ref #3290
+* Drop support for Python 3.6
+* Upgrade sentry-sdk, psutil and distro dependencies
+
+## 2.2.45 12/01/2024
+
+* Add missing console_type values in appliance_v8.json. Ref https://github.com/GNS3/gns3-registry/issues/849
+* Handle moved project notifications on controller stream
+* Add debug for PATH env variable
+* Add custom executable paths on Windows
+* Add --suppressApplicationTitle for Windows terminal. Fixes https://github.com/GNS3/gns3-gui/issues/3544
+* Upgrade sentry-sdk and aiohttp
+
+## 2.2.44.1 07/11/2023
+
+* No changes
+
+## 2.2.44 06/11/2023
+
+* Fix timeout issue when creating Qemu disk image. Fixes https://github.com/GNS3/gns3-server/issues/2313
+* Refactor command variables support
+* Add vendor_logo_url in appliance schemas. Ref https://github.com/GNS3/gns3-registry/pull/825
+* Add Qemu IGB network device
+* Add the ability to edit width and height in the style edit dialog.
+
+## 2.2.43 19/09/2023
+
+* Add KiTTY to preconfigured telnet consoles. Fixes #3507
+* Fix generic icon in Wayland. Ref #3501
+* Support for appliance format version 8.
+* Use importlib instead of pkg_resources
+* Upgrade to PyQt 5.15.9 and pywin32
+* Add support for appliance version 8 format
+
+## 2.2.42 09/08/2023
+
+* Use the system's certificate store for SSL connections
+* Give a node some time to start before opening the console (for console auto start). Fixes #3474
+* Use Mate Terminal by default if installed on Debian, Ubuntu and Linux Mint.
+* Support for gnome-terminal tabs to be opened in the same window.
+* Remove import urllib3 and let sentry_sdk import and patch it. Fixes https://github.com/GNS3/gns3-gui/issues/3498
+* Add import sys in sudo.py
+* Rounded Rectangle support
+
+## 2.2.41 12/07/2023
+
+* Use alternative method to set the correct permissions for uBridge on macOS
+* Remove sending stats to GA
+* Catch urllib3 exceptions when sending crash report. Ref https://github.com/GNS3/gns3-gui/issues/3483
+* Backport UEFI boot mode support for Qemu VMs
+* Add debug for dropEvent. Ref https://github.com/GNS3/gns3-server/issues/2242
+
+## 2.2.40.1 10/06/2023
+
+* No changes
+
+## 2.2.40 06/06/2023
+
+* Change log messages for Websocket errors
+* Do not proceed if an appliance symbol cannot be downloaded. Ref #3466
+* Delete a node or link from topology summary view using Delete key. Ref #3445
+* Fix "Start the capture visualization program" checkbox works only one (first) time for a given link. Fixes #3442
+* Let the selected link style applied when editing a link. Fixes #3460
+* Fix hovered color shown in style editing dialog. Fixes #3460
+
+## 2.2.39 08/05/2023
+
+* Fix nodes are not snapped to the grid at the moment of creation
+* Upgrade distro and aiohttp dependencies
+
+## 2.2.38 28/02/2023
+
+* Add long description content type in setup.py
+* Automatically add new issues to GNS3 project
+* Development 2.2.38.dev1
+
 ## 2.2.37 25/01/2023
 
 * Upgrade to PyQt5 v5.15.7

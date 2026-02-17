@@ -59,7 +59,7 @@ class TraceNGNodeConfigurationPage(QtWidgets.QWidget, Ui_TraceNGNodeConfigPageWi
         symbol_path = self.uiSymbolLineEdit.text()
         dialog = SymbolSelectionDialog(self, symbol=symbol_path)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             new_symbol_path = dialog.getSymbol()
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))

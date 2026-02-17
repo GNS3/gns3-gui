@@ -93,15 +93,15 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         for project in self.uiProjectsTreeWidget.selectedItems():
             if sip_is_deleted(project):
                 continue
-            project_id = project.data(0, QtCore.Qt.UserRole)
-            project_name = project.data(1, QtCore.Qt.UserRole)
+            project_id = project.data(0, QtCore.Qt.ItemDataRole.UserRole)
+            project_name = project.data(1, QtCore.Qt.ItemDataRole.UserRole)
 
             reply = QtWidgets.QMessageBox.warning(self,
                                                   "Delete project",
                                                   'Delete project "{}"?\nThis cannot be reverted.'.format(project_name),
-                                                  QtWidgets.QMessageBox.Yes,
-                                                  QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
+                                                  QtWidgets.QMessageBox.StandardButton.Yes,
+                                                  QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                 projects_to_delete.add(project_id)
 
         for project_id in projects_to_delete:
@@ -118,8 +118,8 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             return
 
         for project in self.uiProjectsTreeWidget.selectedItems():
-            project_id = project.data(0, QtCore.Qt.UserRole)
-            project_name = project.data(1, QtCore.Qt.UserRole)
+            project_id = project.data(0, QtCore.Qt.ItemDataRole.UserRole)
+            project_name = project.data(1, QtCore.Qt.ItemDataRole.UserRole)
 
             new_project_name = project_name + "-1"
             existing_project_name = [p["name"] for p in Controller.instance().projects()]
@@ -131,7 +131,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
             name, reply = QtWidgets.QInputDialog.getText(self,
                                                          "Duplicate project",
                                                          'Duplicate project "{}"?.'.format(project_name),
-                                                         QtWidgets.QLineEdit.Normal,
+                                                         QtWidgets.QLineEdit.EchoMode.Normal,
                                                          new_project_name)
             name = name.strip()
             if reply and len(name) > 0:
@@ -167,9 +167,9 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         for project in Controller.instance().projects():
             path = os.path.join(project["path"], project["filename"])
             item = QtWidgets.QTreeWidgetItem([project["name"], project["status"], path])
-            item.setData(0, QtCore.Qt.UserRole, project["project_id"])
-            item.setData(1, QtCore.Qt.UserRole, project["name"])
-            item.setData(2, QtCore.Qt.UserRole, path)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, project["project_id"])
+            item.setData(1, QtCore.Qt.ItemDataRole.UserRole, project["name"])
+            item.setData(2, QtCore.Qt.ItemDataRole.UserRole, path)
             items.append(item)
         self.uiProjectsTreeWidget.addTopLevelItems(items)
 
@@ -180,7 +180,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         self.uiProjectsTreeWidget.resizeColumnToContents(0)
         self.uiProjectsTreeWidget.resizeColumnToContents(1)
         self.uiProjectsTreeWidget.resizeColumnToContents(2)
-        self.uiProjectsTreeWidget.sortItems(0, QtCore.Qt.AscendingOrder)
+        self.uiProjectsTreeWidget.sortItems(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.uiProjectsTreeWidget.setUpdatesEnabled(True)
 
     def keyPressEvent(self, e):
@@ -188,7 +188,7 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
         Event handler in order to properly handle escape.
         """
 
-        if e.key() == QtCore.Qt.Key_Escape:
+        if e.key() == QtCore.Qt.Key.Key_Escape:
             self.close()
 
     def _projectNameSlot(self, text):
@@ -289,10 +289,10 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                 reply = QtWidgets.QMessageBox.warning(self,
                                                       "New project",
                                                       'Project "{}" already exists in location "{}", overwrite it?'.format(existing_project["name"], existing_project["path"]),
-                                                      QtWidgets.QMessageBox.Yes,
-                                                      QtWidgets.QMessageBox.No)
+                                                      QtWidgets.QMessageBox.StandardButton.Yes,
+                                                      QtWidgets.QMessageBox.StandardButton.No)
 
-                if reply == QtWidgets.QMessageBox.Yes:
+                if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                     Controller.instance().deleteProject(existing_project["project_id"], self._overwriteProjectCallback)
 
                 # In all cases we cancel the new project and if project success to delete
@@ -313,6 +313,6 @@ class ProjectDialog(QtWidgets.QDialog, Ui_ProjectDialog):
                     QtWidgets.QMessageBox.critical(self, "Open project", "No project selected")
                     return
 
-                self._project_settings["project_id"] = current.data(0, QtCore.Qt.UserRole)
-                self._project_settings["project_name"] = current.data(1, QtCore.Qt.UserRole)
+                self._project_settings["project_id"] = current.data(0, QtCore.Qt.ItemDataRole.UserRole)
+                self._project_settings["project_name"] = current.data(1, QtCore.Qt.ItemDataRole.UserRole)
         super().done(result)

@@ -94,9 +94,9 @@ class ImageManager:
                 reply = QtWidgets.QMessageBox.question(parent,
                                                        'Image',
                                                        'Would you like to copy {} to the default images directory'.format(source_filename),
-                                                       QtWidgets.QMessageBox.Yes,
-                                                       QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.Yes:
+                                                       QtWidgets.QMessageBox.StandardButton.Yes,
+                                                       QtWidgets.QMessageBox.StandardButton.No)
+                if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                     try:
                         os.makedirs(destination_directory, exist_ok=True)
                     except OSError as e:
@@ -106,7 +106,7 @@ class ImageManager:
                     worker = FileCopyWorker(source_path, destination_path)
                     progress_dialog = ProgressDialog(worker, 'Image', 'Copying {}'.format(source_filename), 'Cancel', busy=True, parent=parent)
                     progress_dialog.show()
-                    progress_dialog.exec_()
+                    progress_dialog.exec()
                     errors = progress_dialog.errors()
                     if errors:
                         QtWidgets.QMessageBox.critical(parent, 'Image', '{}'.format(''.join(errors)))

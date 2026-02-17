@@ -25,6 +25,9 @@ import os
 import sys
 import shlex
 import subprocess
+import psutil
+import shutil
+
 from .main_window import MainWindow
 from .controller import Controller
 
@@ -34,9 +37,42 @@ log = logging.getLogger(__name__)
 console_mutex = QtCore.QMutex()
 
 
+def gnome_terminal_env():
+
+    uid = os.getuid()
+
+    # get list of processes of current user
+    procs = [p.info for p in psutil.process_iter(
+        attrs=['name', 'pid', 'ppid', 'create_time', 'uids']
+    ) if p.info['uids'].real == uid]
+
+    # get pid of gnome-terminal-server process
+    gnome_terminal_server_pid = [p['pid'] for p in procs if p['name'] == "gnome-terminal-server"]
+    if not gnome_terminal_server_pid:
+        return {}
+    gnome_terminal_server_pid = gnome_terminal_server_pid[0]
+
+    # get subprocesses of gnome-terminal-server
+    gnome_terminal_server_children = [p for p in procs if p['ppid'] == gnome_terminal_server_pid]
+    gnome_terminal_server_children.sort(key=lambda p: p['create_time'], reverse=True)
+
+    # return the gnome-terminal environment variables of the first subprocess named telnet
+    for proc in gnome_terminal_server_children:
+        if proc['name'] == "telnet":
+            try:
+                env = psutil.Process(proc['pid']).environ()
+                if 'GNOME_TERMINAL_SERVICE' in env and \
+                   'GNOME_TERMINAL_SCREEN' in env:
+                    return {'GNOME_TERMINAL_SERVICE': env['GNOME_TERMINAL_SERVICE'],
+                            'GNOME_TERMINAL_SCREEN': env['GNOME_TERMINAL_SCREEN']}
+            except psutil.Error:
+                pass
+    return {}
+
+
 class ConsoleThread(QtCore.QThread):
 
-    consoleError = QtCore.pyqtSignal(str)
+    consoleError = QtCore.Signal(str)
 
     def __init__(self, parent, command, node, port):
         super().__init__(parent)
@@ -52,7 +88,7 @@ class ConsoleThread(QtCore.QThread):
 
         if sys.platform.startswith("win"):
             # use the string on Windows
-            subprocess.call(command)
+            subprocess.Popen(command, env=os.environ)
         else:
             # use arguments on other platforms
             try:
@@ -60,7 +96,23 @@ class ConsoleThread(QtCore.QThread):
             except ValueError:
                 self.consoleError.emit("Syntax error in command: '{}'".format(command))
                 return
-            subprocess.call(args, env=os.environ)
+
+            env = os.environ.copy()
+            # special case to force gnome-terminal to correctly use tabs on Linux
+            if sys.platform.startswith("linux") and "gnome-terminal" in args[0] and "--tab" in command:
+                # inject gnome-terminal environment variables
+                if "GNOME_TERMINAL_SERVICE" not in env or "GNOME_TERMINAL_SCREEN" not in env:
+                    env.update(gnome_terminal_env())
+            proc = subprocess.Popen(args, env=env)
+            if sys.platform.startswith("linux"):
+                wmctrl_path = shutil.which("wmctrl")
+                if wmctrl_path:
+                    proc.wait() # wait for the terminal to open
+                    try:
+                        # use wmctrl to raise the window based on the node name
+                        subprocess.run([wmctrl_path, "-Fa", self._name], env=os.environ)
+                    except OSError as e:
+                        self.consoleError.emit("Count not focus on terminal window: '{}'".format(e))
 
     def run(self):
 
@@ -71,9 +123,18 @@ class ConsoleThread(QtCore.QThread):
         command = self._command.replace("%h", host)
         command = command.replace("%p", str(port))
         command = command.replace("%d", self._name.replace('"', '\\"'))
+        command = command.replace("%P", self._node.project().name().replace('"', '\\"'))
         command = command.replace("%i", self._node.project().id())
         command = command.replace("%n", str(self._node.id()))
         command = command.replace("%c", Controller.instance().httpClient().fullUrl())
+
+        command = command.replace("{host}", host)
+        command = command.replace("{port}", str(port))
+        command = command.replace("{name}", self._name.replace('"', '\\"'))
+        command = command.replace("{project}", self._node.project().name().replace('"', '\\"'))
+        command = command.replace("{project_id}", self._node.project().id())
+        command = command.replace("{node_id}", str(self._node.id()))
+        command = command.replace("{url}", Controller.instance().httpClient().fullUrl())
 
         # If the console use an apple script we lock to avoid multiple console
         # to interact at the same time

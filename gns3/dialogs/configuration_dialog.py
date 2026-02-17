@@ -59,7 +59,7 @@ class ConfigurationDialog(QtWidgets.QDialog, Ui_configurationDialog):
         :param button: button that was clicked (QAbstractButton)
         """
 
-        if button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel):
+        if button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Cancel):
             QtWidgets.QDialog.reject(self)
         else:
             try:

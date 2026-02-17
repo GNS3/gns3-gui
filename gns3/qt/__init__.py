@@ -33,11 +33,11 @@ import logging
 log = logging.getLogger("qt/__init__.py")
 
 try:
-    from PyQt5 import sip
+    from PyQt6 import sip
 except ImportError:
     import sip
 
-from PyQt5 import QtCore, QtGui, QtNetwork, QtWidgets
+from PyQt6 import QtCore, QtGui, QtNetwork, QtWidgets
 sys.modules[__name__ + '.QtCore'] = QtCore
 sys.modules[__name__ + '.QtGui'] = QtGui
 sys.modules[__name__ + '.QtNetwork'] = QtNetwork
@@ -45,23 +45,28 @@ sys.modules[__name__ + '.QtWidgets'] = QtWidgets
 sys.modules[__name__ + '.sip'] = sip
 
 try:
-    from PyQt5 import QtSvg
+    from PyQt6 import QtSvg
     sys.modules[__name__ + '.QtSvg'] = QtSvg
 except ImportError:
-    raise SystemExit("Please install the PyQt5.QtSvg module")
+    raise SystemExit("Please install the PyQt6.QtSvg module")
 
 try:
-    from PyQt5 import QtWebSockets
+    from PyQt6 import QtSvgWidgets
+    sys.modules[__name__ + '.QtSvgWidgets'] = QtSvgWidgets
+except ImportError:
+    raise SystemExit("Please install the PyQt6.QtSvgWidgets module")
+
+try:
+    from PyQt6 import QtWebSockets
     sys.modules[__name__ + '.QtWebSockets'] = QtWebSockets
 except ImportError:
-    raise SystemExit("Please install the PyQt5.QtWebSockets module")
+    raise SystemExit("Please install the PyQt6.QtWebSockets module")
 
 QtCore.Signal = QtCore.pyqtSignal
 QtCore.Slot = QtCore.pyqtSlot
 QtCore.Property = QtCore.pyqtProperty
 
-from PyQt5.QtWidgets import QFileDialog as OldFileDialog
-from PyQt5.QtNetwork import QNetworkAccessManager
+from PyQt6.QtWidgets import QFileDialog as OldFileDialog
 
 # Do not use system proxy because it could be a parental control, virus or "Security software"...
 QtNetwork.QNetworkProxyFactory.setUseSystemConfiguration(False)
@@ -79,32 +84,63 @@ def sip_is_deleted(obj):
 class QFileDialog(OldFileDialog):
 
     @staticmethod
-    def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.ShowDirsOnly):
+    def getExistingDirectory(parent=None, caption='', dir='', options=OldFileDialog.Option.ShowDirsOnly):
         path = OldFileDialog.getExistingDirectory(parent, caption, dir, options)
         if path:
             path = os.path.normpath(path)
         return path
 
     @staticmethod
-    def getOpenFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-        path, _ = OldFileDialog.getOpenFileName(parent, caption, directory, filter, selectedFilter, options)
+    def getOpenFileName(parent=None, caption='', directory='', filter='', initialFilter='', options=None):
+
+        if options is None:
+            options = OldFileDialog.Option(0)
+        path, selected_filter = OldFileDialog.getOpenFileName(
+            parent=parent,
+            caption=caption,
+            directory=directory,
+            filter=filter,
+            initialFilter=initialFilter,
+            options=options
+        )
         if path:
             path = os.path.normpath(path)
-        return path, _
+        return path, selected_filter
+
 
     @staticmethod
-    def getOpenFileNames(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-        path, _ = OldFileDialog.getOpenFileNames(parent, caption, directory, filter, selectedFilter, options)
-        if path:
-            path = os.path.normpath(path)
-        return path, _
+    def getOpenFileNames(parent=None, caption='', directory='', filter='', initialFilter='', options=None):
+
+        if options is None:
+            options = OldFileDialog.Option(0)
+        paths, selected_filter = OldFileDialog.getOpenFileNames(
+            parent=parent,
+            caption=caption,
+            directory=directory,
+            filter=filter,
+            initialFilter=initialFilter,
+            options=options
+        )
+        paths = [os.path.normpath(path) for path in paths]
+        return paths, selected_filter
 
     @staticmethod
-    def getSaveFileName(parent=None, caption='', directory='', filter='', selectedFilter='', options=OldFileDialog.Options()):
-        path, _ = OldFileDialog.getSaveFileName(parent, caption, directory, filter, selectedFilter, options)
+    def getSaveFileName(parent=None, caption='', directory='', filter='', initialFilter='', options=None):
+
+        if options is None:
+            options = OldFileDialog.Option(0)
+        path, selected_filter = OldFileDialog.getSaveFileName(
+            parent=parent,
+            caption=caption,
+            directory=directory,
+            filter=filter,
+            initialFilter=initialFilter,
+            options=options
+        )
         if path:
             path = os.path.normpath(path)
-        return path, _
+        return path, selected_filter
+
 
 QtWidgets.QFileDialog = QFileDialog
 
@@ -145,8 +181,7 @@ class LogQMessageBox(QtWidgets.QMessageBox):
         Return a logger in the context of the caller
         in order to have the correct information in the log
         """
-        if sys.version_info < (3, 5):
-            return logging.getLogger('qt')
+
         try:
             caller = inspect.stack()[2]
             location = "{}:{}".format(os.path.basename(caller.filename), caller.lineno)
@@ -192,55 +227,6 @@ if hasattr(sys, '_called_from_test'):
                 instance._callbacks = set()
 
     QtCore.Signal = FakeQtSignal
-    QtCore.pyqtSignal = FakeQtSignal
-
-
-class StatsQtWidgetsQWizard(QtWidgets.QWizard):
-    """
-    Send stats from all the QWizard
-    """
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-        from ..utils.analytics import AnalyticsClient
-        name = self.__class__.__name__
-        name = re.sub(r"([A-Z])", r" \1", name).strip()
-        AnalyticsClient.instance().sendScreenView(name)
-
-QtWidgets.QWizard = StatsQtWidgetsQWizard
-
-
-class StatsQtWidgetsQMainWindow(QtWidgets.QMainWindow):
-    """
-    Send stats from all the QMainWindow
-    """
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-        from ..utils.analytics import AnalyticsClient
-        name = self.__class__.__name__
-        name = re.sub(r"([A-Z])", r" \1", name).strip()
-        AnalyticsClient.instance().sendScreenView(name)
-
-QtWidgets.QMainWindow = StatsQtWidgetsQMainWindow
-
-
-class StatsQtWidgetsQDialog(QtWidgets.QDialog):
-    """
-    Send stats from all the QWizard
-    """
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-        from ..utils.analytics import AnalyticsClient
-        name = self.__class__.__name__
-        name = re.sub(r"([A-Z])", r" \1", name).strip()
-        AnalyticsClient.instance().sendScreenView(name)
-
-QtWidgets.QDialog = StatsQtWidgetsQDialog
 
 
 def qpartial(func, *args, **kwargs):

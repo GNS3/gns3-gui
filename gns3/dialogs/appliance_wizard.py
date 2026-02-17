@@ -81,7 +81,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 images_directories.append(emulator_images_dir)
 
         images_directories.append(os.path.dirname(self._path))
-        download_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        download_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DownloadLocation)
         if download_directory != "" and download_directory != os.path.dirname(self._path):
             images_directories.append(download_directory)
 
@@ -94,9 +94,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         self.setWindowTitle("Install {} appliance".format(self._appliance["name"]))
 
         # add a custom button to show appliance information
-        self.setButtonText(QtWidgets.QWizard.CustomButton1, "&Appliance info")
-        self.setOption(QtWidgets.QWizard.HaveCustomButton1, True)
-        self.customButtonClicked.connect(self._showApplianceInfoSlot)
+        if self._appliance["registry_version"] < 8:
+            # FIXME: show appliance info for v8
+            self.setButtonText(QtWidgets.QWizard.WizardButton.CustomButton1, "&Appliance info")
+            self.setOption(QtWidgets.QWizard.WizardOption.HaveCustomButton1, True)
+            self.customButtonClicked.connect(self._showApplianceInfoSlot)
 
         # customize the server selection
         self.uiRemoteRadioButton.toggled.connect(self._remoteServerToggledSlot)
@@ -139,23 +141,14 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             symbol = ":/symbols/computer.svg"
         else:
             symbol = ":/symbols/{}.svg".format(self._appliance["category"])
-        self.page(page_id).setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(symbol))
+        self.page(page_id).setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(symbol))
 
         if self.page(page_id) == self.uiServerWizardPage:
 
             Controller.instance().getSymbols(self._getSymbolsCallback)
-
-            if "qemu" in self._appliance:
-                emulator_type = "qemu"
-            elif "iou" in self._appliance:
-                emulator_type = "iou"
-            elif "docker" in self._appliance:
-                emulator_type = "docker"
-            elif "dynamips" in self._appliance:
-                emulator_type = "dynamips"
-            else:
-                QtWidgets.QMessageBox.warning(self, "Appliance", "Could not determine the emulator type")
-
+            template_type = self._appliance.template_type()
+            if not template_type:
+                raise ApplianceError("No template type found for appliance {}".format(self._appliance["name"]))
             is_mac = ComputeManager.instance().localPlatform().startswith("darwin")
             is_win = ComputeManager.instance().localPlatform().startswith("win")
 
@@ -173,11 +166,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if ComputeManager.instance().localPlatform() is None:
                 self.uiLocalRadioButton.setEnabled(False)
             elif is_mac or is_win:
-                if emulator_type == "qemu":
+                if template_type == "qemu":
                     # disallow usage of the local server because Qemu has issues on OSX and Windows
                     if not LocalConfig.instance().experimental():
                         self.uiLocalRadioButton.setEnabled(False)
-                elif emulator_type != "dynamips":
+                elif template_type != "dynamips":
                     self.uiLocalRadioButton.setEnabled(False)
 
             if ComputeManager.instance().vmCompute():
@@ -195,27 +188,55 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         elif self.page(page_id) == self.uiFilesWizardPage:
             if Controller.instance().isRemote() or self._compute_id != "local":
-                self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+                self._registry.getRemoteImageList(self._appliance.template_type(), self._compute_id)
             else:
                 self.images_changed_signal.emit()
 
         elif self.page(page_id) == self.uiQemuWizardPage:
-            if self._appliance['qemu'].get('kvm', 'require') == 'require':
+            if self._appliance.template_properties().get('kvm', 'require') == 'require':
                 self._server_check = False
                 Qemu.instance().getQemuCapabilitiesFromServer(self._compute_id, qpartial(self._qemuServerCapabilitiesCallback))
             else:
                 self._server_check = True
-            Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [self._appliance["qemu"]["arch"]])
+            if self._appliance["registry_version"] >= 8:
+                qemu_platform = self._appliance.template_properties()["platform"]
+            else:
+                qemu_platform = self._appliance.template_properties()["arch"]
+            Qemu.instance().getQemuBinariesFromServer(self._compute_id, qpartial(self._getQemuBinariesFromServerCallback), [qemu_platform])
+
+        elif self.page(page_id) == self.uiInstructionsPage:
+
+            installation_instructions = self._appliance.get("installation_instructions", "No installation instructions available")
+            self.uiInstructionsTextEdit.setText(installation_instructions.strip())
 
         elif self.page(page_id) == self.uiUsageWizardPage:
-            self.uiUsageTextEdit.setText("The template will be available in the {} category.\n\n{}".format(self._appliance["category"].replace("_", " "), self._appliance.get("usage", "")))
+            # TODO: allow taking these info fields at the version level in v8
+            category = self._appliance["category"].replace("_", " ")
+            usage = self._appliance.get("usage", "No usage information available")
+            if self._appliance["registry_version"] >= 8:
+                default_username = self._appliance.get("default_username")
+                default_password = self._appliance.get("default_password")
+                if default_username and default_password:
+                    usage += "\n\nDefault username: {}\nDefault password: {}".format(default_username, default_password)
+
+            usage_info = """
+The template will be available in the {} category.
+            
+Usage: {}
+""".format(category, usage)
+
+            self.uiUsageTextEdit.setText(usage_info.strip())
 
     def _qemuServerCapabilitiesCallback(self, result, error=None, *args, **kwargs):
         """
         Check if the server supports KVM or not
         """
 
-        if error is None and "kvm" in result and self._appliance["qemu"]["arch"] in result["kvm"]:
+        if self._appliance["registry_version"] >= 8:
+            qemu_platform = self._appliance.template_properties()["platform"]
+        else:
+            qemu_platform = self._appliance.template_properties()["arch"]
+        if error is None and "kvm" in result and qemu_platform in result["kvm"]:
             self._server_check = True
         else:
             if error:
@@ -236,7 +257,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             log.error("Error while uploading image '{}': {}".format(image_path, result["message"]))
         else:
             log.info("Image '{}' has been successfully uploaded".format(image_path))
-            self._registry.getRemoteImageList(self._appliance.emulator(), self._compute_id)
+            self._registry.getRemoteImageList(self._appliance.template_type(), self._compute_id)
 
     def _showApplianceInfoSlot(self):
         """
@@ -306,10 +327,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         msgbox = QtWidgets.QMessageBox(self)
         msgbox.setWindowTitle("Appliance information")
         msgbox.setStyleSheet("QLabel{min-width: 600px;}") # TODO: resize details box QTextEdit{min-height: 500px;}
-        msgbox.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        msgbox.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         msgbox.setText(text_info)
         msgbox.setDetailedText(self._appliance["description"])
-        msgbox.exec_()
+        msgbox.exec()
 
     @qslot
     def _refreshVersions(self, *args):
@@ -356,9 +377,9 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                     image_widget.setToolTip(2, image["path"])
 
                 # Associated data stored are col 0: version, col 1: image
-                image_widget.setData(0, QtCore.Qt.UserRole, version)
-                image_widget.setData(1, QtCore.Qt.UserRole, image)
-                image_widget.setData(2, QtCore.Qt.UserRole, self._appliance)
+                image_widget.setData(0, QtCore.Qt.ItemDataRole.UserRole, version)
+                image_widget.setData(1, QtCore.Qt.ItemDataRole.UserRole, image)
+                image_widget.setData(2, QtCore.Qt.ItemDataRole.UserRole, self._appliance)
                 top.addChild(image_widget)
 
             font = top.font(0)
@@ -372,10 +393,10 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 expand = False
                 top.setForeground(2, QtGui.QBrush(QtGui.QColor("green")))
 
-            top.setData(1, QtCore.Qt.DisplayRole, human_filesize(size))
-            top.setData(2, QtCore.Qt.DisplayRole, status)
-            top.setData(0, QtCore.Qt.UserRole, version)
-            top.setData(2, QtCore.Qt.UserRole, self._appliance)
+            top.setData(1, QtCore.Qt.ItemDataRole.DisplayRole, human_filesize(size))
+            top.setData(2, QtCore.Qt.ItemDataRole.DisplayRole, status)
+            top.setData(0, QtCore.Qt.ItemDataRole.UserRole, version)
+            top.setData(2, QtCore.Qt.ItemDataRole.UserRole, self._appliance)
             self.uiApplianceVersionTreeWidget.addTopLevelItem(top)
             if expand:
                 top.setExpanded(True)
@@ -407,7 +428,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         for version in self._appliance["versions"]:
             for image in version["images"].values():
-                img = self._registry.search_image_file(self._appliance.emulator(),
+                img = self._registry.search_image_file(self._appliance.template_type(),
                                                        image["filename"],
                                                        image.get("md5sum"),
                                                        image.get("filesize"),
@@ -438,7 +459,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if current is None or sip.isdeleted(current):
             return
 
-        image = current.data(1, QtCore.Qt.UserRole)
+        image = current.data(1, QtCore.Qt.ItemDataRole.UserRole)
         if image is not None:
             if "direct_download_url" in image or "download_url" in image:
                 self.uiDownloadPushButton.show()
@@ -459,7 +480,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if current is None or sip.isdeleted(current):
             return
 
-        data = current.data(1, QtCore.Qt.UserRole)
+        data = current.data(1, QtCore.Qt.ItemDataRole.UserRole)
         if data is not None:
             if "direct_download_url" in data:
                 QtGui.QDesktopServices.openUrl(QtCore.QUrl(data["direct_download_url"]))
@@ -479,16 +500,16 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         if current is None:
             QtWidgets.QMessageBox.critical(self.parent(), "Base version", "Please select a base version")
             return
-        base_version = current.data(0, QtCore.Qt.UserRole)
+        base_version = current.data(0, QtCore.Qt.ItemDataRole.UserRole)
 
-        new_version_name, ok = QtWidgets.QInputDialog.getText(self, "Creating a new version", "Create a new version for this appliance.\nPlease share your experience on the GNS3 community if this version works.\n\nVersion name:", QtWidgets.QLineEdit.Normal, base_version.get("name"))
+        new_version_name, ok = QtWidgets.QInputDialog.getText(self, "Creating a new version", "Create a new version for this appliance.\nPlease share your experience on the GNS3 community if this version works.\n\nVersion name:", QtWidgets.QLineEdit.EchoMode.Normal, base_version.get("name"))
         if ok:
             new_version = {"name": new_version_name}
             new_version["images"] = {}
 
             for disk_type in base_version["images"]:
                 base_filename = base_version["images"][disk_type]["filename"]
-                filename, ok = QtWidgets.QInputDialog.getText(self, "Image", "Disk image filename for {}".format(disk_type), QtWidgets.QLineEdit.Normal, base_filename)
+                filename, ok = QtWidgets.QInputDialog.getText(self, "Image", "Disk image filename for {}".format(disk_type), QtWidgets.QLineEdit.EchoMode.Normal, base_filename)
                 if not ok:
                     filename = base_filename
                 new_version["images"][disk_type] = {"filename": filename, "version": new_version_name}
@@ -513,19 +534,29 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         current = self.uiApplianceVersionTreeWidget.currentItem()
         if not current:
             return
-        disk = current.data(1, QtCore.Qt.UserRole)
+        disk = current.data(1, QtCore.Qt.ItemDataRole.UserRole)
 
         path, _ = QtWidgets.QFileDialog.getOpenFileName()
         if len(path) == 0:
             return
 
-        image = Image(self._appliance.emulator(), path, filename=disk["filename"])
+        image = Image(self._appliance.template_type(), path, filename=disk["filename"])
         try:
             if "md5sum" in disk and image.md5sum != disk["md5sum"]:
-                reply = QtWidgets.QMessageBox.question(self, "Add appliance",
-                                                       "This is not the correct file. The MD5 sum is {} and should be {}.\nDo you want to accept it at your own risks?".format(image.md5sum, disk["md5sum"]),
-                                                       QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if reply == QtWidgets.QMessageBox.No:
+                reply = QtWidgets.QMessageBox.question(
+                    self,
+                    "Add appliance",
+                    "This is not the correct file.\n\n"
+                    "MD5 checksum\n"
+                    f"actual:\t{image.md5sum}\n"
+                    f"expected:\t{disk['md5sum']}\n\n"
+                    "File size\n"
+                    f"actual:\t{image.filesize} bytes\n"
+                    f"expected:\t{disk['filesize']} bytes\n\n"
+                    "Do you want to accept it at your own risks?",
+                    QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No
+                )
+                if reply == QtWidgets.QMessageBox.StandardButton.No:
                     return
         except OSError as e:
             QtWidgets.QMessageBox.warning(self.parent(), "Add appliance", "Can't access to the image file {}: {}.".format(path, str(e)))
@@ -554,7 +585,11 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             if self.uiQemuListComboBox.count() == 1:
                 self.next()
             else:
-                i = self.uiQemuListComboBox.findData(self._appliance["qemu"]["arch"], flags=QtCore.Qt.MatchEndsWith)
+                if self._appliance["registry_version"] >= 8:
+                    qemu_platform = self._appliance.template_properties()["platform"]
+                else:
+                    qemu_platform = self._appliance.template_properties()["arch"]
+                i = self.uiQemuListComboBox.findData(qemu_platform, flags=QtCore.Qt.MatchFlag.MatchEndsWith)
                 if i != -1:
                     self.uiQemuListComboBox.setCurrentIndex(i)
 
@@ -567,8 +602,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
         if version is None:
             appliance_configuration = self._appliance.copy()
-            if "docker" not in appliance_configuration:
-                # only Docker do not have version
+            if self._appliance.template_type() != "docker":
+                # only Docker do not have versions
                 return False
         else:
             try:
@@ -580,22 +615,27 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         template_manager = TemplateManager().instance()
         while len(appliance_configuration["name"]) == 0 or not template_manager.is_name_available(appliance_configuration["name"]):
             QtWidgets.QMessageBox.warning(self.parent(), "Add template", "The name \"{}\" is already used by another template".format(appliance_configuration["name"]))
-            appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add template", "New name:", QtWidgets.QLineEdit.Normal, appliance_configuration["name"])
+            appliance_configuration["name"], ok = QtWidgets.QInputDialog.getText(self.parent(), "Add template", "New name:", QtWidgets.QLineEdit.EchoMode.Normal, appliance_configuration["name"])
             if not ok:
                 return False
             appliance_configuration["name"] = appliance_configuration["name"].strip()
 
-        if "qemu" in appliance_configuration:
+        if self._appliance["registry_version"] >= 8:
+            if "settings" in appliance_configuration:
+                for settings in appliance_configuration["settings"]:
+                    if settings["template_type"] == "qemu":
+                        settings["template_properties"]["path"] = self.uiQemuListComboBox.currentData()
+        elif "qemu" in appliance_configuration:
             appliance_configuration["qemu"]["path"] = self.uiQemuListComboBox.currentData()
 
-        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, self._symbols, parent=self)
+        new_template = ApplianceToTemplate().new_template(appliance_configuration, self._compute_id, version, self._symbols, parent=self)
         TemplateManager.instance().createTemplate(Template(new_template), callback=self._templateCreatedCallback)
         return False
 
         #worker = WaitForLambdaWorker(lambda: self._create_template(appliance_configuration, self._compute_id), allowed_exceptions=[ConfigException, OSError])
         #progress_dialog = ProgressDialog(worker, "Add template", "Installing a new template...", None, busy=True, parent=self)
         #progress_dialog.show()
-        #if progress_dialog.exec_():
+        #if progress_dialog.exec():
         #    QtWidgets.QMessageBox.information(self.parent(), "Add template", "{} template has been installed!".format(appliance_configuration["name"]))
         #    return True
         #return False
@@ -603,7 +643,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
         # worker = WaitForLambdaWorker(lambda: config.save(), allowed_exceptions=[ConfigException, OSError])
         # progress_dialog = ProgressDialog(worker, "Add appliance", "Install the appliance...", None, busy=True, parent=self)
         # progress_dialog.show()
-        # if progress_dialog.exec_():
+        # if progress_dialog.exec():
         #     QtWidgets.QMessageBox.information(self.parent(), "Add appliance", "{} installed!".format(appliance_configuration["name"]))
         #     return True
 
@@ -632,7 +672,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 if not Controller.instance().isRemote() and self._compute_id == "local" and image["path"].startswith(ImageManager.instance().getDirectory()):
                     log.debug("{} is already on the local server".format(image["path"]))
                     return
-                image = Image(self._appliance.emulator(), image["path"], filename=image["filename"])
+                image = Image(self._appliance.template_type(), image["path"], filename=image["filename"])
                 image_upload_manager = ImageUploadManager(image, Controller.instance(), self._compute_id, self._applianceImageUploadedCallback, LocalConfig.instance().directFileUpload())
                 image_upload_manager.upload()
                 self._image_uploading_count += 1
@@ -649,11 +689,15 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
 
     def nextId(self):
         if self.currentPage() == self.uiServerWizardPage:
-            if "docker" in self._appliance:
+            if self._appliance.template_type() == "docker":
                 # skip Qemu binary selection and files pages if this is a Docker appliance
-                return super().nextId() + 2
-            elif "qemu" not in self._appliance:
+                return super().nextId() + 3
+            elif self._appliance.template_type() != "qemu":
                 # skip the Qemu binary selection page if not a Qemu appliance
+                return super().nextId() + 1
+        if self.currentPage() == self.uiQemuWizardPage:
+            if not self._appliance.get("installation_instructions"):
+                # skip the installation instructions page if there are no instructions
                 return super().nextId() + 1
         return super().nextId()
 
@@ -670,18 +714,18 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             current = self.uiApplianceVersionTreeWidget.currentItem()
             if current is None or sip.isdeleted(current):
                 return False
-            version = current.data(0, QtCore.Qt.UserRole)
+            version = current.data(0, QtCore.Qt.ItemDataRole.UserRole)
             if version is None:
                 return False
-            appliance = current.data(2, QtCore.Qt.UserRole)
+            appliance = current.data(2, QtCore.Qt.ItemDataRole.UserRole)
             try:
                 self._appliance.search_images_for_version(version["name"])
             except ApplianceError as e:
                 QtWidgets.QMessageBox.critical(self, "Appliance", "Cannot install {} version {}: {}".format(appliance["name"], version["name"], e))
                 return False
             reply = QtWidgets.QMessageBox.question(self, "Appliance", "Would you like to install {} version {}?".format(appliance["name"], version["name"]),
-                                                   QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.No:
+                                                   QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.No:
                 return False
 
             self._uploadImages(appliance["name"], version["name"])
@@ -696,7 +740,7 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 return False
             current = self.uiApplianceVersionTreeWidget.currentItem()
             if current:
-                version = current.data(0, QtCore.Qt.UserRole)
+                version = current.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 return self._install(version["name"])
             else:
                 return self._install(None)
@@ -715,14 +759,13 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
                 if ComputeManager.instance().localPlatform():
                     if (ComputeManager.instance().localPlatform().startswith("darwin") or ComputeManager.instance().localPlatform().startswith("win")):
                         if "qemu" in self._appliance:
-                            reply = QtWidgets.QMessageBox.question(self, "Appliance", "Qemu on Windows and macOS is not supported by the GNS3 team. Do you want to continue?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-                            if reply == QtWidgets.QMessageBox.No:
+                            reply = QtWidgets.QMessageBox.question(self, "Appliance", "Qemu on Windows and macOS is not supported by the GNS3 team. Do you want to continue?", QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.No)
+                            if reply == QtWidgets.QMessageBox.StandardButton.No:
                                 return False
                 self._compute_id = "local"
 
         elif self.currentPage() == self.uiQemuWizardPage:
             # validate the Qemu
-
             if self._server_check is False:
                 QtWidgets.QMessageBox.critical(self, "Checking for KVM support", "Please wait for the server to reply...")
                 return False
@@ -778,8 +821,8 @@ class ApplianceWizard(QtWidgets.QWizard, Ui_ApplianceWizard):
             reply = QtWidgets.QMessageBox.question(self, "Custom files",
                 "This option allows files with different MD5 checksums. This feature is only for advanced users and can lead "
                 "to unexpected problems. Do you want to proceed?",
-                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+                QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.No)
 
-            if reply == QtWidgets.QMessageBox.No:
+            if reply == QtWidgets.QMessageBox.StandardButton.No:
                 self.allowCustomFiles.setChecked(False)
                 return False

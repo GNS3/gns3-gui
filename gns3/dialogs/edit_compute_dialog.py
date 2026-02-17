@@ -121,4 +121,4 @@ if __name__ == '__main__':
     main = QtWidgets.QMainWindow()
     dialog = EditComputeDialog(main)
     dialog.show()
-    exit_code = app.exec_()
+    exit_code = app.exec()

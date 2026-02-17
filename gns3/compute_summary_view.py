@@ -82,7 +82,7 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
                 self._status = "stopped"
                 self.setToolTip(0, "{} is stopped or cannot be reached".format(self._compute.name()))
                 self.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
-        self._parent.sortItems(0, QtCore.Qt.AscendingOrder)
+        self._parent.sortItems(0, QtCore.Qt.SortOrder.AscendingOrder)
 
         # add nodes belonging to this compute
         self.takeChildren()
@@ -98,7 +98,7 @@ class ComputeItem(QtWidgets.QTreeWidgetItem):
                 else:
                     item.setIcon(0, QtGui.QIcon(':/icons/led_red.svg'))
                 self.addChild(item)
-        self.sortChildren(0, QtCore.Qt.AscendingOrder)
+        self.sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
 
 
 class ComputeSummaryView(QtWidgets.QTreeWidget):

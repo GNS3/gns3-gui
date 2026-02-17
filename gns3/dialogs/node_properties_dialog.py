@@ -40,8 +40,8 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
         self._node_items = node_items
         self._parent_items = {}
 
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).setEnabled(False)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).setEnabled(False)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).setEnabled(False)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Reset).setEnabled(False)
 
         self.previousItem = None
         self.previousPage = None
@@ -84,7 +84,7 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
             ConfigurationPageItem(self._parent_items[parent], node_item)
 
         # sort the tree
-        self.uiNodesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.uiNodesTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
 
         if len(self._node_items) == 1:
             parent = " {} group".format(str(node_item.node()))
@@ -135,19 +135,19 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
         self.uiConfigStackedWidget.setCurrentWidget(page)
 
         if page != self.uiEmptyPageWidget:
-            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).setEnabled(True)
-            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).setEnabled(True)
-            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).setEnabled(True)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).setEnabled(True)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Reset).setEnabled(True)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Help).setEnabled(True)
         else:
-            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).setEnabled(False)
-            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset).setEnabled(False)
-            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).setEnabled(False)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).setEnabled(False)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Reset).setEnabled(False)
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Help).setEnabled(False)
 
         # hide the contextual help button if there is no help text
         if page.whatsThis():
-            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).show()
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Help).show()
         else:
-            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help).hide()
+            self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Help).hide()
 
     def on_uiButtonBox_clicked(self, button):
         """
@@ -157,13 +157,13 @@ class NodePropertiesDialog(QtWidgets.QDialog, Ui_NodePropertiesDialog):
         """
 
         try:
-            if button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply):
+            if button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply):
                 self.applySettings()
-            elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Reset):
+            elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Reset):
                 self.resetSettings()
-            elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Help):
+            elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Help):
                 self.showHelp()
-            elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Cancel):
+            elif button == self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Cancel):
                 QtWidgets.QDialog.reject(self)
             else:
                 self.applySettings()

@@ -63,7 +63,7 @@ def parse_version(version):
     """
 
     release_type_found = False
-    version_infos = re.split('(\.|[a-z]+)', version)
+    version_infos = re.split('(\\.|[a-z]+)', version)
     version = []
     for info in version_infos:
         if info == '.' or len(info) == 0:

@@ -51,7 +51,7 @@ class VPCSPreferencesPage(QtWidgets.QWidget, Ui_VPCSPreferencesPageWidget):
 
         filter = ""
         if sys.platform.startswith("win"):
-            filter = "Executable (*.exe);;All files (*.*)"
+            filter = "Executable (*.exe);;All files (*)"
         vpcs_path = shutil.which("vpcs")
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select VPCS", vpcs_path, filter)
         if not path:

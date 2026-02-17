@@ -21,7 +21,7 @@ Link items are graphical representation of a link on the QGraphicsScene
 """
 
 import math
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg, qslot, sip_is_deleted
+from ..qt import QtCore, QtGui, QtWidgets, QtSvgWidgets, qslot, sip_is_deleted
 
 from ..packet_capture import PacketCapture
 from ..dialogs.filter_dialog import FilterDialog
@@ -29,11 +29,11 @@ from ..dialogs.style_editor_dialog_link import StyleEditorDialogLink
 from ..utils.get_icon import get_icon
 
 
-class SvgIconItem(QtSvg.QGraphicsSvgItem):
+class SvgIconItem(QtSvgWidgets.QGraphicsSvgItem):
 
     def __init__(self, symbol, parent):
 
-        QtSvg.QGraphicsSvgItem.__init__(self, symbol, parent)
+        QtSvgWidgets.QGraphicsSvgItem.__init__(self, symbol, parent)
 
     def mousePressEvent(self, event):
 
@@ -56,7 +56,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
     """
 
     _draw_port_labels = False
-    delete_link_item_signal = QtCore.pyqtSignal(str)
+    delete_link_item_signal = QtCore.Signal(str)
 
     def __init__(self, source_item, source_port, destination_item, destination_port, link=None, adding_flag=False):
 
@@ -102,7 +102,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
             self._link = link
             self._link.updated_link_signal.connect(self._drawSymbol)
             self._link.delete_link_signal.connect(self._linkDeletedSlot)
-            self.setFlag(self.ItemIsFocusable)
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsFocusable)
             source_item.addLink(self)
             destination_item.addLink(self)
             self.setCustomToolTip()
@@ -132,7 +132,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
     def _filterActionSlot(self, *args):
         dialog = FilterDialog(self._main_window, self._link)
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     @qslot
     def _suspendActionSlot(self, *args):
@@ -142,7 +142,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
     def _styleActionSlot(self, *args):
         style_dialog = StyleEditorDialogLink(self, self._main_window)
         style_dialog.show()
-        style_dialog.exec_()
+        style_dialog.exec()
 
     def setLinkStyle(self, link_style):
         self._link._link_style["color"] = link_style["color"]
@@ -239,57 +239,57 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         if not self._link.capturing():
             # start capture
-            start_capture_action = QtWidgets.QAction("Start capture", menu)
+            start_capture_action = QtGui.QAction("Start capture", menu)
             start_capture_action.setIcon(get_icon('capture-start.svg'))
             start_capture_action.triggered.connect(self._startCaptureActionSlot)
             menu.addAction(start_capture_action)
 
         if self._link.capturing():
             # stop capture
-            stop_capture_action = QtWidgets.QAction("Stop capture", menu)
+            stop_capture_action = QtGui.QAction("Stop capture", menu)
             stop_capture_action.setIcon(get_icon('capture-stop.svg'))
             stop_capture_action.triggered.connect(self._stopCaptureActionSlot)
             menu.addAction(stop_capture_action)
 
             # start wireshark
-            start_wireshark_action = QtWidgets.QAction("Start Wireshark", menu)
+            start_wireshark_action = QtGui.QAction("Start Wireshark", menu)
             start_wireshark_action.setIcon(QtGui.QIcon(":/icons/wireshark.png"))
             start_wireshark_action.triggered.connect(self._startWiresharkActionSlot)
             menu.addAction(start_wireshark_action)
 
             if PacketCapture.instance().packetAnalyzerAvailable():
-                analyze_action = QtWidgets.QAction("Analyze capture", menu)
+                analyze_action = QtGui.QAction("Analyze capture", menu)
                 analyze_action.setIcon(QtGui.QIcon(':/icons/rtv.png'))
                 analyze_action.triggered.connect(self._analyzeCaptureActionSlot)
                 menu.addAction(analyze_action)
 
         if self._link.suspended() is False:
             # Edit filters
-            filter_action = QtWidgets.QAction("Packet filters", menu)
+            filter_action = QtGui.QAction("Packet filters", menu)
             filter_action.setIcon(get_icon('filter.svg'))
             filter_action.triggered.connect(self._filterActionSlot)
             menu.addAction(filter_action)
 
             # Suspend link
-            suspend_action = QtWidgets.QAction("Suspend", menu)
+            suspend_action = QtGui.QAction("Suspend", menu)
             suspend_action.setIcon(get_icon('pause.svg'))
             suspend_action.triggered.connect(self._suspendActionSlot)
             menu.addAction(suspend_action)
         else:
             # Resume link
-            resume_action = QtWidgets.QAction("Resume", menu)
+            resume_action = QtGui.QAction("Resume", menu)
             resume_action.setIcon(get_icon('start.svg'))
             resume_action.triggered.connect(self._suspendActionSlot)
             menu.addAction(resume_action)
 
         # style
-        style_action = QtWidgets.QAction("Style", menu)
+        style_action = QtGui.QAction("Style", menu)
         style_action.setIcon(get_icon("node_conception.svg"))
         style_action.triggered.connect(self._styleActionSlot)
         menu.addAction(style_action)
 
         # delete
-        delete_action = QtWidgets.QAction("Delete", menu)
+        delete_action = QtGui.QAction("Delete", menu)
         delete_action.setIcon(get_icon('delete.svg'))
         delete_action.triggered.connect(self._deleteActionSlot)
         menu.addAction(delete_action)
@@ -302,10 +302,10 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         :param: QGraphicsSceneMouseEvent instance
         """
 
-        if event.button() == QtCore.Qt.RightButton and self._adding_flag:
+        if event.button() == QtCore.Qt.MouseButton.RightButton and self._adding_flag:
             # send a escape key to the main window to cancel the link addition
             from ..main_window import MainWindow
-            key = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Escape, QtCore.Qt.NoModifier)
+            key = QtGui.QKeyEvent(QtCore.QEvent.Type.KeyPress, QtCore.Qt.Key.Key_Escape, QtCore.Qt.KeyboardModifier.NoModifier)
             QtWidgets.QApplication.sendEvent(MainWindow.instance(), key)
             return
         else:
@@ -320,13 +320,13 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
 
         if not sip_is_deleted(self):
             # create the contextual menu
+            self.setHovered(True)
             self.setAcceptHoverEvents(False)
             menu = QtWidgets.QMenu()
             self.populateLinkContextualMenu(menu)
-            menu.exec_(QtGui.QCursor.pos())
+            menu.exec(QtGui.QCursor.pos())
             self.setAcceptHoverEvents(True)
-            self._hovered = False
-            self.adjust()
+            self.setHovered(False)
 
     def keyPressEvent(self, event):
         """
@@ -336,7 +336,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
         """
 
         # On pressing backspace or delete key, the selected link gets deleted
-        if event.key() == QtCore.Qt.Key_Delete or event.key() == QtCore.Qt.Key_Backspace:
+        if event.key() == QtCore.Qt.Key.Key_Delete or event.key() == QtCore.Qt.Key.Key_Backspace:
             self._deleteActionSlot()
             return
 

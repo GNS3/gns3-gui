@@ -22,6 +22,7 @@ Style editor to edit Shape items.
 from ..qt import QtCore, QtWidgets, QtGui
 from ..ui.style_editor_dialog_ui import Ui_StyleEditorDialog
 from ..items.shape_item import ShapeItem
+from ..items.rectangle_item import RectangleItem
 
 
 class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
@@ -41,14 +42,14 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         self._items = items
         self.uiColorPushButton.clicked.connect(self._setColorSlot)
         self.uiBorderColorPushButton.clicked.connect(self._setBorderColorSlot)
-        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self._applyPreferencesSlot)
+        self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).clicked.connect(self._applyPreferencesSlot)
 
-        self.uiBorderStyleComboBox.addItem("Solid", QtCore.Qt.SolidLine)
-        self.uiBorderStyleComboBox.addItem("Dash", QtCore.Qt.DashLine)
-        self.uiBorderStyleComboBox.addItem("Dot", QtCore.Qt.DotLine)
-        self.uiBorderStyleComboBox.addItem("Dash Dot", QtCore.Qt.DashDotLine)
-        self.uiBorderStyleComboBox.addItem("Dash Dot Dot", QtCore.Qt.DashDotDotLine)
-        self.uiBorderStyleComboBox.addItem("No border", QtCore.Qt.NoPen)
+        self.uiBorderStyleComboBox.addItem("Solid", QtCore.Qt.PenStyle.SolidLine)
+        self.uiBorderStyleComboBox.addItem("Dash", QtCore.Qt.PenStyle.DashLine)
+        self.uiBorderStyleComboBox.addItem("Dot", QtCore.Qt.PenStyle.DotLine)
+        self.uiBorderStyleComboBox.addItem("Dash Dot", QtCore.Qt.PenStyle.DashDotLine)
+        self.uiBorderStyleComboBox.addItem("Dash Dot Dot", QtCore.Qt.PenStyle.DashDotDotLine)
+        self.uiBorderStyleComboBox.addItem("No border", QtCore.Qt.PenStyle.NoPen)
 
         # use the first item in the list as the model
         first_item = items[0]
@@ -70,8 +71,27 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
                                                                                                     self._border_color.green(),
                                                                                                     self._border_color.blue(),
                                                                                                     self._border_color.alpha()))
+        if isinstance(first_item, RectangleItem):
+            # use the horizontal corner radius first and then the vertical one if it's not set
+            # maybe we allow configuring them separately in the future
+            corner_radius = first_item.horizontalCornerRadius()
+            if not corner_radius:
+                corner_radius = first_item.verticalCornerRadius()
+            self.uiCornerRadiusSpinBox.setValue(corner_radius)
+        else:
+            self.uiCornerRadiusLabel.hide()
+            self.uiCornerRadiusSpinBox.hide()
         self.uiRotationSpinBox.setValue(int(first_item.rotation()))
         self.uiBorderWidthSpinBox.setValue(pen.width())
+        if isinstance(first_item, ShapeItem):
+            rect = first_item.rect()
+            self.uiWidthSpinBox.setValue(int(rect.width()))
+            self.uiHeightSpinBox.setValue(int(rect.height()))
+        else:
+            self.uiWidthSpinBox.hide()
+            self.uiWidthLabel.hide()
+            self.uiHeightSpinBox.hide()
+            self.uiHeightLabel.hide()
         index = self.uiBorderStyleComboBox.findData(pen.style())
         if index != -1:
             self.uiBorderStyleComboBox.setCurrentIndex(index)
@@ -81,7 +101,7 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         Slot to select the filling color.
         """
 
-        color = QtWidgets.QColorDialog.getColor(self._color, self, "Select Color", QtWidgets.QColorDialog.ShowAlphaChannel)
+        color = QtWidgets.QColorDialog.getColor(self._color, self, "Select Color", QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)
         if color.isValid():
             self._color = color
             self.uiColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._color.red(),
@@ -94,7 +114,7 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         Slot to select the border color.
         """
 
-        color = QtWidgets.QColorDialog.getColor(self._border_color, self, "Select Color", QtWidgets.QColorDialog.ShowAlphaChannel)
+        color = QtWidgets.QColorDialog.getColor(self._border_color, self, "Select Color", QtWidgets.QColorDialog.ColorDialogOption.ShowAlphaChannel)
         if color.isValid():
             self._border_color = color
             self.uiBorderColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(self._border_color.red(),
@@ -108,7 +128,7 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         """
 
         border_style = QtCore.Qt.PenStyle(self.uiBorderStyleComboBox.itemData(self.uiBorderStyleComboBox.currentIndex()))
-        pen = QtGui.QPen(self._border_color, self.uiBorderWidthSpinBox.value(), border_style, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+        pen = QtGui.QPen(self._border_color, self.uiBorderWidthSpinBox.value(), border_style, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
         if self._color:
             brush = QtGui.QBrush(self._color)
         else:
@@ -116,10 +136,18 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
         for item in self._items:
             item.setPen(pen)
-            # on multiselection it's possible to select many type of items
+            # on multi-selection it's possible to select many type of items
             # but brush can be applied only on ShapeItem,
             if brush and isinstance(item, ShapeItem):
                 item.setBrush(brush)
+            if isinstance(item, RectangleItem):
+                corner_radius = self.uiCornerRadiusSpinBox.value()
+                # use the corner radius for both horizontal (rx) and vertical (ry)
+                # maybe we support setting them separately in the future
+                item.setHorizontalCornerRadius(corner_radius)
+                item.setVerticalCornerRadius(corner_radius)
+            if isinstance(item, ShapeItem):
+                item.setWidthAndHeight(self.uiWidthSpinBox.value(), self.uiHeightSpinBox.value())
             item.setRotation(self.uiRotationSpinBox.value())
 
     def done(self, result):

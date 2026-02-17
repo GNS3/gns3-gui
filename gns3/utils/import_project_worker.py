@@ -29,10 +29,10 @@ class ImportProjectWorker(QtCore.QObject):
     """
 
     # signals to update the progress dialog.
-    error = QtCore.pyqtSignal(str, bool)
-    finished = QtCore.pyqtSignal()
-    updated = QtCore.pyqtSignal(int)
-    imported = QtCore.pyqtSignal(str)
+    error = QtCore.Signal(str, bool)
+    finished = QtCore.Signal()
+    updated = QtCore.Signal(int)
+    imported = QtCore.Signal(str)
 
     def __init__(self, source, name=None, path=None):
         """

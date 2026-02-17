@@ -38,7 +38,7 @@ class VMwareVMWizard(VMWizard, Ui_VMwareVMWizard):
 
         super().__init__(vmware_vms, parent)
         self._vmware_vms = vmware_vms
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/vmware_guest.svg"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/vmware_guest.svg"))
 
     def validateCurrentPage(self):
         """

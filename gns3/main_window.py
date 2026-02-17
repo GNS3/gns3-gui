@@ -49,7 +49,6 @@ from .topology import Topology
 from .http_client import HTTPClient
 from .progress import Progress
 from .update_manager import UpdateManager
-from .utils.analytics import AnalyticsClient
 from .dialogs.appliance_wizard import ApplianceWizard
 from .dialogs.new_template_wizard import NewTemplateWizard
 from .dialogs.notif_dialog import NotifDialog, NotifDialogHandler
@@ -70,7 +69,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     """
 
     # signal to tell the view if the user is adding a link or not
-    adding_link_signal = QtCore.pyqtSignal(bool)
+    adding_link_signal = QtCore.Signal(bool)
 
     # Signal of settings updates
     settings_updated_signal = QtCore.Signal()
@@ -133,11 +132,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._local_config_timer = QtCore.QTimer(self)
         self._local_config_timer.timeout.connect(local_config.checkConfigChanged)
         self._local_config_timer.start(1000)  # milliseconds
-        self._analytics_client = AnalyticsClient()
         self._template_manager = TemplateManager().instance()
         self._appliance_manager = ApplianceManager().instance()
 
         # restore the geometry and state of the main window.
+        self._save_gui_state_geometry = True
         self.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["geometry"].encode()))
         self.restoreState(QtCore.QByteArray().fromBase64(self._settings["state"].encode()))
 
@@ -155,17 +154,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiNodesDockWidget.setVisible(False)
 
         # default directories for QFileDialog
-        self._import_configs_from_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-        self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-        self._screenshots_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
-        self._pictures_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.PicturesLocation)
-        self._appliance_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
-        self._portable_project_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation)
+        self._import_configs_from_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DocumentsLocation)
+        self._export_configs_to_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DocumentsLocation)
+        self._screenshots_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.PicturesLocation)
+        self._pictures_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.PicturesLocation)
+        self._appliance_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DownloadLocation)
+        self._portable_project_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DownloadLocation)
         self._project_dir = None
 
         # add recent file actions to the File menu
         for i in range(0, self._maxrecent_files):
-            action = QtWidgets.QAction(self.uiFileMenu)
+            action = QtGui.QAction(self.uiFileMenu)
             action.setVisible(False)
             action.triggered.connect(self.openRecentFileSlot)
             self.recent_file_actions.append(action)
@@ -176,7 +175,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # add recent projects to the File menu
         for i in range(0, self._maxrecent_files):
-            action = QtWidgets.QAction(self.uiFileMenu)
+            action = QtGui.QAction(self.uiFileMenu)
             action.setVisible(False)
             action.triggered.connect(self.openRecentProjectSlot)
             self.recent_project_actions.append(action)
@@ -194,6 +193,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiNewTemplatePushButton.hide()
 
         self.setWindowTitle("[*] GNS3")
+
+        # detect if the SVG module is correctly installed
+        supported_image_formats = [fmt.data().decode('utf-8') for fmt in QtGui.QImageReader().supportedImageFormats()]
+        log.debug("Supported image formats: %s", ", ".join(supported_image_formats))
+        if "svg" not in supported_image_formats:
+            log.warning("SVG image format is not supported, is the Qt SVG module installed?")
 
         # load initial stuff once the event loop isn't busy
         self.run_later(0, self.startupLoading)
@@ -234,6 +239,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiShowGridAction.triggered.connect(self._showGridActionSlot)
         self.uiSnapToGridAction.triggered.connect(self._snapToGridActionSlot)
         self.uiLockAllAction.triggered.connect(self._lockActionSlot)
+        self.uiResetGUIStateAction.triggered.connect(self._resetGUIState)
         self.uiResetDocksAction.triggered.connect(self._resetDocksSlot)
 
         # tool menu connections
@@ -268,6 +274,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiExportDebugInformationAction.triggered.connect(self._exportDebugInformationSlot)
         self.uiDoctorAction.triggered.connect(self._doctorSlot)
         self.uiAcademyAction.triggered.connect(self._academyActionSlot)
+        self.uiShortcutsAction.triggered.connect(self._shortcutsActionSlot)
 
         # browsers tool bar connections
         self.uiBrowseRoutersAction.triggered.connect(self._browseRoutersActionSlot)
@@ -368,6 +375,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         item.updateNode()
                     item.update()
 
+    def _resetGUIState(self):
+        """
+        Reset the GUI state.
+        """
+
+        self._save_gui_state_geometry = False
+        self.close()
+        if hasattr(sys, "frozen"):
+            QtCore.QProcess.startDetached(os.path.abspath(sys.executable), sys.argv)
+        else:
+            QtWidgets.QMessageBox.information(self, "GUI state","The GUI state has been reset, please restart the application")
+
     def _resetDocksSlot(self):
         """
         Reset the dock widgets.
@@ -377,13 +396,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiComputeSummaryDockWidget.setFloating(False)
         self.uiConsoleDockWidget.setFloating(False)
         self.uiNodesDockWidget.setFloating(False)
-
-    def analyticsClient(self):
-        """
-        Return the analytics client
-        """
-
-        return self._analytics_client
 
     def _newProjectActionSlot(self):
         """
@@ -396,7 +408,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self._project_dialog = ProjectDialog(self)
         self._project_dialog.show()
-        create_new_project = self._project_dialog.exec_()
+        create_new_project = self._project_dialog.exec()
 
         if create_new_project:
             Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
@@ -410,7 +422,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         dialog = NewTemplateWizard(self)
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     @qslot
     def openApplianceActionSlot(self, *args):
@@ -422,7 +434,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not os.path.exists(self._appliance_dir):
             directory = Topology.instance().projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Import appliance", directory,
-                                                        "All files (*.*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
+                                                        "All files (*);;GNS3 Appliance (*.gns3appliance *.gns3a)",
                                                         "GNS3 Appliance (*.gns3appliance *.gns3a)")
         if path:
             self.loadPath(path)
@@ -441,7 +453,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if self._project_dir is None or not os.path.exists(self._project_dir):
                 directory = Topology.instance().projectsDirPath()
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open project", directory,
-                                                            "All files (*.*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
+                                                            "All files (*);;GNS3 Project (*.gns3);;GNS3 Portable Project (*.gns3project *.gns3p);;NET files (*.net)",
                                                             "GNS3 Project (*.gns3)")
             if path:
                 self.loadPath(path)
@@ -505,7 +517,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 QtWidgets.QMessageBox.critical(self, "Appliance", "Error while importing appliance {}: {}".format(path, str(e)))
                 return
             self._appliance_wizard.show()
-            self._appliance_wizard.exec_()
+            self._appliance_wizard.exec()
         elif path.endswith(".gns3"):
             if Controller.instance().isRemote():
                 QtWidgets.QMessageBox.critical(self, "Open project", "Cannot open a .gns3 file on a remote server, please use a portable project (.gns3p) instead")
@@ -582,7 +594,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Exports all configs to a directory.
         """
 
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Export directory", self._export_configs_to_dir, QtWidgets.QFileDialog.Option.ShowDirsOnly)
         if path:
             self._export_configs_to_dir = os.path.dirname(path)
             for module in MODULES:
@@ -595,7 +607,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Imports all configs from a directory.
         """
 
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", self._import_configs_from_dir, QtWidgets.QFileDialog.ShowDirsOnly)
+        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Import directory", self._import_configs_from_dir, QtWidgets.QFileDialog.Option.ShowDirsOnly)
         if path:
             self._import_configs_from_dir = os.path.dirname(path)
             for module in MODULES:
@@ -613,12 +625,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         scene = self.uiGraphicsView.scene()
         scene.clearSelection()
         source = scene.itemsBoundingRect().adjusted(-20.0, -20.0, 20.0, 20.0)
-        image = QtGui.QImage(source.size().toSize(), QtGui.QImage.Format_RGB32)
-        image.fill(QtCore.Qt.white)
+        image = QtGui.QImage(source.size().toSize(), QtGui.QImage.Format.Format_RGB32)
+        image.fill(QtCore.Qt.GlobalColor.white)
         painter = QtGui.QPainter(image)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
-        painter.setRenderHint(QtGui.QPainter.TextAntialiasing, True)
-        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing, True)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.TextAntialiasing, True)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.SmoothPixmapTransform, True)
         scene.render(painter, source=source)
         painter.end()
         # TODO: quality option
@@ -708,7 +720,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         dialog = SnapshotsDialog(self, project)
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     def _selectAllActionSlot(self):
         """
@@ -733,12 +745,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot to switch to full screen.
         """
 
-        if not self.windowState() & QtCore.Qt.WindowFullScreen:
+        if not self.windowState() & QtCore.Qt.WindowState.WindowFullScreen:
             # switch to full screen
-            self.setWindowState(self.windowState() | QtCore.Qt.WindowFullScreen)
+            self.setWindowState(self.windowState() | QtCore.Qt.WindowState.WindowFullScreen)
         else:
             # switch back to normal
-            self.setWindowState(self.windowState() & ~QtCore.Qt.WindowFullScreen)
+            self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowFullScreen)
 
     def _zoomInActionSlot(self):
         """
@@ -774,7 +786,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         view = self.uiGraphicsView
         bounding_rect = view.scene().itemsBoundingRect().adjusted(-20.0, -20.0, 20.0, 20.0)
         view.ensureVisible(bounding_rect)
-        view.fitInView(bounding_rect, QtCore.Qt.KeepAspectRatio)
+        view.fitInView(bounding_rect, QtCore.Qt.AspectRatioMode.KeepAspectRatio)
 
     def _showLayersActionSlot(self):
         """
@@ -817,9 +829,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         reply = QtWidgets.QMessageBox.question(self, "Confirm Start All", "Are you sure you want to start all devices?",
-                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                                                   QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
                                                    
-        if reply == QtWidgets.QMessageBox.No:
+        if reply == QtWidgets.QMessageBox.StandardButton.No:
             return
 
         project = Topology.instance().project()
@@ -832,9 +844,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         reply = QtWidgets.QMessageBox.question(self, "Confirm Suspend All", "Are you sure you want to suspend all devices?",
-                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                                                   QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
 
-        if reply == QtWidgets.QMessageBox.No:
+        if reply == QtWidgets.QMessageBox.StandardButton.No:
             return
 
         project = Topology.instance().project()
@@ -847,9 +859,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         reply = QtWidgets.QMessageBox.question(self, "Confirm Stop All", "Are you sure you want to stop all devices?",
-                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                                                   QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
 
-        if reply == QtWidgets.QMessageBox.No:
+        if reply == QtWidgets.QMessageBox.StandardButton.No:
             return
 
         project = Topology.instance().project()
@@ -862,9 +874,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         reply = QtWidgets.QMessageBox.question(self, "Confirm Reload All", "Are you sure you want to reload all devices?",
-                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                                                   QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
 
-        if reply == QtWidgets.QMessageBox.No:
+        if reply == QtWidgets.QMessageBox.StandardButton.No:
             return
 
         project = Topology.instance().project()
@@ -914,7 +926,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Slot called when inserting an image on the scene.
         """
         # supported image file formats
-        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.gif *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)"
+        file_formats = "Image files (*.svg *.bmp *.jpeg *.jpg *.gif *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*)"
 
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Image", self._pictures_dir, file_formats)
         if not path:
@@ -970,9 +982,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         with Progress.instance().context(min_duration=0):
             setup_wizard = SetupWizard(self)
             setup_wizard.show()
-            res = setup_wizard.exec_()
+            res = setup_wizard.exec()
             # start and connect to the local server if needed
             LocalServer.instance().localServerAutoStartIfRequired()
+
+    def _shortcutsActionSlot(self):
+
+        shortcuts_text = ""
+        for action in self.findChildren(QtGui.QAction):
+            shortcut = action.shortcut().toString()
+            if shortcut:
+                shortcuts_text += f"{action.toolTip()}: {shortcut}\n"
+        QtWidgets.QMessageBox.information(self, "Shortcuts", shortcuts_text)
 
     def _aboutQtActionSlot(self):
         """
@@ -988,7 +1009,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         dialog = AboutDialog(self)
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     def _exportDebugInformationSlot(self):
         """
@@ -997,7 +1018,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         dialog = ExportDebugDialog(self, Topology.instance().project())
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     def _doctorSlot(self):
         """
@@ -1006,7 +1027,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         dialog = DoctorDialog(self)
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     def _academyActionSlot(self):
         """
@@ -1096,7 +1117,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dialog = PreferencesDialog(self)
             #dialog.restoreGeometry(QtCore.QByteArray().fromBase64(self._settings["preferences_dialog_geometry"].encode()))
             dialog.show()
-            dialog.exec_()
+            dialog.exec()
             #self._settings["preferences_dialog_geometry"] = bytes(dialog.saveGeometry().toBase64()).decode()
             #self.setSettings(self._settings)
 
@@ -1119,9 +1140,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         key = event.key()
         # if the user is adding a link and press Escape, then cancel the link addition.
-        if self.uiAddLinkAction.isChecked() and key == QtCore.Qt.Key_Escape:
+        if self.uiAddLinkAction.isChecked() and key == QtCore.Qt.Key.Key_Escape:
             self.uiAddLinkAction.setChecked(False)
             self._addLinkActionSlot()
+        elif key == QtCore.Qt.Key.Key_C and (event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier):
+            status_bar_message = self.uiStatusBar.currentMessage()
+            if status_bar_message:
+                QtWidgets.QApplication.clipboard().setText(status_bar_message)
         else:
             super().keyPressEvent(event)
 
@@ -1134,8 +1159,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if Topology.instance().project():
             reply = QtWidgets.QMessageBox.question(self, "Confirm Exit", "Are you sure you want to exit GNS3?",
-                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.No:
+                                                   QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.No:
                 event.ignore()
                 return
 
@@ -1144,8 +1169,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         progress.setCancelButtonText("Force quit")
 
         log.debug("Close the Main Window")
-        self._analytics_client.sendScreenView("Main Window", session_start=False)
-
         self._finish_application_closing(close_windows=False)
         event.accept()
         self.uiConsoleTextEdit.closeIO()
@@ -1160,8 +1183,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         log.debug("_finish_application_closing")
 
-        self._settings["geometry"] = bytes(self.saveGeometry().toBase64()).decode()
-        self._settings["state"] = bytes(self.saveState().toBase64()).decode()
+        if self._save_gui_state_geometry:
+            self._settings["geometry"] = bytes(self.saveGeometry().toBase64()).decode()
+            self._settings["state"] = bytes(self.saveState().toBase64()).decode()
+        else:
+            self._settings["geometry"] = ""
+            self._settings["state"] = ""
         self.setSettings(self._settings)
 
         Controller.instance().stopListenNotifications()
@@ -1195,8 +1222,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if not LocalConfig.instance().isMainGui():
             reply = QtWidgets.QMessageBox.warning(self, "GNS3", "Another GNS3 GUI is already running. Continue?",
-                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.No:
+                                                  QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.No:
                 sys.exit(1)
                 return
 
@@ -1234,7 +1261,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Controller.instance().connected_signal.connect(self._controllerConnectedSlot)
         Controller.instance().project_list_updated_signal.connect(self.updateRecentProjectActions)
 
-        self._analytics_client.sendScreenView("Main Window")
         self.uiGraphicsView.setEnabled(False)
 
         # show the setup wizard
@@ -1429,7 +1455,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not os.path.exists(directory):
             directory = Topology.instance().projectsDirPath()
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open portable project", directory,
-                                                        "All files (*.*);;GNS3 Portable Project (*.gns3project *.gns3p)",
+                                                        "All files (*);;GNS3 Portable Project (*.gns3project *.gns3p)",
                                                         "GNS3 Portable Project (*.gns3project *.gns3p)")
         if path:
             Topology.instance().importProject(path)
@@ -1440,7 +1466,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
         dialog = EditProjectDialog(self)
         dialog.show()
-        dialog.exec_()
+        dialog.exec()
 
     def _deleteProjectActionSlot(self):
         if Topology.instance().project() is None:
@@ -1449,8 +1475,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self,
             "GNS3",
             "The project will be deleted from disk. All files will be removed including the project subdirectories. Continue?",
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             Topology.instance().deleteProject()
 
     def _setStyle(self, style_name):

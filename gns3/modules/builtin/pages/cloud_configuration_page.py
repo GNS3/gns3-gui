@@ -364,7 +364,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
             if interface["type"] == "ethernet":
                 if not state and interface["special"]:
                     continue
-                if self.uiEthernetListWidget.findItems(interface["name"], QtCore.Qt.MatchFixedString):
+                if self.uiEthernetListWidget.findItems(interface["name"], QtCore.Qt.MatchFlag.MatchFixedString):
                     continue
                 self.uiEthernetComboBox.addItem(interface["name"])
                 index += 1
@@ -377,7 +377,7 @@ class CloudConfigurationPage(QtWidgets.QWidget, Ui_cloudConfigPageWidget):
         symbol_path = self.uiSymbolLineEdit.text()
         dialog = SymbolSelectionDialog(self, symbol=symbol_path)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             new_symbol_path = dialog.getSymbol()
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))

@@ -39,7 +39,7 @@ class TraceNGNodeWizard(VMWizard, Ui_TraceNGNodeWizard):
     def __init__(self, traceng_nodes, parent):
 
         super().__init__(traceng_nodes, parent)
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/traceng.png"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/icons/traceng.png"))
         self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)
 
         # TraceNG is only supported on a local server

@@ -1,0 +1,51 @@
+{
+    "appliance_id": "96dac9ff-581c-4262-a9f0-5c68890d049e",
+    "category": "router",
+    "status": "experimental",
+    "maintainer": "GNS3 Team",
+    "name": "Cisco 3745",
+    "vendor_name": "Cisco",
+    "product_name": "3745",
+    "vendor_url": "http://www.cisco.com",
+    "description": "Cisco 3745 Multiservice Access Router",
+    "registry_version": 8,
+    "maintainer_email": "developers@gns3.net",
+    "documentation_url": "http://www.cisco.com/c/en/us/support/routers/3745-multiservice-access-router/model.html",
+    "settings": [
+        {
+            "template_type": "dynamips",
+            "template_properties": {
+                "chassis": "",
+                "platform": "c3745",
+                "ram": 256,
+                "nvram": 256,
+                "startup_config": "ios_base_startup-config.txt",
+                "slot0": "GT96100-FE",
+                "slot1": "NM-1FE-TX",
+                "slot2": "NM-4T",
+                "slot3": "",
+                "slot4": "",
+                "wic0": "WIC-1T",
+                "wic1": "WIC-1T",
+                "wic2": "WIC-1T",
+                "idlepc": "0x60aa1da0"
+            }
+        }
+    ],
+    "versions": [
+        {
+            "name": "124-25d",
+            "images": {
+                "image": "c3745-adventerprisek9-mz.124-25d.image"
+            }
+        }
+    ],
+    "images": [
+        {
+            "filesize": 82053028,
+            "md5sum": "ddbaf74274822b50fa9670e10c75b08f",
+            "version": "124-25d",
+            "filename": "c3745-adventerprisek9-mz.124-25d.image"
+        }
+    ]
+}

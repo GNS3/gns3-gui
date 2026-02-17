@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>601</height>
+    <width>726</width>
+    <height>428</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -219,6 +219,27 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="uiInstructionsPage">
+   <property name="title">
+    <string>Installation instructions</string>
+   </property>
+   <property name="subTitle">
+    <string>Please read the following instructions in order to install your new appliance.</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QTextEdit" name="uiInstructionsTextEdit">
+      <property name="html">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QWizardPage" name="uiFilesWizardPage">
    <property name="title">
     <string>Required files</string>
@@ -232,11 +253,11 @@
       <property name="indentation">
        <number>20</number>
       </property>
-      <attribute name="headerDefaultSectionSize">
-       <number>120</number>
-      </attribute>
       <attribute name="headerMinimumSectionSize">
        <number>20</number>
+      </attribute>
+      <attribute name="headerDefaultSectionSize">
+       <number>120</number>
       </attribute>
       <column>
        <property name="text">

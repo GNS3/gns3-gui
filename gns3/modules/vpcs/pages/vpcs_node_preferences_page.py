@@ -106,7 +106,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
         self.uiEditVPCSPushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             vpcs_node = self._vpcs_nodes[key]
             self._refreshInfo(vpcs_node)
         else:
@@ -119,7 +119,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
         wizard = VPCSNodeWizard(self._vpcs_nodes, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
             new_vpcs_node_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_vpcs_node_settings["compute_id"], name=new_vpcs_node_settings["name"])
             self._vpcs_nodes[key] = VPCS_NODES_SETTINGS.copy()
@@ -128,7 +128,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
             item = QtWidgets.QTreeWidgetItem(self.uiVPCSTreeWidget)
             item.setText(0, self._vpcs_nodes[key]["name"])
             Controller.instance().getSymbolIcon(self._vpcs_nodes[key]["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiVPCSTreeWidget.setCurrentItem(item)
 
@@ -139,11 +139,11 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
         item = self.uiVPCSTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             vpcs_node = self._vpcs_nodes[key]
             dialog = ConfigurationDialog(vpcs_node["name"], vpcs_node, VPCSNodeConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(vpcs_node["symbol"], qpartial(self._setItemIcon, item))
                 if vpcs_node["name"] != item.text(0):
@@ -156,7 +156,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
                     self._vpcs_nodes[new_key] = self._vpcs_nodes[key]
                     del self._vpcs_nodes[key]
                     item.setText(0, vpcs_node["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
                 self._refreshInfo(vpcs_node)
 
     def _deleteVPCSSlot(self):
@@ -166,7 +166,7 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
 
         for item in self.uiVPCSTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._vpcs_nodes[key]
                 self.uiVPCSTreeWidget.takeTopLevelItem(self.uiVPCSTreeWidget.indexOfTopLevelItem(item))
 
@@ -190,12 +190,12 @@ class VPCSNodePreferencesPage(QtWidgets.QWidget, Ui_VPCSNodePageWidget):
             item = QtWidgets.QTreeWidgetItem(self.uiVPCSTreeWidget)
             item.setText(0, node["name"])
             Controller.instance().getSymbolIcon(node["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiVPCSTreeWidget.setCurrentItem(self._items[0])
-            self.uiVPCSTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiVPCSTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiVPCSTreeWidget.setMaximumWidth(self.uiVPCSTreeWidget.sizeHintForColumn(0) + 20)
 
     def _setItemIcon(self, item, icon):

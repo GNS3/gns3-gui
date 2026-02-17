@@ -109,7 +109,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         self.uiEditEthernetSwitchPushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             ethernet_switch = self._ethernet_switches[key]
             self._refreshInfo(ethernet_switch)
         else:
@@ -122,7 +122,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
         wizard = EthernetSwitchWizard(self._ethernet_switches, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
             new_ethernet_switch_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_ethernet_switch_settings["compute_id"], name=new_ethernet_switch_settings["name"])
             self._ethernet_switches[key] = ETHERNET_SWITCH_SETTINGS.copy()
@@ -132,7 +132,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
             item.setText(0, self._ethernet_switches[key]["name"])
             Controller.instance().getSymbolIcon(self._ethernet_switches[key]["symbol"], qpartial(self._setItemIcon, item))
 
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiEthernetSwitchesTreeWidget.setCurrentItem(item)
 
@@ -143,11 +143,11 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
 
         item = self.uiEthernetSwitchesTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             ethernet_switch = self._ethernet_switches[key]
             dialog = ConfigurationDialog(ethernet_switch["name"], ethernet_switch, EthernetSwitchConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(ethernet_switch["symbol"], qpartial(self._setItemIcon, item))
                 if ethernet_switch["name"] != item.text(0):
@@ -160,7 +160,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
                     self._ethernet_switches[new_key] = self._ethernet_switches[key]
                     del self._ethernet_switches[key]
                     item.setText(0, ethernet_switch["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
                 self._refreshInfo(ethernet_switch)
 
     def _deleteEthernetSwitchSlot(self):
@@ -169,7 +169,7 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
         """
         for item in self.uiEthernetSwitchesTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._ethernet_switches[key]
                 self.uiEthernetSwitchesTreeWidget.takeTopLevelItem(self.uiEthernetSwitchesTreeWidget.indexOfTopLevelItem(item))
 
@@ -193,12 +193,12 @@ class EthernetSwitchPreferencesPage(QtWidgets.QWidget, Ui_EthernetSwitchPreferen
             item = QtWidgets.QTreeWidgetItem(self.uiEthernetSwitchesTreeWidget)
             item.setText(0, ethernet_switch["name"])
             Controller.instance().getSymbolIcon(ethernet_switch["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiEthernetSwitchesTreeWidget.setCurrentItem(self._items[0])
-            self.uiEthernetSwitchesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiEthernetSwitchesTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiEthernetSwitchesTreeWidget.setMaximumWidth(self.uiEthernetSwitchesTreeWidget.sizeHintForColumn(0) + 20)
 
     def _setItemIcon(self, item, icon):

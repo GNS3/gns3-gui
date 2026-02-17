@@ -18,7 +18,7 @@
 
 import urllib.parse
 
-from ..qt import QtCore, QtGui, QtWidgets, QtSvg
+from ..qt import QtCore, QtGui, QtWidgets, QtSvgWidgets
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
 from ..controller import Controller
 
@@ -27,7 +27,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class LogoItem(QtSvg.QGraphicsSvgItem):
+class LogoItem(QtSvgWidgets.QGraphicsSvgItem):
     """
     Margin for the logo
     """
@@ -60,8 +60,8 @@ class LogoItem(QtSvg.QGraphicsSvgItem):
         self.graphicsEffect().setEnabled(False)
 
         # set graphical settings for this item
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable)
-        self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsFocusable)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
 
         from ..main_window import MainWindow
@@ -83,7 +83,7 @@ class LogoItem(QtSvg.QGraphicsSvgItem):
         self.setZValue(-2)
 
     def eventFilter(self, source, event):
-        if event.type() == QtCore.QEvent.Paint:
+        if event.type() == QtCore.QEvent.Type.Paint:
             self.updatePosition()
         return QtWidgets.QWidget.eventFilter(self, source, event)
 

@@ -42,6 +42,7 @@ class DockerVM(Node):
         docker_vm_settings = {"image": "",
                               "usage": "",
                               "adapters": DOCKER_CONTAINER_SETTINGS["adapters"],
+                              "mac_address": DOCKER_CONTAINER_SETTINGS["mac_address"],
                               "custom_adapters": DOCKER_CONTAINER_SETTINGS["custom_adapters"],
                               "start_command": DOCKER_CONTAINER_SETTINGS["start_command"],
                               "environment": DOCKER_CONTAINER_SETTINGS["environment"],
@@ -87,6 +88,9 @@ class DockerVM(Node):
                 port_info += "     {port_name} {port_description}\n".format(
                     port_name=port.name(),
                     port_description=port.description())
+
+                if port.macAddress():
+                    port_info += "       MAC address is {mac_address}\n".format(mac_address=port.macAddress())
 
         usage = "\n" + self._settings.get("usage")
         return info + port_info + usage

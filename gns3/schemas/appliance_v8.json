@@ -1,0 +1,908 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "JSON schema validating a GNS3 appliance",
+  "definitions": {
+    "categories": {
+      "enum": [
+        "router",
+        "multilayer_switch",
+        "switch",
+        "firewall",
+        "guest"
+      ]
+    },
+    "docker_properties": {
+      "type": "object",
+      "title": "Docker template properties",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the template"
+        },
+        "category": {
+          "$ref": "#/definitions/categories",
+          "title": "Category of the template"
+        },
+        "default_name_format": {
+          "type": "string",
+          "title": "Default name format"
+        },
+        "usage": {
+          "type": "string",
+          "title": "How to use the template"
+        },
+        "symbol": {
+          "type": "string",
+          "title": "Symbol of the template"
+        },
+        "image": {
+          "type": "string",
+          "title": "Docker image"
+        },
+        "adapters": {
+          "type": "integer",
+          "title": "Number of ethernet adapters"
+        },
+        "start_command": {
+          "type": "string",
+          "title": "Command executed when the container start. Empty will use the default"
+        },
+        "environment": {
+          "type": "string",
+          "title": "One KEY=VAR environment by line"
+        },
+        "console_type": {
+          "enum": [
+            "telnet",
+            "vnc",
+            "http",
+            "https",
+            "none"
+          ],
+          "title": "Type of console"
+        },
+        "console_http_port": {
+          "title": "Internal port in the container of the HTTP server",
+          "type": "integer"
+        },
+        "console_http_path": {
+          "title": "Path of the web interface",
+          "type": "string"
+        },
+        "console_resolution": {
+          "title": "Console resolution for VNC, for example 1024x768",
+          "type": "string",
+          "pattern": "^[0-9]+x[0-9]+$"
+        },
+        "extra_hosts": {
+          "title": "Docker extra hosts (added to /etc/hosts)",
+          "type": "string"
+        },
+        "extra_volumes": {
+          "title": "Additional directories to make persistent",
+          "type": "array"
+        }
+      },
+      "required": [
+        "image"
+      ]
+    },
+    "iou_properties": {
+      "type": "object",
+      "title": "IOU template properties",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the template"
+        },
+        "category": {
+          "$ref": "#/definitions/categories",
+          "title": "Category of the template"
+        },
+        "default_name_format": {
+          "type": "string",
+          "title": "Default name format"
+        },
+        "usage": {
+          "type": "string",
+          "title": "How to use the template"
+        },
+        "symbol": {
+          "type": "string",
+          "title": "Symbol of the template"
+        },
+        "ethernet_adapters": {
+          "type": "integer",
+          "title": "Number of ethernet adapters"
+        },
+        "serial_adapters": {
+          "type": "integer",
+          "title": "Number of serial adapters"
+        },
+        "ram": {
+          "type": "integer",
+          "title": "Host RAM"
+        },
+        "nvram": {
+          "type": "integer",
+          "title": "Host NVRAM"
+        },
+        "startup_config": {
+          "type": "string",
+          "title": "Config loaded at startup"
+        }
+      }
+    },
+    "dynamips_slot": {
+      "enum": [
+        "C2600-MB-2FE",
+        "C2600-MB-1E",
+        "PA-A1",
+        "PA-8E",
+        "C1700-MB-1FE",
+        "PA-8T",
+        "PA-2FE-TX",
+        "PA-FE-TX",
+        "PA-GE",
+        "C2600-MB-2E",
+        "C7200-IO-FE",
+        "NM-4T",
+        "C2600-MB-1FE",
+        "C7200-IO-2FE",
+        "PA-POS-OC3",
+        "PA-4T+",
+        "C1700-MB-WIC1",
+        "NM-16ESW",
+        "C7200-IO-GE-E",
+        "NM-4E",
+        "GT96100-FE",
+        "NM-1FE-TX",
+        "Leopard-2FE",
+        "NM-1E",
+        "PA-4E",
+        ""
+      ]
+    },
+    "dynamips_wic": {
+      "enum": [
+        "WIC-1ENET",
+        "WIC-1T",
+        "WIC-2T",
+        ""
+      ]
+    },
+    "dynamips_properties": {
+      "type": "object",
+      "title": "Dynamips template properties",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the template"
+        },
+        "category": {
+          "$ref": "#/definitions/categories",
+          "title": "Category of the template"
+        },
+        "default_name_format": {
+          "type": "string",
+          "title": "Default name format"
+        },
+        "usage": {
+          "type": "string",
+          "title": "How to use the template"
+        },
+        "symbol": {
+          "type": "string",
+          "title": "Symbol of the template"
+        },
+        "chassis": {
+          "title": "Chassis type",
+          "enum": [
+            "1720",
+            "1721",
+            "1750",
+            "1751",
+            "1760",
+            "2610",
+            "2620",
+            "2610XM",
+            "2620XM",
+            "2650XM",
+            "2621",
+            "2611XM",
+            "2621XM",
+            "2651XM",
+            "3620",
+            "3640",
+            "3660",
+            ""
+          ]
+        },
+        "platform": {
+          "title": "Platform type",
+          "enum": [
+            "c1700",
+            "c2600",
+            "c2691",
+            "c3725",
+            "c3745",
+            "c3600",
+            "c7200"
+          ]
+        },
+        "ram": {
+          "title": "Amount of ram",
+          "type": "integer",
+          "minimum": 1
+        },
+        "nvram": {
+          "title": "Amount of nvram",
+          "type": "integer",
+          "minimum": 1
+        },
+        "idlepc": {
+          "type": "string",
+          "pattern": "^0x[0-9a-f]{8}"
+        },
+        "startup_config": {
+          "type": "string",
+          "title": "Config loaded at startup"
+        },
+        "wic0": {
+          "$ref": "#/definitions/dynamips_wic"
+        },
+        "wic1": {
+          "$ref": "#/definitions/dynamips_wic"
+        },
+        "wic2": {
+          "$ref": "#/definitions/dynamips_wic"
+        },
+        "slot0": {
+          "$ref": "#/definitions/dynamips_slot"
+        },
+        "slot1": {
+          "$ref": "#/definitions/dynamips_slot"
+        },
+        "slot2": {
+          "$ref": "#/definitions/dynamips_slot"
+        },
+        "slot3": {
+          "$ref": "#/definitions/dynamips_slot"
+        },
+        "slot4": {
+          "$ref": "#/definitions/dynamips_slot"
+        },
+        "slot5": {
+          "$ref": "#/definitions/dynamips_slot"
+        },
+        "slot6": {
+          "$ref": "#/definitions/dynamips_slot"
+        },
+        "midplane": {
+          "enum": [
+            "std",
+            "vxr"
+          ]
+        },
+        "npe": {
+          "enum": [
+            "npe-100",
+            "npe-150",
+            "npe-175",
+            "npe-200",
+            "npe-225",
+            "npe-300",
+            "npe-400",
+            "npe-g2"
+          ]
+        }
+      },
+      "required": [
+        "platform"
+      ]
+    },
+    "qemu_disk_interfaces": {
+      "enum": [
+        "ide",
+        "scsi",
+        "sd",
+        "mtd",
+        "floppy",
+        "pflash",
+        "virtio",
+        "sata"
+      ]
+    },
+    "qemu_properties": {
+      "type": "object",
+      "title": "Qemu template properties",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the template"
+        },
+        "category": {
+          "$ref": "#/definitions/categories",
+          "title": "Category of the template"
+        },
+        "default_name_format": {
+          "type": "string",
+          "title": "Default name format"
+        },
+        "usage": {
+          "type": "string",
+          "title": "How to use the template"
+        },
+        "symbol": {
+          "type": "string",
+          "title": "Symbol of the template"
+        },
+        "adapter_type": {
+          "enum": [
+            "e1000",
+            "i82550",
+            "i82551",
+            "i82557a",
+            "i82557b",
+            "i82557c",
+            "i82558a",
+            "i82558b",
+            "i82559a",
+            "i82559b",
+            "i82559c",
+            "i82559er",
+            "i82562",
+            "i82801",
+            "igb",
+            "ne2k_pci",
+            "pcnet",
+            "rtl8139",
+            "virtio",
+            "virtio-net-pci",
+            "vmxnet3"
+          ],
+          "title": "Type of network adapter"
+        },
+        "adapters": {
+          "type": "integer",
+          "title": "Number of adapters"
+        },
+        "custom_adapters": {
+          "type": "array",
+          "title": "Custom adapters",
+          "items": {
+            "type": "object",
+            "properties": {
+              "adapter_number": {
+                "title": "Adapter number",
+                "type": "integer"
+              },
+              "port_name": {
+                "title": "Custom port name",
+                "type": "string",
+                "minimum": 1
+              },
+              "adapter_type": {
+                "title": "Custom adapter type",
+                "type": "string",
+                "enum": [
+                  "e1000",
+                  "i82550",
+                  "i82551",
+                  "i82557a",
+                  "i82557b",
+                  "i82557c",
+                  "i82558a",
+                  "i82558b",
+                  "i82559a",
+                  "i82559b",
+                  "i82559c",
+                  "i82559er",
+                  "i82562",
+                  "i82801",
+                  "igb",
+                  "ne2k_pci",
+                  "pcnet",
+                  "rtl8139",
+                  "virtio",
+                  "virtio-net-pci",
+                  "vmxnet3"
+                ]
+              },
+              "mac_address": {
+                "title": "Custom MAC address",
+                "type": "string",
+                "minimum": 1,
+                "pattern": "^([0-9a-fA-F]{2}[:]){5}([0-9a-fA-F]{2})$"
+              }
+            },
+            "required": [
+              "adapter_number"
+            ]
+          }
+        },
+        "first_port_name": {
+          "type": "string",
+          "title": "Optional name of the first networking port example: eth0"
+        },
+        "port_name_format": {
+          "type": "string",
+          "title": "Optional formating of the networking port example: eth{0}"
+        },
+        "port_segment_size": {
+          "type": "integer",
+          "title": "Optional port segment size. A port segment is a block of port. For example Ethernet0/0 Ethernet0/1 is the module 0 with a port segment size of 2"
+        },
+        "linked_clone": {
+          "type": "boolean",
+          "title": "False if you don't want to use a single image for all nodes"
+        },
+        "ram": {
+          "type": "integer",
+          "title": "Ram allocated to the appliance (MB)"
+        },
+        "cpus": {
+          "type": "integer",
+          "title": "Number of Virtual CPU"
+        },
+        "hda_disk_interface": {
+          "$ref": "#/definitions/qemu_disk_interfaces",
+          "title": "Disk interface for the installed hda_disk_image"
+        },
+        "hdb_disk_interface": {
+          "$ref": "#/definitions/qemu_disk_interfaces",
+          "title": "Disk interface for the installed hdb_disk_image"
+        },
+        "hdc_disk_interface": {
+          "$ref": "#/definitions/qemu_disk_interfaces",
+          "title": "Disk interface for the installed hdc_disk_image"
+        },
+        "hdd_disk_interface": {
+          "$ref": "#/definitions/qemu_disk_interfaces",
+          "title": "Disk interface for the installed hdd_disk_image"
+        },
+        "platform": {
+          "enum": [
+            "aarch64",
+            "alpha",
+            "arm",
+            "cris",
+            "i386",
+            "lm32",
+            "m68k",
+            "microblaze",
+            "microblazeel",
+            "mips",
+            "mips64",
+            "mips64el",
+            "mipsel",
+            "moxie",
+            "or32",
+            "ppc",
+            "ppc64",
+            "ppcemb",
+            "s390x",
+            "sh4",
+            "sh4eb",
+            "sparc",
+            "sparc64",
+            "tricore",
+            "unicore32",
+            "x86_64",
+            "xtensa",
+            "xtensaeb"
+          ],
+          "title": "Platform to emulate"
+        },
+        "console_type": {
+          "enum": [
+            "telnet",
+            "vnc",
+            "spice",
+            "spice+agent",
+            "none"
+          ],
+          "title": "Type of console connection for the administration of the appliance"
+        },
+        "boot_priority": {
+          "enum": [
+            "d",
+            "c",
+            "dc",
+            "cd",
+            "n",
+            "nc",
+            "nd",
+            "cn",
+            "dn"
+          ],
+          "title": "Optional define the disk boot priory. Refer to -boot option in qemu manual for more details."
+        },
+        "kernel_command_line": {
+          "type": "string",
+          "title": "Command line parameters send to the kernel"
+        },
+        "options": {
+          "type": "string",
+          "title": "Optional additional qemu command line options"
+        },
+        "cpu_throttling": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "title": "Throttle the CPU"
+        },
+        "tpm": {
+          "type": "boolean",
+          "title": "Enable the Trusted Platform Module (TPM)"
+        },
+        "uefi": {
+          "type": "boolean",
+          "title": "Enable the UEFI boot mode"
+        },
+        "on_close": {
+          "title": "Action to execute on the VM is closed",
+          "enum": [
+            "power_off",
+            "shutdown_signal",
+            "save_vm_state"
+          ]
+        },
+        "process_priority": {
+          "title": "Process priority for QEMU",
+          "enum": [
+            "realtime",
+            "very high",
+            "high",
+            "normal",
+            "low",
+            "very low",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "properties": {
+    "appliance_id": {
+      "title": "Appliance ID",
+      "type": "string",
+      "minLength": 36,
+      "maxLength": 36,
+      "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+    },
+    "name": {
+      "type": "string",
+      "title": "Appliance name"
+    },
+    "category": {
+      "$ref": "#/definitions/categories",
+      "title": "Category of the appliance"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description of the appliance. Could be a marketing description"
+    },
+    "vendor_name": {
+      "type": "string",
+      "title": "Name of the vendor"
+    },
+    "vendor_url": {
+      "type": "string",
+      "format": "uri",
+      "title": "Website of the vendor"
+    },
+    "vendor_logo_url": {
+      "type": "string",
+      "format": "uri",
+      "title": "Link to the vendor logo (used by the GNS3 marketplace)"
+    },
+    "documentation_url": {
+      "type": "string",
+      "format": "uri",
+      "title": "An optional documentation for using the appliance on vendor website"
+    },
+    "product_name": {
+      "type": "string",
+      "title": "Product name"
+    },
+    "product_url": {
+      "type": "string",
+      "format": "uri",
+      "title": "An optional product url on vendor website"
+    },
+    "registry_version": {
+      "enum": [
+        8
+      ],
+      "title": "Version of the registry compatible with this appliance (version >=8 introduced breaking changes)"
+    },
+    "status": {
+      "enum": [
+        "stable",
+        "experimental",
+        "broken"
+      ],
+      "title": "Document if the appliance is working or not"
+    },
+    "availability": {
+      "enum": [
+        "free",
+        "with-registration",
+        "free-to-try",
+        "service-contract"
+      ],
+      "title": "About image availability: can be downloaded directly; download requires a free registration; paid but a trial version (time or feature limited) is available; not available publicly"
+    },
+    "maintainer": {
+      "type": "string",
+      "title": "Maintainer name"
+    },
+    "maintainer_email": {
+      "type": "string",
+      "format": "email",
+      "title": "Maintainer email"
+    },
+    "installation_instructions": {
+      "type": "string",
+      "title": "Optional installation instructions"
+    },
+    "usage": {
+      "type": "string",
+      "title": "How to use the appliance"
+    },
+    "default_username": {
+      "type": "string",
+      "title": "Default username for the appliance"
+    },
+    "default_password": {
+      "type": "string",
+      "title": "Default password for the appliance"
+    },
+    "symbol": {
+      "type": "string",
+      "title": "An optional symbol for the appliance"
+    },
+    "settings": {
+      "type": "array",
+      "title": "Settings for running the appliance",
+      "items": {
+        "type": "object",
+        "title": "Emulator settings",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name of the settings set"
+          },
+          "default": {
+            "type": "boolean",
+            "title": "Whether these are the default settings"
+          },
+          "inherit_default_properties": {
+            "type": "boolean",
+            "title": "Whether the default properties should be used",
+            "default": "true"
+          },
+          "template_type": {
+            "enum": [
+              "docker",
+              "iou",
+              "dynamips",
+              "qemu"
+            ],
+            "title": "Type of emulator properties"
+          },
+          "template_properties": {
+            "type": "object",
+            "title": "Properties for the template",
+            "oneOf": [
+              {
+                "$ref": "#/definitions/qemu_properties"
+              },
+              {
+                "$ref": "#/definitions/dynamips_properties"
+              },
+              {
+                "$ref": "#/definitions/iou_properties"
+              },
+              {
+                "$ref": "#/definitions/docker_properties"
+              }
+            ]
+          }
+        },
+        "required": [
+          "template_type",
+          "template_properties"
+        ]
+      }
+    },
+    "images": {
+      "type": "array",
+      "title": "Images for this appliance",
+      "items": {
+        "type": "object",
+        "title": "An image file",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version of the image file"
+          },
+          "md5sum": {
+            "type": "string",
+            "title": "MD5 cheksum of the image file",
+            "pattern": "^[a-f0-9]{32}$"
+          },
+          "checksum": {
+            "type": "string",
+            "title": "checksum of the image file"
+          },
+          "checksum_type": {
+            "title": "checksum type of the image file",
+            "enum": [
+              "md5"
+            ]
+          },
+          "filesize": {
+            "type": "integer",
+            "title": "File size in bytes of the image file"
+          },
+          "download_url": {
+            "type": "string",
+            "format": "uri",
+            "title": "Download URL where you can download the image file from a browser"
+          },
+          "direct_download_url": {
+            "type": "string",
+            "format": "uri",
+            "title": "Optional. Non authenticated URL to the image file where you can download the image directly"
+          },
+          "compression": {
+            "enum": [
+              "bzip2",
+              "gzip",
+              "lzma",
+              "xz",
+              "rar",
+              "zip",
+              "7z"
+            ],
+            "title": "Optional, compression type of direct download URL image."
+          },
+          "compression_target": {
+            "type": "string",
+            "title": "Optional, file name of the image file inside the compressed file."
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "filename",
+              "version",
+              "md5sum",
+              "filesize"
+            ]
+          },
+          {
+            "required": [
+              "filename",
+              "version",
+              "checksum",
+              "filesize"
+            ]
+          }
+        ]
+      }
+    },
+    "versions": {
+      "type": "array",
+      "title": "Versions of the appliance",
+      "items": {
+        "type": "object",
+        "title": "A version of the appliance",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name of the version"
+          },
+          "settings": {
+            "type": "string",
+            "title": "Template settings to use to run the version"
+          },
+          "category": {
+            "$ref": "#/definitions/categories",
+            "title": "Category of the version"
+          },
+          "installation_instructions": {
+            "type": "string",
+            "title": "Optional installation instructions for the version"
+          },
+          "usage": {
+            "type": "string",
+            "title": "Optional instructions about using the version"
+          },
+          "default_username": {
+            "type": "string",
+            "title": "Default username for the version"
+          },
+          "default_password": {
+            "type": "string",
+            "title": "Default password for the version"
+          },
+          "symbol": {
+            "type": "string",
+            "title": "An optional symbol for the version"
+          },
+          "images": {
+            "type": "object",
+            "title": "Images used for this version",
+            "properties": {
+              "kernel_image": {
+                "type": "string",
+                "title": "Kernel image (Qemu only)"
+              },
+              "initrd": {
+                "type": "string",
+                "title": "Initrd disk image (Qemu only)"
+              },
+              "image": {
+                "type": "string",
+                "title": "OS image (IOU and Dynamips only)"
+              },
+              "bios_image": {
+                "type": "string",
+                "title": "Bios image (Qemu only)"
+              },
+              "hda_disk_image": {
+                "type": "string",
+                "title": "Hda disk image (Qemu only)"
+              },
+              "hdb_disk_image": {
+                "type": "string",
+                "title": "Hdc disk image (Qemu only)"
+              },
+              "hdc_disk_image": {
+                "type": "string",
+                "title": "Hdd disk image (Qemu only)"
+              },
+              "hdd_disk_image": {
+                "type": "string",
+                "title": "Hdd disk image (Qemu only)"
+              },
+              "cdrom_image": {
+                "type": "string",
+                "title": "cdrom image (Qemu only)"
+              }
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    }
+  },
+  "required": [
+    "appliance_id",
+    "name",
+    "category",
+    "description",
+    "vendor_name",
+    "vendor_url",
+    "product_name",
+    "registry_version",
+    "status",
+    "maintainer",
+    "maintainer_email",
+    "settings"
+  ]
+}

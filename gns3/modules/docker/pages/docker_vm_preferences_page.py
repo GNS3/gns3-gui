@@ -116,7 +116,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         self.uiCopyDockerVMPushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             docker_container = self._docker_containers[key]
             self._refreshInfo(docker_container)
         else:
@@ -128,7 +128,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
         """
         wizard = DockerVMWizard(self._docker_containers, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
             new_image_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_image_settings["compute_id"], name=new_image_settings["name"])
             self._docker_containers[key] = DOCKER_CONTAINER_SETTINGS.copy()
@@ -137,7 +137,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
             item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
             item.setText(0, self._docker_containers[key]["name"])
             Controller.instance().getSymbolIcon(self._docker_containers[key]["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiDockerVMsTreeWidget.setCurrentItem(item)
 
@@ -148,9 +148,9 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
 
         item = self.uiDockerVMsTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             copied_containers_settings = copy.deepcopy(self._docker_containers[key])
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Docker template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_containers_settings["name"]))
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy Docker template", "Template name:", QtWidgets.QLineEdit.EchoMode.Normal, "Copy of {}".format(copied_containers_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_containers_settings["compute_id"], name=new_name)
                 if key in self._docker_containers:
@@ -164,7 +164,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
                 item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
                 item.setText(0, self._docker_containers[key]["name"])
                 Controller.instance().getSymbolIcon(self._docker_containers[key]["symbol"], qpartial(self._setItemIcon, item))
-                item.setData(0, QtCore.Qt.UserRole, key)
+                item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
                 self._items.append(item)
                 self.uiDockerVMsTreeWidget.setCurrentItem(item)
 
@@ -175,11 +175,11 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
 
         item = self.uiDockerVMsTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             docker_container = self._docker_containers[key]
             dialog = ConfigurationDialog(docker_container["name"], docker_container, DockerVMConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(docker_container["symbol"], qpartial(self._setItemIcon, item))
                 if docker_container["name"] != item.text(0):
@@ -192,7 +192,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
                     self._docker_containers[new_key] = self._docker_containers[key]
                     del self._docker_containers[key]
                     item.setText(0, docker_container["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
                 self._refreshInfo(docker_container)
 
     def _dockerImageDeleteSlot(self):
@@ -202,7 +202,7 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
 
         for item in self.uiDockerVMsTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._docker_containers[key]
                 self.uiDockerVMsTreeWidget.takeTopLevelItem(self.uiDockerVMsTreeWidget.indexOfTopLevelItem(item))
 
@@ -226,12 +226,12 @@ class DockerVMPreferencesPage(QtWidgets.QWidget, Ui_DockerVMPreferencesPageWidge
             item = QtWidgets.QTreeWidgetItem(self.uiDockerVMsTreeWidget)
             item.setText(0, docker_container["name"])
             Controller.instance().getSymbolIcon(docker_container["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiDockerVMsTreeWidget.setCurrentItem(self._items[0])
-            self.uiDockerVMsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiDockerVMsTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiDockerVMsTreeWidget.setMaximumWidth(self.uiDockerVMsTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):

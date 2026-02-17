@@ -23,6 +23,7 @@ import os
 
 from gns3.qt import QtWidgets
 from gns3.local_server import LocalServer
+from gns3.local_config import LocalConfig
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.node import Node
@@ -57,6 +58,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             self.uiPrivateConfigToolButton.hide()
 
         # location of the base config templates
+        # FIXME: this does not work
         self._base_iou_l2_config_template = get_resource(os.path.join("configs", "iou_l2_base_startup-config.txt"))
         self._base_iou_l3_config_template = get_resource(os.path.join("configs", "iou_l3_base_startup-config.txt"))
         self._default_configs_dir = LocalServer.instance().localServerSettings()["configs_path"]
@@ -143,7 +145,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
         symbol_path = self.uiSymbolLineEdit.text()
         dialog = SymbolSelectionDialog(self, symbol=symbol_path)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             new_symbol_path = dialog.getSymbol()
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
@@ -244,7 +246,7 @@ class iouDeviceConfigurationPage(QtWidgets.QWidget, Ui_iouDeviceConfigPageWidget
             name = self.uiNameLineEdit.text()
             if not name:
                 QtWidgets.QMessageBox.critical(self, "Name", "IOU device name cannot be empty!")
-            elif node and not node.validateHostname(name):
+            elif node and not node.validateHostname(name) and not LocalConfig.instance().experimental():
                 QtWidgets.QMessageBox.critical(self, "Name", "Invalid name detected for IOU device: {}".format(name))
             else:
                 settings["name"] = name

@@ -25,7 +25,7 @@ from .qt import QtCore, QtGui, QtWidgets
 
 
 class MultipleRedirection(QtCore.QObject):
-    writed = QtCore.pyqtSignal(str)
+    writed = QtCore.Signal(str)
 
     def __init__(self, console, stdout):
         super().__init__()
@@ -75,7 +75,7 @@ class PyCutExt(QtWidgets.QTextEdit):
 
         # to exit the main interpreter by a Ctrl-D if PyCute has no parent
         if parent is None:
-            self.eofKey = QtCore.Qt.Key_D
+            self.eofKey = QtCore.Qt.Key.Key_D
         else:
             self.eofKey = None
 
@@ -105,7 +105,7 @@ class PyCutExt(QtWidgets.QTextEdit):
         self.pointer = 0
         self.cursor_pos = 0
 
-        self.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)
+        self.setLineWrapMode(QtWidgets.QTextEdit.LineWrapMode.NoWrap)
 
         try:
             sys.ps1
@@ -134,7 +134,7 @@ class PyCutExt(QtWidgets.QTextEdit):
 
         return self.interpreter
 
-    def moveCursor(self, operation, mode=QtGui.QTextCursor.MoveAnchor):
+    def moveCursor(self, operation, mode=QtGui.QTextCursor.MoveMode.MoveAnchor):
         """
         Convenience function to move the cursor
         This function will be present in PyQT4.2
@@ -162,9 +162,9 @@ class PyCutExt(QtWidgets.QTextEdit):
 
         self.reading = 1
         self._clearLine()
-        self.moveCursor(QtGui.QTextCursor.End)
+        self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         while self.reading:
-            QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents, 1000)
+            QtWidgets.QApplication.processEvents(QtCore.QEventLoop.ProcessEventsFlag.AllEvents, 1000)
         if len(self.line) == 0:
             return '\n'
         else:
@@ -176,7 +176,7 @@ class PyCutExt(QtWidgets.QTextEdit):
         """
 
         cursor = self.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
 
         pos1 = cursor.position()
         cursor.insertText(text)
@@ -186,7 +186,7 @@ class PyCutExt(QtWidgets.QTextEdit):
         self.ensureCursorVisible()
 
         # Set the format
-        cursor.setPosition(pos1, QtGui.QTextCursor.KeepAnchor)
+        cursor.setPosition(pos1, QtGui.QTextCursor.MoveMode.KeepAnchor)
         char_format = cursor.charFormat()
         if error:
             color = QtGui.QColor(255, 0, 0)  # red
@@ -256,59 +256,59 @@ class PyCutExt(QtWidgets.QTextEdit):
         text = e.text()
         key = e.key()
 
-        if e.modifiers() == QtCore.Qt.ControlModifier:
+        if e.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
             return super().keyPressEvent(e)
 
         # Keep the cursor after the last prompt.
-        self.moveCursor(QtGui.QTextCursor.End)
+        self.moveCursor(QtGui.QTextCursor.MoveOperation.End)
 
-        if key == QtCore.Qt.Key_Backspace:
+        if key == QtCore.Qt.Key.Key_Backspace:
             if self.point:
                 cursor = self.textCursor()
-                cursor.movePosition(QtGui.QTextCursor.PreviousCharacter, QtGui.QTextCursor.KeepAnchor)
+                cursor.movePosition(QtGui.QTextCursor.MoveOperation.PreviousCharacter, QtGui.QTextCursor.MoveMode.KeepAnchor)
                 cursor.removeSelectedText()
                 self.color_line()
 
                 self.point -= 1
                 self.line = self.line[:-1]
 
-        elif key == QtCore.Qt.Key_Delete:
+        elif key == QtCore.Qt.Key.Key_Delete:
             cursor = self.textCursor()
-            cursor.movePosition(QtGui.QTextCursor.NextCharacter, QtGui.QTextCursor.KeepAnchor)
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.NextCharacter, QtGui.QTextCursor.MoveMode.KeepAnchor)
             cursor.removeSelectedText()
             self.color_line()
 
             self.line = self.line[:-1]
 
-        elif key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Enter:
+        elif key == QtCore.Qt.Key.Key_Return or key == QtCore.Qt.Key.Key_Enter:
             self.write("\n")
             if self.reading:
                 self.reading = 0
             else:
                 self._run()
 
-        elif key == QtCore.Qt.Key_Tab:
+        elif key == QtCore.Qt.Key.Key_Tab:
             self.onKeyPress_Tab()
-        elif key == QtCore.Qt.Key_Left:
+        elif key == QtCore.Qt.Key.Key_Left:
             if self.point:
-                self.moveCursor(QtGui.QTextCursor.Left)
+                self.moveCursor(QtGui.QTextCursor.MoveOperation.Left)
                 self.point -= 1
-        elif key == QtCore.Qt.Key_Right:
+        elif key == QtCore.Qt.Key.Key_Right:
             if self.point < len(self.line):
-                self.moveCursor(QtGui.QTextCursor.Right)
+                self.moveCursor(QtGui.QTextCursor.MoveOperation.Right)
                 self.point += 1
 
-        elif key == QtCore.Qt.Key_Home:
+        elif key == QtCore.Qt.Key.Key_Home:
             cursor = self.textCursor()
             cursor.setPosition(self.cursor_pos)
             self.setTextCursor(cursor)
             self.point = 0
 
-        elif key == QtCore.Qt.Key_End:
-            self.moveCursor(QtGui.QTextCursor.EndOfLine)
+        elif key == QtCore.Qt.Key.Key_End:
+            self.moveCursor(QtGui.QTextCursor.MoveOperation.EndOfLine)
             self.point = len(self.line)
 
-        elif key == QtCore.Qt.Key_Up:
+        elif key == QtCore.Qt.Key.Key_Up:
 
             if len(self.history):
                 if self.pointer == 0:
@@ -316,7 +316,7 @@ class PyCutExt(QtWidgets.QTextEdit):
                 self.pointer -= 1
                 self._recall()
 
-        elif key == QtCore.Qt.Key_Down:
+        elif key == QtCore.Qt.Key.Key_Down:
             if len(self.history):
                 self.pointer += 1
                 if self.pointer == len(self.history):
@@ -333,7 +333,7 @@ class PyCutExt(QtWidgets.QTextEdit):
         """
 
         cursor = self.textCursor()
-        cursor.select(QtGui.QTextCursor.LineUnderCursor)
+        cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
         cursor.removeSelectedText()
 
         if self.more:
@@ -357,18 +357,18 @@ class PyCutExt(QtWidgets.QTextEdit):
         """
 
         cursor = self.textCursor()
-        cursor.movePosition(QtGui.QTextCursor.StartOfLine)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfLine)
 
         newpos = cursor.position()
         pos = -1
 
         while (newpos != pos):
-            cursor.movePosition(QtGui.QTextCursor.NextWord)
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.NextWord)
 
             pos = newpos
             newpos = cursor.position()
 
-            cursor.select(QtGui.QTextCursor.WordUnderCursor)
+            cursor.select(QtGui.QTextCursor.SelectionType.WordUnderCursor)
             word = cursor.selectedText()
 
             if not word:

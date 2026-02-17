@@ -30,16 +30,6 @@ try:
 except Exception as e:
     print("Fail update installation: {}".format(str(e)))
 
-
-# WARNING
-# Due to buggy user machines we choose to put this as the first loading modules
-# otherwise the egg cache is initialized in his standard location and
-# if is not writetable the application crash. It's the user fault
-# because one day the user as used sudo to run an egg and break his
-# filesystem permissions, but it's a common mistake.
-from gns3.utils.get_resource import get_resource
-
-
 import datetime
 import traceback
 import time
@@ -60,11 +50,11 @@ from gns3.local_config import LocalConfig
 from gns3.application import Application
 from gns3.utils import parse_version
 from gns3.dialogs.profile_select import ProfileSelectDialog
+from gns3.version import __version__
+
 
 import logging
 log = logging.getLogger(__name__)
-
-from gns3.version import __version__
 
 
 def locale_check():
@@ -135,6 +125,13 @@ def main():
     if options.project:
         options.project = os.path.abspath(options.project)
 
+    try:
+        import truststore
+        truststore.inject_into_ssl()
+        log.info("Using system certificate store for SSL connections")
+    except ImportError:
+        pass
+
     if hasattr(sys, "frozen"):
         # We add to the path where the OS search executable our binary location starting by GNS3
         # packaged binary
@@ -145,6 +142,7 @@ def main():
             frozen_dirs = [
                 frozen_dir,
                 os.path.normpath(os.path.join(frozen_dir, 'dynamips')),
+                os.path.normpath(os.path.join(frozen_dir, 'ubridge')),
                 os.path.normpath(os.path.join(frozen_dir, 'vpcs')),
                 os.path.normpath(os.path.join(frozen_dir, 'traceng'))
             ]
@@ -153,6 +151,7 @@ def main():
 
         if options.project:
             os.chdir(frozen_dir)
+
 
     def exceptionHook(exception, value, tb):
 
@@ -185,12 +184,12 @@ def main():
     # catch exceptions to write them in a file
     sys.excepthook = exceptionHook
 
-    # we only support Python 3 version >= 3.4
-    if sys.version_info < (3, 4):
-        raise SystemExit("Python 3.4 or higher is required")
+    # we only support Python 3 version >= 3.9
+    if sys.version_info < (3, 9):
+        raise SystemExit("Python 3.9 or higher is required")
 
-    if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.5.0"):
-        raise SystemExit("Requirement is PyQt5 version 5.5.0 or higher, got version {}".format(QtCore.QT_VERSION_STR))
+    if parse_version(QtCore.QT_VERSION_STR) < parse_version("6.3.1"):
+        raise SystemExit("Requirement is PyQt6 version 6.3.1 or higher, got version {}".format(QtCore.QT_VERSION_STR))
 
     if parse_version(psutil.__version__) < parse_version("2.2.1"):
         raise SystemExit("Requirement is psutil version 2.2.1 or higher, got version {}".format(psutil.__version__))
@@ -207,7 +206,7 @@ def main():
 
     # always use the INI format on Windows and OSX (because we don't like the registry and plist files)
     if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
-        QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
+        QtCore.QSettings.setDefaultFormat(QtCore.QSettings.Format.IniFormat)
 
     if sys.platform.startswith('win') and hasattr(sys, "frozen"):
         try:
@@ -222,8 +221,11 @@ def main():
                 # hide the console
                 # win32console.AllocConsole()
                 console_window = win32console.GetConsoleWindow()
-                if console_window:
+                parent_window = win32gui.GetParent(console_window)
+                if not parent_window and console_window:
                     win32gui.ShowWindow(console_window, win32con.SW_HIDE)
+                elif parent_window:
+                    win32gui.ShowWindow(parent_window, win32con.SW_HIDE)
                 else:
                     log.warning("Could not get the console window")
             except win32console.error as e:
@@ -232,12 +234,12 @@ def main():
     local_config = LocalConfig.instance()
 
     global app
-    app = Application(sys.argv, hdpi=local_config.hdpi())
+    app = Application(sys.argv)
 
     if local_config.multiProfiles() and not options.profile:
         profile_select = ProfileSelectDialog()
         profile_select.show()
-        if profile_select.exec_():
+        if profile_select.exec():
             options.profile = profile_select.profile()
         else:
             sys.exit(0)
@@ -263,6 +265,7 @@ def main():
     log.info("GNS3 GUI version {}".format(__version__))
     log.info("Copyright (c) 2007-{} GNS3 Technologies Inc.".format(current_year))
     log.info("Application started with {}".format(" ".join(sys.argv)))
+    log.debug("PATH={}".format(os.environ["PATH"]))
 
     # update the exception file path to have it in the same directory as the settings file.
     exception_file_path = os.path.join(LocalConfig.instance().configDirectory(), exception_file_path)
@@ -274,7 +277,7 @@ def main():
             error_message = "GNS3.app must be moved to the '/Applications' folder before it can be used"
             QtWidgets.QMessageBox.critical(False, "Loading error", error_message)
             QtCore.QTimer.singleShot(0, app.quit)
-            app.exec_()
+            app.exec()
             sys.exit(1)
 
     global mainwindow
@@ -297,7 +300,7 @@ def main():
 
     mainwindow.show()
 
-    exit_code = app.exec_()
+    exit_code = app.exec()
     signal.signal(signal.SIGINT, orig_sigint)
     signal.signal(signal.SIGTERM, orig_sigterm)
 

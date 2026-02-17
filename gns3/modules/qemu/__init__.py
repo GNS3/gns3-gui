@@ -121,7 +121,7 @@ class Qemu(Module):
         :param options: Options for the image creation
         """
 
-        Controller.instance().postCompute("/qemu/img", compute_id, callback, body=options)
+        Controller.instance().postCompute("/qemu/img", compute_id, callback, timeout=None, body=options)
 
     def updateDiskImage(self, compute_id, callback, options):
         """

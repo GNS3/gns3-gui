@@ -61,7 +61,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
-            if address.protocol() in [QtNetwork.QAbstractSocket.IPv4Protocol, QtNetwork.QAbstractSocket.IPv6Protocol]:
+            if address.protocol() in [QtNetwork.QAbstractSocket.NetworkLayerProtocol.IPv4Protocol, QtNetwork.QAbstractSocket.NetworkLayerProtocol.IPv6Protocol]:
                 address_string = address.toString()
                 if address_string.startswith("169.254") or address_string.startswith("fe80"):
                     # ignore link-local addresses
@@ -106,7 +106,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         filter = ""
         if sys.platform.startswith("win"):
-            filter = "Executable (*.exe);;All files (*.*)"
+            filter = "Executable (*.exe);;All files (*)"
         server_path = shutil.which("gns3server")
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the local server", server_path, filter)
         if not path:
@@ -121,7 +121,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         filter = ""
         if sys.platform.startswith("win"):
-            filter = "Executable (*.exe);;All files (*.*)"
+            filter = "Executable (*.exe);;All files (*)"
 
         ubridge_path = shutil.which("ubridge")
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select ubridge executable", ubridge_path, filter)
@@ -150,7 +150,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
 
         dialog = EditComputeDialog(self.parent())
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             self._remote_computes[dialog.compute().id()] = dialog.compute()
             self._populateRemoteServersTree()
 
@@ -172,7 +172,7 @@ class ServerPreferencesPage(QtWidgets.QWidget, Ui_ServerPreferencesPageWidget):
         item = self.uiRemoteServersTreeWidget.currentItem()
         dialog = EditComputeDialog(self.parent(), item.compute)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             self._populateRemoteServersTree()
 
     def _populateWidgets(self, servers_settings):

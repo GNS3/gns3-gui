@@ -74,6 +74,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
     :param parent: parent widget
     """
 
+    # Class-level constants for default colors
+    DEFAULT_DRAWING_GRID_COLOR = QtGui.QColor(208, 208, 208)  # #D0D0D0
+    DEFAULT_NODE_GRID_COLOR = QtGui.QColor(190, 190, 190)     # #BEBEBE
+
     def __init__(self, parent):
 
         # Our parent is the central widget which parent is the main window.
@@ -92,6 +96,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._dragging = False
         self._grid_size = 75
         self._drawing_grid_size = 25
+        self._drawing_grid_color = self.DEFAULT_DRAWING_GRID_COLOR
+        self._node_grid_color = self.DEFAULT_NODE_GRID_COLOR
         self._last_mouse_position = None
         self._topology = Topology.instance()
         self._background_warning_msgbox = QtWidgets.QErrorMessage(self)
@@ -105,14 +111,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self.setSceneSize(width, height)
 
         # set the custom flags for this view
-        self.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
-        self.setRenderHint(QtGui.QPainter.Antialiasing)
-        self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
+        self.setDragMode(QtWidgets.QGraphicsView.DragMode.RubberBandDrag)
+        self.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+        self.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
+        self.setResizeAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorViewCenter)
 
         # default directories for QFileDialog
-        self._import_config_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
-        self._export_config_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        self._import_config_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DocumentsLocation)
+        self._export_config_directory = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DocumentsLocation)
         self._local_addresses = ['0.0.0.0', '127.0.0.1', 'localhost', '::1', '0:0:0:0:0:0:0:1', '::', QtNetwork.QHostInfo.localHostName()]
 
     def setSceneSize(self, width, height):
@@ -231,12 +237,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         if enabled:
-            self.setCursor(QtCore.Qt.CrossCursor)
+            self.setCursor(QtCore.Qt.CursorShape.CrossCursor)
         else:
             if self._newlink and self._newlink in self.scene().items():
                 self.scene().removeItem(self._newlink)
             self._newlink = None
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
         self._adding_link = enabled
 
     def addNote(self, state):
@@ -248,10 +254,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if state:
             self._adding_note = True
-            self.setCursor(QtCore.Qt.IBeamCursor)
+            self.setCursor(QtCore.Qt.CursorShape.IBeamCursor)
         else:
             self._adding_note = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
     def addRectangle(self, state):
         """
@@ -262,10 +268,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if state:
             self._adding_rectangle = True
-            self.setCursor(QtCore.Qt.PointingHandCursor)
+            self.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         else:
             self._adding_rectangle = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
     def addEllipse(self, state):
         """
@@ -276,10 +282,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if state:
             self._adding_ellipse = True
-            self.setCursor(QtCore.Qt.PointingHandCursor)
+            self.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         else:
             self._adding_ellipse = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
     def addLine(self, state):
         """
@@ -290,10 +296,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if state:
             self._adding_line = True
-            self.setCursor(QtCore.Qt.PointingHandCursor)
+            self.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         else:
             self._adding_line = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
     def addImage(self, image_path):
         """
@@ -395,7 +401,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         # link addition code
         if not self._newlink:
             source_item = item
-            source_port = source_item.connectToPort(event.globalPos())
+            source_port = source_item.connectToPort(event.globalPosition().toPoint())
             if not source_port:
                 return
 
@@ -404,15 +410,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 return
 
             if source_port.linkType() == "Serial":
-                self._newlink = SerialLinkItem(source_item, source_port, self.mapToScene(event.pos()), None, adding_flag=True)
+                self._newlink = SerialLinkItem(source_item, source_port, self.mapToScene(event.position().toPoint()), None, adding_flag=True)
             else:
-                self._newlink = EthernetLinkItem(source_item, source_port, self.mapToScene(event.pos()), None, adding_flag=True)
+                self._newlink = EthernetLinkItem(source_item, source_port, self.mapToScene(event.position().toPoint()), None, adding_flag=True)
             self.scene().addItem(self._newlink)
         else:
             source_item = self._newlink.sourceItem()
             source_port = self._newlink.sourcePort()
             destination_item = item
-            destination_port = destination_item.connectToPort(event.globalPos())
+            destination_port = destination_item.connectToPort(event.globalPosition().toPoint())
             if not destination_port:
                 return
 
@@ -435,9 +441,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         is_not_link = True
         is_not_logo = True
 
-        item = self.itemAt(event.pos())
+        item = self.itemAt(event.position().toPoint())
         if item and sip.isdeleted(item):
             return
+        elif not item:
+            self._main_window.uiStatusBar.clearMessage()  # reset the status bar message when clicking on the scene
 
         if item and (isinstance(item, LinkItem) or isinstance(item.parentItem(), LinkItem)):
             is_not_link = False
@@ -448,57 +456,57 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 if isinstance(it, LinkItem):
                     it.setHovered(False)
 
-        if (event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ShiftModifier) or event.buttons() == QtCore.Qt.MidButton:
+        if (event.buttons() == QtCore.Qt.MouseButton.LeftButton and event.modifiers() == QtCore.Qt.KeyboardModifier.ShiftModifier) or event.buttons() == QtCore.Qt.MouseButton.MiddleButton:
             # checks to see if either the middle mouse is pressed
             # or a combination of left mouse button and SHIT key are pressed to start dragging the view
-            self._last_mouse_position = self.mapFromGlobal(event.globalPos())
+            self._last_mouse_position = self.mapFromGlobal(event.globalPosition())
             self._dragging = True
-            self.setCursor(QtCore.Qt.ClosedHandCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ClosedHandCursor)
             return
 
-        if is_not_link and item and event.modifiers() == QtCore.Qt.ControlModifier and event.button() == QtCore.Qt.LeftButton and item and not self._adding_link:
+        if is_not_link and item and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier and event.button() == QtCore.Qt.MouseButton.LeftButton and item and not self._adding_link:
             # manual selection using CTRL
             if item.isSelected():
                 item.setSelected(False)
             else:
                 item.setSelected(True)
-        elif is_not_link and is_not_logo and event.button() == QtCore.Qt.RightButton and not self._adding_link:
+        elif is_not_link and is_not_logo and event.button() == QtCore.Qt.MouseButton.RightButton and not self._adding_link:
             pass #TODO: remove this without creating a bug...
-        elif is_not_link and self._adding_link and event.button() == QtCore.Qt.RightButton:
+        elif is_not_link and self._adding_link and event.button() == QtCore.Qt.MouseButton.RightButton:
             # send a escape key to the main window to cancel the link addition
-            key = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Escape, QtCore.Qt.NoModifier)
+            key = QtGui.QKeyEvent(QtCore.QEvent.Type.KeyPress, QtCore.Qt.Key.Key_Escape, QtCore.Qt.KeyboardModifier.NoModifier)
             QtWidgets.QApplication.sendEvent(self._main_window, key)
-        elif item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.LeftButton:
+        elif item and isinstance(item, NodeItem) and self._adding_link and event.button() == QtCore.Qt.MouseButton.LeftButton:
             self._userNodeLinking(event, item)
-            #context_event = QtGui.QContextMenuEvent(QtGui.QContextMenuEvent.Mouse, event.pos())
+            #context_event = QtGui.QContextMenuEvent(QtGui.QContextMenuEvent.Reason.Mouse, event.pos())
             #QtWidgets.QApplication.sendEvent(self, context_event)
-        elif event.button() == QtCore.Qt.LeftButton and self._adding_note:
-            pos = self.mapToScene(event.pos())
+        elif event.button() == QtCore.Qt.MouseButton.LeftButton and self._adding_note:
+            pos = self.mapToScene(event.position().toPoint())
             note = self.createDrawingItem("text", int(pos.x()), int(pos.y()), 2)
             pos_x = note.pos().x()
             pos_y = note.pos().y() - (note.boundingRect().height() / 2)
             note.setPos(pos_x, pos_y)
             note.editText()
             self._main_window.uiAddNoteAction.setChecked(False)
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
             self._adding_note = False
-        elif event.button() == QtCore.Qt.LeftButton and self._adding_rectangle:
-            pos = self.mapToScene(event.pos())
+        elif event.button() == QtCore.Qt.MouseButton.LeftButton and self._adding_rectangle:
+            pos = self.mapToScene(event.position().toPoint())
             self.createDrawingItem("rect", int(pos.x()), int(pos.y()), 1)
             self._main_window.uiDrawRectangleAction.setChecked(False)
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
             self._adding_rectangle = False
-        elif event.button() == QtCore.Qt.LeftButton and self._adding_ellipse:
-            pos = self.mapToScene(event.pos())
+        elif event.button() == QtCore.Qt.MouseButton.LeftButton and self._adding_ellipse:
+            pos = self.mapToScene(event.position().toPoint())
             self.createDrawingItem("ellipse", int(pos.x()), int(pos.y()), 1)
             self._main_window.uiDrawEllipseAction.setChecked(False)
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
             self._adding_ellipse = False
-        elif event.button() == QtCore.Qt.LeftButton and self._adding_line:
-            pos = self.mapToScene(event.pos())
+        elif event.button() == QtCore.Qt.MouseButton.LeftButton and self._adding_line:
+            pos = self.mapToScene(event.position().toPoint())
             self.createDrawingItem("line", int(pos.x()), int(pos.y()), 1)
             self._main_window.uiDrawLineAction.setChecked(False)
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
             self._adding_line = False
         else:
             super().mousePressEvent(event)
@@ -532,7 +540,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if item and not sip.isdeleted(item):
                 # Prevent right clicking on a selected item from de-selecting all other items
                 if not item.isSelected():
-                    if not event.modifiers() & QtCore.Qt.ControlModifier:
+                    if not (event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier):
                         for it in self.scene().items():
                             it.setSelected(False)
                     item.setSelected(True)
@@ -558,12 +566,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # If the left  mouse button is not still pressed TOGETHER with the SHIFT key and neither is the middle button
         # this means the user is no longer trying to drag the view
-        if self._dragging and not (event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == QtCore.Qt.ShiftModifier) and not event.buttons() & QtCore.Qt.MidButton:
+        if self._dragging and not (event.buttons() == QtCore.Qt.MouseButton.LeftButton and event.modifiers() == QtCore.Qt.KeyboardModifier.ShiftModifier) and not (event.buttons() & QtCore.Qt.MouseButton.MiddleButton):
             self._dragging = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
         else:
-            item = self.itemAt(event.pos())
-            if item is not None and not event.modifiers() & QtCore.Qt.ControlModifier:
+            item = self.itemAt(event.position().toPoint())
+            if item is not None and not (event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier):
                 item.setSelected(True)
             super().mouseReleaseEvent(event)
 
@@ -576,7 +584,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param: QWheelEvent instance
         """
 
-        if event.modifiers() == QtCore.Qt.ControlModifier:
+        if event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
             delta = event.angleDelta()
             if delta is not None and delta.x() == 0:
                 # CTRL is pressed then use the mouse wheel to zoom in or out.
@@ -595,7 +603,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if factor < 0.10 or factor > 10:
             return
         self.scale(scale_factor, scale_factor)
-        self._main_window.uiStatusBar.showMessage("Zoom: {}%".format(round(self.transform().m11() * 100)), 2000)
+        self._main_window.uiStatusBar.showMessage("Zoom: {}%".format(round(self.transform().m11() * 100)), 5000)
 
     def keyPressEvent(self, event):
         """
@@ -604,7 +612,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QKeyEvent
         """
 
-        if event.key() == QtCore.Qt.Key_Delete:
+        if event.key() == QtCore.Qt.Key.Key_Delete:
             # check if we are editing an LabelItem instance, then send the delete key event to it
             for item in self.scene().selectedItems():
                 if (isinstance(item, LabelItem) or isinstance(item, TextItem)) and item.hasFocus():
@@ -624,23 +632,23 @@ class GraphicsView(QtWidgets.QGraphicsView):
             # This if statement event checks to see if the user is dragging the scene
             # if so it sets the value of the scene scroll bars based on the change between
             # the previous and current mouse position
-            mapped_global_pos = self.mapFromGlobal(event.globalPos())
+            mapped_global_pos = self.mapFromGlobal(event.globalPosition())
             hBar = self.horizontalScrollBar()
             vBar = self.verticalScrollBar()
             delta = mapped_global_pos - self._last_mouse_position
-            hBar.setValue(hBar.value() + (delta.x() if QtWidgets.QApplication.isRightToLeft() else -delta.x()))
-            vBar.setValue(vBar.value() - delta.y())
+            hBar.setValue(int(hBar.value() + (delta.x() if QtWidgets.QApplication.isRightToLeft() else - delta.x())))
+            vBar.setValue(int(vBar.value() - delta.y()))
             self._last_mouse_position = mapped_global_pos
         if self._adding_link and self._newlink and self._newlink in self.scene().items():
             # update the mouse position when the user is adding a link.
-            self._newlink.setMousePoint(self.mapToScene(event.pos()))
+            self._newlink.setMousePoint(self.mapToScene(event.position().toPoint()))
             event.ignore()
         else:
-            item = self.itemAt(event.pos())
+            item = self.itemAt(event.position().toPoint())
             if item:
                 # show item coords in the status bar
                 coords = "X: {} Y: {} Z: {}".format(item.x(), item.y(), item.zValue())
-                self._main_window.uiStatusBar.showMessage(coords, 2000)
+                self._main_window.uiStatusBar.showMessage(coords)
 
             # force the children to redraw because of a problem with QGraphicsEffect
             for item in self.scene().selectedItems():
@@ -655,7 +663,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QMouseEvent instance
         """
 
-        item = self.itemAt(event.pos())
+        item = self.itemAt(event.position().toPoint())
 
         if not self._adding_link:
             if isinstance(item, NodeItem) and item.node().initialized():
@@ -664,7 +672,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     self.configureSlot()
                     return
                 else:
-                    if sys.platform.startswith("win") and item.node().bringToFront():
+                    if item.node().bringToFront():
                         return
                     self.consoleFromItems(self.scene().selectedItems())
                     return
@@ -689,7 +697,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             node_properties = NodePropertiesDialog(items, self._main_window)
             node_properties.setModal(True)
             node_properties.show()
-            node_properties.exec_()
+            node_properties.exec()
 
     def dragMoveEvent(self, event):
         """
@@ -713,24 +721,25 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QDropEvent instance
         """
 
+        log.debug("Drop event received with mime data: {}".format(event.mimeData().formats()))
         # check if what has been dropped is handled by this view
         if event.mimeData().hasFormat("application/x-gns3-template"):
             template_id = event.mimeData().data("application/x-gns3-template").data().decode()
-            event.setDropAction(QtCore.Qt.CopyAction)
+            event.setDropAction(QtCore.Qt.DropAction.CopyAction)
             event.accept()
-            if event.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+            if event.modifiers() == QtCore.Qt.KeyboardModifier.ShiftModifier:
                 max_nodes_per_line = 10  # max number of nodes on a single line
                 offset = 100  # spacing between elements
                 integer, ok = QtWidgets.QInputDialog.getInt(self, "Nodes", "Number of nodes:", 2, 1, 100, 1)
                 if ok:
                     for node_number in range(integer):
-                        x = event.pos().x() - (150 // 2) + (node_number % max_nodes_per_line) * offset
-                        y = event.pos().y() - (70 // 2) + (node_number // max_nodes_per_line) * offset
+                        x = event.position().x() - (150 // 2) + (node_number % max_nodes_per_line) * offset
+                        y = event.position().y() - (70 // 2) + (node_number // max_nodes_per_line) * offset
                         if self.createNodeFromTemplateId(template_id, QtCore.QPoint(x, y)) is False:
                             event.ignore()
                             break
             else:
-                if self.createNodeFromTemplateId(template_id, event.pos()) is False:
+                if self.createNodeFromTemplateId(template_id, event.position()) is False:
                     event.ignore()
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             # This should not arrive but we received bug report with it...
@@ -755,7 +764,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         menu = QtWidgets.QMenu()
         self.populateDeviceContextualMenu(menu)
-        menu.exec_(pos)
+        menu.exec(pos)
         menu.clear()
         # Make sure to deselect all items.
         # This is to prevent a bug on Windows
@@ -776,145 +785,145 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "configPage"), items)):
             # Action: Configure node
-            configure_action = QtWidgets.QAction("Configure", menu)
+            configure_action = QtGui.QAction("Configure", menu)
             configure_action.setIcon(get_icon("configuration.svg"))
             configure_action.triggered.connect(self.configureActionSlot)
             menu.addAction(configure_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
-            console_action = QtWidgets.QAction("Console", menu)
+            console_action = QtGui.QAction("Console", menu)
             console_action.setIcon(get_icon("console.svg"))
             console_action.triggered.connect(self.consoleActionSlot)
             menu.addAction(console_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "auxConsole"), items)):
-            aux_console_action = QtWidgets.QAction("Auxiliary console", menu)
+            aux_console_action = QtGui.QAction("Auxiliary console", menu)
             aux_console_action.setIcon(get_icon("aux-console.svg"))
             aux_console_action.triggered.connect(self.auxConsoleActionSlot)
             menu.addAction(aux_console_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            start_action = QtWidgets.QAction("Start", menu)
+            start_action = QtGui.QAction("Start", menu)
             start_action.setIcon(get_icon("start.svg"))
             start_action.triggered.connect(self.startActionSlot)
             menu.addAction(start_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            suspend_action = QtWidgets.QAction("Suspend", menu)
+            suspend_action = QtGui.QAction("Suspend", menu)
             suspend_action.setIcon(get_icon("pause.svg"))
             suspend_action.triggered.connect(self.suspendActionSlot)
             menu.addAction(suspend_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            stop_action = QtWidgets.QAction("Stop", menu)
+            stop_action = QtGui.QAction("Stop", menu)
             stop_action.setIcon(get_icon("stop.svg"))
             stop_action.triggered.connect(self.stopActionSlot)
             menu.addAction(stop_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and not item.node().isAlwaysOn(), items)):
-            reload_action = QtWidgets.QAction("Reload", menu)
+            reload_action = QtGui.QAction("Reload", menu)
             reload_action.setIcon(get_icon("reload.svg"))
             reload_action.triggered.connect(self.reloadActionSlot)
             menu.addAction(reload_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and item.node().console() is not None, items)):
-            console_edit_action = QtWidgets.QAction("Custom console", menu)
+            console_edit_action = QtGui.QAction("Custom console", menu)
             console_edit_action.setIcon(get_icon("console_edit.svg"))
             console_edit_action.triggered.connect(self.customConsoleActionSlot)
             menu.addAction(console_edit_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem), items)):
             # Action: Change hostname
-            change_hostname_action = QtWidgets.QAction("Change hostname", menu)
+            change_hostname_action = QtGui.QAction("Change hostname", menu)
             change_hostname_action.setIcon(get_icon("show-hostname.svg"))
             change_hostname_action.triggered.connect(self.changeHostnameActionSlot)
             menu.addAction(change_hostname_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem), items)):
             # Action: Change symbol
-            change_symbol_action = QtWidgets.QAction("Change symbol", menu)
+            change_symbol_action = QtGui.QAction("Change symbol", menu)
             change_symbol_action.setIcon(get_icon("node_conception.svg"))
             change_symbol_action.triggered.connect(self.changeSymbolActionSlot)
             menu.addAction(change_symbol_action)
 
         if True in list(map(lambda item: isinstance(item, DrawingItem) or isinstance(item, NodeItem), items)):
-            duplicate_action = QtWidgets.QAction("Duplicate", menu)
+            duplicate_action = QtGui.QAction("Duplicate", menu)
             duplicate_action.setIcon(get_icon("duplicate.svg"))
             duplicate_action.triggered.connect(self.duplicateActionSlot)
             menu.addAction(duplicate_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "info"), items)):
             # Action: Show node information
-            show_node_info_action = QtWidgets.QAction("Show node information", menu)
+            show_node_info_action = QtGui.QAction("Show node information", menu)
             show_node_info_action.setIcon(get_icon("help.svg"))
             show_node_info_action.triggered.connect(self.showNodeInfoSlot)
             menu.addAction(show_node_info_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "nodeDir"), items)):
             # Action: Show in file manager
-            show_in_file_manager_action = QtWidgets.QAction("Show in file manager", menu)
+            show_in_file_manager_action = QtGui.QAction("Show in file manager", menu)
             show_in_file_manager_action.setIcon(get_icon("open.svg"))
             show_in_file_manager_action.triggered.connect(self.showInFileManagerSlot)
             menu.addAction(show_in_file_manager_action)
 
-        if sys.platform.startswith("win") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
-            # Action: bring console or window to front (Windows only)
-            bring_to_front_action = QtWidgets.QAction("Bring to front", menu)
+        if not sys.platform.startswith("darwin") and True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "bringToFront"), items)):
+            # Action: bring console or window to front (Windows and Linux only)
+            bring_to_front_action = QtGui.QAction("Bring to front", menu)
             bring_to_front_action.setIcon(get_icon("front.svg"))
             bring_to_front_action.triggered.connect(self.bringToFrontSlot)
             menu.addAction(bring_to_front_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and bool(item.node().configFiles()), items)):
-            import_config_action = QtWidgets.QAction("Import config", menu)
+            import_config_action = QtGui.QAction("Import config", menu)
             import_config_action.setIcon(get_icon("import.svg"))
             import_config_action.triggered.connect(self.importConfigActionSlot)
             menu.addAction(import_config_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and bool(item.node().configFiles()), items)):
-            export_config_action = QtWidgets.QAction("Export config", menu)
+            export_config_action = QtGui.QAction("Export config", menu)
             export_config_action.setIcon(get_icon("export.svg"))
             export_config_action.triggered.connect(self.exportConfigActionSlot)
             menu.addAction(export_config_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and bool(item.node().configTextFiles()), items)):
-            export_config_action = QtWidgets.QAction("Edit config", menu)
+            export_config_action = QtGui.QAction("Edit config", menu)
             export_config_action.setIcon(get_icon("edit.svg"))
             export_config_action.triggered.connect(self.editConfigActionSlot)
             menu.addAction(export_config_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepc"), items)):
-            idlepc_action = QtWidgets.QAction("Idle-PC", menu)
+            idlepc_action = QtGui.QAction("Idle-PC", menu)
             idlepc_action.setIcon(get_icon("calculate.svg"))
             idlepc_action.triggered.connect(self.idlepcActionSlot)
             menu.addAction(idlepc_action)
 
         if True in list(map(lambda item: isinstance(item, NodeItem) and hasattr(item.node(), "idlepc"), items)):
-            auto_idlepc_action = QtWidgets.QAction("Auto Idle-PC", menu)
+            auto_idlepc_action = QtGui.QAction("Auto Idle-PC", menu)
             auto_idlepc_action.setIcon(get_icon("calculate.svg"))
             auto_idlepc_action.triggered.connect(self.autoIdlepcActionSlot)
             menu.addAction(auto_idlepc_action)
 
         if True in list(map(lambda item: isinstance(item, LabelItem), items)):
-            text_edit_action = QtWidgets.QAction("Text edit", menu)
+            text_edit_action = QtGui.QAction("Text edit", menu)
             text_edit_action.setIcon(get_icon("show-hostname.svg"))
             text_edit_action.triggered.connect(self.textEditActionSlot)
             menu.addAction(text_edit_action)
 
         if True in list(map(lambda item: isinstance(item, TextItem), items)):
-            text_edit_action = QtWidgets.QAction("Text edit", menu)
+            text_edit_action = QtGui.QAction("Text edit", menu)
             text_edit_action.setIcon(get_icon("edit.svg"))
             text_edit_action.triggered.connect(self.textEditActionSlot)
             menu.addAction(text_edit_action)
 
         if True in list(map(lambda item: isinstance(item, ShapeItem) or isinstance(item, LineItem), items)):
-            style_action = QtWidgets.QAction("Style", menu)
+            style_action = QtGui.QAction("Style", menu)
             style_action.setIcon(get_icon("node_conception.svg"))
             style_action.triggered.connect(self.styleActionSlot)
             menu.addAction(style_action)
 
         if True in list(map(lambda item: isinstance(item, LabelItem), items)) and False in list(map(lambda item: item.parentItem() is None, items)):
             # action only for port labels
-            reset_label_position_action = QtWidgets.QAction("Reset position", menu)
+            reset_label_position_action = QtGui.QAction("Reset position", menu)
             reset_label_position_action.setIcon(get_icon("reset.svg"))
             reset_label_position_action.triggered.connect(self.resetLabelPositionActionSlot)
             menu.addAction(reset_label_position_action)
@@ -923,41 +932,41 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if True in list(map(lambda item: item.parentItem() is None, items)):
 
             if len(items) > 1:
-                horizontal_align_action = QtWidgets.QAction("Align horizontally", menu)
+                horizontal_align_action = QtGui.QAction("Align horizontally", menu)
                 horizontal_align_action.setIcon(get_icon("horizontally.svg"))
                 horizontal_align_action.triggered.connect(self.horizontalAlignmentSlot)
                 menu.addAction(horizontal_align_action)
 
-                vertical_align_action = QtWidgets.QAction("Align vertically", menu)
+                vertical_align_action = QtGui.QAction("Align vertically", menu)
                 vertical_align_action.setIcon(get_icon("vertically.svg"))
                 vertical_align_action.triggered.connect(self.verticalAlignmentSlot)
                 menu.addAction(vertical_align_action)
 
-            raise_layer_action = QtWidgets.QAction("Raise one layer", menu)
+            raise_layer_action = QtGui.QAction("Raise one layer", menu)
             raise_layer_action.setIcon(get_icon("raise_z_value.svg"))
             raise_layer_action.triggered.connect(self.raiseLayerActionSlot)
             menu.addAction(raise_layer_action)
 
-            lower_layer_action = QtWidgets.QAction("Lower one layer", menu)
+            lower_layer_action = QtGui.QAction("Lower one layer", menu)
             lower_layer_action.setIcon(get_icon("lower_z_value.svg"))
             lower_layer_action.triggered.connect(self.lowerLayerActionSlot)
             menu.addAction(lower_layer_action)
 
             if len(items) > 1:
-                lock_action = QtWidgets.QAction("Lock or unlock items", menu)
+                lock_action = QtGui.QAction("Lock or unlock items", menu)
                 lock_action.setIcon(get_icon("lock.svg"))
             else:
                 item = items[0]
-                if item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable:
-                    lock_action = QtWidgets.QAction("Lock item", menu)
+                if item.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable:
+                    lock_action = QtGui.QAction("Lock item", menu)
                     lock_action.setIcon(get_icon("lock.svg"))
                 else:
-                    lock_action = QtWidgets.QAction("Unlock item", menu)
+                    lock_action = QtGui.QAction("Unlock item", menu)
                     lock_action.setIcon(get_icon("unlock.svg"))
             lock_action.triggered.connect(self.lockActionSlot)
             menu.addAction(lock_action)
 
-            delete_action = QtWidgets.QAction("Delete", menu)
+            delete_action = QtGui.QAction("Delete", menu)
             delete_action.setIcon(get_icon("delete.svg"))
             delete_action.triggered.connect(self.deleteActionSlot)
             menu.addAction(delete_action)
@@ -1024,12 +1033,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem) and item.node().initialized():
-                new_hostname, ok = QtWidgets.QInputDialog.getText(self, "Change hostname", "Hostname:", QtWidgets.QLineEdit.Normal, item.node().name())
+                new_hostname, ok = QtWidgets.QInputDialog.getText(self, "Change hostname", "Hostname:", QtWidgets.QLineEdit.EchoMode.Normal, item.node().name())
                 if ok:
                     if not new_hostname.strip():
                         QtWidgets.QMessageBox.critical(self, "Change hostname", "Hostname cannot be blank")
                         continue
-                    if hasattr(item.node(), "validateHostname"):
+                    if hasattr(item.node(), "validateHostname") and not LocalConfig.instance().experimental():
                         if not item.node().validateHostname(new_hostname):
                             QtWidgets.QMessageBox.critical(self, "Change hostname", "Invalid name detected for this node: {}".format(new_hostname))
                             continue
@@ -1048,7 +1057,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if items:
             dialog = SymbolSelectionDialog(self, items)
             dialog.show()
-            dialog.exec_()
+            dialog.exec()
 
     def showInFileManagerSlot(self):
         """
@@ -1070,8 +1079,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                         QtWidgets.QMessageBox.critical(self, "Show in file manager", "Failed to open {}".format(node_dir))
                         break
                 else:
-                    reply = QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}\n\nCopy path to clipboard?".format(node_dir, node.compute().name()), QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                    if reply == QtWidgets.QMessageBox.Yes:
+                    reply = QtWidgets.QMessageBox.information(self, "Show in file manager", "The device directory is located in {} on {}\n\nCopy path to clipboard?".format(node_dir, node.compute().name()), QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+                    if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                         QtWidgets.QApplication.clipboard().setText(node_dir)
                     break
 
@@ -1128,7 +1137,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         delay = self._main_window.settings()["delay_console_all"]
         counter = 0
-        for name in sorted(nodes.keys()):
+        for name in sorted(nodes.keys(), key=str.casefold):
             node = nodes[name]
             callback = qpartial(self.consoleToNode, node)
             self._main_window.run_later(counter, callback)
@@ -1146,10 +1155,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
             proceed = QtWidgets.QMessageBox.question(self,
                                                      "Console to all nodes",
                                                      "You are about to open console windows to {} nodes. Are you sure?".format(nb_items),
-                                                     QtWidgets.QMessageBox.Yes,
-                                                     QtWidgets.QMessageBox.No)
+                                                     QtWidgets.QMessageBox.StandardButton.Yes,
+                                                     QtWidgets.QMessageBox.StandardButton.No)
 
-            if proceed == QtWidgets.QMessageBox.No:
+            if proceed == QtWidgets.QMessageBox.StandardButton.No:
                 return
         self.consoleFromItems(items)
 
@@ -1207,7 +1216,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         delay = self._main_window.settings()["delay_console_all"]
         counter = 0
-        for name in sorted(nodes.keys()):
+        for name in sorted(nodes.keys(), key=str.casefold):
             node = nodes[name]
             callback = qpartial(self.consoleToNode, node, aux=True)
             self._main_window.run_later(counter, callback)
@@ -1246,7 +1255,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                             "Import {}".format(os.path.basename(config_file)),
                                                             self._import_config_directory,
-                                                            "All files (*.*);;Config files (*.cfg)",
+                                                            "All files (*);;Config files (*.cfg)",
                                                             "Config files (*.cfg)")
             if not path:
                 continue
@@ -1275,7 +1284,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     continue
             dialog = FileEditorDialog(item.node(), config_file, parent=self)
             dialog.show()
-            dialog.exec_()
+            dialog.exec()
 
     def exportConfigActionSlot(self):
         """
@@ -1293,7 +1302,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in items:
             for config_file in item.node().configFiles():
-                path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_config_directory, item.node().name() + "_" + os.path.basename(config_file)), "All files (*.*);;Config files (*.cfg)")
+                path, ok = QtWidgets.QFileDialog.getSaveFileName(self, "Export file", os.path.join(self._export_config_directory, item.node().name() + "_" + os.path.basename(config_file)), "All files (*);;Config files (*.cfg)")
                 if not path:
                     continue
                 self._export_config_directory = os.path.dirname(path)
@@ -1313,7 +1322,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if isinstance(item, NodeItem):
             dialog = NodeInfoDialog(item.node(), parent=self)
             dialog.show()
-            dialog.exec_()
+            dialog.exec()
 
     def bringToFrontSlot(self):
         """
@@ -1354,7 +1363,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if idlepcs and idlepcs[0] != "0x0":
                 dialog = IdlePCDialog(router, idlepcs, parent=self)
                 dialog.show()
-                dialog.exec_()
+                dialog.exec()
             else:
                 QtWidgets.QMessageBox.critical(self, "Idle-PC", "Sorry no Idle-PC values could be computed, please check again with Cisco IOS in a different state")
 
@@ -1437,7 +1446,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if items:
             style_dialog = StyleEditorDialog(self._main_window, items)
             style_dialog.show()
-            style_dialog.exec_()
+            style_dialog.exec()
 
     def textEditActionSlot(self):
         """
@@ -1452,7 +1461,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if items:
             text_edit_dialog = TextEditorDialog(self._main_window, items)
             text_edit_dialog.show()
-            text_edit_dialog.exec_()
+            text_edit_dialog.exec()
 
     def resetLabelPositionActionSlot(self):
         """
@@ -1510,7 +1519,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
-                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
+                if not (item.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable):
                     log.error("Cannot move object to a upper layer because it is locked")
                     continue
                 item.setZValue(item.zValue() + 1)
@@ -1525,7 +1534,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         for item in self.scene().selectedItems():
             if item.parentItem() is None:
-                if not (item.flags() & QtWidgets.QGraphicsItem.ItemIsMovable):
+                if not (item.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable):
                     log.error("Cannot move object to a lower layer because it is locked")
                     continue
                 item.setZValue(item.zValue() - 1)
@@ -1571,8 +1580,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             else:
                 question = "Do you want to permanently delete {}?".format(selected_nodes[0].name())
             reply = QtWidgets.QMessageBox.question(self, "Delete", question,
-                                                   QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.No:
+                                                   QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.No:
                 return
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem):
@@ -1608,7 +1617,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
         Ask the server to create a node using this template
         """
-        pos = self.mapToScene(pos)
+        pos = self.mapToScene(pos.toPoint())
         return TemplateManager().instance().createNodeFromTemplateId(self._topology.project(), template_id, pos.x(), pos.y())
 
     def createNodeItem(self, node, symbol, x, y):
@@ -1639,15 +1648,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def createDrawingItem(self, type, x, y, z, locked=False, rotation=0, svg=None, drawing_id=None):
 
         if type == "ellipse":
-            item = EllipseItem(pos=QtCore.QPoint(x, y), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = EllipseItem(pos=QtCore.QPointF(x, y), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "rect":
-            item = RectangleItem(pos=QtCore.QPoint(x, y), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = RectangleItem(pos=QtCore.QPointF(x, y), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "line":
-            item = LineItem(pos=QtCore.QPoint(x, y), dst=QtCore.QPoint(200, 0), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = LineItem(pos=QtCore.QPointF(x, y), dst=QtCore.QPoint(200, 0), z=z, locked=locked, rotation=rotation, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "image":
-            item = ImageItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, locked=locked, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = ImageItem(pos=QtCore.QPointF(x, y), z=z, rotation=rotation, locked=locked, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
         elif type == "text":
-            item = TextItem(pos=QtCore.QPoint(x, y), z=z, rotation=rotation, locked=locked, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
+            item = TextItem(pos=QtCore.QPointF(x, y), z=z, rotation=rotation, locked=locked, project=self._topology.project(), drawing_id=drawing_id, svg=svg)
 
         if drawing_id is None:
             item.create()
@@ -1656,11 +1665,39 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._topology.addDrawing(item)
         return item
 
+    @QtCore.Property(QtGui.QColor)
+    def drawingGridColor(self):
+        """Returns the drawing grid color"""
+        return self._drawing_grid_color
+
+    @drawingGridColor.setter
+    def drawingGridColor(self, color):
+        """Sets the drawing grid color"""
+        self._drawing_grid_color = color
+        self.viewport().update()
+
+    @QtCore.Property(QtGui.QColor)
+    def nodeGridColor(self):
+        """Returns the node grid color"""
+        return self._node_grid_color
+
+    @nodeGridColor.setter
+    def nodeGridColor(self, color):
+        """Sets the node grid color"""
+        self._node_grid_color = color
+        self.viewport().update()
+
+    def resetGridColors(self):
+        """Reset grid colors to defaults"""
+        self._drawing_grid_color = self.DEFAULT_DRAWING_GRID_COLOR
+        self._node_grid_color = self.DEFAULT_NODE_GRID_COLOR
+        self.viewport().update()
+
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)
         if self._main_window.uiShowGridAction.isChecked():
-            grids = [(self.drawingGridSize(), QtGui.QColor(208, 208, 208)),
-                     (self.nodeGridSize(), QtGui.QColor(190, 190, 190))]
+            grids = [(self.drawingGridSize(), self._drawing_grid_color),
+                     (self.nodeGridSize(), self._node_grid_color)]
             painter.save()
             for (grid, colour) in grids:
                 if not grid:

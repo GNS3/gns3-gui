@@ -60,14 +60,14 @@ class Progress(QtCore.QObject):
 
         self._finished_query_during_display = 0
         self._queries = {}
-        # QtCore.Qt.QueuedConnection warranty that we execute the slot
+        # QtCore.Qt.ConnectionType.QueuedConnection warranty that we execute the slot
         # in the current thread and not emitter thread.
         # This fix an issue with Qt 5.5
-        self.add_query_signal.connect(self._addQuerySlot, QtCore.Qt.QueuedConnection)
-        self.remove_query_signal.connect(self._removeQuerySlot, QtCore.Qt.QueuedConnection)
-        self.progress_signal.connect(self._progressSlot, QtCore.Qt.QueuedConnection)
-        self.show_signal.connect(self._showSlot, QtCore.Qt.QueuedConnection)
-        self.hide_signal.connect(self._hideSlot, QtCore.Qt.QueuedConnection)
+        self.add_query_signal.connect(self._addQuerySlot, QtCore.Qt.ConnectionType.QueuedConnection)
+        self.remove_query_signal.connect(self._removeQuerySlot, QtCore.Qt.ConnectionType.QueuedConnection)
+        self.progress_signal.connect(self._progressSlot, QtCore.Qt.ConnectionType.QueuedConnection)
+        self.show_signal.connect(self._showSlot, QtCore.Qt.ConnectionType.QueuedConnection)
+        self.hide_signal.connect(self._hideSlot, QtCore.Qt.ConnectionType.QueuedConnection)
 
         self._minimum_duration = min_duration
         self._cancel_button_text = ""
@@ -137,7 +137,7 @@ class Progress(QtCore.QObject):
             progress_dialog = QtWidgets.QProgressDialog("Waiting for server response", None, 0, 0, self.parent())
             progress_dialog.canceled.connect(self._cancelSlot)
             progress_dialog.rejected.connect(self._rejectSlot)
-            progress_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+            progress_dialog.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
             progress_dialog.setWindowTitle("Please wait")
             progress_dialog.setAutoReset(False)
             progress_dialog.setMinimumDuration(self._minimum_duration)

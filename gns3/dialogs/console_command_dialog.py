@@ -93,7 +93,7 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
         """
         Save a custom command to the list
         """
-        name, ok = QtWidgets.QInputDialog.getText(self, "Add a command", "Command name:", QtWidgets.QLineEdit.Normal)
+        name, ok = QtWidgets.QInputDialog.getText(self, "Add a command", "Command name:", QtWidgets.QLineEdit.EchoMode.Normal)
         command = self.uiCommandPlainTextEdit.toPlainText().strip()
         if ok and len(command) > 0:
             if command not in self._consoles.values():
@@ -123,7 +123,7 @@ class ConsoleCommandDialog(QtWidgets.QDialog, Ui_uiConsoleCommandDialog):
     def getCommand(parent, console_type="telnet", current=None):
         dialog = ConsoleCommandDialog(parent, console_type=console_type, current=current)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             return True, dialog.uiCommandPlainTextEdit.toPlainText().replace("\n", " ")
         return False, None
 

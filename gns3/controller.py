@@ -25,6 +25,8 @@ from .qt import QtCore, QtNetwork, QtGui, QtWidgets, QtWebSockets, qpartial, qsl
 from .symbol import Symbol
 from .local_server_config import LocalServerConfig
 from .settings import LOCAL_SERVER_SETTINGS
+
+from gns3.local_config import LocalConfig
 from gns3.utils import parse_version
 
 import logging
@@ -151,13 +153,13 @@ class Controller(QtCore.QObject):
                 self.connection_failed_signal.emit()
                 if self._display_error:
                     self._error_dialog = QtWidgets.QMessageBox(self.parent())
-                    self._error_dialog.setWindowModality(QtCore.Qt.ApplicationModal)
+                    self._error_dialog.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
                     self._error_dialog.setWindowTitle("Connection to server")
                     if result and "message" in result:
                         self._error_dialog.setText("Error when connecting to the GNS3 server:\n{}".format(result["message"]))
                     else:
                         self._error_dialog.setText("Cannot connect to the GNS3 server")
-                    self._error_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+                    self._error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
                     self._error_dialog.show()
             # Try to connect again in 5 seconds
             QtCore.QTimer.singleShot(5000, qpartial(self.get, '/version', self._versionGetSlot, showProgress=self._first_error))
@@ -416,19 +418,23 @@ class Controller(QtCore.QObject):
         self._notification_stream = None
 
         # Qt websocket before Qt 5.6 doesn't support auth
-        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0"):
+        if parse_version(QtCore.QT_VERSION_STR) < parse_version("5.6.0") or parse_version(QtCore.PYQT_VERSION_STR) < parse_version("5.6.0") or LocalConfig.instance().experimental():
+
             self._notification_stream = Controller.instance().createHTTPQuery("GET", "/notifications", self._endListenNotificationCallback,
                                                                               downloadProgressCallback=self._event_received,
                                                                               networkManager=self._notification_network_manager,
                                                                               timeout=None,
                                                                               showProgress=False,
                                                                               ignoreErrors=True)
+            url = self._http_client.url() + '/notifications'
+            log.info("Listening for controller notifications on '{}'".format(url))
 
         else:
             self._notification_stream = self._http_client.connectWebSocket(self._websocket, "/notifications/ws")
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
             self._notification_stream.error.connect(self._websocket_error)
             self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
+            log.info("Listening for controller notifications on '{}'".format(self._notification_stream.requestUrl().toString()))
 
     def stopListenNotifications(self):
         if self._notification_stream:
@@ -449,7 +455,7 @@ class Controller(QtCore.QObject):
     @qslot
     def _websocket_error(self, error):
         if self._notification_stream:
-            log.error("Websocket notification stream error: {}".format(self._notification_stream.errorString()))
+            log.error("Websocket controller notification stream error: {}".format(self._notification_stream.errorString()))
             self._notification_stream = None
             self._startListenNotifications()
 
@@ -479,11 +485,21 @@ class Controller(QtCore.QObject):
         elif result["action"] == "compute.created" or result["action"] == "compute.updated":
             from .compute_manager import ComputeManager
             ComputeManager.instance().computeDataReceivedCallback(result["event"])
-        elif result["action"] == "log.error":
-            log.error(result["event"]["message"])
-        elif result["action"] == "log.warning":
-            log.warning(result["event"]["message"])
-        elif result["action"] == "log.info":
-            log.info(result["event"]["message"], extra={"show": True})
+        elif result["action"] == "project.closed":
+            from .topology import Topology
+            project = Topology.instance().project()
+            if project and project.id() == result["event"]["project_id"]:
+                Topology.instance().setProject(None)
+        elif result["action"] == "project.updated":
+            from .topology import Topology
+            project = Topology.instance().project()
+            if project and project.id() == result["event"]["project_id"]:
+                project.projectUpdatedCallback(result["event"])
+        elif result["action"] == "log.error" and result["event"].get("message"):
+            log.error(result["event"].get("message"))
+        elif result["action"] == "log.warning" and result["event"].get("message"):
+            log.warning(result["event"].get("message"))
+        elif result["action"] == "log.info" and result["event"].get("message"):
+            log.info(result["event"].get("message"), extra={"show": True})
         elif result["action"] == "ping":
             pass

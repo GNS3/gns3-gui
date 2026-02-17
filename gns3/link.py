@@ -23,7 +23,7 @@ import re
 from .qt import sip
 import uuid
 
-from .qt import QtCore
+from .qt import QtCore, QtNetwork
 from .controller import Controller
 
 
@@ -78,6 +78,7 @@ class Link(QtCore.QObject):
         self._deleting = False
         self._capture_file_path = None
         self._capture_file = None
+        self._network_manager = None
         self._response_stream = None
         self._capture_compute_id = None
         self._initialized = False
@@ -111,18 +112,21 @@ class Link(QtCore.QObject):
                 # We need to stream the pcap file content if the controller or compute is remote
                 if Controller.instance().isRemote() or self._capture_file_path is None:
                     self._capture_file = QtCore.QTemporaryFile()
-                    self._capture_file.open(QtCore.QFile.WriteOnly)
+                    self._capture_file.open(QtCore.QIODeviceBase.OpenModeFlag.WriteOnly)
                     self._capture_file.setAutoRemove(True)
                     self._capture_file_path = self._capture_file.fileName()
                 else:
                     self._capture_file = QtCore.QFile(self._capture_file_path)
-                    self._capture_file.open(QtCore.QFile.WriteOnly)
+                    self._capture_file.open(QtCore.QIODeviceBase.OpenModeFlag.WriteOnly)
+                if self._network_manager is None:
+                    self._network_manager = QtNetwork.QNetworkAccessManager(self)
                 self._response_stream = Controller.instance().get("/projects/{project_id}/links/{link_id}/pcap".format(project_id=self.project().id(), link_id=self._link_id),
                                                                   None,
                                                                   showProgress=False,
                                                                   downloadProgressCallback=self._downloadPcapProgress,
                                                                   ignoreErrors=True,  # If something is wrong avoid disconnect us from server
-                                                                  timeout=None)
+                                                                  timeout=None,
+                                                                  networkManager=self._network_manager)
             log.debug("Has successfully started capturing packets on link {} to '{}'".format(self._link_id, self._capture_file_path))
         else:
             self._response_stream = None

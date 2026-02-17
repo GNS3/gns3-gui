@@ -132,7 +132,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         self.uiCopyIOUDevicePushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             iou_device = self._iou_devices[key]
             self._refreshInfo(iou_device)
         else:
@@ -145,7 +145,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
         wizard = IOUDeviceWizard(self._iou_devices, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
 
             new_device_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_device_settings["compute_id"], name=new_device_settings["name"])
@@ -155,7 +155,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
             item.setText(0, self._iou_devices[key]["name"])
             Controller.instance().getSymbolIcon(self._iou_devices[key]["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiIOUDevicesTreeWidget.setCurrentItem(item)
 
@@ -166,9 +166,9 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
         item = self.uiIOUDevicesTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             copied_iou_device_settings = copy.deepcopy(self._iou_devices[key])
-            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOU template", "Template name:", QtWidgets.QLineEdit.Normal, "Copy of {}".format(copied_iou_device_settings["name"]))
+            new_name, ok = QtWidgets.QInputDialog.getText(self, "Copy IOU template", "Template name:", QtWidgets.QLineEdit.EchoMode.Normal, "Copy of {}".format(copied_iou_device_settings["name"]))
             if ok:
                 key = "{server}:{name}".format(server=copied_iou_device_settings["compute_id"], name=new_name)
                 if key in self._iou_devices:
@@ -182,7 +182,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
                 item = QtWidgets.QTreeWidgetItem(self.uiIOUDevicesTreeWidget)
                 item.setText(0, self._iou_devices[key]["name"])
                 Controller.instance().getSymbolIcon(self._iou_devices[key]["symbol"], qpartial(self._setItemIcon, item))
-                item.setData(0, QtCore.Qt.UserRole, key)
+                item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
                 self._items.append(item)
                 self.uiIOUDevicesTreeWidget.setCurrentItem(item)
 
@@ -193,11 +193,11 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
         item = self.uiIOUDevicesTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             iou_device = self._iou_devices[key]
             dialog = ConfigurationDialog(iou_device["name"], iou_device, iouDeviceConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(iou_device["symbol"], qpartial(self._setItemIcon, item))
                 if iou_device["name"] != item.text(0):
@@ -210,7 +210,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
                     self._iou_devices[new_key] = self._iou_devices[key]
                     del self._iou_devices[key]
                     item.setText(0, iou_device["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
                 self._refreshInfo(dialog.settings())
 
     def _iouDeviceDeleteSlot(self):
@@ -220,7 +220,7 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
 
         for item in self.uiIOUDevicesTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._iou_devices[key]
                 self.uiIOUDevicesTreeWidget.takeTopLevelItem(self.uiIOUDevicesTreeWidget.indexOfTopLevelItem(item))
 
@@ -245,12 +245,12 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
             item.setText(0, iou_device["name"])
             Controller.instance().getSymbolIcon(iou_device["symbol"], qpartial(self._setItemIcon, item))
 
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiIOUDevicesTreeWidget.setCurrentItem(self._items[0])
-            self.uiIOUDevicesTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiIOUDevicesTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiIOUDevicesTreeWidget.setMaximumWidth(self.uiIOUDevicesTreeWidget.sizeHintForColumn(0) + 10)
 
     def savePreferences(self):
@@ -291,8 +291,8 @@ class IOUDevicePreferencesPage(QtWidgets.QWidget, Ui_IOUDevicePreferencesPageWid
         path, _ = QtWidgets.QFileDialog.getOpenFileName(parent,
                                                         "Select an IOU image",
                                                         cls._default_images_dir,
-                                                        "All file (*);;IOU image (*.bin *.image)",
-                                                        "IOU image (*.bin *.image)")
+                                                        "All file (*);;IOU image (x86_64* i86bi* *.bin *.image *.iol)",
+                                                        "IOU image (x86_64* i86bi* *.bin *.image *.iol)")
 
         if not path:
             return

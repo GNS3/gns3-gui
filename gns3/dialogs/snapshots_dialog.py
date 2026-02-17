@@ -68,7 +68,7 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
         for snapshot in result:
             item = QtWidgets.QListWidgetItem(self.uiSnapshotsList)
             item.setText("{} on {}".format(snapshot["name"], datetime.fromtimestamp(snapshot["created_at"]).strftime("%d/%m/%y at %H:%M:%S")))
-            item.setData(QtCore.Qt.UserRole, snapshot["snapshot_id"])
+            item.setData(QtCore.Qt.ItemDataRole.UserRole, snapshot["snapshot_id"])
 
         if self.uiSnapshotsList.count():
             self.uiSnapshotsList.setCurrentRow(0)
@@ -83,7 +83,7 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
         Slot to create a snapshot.
         """
 
-        snapshot_name, ok = QtWidgets.QInputDialog.getText(self, "Snapshot", "Snapshot name:", QtWidgets.QLineEdit.Normal, "Unnamed")
+        snapshot_name, ok = QtWidgets.QInputDialog.getText(self, "Snapshot", "Snapshot name:", QtWidgets.QLineEdit.EchoMode.Normal, "Unnamed")
         if ok and snapshot_name and self._project:
             Controller.instance().post("/projects/{}/snapshots".format(self._project.id()),
                                        self._createSnapshotsCallback,
@@ -107,7 +107,7 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
         item = self.uiSnapshotsList.currentItem()
         if item:
-            snapshot_id = item.data(QtCore.Qt.UserRole)
+            snapshot_id = item.data(QtCore.Qt.ItemDataRole.UserRole)
             Controller.instance().delete("/projects/{}/snapshots/{}".format(self._project.id(), snapshot_id), self._deleteSnapshotsCallback)
 
     def _deleteSnapshotsCallback(self, result, error=False, server=None, context={}, **kwargs):
@@ -125,7 +125,7 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
         item = self.uiSnapshotsList.currentItem()
         if item:
-            snapshot_id = item.data(QtCore.Qt.UserRole)
+            snapshot_id = item.data(QtCore.Qt.ItemDataRole.UserRole)
             self._restoreSnapshot(snapshot_id)
 
     def _restoreSnapshot(self, snapshot_id):
@@ -135,8 +135,8 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
         :param snapshot_id: id of the snapshot
         """
 
-        reply = QtWidgets.QMessageBox.question(self, "Snapshots", "This will discard any changes made to your project since the snapshot was taken, would you like to proceed?", QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Cancel)
-        if reply == QtWidgets.QMessageBox.Cancel:
+        reply = QtWidgets.QMessageBox.question(self, "Snapshots", "This will discard any changes made to your project since the snapshot was taken, would you like to proceed?", QtWidgets.QMessageBox.StandardButton.Ok, QtWidgets.QMessageBox.StandardButton.Cancel)
+        if reply == QtWidgets.QMessageBox.StandardButton.Cancel:
             return
 
         Controller.instance().post("/projects/{}/snapshots/{}/restore".format(self._project.id(), snapshot_id),
@@ -155,5 +155,5 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
         Slot to restore a snapshot when it is double clicked.
         """
 
-        snapshot_id = item.data(QtCore.Qt.UserRole)
+        snapshot_id = item.data(QtCore.Qt.ItemDataRole.UserRole)
         self._restoreSnapshot(snapshot_id)

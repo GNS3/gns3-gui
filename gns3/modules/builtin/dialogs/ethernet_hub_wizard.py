@@ -38,7 +38,7 @@ class EthernetHubWizard(VMWizard, Ui_EthernetHubWizard):
 
         super().__init__(ethernet_hubs, parent)
 
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/hub.svg"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/hub.svg"))
         self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)
 
     def getSettings(self):

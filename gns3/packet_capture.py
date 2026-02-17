@@ -84,7 +84,7 @@ class PacketCapture:
         else:
             ethernet_link = True
         dialog = CaptureDialog(self.parent(), link.capture_file_name(), self.settings()["command_auto_start"], ethernet_link)
-        if dialog.exec_():
+        if dialog.exec():
             self._autostart[link] = dialog.commandAutoStart()
             link.startCapture(dialog.dataLink(), dialog.fileName() + ".pcap")
 
@@ -112,15 +112,20 @@ class PacketCapture:
         """
         Starts the packet capture reader.
         """
+
         self._startPacketCommand(link, self.settings()["packet_capture_reader_command"])
 
     def stopPacketCaptureReader(self, link):
         """
         Stop the packet capture reader
         """
-        if link in self._tail_process and self._tail_process[link].poll() is None:
+
+        if link in self._tail_process:
             log.debug("Stopping packet capture reader for link {}".format(link.link_id()))
-            self._tail_process[link].kill()
+            try:
+                self._tail_process[link].kill()
+            except (PermissionError, OSError):
+                pass
             del self._tail_process[link]
 
     def startPacketCaptureAnalyzer(self, link):
@@ -141,13 +146,19 @@ class PacketCapture:
 
         # PCAP capture file path
         command = command.replace("%c", '"' + capture_file_path + '"')
+        command = command.replace("{pcap_file}", '"' + capture_file_path + '"')
 
-        # Add description
+        # Add project name
+        command = command.replace("%P", link.project().name())
+        command = command.replace("{project}", link.project().name().replace('"', '\\"'))
+
+        # Add link description
         description = "{}[{}]->{}[{}]".format(link.sourceNode().name(),
                                               link.sourcePort().name(),
                                               link.destinationNode().name(),
                                               link.destinationPort().name())
         command = command.replace("%d", description)
+        command = command.replace("{link_description}", description)
 
         if not sys.platform.startswith("win"):
             command = shlex.split(command)
@@ -155,7 +166,7 @@ class PacketCapture:
             QtWidgets.QMessageBox.critical(self.parent(), "Packet Capture Analyzer", "No packet capture analyzer program configured")
             return
         try:
-            subprocess.Popen(command)
+            subprocess.Popen(command, env=os.environ)
         except OSError as e:
             QtWidgets.QMessageBox.critical(self.parent(), "Packet Capture Analyzer", "Can't start packet capture analyzer program {}".format(str(e)))
             return
@@ -183,14 +194,14 @@ class PacketCapture:
                 QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", "Can't create packet capture file {}: {}".format(capture_file_path, str(e)))
                 return
 
-        if link in self._tail_process and self._tail_process[link].poll() is None:
+        if link in self._tail_process:
             try:
                 self._tail_process[link].kill()
             except (PermissionError, OSError):
                 # Sometimes we have condition on windows where the process is in the process to quit
                 pass
             del self._tail_process[link]
-        if link in self._capture_reader_process and self._capture_reader_process[link].poll() is None:
+        if link in self._capture_reader_process:
             try:
                 self._capture_reader_process[link].kill()
             except (PermissionError, OSError):
@@ -199,13 +210,19 @@ class PacketCapture:
 
         # PCAP capture file path
         command = command.replace("%c", '"' + capture_file_path + '"')
+        command = command.replace("{pcap_file}", '"' + capture_file_path + '"')
 
-        # Add description
+        # Add project name
+        command = command.replace("%P", link.project().name())
+        command = command.replace("{project}", link.project().name().replace('"', '\\"'))
+
+        # Add link description
         description = "{} {} to {} {}".format(link.sourceNode().name(),
                                               link.sourcePort().name(),
                                               link.destinationNode().name(),
                                               link.destinationPort().name())
         command = command.replace("%d", description)
+        command = command.replace("{link_description}", description)
 
         if "|" in command:
             # live traffic capture (using tail)

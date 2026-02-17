@@ -47,7 +47,7 @@ def http_client(http_request, network_manager):
     return HTTPClient({"protocol": "http", "host": "127.0.0.1", "port": "3080"}, network_manager=network_manager)
 
 
-@pytest.yield_fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def http_request():
 
     mock = unittest.mock.Mock()

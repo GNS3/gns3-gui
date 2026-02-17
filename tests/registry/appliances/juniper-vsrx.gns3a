@@ -3,8 +3,6 @@
     "vendor_name": "Juniper",
     "product_name": "vSRX",
     "name": "vSRX",
-
-
     "description": "The vSRX delivers core firewall, networking, advanced security, and automated lifecycle management capabilities for enterprises and service providers. The industry\u2019s fastest virtual security platform, the vSRX offers firewall speeds up to 17 Gbps using only two virtual CPUs, providing scalable, secure protection across private, public, and hybrid clouds.",
     "maintainer_email": "developers@gns3.net",
     "documentation_url": "http://www.juniper.net/techpubs/",
@@ -13,7 +11,6 @@
     "status": "experimental",
     "vendor_url": "https://www.juniper.net",
     "registry_version": 1,
-
     "qemu": {
         "console_type": "telnet",
         "ram": 2000,
@@ -23,8 +20,6 @@
         "options": "-smp 2",
         "kvm": "require"
     },
-
-
     "images": [
         {
             "version": "12.1X47.4-domestic",
@@ -34,7 +29,6 @@
             "download_url": "https://www.juniper.net/us/en/dm/free-vsrx-trial/"
         }
     ],
-
     "versions": [
         {
             "name": "12.1X47.4-domestic",
@@ -43,4 +37,4 @@
             }
         }
     ]
-  }
+}

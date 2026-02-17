@@ -54,7 +54,7 @@ class IOUPreferencesPage(QtWidgets.QWidget, Ui_IOUPreferencesPageWidget):
         Slot to open a file browser and select an iourc file
         """
 
-        documents_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation)
+        documents_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DocumentsLocation)
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select the IOURC file", documents_path)
         if not path:
             return

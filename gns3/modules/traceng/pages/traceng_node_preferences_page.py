@@ -102,7 +102,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
         self.uiEditTraceNGPushButton.setEnabled(single_selected)
 
         if single_selected:
-            key = selection[0].data(0, QtCore.Qt.UserRole)
+            key = selection[0].data(0, QtCore.Qt.ItemDataRole.UserRole)
             traceng_node = self._traceng_nodes[key]
             self._refreshInfo(traceng_node)
         else:
@@ -115,7 +115,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
 
         wizard = TraceNGNodeWizard(self._traceng_nodes, parent=self)
         wizard.show()
-        if wizard.exec_():
+        if wizard.exec():
             new_traceng_node_settings = wizard.getSettings()
             key = "{server}:{name}".format(server=new_traceng_node_settings["compute_id"], name=new_traceng_node_settings["name"])
             self._traceng_nodes[key] = TRACENG_NODES_SETTINGS.copy()
@@ -124,7 +124,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
             item = QtWidgets.QTreeWidgetItem(self.uiTraceNGTreeWidget)
             item.setText(0, self._traceng_nodes[key]["name"])
             Controller.instance().getSymbolIcon(self._traceng_nodes[key]["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
             self.uiTraceNGTreeWidget.setCurrentItem(item)
 
@@ -135,11 +135,11 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
 
         item = self.uiTraceNGTreeWidget.currentItem()
         if item:
-            key = item.data(0, QtCore.Qt.UserRole)
+            key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
             traceng_node = self._traceng_nodes[key]
             dialog = ConfigurationDialog(traceng_node["name"], traceng_node, TraceNGNodeConfigurationPage(), parent=self)
             dialog.show()
-            if dialog.exec_():
+            if dialog.exec():
                 # update the icon
                 Controller.instance().getSymbolIcon(traceng_node["symbol"], qpartial(self._setItemIcon, item))
                 if traceng_node["name"] != item.text(0):
@@ -152,7 +152,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
                     self._traceng_nodes[new_key] = self._traceng_nodes[key]
                     del self._traceng_nodes[key]
                     item.setText(0, traceng_node["name"])
-                    item.setData(0, QtCore.Qt.UserRole, new_key)
+                    item.setData(0, QtCore.Qt.ItemDataRole.UserRole, new_key)
                 self._refreshInfo(traceng_node)
 
     def _deleteTraceNGSlot(self):
@@ -162,7 +162,7 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
 
         for item in self.uiTraceNGTreeWidget.selectedItems():
             if item:
-                key = item.data(0, QtCore.Qt.UserRole)
+                key = item.data(0, QtCore.Qt.ItemDataRole.UserRole)
                 del self._traceng_nodes[key]
                 self.uiTraceNGTreeWidget.takeTopLevelItem(self.uiTraceNGTreeWidget.indexOfTopLevelItem(item))
 
@@ -186,12 +186,12 @@ class TraceNGNodePreferencesPage(QtWidgets.QWidget, Ui_TraceNGNodePageWidget):
             item = QtWidgets.QTreeWidgetItem(self.uiTraceNGTreeWidget)
             item.setText(0, node["name"])
             Controller.instance().getSymbolIcon(node["symbol"], qpartial(self._setItemIcon, item))
-            item.setData(0, QtCore.Qt.UserRole, key)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, key)
             self._items.append(item)
 
         if self._items:
             self.uiTraceNGTreeWidget.setCurrentItem(self._items[0])
-            self.uiTraceNGTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            self.uiTraceNGTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
             self.uiTraceNGTreeWidget.setMaximumWidth(self.uiTraceNGTreeWidget.sizeHintForColumn(0) + 20)
 
     def _setItemIcon(self, item, icon):

@@ -38,7 +38,7 @@ class VirtualBoxVMWizard(VMWizard, Ui_VirtualBoxVMWizard):
 
         super().__init__(virtualbox_vms, parent)
         self._virtualbox_vms = virtualbox_vms
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/icons/virtualbox.png"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/icons/virtualbox.png"))
 
     def validateCurrentPage(self):
         """

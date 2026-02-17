@@ -57,10 +57,10 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
             "port": 80
         }
 
-        self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
+        self.setWizardStyle(QtWidgets.QWizard.WizardStyle.ModernStyle)
         if sys.platform.startswith("darwin"):
             # we want to see the cancel button on OSX
-            self.setOptions(QtWidgets.QWizard.NoDefaultButton)
+            self.setOptions(QtWidgets.QWizard.WizardOption.NoDefaultButton)
 
         self.uiLocalServerToolButton.clicked.connect(self._localServerBrowserSlot)
 
@@ -82,7 +82,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
 
         # load all available addresses
         for address in QtNetwork.QNetworkInterface.allAddresses():
-            if address.protocol() in [QtNetwork.QAbstractSocket.IPv4Protocol, QtNetwork.QAbstractSocket.IPv6Protocol]:
+            if address.protocol() in [QtNetwork.QAbstractSocket.NetworkLayerProtocol.IPv4Protocol, QtNetwork.QAbstractSocket.NetworkLayerProtocol.IPv6Protocol]:
                 address_string = address.toString()
                 if address_string.startswith("169.254") or address_string.startswith("fe80"):
                     # ignore link-local addresses, could not use https://doc.qt.io/qt-5/qhostaddress.html#isLinkLocal
@@ -156,7 +156,7 @@ class SetupWizard(QtWidgets.QWizard, Ui_SetupWizard):
         :returns: current QWidget
         """
 
-        pane = dialog.uiTreeWidget.findItems(name, QtCore.Qt.MatchFixedString)[0]
+        pane = dialog.uiTreeWidget.findItems(name, QtCore.Qt.MatchFlag.MatchFixedString)[0]
         child_pane = pane.child(0)
         dialog.uiTreeWidget.setCurrentItem(child_pane)
         return dialog.uiStackedWidget.currentWidget()

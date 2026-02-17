@@ -64,8 +64,15 @@ def empty_config(tmpdir, images_dir, symbols_dir, local_server_config):
     return Config(path)
 
 
-def test_add_appliance_iou(iou_l3):
-    with open("tests/registry/appliances/cisco-iou-l3.gns3a", encoding="utf-8") as f:
+@pytest.mark.parametrize(
+    "appliance_file",
+    [
+        "cisco-iou-l3.gns3a",
+        "cisco-iou-l3-v8.gns3a"
+    ]
+)
+def test_add_appliance_iou(iou_l3, appliance_file):
+    with open("tests/registry/appliances/{}".format(appliance_file), encoding="utf-8") as f:
         config = json.load(f)
     config["images"] = [
         {
@@ -74,7 +81,7 @@ def test_add_appliance_iou(iou_l3):
             "path": iou_l3
         }
     ]
-    new_template = ApplianceToTemplate().new_template(config, "local")
+    new_template = ApplianceToTemplate().new_template(config, "local", "15.4.1T")
     assert new_template == {
         "category": "router",
         "template_type": "iou",
@@ -91,8 +98,15 @@ def test_add_appliance_iou(iou_l3):
     }
 
 
-def test_add_appliance_docker():
-    with open("tests/registry/appliances/openvswitch.gns3a", encoding="utf-8") as f:
+@pytest.mark.parametrize(
+    "appliance_file",
+    [
+        "openvswitch.gns3a",
+        "openvswitch-v8.gns3a"
+    ]
+)
+def test_add_appliance_docker(appliance_file):
+    with open("tests/registry/appliances/{}".format(appliance_file), encoding="utf-8") as f:
         config = json.load(f)
 
     new_template = ApplianceToTemplate().new_template(config, "local")
@@ -108,8 +122,15 @@ def test_add_appliance_docker():
     }
 
 
-def test_add_appliance_dynamips(cisco_3745):
-    with open("tests/registry/appliances/cisco-3745.gns3a", encoding="utf-8") as f:
+@pytest.mark.parametrize(
+    "appliance_file",
+    [
+        "cisco-3745.gns3a",
+        "cisco-3745-v8.gns3a"
+    ]
+)
+def test_add_appliance_dynamips(cisco_3745, appliance_file):
+    with open("tests/registry/appliances/{}".format(appliance_file), encoding="utf-8") as f:
         config = json.load(f)
     config["images"] = [
         {
@@ -120,7 +141,7 @@ def test_add_appliance_dynamips(cisco_3745):
         }
     ]
 
-    new_template = ApplianceToTemplate().new_template(config, "local")
+    new_template = ApplianceToTemplate().new_template(config, "local", "124-25d")
     assert new_template == {
         "template_type": "dynamips",
         "category": "router",
@@ -166,7 +187,6 @@ def test_add_appliance_guest(linux_microcore_img):
         "symbol": ":/symbols/qemu_guest.svg",
         "hda_disk_image": "linux-microcore-3.4.1.img",
         "name": "Micro Core Linux",
-        "options": "",
         "qemu_path": "qemu-system-i386",
         "usage": "Just start the appliance",
         "ram": 32,
@@ -238,8 +258,15 @@ def test_add_appliance_with_boot_priority(linux_microcore_img):
     assert new_template["boot_priority"] == "dc"
 
 
-def test_add_appliance_router_two_disk(images_dir):
-    with open("tests/registry/appliances/arista-veos.gns3a", encoding="utf-8") as f:
+@pytest.mark.parametrize(
+    "appliance_file",
+    [
+        "arista-veos.gns3a",
+        "arista-veos-v8.gns3a"
+    ]
+)
+def test_add_appliance_router_two_disk(images_dir, appliance_file):
+    with open("tests/registry/appliances/{}".format(appliance_file), encoding="utf-8") as f:
         config = json.load(f)
 
     config["images"] = [
@@ -255,8 +282,8 @@ def test_add_appliance_router_two_disk(images_dir):
         }
     ]
 
-    new_template = ApplianceToTemplate().new_template(config, "local")
-    assert new_template == {
+    new_template = ApplianceToTemplate().new_template(config, "local", "4.13.8M")
+    expected_result = {
         "template_type": "qemu",
         "adapter_type": "e1000",
         "adapters": 8,
@@ -265,12 +292,76 @@ def test_add_appliance_router_two_disk(images_dir):
         "hda_disk_image": "a",
         "hdb_disk_image": "b",
         "name": "Arista vEOS",
-        "options": "",
         "qemu_path": "qemu-system-x86_64",
         "ram": 2048,
         "console_type": "telnet",
         "compute_id": "local"
     }
+    if "v8" in appliance_file:
+        expected_result["platform"] = "x86_64"  # platform was added in v8
+    assert new_template == expected_result
+
+
+def test_add_appliance_v8_default_properties_inheritance(images_dir):
+    with open("tests/registry/appliances/empty-vm-v8.gns3a", encoding="utf-8") as f:
+        config = json.load(f)
+
+    # check that default properties are used
+    new_template = ApplianceToTemplate().new_template(config, "local", "8G")
+    expected_result = {
+        "name": "Empty VM",
+        "template_type": "qemu",
+        "symbol": ":/symbols/qemu_guest.svg",
+        "category": "guest",
+        "adapter_type": "e1000",
+        "adapters": 1,
+        "ram": 1024,
+        "qemu_path": "qemu-system-x86_64",
+        "hda_disk_interface": "sata",
+        "platform": "x86_64",
+        "console_type": "vnc",
+        "boot_priority": "d",
+        "compute_id": "local",
+        "usage": "Default at first boot the VM will start from the cdrom."
+    }
+    assert new_template == expected_result
+
+    # check that specific properties are used along with default properties
+    new_template = ApplianceToTemplate().new_template(config, "local", "30G")
+    expected_result.update(
+        {
+            "adapters": 8,
+            "qemu_path": "qemu-system-i386",
+            "platform": "i386",
+        }
+    )
+    assert new_template == expected_result
+
+    # check that specific properties are used along without default properties
+    new_template = ApplianceToTemplate().new_template(config, "local", "100G")
+    expected_result = {
+        "name": "Empty VM",
+        "template_type": "qemu",
+        "symbol": ":/symbols/qemu_guest.svg",
+        "category": "guest",
+        "ram": 512,
+        "qemu_path": "qemu-system-arm",
+        "platform": "arm",
+        "compute_id": "local",
+        "usage": "Default at first boot the VM will start from the cdrom."
+    }
+    assert new_template == expected_result
+
+    # check that specific properties are used with "usage", "symbol" and "category" defined at the version level
+    new_template = ApplianceToTemplate().new_template(config, "local", "200G")
+    expected_result.update(
+        {
+            "usage": "This is how to use this version",
+            "symbol": "ethernet_switch",
+            "category": "switch"
+        }
+    )
+    assert new_template == expected_result
 
 
 def test_add_appliance_path_relative_to_images_dir(tmpdir, linux_microcore_img):

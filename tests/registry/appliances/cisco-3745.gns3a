@@ -1,4 +1,5 @@
 {
+    "appliance_id": "96dac9ff-581c-4262-a9f0-5c68890d049e",
     "category": "router",
     "status": "experimental",
     "maintainer": "GNS3 Team",
@@ -10,7 +11,6 @@
     "registry_version": 2,
     "maintainer_email": "developers@gns3.net",
     "documentation_url": "http://www.cisco.com/c/en/us/support/routers/3745-multiservice-access-router/model.html",
-
     "dynamips": {
         "chassis": "",
         "platform": "c3745",
@@ -26,7 +26,6 @@
         "wic1": "WIC-1T",
         "wic2": "WIC-1T"
     },
-
     "versions": [
         {
             "images": {

@@ -51,7 +51,7 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         self.uiPortTypeComboBox.currentIndexChanged.connect(self._typeSelectionChangedSlot)
 
         # enable sorting
-        self.uiPortsTreeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        self.uiPortsTreeWidget.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.uiPortsTreeWidget.setSortingEnabled(True)
 
         self.uiSymbolToolButton.clicked.connect(self._symbolBrowserSlot)
@@ -64,7 +64,7 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
         symbol_path = self.uiSymbolLineEdit.text()
         dialog = SymbolSelectionDialog(self, symbol=symbol_path)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             new_symbol_path = dialog.getSymbol()
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
@@ -131,7 +131,7 @@ class EthernetSwitchConfigurationPage(QtWidgets.QWidget, Ui_ethernetSwitchConfig
 
         if port in self._ports:
             # update a given entry in the tree widget
-            item = self.uiPortsTreeWidget.findItems(str(port), QtCore.Qt.MatchFixedString)[0]
+            item = self.uiPortsTreeWidget.findItems(str(port), QtCore.Qt.MatchFlag.MatchFixedString)[0]
             item.setText(1, str(vlan))
             item.setText(2, port_type)
             item.setText(3, port_ethertype)

@@ -62,11 +62,11 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         Edit mode for this note.
         """
 
-        self.setTextInteractionFlags(QtCore.Qt.TextEditorInteraction)
+        self.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextEditorInteraction)
         self.setSelected(True)
         self.setFocus()
         cursor = self.textCursor()
-        cursor.select(QtGui.QTextCursor.Document)
+        cursor.select(QtGui.QTextCursor.SelectionType.Document)
         self.setTextCursor(cursor)
 
     def mouseDoubleClickEvent(self, event):
@@ -85,12 +85,12 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
         :param event: QFocusEvent instance
         """
 
-        self.setFlag(QtWidgets.QGraphicsItem.ItemIsFocusable, False)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsFocusable, False)
         cursor = self.textCursor()
         if cursor.hasSelection():
             cursor.clearSelection()
             self.setTextCursor(cursor)
-        self.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.NoTextInteraction)
         if not self.toPlainText():
             # delete the note if empty
             self.delete()

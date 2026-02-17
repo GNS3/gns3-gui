@@ -9,15 +9,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>147</height>
+    <width>460</width>
+    <height>142</height>
    </rect>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>500</width>
-    <height>147</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Packet capture</string>

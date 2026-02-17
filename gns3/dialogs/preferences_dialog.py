@@ -19,7 +19,7 @@
 Dialog to load module and built-in preference pages.
 """
 
-from ..qt import QtCore, QtWidgets
+from ..qt import QtGui, QtCore, QtWidgets
 from ..ui.preferences_dialog_ui import Ui_PreferencesDialog
 from ..pages.server_preferences_page import ServerPreferencesPage
 from ..pages.general_preferences_page import GeneralPreferencesPage
@@ -49,8 +49,9 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         # We adapt the max size to the screen resolution
         # We need to manually do that otherwise on small screen the windows
         # could be bigger than the screen instead of displaying scrollbars
-        height = QtWidgets.QDesktopWidget().screenGeometry().height() - 100
-        width = QtWidgets.QDesktopWidget().screenGeometry().width() - 100
+        geometry = QtGui.QGuiApplication.primaryScreen().geometry()
+        height = geometry.height() - 100
+        width = geometry.width() - 100
 
         # 980 is the default width
         if self.width() > width:
@@ -60,7 +61,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             self.resize(self.width(), height)
 
         self.uiTreeWidget.currentItemChanged.connect(self._showPreferencesPageSlot)
-        self._applyButton = self.uiButtonBox.button(QtWidgets.QDialogButtonBox.Apply)
+        self._applyButton = self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply)
         self._applyButton.clicked.connect(self._applyPreferences)
         self._applyButton.setEnabled(False)
         self._applyButton.setStyleSheet("QPushButton:disabled {color: gray}")
@@ -73,7 +74,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         # set the maximum width based on the content of column 0
         self.uiTreeWidget.setMaximumWidth(self.uiTreeWidget.sizeHintForColumn(0) + 10)
 
-        # Something has change?
+        # Something has changed?
         self._modified_pages = set()
 
     def _loadPreferencePages(self):
@@ -95,7 +96,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             name = preferences_page.windowTitle()
             item = QtWidgets.QTreeWidgetItem(self.uiTreeWidget)
             item.setText(0, name)
-            item.setData(0, QtCore.Qt.UserRole, preferences_page)
+            item.setData(0, QtCore.Qt.ItemDataRole.UserRole, preferences_page)
             self.uiStackedWidget.addWidget(preferences_page)
             self._items.append(item)
             self._watchForChanges(preferences_page)
@@ -111,7 +112,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
                 name = preferences_page.windowTitle()
                 item = QtWidgets.QTreeWidgetItem(parent)
                 item.setText(0, name)
-                item.setData(0, QtCore.Qt.UserRole, preferences_page)
+                item.setData(0, QtCore.Qt.ItemDataRole.UserRole, preferences_page)
                 self.uiStackedWidget.addWidget(preferences_page)
                 self._items.append(item)
                 if cls is preference_pages[0]:
@@ -176,7 +177,7 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         if current is None:
             current = previous
 
-        preferences_page = current.data(0, QtCore.Qt.UserRole)
+        preferences_page = current.data(0, QtCore.Qt.ItemDataRole.UserRole)
         accessible_name = preferences_page.accessibleName()
         if accessible_name:
             self.uiTitleLabel.setText(accessible_name)
@@ -192,9 +193,9 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
         for index in range(0, self.uiStackedWidget.count()):
             page = self.uiStackedWidget.widget(index)
             if self.uiStackedWidget.currentIndex() == index:
-                page.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+                page.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
             else:
-                page.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+                page.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Ignored)
 
     def _applyPreferences(self):
         """
@@ -223,9 +224,9 @@ class PreferencesDialog(QtWidgets.QDialog, Ui_PreferencesDialog):
             reply = QtWidgets.QMessageBox.warning(self,
                                                   "Preferences",
                                                   "You have unsaved preferences in {}.\n\nContinue without saving?".format(pages_title),
-                                                  QtWidgets.QMessageBox.Yes,
-                                                  QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.No:
+                                                  QtWidgets.QMessageBox.StandardButton.Yes,
+                                                  QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.No:
                 return
         QtWidgets.QDialog.reject(self)
 

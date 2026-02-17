@@ -24,6 +24,7 @@ import re
 
 from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.local_server import LocalServer
+from gns3.local_config import LocalConfig
 from gns3.dialogs.node_properties_dialog import ConfigurationError
 from gns3.dialogs.symbol_selection_dialog import SymbolSelectionDialog
 from gns3.controller import Controller
@@ -64,8 +65,8 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         self.uiIOSImageToolButton.clicked.connect(self._iosImageBrowserSlot)
         self._compute_id = None
         self._idle_valid = False
-        idle_pc_rgx = QtCore.QRegExp("^(0x[0-9a-fA-F]{8})?$")
-        validator = QtGui.QRegExpValidator(idle_pc_rgx, self)
+        idle_pc_rgx = QtCore.QRegularExpression("^(0x[0-9a-fA-F]{8})?$")
+        validator = QtGui.QRegularExpressionValidator(idle_pc_rgx, self)
         self.uiIdlepcLineEdit.setValidator(validator)
         self.uiIdlepcLineEdit.textChanged.connect(self._idlePCValidateSlot)
         self.uiIdlepcLineEdit.textChanged.emit(self.uiIdlepcLineEdit.text())
@@ -86,10 +87,10 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
 
         validator = self.uiIdlepcLineEdit.validator()
         state = validator.validate(self.uiIdlepcLineEdit.text(), 0)[0]
-        if state == QtGui.QValidator.Acceptable:
+        if state == QtGui.QValidator.State.Acceptable:
             color = '#A2C964'  # green
             self._idle_valid = True
-        elif state == QtGui.QValidator.Intermediate:
+        elif state == QtGui.QValidator.State.Intermediate:
             color = '#fff79a'  # yellow
             self._idle_valid = False
         else:
@@ -176,7 +177,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
         symbol_path = self.uiSymbolLineEdit.text()
         dialog = SymbolSelectionDialog(self, symbol=symbol_path)
         dialog.show()
-        if dialog.exec_():
+        if dialog.exec():
             new_symbol_path = dialog.getSymbol()
             self.uiSymbolLineEdit.setText(new_symbol_path)
             self.uiSymbolLineEdit.setToolTip('<img src="{}"/>'.format(new_symbol_path))
@@ -488,7 +489,7 @@ class IOSRouterConfigurationPage(QtWidgets.QWidget, Ui_iosRouterConfigPageWidget
             name = self.uiNameLineEdit.text()
             if not name:
                 QtWidgets.QMessageBox.critical(self, "Name", "IOS router name cannot be empty!")
-            elif node and not node.validateHostname(name):
+            elif node and not node.validateHostname(name) and not LocalConfig.instance().experimental():
                 QtWidgets.QMessageBox.critical(self, "Name", "Invalid name detected for IOS router: {}".format(name))
             else:
                 settings["name"] = name

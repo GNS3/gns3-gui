@@ -37,7 +37,7 @@ class CloudWizard(VMWizard, Ui_CloudNodeWizard):
 
         super().__init__(cloud_nodes, parent)
 
-        self.setPixmap(QtWidgets.QWizard.LogoPixmap, QtGui.QPixmap(":/symbols/cloud.svg"))
+        self.setPixmap(QtWidgets.QWizard.WizardPixmap.LogoPixmap, QtGui.QPixmap(":/symbols/cloud.svg"))
         self.uiNameWizardPage.registerField("name*", self.uiNameLineEdit)
 
     def getSettings(self):
