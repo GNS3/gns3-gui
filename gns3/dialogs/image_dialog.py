@@ -229,7 +229,7 @@ class ImageDialog(QtWidgets.QDialog, Ui_ImageDialog):
 
         items = self.uiImagesTreeWidget.selectedItems()
         if items:
-            menu = QtWidgets.QMenu()
+            menu = QtWidgets.QMenu(parent=self)
             copy = QtGui.QAction("&Copy image information to clipboard", menu)
             copy.triggered.connect(self._copyToClipboardSlot)
             menu.addAction(copy)

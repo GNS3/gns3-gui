@@ -148,7 +148,7 @@ class ComputeSummaryView(QtWidgets.QTreeWidget):
         if item and isinstance(item, ComputeItem):
             compute = item.getCompute()
             if not compute.connected():
-                menu = QtWidgets.QMenu()
+                menu = QtWidgets.QMenu(parent=self)
                 connect_action = QtGui.QAction("Connect to server", menu)
                 connect_action.setIcon(get_icon("start.svg"))
                 connect_action.triggered.connect(lambda: ComputeManager.instance().connectToCompute(compute.id()))
