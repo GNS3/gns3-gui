@@ -402,7 +402,7 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
         """
 
         self._selected_port = None
-        menu = QtWidgets.QMenu()
+        menu = QtWidgets.QMenu(parent=self)
         ports = self._node.ports()
         if not ports:
             QtWidgets.QMessageBox.critical(self.scene().parent(), "Link", "No port available, please configure this device")

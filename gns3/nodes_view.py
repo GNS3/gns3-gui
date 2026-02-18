@@ -192,7 +192,7 @@ class NodesView(QtWidgets.QTreeWidget):
 
     def _showContextualMenu(self, pos):
 
-        menu = QtWidgets.QMenu()
+        menu = QtWidgets.QMenu(parent=self)
         refresh_action = QtGui.QAction("Refresh templates", menu)
         refresh_action.setIcon(get_icon("reload.svg"))
         refresh_action.triggered.connect(self.refresh)

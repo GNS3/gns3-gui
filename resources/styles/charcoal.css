@@ -13,7 +13,6 @@ QGraphicsView, QTextEdit, QPlainTextEdit, QTreeWidget, QListWidget, QLineEdit, Q
 }
 
 QLabel, QMenu, QStatusBar {
-  color: black;
   color: #dedede;
 }
 

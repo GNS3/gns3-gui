@@ -281,7 +281,7 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         Contextual menu to expand and collapse the tree.
         """
 
-        menu = QtWidgets.QMenu()
+        menu = QtWidgets.QMenu(parent=self)
         expand_all = QtGui.QAction("Expand all", menu)
         expand_all.setIcon(get_icon("plus.svg"))
         expand_all.triggered.connect(self._expandAllSlot)

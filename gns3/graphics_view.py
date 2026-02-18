@@ -760,7 +760,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param pos: position where to display the menu
         """
 
-        menu = QtWidgets.QMenu()
+        menu = QtWidgets.QMenu(parent=self)
         self.populateDeviceContextualMenu(menu)
         menu.exec(pos)
         menu.clear()

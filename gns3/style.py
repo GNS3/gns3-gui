@@ -20,7 +20,7 @@ Sets window styles
 """
 
 import sys
-from gns3.qt import QtCore, QtGui
+from gns3.qt import QtCore, QtGui, QtWidgets
 
 
 class Style:
@@ -42,16 +42,11 @@ class Style:
         icon.addPixmap(QtGui.QPixmap(active_file), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
         return icon
 
-    def setLegacyStyle(self):
+    def _setLegacyIcons(self):
         """
-        Sets the legacy GUI style.
+        Sets the legacy icons.
         """
 
-        graphics_view = self._mw.uiGraphicsView
-        if hasattr(graphics_view, 'resetGridColors'):
-            graphics_view.resetGridColors()
-
-        self._mw.setStyleSheet("")
         self._mw.uiNewProjectAction.setIcon(QtGui.QIcon(":/icons/new-project.svg"))
         self._mw.uiOpenProjectAction.setIcon(QtGui.QIcon(":/icons/open.svg"))
         self._mw.uiOpenApplianceAction.setIcon(QtGui.QIcon(":/icons/applications.svg"))
@@ -98,17 +93,24 @@ class Style:
         icon.addPixmap(QtGui.QPixmap(":/icons/unlock.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
         self._mw.uiLockAllAction.setIcon(icon)
 
-
-    def setClassicStyle(self):
+    def setLegacyStyle(self):
         """
-        Sets the classic GUI style.
+        Sets the legacy GUI style.
         """
 
         graphics_view = self._mw.uiGraphicsView
         if hasattr(graphics_view, 'resetGridColors'):
             graphics_view.resetGridColors()
-
         self._mw.setStyleSheet("")
+        QtGui.QGuiApplication.setPalette(QtWidgets.QApplication.style().standardPalette())
+        self._mw.uiConsoleTextEdit.setDefaultTextColor(QtGui.QColor(0, 0, 0))
+        self._setLegacyIcons()
+
+    def _setClassicIcons(self):
+        """
+        Sets the classic icons.
+        """
+
         self._mw.uiNewProjectAction.setIcon(self._getStyleIcon(":/classic_icons/new-project.svg", ":/classic_icons/new-project-hover.svg"))
         self._mw.uiOpenProjectAction.setIcon(self._getStyleIcon(":/classic_icons/open.svg", ":/classic_icons/open-hover.svg"))
         self._mw.uiOpenApplianceAction.setIcon(self._getStyleIcon(":/classic_icons/open.svg", ":/classic_icons/open-hover.svg"))
@@ -160,22 +162,25 @@ class Style:
         icon.addPixmap(QtGui.QPixmap(":/classic_icons/unlock-hover.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
         self._mw.uiLockAllAction.setIcon(icon)
 
-    def setCharcoalStyle(self):
+    def setClassicStyle(self):
         """
-        Sets the charcoal GUI style.
+        Sets the classic GUI style.
         """
 
         graphics_view = self._mw.uiGraphicsView
         if hasattr(graphics_view, 'resetGridColors'):
             graphics_view.resetGridColors()
 
-        style_file = QtCore.QFile(":/styles/charcoal.css")
-        style_file.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
-        style = QtCore.QTextStream(style_file).readAll()
-        if sys.platform.startswith("darwin"):
-            style += "QDockWidget::title {text-align: center; background-color: #535353}"
+        self._mw.setStyleSheet("")
+        QtGui.QGuiApplication.setPalette(QtWidgets.QApplication.style().standardPalette())
+        self._mw.uiConsoleTextEdit.setDefaultTextColor(QtGui.QColor(0, 0, 0))
+        self._setClassicIcons()
 
-        self._mw.setStyleSheet(style)
+    def _setCharcoalIcons(self):
+        """
+        Sets the charcoal icons.
+        """
+
         self._mw.uiNewProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/new-project.svg", ":/charcoal_icons/new-project-hover.svg"))
         self._mw.uiOpenProjectAction.setIcon(self._getStyleIcon(":/charcoal_icons/open.svg", ":/charcoal_icons/open-hover.svg"))
         self._mw.uiOpenApplianceAction.setIcon(self._getStyleIcon(":/charcoal_icons/open.svg", ":/charcoal_icons/open-hover.svg"))
@@ -226,3 +231,44 @@ class Style:
         icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/unlock.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/unlock-hover.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
         self._mw.uiLockAllAction.setIcon(icon)
+
+    def setCharcoalStyle(self):
+        """
+        Sets the charcoal GUI style.
+        """
+
+        graphics_view = self._mw.uiGraphicsView
+        if hasattr(graphics_view, 'resetGridColors'):
+            graphics_view.resetGridColors()
+
+        style_file = QtCore.QFile(":/styles/charcoal.css")
+        style_file.open(QtCore.QIODeviceBase.OpenModeFlag.ReadOnly)
+        style = QtCore.QTextStream(style_file).readAll()
+        if sys.platform.startswith("darwin"):
+            style += "QDockWidget::title {text-align: center; background-color: #535353}"
+
+        self._mw.setStyleSheet(style)
+        QtWidgets.QApplication.setPalette(QtWidgets.QApplication.style().standardPalette())
+        self._mw.uiConsoleTextEdit.setDefaultTextColor(QtGui.QColor(0, 0, 0))
+        self._setCharcoalIcons()
+
+    def setDarkStyle(self):
+        """
+        Sets the dark GUI style.
+        """
+
+
+        graphics_view = self._mw.uiGraphicsView
+        if hasattr(graphics_view, 'resetGridColors'):
+            graphics_view.resetGridColors()
+
+        import qdarkstyle
+        style = qdarkstyle.load_stylesheet(qt_api='pyqt6')
+        style += "QMenu::item { padding: 5px; }"
+        self._mw.setStyleSheet(style)
+        text_color = QtGui.QColor(0xdf, 0xe1, 0xe2)  # light gray
+        palette = QtGui.QPalette()
+        palette.setColor(QtGui.QPalette.ColorRole.Text, text_color)
+        QtGui.QGuiApplication.setPalette(palette)
+        self._mw.uiConsoleTextEdit.setDefaultTextColor(text_color)
+        self._setCharcoalIcons()  # use the charcoal icons for the dark style
