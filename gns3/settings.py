@@ -60,7 +60,8 @@ if sys.platform.startswith("win"):
                                              'MobaXterm': r'"{}\Mobatek\MobaXterm Personal Edition\MobaXterm.exe" -newtab "title {{name}} & telnet {{host}} {{port}}"'.format(program_files_x86),
                                              'Royal TS V3': r'{}\code4ward.net\Royal TS V3\RTS3App.exe /connectadhoc:{{host}} /adhoctype:terminal /p:IsTelnetConnection="true" /p:ConnectionType="telnet;Telnet Connection" /p:Port="{{port}}" /p:Name="{{name}}"'.format(program_files),
                                              'Royal TS V5': r'"{}\Royal TS V5\RoyalTS.exe" /protocol:terminal /using:adhoc /uri:"{{host}}" /property:Port="{{port}}" /property:IsTelnetConnection="true" /property:Name="{{name}}"'.format(program_files_x86),
-                                             'SuperPutty': r'SuperPutty.exe -telnet "{host} -P {port} -wt \"{name}\""',
+                                             'SuperPutty + PuTTY': r'SuperPutty.exe -telnet "{host} -P {port} -loghost \"{name}\""',
+                                             'SuperPutty + KiTTY': r'SuperPutty.exe -telnet "{host} -P {port} -title \"{name}\""',
                                              'SecureCRT': r'"{}\VanDyke Software\SecureCRT\SecureCRT.exe" /N "{{name}}" /T /TELNET {{host}} {{port}}'.format(program_files),
                                              'SecureCRT (personal profile)': r'"{}\AppData\Local\VanDyke Software\SecureCRT\SecureCRT.exe" /T /N "{{name}}" /TELNET {{host}} {{port}}'.format(userprofile),
                                              'TeraTerm Pro': r'"{}\teraterm\ttermpro.exe" /W="{{name}}" /M="ttstart.macro" /T=1 {{host}} {{port}}'.format(program_files_x86),
@@ -180,6 +181,7 @@ if sys.platform.startswith("win"):
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'TightVNC (included with GNS3)': 'tvnviewer.exe {host}:{port}',
         'UltraVNC': r'"{}\uvnc bvba\UltraVNC\vncviewer.exe" {{host}}:{{port}}'.format(program_files)
+        'SuperPutty': r'SuperPutty.exe -vnc {host}::{port}',
     }
 
     # default Windows VNC console command
@@ -257,6 +259,11 @@ elif sys.platform.startswith("freebsd"):
     # FreeBSD
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: 'wireshark {pcap_file} --capture-comment "{project} {link_description}"',
                                                     WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'gtail -f -c +0b {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
+
+elif sys.platform.startswith("openbsd"):
+    # OpenBSD
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: 'wireshark {pcap_file} --capture-comment "{project} {link_description}"',
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
 else:
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: 'wireshark {pcap_file} --capture-comment "{project} {link_description}"',
                                                     WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0b {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
