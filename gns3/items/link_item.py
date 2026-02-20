@@ -322,7 +322,7 @@ class LinkItem(QtWidgets.QGraphicsPathItem):
             # create the contextual menu
             self.setHovered(True)
             self.setAcceptHoverEvents(False)
-            menu = QtWidgets.QMenu(parent=self)
+            menu = QtWidgets.QMenu(parent=self.scene().parent())
             self.populateLinkContextualMenu(menu)
             menu.exec(QtGui.QCursor.pos())
             self.setAcceptHoverEvents(True)
