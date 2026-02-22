@@ -241,28 +241,28 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
         if self._node:
             create_dialog = QemuImageWizard(self, self._node, self.uiNameLineEdit.text() + '-hda')
-            if QtWidgets.QDialog.Accepted == create_dialog.exec():
+            if QtWidgets.QDialog.DialogCode.Accepted == create_dialog.exec():
                 self.uiHdaDiskImageLineEdit.setText(create_dialog.uiDiskFilenameLineEdit.text())
 
     def _hdbDiskImageCreateSlot(self):
 
         if self._node:
             create_dialog = QemuImageWizard(self, self._node, self.uiNameLineEdit.text() + '-hdb')
-            if QtWidgets.QDialog.Accepted == create_dialog.exec():
+            if QtWidgets.QDialog.DialogCode.Accepted == create_dialog.exec():
                 self.uiHdbDiskImageLineEdit.setText(create_dialog.uiDiskFilenameLineEdit.text())
 
     def _hdcDiskImageCreateSlot(self):
 
         if self._node:
             create_dialog = QemuImageWizard(self, self._node, self.uiNameLineEdit.text() + '-hdc')
-            if QtWidgets.QDialog.Accepted == create_dialog.exec():
+            if QtWidgets.QDialog.DialogCode.Accepted == create_dialog.exec():
                 self.uiHdcDiskImageLineEdit.setText(create_dialog.uiDiskFilenameLineEdit.text())
 
     def _hddDiskImageCreateSlot(self):
 
         if self._node:
             create_dialog = QemuImageWizard(self, self._node, self.uiNameLineEdit.text() + '-hdd')
-            if QtWidgets.QDialog.Accepted == create_dialog.exec():
+            if QtWidgets.QDialog.DialogCode.Accepted == create_dialog.exec():
                 self.uiHddDiskImageLineEdit.setText(create_dialog.uiDiskFilenameLineEdit.text())
 
     def _hdaDiskImageResizeSlot(self):
