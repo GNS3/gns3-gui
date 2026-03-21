@@ -642,7 +642,7 @@ class Project(QtCore.QObject):
            path = "/projects/{project_id}/notifications/ws".format(project_id=self._id)
            self._notification_stream = Controller.instance().httpClient().connectWebSocket(self._websocket, path)
            self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
-           self._notification_stream.error.connect(self._websocket_error)
+           self._notification_stream.errorOccurred.connect(self._websocket_error)
            self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
            log.info("Listening for project notifications on '{}'".format(self._notification_stream.requestUrl().toString()))
 
