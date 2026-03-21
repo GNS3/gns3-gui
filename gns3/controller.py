@@ -432,7 +432,7 @@ class Controller(QtCore.QObject):
         else:
             self._notification_stream = self._http_client.connectWebSocket(self._websocket, "/notifications/ws")
             self._notification_stream.textMessageReceived.connect(self._websocket_event_received)
-            self._notification_stream.error.connect(self._websocket_error)
+            self._notification_stream.errorOccurred.connect(self._websocket_error)
             self._notification_stream.sslErrors.connect(self._sslErrorsSlot)
             log.info("Listening for controller notifications on '{}'".format(self._notification_stream.requestUrl().toString()))
 
