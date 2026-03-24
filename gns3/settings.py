@@ -180,7 +180,7 @@ if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_VNC_CONSOLE_COMMANDS = {
         'TightVNC (included with GNS3)': 'tvnviewer.exe {host}:{port}',
-        'UltraVNC': r'"{}\uvnc bvba\UltraVNC\vncviewer.exe" {{host}}:{{port}}'.format(program_files)
+        'UltraVNC': r'"{}\uvnc bvba\UltraVNC\vncviewer.exe" {{host}}:{{port}}'.format(program_files),
         'SuperPutty': r'SuperPutty.exe -vnc {host}::{port}',
     }
 
@@ -275,7 +275,7 @@ if sys.platform.startswith("win"):
     # Windows 64-bit
     DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = r'"{}\SolarWinds\ResponseTimeViewer\ResponseTimeViewer.exe" {{pcap_file}}'.format(program_files_x86)
 
-STYLES = ["Charcoal", "Classic", "Legacy"]
+STYLES = ["Charcoal", "Dark", "Classic", "Legacy"]
 
 SYMBOL_THEMES = ["Classic",
                  "Affinity-square-blue",

@@ -636,7 +636,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             hBar = self.horizontalScrollBar()
             vBar = self.verticalScrollBar()
             delta = mapped_global_pos - self._last_mouse_position
-            hBar.setValue(int(hBar.value() + (delta.x() if QtWidgets.QApplication.isRightToLeft() else - delta.x())))
+            hBar.setValue(int(hBar.value() + (delta.x() if QtWidgets.QApplication.isRightToLeft() else -delta.x())))
             vBar.setValue(int(vBar.value() - delta.y()))
             self._last_mouse_position = mapped_global_pos
         if self._adding_link and self._newlink and self._newlink in self.scene().items():
@@ -762,7 +762,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param pos: position where to display the menu
         """
 
-        menu = QtWidgets.QMenu()
+        menu = QtWidgets.QMenu(parent=self)
         self.populateDeviceContextualMenu(menu)
         menu.exec(pos)
         menu.clear()

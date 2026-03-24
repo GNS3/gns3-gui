@@ -23,7 +23,7 @@ def get_icon(filename):
     from gns3.main_window import MainWindow
     style_name = MainWindow.instance().settings().get("style")
 
-    if style_name.startswith("Charcoal"):
+    if style_name.startswith("Charcoal") or style_name.startswith("Dark"):
         style_dir = ":/charcoal_icons/"
     elif style_name == "Classic":
         style_dir = ":/classic_icons/"

@@ -32,7 +32,7 @@ def test_dump():
     font.setUnderline(True)
     font.setStrikeOut(True)
     label.setFont(font)
-    label.setDefaultTextColor(QtCore.Qt.red)
+    label.setDefaultTextColor(QtCore.Qt.GlobalColor.red)
 
     assert label.dump() == {
         "text": "Test",
@@ -54,7 +54,7 @@ def test_setStyle():
     font.setUnderline(True)
     font.setStrikeOut(False)
     label.setFont(font)
-    label.setDefaultTextColor(QtCore.Qt.red)
+    label.setDefaultTextColor(QtCore.Qt.GlobalColor.red)
 
     style = label.dump()["style"]
     label2 = LabelItem()
@@ -65,4 +65,4 @@ def test_setStyle():
     assert label2.font().bold()
     assert label2.font().strikeOut() is False
     assert label2.font().underline()
-    assert label2.defaultTextColor() == QtCore.Qt.red
+    assert label2.defaultTextColor() == QtCore.Qt.GlobalColor.red

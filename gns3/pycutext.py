@@ -68,6 +68,7 @@ class PyCutExt(QtWidgets.QTextEdit):
         super().__init__(parent)
 
         self.interpreter = interpreter
+        self._default_text_color = QtGui.QColor(0, 0, 0) # black
         self.colorizer = SyntaxColor()
 
         # session log
@@ -170,6 +171,20 @@ class PyCutExt(QtWidgets.QTextEdit):
         else:
             return self.line
 
+    def setDefaultTextColor(self, color):
+        """
+        Set the default text color and reset the colorizer with the new color.
+        """
+
+        self._default_text_color = color
+        self.colorizer.set_default_text_color(color)
+        self.setTextColor(color)
+
+        # reset everything
+        self.clear()
+        self.write(self.intro + '\n\n')
+        self.write(sys.ps1)
+
     def write(self, text, error=False, warning=False):
         """
         Simulates stdin, stdout, and stderr.
@@ -193,7 +208,7 @@ class PyCutExt(QtWidgets.QTextEdit):
         elif warning:
             color = QtGui.QColor(255, 128, 0)  # orange
         else:
-            color = QtGui.QColor(0, 0, 0)  # black
+            color = self._default_text_color
         char_format.setForeground(QtGui.QBrush(color))
         cursor.setCharFormat(char_format)
 
@@ -374,16 +389,15 @@ class PyCutExt(QtWidgets.QTextEdit):
             if not word:
                 continue
 
-            (R, G, B) = self.colorizer.get_color(word)
+            color = self.colorizer.get_color(word)
             char_format = cursor.charFormat()
-            char_format.setForeground(QtGui.QBrush(QtGui.QColor(R, G, B)))
+            char_format.setForeground(QtGui.QBrush(color))
             cursor.setCharFormat(char_format)
 
 
 class SyntaxColor:
-
     """
-    Allows to color python keywords.
+    Allows to color Python keywords.
     """
 
     keywords = set(["and", "del", "from", "not", "while",
@@ -394,27 +408,22 @@ class SyntaxColor:
                     "continue", "finally", "is", "return",
                     "def", "for", "lambda", "try"])
 
+    def __init__(self):
+
+        self._default_text_color = QtGui.QColor(0, 0, 0) # black
+
+    def set_default_text_color(self, default_text_color):
+
+        self._default_text_color = default_text_color
+
     def get_color(self, word):
-        """ Return a color tuple (R,G,B) depending of the string word """
+        """
+        Return a color based on the string word.
+        """
 
         stripped = word.strip()
 
-        if(stripped in self.keywords):
-            return (165, 42, 42)   # brown
-        elif(self.is_python_string(stripped)):
-            return (61, 120, 9)   # dark green
+        if stripped in self.keywords:
+            return QtGui.QColor(165, 42, 42) # brown
         else:
-            return (0, 0, 0)
-
-    def is_python_string(self, string):
-        """
-        Return True if string is enclosed by a string mark
-        """
-
-#         return (
-#             (string.startswith("'''") and string.endswith("'''")) or
-#             (string.startswith('"""') and string.endswith('"""')) or
-#             (string.startswith("'") and string.endswith("'")) or
-#             (string.startswith('"') and string.endswith('"'))
-#             )
-        return False
+            return self._default_text_color

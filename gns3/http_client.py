@@ -574,8 +574,7 @@ class HTTPClient(QtCore.QObject):
         context["query_id"] = str(uuid.uuid4())
 
         response.finished.connect(qpartial(self._processResponse, response, server, callback, context, body, ignoreErrors))
-        #FIXME:
-        #response.error.connect(qpartial(self._processError, response, server, callback, context, body, ignoreErrors))
+        response.errorOccurred.connect(qpartial(self._processError, response, server, callback, context, body, ignoreErrors))
 
         if downloadProgressCallback is not None:
             response.readyRead.connect(qpartial(self._readyReadySlot, response, downloadProgressCallback, context, server))
@@ -665,7 +664,7 @@ class HTTPClient(QtCore.QObject):
             if "query_id" in context:
                 self._notify_progress_end_query(context["query_id"])
 
-            if error_code < 200 or error_code == 403:
+            if error_code.value < 200 or error_code.value == 403:
                 if error_code == QtNetwork.QNetworkReply.NetworkError.OperationCanceledError:  # It's legit to cancel do not disconnect
                     error_message = "Operation timeout"  # It's clearer than cancel because cancel is triggered by us when we timeout
                 elif error_code == QtNetwork.QNetworkReply.NetworkError.NetworkSessionFailedError:
