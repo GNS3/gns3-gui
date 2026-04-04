@@ -375,8 +375,7 @@
                      "high",
                      "normal",
                      "low",
-                     "very low",
-                     "null"]
+                     "very low"]
         }
       },
       "required": [

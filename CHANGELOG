@@ -1,5 +1,20 @@
 # Change Log
 
+## 2.2.57 23/03/2026
+
+* Fix errors from controller are not reported
+* Deactivate 'use default IOU values' by default and update RAM/NVRAM values
+* Fix QMenu parents
+* Fix UltraVNC preconfigured command
+* Dark style
+* Fix bug when dragging scene
+* Upgrade pytest and jsonschema dependencies
+* Upgrade sentry-sdk and psutil dependencies
+* Fix mouse manipulation bug
+* Add Multi VNC tab handling in Superputty
+* Fixing tab name in Superputty + Adding Superputty VNC support
+* settings.py: add OpenBSD packet capture command
+
 ## 2.2.56.1 28/01/2026
 
 * Fix line style support for links

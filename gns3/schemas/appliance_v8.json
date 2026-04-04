@@ -308,13 +308,15 @@
     "qemu_disk_interfaces": {
       "enum": [
         "ide",
+        "sata",
+        "nvme",
         "scsi",
         "sd",
         "mtd",
         "floppy",
         "pflash",
         "virtio",
-        "sata"
+        "none"
       ]
     },
     "qemu_properties": {
@@ -561,8 +563,7 @@
             "high",
             "normal",
             "low",
-            "very low",
-            "null"
+            "very low"
           ]
         }
       }
