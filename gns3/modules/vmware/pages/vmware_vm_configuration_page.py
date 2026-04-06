@@ -133,8 +133,8 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
 
             if "linked_clone" in settings:
                 self.uiBaseVMCheckBox.setChecked(settings["linked_clone"])
-            else:
-                self.uiBaseVMCheckBox.hide()
+            if node:
+                self.uiBaseVMCheckBox.setEnabled(False)
 
         else:
             self.uiNameLabel.hide()
@@ -219,7 +219,7 @@ class VMwareVMConfigurationPage(QtWidgets.QWidget, Ui_VMwareVMConfigPageWidget):
                 else:
                     settings["name"] = name
 
-            if "linked_clone" in settings:
+            if "linked_clone" in settings and not node:
                 settings["linked_clone"] = self.uiBaseVMCheckBox.isChecked()
 
         if not node:
