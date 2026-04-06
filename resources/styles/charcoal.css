@@ -16,6 +16,11 @@ QLabel, QMenu, QStatusBar {
   color: #dedede;
 }
 
+QToolBox::tab {
+    color: #dedede;
+    font: bold 12px;
+}
+
 QMenuBar::item {
     background-color: #535353;
 }

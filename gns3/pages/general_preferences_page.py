@@ -63,6 +63,12 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         self.uiDefaultLabelColorPushButton.clicked.connect(self._setDefaultLabelColorSlot)
         self.uiDefaultNoteFontPushButton.clicked.connect(self._setDefaultNoteFontSlot)
         self.uiDefaultNoteColorPushButton.clicked.connect(self._setDefaultNoteColorSlot)
+        self.uiDefaultLinkColorPushButton.clicked.connect(self._setDefaultLinkColorSlot)
+        self.uiDefaultLinkStyleComboBox.addItem("Solid", QtCore.Qt.PenStyle.SolidLine)
+        self.uiDefaultLinkStyleComboBox.addItem("Dash", QtCore.Qt.PenStyle.DashLine)
+        self.uiDefaultLinkStyleComboBox.addItem("Dot", QtCore.Qt.PenStyle.DotLine)
+        self.uiDefaultLinkStyleComboBox.addItem("Dash Dot", QtCore.Qt.PenStyle.DashDotLine)
+        self.uiDefaultLinkStyleComboBox.addItem("Dash Dot Dot", QtCore.Qt.PenStyle.DashDotDotLine)
         self.uiBrowseConfigurationPushButton.clicked.connect(self._browseConfigurationDirectorySlot)
         self._default_label_color = QtGui.QColor(QtCore.Qt.GlobalColor.black)
         self.uiStyleComboBox.addItems(STYLES)
@@ -288,6 +294,16 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             self._default_note_color = color
             self.uiDefaultNoteStylePlainTextEdit.setStyleSheet("color : {}".format(color.name()))
 
+    def _setDefaultLinkColorSlot(self):
+        """
+        Slot to select the default link color.
+        """
+
+        color = QtWidgets.QColorDialog.getColor(self._default_link_color, self)
+        if color.isValid():
+            self._default_link_color = color
+            self.uiDefaultLinkColorPushButton.setStyleSheet("background-color: {};".format(color.name()))
+
     def _populateGeneralSettingWidgets(self, settings):
         """
         Populates the widgets with the settings.
@@ -366,6 +382,15 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
             self._default_note_color = qt_color
             self.uiDefaultNoteStylePlainTextEdit.setStyleSheet("color : {}".format(qt_color.name()))
 
+        qt_color = QtGui.QColor(settings["default_link_color"])
+        if qt_color.isValid():
+            self._default_link_color = qt_color
+            self.uiDefaultLinkColorPushButton.setStyleSheet("background-color: {};".format(qt_color.name()))
+        self.uiDefaultLinkWidthSpinBox.setValue(settings["default_link_width"])
+        index = self.uiDefaultLinkStyleComboBox.findData(settings["default_link_type"])
+        if index != -1:
+            self.uiDefaultLinkStyleComboBox.setCurrentIndex(index)
+
     def loadPreferences(self):
         """
         Loads the general preferences.
@@ -414,18 +439,23 @@ class GeneralPreferencesPage(QtWidgets.QWidget, Ui_GeneralPreferencesPageWidget)
         from ..main_window import MainWindow
         MainWindow.instance().setSettings(new_general_settings)
 
-        new_graphics_view_settings = {"scene_width": self.uiSceneWidthSpinBox.value(),
-                                      "scene_height": self.uiSceneHeightSpinBox.value(),
-                                      "draw_rectangle_selected_item": self.uiRectangleSelectedItemCheckBox.isChecked(),
-                                      "draw_link_status_points": self.uiDrawLinkStatusPointsCheckBox.isChecked(),
-                                      "show_interface_labels_on_new_project": self.uiShowInterfaceLabelsOnNewProject.isChecked(),
-                                      "limit_size_node_symbols": self.uiLimitSizeNodeSymbolCheckBox.isChecked(),
-                                      "show_grid_on_new_project": self.uiShowGridOnNewProject.isChecked(),
-                                      "snap_to_grid_on_new_project": self.uiSnapToGridOnNewProject.isChecked(),
-                                      "default_label_font": self.uiDefaultLabelStylePlainTextEdit.font().toString(),
-                                      "default_label_color": self._default_label_color.name(),
-                                      "default_note_font": self.uiDefaultNoteStylePlainTextEdit.font().toString(),
-                                      "default_note_color": self._default_note_color.name()}
+        new_graphics_view_settings = {
+            "scene_width": self.uiSceneWidthSpinBox.value(),
+            "scene_height": self.uiSceneHeightSpinBox.value(),
+            "draw_rectangle_selected_item": self.uiRectangleSelectedItemCheckBox.isChecked(),
+            "draw_link_status_points": self.uiDrawLinkStatusPointsCheckBox.isChecked(),
+            "show_interface_labels_on_new_project": self.uiShowInterfaceLabelsOnNewProject.isChecked(),
+            "limit_size_node_symbols": self.uiLimitSizeNodeSymbolCheckBox.isChecked(),
+            "show_grid_on_new_project": self.uiShowGridOnNewProject.isChecked(),
+            "snap_to_grid_on_new_project": self.uiSnapToGridOnNewProject.isChecked(),
+            "default_label_font": self.uiDefaultLabelStylePlainTextEdit.font().toString(),
+            "default_label_color": self._default_label_color.name(),
+            "default_note_font": self.uiDefaultNoteStylePlainTextEdit.font().toString(),
+            "default_note_color": self._default_note_color.name(),
+            "default_link_color": self._default_link_color.name(),
+            "default_link_width": self.uiDefaultLinkWidthSpinBox.value(),
+            "default_link_type": self.uiDefaultLinkStyleComboBox.currentData().value
+        }
 
         node_grid_size = self.uiNodeGridSizeSpinBox.value()
         drawing_grid_size = self.uiDrawingGridSizeSpinBox.value()

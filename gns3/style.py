@@ -104,6 +104,7 @@ class Style:
         self._mw.setStyleSheet("")
         QtGui.QGuiApplication.setPalette(QtWidgets.QApplication.style().standardPalette())
         self._mw.uiConsoleTextEdit.setDefaultTextColor(QtGui.QColor(0, 0, 0))
+        self._resetDefaultColors()
         self._setLegacyIcons()
 
     def _setClassicIcons(self):
@@ -174,6 +175,7 @@ class Style:
         self._mw.setStyleSheet("")
         QtGui.QGuiApplication.setPalette(QtWidgets.QApplication.style().standardPalette())
         self._mw.uiConsoleTextEdit.setDefaultTextColor(QtGui.QColor(0, 0, 0))
+        self._resetDefaultColors()
         self._setClassicIcons()
 
     def _setCharcoalIcons(self):
@@ -232,6 +234,22 @@ class Style:
         icon.addPixmap(QtGui.QPixmap(":/charcoal_icons/unlock-hover.svg"), QtGui.QIcon.Mode.Active, QtGui.QIcon.State.Off)
         self._mw.uiLockAllAction.setIcon(icon)
 
+    def _resetDefaultColors(self):
+        """
+        Reset the default colors if switching from the Dark style.
+        """
+
+        # set the default colors to black if they are still set to light gray (set by the dark style)
+        graphics_view = self._mw.uiGraphicsView
+        topology_view_settings = graphics_view.settings()
+        if topology_view_settings["default_note_color"] == "#dfe1e2":
+            topology_view_settings["default_note_color"] = "#000000"
+        if topology_view_settings["default_label_color"] == "#dfe1e2":
+            topology_view_settings["default_label_color"] = "#000000"
+        if topology_view_settings["default_link_color"] == "#dfe1e2":
+            topology_view_settings["default_link_color"] = "#000000"
+        graphics_view.setSettings(topology_view_settings)
+
     def setCharcoalStyle(self):
         """
         Sets the charcoal GUI style.
@@ -250,13 +268,13 @@ class Style:
         self._mw.setStyleSheet(style)
         QtWidgets.QApplication.setPalette(QtWidgets.QApplication.style().standardPalette())
         self._mw.uiConsoleTextEdit.setDefaultTextColor(QtGui.QColor(0, 0, 0))
+        self._resetDefaultColors()
         self._setCharcoalIcons()
 
     def setDarkStyle(self):
         """
         Sets the dark GUI style.
         """
-
 
         graphics_view = self._mw.uiGraphicsView
         if hasattr(graphics_view, 'resetGridColors'):
@@ -266,9 +284,19 @@ class Style:
         style = qdarkstyle.load_stylesheet(qt_api='pyqt6')
         style += "QMenu::item { padding: 5px; }"
         self._mw.setStyleSheet(style)
-        text_color = QtGui.QColor(0xdf, 0xe1, 0xe2)  # light gray
+        color = QtGui.QColor(0xdf, 0xe1, 0xe2)  # light gray
         palette = QtGui.QPalette()
-        palette.setColor(QtGui.QPalette.ColorRole.Text, text_color)
+        palette.setColor(QtGui.QPalette.ColorRole.Text, color)
         QtGui.QGuiApplication.setPalette(palette)
-        self._mw.uiConsoleTextEdit.setDefaultTextColor(text_color)
+        self._mw.uiConsoleTextEdit.setDefaultTextColor(color)
+        # set the default colors to the light gray if they are still set to black
+        # (i.e. not customized by the user) to be visible in the dark style
+        topology_view_settings = graphics_view.settings()
+        if topology_view_settings["default_note_color"] == "#000000":
+            topology_view_settings["default_note_color"] = color.name()
+        if topology_view_settings["default_label_color"] == "#000000":
+            topology_view_settings["default_label_color"] = color.name()
+        if topology_view_settings["default_link_color"] == "#000000":
+            topology_view_settings["default_link_color"] = color.name()
+        graphics_view.setSettings(topology_view_settings)
         self._setCharcoalIcons()  # use the charcoal icons for the dark style
