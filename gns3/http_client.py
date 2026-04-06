@@ -500,7 +500,8 @@ class HTTPClient(QtCore.QObject):
         # We check if we received HTTP headers
         if not sip.isdeleted(reply) and reply.isRunning() and not len(reply.rawHeaderList()) > 0:
             if not reply.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
-                method = reply.request().attribute(QtNetwork.QNetworkRequest.Attribute.CustomVerbAttribute).data().decode()
+                method = reply.request().attribute(
+                    QtNetwork.QNetworkRequest.Attribute.CustomVerbAttribute).data().decode()
                 log.warning(f"Timeout after {timeout} seconds for request {method} '{reply.url().toString()}'. \
                 Please check the connection is not blocked by a firewall or an anti-virus.")
                 reply.abort()
