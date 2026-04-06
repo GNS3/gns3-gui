@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "")
-        MainWindow.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks|QtWidgets.QMainWindow.AnimatedDocks)
+        MainWindow.setDockOptions(QtWidgets.QMainWindow.DockOption.AllowTabbedDocks | QtWidgets.QMainWindow.DockOption.AnimatedDocks)
         self.uiCentralWidget = QtWidgets.QWidget(parent=MainWindow)
         self.uiCentralWidget.setObjectName("uiCentralWidget")
         self.gridlayout = QtWidgets.QGridLayout(self.uiCentralWidget)
