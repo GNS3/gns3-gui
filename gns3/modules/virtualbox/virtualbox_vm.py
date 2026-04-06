@@ -57,7 +57,8 @@ class VirtualBoxVM(Node):
                                   "custom_adapters": VBOX_VM_SETTINGS["custom_adapters"],
                                   "port_name_format": "Ethernet0",
                                   "port_segment_size": 0,
-                                  "first_port_name": None}
+                                  "first_port_name": None,
+                                  "linked_close": False}
 
         self.settings().update(virtualbox_vm_settings)
 
