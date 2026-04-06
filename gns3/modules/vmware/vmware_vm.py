@@ -59,7 +59,8 @@ class VMwareVM(Node):
                               "custom_adapters": VMWARE_VM_SETTINGS["custom_adapters"],
                               "port_name_format": "Ethernet{0}",
                               "port_segment_size": 0,
-                              "first_port_name": None}
+                              "first_port_name": None,
+                              "linked_clone": False}
 
         self.settings().update(vmware_vm_settings)
 

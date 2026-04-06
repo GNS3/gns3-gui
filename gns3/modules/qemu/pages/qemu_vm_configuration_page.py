@@ -418,8 +418,8 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
 
             if "linked_clone" in settings:
                 self.uiBaseVMCheckBox.setChecked(settings["linked_clone"])
-            else:
-                self.uiBaseVMCheckBox.hide()
+            if node:
+                self.uiBaseVMCheckBox.setEnabled(False)
 
             self.uiHdaDiskImageLineEdit.setText(settings["hda_disk_image"])
             self.uiHdbDiskImageLineEdit.setText(settings["hdb_disk_image"])
@@ -568,7 +568,7 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
             else:
                 settings["name"] = name
 
-            if "linked_clone" in settings:
+            if "linked_clone" in settings and not node:
                 settings["linked_clone"] = self.uiBaseVMCheckBox.isChecked()
 
             settings["hda_disk_image"] = self.uiHdaDiskImageLineEdit.text().strip()
