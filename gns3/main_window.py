@@ -321,6 +321,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         style = new_settings.get("style")
         if style and new_settings["style"] != self._settings["style"]:
             self._setStyle(style)
+            QtWidgets.QMessageBox.information(
+                self,
+                "Interface style",
+                "Please restart the application to fully apply the {} style.".format(style)
+            )
 
         self._settings.update(new_settings)
         # save the settings
