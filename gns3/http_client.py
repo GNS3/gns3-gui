@@ -337,7 +337,7 @@ class HTTPClient(QtCore.QObject):
             method,
             endpoint,
             qpartial(callback),
-            body,
+            body=body,
             context=context,
             download_progress_callback=download_progress_callback,
             show_progress=show_progress,
@@ -738,8 +738,7 @@ class HTTPClient(QtCore.QObject):
         if context:
             context = copy.copy(context)
         else:
-            context = dict()
-        context["query_id"] = str(uuid.uuid4())
+            context = {"query_id": str(uuid.uuid4())}
 
         if download_progress_callback is not None:
             reply.readyRead.connect(qpartial(self._dataReadySlot, reply, download_progress_callback, context))
