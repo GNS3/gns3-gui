@@ -660,7 +660,7 @@ class HTTPClient(QtCore.QObject):
             error_message = "{} ({}:{})".format(response.errorString(), self._host, self._port)
 
             if not ignore_errors:
-                log.debug("Response error: %s for %s (error: %d)", error_message, response.url().toString(), error_code)
+                log.debug("Response error: %s for %s (error: %d)", error_message, response.url().toString(), error_code.value)
 
             if "query_id" in context:
                 self._notify_progress_end_query(context["query_id"])
