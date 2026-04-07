@@ -251,7 +251,7 @@ class BaseNode(QtCore.QObject):
 
         return self._ports
 
-    def controllerHttpPost(self, path, callback, body={}, context={}, **kwargs):
+    def controllerHttpPost(self, path, callback, body=None, context=None, **kwargs):
         """
         POST on current server / project
 
@@ -263,7 +263,7 @@ class BaseNode(QtCore.QObject):
 
         self._project.post(path, callback, body=body, context=context, **kwargs)
 
-    def controllerHttpPut(self, path, callback, body={}, context={}, **kwargs):
+    def controllerHttpPut(self, path, callback, body=None, context=None, **kwargs):
         """
         PUT on current server / project
 
@@ -275,7 +275,7 @@ class BaseNode(QtCore.QObject):
 
         self._project.put(path, callback, body=body, context=context, **kwargs)
 
-    def controllerHttpGet(self, path, callback, context={}, **kwargs):
+    def controllerHttpGet(self, path, callback, context=None, **kwargs):
         """
         Get on current server / project
 
@@ -287,7 +287,7 @@ class BaseNode(QtCore.QObject):
 
         self._project.get(path, callback, context=context, **kwargs)
 
-    def controllerHttpDelete(self, path, callback, context={}, **kwargs):
+    def controllerHttpDelete(self, path, callback, context=None, **kwargs):
         """
         Delete on current server / project
 
