@@ -750,8 +750,12 @@ class Node(BaseNode):
                 wmctrl_path = shutil.which("wmctrl")
                 if wmctrl_path:
                     try:
-                        # use wmctrl to raise the window based on the node name (this doesn't work well with window having multiple tabs)
-                        subprocess.run([wmctrl_path, "-Fa", self.name()], check=True, env=os.environ)
+                        console_type = self.consoleType()
+                        if console_type == "telnet":
+                            # use wmctrl to raise the window based on the node name (this doesn't work well with window having multiple tabs)
+                            subprocess.run([wmctrl_path, "-Fa", self.name()], check=True, env=os.environ)
+                        else:
+                            subprocess.run([wmctrl_path, "-a", '(' + self.name() + ')'], check=True, env=os.environ)
                         return True
                     except subprocess.CalledProcessError:
                         log.debug("Could not find window title '{}' to bring it to front".format(self.name()))

@@ -88,7 +88,8 @@ class QemuVM(Node):
                             "kernel_command_line": "",
                             "port_name_format": "Ethernet{0}",
                             "port_segment_size": 0,
-                            "first_port_name": ""}
+                            "first_port_name": "",
+                            "linked_clone": False}
 
         self.settings().update(qemu_vm_settings)
 

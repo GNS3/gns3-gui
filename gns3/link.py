@@ -84,14 +84,21 @@ class Link(QtCore.QObject):
         self._initialized = False
         self._filters = {}
         self._suspend = False
+        self._nodes = []
 
         # Boolean if True we are creating the first instance of this node
         # if false the node already exist in the topology
         # use to avoid erasing information when reloading
         self._creator = False
 
-        self._nodes = []
-        self._link_style = {}
+        # Add the default link style from the topology view settings
+        from .main_window import MainWindow
+        topology_view_settings = MainWindow.instance().uiGraphicsView.settings()
+        self._link_style = {
+            "color": topology_view_settings.get("default_link_color", "#000000"),
+            "width": topology_view_settings.get("default_link_width", 2),
+            "type": topology_view_settings.get("default_link_type", 1)
+        }
 
         body = self._prepareParams()
         if self._link_id:

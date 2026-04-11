@@ -318,7 +318,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Controller.instance().post("/projects/{project_id}/nodes/start".format(project_id=self._id), None, body={}, timeout=None)
+        Controller.instance().post("/projects/{project_id}/nodes/start".format(project_id=self._id), None, timeout=None)
 
     def duplicate(self, name=None, path=None, callback=None):
         """
@@ -345,7 +345,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Controller.instance().post("/projects/{project_id}/nodes/stop".format(project_id=self._id), None, body={}, timeout=None)
+        Controller.instance().post("/projects/{project_id}/nodes/stop".format(project_id=self._id), None, timeout=None)
 
     def suspend_all_nodes(self):
         """Suspend all nodes belonging to this project"""
@@ -354,7 +354,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Controller.instance().post("/projects/{project_id}/nodes/suspend".format(project_id=self._id), None, body={}, timeout=None)
+        Controller.instance().post("/projects/{project_id}/nodes/suspend".format(project_id=self._id), None, timeout=None)
 
     def reload_all_nodes(self):
         """Reload all nodes belonging to this project"""
@@ -363,7 +363,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Controller.instance().post("/projects/{project_id}/nodes/reload".format(project_id=self._id), None, body={}, timeout=None)
+        Controller.instance().post("/projects/{project_id}/nodes/reload".format(project_id=self._id), None, timeout=None)
 
     def reset_console_all_nodes(self):
         """Reset console for all nodes belonging to this project"""
@@ -372,7 +372,7 @@ class Project(QtCore.QObject):
         if self._id is None:
             return
 
-        Controller.instance().post("/projects/{project_id}/nodes/console/reset".format(project_id=self._id), None, body={}, timeout=None)
+        Controller.instance().post("/projects/{project_id}/nodes/console/reset".format(project_id=self._id), None, timeout=None)
 
     def get(self, path, callback, **kwargs):
         """
@@ -386,7 +386,7 @@ class Project(QtCore.QObject):
         """
         self._projectHTTPQuery("GET", path, callback, **kwargs)
 
-    def post(self, path, callback, body={}, **kwargs):
+    def post(self, path, callback, body=None, **kwargs):
         """
         HTTP POST on the remote server
 
@@ -398,7 +398,7 @@ class Project(QtCore.QObject):
         """
         self._projectHTTPQuery("POST", path, callback, body=body, **kwargs)
 
-    def put(self, path, callback, body={}, **kwargs):
+    def put(self, path, callback, body=None, **kwargs):
         """
         HTTP PUT on the remote server
 
@@ -410,7 +410,7 @@ class Project(QtCore.QObject):
         """
         self._projectHTTPQuery("PUT", path, callback, body=body, **kwargs)
 
-    def delete(self, path, callback, body={}, **kwargs):
+    def delete(self, path, callback, **kwargs):
         """
         HTTP DELETE on the remote server
 
@@ -420,9 +420,9 @@ class Project(QtCore.QObject):
 
         Full arg list in createHTTPQuery
         """
-        self._projectHTTPQuery("DELETE", path, callback, body=body, **kwargs)
+        self._projectHTTPQuery("DELETE", path, callback, **kwargs)
 
-    def _projectHTTPQuery(self, method, path, callback, body={}, **kwargs):
+    def _projectHTTPQuery(self, method, path, callback, body=None, **kwargs):
         """
         HTTP query on the remote server
 
@@ -588,7 +588,7 @@ class Project(QtCore.QObject):
         self._closing = True
         if self._id:
             self.project_about_to_close_signal.emit()
-            Controller.instance().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Close the project")
+            Controller.instance().post("/projects/{project_id}/close".format(project_id=self._id), self._projectClosedCallback, progressText="Close the project")
         else:
             # The project is not initialized when we close it
             self._closed = True
@@ -600,7 +600,7 @@ class Project(QtCore.QObject):
         Delete the project from all servers
         """
         self.project_about_to_close_signal.emit()
-        Controller.instance().delete("/projects/{project_id}".format(project_id=self._id), self._projectClosedCallback, body={}, progressText="Delete the project")
+        Controller.instance().delete("/projects/{project_id}".format(project_id=self._id), self._projectClosedCallback, progressText="Delete the project")
 
     def _projectClosedCallback(self, result, error=False, server=None, **kwargs):
 

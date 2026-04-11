@@ -275,18 +275,25 @@ class HTTPClient(QtCore.QObject):
         :param query: The Server to connect
         """
 
-    def createHTTPQuery(self, method, path, callback, body={}, context={},
-                        downloadProgressCallback=None,
-                        showProgress=True,
-                        ignoreErrors=False,
-                        progressText=None,
-                        timeout=120,
-                        server=None,
-                        prefix="/v2",
-                        params={},
-                        networkManager=None,
-                        eventsHandler=None,
-                        **kwargs):
+    def createHTTPQuery(
+            self,
+            method,
+            path,
+            callback,
+            body=None,
+            context=None,
+            downloadProgressCallback=None,
+            showProgress=True,
+            ignoreErrors=False,
+            progressText=None,
+            timeout=120,
+            server=None,
+            prefix="/v2",
+            params=None,
+            networkManager=None,
+            eventsHandler=None,
+            **kwargs
+    ):
         """
         Call the remote server, if not connected, check connection before
 
@@ -328,17 +335,24 @@ class HTTPClient(QtCore.QObject):
         #         return
         #     self._last_query_timestamp = now
 
-        request = qpartial(self._executeHTTPQuery, method, path, qpartial(callback), body, context,
-                           downloadProgressCallback=downloadProgressCallback,
-                           showProgress=showProgress,
-                           ignoreErrors=ignoreErrors,
-                           progressText=progressText,
-                           networkManager=networkManager,
-                           server=server,
-                           timeout=timeout,
-                           prefix=prefix,
-                           eventsHandler=eventsHandler,
-                           params=params)
+        request = qpartial(
+            self._executeHTTPQuery,
+            method,
+            path,
+            qpartial(callback),
+            body,
+            context,
+            downloadProgressCallback=downloadProgressCallback,
+            showProgress=showProgress,
+            ignoreErrors=ignoreErrors,
+            progressText=progressText,
+            networkManager=networkManager,
+            server=server,
+            timeout=timeout,
+            prefix=prefix,
+            eventsHandler=eventsHandler,
+            params=params
+        )
 
         if self._connected:
             return request()
@@ -347,7 +361,14 @@ class HTTPClient(QtCore.QObject):
             # enqueue the first query and open the connection if we are not connected
             if len(self._query_waiting_connections) == 1:
                 log.debug("Connection to {}".format(self.url()))
-                self._executeHTTPQuery("GET", "/version", self._callbackConnect, {}, server=server, timeout=10, showProgress=False)
+                self._executeHTTPQuery(
+                    "GET",
+                    "/version",
+                    self._callbackConnect,
+                    server=server,
+                    timeout=10,
+                    showProgress=False
+                )
 
     def _connectionError(self, callback, msg="", server=None):
         """
@@ -370,7 +391,16 @@ class HTTPClient(QtCore.QObject):
     def _retryConnection(self, server=None):
         log.debug("Retry connection to {}".format(self.url()))
         self._retry += 1
-        QtCore.QTimer.singleShot(1000, qpartial(self._executeHTTPQuery, "GET", "/version", self._callbackConnect, {}, server=server, timeout=5))
+        QtCore.QTimer.singleShot(
+            1000,
+            qpartial(
+                self._executeHTTPQuery,
+                "GET",
+                "/version",
+                self._callbackConnect,
+                server=server,
+                timeout=5)
+        )
 
     def _callbackConnect(self, params, error=False, server=None, **kwargs):
         """
@@ -512,7 +542,7 @@ class HTTPClient(QtCore.QObject):
         :param params: Dictionary of query string parameters
         :returns: String of the query string
         """
-        if params == {}:
+        if params is None:
             query_string = ""
         else:
             query_string = "?"
@@ -523,7 +553,25 @@ class HTTPClient(QtCore.QObject):
             query_string += urllib.parse.urlencode(params)
         return query_string
 
-    def _executeHTTPQuery(self, method, path, callback, body, context={}, downloadProgressCallback=None, showProgress=True, ignoreErrors=False, progressText=None, server=None, timeout=120, prefix="/v2", params={}, networkManager=None, eventsHandler=None, **kwargs):
+    def _executeHTTPQuery(
+            self,
+            method,
+            path,
+            callback,
+            body=None,
+            context=None,
+            downloadProgressCallback=None,
+            showProgress=True,
+            ignoreErrors=False,
+            progressText=None,
+            server=None,
+            timeout=120,
+            prefix="/v2",
+            params=None,
+            networkManager=None,
+            eventsHandler=None,
+            **kwargs
+    ):
         """
         Call the remote server
 
@@ -570,8 +618,10 @@ class HTTPClient(QtCore.QObject):
             log.error("Can't send query: {}".format(str(e)))
             return
 
-        context = copy.copy(context)
-        context["query_id"] = str(uuid.uuid4())
+        if context:
+            context = copy.copy(context)
+        else:
+            context = {"query_id": str(uuid.uuid4())}
 
         response.finished.connect(qpartial(self._processResponse, response, server, callback, context, body, ignoreErrors))
         response.errorOccurred.connect(qpartial(self._processError, response, server, callback, context, body, ignoreErrors))
@@ -636,7 +686,8 @@ class HTTPClient(QtCore.QObject):
         # We check if we received HTTP headers
         if not sip.isdeleted(response) and response.isRunning() and not len(response.rawHeaderList()) > 0:
             if not response.error() != QtNetwork.QNetworkReply.NetworkError.NoError:
-                log.warning("Timeout after {} seconds for request {}. Please check the connection is not blocked by a firewall or an anti-virus.".format(timeout, response.url().toString()))
+                method = response.request().attribute(QtNetwork.QNetworkRequest.Attribute.CustomVerbAttribute).data().decode()
+                log.warning("Timeout after {} seconds for request {} '{}'. Please check the connection is not blocked by a firewall or an anti-virus.".format(timeout, method, response.url().toString()))
                 response.abort()
 
     def disconnect(self):
@@ -659,7 +710,8 @@ class HTTPClient(QtCore.QObject):
             error_message = "{} ({}:{})".format(response.errorString(), self._host, self._port)
 
             if not ignore_errors:
-                log.debug("Response error: %s for %s (error: %d)", error_message, response.url().toString(), error_code)
+                method = response.request().attribute(QtNetwork.QNetworkRequest.Attribute.CustomVerbAttribute).data().decode()
+                log.debug("Response error: %s for %s '%s' (error: %d)", error_message, method, response.url().toString(), error_code.value)
 
             if "query_id" in context:
                 self._notify_progress_end_query(context["query_id"])

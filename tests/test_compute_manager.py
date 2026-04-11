@@ -59,7 +59,7 @@ def test_deleteCompute(controller):
     cm.deleteCompute("test")
     assert "test" not in cm._computes
     assert callback_delete.called
-    controller._http_client.createHTTPQuery.assert_called_with("DELETE", "/computes/test", None)
+    controller._http_client.createHTTPQuery.assert_called_with("DELETE", "/computes/test")
 
 
 def test_listComputesCallback():

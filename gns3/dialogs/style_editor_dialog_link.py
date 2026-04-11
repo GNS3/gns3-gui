@@ -41,6 +41,10 @@ class StyleEditorDialogLink(QtWidgets.QDialog, Ui_StyleEditorDialog):
         self._link = link
         self._link_style = {}
 
+        self.uiBorderColorLabel.setText("Link color")
+        self.uiBorderWidthLabel.setText("Link width")
+        self.uiBorderStyleLabel.setText("Link style")
+
         self.uiBorderColorPushButton.clicked.connect(self._setBorderColorSlot)
         self.uiButtonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Apply).clicked.connect(self._applyPreferencesSlot)
 
@@ -102,10 +106,11 @@ class StyleEditorDialogLink(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
         self._link.setPen(pen)
 
-        new_link_style = {}
-        new_link_style["color"] = self._border_color.name()
-        new_link_style["width"] = self.uiBorderWidthSpinBox.value()
-        new_link_style["type"]  = border_style.value
+        new_link_style = {
+            "color": self._border_color.name(),
+            "width": self.uiBorderWidthSpinBox.value(),
+            "type": border_style.value,
+        }
 
         # Store values
         self._link.setLinkStyle(new_link_style)
