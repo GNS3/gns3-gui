@@ -67,7 +67,7 @@ class SnapshotsDialog(QtWidgets.QDialog, Ui_SnapshotsDialog):
 
         for snapshot in result:
             item = QtWidgets.QListWidgetItem(self.uiSnapshotsList)
-            item.setText("{} on {}".format(snapshot["name"], datetime.fromtimestamp(snapshot["created_at"]).strftime("%d/%m/%y at %H:%M:%S")))
+            item.setText("{} on {}".format(snapshot["name"], datetime.fromtimestamp(snapshot["created_at"]).strftime("%Y-%m-%d at %H:%M:%S")))
             item.setData(QtCore.Qt.ItemDataRole.UserRole, snapshot["snapshot_id"])
 
         if self.uiSnapshotsList.count():

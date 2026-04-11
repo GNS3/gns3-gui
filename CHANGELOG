@@ -1,5 +1,18 @@
 # Change Log
 
+## 2.2.58 10/04/2026
+
+* Update snapshot date & time format
+* Fix bug when HTTP DELETE requests are silently dropped. Fixes #3810
+* Show if a linked base VM or not in device's properties
+* Add HTTP method to response timeout slot. Ref #3810
+* Add default link style section in preferences
+* Update the default style colors based on the interface style
+* Support bring to front for vnc and spice consoles on Linux. Fixes #3783
+* Update appliance schemas
+* Fix bug when adding multiple nodes at the same time. Fixes #3807
+* Fix QWebSocket error signal. Fixes #3804
+
 ## 2.2.57 23/03/2026
 
 * Fix errors from controller are not reported
