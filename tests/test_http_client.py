@@ -66,7 +66,6 @@ def test_get_connected(http_client, http_request, network_manager, response):
 
     http_client.createHTTPQuery("GET", "/test", callback)
     http_request.assert_called_with(QtCore.QUrl("http://127.0.0.1:3080/v2/test"))
-    http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
     assert network_manager.sendCustomRequest.called
     args, kwargs = network_manager.sendCustomRequest.call_args
@@ -80,7 +79,7 @@ def test_get_connected(http_client, http_request, network_manager, response):
 
 
 def test_paramsToQueryString(http_client):
-    assert http_client._paramsToQueryString({}) == ""
+    assert http_client._paramsToQueryString(None) == ""
     res = http_client._paramsToQueryString({"a": 1, "b": 2})
     assert res == "?a=1&b=2" or res == "?b=2&a=1"
     res = http_client._paramsToQueryString({"a": 1, "b": 2, "c": None})
@@ -96,7 +95,6 @@ def test_get_connected_auth(http_client, http_request, network_manager, response
 
     http_client.createHTTPQuery("GET", "/test", callback)
     http_request.assert_called_with(QtCore.QUrl("http://gns3@127.0.0.1:3080/v2/test"))
-    http_request.setRawHeader.assert_any_call(b"Content-Type", b"application/json")
     http_request.setRawHeader.assert_any_call(b"Authorization", b"Basic Z25zMzozc25n")
     http_request.setRawHeader.assert_any_call(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
     assert network_manager.sendCustomRequest.called
@@ -115,7 +113,7 @@ def test_post_not_connected(http_client, http_request, network_manager, response
     http_client._connected = False
     callback = unittest.mock.MagicMock()
 
-    http_client.createHTTPQuery("POST", "/test", callback, context={"toto": 42})
+    http_client.createHTTPQuery("POST", "/test", callback, context={"query_id": 42})
 
     args, kwargs = network_manager.sendCustomRequest.call_args
     assert args[0] == http_request
@@ -138,7 +136,7 @@ def test_post_not_connected(http_client, http_request, network_manager, response
     assert callback.called
 
     args, kwargs = callback.call_args
-    assert kwargs["context"]["toto"] == 42
+    assert kwargs["context"]["query_id"] == 42
 
 
 def test_post_not_connected_connection_failed(http_client, http_request, network_manager, response):

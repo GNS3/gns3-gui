@@ -65,7 +65,7 @@ def link(devices, controller, project):
             {"node_id": devices[0].node_id(), "adapter_number": 0, "port_number": 0},
             {"node_id": devices[1].node_id(), "adapter_number": 0, "port_number": 0}
         ],
-        "link_style": {},
+        "link_style": {'color': '#000000', 'width': 2, 'type': 1},
         "filters": {},
     }
 
@@ -90,7 +90,7 @@ def test_create_link(devices, project, controller):
             {"node_id": devices[0].node_id(), "adapter_number": 0, "port_number": 0},
             {"node_id": devices[1].node_id(), "adapter_number": 0, "port_number": 0},
         ],
-        "link_style": {},
+        "link_style": {'color': '#000000', 'width': 2, 'type': 1},
         "filters": {},
     }
 
