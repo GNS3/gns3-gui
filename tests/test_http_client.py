@@ -136,7 +136,7 @@ def test_post_not_connected(http_client, http_request, network_manager, response
     assert callback.called
 
     args, kwargs = callback.call_args
-    assert kwargs["context"]["query_id"] == 42
+    assert kwargs["context"]["toto"] == 42
 
 
 def test_post_not_connected_connection_failed(http_client, http_request, network_manager, response):

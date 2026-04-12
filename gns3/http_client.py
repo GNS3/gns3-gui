@@ -580,7 +580,7 @@ class HTTPClient(QtCore.QObject):
         :param body: params to send (dictionary)
         :param callback: callback method to call when the server replies
         :param context: Pass a context to the response callback
-        :param downloadProgressCallback: Callback called when received something, it can be an incomplete response
+        :param downloadProgressCallback: callback called when received something, it can be an incomplete response
         :param showProgress: Display progress to the user
         :param networkManager: The network manager to use. If None use default
         :param progressText: Text display to user in progress dialog. None for auto generated
@@ -606,7 +606,7 @@ class HTTPClient(QtCore.QObject):
         request = self._addAuth(request)
         request.setRawHeader(b"User-Agent", "GNS3 QT Client v{version}".format(version=__version__).encode())
 
-        # By default QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
+        # By default, QT doesn't support GET with body even if it's in the RFC that's why we need to use sendCustomRequest
         body = self._addBodyToRequest(body, request)
 
         if not networkManager:
@@ -616,12 +616,13 @@ class HTTPClient(QtCore.QObject):
             response = networkManager.sendCustomRequest(request, method.encode(), body)
         except SystemError as e:
             log.error("Can't send query: {}".format(str(e)))
-            return
+            return None
 
         if context:
             context = copy.copy(context)
         else:
-            context = {"query_id": str(uuid.uuid4())}
+            context = dict()
+        context["query_id"] = str(uuid.uuid4())
 
         response.finished.connect(qpartial(self._processResponse, response, server, callback, context, body, ignoreErrors))
         response.errorOccurred.connect(qpartial(self._processError, response, server, callback, context, body, ignoreErrors))
