@@ -113,7 +113,7 @@ def test_post_not_connected(http_client, http_request, network_manager, response
     http_client._connected = False
     callback = unittest.mock.MagicMock()
 
-    http_client.createHTTPQuery("POST", "/test", callback, context={"query_id": 42})
+    http_client.createHTTPQuery("POST", "/test", callback, context={"toto": 42})
 
     args, kwargs = network_manager.sendCustomRequest.call_args
     assert args[0] == http_request
@@ -136,7 +136,7 @@ def test_post_not_connected(http_client, http_request, network_manager, response
     assert callback.called
 
     args, kwargs = callback.call_args
-    assert kwargs["context"]["query_id"] == 42
+    assert kwargs["context"]["toto"] == 42
 
 
 def test_post_not_connected_connection_failed(http_client, http_request, network_manager, response):
