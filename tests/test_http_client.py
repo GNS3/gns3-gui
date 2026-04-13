@@ -82,7 +82,7 @@ def test_get_connected(http_client, http_request, network_manager, response):
 
 
 def test_paramsToQueryString(http_client):
-    assert http_client._paramsToQueryString({}) == ""
+    assert http_client._paramsToQueryString(None) == ""
     res = http_client._paramsToQueryString({"a": 1, "b": 2})
     assert res == "?a=1&b=2" or res == "?b=2&a=1"
     res = http_client._paramsToQueryString({"a": 1, "b": 2, "c": None})

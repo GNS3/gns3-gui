@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.58.1 12/04/2026
+
+* Fix callback issues in found in v2.2.58
+
 ## 2.2.58 10/04/2026
 
 * Update snapshot date & time format

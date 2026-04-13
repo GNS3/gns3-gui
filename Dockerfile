@@ -3,7 +3,7 @@ FROM ubuntu:latest
 MAINTAINER GNS3 Team
 
 RUN apt-get update
-RUN apt-get install -y --force-yes python3 python3-pyqt5 python3-pip python3-pyqt5.qtsvg python3-pyqt5.qtwebsockets python3-dev xvfb
+RUN apt-get install -y --force-yes python3 python3-pyqt6 python3-pip python3-pyqt6.qtsvg python3-pyqt6.qtwebsockets python3-dev xvfb
 RUN apt-get clean
 
 ADD dev-requirements.txt /dev-requirements.txt
