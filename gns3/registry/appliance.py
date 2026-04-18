@@ -173,6 +173,10 @@ class Appliance(collections.abc.Mapping):
                     image["path"] = img.path
                     image["location"] = img.location
 
+                    if image["filename"] != img.filename:
+                        log.warning("Using image '{}' because its MD5 checksum matches the one for '{}'".format(img.filename, image["filename"]))
+                        image["filename"] = img.filename
+
                     if "md5sum" not in image:
                         image["md5sum"] = img.md5sum
                         image["filesize"] = img.filesize
