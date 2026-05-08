@@ -106,6 +106,11 @@ class DrawingItem:
         """
 
         if error:
+            if "doesn't exist" in result.get("message", ""):
+                log.warning("Drawing not found on server, recreating: {}".format(self._id))
+                self._id = None
+                self.create()
+                return True
             log.error("Error while updating drawing: {}".format(result["message"]))
             return False
         self.setPos(QtCore.QPointF(result["x"], result["y"]))
