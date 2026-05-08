@@ -208,7 +208,7 @@ else:
         'TightVNC': 'vncviewer {host}:{port}',
         'Vinagre': 'vinagre {host}::{port}',
         'gvncviewer': 'gvncviewer {host}:{display}',
-        'Remote Viewer': 'remote-viewer vnc://{host}:{port}',
+        'Remote Viewer': 'remote-viewer --title "({name})" vnc://{host}:{port}',
         'KRDC': 'krdc vnc://{host}:{port}'
     }
 
@@ -219,7 +219,7 @@ else:
 if sys.platform.startswith("win"):
     # Windows
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer': r'"{}\VirtViewer v11.0-256\bin\remote-viewer.exe" spice://{{host}}:{{port}}'.format(program_files),
+        'Remote Viewer': r'"{}\VirtViewer v11.0-256\bin\remote-viewer.exe" --title "({{name}})" spice://{{host}}:{{port}}'.format(program_files),
     }
 
     # default Windows SPICE console command
@@ -228,7 +228,7 @@ if sys.platform.startswith("win"):
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer': '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer spice://{host}:{port}',
+        'Remote Viewer': '/Applications/RemoteViewer.app/Contents/MacOS/RemoteViewer --title "({name})" spice://{host}:{port}',
     }
 
     # default Mac OS X SPICE console command
@@ -236,7 +236,7 @@ elif sys.platform.startswith("darwin"):
 
 else:
     PRECONFIGURED_SPICE_CONSOLE_COMMANDS = {
-        'Remote Viewer': 'remote-viewer spice://{host}:{port}',
+        'Remote Viewer': 'remote-viewer --title "({name})" spice://{host}:{port}',
     }
 
     # default SPICE console command on other systems

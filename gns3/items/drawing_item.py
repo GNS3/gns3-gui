@@ -106,6 +106,11 @@ class DrawingItem:
         """
 
         if error:
+            if "doesn't exist" in result.get("message", ""):
+                log.warning("Drawing not found on server, recreating: {}".format(self._id))
+                self._id = None
+                self.create()
+                return True
             log.error("Error while updating drawing: {}".format(result["message"]))
             return False
         self.setPos(QtCore.QPointF(result["x"], result["y"]))
@@ -214,7 +219,7 @@ class DrawingItem:
         """
         Deletes this drawing.
 
-        :param skip_controller: Do not replicate change on the controller (usefull when it's already deleted on controller)
+        :param skip_controller: Do not replicate change on the controller (useful when it's already deleted on controller)
         """
 
         self.setDeleting()
@@ -222,7 +227,7 @@ class DrawingItem:
         from ..topology import Topology
         Topology.instance().removeDrawing(self)
         if self._id and not skip_controller:
-            self._project.delete("/drawings/" + self._id, None, body=self.__json__())
+            self._project.delete("/drawings/" + self._id, None)
 
     def itemChange(self, change, value):
 
