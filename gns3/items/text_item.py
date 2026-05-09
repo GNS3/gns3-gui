@@ -132,7 +132,7 @@ class TextItem(QtWidgets.QGraphicsTextItem, DrawingItem):
             text.set("text-decoration", "underline")
         text.set("fill", "#" + hex(self.defaultTextColor().rgba())[4:])
         text.set("fill-opacity", str(self.defaultTextColor().alphaF()))
-        text.text = self.toPlainText()
+        text.text = self.toPlainText() or " "
 
         svg = ET.tostring(svg, encoding="utf-8").decode("utf-8")
         return svg

@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.2.59 08/05/2026
+
+* Remove psutil version check
+* Fix remaining PyQt6 compatibility issues. Fixes #3822
+* Add --title to remote-viewer console commands. Fixes #3783
+* Fix deleting drawings. Ref #3810
+
 ## 3.1.0a1 25/04/2026
 
 * Fix bug when an image checksum matches with another image filename

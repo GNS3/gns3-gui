@@ -36,7 +36,6 @@ import time
 import locale
 import argparse
 import signal
-import psutil
 
 try:
     from gns3.qt import QtCore, QtWidgets
@@ -195,9 +194,6 @@ def main():
 
     if parse_version(QtCore.QT_VERSION_STR) < parse_version("6.3.1"):
         raise SystemExit("Requirement is PyQt6 version 6.3.1 or higher, got version {}".format(QtCore.QT_VERSION_STR))
-
-    if parse_version(psutil.__version__) < parse_version("2.2.1"):
-        raise SystemExit("Requirement is psutil version 2.2.1 or higher, got version {}".format(psutil.__version__))
 
     # check for the correct locale
     # (UNIX/Linux only)
