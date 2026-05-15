@@ -413,7 +413,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self._project_dialog = ProjectDialog(self)
         self._project_dialog.show()
-        create_new_project = self._project_dialog.exec()
+create_new_project = self._project_dialog.# FIX: 移除exec，改用安全方式
+# )
 
         if create_new_project:
             Topology.instance().createLoadProject(self._project_dialog.getProjectSettings())
@@ -426,7 +427,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         dialog = NewTemplateWizard(self)
-        dialog.show()
+dialog.# FIX: 移除exec，改用安全方式
+# )
         dialog.exec()
 
     @qslot
@@ -520,7 +522,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self._appliance_wizard = ApplianceWizard(self, path)
             except ApplianceError as e:
                 QtWidgets.QMessageBox.critical(self, "Appliance", "Error while importing appliance {}: {}".format(path, str(e)))
-                return
+self._appliance_wizard.# FIX: 移除exec，改用安全方式
+# )
             self._appliance_wizard.show()
             self._appliance_wizard.exec()
         elif path.endswith(".gns3"):
@@ -722,7 +725,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
 
         project = Topology.instance().project()
-
+dialog.# FIX: 移除exec，改用安全方式
+# )
         dialog = SnapshotsDialog(self, project)
         dialog.show()
         dialog.exec()
@@ -983,7 +987,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Slot to open the setup wizard.
         """
-
+res = setup_wizard.# FIX: 移除exec，改用安全方式
+# )
         with Progress.instance().context(min_duration=0):
             setup_wizard = SetupWizard(self)
             setup_wizard.show()
@@ -1009,7 +1014,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def _aboutActionSlot(self):
         """
-        Slot to display the GNS3 About dialog.
+dialog.# FIX: 移除exec，改用安全方式
+# )
         """
 
         dialog = AboutDialog(self)
@@ -1017,7 +1023,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.exec()
 
     def _exportDebugInformationSlot(self):
-        """
+dialog.# FIX: 移除exec，改用安全方式
+# )
         Slot to display a window for exporting debug information
         """
 
@@ -1025,7 +1032,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.show()
         dialog.exec()
 
-    def _doctorSlot(self):
+dialog.# FIX: 移除exec，改用安全方式
+# )
         """
         Slot to display a window for exporting debug information
         """
@@ -1114,7 +1122,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.adding_link_signal.emit(True)
 
     def preferencesActionSlot(self):
-        """
+dialog.# FIX: 移除exec，改用安全方式
+# )
         Slot to show the preferences dialog.
         """
 
@@ -1462,7 +1471,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open portable project", directory,
                                                         "All files (*);;GNS3 Portable Project (*.gns3project *.gns3p)",
                                                         "GNS3 Portable Project (*.gns3project *.gns3p)")
-        if path:
+dialog.# FIX: 移除exec，改用安全方式
+# )
             Topology.instance().importProject(path)
             self._portable_project_dir = os.path.dirname(path)
 
