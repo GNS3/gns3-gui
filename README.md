@@ -16,7 +16,7 @@ Software dependencies
 PyQt6 which is either part of the Linux distribution or installable from
 PyPi. The other Python dependencies are automatically installed during
 the GNS3 GUI installation and are listed
-[here](https://github.com/GNS3/gns3-gui/blob/3.0/requirements.txt)
+[here](https://github.com/GNS3/gns3-gui/blob/3.1/requirements.txt)
 
 For connecting to nodes using Telnet, a Telnet client is required. On
 Linux that's a terminal emulator like xterm, gnome-terminal, konsole
