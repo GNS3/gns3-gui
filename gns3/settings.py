@@ -154,6 +154,7 @@ elif sys.platform.startswith("darwin"):
 else:
     PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {'Xterm': 'xterm -T "{name}" -e "telnet {host} {port}"',
                                              'Putty': 'putty -telnet {host} {port} -title "{name}" -sl 2500 -fg SALMON1 -bg BLACK',
+                                             'Ptyxis': 'ptyxis --tab --title="{name}" -- telnet {host} {port}',
                                              'Gnome Terminal': 'gnome-terminal --tab -t "{name}" -- telnet {host} {port}',
                                              'Xfce4 Terminal': 'xfce4-terminal --tab -T "{name}" -e "telnet {host} {port}"',
                                              'ROXTerm': 'roxterm -n "{name}" --tab -e "telnet {host} {port}"',
@@ -172,6 +173,8 @@ else:
         if distro_name == "Debian" or distro_name == "Ubuntu" or distro_name == "Linux Mint":
             if shutil.which("mate-terminal"):
                 DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Mate Terminal"]
+            elif shutil.which("ptyxis"):
+                DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Ptyxis"]
             else:
                 DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Gnome Terminal"]
 
