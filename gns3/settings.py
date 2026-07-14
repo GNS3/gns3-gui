@@ -248,30 +248,40 @@ else:
 # Pre-configured packet capture reader commands on various OSes
 WIRESHARK_NORMAL_CAPTURE = "Wireshark Traditional Capture"
 WIRESHARK_LIVE_TRAFFIC_CAPTURE = "Wireshark Live Traffic Capture"
+WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL = "Wireshark Live Traffic Capture (with internal tail)"
 
 if sys.platform.startswith("win"):
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: r'{}\Wireshark\wireshark.exe {{pcap_file}} --capture-comment "{{project}} {{link_description}}"'.format(program_files),
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: r'tail.exe -f -c +0b {{pcap_file}} | "{}\Wireshark\wireshark.exe" --capture-comment "{{project}} {{link_description}}" -o "gui.window_title:{{link_description}}" -k -i -'.format(program_files)}
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: r'tail.exe -f -c +0b {{pcap_file}} | "{}\Wireshark\wireshark.exe" --capture-comment "{{project}} {{link_description}}" -o "gui.window_title:{{link_description}}" -k -i -'.format(program_files),
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL: r'<internal_tail> | "{}\Wireshark\wireshark.exe" --capture-comment "{{project}} {{link_description}}" -o "gui.window_title:{{link_description}}" -k -i -'.format(program_files)}
 
 elif sys.platform.startswith("darwin"):
     # Mac OS X
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: '/usr/bin/open -a /Applications/Wireshark.app {pcap_file} --capture-comment {project} {link_description}"',
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 {pcap_file} | /Applications/Wireshark.app/Contents/MacOS/Wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 {pcap_file} | /Applications/Wireshark.app/Contents/MacOS/Wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -',
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL: '<internal_tail> | /Applications/Wireshark.app/Contents/MacOS/Wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
 
 elif sys.platform.startswith("freebsd"):
     # FreeBSD
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: 'wireshark {pcap_file} --capture-comment "{project} {link_description}"',
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'gtail -f -c +0b {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'gtail -f -c +0b {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -',
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL: '<internal_tail> | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
 
 elif sys.platform.startswith("openbsd"):
     # OpenBSD
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: 'wireshark {pcap_file} --capture-comment "{project} {link_description}"',
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0 {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -',
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL: '<internal_tail> | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
 else:
     PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS = {WIRESHARK_NORMAL_CAPTURE: 'wireshark {pcap_file} --capture-comment "{project} {link_description}"',
-                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0b {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0b {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -',
+                                                    WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL: '<internal_tail> | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
 
-DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
+if sys.platform.startswith("linux"):
+    # only use the internal live traffic capture version on Linux by default
+    DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL]
+else:
+    DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
 
 DEFAULT_PACKET_CAPTURE_ANALYZER_COMMAND = ""
 if sys.platform.startswith("win"):
