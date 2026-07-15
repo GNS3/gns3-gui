@@ -57,8 +57,6 @@ class PCAPToWireshark(QtCore.QThread):
             return
 
         with open(self._pcap_path, 'rb') as f:
-            #f.seek(0, os.SEEK_END)
-
             while self._running and self._wireshark_proc.poll() is None:
                 chunk = f.read(4096)
                 if chunk:
