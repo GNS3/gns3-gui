@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.2.60 15/07/2026
+
+* feat(capture): implement live packet capture with internal tail
+* Add support for Ptyxis terminal. Fixes #3834
+
 ## 2.2.59 08/05/2026
 
 * Remove psutil version check
