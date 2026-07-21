@@ -25,6 +25,7 @@ from .local_config import LocalConfig
 from .settings import PACKET_CAPTURE_SETTINGS
 from .dialogs.capture_dialog import CaptureDialog
 from .topology import Topology
+from .pcap_to_wireshark import PCAPToWireshark
 
 import logging
 log = logging.getLogger(__name__)
@@ -38,6 +39,7 @@ class PacketCapture:
     def __init__(self):
         self._tail_process = {}
         self._capture_reader_process = {}
+        self._capture_stream_thread = {}
         # Auto start the capture program for this link
         self._autostart = {}
 
@@ -55,6 +57,11 @@ class PacketCapture:
                 pass
         self._tail_process = {}
         self._capture_reader_process = {}
+
+        for thread in list(self._capture_stream_thread.values()):
+            thread.stop()
+            thread.wait()
+        self._capture_stream_thread = {}
 
     def topology(self):
         from .topology import Topology
@@ -92,7 +99,7 @@ class PacketCapture:
         link = self.topology().getLink(link_id)
         if link:
             if link.capturing():
-                if self._autostart.get(link) and link not in self._tail_process:
+                if self._autostart.get(link) and (link not in self._tail_process and link not in self._capture_stream_thread):
                     log.debug("Starting packet capture reader for link {}".format(link.link_id()))
                     self.startPacketCaptureReader(link)
             else:
@@ -127,6 +134,13 @@ class PacketCapture:
             except (PermissionError, OSError):
                 pass
             del self._tail_process[link]
+
+        if link in self._capture_stream_thread:
+            log.debug("Stopping packet capture stream thread for link {}".format(link.link_id()))
+            self._capture_stream_thread[link].stop()
+            self._capture_stream_thread[link].wait()
+            self._capture_stream_thread[link].error_signal.disconnect()
+            del self._capture_stream_thread[link]
 
     def startPacketCaptureAnalyzer(self, link):
         """
@@ -207,6 +221,12 @@ class PacketCapture:
             except (PermissionError, OSError):
                 pass
             del self._capture_reader_process[link]
+        if link in self._capture_stream_thread:
+            log.debug("Stopping packet capture stream thread for link {}".format(link.link_id()))
+            self._capture_stream_thread[link].stop()
+            self._capture_stream_thread[link].wait()
+            self._capture_stream_thread[link].error_signal.disconnect()
+            del self._capture_stream_thread[link]
 
         # PCAP capture file path
         command = command.replace("%c", '"' + capture_file_path + '"')
@@ -227,6 +247,15 @@ class PacketCapture:
         if "|" in command:
             # live traffic capture (using tail)
             command1, command2 = command.split("|", 1)
+
+            if '<internal_tail>' in command1:
+                # Start the background capture streaming thread if using the internal tail implementation
+                log.debug("Starting background capture streaming thread for link {}".format(link.link_id()))
+                self._capture_stream_thread[link] = PCAPToWireshark(capture_file_path, command2)
+                self._capture_stream_thread[link].error_signal.connect(lambda msg: QtWidgets.QMessageBox.critical(self.parent(), "Packet capture", msg))
+                self._capture_stream_thread[link].start()
+                return
+
             info = None
             if sys.platform.startswith("win"):
                 # hide tail window on Windows
