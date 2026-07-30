@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.61 30/07/2026
+
+* No changes
+
 ## 2.2.60 15/07/2026
 
 * feat(capture): implement live packet capture with internal tail
