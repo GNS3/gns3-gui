@@ -192,16 +192,16 @@ else:
         # flatpak-spawn --host to launch them on the host instead, and prefer
         # the user's actual default terminal via xdg-terminal-exec when present.
         PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
-            'Default terminal (host)':
+            'Default terminal':
                 "flatpak-spawn --host sh -c '" + _FLATPAK_HOST_TERMINAL_SHELL + "'",
-            'Konsole (host)':
-                'flatpak-spawn --host konsole --hold -e sh -c "telnet {host} {port}" -p tabtitle="{name}"',
-            'Xterm (host)':
+            'KDE Konsole':
+                'flatpak-spawn --host konsole --new-tab --hold -e sh -c "telnet {host} {port}" -p tabtitle="{name}"',
+            'Xterm':
                 'flatpak-spawn --host xterm -hold -e sh -c "telnet {host} {port}" -T "{name}"',
-            'GNOME Terminal (host)':
+            'GNOME Terminal':
                 'flatpak-spawn --host gnome-terminal --tab -t "{name}" -- sh -c "telnet {host} {port}; exec sh"',
         }
-        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Default terminal (host)"]
+        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Default terminal"]
 
     elif sys.platform.startswith("linux"):
         distro_name = distro.name()
