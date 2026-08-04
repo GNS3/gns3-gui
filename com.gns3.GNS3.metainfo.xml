@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2016 Athmane Madjoudj <athmane@fedoraproject.org> -->
+<component type="desktop-application">
+  <id>com.gns3.GNS3</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="com.gns3">
+    <name>GNS3 Technologies</name>
+  </developer>
+  <name>GNS3</name>
+  <summary>Graphical Network Simulator 3</summary>
+  <description>
+    <p>
+      GNS3 is a graphical network simulator that allows you to design complex network
+      topologies. You may run simulations or configure devices ranging from simple
+      workstations to powerful routers.
+    </p>
+  </description>
+  <launchable type="desktop-id">com.gns3.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://docs.gns3.com/assets/images/17-d25a8d21b29a736e3a502b3996820b6d.jpg</image>
+    </screenshot>
+    <screenshot>
+      <image>https://docs.gns3.com/assets/images/20-21592545c365456bc085ce71f821bdc6.jpg</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://gns3.com/</url>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="2.6.21" date="2026-08-03">
+      <description>
+        <p>Flatpak</p>
+      </description>
+    </release>
+  </releases>
+</component>
