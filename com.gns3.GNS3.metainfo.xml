@@ -16,7 +16,7 @@
       workstations to powerful routers.
     </p>
   </description>
-  <launchable type="desktop-id">com.gns3.desktop</launchable>
+  <launchable type="desktop-id">com.gns3.GNS3.desktop</launchable>
   <screenshots>
     <screenshot type="default">
       <image>https://docs.gns3.com/assets/images/17-d25a8d21b29a736e3a502b3996820b6d.jpg</image>

@@ -40,7 +40,7 @@ class PyTest(TestCommand):
 
 if sys.platform.startswith('linux'):
     data_files = [
-        ("share/applications/", ["resources/linux/applications/gns3.desktop"]),
+        ("share/applications/", ["resources/linux/applications/com.gns3.GNS3.desktop"]),
         ("share/mime/packages", ["resources/linux/gns3-gui.xml"]),
         ("share/icons/hicolor/16x16/apps", ["resources/linux/icons/hicolor/16x16/apps/gns3.png"]),
         ("share/icons/hicolor/32x32/apps", ["resources/linux/icons/hicolor/32x32/apps/gns3.png"]),
