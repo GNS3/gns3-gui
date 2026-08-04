@@ -30,7 +30,7 @@
     <id>gns3.desktop</id>
     <mediatype>application/x-gns3</mediatype>
     <mediatype>application/x-gns3project</mediatype>
-    <mediatype>application/application/x-gns3appliance</mediatype>
+    <mediatype>application/x-gns3appliance</mediatype>
   </provides>
   <content_rating type="oars-1.1" />
   <releases>
