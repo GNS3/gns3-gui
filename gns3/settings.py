@@ -319,10 +319,15 @@ else:
         # wireshark's stdin itself via subprocess.Popen), so simply
         # prefixing "flatpak-spawn --host" before wireshark is enough;
         # flatpak-spawn forwards stdin/stdout to the host process.
+        _flatpak_host_wireshark_cmd = "wireshark"
+        if not shutil.which("wireshark") and shutil.which("flatpak"):
+            _flatpak_host_wireshark_cmd = "flatpak run org.wireshark.Wireshark"
+
         PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_NORMAL_CAPTURE] = \
-            'flatpak-spawn --host wireshark {pcap_file} --capture-comment "{project} {link_description}"'
+            'flatpak-spawn --host ' + _flatpak_host_wireshark_cmd + ' {pcap_file} --capture-comment "{project} {link_description}"'
+
         PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL] = \
-            '<internal_tail> {pcap_file} | flatpak-spawn --host wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'
+            '<internal_tail> {pcap_file} | flatpak-spawn --host ' + _flatpak_host_wireshark_cmd + ' --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'
         # the external "tail |" variant isn't usable as-is here since "tail"
         # itself would run inside the sandbox while wireshark runs on the
         # host, and they don't share a filesystem view of {pcap_file}; drop
