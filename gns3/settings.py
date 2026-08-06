@@ -195,7 +195,7 @@ else:
             'Default terminal':
                 "flatpak-spawn --host sh -c '" + _FLATPAK_HOST_TERMINAL_SHELL + "'",
             'KDE Konsole':
-                'flatpak-spawn --host konsole --new-tab --hold -e sh -c "telnet {host} {port}" -p tabtitle="{name}"',
+                'flatpak-spawn --host konsole --new-tab --hold -p tabtitle="{name}" -e sh -c "telnet {host} {port}"',
             'Xterm':
                 'flatpak-spawn --host xterm -hold -e sh -c "telnet {host} {port}" -T "{name}"',
             'GNOME Terminal':
