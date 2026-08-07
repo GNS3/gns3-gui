@@ -201,7 +201,7 @@ else:
             'GNOME Terminal':
                 'flatpak-spawn --host gnome-terminal --tab -t "{name}" -- sh -c "telnet {host} {port}; exec sh"',
             'PuTTY':
-                'flatpak-spawn --host flatpak run uk.org.greenend.chiark.sgtatham.putty -telnet {host} {port} -wt "{name}"',
+                'flatpak-spawn --host flatpak run uk.org.greenend.chiark.sgtatham.putty -telnet {host} {port} -title "{name}" -sl 2500 -fg SALMON1 -bg BLACK',
         }
         DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Default terminal"]
 
