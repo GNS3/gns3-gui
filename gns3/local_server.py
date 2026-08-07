@@ -31,7 +31,7 @@ import subprocess
 
 
 from gns3.qt import QtWidgets, QtCore, qslot
-from gns3.settings import LOCAL_SERVER_SETTINGS, DEFAULT_LOCAL_SERVER_HOST
+from gns3.settings import LOCAL_SERVER_SETTINGS, DEFAULT_LOCAL_SERVER_HOST, is_flatpak
 from gns3.local_config import LocalConfig
 from gns3.local_server_config import LocalServerConfig
 from gns3.utils.wait_for_connection_worker import WaitForConnectionWorker
@@ -224,23 +224,46 @@ class LocalServer(QtCore.QObject):
             settings["user"] = "admin"
             settings["password"] = self._passwordGenerate()
 
-        # local GNS3 server path
-        local_server_path = shutil.which(settings["path"].strip())
-        if local_server_path is None:
-            default_server_path = shutil.which("gns3server")
-            if default_server_path is not None:
-                settings["path"] = os.path.abspath(default_server_path)
-        else:
-            settings["path"] = os.path.abspath(local_server_path)
+        if is_flatpak():
+            if settings["path"].strip() == "gns3server":
+                try:
+                    result = subprocess.run(
+                        ["flatpak-spawn", "--host", "which", "gns3server"],
+                        capture_output=True, text=True, timeout=5
+                    )
+                    if result.returncode == 0 and result.stdout.strip():
+                        settings["path"] = result.stdout.strip()
+                except Exception:
+                    pass
 
-        # uBridge path
-        ubridge_path = shutil.which(settings["ubridge_path"].strip())
-        if ubridge_path is None:
-            default_ubridge_path = shutil.which("ubridge")
-            if default_ubridge_path is not None:
-                settings["ubridge_path"] = os.path.abspath(default_ubridge_path)
+            if settings["ubridge_path"].strip() == "ubridge":
+                try:
+                    result = subprocess.run(
+                        ["flatpak-spawn", "--host", "which", "ubridge"],
+                        capture_output=True, text=True, timeout=5
+                    )
+                    if result.returncode == 0 and result.stdout.strip():
+                        settings["ubridge_path"] = result.stdout.strip()
+                except Exception:
+                    pass
         else:
-            settings["ubridge_path"] = os.path.abspath(ubridge_path)
+            # local GNS3 server path
+            local_server_path = shutil.which(settings["path"].strip())
+            if local_server_path is None:
+                default_server_path = shutil.which("gns3server")
+                if default_server_path is not None:
+                    settings["path"] = os.path.abspath(default_server_path)
+            else:
+                settings["path"] = os.path.abspath(local_server_path)
+
+            # uBridge path
+            ubridge_path = shutil.which(settings["ubridge_path"].strip())
+            if ubridge_path is None:
+                default_ubridge_path = shutil.which("ubridge")
+                if default_ubridge_path is not None:
+                    settings["ubridge_path"] = os.path.abspath(default_ubridge_path)
+            else:
+                settings["ubridge_path"] = os.path.abspath(ubridge_path)
 
         if self._settings != settings:
             self.updateLocalServerSettings(settings)
@@ -374,6 +397,10 @@ class LocalServer(QtCore.QObject):
         Initialize the local server.
         """
 
+        if is_flatpak():
+            self._port = self._settings["port"]
+            return True
+
         self._checkUbridgePermissions()
 
         if sys.platform.startswith("win"):
@@ -452,7 +479,10 @@ class LocalServer(QtCore.QObject):
 
         self._stopping = False
         path = self.localServerPath()
-        command = '"{executable}" --local'.format(executable=path)
+        if is_flatpak():
+            command = 'flatpak-spawn --host "{executable}" --local'.format(executable=path)
+        else:
+            command = '"{executable}" --local'.format(executable=path)
 
         if LocalConfig.instance().profile():
             command += " --profile {}".format(LocalConfig.instance().profile())
