@@ -34,6 +34,7 @@
   </branding>
   <content_rating type="oars-1.1" />
   <url type="homepage">https://gns3.com/</url>
+  <url type="vcs-browser">https://github.com/GNS3/gns3-gui</url>
   <screenshots>
     <screenshot type="default">
       <image>https://docs.gns3.com/assets/images/17-d25a8d21b29a736e3a502b3996820b6d.jpg</image>
