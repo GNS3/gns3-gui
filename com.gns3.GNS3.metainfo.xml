@@ -37,10 +37,8 @@
   <url type="vcs-browser">https://github.com/GNS3/gns3-gui</url>
   <screenshots>
     <screenshot type="default">
-      <image>https://docs.gns3.com/assets/images/17-d25a8d21b29a736e3a502b3996820b6d.jpg</image>
-    </screenshot>
-    <screenshot>
-      <image>https://docs.gns3.com/assets/images/20-21592545c365456bc085ce71f821bdc6.jpg</image>
+      <image>https://raw.githubusercontent.com/KastenKlicker/gns3-gui-flatpak/main/screenshots/gns3screenshot.png</image>
+      <caption>GNS3's main view</caption>
     </screenshot>
   </screenshots>
   <releases>
