@@ -35,12 +35,6 @@
   <content_rating type="oars-1.1" />
   <url type="homepage">https://gns3.com/</url>
   <url type="vcs-browser">https://github.com/GNS3/gns3-gui</url>
-  <screenshots>
-    <screenshot type="default">
-      <image>https://raw.githubusercontent.com/KastenKlicker/gns3-gui-flatpak/main/screenshots/gns3screenshot.png</image>
-      <caption>GNS3's main view</caption>
-    </screenshot>
-  </screenshots>
   <releases>
     <release version="2.6.21" date="2026-07-30">
     <url type="details">https://github.com/GNS3/gns3-gui/releases/tag/v2.2.61</url>
