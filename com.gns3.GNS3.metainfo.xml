@@ -23,6 +23,10 @@
     <mediatype>application/x-gns3project</mediatype>
     <mediatype>application/x-gns3appliance</mediatype>
   </provides>
+  <categories>
+    <category>Education</category>
+    <category>Network</category>
+  </categories>
   <icon type="stock">com.gns3.GNS3</icon>
   <branding>
     <color type="primary" scheme_preference="light">#079fcd</color>

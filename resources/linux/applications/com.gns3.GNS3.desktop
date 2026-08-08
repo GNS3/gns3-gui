@@ -2,7 +2,7 @@
 Type=Application
 Version=1.5
 Name=GNS3
-GenericName="Network Simulator"
+GenericName=Network Simulator
 Comment=GNS3 Graphical Network Simulator
 Icon=com.gns3.GNS3
 Exec=gns3 %f
