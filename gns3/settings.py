@@ -44,6 +44,24 @@ DEFAULT_LOCAL_SERVER_HOST = "localhost"
 DEFAULT_LOCAL_SERVER_PORT = 3080
 DEFAULT_DELAY_CONSOLE_ALL = 500
 
+
+def is_flatpak():
+    """
+    Returns True if GNS3 is currently running inside a Flatpak sandbox.
+    """
+    return os.path.exists("/.flatpak-info")
+
+
+# Shell snippet that picks a host terminal at runtime: prefers the
+# freedesktop xdg-terminal-exec portal (the user's actual default terminal),
+# and falls back to $TERMINAL or x-terminal-emulator (Debian alternatives)
+# if xdg-terminal-exec isn't available on the host.
+_FLATPAK_HOST_TERMINAL_SHELL = (
+    'command -v xdg-terminal-exec >/dev/null 2>&1 && '
+    'exec xdg-terminal-exec -T "{name}" -- sh -c "telnet {host} {port}" || '
+    'exec "${TERMINAL:-x-terminal-emulator}" -e sh -c "telnet {host} {port}" -T "{name}"'
+)
+
 # Pre-configured Telnet console commands on various OSes
 if sys.platform.startswith("win"):
     userprofile = os.path.expandvars("%USERPROFILE%")
@@ -168,7 +186,26 @@ else:
     # default Telnet console command on other systems
     DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Xterm"]
 
-    if sys.platform.startswith("linux"):
+    if is_flatpak():
+        # Inside the Flatpak sandbox none of the terminals above are reachable
+        # directly (they live on the host, not in the sandbox). Use
+        # flatpak-spawn --host to launch them on the host instead, and prefer
+        # the user's actual default terminal via xdg-terminal-exec when present.
+        PRECONFIGURED_TELNET_CONSOLE_COMMANDS = {
+            'Default terminal':
+                "flatpak-spawn --host sh -c '" + _FLATPAK_HOST_TERMINAL_SHELL + "'",
+            'KDE Konsole':
+                'flatpak-spawn --host konsole --new-tab --hold -p tabtitle="{name}" -e sh -c "telnet {host} {port}"',
+            'Xterm':
+                'flatpak-spawn --host xterm -hold -e sh -c "telnet {host} {port}" -T "{name}"',
+            'GNOME Terminal':
+                'flatpak-spawn --host gnome-terminal --tab -t "{name}" -- sh -c "telnet {host} {port}; exec sh"',
+            'PuTTY':
+                'flatpak-spawn --host flatpak run uk.org.greenend.chiark.sgtatham.putty -telnet {host} {port} -title "{name}" -sl 2500 -fg SALMON1 -bg BLACK',
+        }
+        DEFAULT_TELNET_CONSOLE_COMMAND = PRECONFIGURED_TELNET_CONSOLE_COMMANDS["Default terminal"]
+
+    elif sys.platform.startswith("linux"):
         distro_name = distro.name()
         if distro_name == "Debian" or distro_name == "Ubuntu" or distro_name == "Linux Mint":
             if shutil.which("mate-terminal"):
@@ -277,7 +314,19 @@ else:
                                                     WIRESHARK_LIVE_TRAFFIC_CAPTURE: 'tail -f -c +0b {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -',
                                                     WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL: '<internal_tail> {pcap_file} | wireshark --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'}
 
-if sys.platform.startswith("linux"):
+if is_flatpak():
+    # In Flatpak sandbox, launch host Flatpak Wireshark explicitly.
+    _flatpak_host_wireshark_cmd = "flatpak run org.wireshark.Wireshark"
+
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_NORMAL_CAPTURE] = \
+        'flatpak-spawn --host ' + _flatpak_host_wireshark_cmd + ' {pcap_file} --capture-comment "{project} {link_description}"'
+    PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL] = \
+        '<internal_tail> {pcap_file} | flatpak-spawn --host ' + _flatpak_host_wireshark_cmd + ' --capture-comment "{project} {link_description}" -o "gui.window_title:{link_description}" -k -i -'
+    del PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE]
+
+if is_flatpak():
+    DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL]
+elif sys.platform.startswith("linux"):
     # only use the internal live traffic capture version on Linux by default
     DEFAULT_PACKET_CAPTURE_READER_COMMAND = PRECONFIGURED_PACKET_CAPTURE_READER_COMMANDS[WIRESHARK_LIVE_TRAFFIC_CAPTURE_INTERNAL]
 else:

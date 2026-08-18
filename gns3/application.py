@@ -34,8 +34,8 @@ class Application(QtWidgets.QApplication):
         self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
         super().__init__(argv)
 
-        # this is tell Wayland what is the name of the desktop file (gns3.desktop)
-        self.setDesktopFileName("gns3")
+        # this is tell Wayland what is the name of the desktop file (com.gns3.GNS3.desktop)
+        self.setDesktopFileName("com.gns3.GNS3")
 
         # this info is necessary for QSettings
         self.setOrganizationName("GNS3")

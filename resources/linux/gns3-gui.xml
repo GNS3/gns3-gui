@@ -2,27 +2,25 @@
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
     <mime-type type="application/x-gns3">
         <comment>GNS3 Project File</comment>
-	    <comment xml:lang="en">GNS3 Project File</comment>
-    	<glob pattern="*.gns3"/>
+        <comment xml:lang="en">GNS3 Project File</comment>
+        <glob pattern="*.gns3"/>
+        <icon name="com.gns3.GNS3.application-x-gns3"/>
+        <generic-icon name="com.gns3.GNS3.application-x-gns3"/>
     </mime-type>
     <mime-type type="application/x-gns3project">
-        <comment>GNS3 Project File</comment>
-	    <comment xml:lang="en">GNS3 Portable Project File</comment>
-    	<glob pattern="*.gns3project"/>
-    </mime-type>
-    <mime-type type="application/x-gns3project">
-        <comment>GNS3 Project File</comment>
-	    <comment xml:lang="en">GNS3 Portable Project File</comment>
-    	<glob pattern="*.gns3p"/>
+        <comment>GNS3 Portable Project File</comment>
+        <comment xml:lang="en">GNS3 Portable Project File</comment>
+        <glob pattern="*.gns3project"/>
+        <glob pattern="*.gns3p"/>
+        <icon name="com.gns3.GNS3.application-x-gns3project"/>
+        <generic-icon name="com.gns3.GNS3.application-x-gns3project"/>
     </mime-type>
     <mime-type type="application/x-gns3appliance">
         <comment>GNS3 Appliance File</comment>
-	    <comment xml:lang="en">GNS3 Appliance File</comment>
-    	<glob pattern="*.gns3appliance"/>
-    </mime-type>
-    <mime-type type="application/x-gns3appliance">
-        <comment>GNS3 Appliance File</comment>
-	    <comment xml:lang="en">GNS3 Appliance File</comment>
-    	<glob pattern="*.gns3a"/>
+        <comment xml:lang="en">GNS3 Appliance File</comment>
+        <glob pattern="*.gns3appliance"/>
+        <glob pattern="*.gns3a"/>
+        <icon name="com.gns3.GNS3.application-x-gns3appliance"/>
+        <generic-icon name="com.gns3.GNS3.application-x-gns3appliance"/>
     </mime-type>
 </mime-info>
