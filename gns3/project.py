@@ -613,11 +613,19 @@ class Project(QtCore.QObject):
         self.project_about_to_close_signal.emit()
         Controller.instance().delete(
             "/projects/{project_id}".format(project_id=self._id),
-            self._projectClosedCallback,
+            self._projectDestroyedCallback,
             body={},
             progress_text="Deleting the project",
             wait=True
         )
+
+    def _projectDestroyedCallback(self, result, error=False, server=None, **kwargs):
+        self._projectClosedCallback(result, error=error, server=server, **kwargs)
+        if not error or ("status" in result and result["status"] == 404):
+            # Refresh the controller's project list so a deleted project disappears
+            # immediately from menus such as "recent projects" instead of only
+            # after restarting the GUI.
+            Controller.instance().refreshProjectList()
 
     def _projectClosedCallback(self, result, error=False, server=None, **kwargs):
 
