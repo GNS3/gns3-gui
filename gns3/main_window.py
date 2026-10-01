@@ -115,7 +115,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.uiImportProjectAction,
             self.uiOpenApplianceAction,
             self.uiWebUIAction,
-            self.uiNodesDockWidget
+            self.uiNodesDockWidget,
+            self.uiTryWebUiPushButton
         ]
 
         for widget in self.disableWhenControllerNotConnectedWidgets:
@@ -305,6 +306,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # new template button
         self.uiNewTemplatePushButton.clicked.connect(self._newTemplateActionSlot)
+
+        # try the web-ui button
+        self.uiTryWebUiPushButton.clicked.connect(self._openWebInterfaceActionSlot)
 
         # connect the signal to the view
         self.adding_link_signal.connect(self.uiGraphicsView.addingLinkSlot)

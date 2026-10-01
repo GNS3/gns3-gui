@@ -3,7 +3,7 @@
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::WindowModality::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="contextMenuPolicy">
-   <enum>Qt::PreventContextMenu</enum>
+   <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
   </property>
   <property name="styleSheet">
    <string notr="true">#toolBar_Devices QToolButton {
@@ -34,7 +34,7 @@ background-none;
 </string>
   </property>
   <property name="dockOptions">
-   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+   <set>QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="uiCentralWidget">
    <layout class="QGridLayout">
@@ -63,6 +63,16 @@ background-none;
       </property>
      </widget>
     </item>
+    <item row="1" column="0">
+     <widget class="QPushButton" name="uiTryWebUiPushButton">
+      <property name="text">
+       <string>&amp;Try our latest web interface for more features</string>
+      </property>
+      <property name="icon">
+       <iconset theme="QIcon::ThemeIcon::SoftwareUpdateAvailable"/>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="uiMenuBar">
@@ -71,7 +81,7 @@ background-none;
      <x>0</x>
      <y>0</y>
      <width>986</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="uiEditMenu">
@@ -202,7 +212,7 @@ background-none;
     <string/>
    </property>
    <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
    <property name="iconSize">
     <size>
@@ -230,7 +240,7 @@ background-none;
     <bool>false</bool>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+    <set>Qt::DockWidgetArea::LeftDockWidgetArea|Qt::DockWidgetArea::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>All templates</string>
@@ -326,7 +336,7 @@ background-none;
     </size>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonIconOnly</enum>
+    <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
@@ -358,7 +368,7 @@ background-none;
     </size>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonIconOnly</enum>
+    <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -383,7 +393,7 @@ background-none;
     </size>
    </property>
    <property name="allowedAreas">
-    <set>Qt::AllDockWidgetAreas</set>
+    <set>Qt::DockWidgetArea::AllDockWidgetAreas</set>
    </property>
    <property name="windowTitle">
     <string>Console</string>
@@ -455,7 +465,7 @@ background-none;
     </sizepolicy>
    </property>
    <property name="allowedAreas">
-    <set>Qt::AllDockWidgetAreas</set>
+    <set>Qt::DockWidgetArea::AllDockWidgetAreas</set>
    </property>
    <property name="windowTitle">
     <string>Topology Summary</string>
@@ -514,7 +524,7 @@ background-none;
   </widget>
   <widget class="QDockWidget" name="uiComputeSummaryDockWidget">
    <property name="allowedAreas">
-    <set>Qt::AllDockWidgetAreas</set>
+    <set>Qt::DockWidgetArea::AllDockWidgetAreas</set>
    </property>
    <property name="windowTitle">
     <string>Servers Summary</string>
@@ -562,7 +572,7 @@ background-none;
     <string>About</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::MenuRole::AboutRole</enum>
    </property>
   </action>
   <action name="uiQuitAction">
@@ -699,7 +709,7 @@ background-none;
     <string>About Qt</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutQtRole</enum>
+    <enum>QAction::MenuRole::AboutQtRole</enum>
    </property>
   </action>
   <action name="uiZoomInAction">
@@ -788,7 +798,7 @@ background-none;
     <string>Ctrl+Shift+P</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::PreferencesRole</enum>
+    <enum>QAction::MenuRole::PreferencesRole</enum>
    </property>
   </action>
   <action name="uiSuspendAllAction">
@@ -1179,7 +1189,7 @@ background-none;
     <string>&amp;Setup Wizard</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="uiOpenApplianceAction">
@@ -1297,7 +1307,7 @@ background-none;
   </action>
   <action name="uiWebUIAction">
    <property name="text">
-    <string>Web UI - beta</string>
+    <string>Launch the GNS3 Web UI</string>
    </property>
   </action>
   <action name="uiNewTemplateAction">
