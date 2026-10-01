@@ -34,8 +34,8 @@ def install_mime_types():
     if not sys.platform.startswith("linux"):
         raise SystemExit("Installing mime types is only possible on Linux")
 
-    applications_location = Path(QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.ApplicationsLocation))
-    generic_data_location = Path(QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.GenericDataLocation))
+    applications_location = Path(QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.ApplicationsLocation))
+    generic_data_location = Path(QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.GenericDataLocation))
     try:
         # install the gns3.desktop file
         applications_location.mkdir(parents=True, exist_ok=True)
