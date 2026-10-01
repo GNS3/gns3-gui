@@ -78,9 +78,14 @@ class VMware(Module):
             vmrun_path = shutil.which("vmrun")
             if vmrun_path is None:
                 # look for vmrun.exe using the VMware Workstation directory listed in the registry
-                vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware Workstation")
+                # (native 64-bit key first; VMware Workstation 26H1+ dropped the 32-bit build)
+                vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\VMware, Inc.\VMware Workstation")
+                if vmrun_path is None:
+                    vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware Workstation")
                 if vmrun_path is None:
                     # look for vmrun.exe using the VIX directory listed in the registry
+                    vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\VMware, Inc.\VMware VIX")
+                if vmrun_path is None:
                     vmrun_path = VMware._findVmrunRegistry(r"SOFTWARE\Wow6432Node\VMware, Inc.\VMware VIX")
         elif sys.platform.startswith("darwin"):
             vmware_fusion_vmrun_path = None
