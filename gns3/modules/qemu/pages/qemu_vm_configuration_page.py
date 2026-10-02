@@ -212,10 +212,23 @@ class QemuVMConfigurationPage(QtWidgets.QWidget, Ui_QemuVMConfigPageWidget):
         Slot to open a file browser and select a QEMU hdd disk image.
         """
 
-        path = self.getDiskImage(self, self._compute_id)
-        if path:
-            self.uiHddDiskImageLineEdit.clear()
-            self.uiHddDiskImageLineEdit.setText(path)
+        if self._node and self.uiCreateConfigDiskCheckBox.isChecked():
+            config_dir = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.StandardLocation.DocumentsLocation)
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                            "Import config zip",
+                                                            config_dir,
+                                                            "All files (*);;Config zip (*.zip)",
+                                                            "Config zip (*.zip)")
+            if not path:
+                return
+            self._import_config_directory = os.path.dirname(path)
+            self._node.importFile("config.zip", path)
+
+        else:
+            path = self.getDiskImage(self, self._compute_id)
+            if path:
+                self.uiHddDiskImageLineEdit.clear()
+                self.uiHddDiskImageLineEdit.setText(path)
 
     def _biosImageBrowserSlot(self):
         """
