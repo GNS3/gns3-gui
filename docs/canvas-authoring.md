@@ -217,3 +217,10 @@ para coordenadas da cena para consultar as formas dos itens, respeitando zoom e
 scroll. O menu é aberto apenas ao soltar; o evento nativo de menu do mouse é
 consumido para evitar uma segunda abertura ou seleção pontual involuntária.
 A navegação altera somente as barras da view; não modifica posições exportadas.
+
+O campo **Border width** da aba Style do container tem fundo branco e texto
+preto, com estilo restrito ao campo e ao editor interno. Isso mantém o valor
+legível em temas escuros sem alterar o restante do diálogo. A verificação
+automatizada de contraste dos campos numéricos também cobre esse controle.
+
+Validação desta etapa: suíte completa com 308 testes aprovados e um ignorado.

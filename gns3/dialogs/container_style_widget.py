@@ -66,6 +66,7 @@ class ContainerStyleWidget(QtWidgets.QWidget):
         self.borderStyle.setCurrentIndex(self.values['border_style'])
         form.addRow('Border:', self.borderStyle)
         self.borderWidth = QtWidgets.QDoubleSpinBox(self)
+        self.borderWidth.setStyleSheet("QDoubleSpinBox { background-color: white; color: black; } QLineEdit { background-color: white; color: black; }")
         self.borderWidth.setRange(0, 100)
         self.borderWidth.setValue(self.values['border_width'])
         form.addRow('Border width:', self.borderWidth)

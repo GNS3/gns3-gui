@@ -7,9 +7,11 @@ from test_group_item import canvas, drawing, device
 def test_numeric_dimensions_have_scoped_white_backgrounds(canvas):
     from gns3.dialogs.image_properties_dialog import ImagePropertiesDialog
     from gns3.dialogs.style_editor_dialog import StyleEditorDialog
+    from gns3.dialogs.container_style_widget import ContainerStyleWidget
+    container_style = ContainerStyleWidget(parent=canvas)
     image = ImagePropertiesDialog(canvas, 100, 50)
     shape = StyleEditorDialog(canvas, [drawing(canvas)])
-    for field in (image.widthEdit, image.heightEdit, shape.uiWidthSpinBox, shape.uiHeightSpinBox):
+    for field in (image.widthEdit, image.heightEdit, shape.uiWidthSpinBox, shape.uiHeightSpinBox, container_style.borderWidth):
         assert 'background-color: white' in field.styleSheet()
         assert 'color: black' in field.styleSheet()
 
