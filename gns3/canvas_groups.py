@@ -446,9 +446,20 @@ class CanvasGroups:
                           if any(isinstance(item, NodeItem) and item.node() is link.sourceNode() for item in all_items)
                           and any(isinstance(item, NodeItem) and item.node() is link.destinationNode() for item in all_items)]
         snapshots = {item: (item.parentItem(), item.pos(), item.scenePos()) for item in all_items}
+        names = {group.name for group in self.groups()}
         for item in all_items:
             if isinstance(item, GroupItem):
-                copy = GroupItem(name=item.name, project=project, width=item.rect().width(), height=item.rect().height())
+                name = item.name
+                if item in roots:
+                    # Rename only selected roots; nested names describe the
+                    # copied hierarchy and can remain unchanged.
+                    name = "Copy of " + item.name
+                    number = 2
+                    while name in names:
+                        name = "Copy {} of {}".format(number, item.name)
+                        number += 1
+                    names.add(name)
+                copy = GroupItem(name=name, project=project, width=item.rect().width(), height=item.rect().height())
                 view.scene().addItem(copy)
                 view._topology.addDrawing(copy)
                 copy.setPos(item.scenePos() + offset)

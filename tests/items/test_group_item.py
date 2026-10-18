@@ -191,7 +191,7 @@ def test_drawing_only_recursive_duplicate(canvas):
     outer = group(canvas, [inner], "Site")
     canvas.duplicateActionSlot()
     copy = canvas._groups.selected()[0]
-    assert isinstance(copy, GroupItem) and copy.name == "Site"
+    assert isinstance(copy, GroupItem) and copy.name == "Copy of Site"
     assert copy.drawing_id() != outer.drawing_id()
     assert copy.scenePos() == outer.scenePos() + QtCore.QPointF(20, 20)
     child = copy.members()[0]
@@ -274,7 +274,8 @@ def test_portable_import_remaps_all_server_ids(canvas):
     assert {child["id"] for child in read_group(new_inner.toSvg())["children"]} == {node.node().node_id(), new_shape.drawing_id()}
 
 
-def test_async_node_duplicate_waits_for_all_ids_and_restores_internal_link(canvas):
+@pytest.mark.parametrize("entry", ["canvas", "summary"])
+def test_async_node_duplicate_waits_for_all_ids_and_restores_internal_link(canvas, summary, entry):
     a, b = device(canvas, 100), device(canvas, 200)
     inner = group(canvas, [a, b])
     outer = group(canvas, [inner], "Site")
@@ -287,7 +288,10 @@ def test_async_node_duplicate_waits_for_all_ids_and_restores_internal_link(canva
     link.sourcePort.return_value, link.destinationPort.return_value = source_port, destination_port
     canvas._topology.links.return_value = [link]
     canvas.addLink = MagicMock()
-    canvas.duplicateActionSlot()
+    if entry == "summary":
+        summary.groupMenu(outer).actions()[1].trigger()
+    else:
+        canvas.duplicateActionSlot()
     callback_a = a.node().duplicate.call_args.kwargs["callback"]
     callback_b = b.node().duplicate.call_args.kwargs["callback"]
     a_copy, b_copy = device(canvas, 120), device(canvas, 220)
@@ -300,7 +304,18 @@ def test_async_node_duplicate_waits_for_all_ids_and_restores_internal_link(canva
     assert a_copy.parentItem() is b_copy.parentItem()
     assert a_copy.parentItem() is not inner
     assert a_copy.parentItem().parentItem() is not outer
+    copied_outer = a_copy.parentItem().parentItem()
+    assert copied_outer.name == "Copy of Site"
+    assert a_copy.pos() == a.pos() and b_copy.pos() == b.pos()
+    assert a.parentItem() is inner and inner.parentItem() is outer
     canvas.addLink.assert_called_once_with(a_copy.node(), source_port, b_copy.node(), destination_port)
+    # Notifications/reload must preserve the copied ownership, not just its
+    # immediate appearance while the operation is completing.
+    canvas._groups.restore()
+    assert a_copy.parentItem().parentItem() is copied_outer
+    row = add_summary_node(summary, canvas, a_copy, 101)
+    assert row.parent().group is a_copy.parentItem()
+    assert row.parent().parent().group is copied_outer
 
 
 def test_async_duplicate_failure_rolls_back_successful_copies(canvas):
@@ -314,6 +329,20 @@ def test_async_duplicate_failure_rolls_back_successful_copies(canvas):
         b.node().duplicate.call_args.kwargs["callback"]({"message": "failure"}, error=True)
     copied.node().delete.assert_called_once()
     assert len(canvas._groups.groups()) == 1
+
+
+def test_duplicate_names_distinguish_repeated_copies_without_renaming_original(canvas):
+    original = group(canvas, [drawing(canvas)], "LAN 1")
+    canvas.duplicateActionSlot()
+    first = canvas._groups.selected()[0]
+    assert first.name == "Copy of LAN 1"
+    canvas.scene().clearSelection()
+    original.setSelected(True)
+    canvas.duplicateActionSlot()
+    second = canvas._groups.selected()[0]
+    assert second.name == "Copy 2 of LAN 1"
+    assert original.name == "LAN 1"
+    assert read_group(second.toSvg())["name"] == second.name
 
 
 def test_invalid_metadata_and_stale_acknowledgment(canvas):

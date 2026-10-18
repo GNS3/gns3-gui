@@ -7,6 +7,8 @@ model adapters avoid launching simulators or connecting the desktop controller.
 Creates and removes only its own disposable projects. Does not need image files.
 """
 import argparse
+import gc
+import time
 import io
 import tempfile
 import json
@@ -16,6 +18,7 @@ import urllib.request
 import uuid
 import zipfile
 from pathlib import Path
+from urllib.parse import urlparse
 from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -29,6 +32,8 @@ from gns3.items.node_item import NodeItem
 from gns3.items.group_item import GroupItem, read_group
 from gns3.local_config import LocalConfig
 from gns3.template_manager import TemplateManager
+from gns3.http_client import HTTPClient
+from gns3.node import Node
 
 def main():
     app = QtWidgets.QApplication([])
@@ -40,6 +45,10 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     LocalConfig._instance = LocalConfig(config_file=str(output / 'gui.json'))
     base = args.server.rstrip('/') + '/v2'
+    address = urlparse(args.server)
+    http = HTTPClient({'host': address.hostname, 'port': address.port or (443 if address.scheme == 'https' else 80),
+                       'protocol': address.scheme})
+    http._connected = True
 
     def request(method, path, data=None, raw=False):
         body = data if isinstance(data, bytes) else json.dumps(data).encode() if data is not None else None
@@ -121,18 +130,19 @@ def main():
             node.setGraphics.side_effect = lambda item: topo._project.put('/nodes/'+node.node_id() ,body={
                 'x':int(item.scenePos().x()), 'y':int(item.scenePos().y()), 'z':int(item.zValue())})
             node.delete.side_effect = lambda: topo._project.delete('/nodes/'+node.node_id())
-            def duplicate(x,y,z,callback=None):
-                result = topo._project.post('/nodes/'+node.node_id()+'/duplicate',body={'x':int(x),'y':int(y),'z':int(z)})
-                item_for(result)
-                if callback:
-                    callback(result)
-            node.duplicate.side_effect = duplicate
+            # Keep the real Node completion hook and Qt HTTP transport. A
+            # synchronous adapter hid replies being collected before finished.
+            node.post.side_effect = lambda path, callback, **kwargs: http.createHTTPQuery(
+                'POST', '/projects/'+topo._project.id()+'/nodes/'+node.node_id()+path,
+                callback, **kwargs)
+            node.duplicate.side_effect = lambda x,y,z,callback=None: Node.duplicate(node, x, y, z, callback)
             item = NodeItem(node)
             view.scene().addItem(item)
             QtWidgets.QGraphicsSimpleTextItem(data['name'], item).setPos(0, 35)
             topo.addNode(node)
             return item
 
+        topo.createNode = item_for
         nodes = [item_for(topo._project.post('/nodes',body={
             'name':name, 'node_type':'ethernet_switch','compute_id':'local','x':x,'y':80,
             'symbol':':/symbols/classic/switch.svg'})) for name,x in [('SW1',100),('SW2',250)]]
@@ -204,6 +214,11 @@ def main():
         # PUT would reach the actual server and fail with the reported 404.
         topo._project.defer_drawings = True
         view.duplicateActionSlot()
+        gc.collect()  # No timeout or progress dialog may retain these replies.
+        deadline = time.monotonic() + 15
+        while len(topo._project.pending_drawings) < 5 and time.monotonic() < deadline:
+            app.processEvents()
+            time.sleep(.01)
         assert len(topo._project.pending_drawings) == 5
         assert len(topo._project.call('GET', '/drawings')) == 5
         topo._project.flush_drawings()
@@ -211,9 +226,18 @@ def main():
         assert len(topo._project.call('GET','/nodes'))==6
         assert len(topo._project.call('GET','/links'))==2
         assert len(view._groups.groups())==4
+        expected_sizes['Copy of ' + outer.name] = expected_sizes[outer.name]
         assert all(group.rect().size() == expected_sizes[group.name] for group in view._groups.groups())
         copies=view._groups.selected()
         assert len(copies)==1 and isinstance(copies[0],GroupItem)
+        assert copies[0].name == 'Copy of ' + outer.name
+        copied_nodes = {item.node().node_id() for item in copies[0].descendants() if isinstance(item, NodeItem)}
+        original_nodes = {item.node().node_id() for item in outer.descendants() if isinstance(item, NodeItem)}
+        assert len(copied_nodes) == 3 and copied_nodes.isdisjoint(original_nodes)
+        copied_links = [link for link in topo._project.call('GET', '/links')
+                        if {side['node_id'] for side in link['nodes']} <= copied_nodes]
+        assert len(copied_links) == 1
+        assert not http._active_replies
         # Export then import: GNS3 regenerates all IDs, including drawing IDs.
         archive=request('GET','/projects/'+pid+'/export?include_images=no&keep_compute_ids=yes',raw=True)
         (output / 'hierarchy.gns3p').write_bytes(archive)
