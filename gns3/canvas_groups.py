@@ -19,11 +19,13 @@ class CanvasGroups:
         self._resize = None
         self._drag_item = None
         self.guide_parent = None
+        self.drop_target = None
 
     def groups(self):
         return [item for item in self.view.scene().items() if isinstance(item, GroupItem)]
 
     def reset(self):
+        self.clearDropTarget()
         self.clearDrag()
         self._resize = None
         self.editing = None
@@ -63,12 +65,12 @@ class CanvasGroups:
 
     @staticmethod
     def initialGeometry(items):
-        """Ten percent on each side, plus a reserved title row at the top."""
+        """Thirty percent extra in total (15% per side), plus the title row."""
         bounds = items[0].sceneBoundingRect()
         for item in items[1:]:
             bounds = bounds.united(item.sceneBoundingRect())
-        margin_x = max(2, bounds.width() * .1)
-        margin_y = max(2, bounds.height() * .1)
+        margin_x = max(2, bounds.width() * .15)
+        margin_y = max(2, bounds.height() * .15)
         position = bounds.topLeft() - QtCore.QPointF(margin_x, margin_y + GroupItem.TITLE_HEIGHT)
         return position, max(20, math.ceil(bounds.width() + 2 * margin_x)), max(20, math.ceil(bounds.height() + 2 * margin_y + GroupItem.TITLE_HEIGHT))
 
@@ -169,6 +171,43 @@ class CanvasGroups:
         painter.drawLine(group.mapToScene(QtCore.QPointF(0, center.y())),
                          group.mapToScene(QtCore.QPointF(rect.width(), center.y())))
         painter.restore()
+
+    def groupAt(self, position):
+        """The topmost visible container, including closed/nested groups."""
+        for group in self.view.scene().items(position):
+            if not isinstance(group, GroupItem):
+                continue
+            current = group
+            eligible = True
+            while isinstance(current, GroupItem):
+                if current.locked() or not current.isVisible() or not current.shape().contains(current.mapFromScene(position)):
+                    eligible = False
+                    break
+                current = current.parentItem()
+            if eligible:
+                return group
+        return None
+
+    def setDropTarget(self, position):
+        target = self.groupAt(position)
+        self.clearDropTarget()
+        if target is not None:
+            self.drop_target = target
+            target.drop_hover = True
+            self.guide_parent = target
+            target.update()
+            self.view.viewport().update()
+        return target
+
+    def clearDropTarget(self):
+        old = self.drop_target
+        self.drop_target = None
+        if old is not None and not sip.isdeleted(old):
+            old.drop_hover = False
+            old.update()
+        if self.guide_parent is old:
+            self.guide_parent = None
+        self.view.viewport().update()
 
     def resizeHandleAt(self, position):
         for group in self.groups():

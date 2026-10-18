@@ -20,6 +20,11 @@ class GroupPropertiesDialog(QtWidgets.QDialog):
             field.setDecimals(2)
             field.setValue(value)
             field.setSuffix(" units")
+            # Scope this override to these inputs, including their line edits;
+            # global dark themes must not obscure the numeric values.
+            field.setStyleSheet(
+                "QDoubleSpinBox, QDoubleSpinBox QLineEdit { background-color: white; color: black; "
+                "selection-background-color: #3484c6; selection-color: white; }")
         layout.addRow("Name:", self.nameEdit)
         layout.addRow("Width:", self.widthEdit)
         layout.addRow("Height:", self.heightEdit)

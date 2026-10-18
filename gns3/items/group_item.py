@@ -12,7 +12,7 @@ import json
 import math
 import xml.etree.ElementTree as ET
 
-from ..qt import QtCore, QtGui, QtWidgets
+from ..qt import QtCore, QtGui, QtWidgets, sip_is_deleted
 from .drawing_item import DrawingItem
 
 GROUP_METADATA = "gns3-canvas-group"
@@ -171,6 +171,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         self._revision = 0
         self._ready = False
         self.editing = False
+        self.drop_hover = False
         self._legacy_bounds = False
         super().__init__(**kwargs)
         self._ready = True
@@ -197,6 +198,8 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         super().updateDrawing()
 
     def updateDrawingCallback(self, result, error=False, **kwargs):
+        if sip_is_deleted(self) or self.deleting():
+            return
         if not error and "svg" in result:
             try:
                 data = read_group(result["svg"])
@@ -267,7 +270,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
     def paint(self, painter, option, widget=None):
         painter.save()
         color = QtGui.QColor("#3484c6")
-        painter.setPen(QtGui.QPen(color, 2 if self.isSelected() else 1,
+        painter.setPen(QtGui.QPen(color, 4 if self.drop_hover else (2 if self.isSelected() else 1),
                                   QtCore.Qt.PenStyle.DashLine))
         painter.setBrush(QtCore.Qt.BrushStyle.NoBrush)
         painter.drawRect(self.rect())

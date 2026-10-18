@@ -116,6 +116,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         # set the custom flags for this view
         self.setDragMode(QtWidgets.QGraphicsView.DragMode.RubberBandDrag)
         self.setMouseTracking(True)
+        self.setAcceptDrops(True)
         self.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         self.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.setResizeAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorViewCenter)
@@ -771,20 +772,28 @@ class GraphicsView(QtWidgets.QGraphicsView):
             node_properties.show()
             node_properties.exec()
 
-    def dragMoveEvent(self, event):
-        """
-        Handles all drag move events.
-
-        :param event: QDragMoveEvent instance
-        """
-
-        # check if what is dragged is handled by this view
-        if event.mimeData().hasFormat("text/uri-list") \
-                or event.mimeData().hasFormat("application/x-gns3-template"):
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat("application/x-gns3-template") or event.mimeData().hasFormat("text/uri-list"):
             event.acceptProposedAction()
-            event.accept()
         else:
+            self._groups.clearDropTarget()
             event.ignore()
+
+    def dragMoveEvent(self, event):
+        """Preview membership only for new devices dragged from templates."""
+        if event.mimeData().hasFormat("application/x-gns3-template"):
+            self._groups.setDropTarget(self.mapToScene(event.position().toPoint()))
+            event.acceptProposedAction()
+        elif event.mimeData().hasFormat("text/uri-list"):
+            self._groups.clearDropTarget()
+            event.acceptProposedAction()
+        else:
+            self._groups.clearDropTarget()
+            event.ignore()
+
+    def dragLeaveEvent(self, event):
+        self._groups.clearDropTarget()
+        event.accept()
 
     def dropEvent(self, event):
         """
@@ -793,6 +802,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QDropEvent instance
         """
 
+        # Capture the container before clearing temporary highlight/guides.
+        # Resolve it again at the actual drop position, not the last hover point.
+        target = self._groups.groupAt(self.mapToScene(event.position().toPoint())) if event.mimeData().hasFormat("application/x-gns3-template") else None
+        self._groups.clearDropTarget()
         log.debug("Drop event received with mime data: {}".format(event.mimeData().formats()))
         # check if what has been dropped is handled by this view
         if event.mimeData().hasFormat("application/x-gns3-template"):
@@ -807,11 +820,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     for node_number in range(integer):
                         x = event.position().x() - (150 // 2) + (node_number % max_nodes_per_line) * offset
                         y = event.position().y() - (70 // 2) + (node_number // max_nodes_per_line) * offset
-                        if self.createNodeFromTemplateId(template_id, QtCore.QPointF(x, y)) is False:
+                        if self.createNodeFromTemplateId(template_id, QtCore.QPointF(x, y), group=target) is False:
                             event.ignore()
                             break
             else:
-                if self.createNodeFromTemplateId(template_id, event.position()) is False:
+                if self.createNodeFromTemplateId(template_id, event.position(), group=target) is False:
                     event.ignore()
         elif event.mimeData().hasFormat("text/uri-list") and event.mimeData().hasUrls():
             # This should not arrive but we received bug report with it...
@@ -1678,12 +1691,40 @@ class GraphicsView(QtWidgets.QGraphicsView):
             raise ModuleError("Please select a server")
         return server
 
-    def createNodeFromTemplateId(self, template_id, pos):
+    def createNodeFromTemplateId(self, template_id, pos, group=None):
+        """Create through the existing API, then attach the returned node ID.
+
+        Capture a local position: a group may move while the server creates a
+        device. Do not infer membership from whichever notification arrives next.
         """
-        Ask the server to create a node using this template
-        """
-        pos = self.mapToScene(pos.toPoint())
-        return TemplateManager().instance().createNodeFromTemplateId(self._topology.project(), template_id, pos.x(), pos.y())
+        position = self.mapToScene(pos.toPoint())
+        project = self._topology.project()
+        manager = TemplateManager.instance()
+        if group is None:
+            return manager.createNodeFromTemplateId(project, template_id, position.x(), position.y())
+        local = group.mapFromScene(position)
+
+        def created(result, error=False):
+            if error or self._topology.project() is not project or sip.isdeleted(self):
+                return
+            if sip.isdeleted(group) or group.scene() is not self.scene():
+                return  # the device remains at the scene root if its target was removed
+            identity = result["node_id"]
+            if self._topology.getNodeFromUuid(identity) is None:
+                self._topology.createNode(result)
+            item = next((item for item in self.scene().items()
+                         if isinstance(item, NodeItem) and item.node().node_id() == identity), None)
+            if item is not None:
+                from .items.group_item import reparent
+                reparent(item, group, local)
+                # NodeItem.setPos caches scene coordinates. Keep the last
+                # server-confirmed values until save compares them with the
+                # actual scene position (the parent may have moved meanwhile).
+                item.node().setSettingValue("x", result.get("x", int(position.x())))
+                item.node().setSettingValue("y", result.get("y", int(position.y())))
+                self._groups.save([item])
+
+        return manager.createNodeFromTemplateId(project, template_id, position.x(), position.y(), callback=created)
 
     def createNodeItem(self, node, symbol, x, y):
         node.setSymbol(symbol)

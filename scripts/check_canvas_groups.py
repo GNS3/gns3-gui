@@ -20,7 +20,7 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
-from gns3.qt import QtWidgets, QtCore
+from gns3.qt import QtWidgets, QtCore, QtGui
 from gns3.main_window import MainWindow
 from gns3.graphics_view import GraphicsView
 from gns3.topology import Topology
@@ -28,6 +28,7 @@ from gns3.topology_summary_view import TopologySummaryView
 from gns3.items.node_item import NodeItem
 from gns3.items.group_item import GroupItem, read_group
 from gns3.local_config import LocalConfig
+from gns3.template_manager import TemplateManager
 
 def main():
     app = QtWidgets.QApplication([])
@@ -49,6 +50,7 @@ def main():
         return value if raw else json.loads(value) if value else None
 
     project_ids = []
+    template_ids = []
     try:
         created = request('POST', '/projects', {'name': 'Canvas hierarchy integration'})
         pid = created['project_id']
@@ -56,13 +58,27 @@ def main():
         class Bridge:
             def __init__(self, identity):
                 self.identity = identity
+                self.defer_drawings = False
+                self.pending_drawings = []
+            def id(self):
+                return self.identity
+
             def call(self, method, path, callback=None, body=None, **kwargs):
                 result = request(method, '/projects/'+self.identity+path, body)
                 if callback:
                     callback(result)
                 return result
             def post(self, path, callback=None, **kwargs):
+                if self.defer_drawings and path == '/drawings':
+                    self.pending_drawings.append((path, callback, kwargs))
+                    return
                 return self.call('POST', path, callback, **kwargs)
+
+            def flush_drawings(self):
+                self.defer_drawings = False
+                pending, self.pending_drawings = self.pending_drawings, []
+                for path, callback, kwargs in reversed(pending):
+                    self.call('POST', path, callback, **kwargs)
             def put(self, path, callback=None, **kwargs):
                 return self.call('PUT', path, callback, **kwargs)
             def delete(self, path, callback=None, **kwargs):
@@ -149,10 +165,50 @@ def main():
         outer.setPos(outer.pos()+QtCore.QPointF(80,50))
         view._groups.save([outer])
         assert nodes[0].scenePos()==before+QtCore.QPointF(80,50)
+        # Exercise the existing template endpoint and the new drop callback.
+        template_data = request('POST', '/templates', {
+            'name': 'Canvas drop ' + str(uuid.uuid4()),
+            'template_type': 'ethernet_switch', 'compute_id': 'local'})
+        template_id = template_data['template_id']
+        template_ids.append(template_id)
+        templates = TemplateManager()
+        template = MagicMock()
+        template.id.return_value = template_id
+        template.compute_id.return_value = 'local'
+        templates._templates = {template_id: template}
+        templates._controller = MagicMock()
+        templates._controller.connected.return_value = True
+
+        def instantiate(path, callback, body, **kwargs):
+            result = request('POST', path, body)
+            item_for(result)  # simulate the creation notification arriving first
+            callback(result)
+        templates._controller.post.side_effect = instantiate
+        point = view.mapFromScene(inner.mapToScene(inner.rect().center()))
+        mime = QtCore.QMimeData()
+        mime.setData('application/x-gns3-template', template_id.encode())
+        move = QtGui.QDragMoveEvent(point, QtCore.Qt.DropAction.CopyAction, mime,
+                                   QtCore.Qt.MouseButton.LeftButton, QtCore.Qt.KeyboardModifier.NoModifier)
+        view.dragMoveEvent(move)
+        assert inner.drop_hover and view._groups.guide_parent is inner
+        drop = QtGui.QDropEvent(QtCore.QPointF(point), QtCore.Qt.DropAction.CopyAction, mime,
+                               QtCore.Qt.MouseButton.LeftButton, QtCore.Qt.KeyboardModifier.NoModifier)
+        with patch('gns3.graphics_view.TemplateManager.instance', return_value=templates):
+            view.dropEvent(drop)
+        assert drop.isAccepted() and not inner.drop_hover
+        assert view._groups.guide_parent is None
+        assert len([item for item in inner.members() if isinstance(item, NodeItem)]) == 3
         # Duplicate real server nodes through the asynchronous-callback API adapter.
         view.scene().clearSelection(); outer.setSelected(True)
+        # Hold drawing POSTs while the Qt-side copy continues. Any premature
+        # PUT would reach the actual server and fail with the reported 404.
+        topo._project.defer_drawings = True
         view.duplicateActionSlot()
-        assert len(topo._project.call('GET','/nodes'))==4
+        assert len(topo._project.pending_drawings) == 5
+        assert len(topo._project.call('GET', '/drawings')) == 5
+        topo._project.flush_drawings()
+        assert len(topo._project.call('GET', '/drawings')) == 10
+        assert len(topo._project.call('GET','/nodes'))==6
         assert len(topo._project.call('GET','/links'))==2
         assert len(view._groups.groups())==4
         assert all(group.rect().size() == expected_sizes[group.name] for group in view._groups.groups())
@@ -164,7 +220,7 @@ def main():
         with zipfile.ZipFile(io.BytesIO(archive)) as exported:
             name=next(name for name in exported.namelist() if name.endswith('.gns3'))
             exported_data=json.loads(exported.read(name))
-            assert len(exported_data['topology']['nodes'])==4
+            assert len(exported_data['topology']['nodes'])==6
             print('Exported archive:', len(exported_data['topology']['drawings']), 'drawings including four nested groups')
         newid=str(uuid.uuid4())
         project_ids.append(newid)
@@ -187,8 +243,8 @@ def main():
         assert len([group for group in groups if group.parentItem() is None])==2
         for group in groups:
             if group.name=='LAN 1':
-                assert len(group.members())==4
-                assert len([item for item in group.members() if isinstance(item,NodeItem)])==2
+                assert len(group.members())==5
+                assert len([item for item in group.members() if isinstance(item,NodeItem)])==3
             else:
                 assert len(group.members())==2
                 assert len([item for item in group.members() if isinstance(item,GroupItem)])==1
@@ -229,10 +285,10 @@ def main():
         root.setSelected(True)
         with patch.object(QtWidgets.QMessageBox,'question',return_value=QtWidgets.QMessageBox.StandardButton.Yes):
             view.deleteActionSlot()
-        assert len(topo._project.call('GET','/nodes'))==2
+        assert len(topo._project.call('GET','/nodes'))==3
         assert len(topo._project.call('GET','/links'))==1
         assert len(view._groups.groups())==2
-        print('PASS: server save, move, node/link duplication, portable export/import, ID remapping and recursive deletion')
+        print('PASS: template drop, delayed drawing creation, node/link duplication, portable import, ID remapping and recursive deletion')
         print('Artifacts:', output)
 
     finally:
@@ -241,6 +297,11 @@ def main():
                 request('DELETE', '/projects/' + identity)
             except Exception as error:
                 print('Could not clean test project', identity, error, file=sys.stderr)
+        for identity in template_ids:
+            try:
+                request('DELETE', '/templates/' + identity)
+            except Exception as error:
+                print('Could not clean test template', identity, error, file=sys.stderr)
 
 
 if __name__ == '__main__':

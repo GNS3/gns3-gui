@@ -365,8 +365,8 @@ def test_fixed_dimensions_margin_and_child_clipping(canvas):
     from gns3.items.group_item import set_scene_position
     child = drawing(canvas, x=0, y=0)
     _, width, height = canvas._groups.initialGeometry([child])
-    assert width >= child.sceneBoundingRect().width() * 1.2
-    assert height >= child.sceneBoundingRect().height() * 1.2 + GroupItem.TITLE_HEIGHT
+    assert width >= child.sceneBoundingRect().width() * 1.3
+    assert height >= child.sceneBoundingRect().height() * 1.3 + GroupItem.TITLE_HEIGHT
     container = group(canvas, [child])
     assert container.rect().width() == width and container.rect().height() == height
     rect = container.rect()
@@ -554,3 +554,121 @@ def test_duplicate_nested_group_retains_parent_and_fixed_dimensions(canvas):
     assert copy.parentItem() is outer
     assert copy.pos() == inner.pos() + QtCore.QPointF(20, 20)
     assert copy.rect() == inner.rect()
+
+
+def test_creation_acknowledgment_precedes_drawing_updates(canvas):
+    project = MagicMock()
+    container = GroupItem(name="Copy", project=project)
+    canvas.scene().addItem(container)
+    container.create()
+    posted = project.post.call_args.kwargs["body"]
+    acknowledge = project.post.call_args.args[1]
+    container.name = "Edited while creating"
+    container.setDimensions(350, 240)
+    container.updateDrawing()
+    container.updateDrawing()
+    assert project.post.call_count == 1
+    assert not project.put.called  # no PUT to a UUID not yet present on the server
+    acknowledge(posted)
+    assert project.put.call_count == 1
+    latest = project.put.call_args.kwargs["body"]
+    assert read_group(latest["svg"])["name"] == "Edited while creating"
+    assert read_group(latest["svg"])["size"] == {"width": 350, "height": 240}
+    assert container.rect().width() == 350
+
+
+def test_duplicate_queues_all_drawing_updates_until_post_ack(canvas):
+    shape = drawing(canvas)
+    original = group(canvas, [shape])
+    project = MagicMock()
+    canvas._topology.project.return_value = project
+    canvas.duplicateActionSlot()
+    assert project.post.call_count == 2  # one group and one shape
+    assert not project.put.called
+    requests = list(project.post.call_args_list)
+    for call in reversed(requests):  # deliberately acknowledge children before parents
+        call.args[1](call.kwargs["body"])
+    assert project.put.call_count == 2
+    copy = canvas._groups.selected()[0]
+    assert copy.drawing_id() != original.drawing_id()
+    assert len(copy.members()) == 1
+    assert read_group(copy.toSvg())["children"][0]["id"] == copy.members()[0].drawing_id()
+
+
+def test_delete_drawing_while_creation_is_pending_cleans_server_copy(canvas):
+    project = MagicMock()
+    shape = canvas.createDrawingItem("rect", 0, 0, 0, create=False)
+    shape._project = project
+    shape.create()
+    acknowledge = project.post.call_args.args[1]
+    posted = project.post.call_args.kwargs["body"]
+    shape.delete()
+    assert not project.delete.called
+    acknowledge(posted)
+    project.delete.assert_called_once_with("/drawings/" + shape.drawing_id(), None)
+
+
+def test_dimension_inputs_remain_white_under_dark_parent_style(canvas):
+    from gns3.qt import QtGui
+    from gns3.dialogs.group_properties_dialog import GroupPropertiesDialog
+    dialog = GroupPropertiesDialog(canvas, "LAN", 400, 250)
+    dialog.setStyleSheet("QDoubleSpinBox {background-color: #222222; color: #eeeeee;}")
+    for field in (dialog.widthEdit, dialog.heightEdit):
+        field.ensurePolished()
+        assert field.palette().color(QtGui.QPalette.ColorRole.Base).name() == "#ffffff"
+        assert field.palette().color(QtGui.QPalette.ColorRole.Text).name() == "#000000"
+    assert not dialog.nameEdit.styleSheet()  # override is scoped to dimensions
+    dialog.deleteLater()
+
+
+def test_template_drag_highlight_guides_and_async_group_insertion(canvas):
+    from gns3.qt import QtGui
+    container = group(canvas, [drawing(canvas)])
+    mime = QtCore.QMimeData()
+    mime.setData("application/x-gns3-template", b"test-template")
+    scene_point = container.mapToScene(container.rect().center())
+    point = canvas.mapFromScene(scene_point)
+    enter = QtGui.QDragEnterEvent(point, QtCore.Qt.DropAction.CopyAction, mime,
+                                 QtCore.Qt.MouseButton.LeftButton, QtCore.Qt.KeyboardModifier.NoModifier)
+    QtWidgets.QApplication.sendEvent(canvas.viewport(), enter)
+    before = container.toSvg()
+    move = QtGui.QDragMoveEvent(point, QtCore.Qt.DropAction.CopyAction, mime,
+                               QtCore.Qt.MouseButton.LeftButton, QtCore.Qt.KeyboardModifier.NoModifier)
+    QtWidgets.QApplication.sendEvent(canvas.viewport(), move)
+    assert container.drop_hover and canvas._groups.guide_parent is container
+    assert container.toSvg() == before
+    manager = MagicMock()
+    manager.createNodeFromTemplateId.return_value = True
+    local = container.mapFromScene(canvas.mapToScene(point))
+    drop = QtGui.QDropEvent(QtCore.QPointF(point), QtCore.Qt.DropAction.CopyAction, mime,
+                           QtCore.Qt.MouseButton.LeftButton, QtCore.Qt.KeyboardModifier.NoModifier)
+    with patch("gns3.graphics_view.TemplateManager.instance", return_value=manager):
+        QtWidgets.QApplication.sendEvent(canvas.viewport(), drop)
+    assert drop.isAccepted()
+    assert not container.drop_hover and canvas._groups.guide_parent is None
+    callback = manager.createNodeFromTemplateId.call_args.kwargs["callback"]
+    # Only the node returned by this request is adopted; moving the group while
+    # waiting must retain the original local drop location.
+    container.setPos(container.pos() + QtCore.QPointF(70, 30))
+    node = device(canvas, 300, 200)
+    canvas._topology.getNodeFromUuid.return_value = node.node()
+    callback({"node_id": node.node().node_id()})
+    assert node.parentItem() is container and node.pos() == local
+
+
+def test_template_hover_prefers_nested_group_and_clears_on_leave(canvas):
+    from gns3.qt import QtGui
+    inner = group(canvas, [drawing(canvas)])
+    outer = group(canvas, [inner, drawing(canvas, x=350)], "Site")
+    canvas._groups.setDropTarget(inner.mapToScene(inner.rect().center()))
+    assert canvas._groups.drop_target is inner and inner.drop_hover and not outer.drop_hover
+    canvas.dragLeaveEvent(QtGui.QDragLeaveEvent())
+    assert not inner.drop_hover and canvas._groups.drop_target is None
+    assert canvas._groups.guide_parent is None
+    canvas._groups.setDropTarget(inner.mapToScene(inner.rect().center()))
+    mime = QtCore.QMimeData()
+    mime.setUrls([QtCore.QUrl.fromLocalFile("/tmp/example.gns3")])
+    move = QtGui.QDragMoveEvent(QtCore.QPoint(0, 0), QtCore.Qt.DropAction.CopyAction, mime,
+                               QtCore.Qt.MouseButton.LeftButton, QtCore.Qt.KeyboardModifier.NoModifier)
+    canvas.dragMoveEvent(move)
+    assert not inner.drop_hover and canvas._groups.guide_parent is None

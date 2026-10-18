@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtCore, QtWidgets, qslot, QtGui
+from ..qt import QtCore, QtWidgets, qslot, QtGui, sip_is_deleted
 from .utils import colorFromSvg
 
 import uuid
@@ -44,6 +44,10 @@ class DrawingItem:
     def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, locked=False, rotation=0, **kws):
         self._id = drawing_id
         self._deleting = False
+        self._server_created = drawing_id is not None
+        self._create_pending = False
+        self._update_pending = False
+        self._delete_on_create = False
         self._allow_snap_to_grid = True
         self._locked = locked
         if self._id is None:
@@ -75,7 +79,11 @@ class DrawingItem:
         return self._id
 
     def create(self):
-        if self._project:
+        if self._project and not self._server_created and not self._create_pending and not self.deleting():
+            # POST/PUT can use different HTTP connections. A client-generated
+            # UUID alone does not mean the server has created the drawing yet.
+            self._create_pending = True
+            self._hash_svg = None  # creation always needs the complete SVG
             self._project.post("/drawings", self._createDrawingCallback, body=self.__json__())
 
     def _createDrawingCallback(self, result, error=False, **kwargs):
@@ -87,14 +95,35 @@ class DrawingItem:
         :returns: Boolean success or not
         """
 
+        if sip_is_deleted(self):
+            return False
+        self._create_pending = False
         if error:
+            self._server_created = False
             log.error("Error while creating drawing: {}".format(result["message"]))
             return False
+        self._server_created = True
         self._id = result["drawing_id"]
-        self.updateDrawingCallback(result)
+        if self.deleting() and self._delete_on_create:
+            # Deletion while POST was pending must not leave an orphan behind.
+            self._project.delete("/drawings/" + self._id, None)
+        elif self.deleting():
+            return
+        elif self._update_pending:
+            # Preserve edits made while POST was in flight; do not apply its
+            # old coordinates/SVG before flushing the newest complete state.
+            self._update_pending = False
+            self._hash_svg = None
+            self.updateDrawing()
+        else:
+            self.updateDrawingCallback(result)
 
     def updateDrawing(self):
         if self._id and not self.deleting() and self._project:
+            if not self._server_created:
+                self._update_pending = True
+                self.create()
+                return
             self._project.put("/drawings/" + self._id, self.updateDrawingCallback, body=self.__json__(), showProgress=False)
 
     @qslot
@@ -107,10 +136,13 @@ class DrawingItem:
         :returns: Boolean success or not
         """
 
+        if self.deleting():
+            return
         if error:
             if "doesn't exist" in result.get("message", ""):
                 log.warning("Drawing not found on server, recreating: {}".format(self._id))
-                self._id = None
+                self._server_created = False
+                self._hash_svg = None
                 self.create()
                 return True
             log.error("Error while updating drawing: {}".format(result["message"]))
@@ -233,6 +265,7 @@ class DrawingItem:
         """
 
         self.setDeleting()
+        self._delete_on_create = self._create_pending and not skip_controller
         from .group_item import GroupItem, reparent
         parent = self.parentItem()
         if isinstance(parent, GroupItem):
@@ -240,7 +273,7 @@ class DrawingItem:
         self.scene().removeItem(self)
         from ..topology import Topology
         Topology.instance().removeDrawing(self)
-        if self._id and self._project and not skip_controller:
+        if self._id and self._project and not skip_controller and self._server_created:
             self._project.delete("/drawings/" + self._id, None)
         if isinstance(parent, GroupItem) and not parent.deleting():
             parent.updateDrawing()
