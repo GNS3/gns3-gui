@@ -246,7 +246,7 @@ Ao arrastar um dispositivo novo da lista de templates sobre um grupo, o
 contorno temporário agora usa uma linha **sólida** de quatro unidades de largura.
 Ao sair da área ou soltar o dispositivo, volta ao contorno tracejado normal.
 As guias de centro continuam temporárias e tracejadas; elas têm outra função.
-O destaque continua restrito ao arraste de dispositivos novos.
+A mesma indicação de destino também atende dispositivos já presentes no canvas.
 
 Para retirar um dispositivo existente, entre no grupo e arraste o dispositivo
 para fora. A retirada acontece ao soltar o botão do mouse, quando o **centro do
@@ -264,7 +264,8 @@ comportamento anterior.
 No código, `CanvasGroups.beginDrag()` registra as posições dos dispositivos
 selecionados no mesmo pai. `endDrag()` avalia os que realmente mudaram de posição,
 depois de o Qt terminar de processar a soltura em `GraphicsView.mouseReleaseEvent()`.
-Durante o gesto, o dispositivo continua filho do grupo e sujeito ao recorte.
+Durante o gesto, o dispositivo continua filho do grupo; a prévia descrita abaixo
+permite vê-lo fora da borda.
 O helper `reparent()` preserva a posição no canvas e a camada visual; os links
 continuam ligados aos mesmos dispositivos. O salvamento inclui o dispositivo,
 o pai anterior, mesmo que tenha ficado vazio, e os ancestrais envolvidos.
@@ -278,3 +279,34 @@ Também verificam cliques sem movimento, recorte parcial e a renderização do
 contorno contínuo durante o destaque, seguida da volta ao tracejado.
 Resultado desta revisão: **235 testes aprovados e 1 ignorado**, com o aviso já
 existente de depreciação de `tarfile` no teste do instalador de atualizações.
+
+### Prévia de saída e transferência entre grupos
+
+Quando o centro de um dispositivo arrastado sai do pai direto, o contorno desse
+grupo fica vermelho, sólido e engrossado. O símbolo e seus rótulos passam a
+ser visíveis fora da borda durante o arraste. Voltar para dentro limpa essa
+indicação; soltar fora conclui a saída. O critério continua sendo o centro do
+símbolo, então um elemento apenas parcialmente para fora continua recortado
+enquanto o centro permanecer dentro.
+
+Um dispositivo que já esteja na topologia pode ser inserido em um grupo por
+arraste. O grupo sob o centro do símbolo recebe o mesmo contorno azul sólido
+e engrossado usado para dispositivos novos, junto das guias de centro. Soltar
+confirma a inserção. Isso também permite transferir um dispositivo diretamente
+de um grupo para outro: a origem fica vermelha e o destino azul. O destino é o
+grupo visível mais interno naquela posição, respeitando os bloqueios do grupo
+e dos seus ancestrais. Posição no canvas e links são preservados.
+
+`updateDrag()` calcula a prévia depois que o Qt atualiza as posições. Não há
+reparenting temporário: o pai e os metadados só mudam em `endDrag()`. Para mostrar
+o dispositivo fora do recorte sem revelar os demais filhos, `drawDragPreviews()`
+pinta o símbolo e seus rótulos no foreground, apenas nos pixels excluídos pelo
+recorte dos ancestrais. O recorte normal dos grupos continua ativo. Essa prévia,
+as cores e as guias são estados da visualização e não entram na topologia
+exportada. Soltar, perder o foco ou sair da edição limpa o estado temporário.
+
+A suíte desta revisão terminou com **239 aprovados e 1 ignorado**, mantendo o
+aviso anterior de `tarfile`. Os testes novos cobrem saída com símbolo/rótulos
+visíveis fora da borda, outros filhos ainda recortados, contorno vermelho,
+retorno ao grupo original, entrada a partir do canvas e transferência entre
+grupos, incluindo a árvore lateral e a restauração dos metadados.

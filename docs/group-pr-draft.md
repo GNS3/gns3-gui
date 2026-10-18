@@ -22,6 +22,11 @@ is dragged out of its group, releasing its symbol center outside the parent
 detaches it while preserving its scene position and links. In a nested hierarchy,
 the device moves to the nearest containing ancestor, or to the canvas if none
 contains it. Partial overflow remains clipped until the center leaves the frame.
+During exit, the source frame turns red and a view-only foreground preview keeps
+the dragged symbol and labels visible beyond ancestor clips without exposing
+other overflowing children. Existing devices can also be dropped into a group;
+the destination uses the same thick blue border and center guides as template
+drops. Ownership changes only on release, including direct group-to-group moves.
 
 The canvas uses Qt parent/child items rather than a selection association. The
 implementation keeps the existing menus and tools, adding a toolbar action with
