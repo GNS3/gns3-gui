@@ -83,6 +83,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings = {}
 
         self.setupUi(self)
+        self._setupNodeGroupingActions()
         self.setUnifiedTitleAndToolBarOnMac(True)
 
         # These widgets will be disabled when no project is loaded
@@ -1135,6 +1136,41 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def resizeEvent(self, event):
         self._notif_dialog.resize()
         super().resizeEvent(event)
+
+    def _setupNodeGroupingActions(self):
+        """Add canvas actions without editing generated Qt Designer code.
+
+        Shortcuts belong to the canvas, avoiding conflicts in text fields and
+        dialogs. Membership is intentionally local to the open project session.
+        """
+        for name, text, shortcut, callback in (
+            ("uiGroupNodesAction", "Group devices", "Ctrl+G", self.uiGraphicsView.groupSelectedNodes),
+            ("uiUngroupNodesAction", "Ungroup devices", "Ctrl+Shift+G", self.uiGraphicsView.ungroupSelectedNodes),
+        ):
+            action = QtGui.QAction(text, self.uiGraphicsView)
+            action.setObjectName(name)
+            action.setShortcut(QtGui.QKeySequence(shortcut))
+            action.setShortcutContext(QtCore.Qt.ShortcutContext.WidgetShortcut)
+            action.setToolTip("{} ({}) — current project session".format(text, shortcut))
+            action.triggered.connect(callback)
+            self.uiGraphicsView.addAction(action)
+            self.uiAnnotateMenu.addAction(action)
+            setattr(self, name, action)
+
+        # Draw a small theme-aware icon; no generated resource files to rebuild.
+        pixmap = QtGui.QPixmap(32, 32)
+        pixmap.fill(QtCore.Qt.GlobalColor.transparent)
+        painter = QtGui.QPainter(pixmap)
+        pen = QtGui.QPen(self.palette().color(QtGui.QPalette.ColorRole.WindowText), 2)
+        painter.setPen(pen)
+        painter.drawRect(7, 7, 8, 8)
+        painter.drawRect(17, 17, 8, 8)
+        pen.setStyle(QtCore.Qt.PenStyle.DashLine)
+        painter.setPen(pen)
+        painter.drawRect(2, 2, 28, 28)
+        painter.end()
+        self.uiGroupNodesAction.setIcon(QtGui.QIcon(pixmap))
+        self.uiAnnotationToolBar.addAction(self.uiGroupNodesAction)
 
     def keyPressEvent(self, event):
         """

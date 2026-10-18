@@ -41,3 +41,16 @@ def test_main_window_settings_changed_slot(real_main_window):
     real_main_window._appliance_manager =  manager
     real_main_window.settingsChangedSlot()
     assert instance.refresh.called
+
+
+def test_node_grouping_actions(real_main_window):
+    from gns3.qt import QtCore
+    window = real_main_window
+    group = window.uiGroupNodesAction
+    ungroup = window.uiUngroupNodesAction
+    assert group in window.uiAnnotationToolBar.actions()
+    assert ungroup in window.uiAnnotateMenu.actions()
+    assert not group.icon().isNull()
+    assert group.shortcut().toString() == "Ctrl+G"
+    assert ungroup.shortcut().toString() == "Ctrl+Shift+G"
+    assert group.shortcutContext() == QtCore.Qt.ShortcutContext.WidgetShortcut

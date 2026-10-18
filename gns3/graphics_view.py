@@ -94,6 +94,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._adding_line = False
         self._newlink = None
         self._dragging = False
+        # Session-only membership: keep nodes as top-level scene items so their
+        # existing link geometry, coordinates and controller updates still work.
+        self._node_groups = []
         self._grid_size = 75
         self._drawing_grid_size = 25
         self._drawing_grid_color = self.DEFAULT_DRAWING_GRID_COLOR
@@ -195,6 +198,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._main_window.uiLockAllAction.setChecked(False)
 
         # clear all objects on the scene
+        self._node_groups.clear()
         self.scene().clear()
 
         # reset zoom / scale
@@ -431,6 +435,43 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._newlink = None
             self.addLink(source_item.node(), source_port, destination_item.node(), destination_port)
 
+    def _liveNodeGroups(self):
+        """Discard deleted/removed nodes before using session memberships."""
+        self._node_groups = [
+            {item for item in group if not sip.isdeleted(item) and item.scene() is self.scene()}
+            for group in self._node_groups
+        ]
+        self._node_groups = [group for group in self._node_groups if len(group) > 1]
+        return self._node_groups
+
+    def groupSelectedNodes(self):
+        """Merge selected devices and their existing groups without reparenting."""
+        selected = {item for item in self.scene().selectedItems() if isinstance(item, NodeItem)}
+        groups = self._liveNodeGroups()
+        for group in groups:
+            if selected & group:
+                selected.update(group)
+        if len(selected) < 2:
+            self._main_window.uiStatusBar.showMessage("Select at least two devices to group", 5000)
+            return
+        self._node_groups = [group for group in groups if not selected & group]
+        self._node_groups.append(selected)
+        self._selectNodeGroups()
+        self._main_window.uiStatusBar.showMessage("Devices grouped (for this project session)", 5000)
+
+    def ungroupSelectedNodes(self):
+        """Dissolve every group touched by the current device selection."""
+        selected = set(self.scene().selectedItems())
+        self._node_groups = [group for group in self._liveNodeGroups() if not selected & group]
+
+    def _selectNodeGroups(self):
+        """Expand a selection using Qt's native multiple-item drag support."""
+        selected = set(self.scene().selectedItems())
+        for group in self._liveNodeGroups():
+            if selected & group:
+                for item in group:
+                    item.setSelected(True)
+
     def mousePressEvent(self, event):
         """
         Handles all mouse press events.
@@ -511,6 +552,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             super().mousePressEvent(event)
 
+        if event.button() == QtCore.Qt.MouseButton.LeftButton and not self._adding_link:
+            self._selectNodeGroups()
         self.toggleUiDeviceMenu()
 
     def contextMenuEvent(self, event):
@@ -560,6 +603,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param: QMouseEvent instance
         """
 
+        if not self._adding_link:
+            self._selectNodeGroups()
         for item in self.scene().selectedItems():
             if isinstance(item, NodeItem):
                 item.mouseRelease()
@@ -627,6 +672,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         :param event: QMouseEvent instance
         """
+
+        if not self._dragging and not self._adding_link and event.buttons() & QtCore.Qt.MouseButton.LeftButton:
+            selected = set(self.scene().selectedItems())
+            # A locked member must not leave the rest of its group behind.
+            for group in self._liveNodeGroups():
+                if selected & group and any(item.locked() for item in group):
+                    event.accept()
+                    return
 
         if self._dragging:
             # This if statement event checks to see if the user is dragging the scene
