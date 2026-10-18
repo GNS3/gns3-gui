@@ -98,6 +98,10 @@ class HTTPClient(QtCore.QObject):
             self._network_manager = QtNetwork.QNetworkAccessManager()
         # A buffer used by progress download
         self._buffer = {}
+        # Qt owns the native replies, but Python signal callbacks also need
+        # their wrappers alive. Requests without a timeout/progress dialog
+        # otherwise have only collectible cycles and may lose their callbacks.
+        self._active_replies = set()
 
         # List of query waiting for the connection
         self._query_waiting_connections = []
@@ -618,6 +622,7 @@ class HTTPClient(QtCore.QObject):
             log.error("Can't send query: {}".format(str(e)))
             return None
 
+        self._active_replies.add(response)
         if context:
             context = copy.copy(context)
         else:
@@ -757,6 +762,9 @@ class HTTPClient(QtCore.QObject):
                     log.error(error_message)
 
     def _processResponse(self, response, server, callback, context, request_body, ignore_errors):
+        # The argument keeps the wrapper alive until this handler returns,
+        # including while the completion callback submits further requests.
+        self._active_replies.discard(response)
         if request_body is not None:
             request_body.close()
 

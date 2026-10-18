@@ -17,6 +17,8 @@
 
 import pytest
 import unittest.mock
+import gc
+import weakref
 
 from gns3.qt import QtCore, QtNetwork, FakeQtSignal, QtWebSockets
 from gns3.http_client import HTTPClient
@@ -76,6 +78,41 @@ def test_get_connected(http_client, http_request, network_manager, response):
     response.finished.emit()
 
     assert callback.called
+
+
+def test_background_replies_survive_collection_and_complete_out_of_order(http_client, network_manager):
+    """Use real Qt signals/wrappers; mocked replies cannot expose this GC bug."""
+    class Reply(QtNetwork.QNetworkReply):
+        def __init__(self, number):
+            super().__init__()
+            self.number = number
+            self.setAttribute(QtNetwork.QNetworkRequest.Attribute.HttpStatusCodeAttribute, 201)
+            self.setHeader(QtNetwork.QNetworkRequest.KnownHeaders.ContentTypeHeader, "application/json")
+
+        def readAll(self):
+            return QtCore.QByteArray(('{"node_id": "%s"}' % self.number).encode())
+
+    references = []
+
+    def send(*args):
+        reply = Reply(len(references))
+        references.append(weakref.ref(reply))
+        return reply
+
+    network_manager.sendCustomRequest.side_effect = send
+    http_client._connected = True
+    completed = []
+    for number in range(3):
+        http_client.createHTTPQuery("POST", "/nodes/{}/duplicate".format(number),
+                                    lambda result, **kwargs: completed.append(result["node_id"]),
+                                    body={"x": 20, "y": 20}, timeout=None, showProgress=False)
+    gc.collect()
+    assert all(reference() is not None for reference in references)
+    for number in (2, 0, 1):
+        references[number]().finished.emit()
+        gc.collect()
+    assert completed == ["2", "0", "1"]
+    assert not http_client._active_replies
 
 
 def test_paramsToQueryString(http_client):
