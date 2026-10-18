@@ -324,9 +324,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
         """
 
         image_item = ImageItem(image_path=image_path, project=self._topology.project())
-        image_item.create()
+        if image_item.boundingRect().width() <= 0 or image_item.boundingRect().height() <= 0:
+            QtWidgets.QMessageBox.warning(self, 'Image properties', 'Could not read image dimensions.')
+            return
+        from .dialogs.image_properties_dialog import ImagePropertiesDialog
+        dimensions = ImagePropertiesDialog.getDimensions(self, image_item.boundingRect().width(), image_item.boundingRect().height())
+        if dimensions is None:
+            return
+        width, height, image_item.keep_aspect = dimensions
+        center = image_item.scenePos() + image_item.boundingRect().center()
+        image_item.setDimensions(width, height)
+        image_item.setPos(center - image_item.boundingRect().center())
         self.scene().addItem(image_item)
         self._topology.addDrawing(image_item)
+        image_item.create()
 
     def addLogo(self, logo_path, logo_url):
         logo_item = LogoItem(logo_path, logo_url, self._topology.project())

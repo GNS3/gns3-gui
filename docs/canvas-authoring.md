@@ -56,3 +56,34 @@ seletor já existente. Confirmar uma nota não vazia cria o desenho; cancelar ou
 confirmar conteúdo vazio descarta o rascunho. Família, tamanho e sublinhado são
 preservados pelo SVG existente. Testes cobrem confirmação/cancelamento, padrões
 e round-trip da tipografia.
+
+## Imagens: dimensões iniciais e redimensionamento
+
+Importar abre Image properties antes de criar o desenho. Largura/altura vêm
+da imagem, com Keep aspect ratio marcado; é possível desmarcar para dimensões
+independentes. Confirmar redimensiona mantendo o centro inicial, e cancelar não
+adiciona a imagem nem envia criação ao servidor. Dimensões vão de 1 a 1.000.000.
+
+Imagens selecionadas mostram quatro alças internas nos cantos. Arrastar perto
+de uma borda ou canto redimensiona; mover pelo interior mantém a movimentação
+normal. O bloqueio impede redimensionar. A proporção segue a escolha feita ao
+importar. A transformação original do gesto serve de referência, incluindo
+imagens dentro de containers ou com rotação, preservando o canto oposto.
+
+O tamanho é salvo no SVG (width, height e viewBox), não apenas em uma escala
+transitória do item. A preferência de proporção é um atributo opcional do SVG;
+imagens antigas assumem proporção preservada. O renderer tem referência Python
+explícita e é substituído antes de liberar o antigo. O conteúdo raster continua
+embutido no SVG, sem depender do caminho do arquivo depois da importação.
+
+Testes verificam cancelamento/aceitação da importação, dimensões após recarga,
+proporção e tamanho livre, cantos superior esquerdo e inferior direito dentro
+de um container, posição do canto oposto e persistência da escolha de proporção.
+
+## Verificação final
+
+Suíte completa: 288 aprovados e 1 ignorado, com o aviso preexistente de `tarfile`.
+Os três diálogos foram renderizados e inspecionados em Qt offscreen. A avaliação
+de uso no desktop deve incluir desenhos em diferentes níveis de zoom, importação
+de imagens reais e a troca de forma de containers já preenchidos. Fontes não
+são incorporadas: a aparência pode variar em sistemas sem a família original.
