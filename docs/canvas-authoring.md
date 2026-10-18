@@ -170,3 +170,23 @@ projeto descartável é excluído. A suíte completa terminou com 297 aprovados 
 
 A cobertura do diálogo também aciona o botão Apply real e verifica os valores
 enviados à prévia, sem aceitar ou fechar o diálogo.
+
+## Fluidez do redimensionamento de imagens
+
+O gesto agora usa uma transformação temporária do item, reutilizando o mesmo
+renderer e os pixels já decodificados. Reconstruir e decodificar o SVG/base64 a
+cada evento do mouse causava travamentos, especialmente em imagens grandes.
+Ao soltar, a transformação temporária é incorporada às dimensões SVG uma única
+vez, o transform original é restaurado e a view salva o resultado. Não há uma
+segunda gravação redundante disparada pelo próprio item.
+
+Nos cantos com proporção bloqueada, o movimento é projetado na diagonal da
+proporção original, evitando a troca abrupta entre eixo dominante horizontal e
+vertical. O cálculo usa a transformação original do gesto para preservar o
+canto oposto, inclusive com rotação e dentro de containers. A preferência de
+proporção e o tamanho livre continuam disponíveis.
+
+A regressão percorre vários eventos nos quatro cantos de uma imagem rotacionada:
+verifica que o renderer é o mesmo durante o arraste, que não há nova decodificação
+nesse período e que ela ocorre uma vez na soltura. A suíte completa desta revisão
+terminou com **304 aprovados e 1 ignorado**, com o aviso preexistente de `tarfile`.

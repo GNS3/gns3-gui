@@ -142,14 +142,15 @@ class ImageItem(QtSvgWidgets.QGraphicsSvgItem, DrawingItem):
         self._resize_edge = self.resizeEdgeAt(event.pos()) if event.button() == QtCore.Qt.MouseButton.LeftButton else None
         if self._resize_edge:
             self.setSelected(True)
-            self._resize_data = (QtCore.QRectF(self.boundingRect()), self.scenePos(), event.pos(), self.sceneTransform().inverted()[0])
+            self._resize_data = (QtCore.QRectF(self.boundingRect()), self.scenePos(), event.pos(), self.sceneTransform().inverted()[0], self.transform(), self.sceneTransform())
+            self._resize_dimensions = None
             event.accept()
             return
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
         if self._resize_edge:
-            rect, origin, press, original_inverse = self._resize_data
+            rect, origin, press, original_inverse, original_transform, scene_transform = self._resize_data
             # Work in the original item's axes; mapFromScene also handles nested
             # containers and rotation, unlike subtracting canvas x/y directly.
             delta = original_inverse.map(event.scenePos()) - press
@@ -157,15 +158,23 @@ class ImageItem(QtSvgWidgets.QGraphicsSvgItem, DrawingItem):
             height = max(1, min(1000000, rect.height() + (-delta.y() if 't' in self._resize_edge else delta.y() if 'b' in self._resize_edge else 0)))
             if self.keep_aspect:
                 sx, sy = width / rect.width(), height / rect.height()
-                scale = sy if self._resize_edge in ('t', 'b') or (len(self._resize_edge) == 2 and abs(sy - 1) > abs(sx - 1)) else sx
+                if len(self._resize_edge) == 2:
+                    # Project the pointer delta onto the aspect-ratio diagonal,
+                    # avoiding jumps when the dominant axis changes.
+                    scale = (rect.width() * width + rect.height() * height) / (rect.width() ** 2 + rect.height() ** 2)
+                else:
+                    scale = sy if self._resize_edge in ('t', 'b') else sx
                 scale = max(max(1 / rect.width(), 1 / rect.height()), min(scale, 1000000 / rect.width(), 1000000 / rect.height()))
                 width, height = rect.width() * scale, rect.height() * scale
             shift = QtCore.QPointF(rect.width() - width if 'l' in self._resize_edge else 0,
                                   rect.height() - height if 't' in self._resize_edge else 0)
             from .group_item import set_scene_position
             # Preserve the opposite corner in scene coordinates.
-            movement = self.mapToScene(shift) - self.mapToScene(QtCore.QPointF())
-            self.setDimensions(width, height)
+            movement = scene_transform.map(shift) - scene_transform.map(QtCore.QPointF())
+            # A transform is a cheap interactive preview; decode/rebuild the SVG
+            # only once on release, rather than once per mouse event.
+            self.setTransform(QtGui.QTransform.fromScale(width / rect.width(), height / rect.height()) * original_transform)
+            self._resize_dimensions = (width, height)
             set_scene_position(self, origin + movement)
             event.accept()
             return
@@ -173,9 +182,15 @@ class ImageItem(QtSvgWidgets.QGraphicsSvgItem, DrawingItem):
 
     def mouseReleaseEvent(self, event):
         if self._resize_edge:
+            from .group_item import set_scene_position
+            position = self.scenePos()
+            self.setTransform(self._resize_data[4])
+            if self._resize_dimensions is not None:
+                self.setDimensions(*self._resize_dimensions)
+            set_scene_position(self, position)
             self._resize_edge = None
             self._resize_data = None
-            self._graphics_view._groups.save([self])
+            # GraphicsView persists the final selected drawings on release.
             event.accept()
             return
         super().mouseReleaseEvent(event)
