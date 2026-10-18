@@ -33,7 +33,7 @@ O servidor GNS3 e os simuladores são instalados/configurados separadamente.
    com foco no canvas. Informe um nome, por exemplo **LAN 1**, e ajuste largura
    e altura se desejar. Os valores iniciais contêm os elementos selecionados,
    com 30% de espaço extra no total (15% em cada lado) e uma faixa de 24 unidades para o título.
-3. O novo elemento aparece com nome e moldura tracejada. Arrastar um membro do
+3. O novo elemento aparece com nome e moldura sólida. Arrastar um membro do
    grupo fechado seleciona e move o contêiner inteiro. As posições dos filhos
    passam a ser relativas à origem do grupo.
 4. Selecione esse grupo junto de outros elementos e agrupe novamente para criar
@@ -79,8 +79,10 @@ respectivos dispositivos e portas. O menu de contexto de um grupo oferece
 **Rename group**, **Duplicate** e **Delete**, usando as mesmas operações
 recursivas do canvas; Delete no teclado também funciona para o grupo selecionado.
 Duplo clique no nome do grupo nessa árvore também abre suas propriedades.
-O botão superior é uma ação momentânea: mostra ajuda na barra de status ao
-passar o mouse e usa ícones diferentes para estado normal e hover.
+O botão superior mostra ajuda na barra de status ao passar o mouse e usa ícones
+diferentes para estado normal e hover. Sem seleção, ele aguarda a próxima
+seleção no canvas e abre o diálogo ao soltar o mouse; Esc cancela essa espera.
+Com uma seleção existente, abre o diálogo imediatamente, assim como Ctrl+G.
 O contêiner suporta translação, não rotação/escala do conjunto. Os desenhos
 filhos preservam suas rotações individuais. Rótulos de dispositivos/portas
 continuam pertencendo aos respectivos objetos; links são relações entre nós,
@@ -244,7 +246,7 @@ com servidor 2.2.61, agora usando o transporte Qt assíncrono para a duplicaçã
 
 Ao arrastar um dispositivo novo da lista de templates sobre um grupo, o
 contorno temporário agora usa uma linha **sólida** de quatro unidades de largura.
-Ao sair da área ou soltar o dispositivo, volta ao contorno tracejado normal.
+Ao sair da área ou soltar o dispositivo, volta ao contorno sólido de espessura normal.
 As guias de centro continuam temporárias e tracejadas; elas têm outra função.
 A mesma indicação de destino também atende dispositivos já presentes no canvas.
 
@@ -276,7 +278,7 @@ Não foi necessário alterar o formato de arquivo nem a API do servidor. Os
 testes usam eventos reais de mouse nas quatro bordas, verificam a árvore lateral
 e a restauração dos metadados, a posição, os links e a saída de grupos aninhados.
 Também verificam cliques sem movimento, recorte parcial e a renderização do
-contorno contínuo durante o destaque, seguida da volta ao tracejado.
+contorno contínuo durante o destaque, seguida da volta à espessura normal.
 Resultado desta revisão: **235 testes aprovados e 1 ignorado**, com o aviso já
 existente de depreciação de `tarfile` no teste do instalador de atualizações.
 
@@ -310,3 +312,32 @@ aviso anterior de `tarfile`. Os testes novos cobrem saída com símbolo/rótulos
 visíveis fora da borda, outros filhos ainda recortados, contorno vermelho,
 retorno ao grupo original, entrada a partir do canvas e transferência entre
 grupos, incluindo a árvore lateral e a restauração dos metadados.
+
+### Criação pela barra superior após selecionar
+
+O botão **Group elements** e Ctrl+G usam `CanvasGroups.requestGroup()`. Quando
+já há uma seleção válida, o diálogo abre imediatamente. Sem seleção, o pedido
+fica pendente: selecione os elementos com o retângulo de seleção e solte o
+botão esquerdo. O diálogo abre uma única vez, com os elementos selecionados
+naquele momento, incluindo dispositivos, desenhos, textos e grupos. Para montar
+uma seleção por vários Ctrl+cliques, faça isso antes de acionar o botão.
+
+A soltura é processada primeiro pelo Qt, depois a seleção é normalizada para o
+nível atual da hierarquia e só então `finishSelection()` chama a criação já
+existente. O pedido é consumido antes do modal, portanto cancelar o diálogo não
+deixa a próxima seleção abrindo outro modal. Uma seleção vazia mantém a espera;
+Esc e a limpeza do projeto cancelam o pedido. Cliques direitos, pan e ferramentas
+de desenho ou criação de links não concluem esse pedido. O botão permanece
+momentâneo, sem ficar pressionado ou azul depois do clique.
+
+Todas as molduras dos grupos agora são sólidas: estado normal, seleção, edição,
+entrada azul e saída vermelha. As indicações de arraste continuam mais espessas.
+O contorno externo do ícone do botão também é sólido. As guias temporárias de
+alinhamento continuam tracejadas para se distinguirem dos contornos.
+
+Validação: **247 testes aprovados e 1 ignorado**, com o aviso já existente de
+`tarfile`. O teste do botão usa um `QToolBar` real, eventos de mouse e uma seleção
+retangular contendo dois dispositivos e uma nota, deixando um terceiro
+dispositivo de fora. Confere que o diálogo só abre na soltura e cobre tanto a
+confirmação quanto o cancelamento. Outros testes cobrem seleção prévia, Esc,
+seleção vazia e continuidade dos contornos em seleção, edição e hover.

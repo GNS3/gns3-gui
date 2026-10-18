@@ -31,6 +31,11 @@ drops. Ownership changes only on release, including direct group-to-group moves.
 The canvas uses Qt parent/child items rather than a selection association. The
 implementation keeps the existing menus and tools, adding a toolbar action with
 Ctrl+G and Ctrl+Shift+G for ungrouping. Name and dimension fields share one dialog.
+With a selection, the group action opens the properties dialog immediately.
+Without one, it waits for the next selection and opens the dialog on mouse
+release with the selected elements. The request is consumed once; Esc cancels
+the wait. Group frames are solid in every state, with thicker blue/red drag
+feedback; temporary alignment guides remain dashed.
 Guides, hover highlighting and editing state are view-only and are not exported.
 
 ## Persistence and server scope
