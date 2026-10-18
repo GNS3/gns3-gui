@@ -496,7 +496,7 @@ class CanvasGroups:
                                   if kind == member["type"] and
                                   (item.node().name() if kind == "node" else item._canvas_id) == member["key"]]
                     if len(candidates) > 1:
-                        raise ValueError("Ambiguous imported group child")
+                        raise ValueError("Ambiguous imported container child")
                     child = candidates[0] if candidates else None
                 if child is None:
                     continue
@@ -510,7 +510,7 @@ class CanvasGroups:
 
         def visit(group):
             if group in active:
-                raise ValueError("Cyclic canvas group hierarchy")
+                raise ValueError("Cyclic canvas container hierarchy")
             if group in visited:
                 return
             active.add(group)

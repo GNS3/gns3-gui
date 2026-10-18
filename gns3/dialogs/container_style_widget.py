@@ -78,7 +78,13 @@ class ContainerStyleWidget(QtWidgets.QWidget):
 
     def updateColorButton(self, button, color):
         value = QtGui.QColor(color)
-        button.setStyleSheet('background-color: rgba(%d,%d,%d,%d)' % (value.red(), value.green(), value.blue(), value.alpha()))
+        if value.alpha() == 0:
+            button.setText('Transparent')
+            button.setStyleSheet('background-color: white; color: black;')
+        else:
+            button.setText('Choose color…' if value.alpha() == 255 else 'Opacity: {}%'.format(round(value.alphaF() * 100)))
+            foreground = 'black' if value.lightness() > 128 else 'white'
+            button.setStyleSheet('background-color: {}; color: {};'.format(value.name(), foreground))
 
     def chooseColor(self, key, button):
         color = QtWidgets.QColorDialog.getColor(QtGui.QColor(self.values[key]), self, 'Select color',
@@ -87,6 +93,6 @@ class ContainerStyleWidget(QtWidgets.QWidget):
             self.values[key] = color.name(QtGui.QColor.NameFormat.HexArgb)
             self.updateColorButton(button, self.values[key])
 
-    def style(self):
+    def styleData(self):
         return validated_style(dict(self.values, shape=self.shapes.checkedButton().property('containerShape'),
                                     border_style=self.borderStyle.currentData(), border_width=self.borderWidth.value()))

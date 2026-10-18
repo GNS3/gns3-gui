@@ -80,7 +80,7 @@ def test_container_dialog_has_accessible_exclusive_icon_choices(canvas):
     editor = dialog.styleEditor
     assert editor.shape_buttons['rect'].isChecked()
     editor.shape_buttons['triangle'].click()
-    assert editor.style()['shape'] == 'triangle'
+    assert editor.styleData()['shape'] == 'triangle'
     assert not editor.shape_buttons['rect'].isChecked()
     assert all(not button.text() and button.accessibleName() and not button.icon().isNull()
                for button in editor.shape_buttons.values())
@@ -176,3 +176,19 @@ def test_image_dimension_dialog_ratio_and_free_size(canvas):
     dialog.keepAspect.setChecked(False)
     dialog.heightEdit.setValue(350)
     assert dialog.widthEdit.value() == 400
+
+
+def test_container_color_controls_remain_readable_and_draft_cancels_on_focus_loss(canvas):
+    from gns3.dialogs.container_style_widget import ContainerStyleWidget
+    from gns3.qt import QtGui
+    editor = ContainerStyleWidget()
+    button = QtWidgets.QPushButton()
+    editor.updateColorButton(button, '#00000000')
+    assert button.text() == 'Transparent' and 'color: black' in button.styleSheet()
+    editor.updateColorButton(button, '#ff000000')
+    assert 'color: white' in button.styleSheet()
+    assert isinstance(editor.style(), QtWidgets.QStyle)  # QWidget API is not shadowed.
+    canvas._adding_rectangle = True
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=QtCore.QPoint(100, 100))
+    canvas.focusOutEvent(QtGui.QFocusEvent(QtCore.QEvent.Type.FocusOut))
+    assert canvas._shape_preview is None

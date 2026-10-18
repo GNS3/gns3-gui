@@ -82,8 +82,12 @@ de um container, posição do canto oposto e persistência da escolha de propor�
 
 ## Verificação final
 
-Suíte completa: 288 aprovados e 1 ignorado, com o aviso preexistente de `tarfile`.
+Suíte completa: 289 aprovados e 1 ignorado, com o aviso preexistente de `tarfile`.
 Os três diálogos foram renderizados e inspecionados em Qt offscreen. A avaliação
 de uso no desktop deve incluir desenhos em diferentes níveis de zoom, importação
 de imagens reais e a troca de forma de containers já preenchidos. Fontes não
 são incorporadas: a aparência pode variar em sistemas sem a família original.
+
+Na revisão visual, os seletores de cor ganharam texto contrastante e o fundo
+sem preenchimento é explicitamente identificado como Transparent. Perder o
+foco durante o desenho também cancela a prévia, evitando um fantasma órfão.

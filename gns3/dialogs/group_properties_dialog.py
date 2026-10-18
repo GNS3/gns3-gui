@@ -52,4 +52,4 @@ class GroupPropertiesDialog(QtWidgets.QDialog):
         dialog = cls(parent, name, width, height, style)
         if dialog.exec() != QtWidgets.QDialog.DialogCode.Accepted:
             return None
-        return dialog.nameEdit.text().strip(), dialog.widthEdit.value(), dialog.heightEdit.value(), dialog.styleEditor.style()
+        return dialog.nameEdit.text().strip(), dialog.widthEdit.value(), dialog.heightEdit.value(), dialog.styleEditor.styleData()

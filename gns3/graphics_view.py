@@ -1915,6 +1915,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._groups.drawDragPreviews(painter)
 
     def focusOutEvent(self, event):
+        if self._shape_preview is not None:
+            self.cancelShapeDrawing()
         self._groups.clearDrag()
         self._groups.endResize()
         super().focusOutEvent(event)

@@ -117,22 +117,22 @@ def read_group(svg):
         return None
     data = json.loads(metadata.text or "")
     if not isinstance(data, dict) or type(data.get("version")) is not int or data["version"] not in (1, GROUP_VERSION):
-        raise ValueError("Unsupported canvas group version")
+        raise ValueError("Unsupported canvas container version")
     if not isinstance(data.get("name"), str) or not data["name"].strip():
-        raise ValueError("A canvas group must have a name")
+        raise ValueError("A canvas container must have a name")
     if not isinstance(data.get("children"), list):
-        raise ValueError("A canvas group must have a children list")
+        raise ValueError("A canvas container must have a children list")
     if any(not isinstance(data.get(key), str) or not data[key] for key in ("drawing_id", "identity")):
-        raise ValueError("Invalid canvas group identity")
+        raise ValueError("Invalid canvas container identity")
     revision = data.get("revision", 0)
     if isinstance(revision, bool) or not isinstance(revision, int) or revision < 0:
-        raise ValueError("Invalid canvas group revision")
+        raise ValueError("Invalid canvas container revision")
     origin = data.get("origin")
     if not isinstance(origin, dict) or any(
         isinstance(origin.get(axis), bool) or not isinstance(origin.get(axis), (int, float))
         or not math.isfinite(origin[axis]) for axis in ("x", "y")
     ):
-        raise ValueError("Invalid canvas group origin")
+        raise ValueError("Invalid canvas container origin")
     if data["version"] >= 2:
         size = data.get("size")
         if not isinstance(size, dict) or any(
@@ -140,11 +140,11 @@ def read_group(svg):
             or not math.isfinite(size[axis]) or not 1 <= size[axis] <= 1000000
             for axis in ("width", "height")
         ):
-            raise ValueError("Invalid canvas group dimensions")
+            raise ValueError("Invalid canvas container dimensions")
     seen = set()
     for child in data["children"]:
         if not isinstance(child, dict) or child.get("type") not in ("node", "drawing", "group"):
-            raise ValueError("Invalid canvas group child")
+            raise ValueError("Invalid canvas container child")
         if not isinstance(child.get("id"), str) or not child["id"] or child["id"] in seen:
             raise ValueError("Invalid or duplicate child ID")
         seen.add(child["id"])
@@ -153,7 +153,7 @@ def read_group(svg):
         for coordinate in ("x", "y"):
             value = child.get(coordinate)
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
-                raise ValueError("Invalid canvas group coordinate")
+                raise ValueError("Invalid canvas container coordinate")
     from ..dialogs.container_style_widget import validated_style
     data["style"] = validated_style(data.get("style"))
     return data
@@ -387,7 +387,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
     def fromSvg(self, svg):
         data = read_group(svg)
         if data is None:
-            raise ValueError("Missing canvas group metadata")
+            raise ValueError("Missing canvas container metadata")
         self.setStyle(data["style"])
         self.name = data["name"].strip()
         self._revision = data.get("revision", 0)
