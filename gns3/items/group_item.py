@@ -273,7 +273,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         color = QtGui.QColor("#e53935" if self.exit_hover else "#3484c6")
         highlighted = self.drop_hover or self.exit_hover
         painter.setPen(QtGui.QPen(color, 4 if highlighted else (2 if self.isSelected() else 1),
-                                  QtCore.Qt.PenStyle.SolidLine if highlighted else QtCore.Qt.PenStyle.DashLine))
+                                  QtCore.Qt.PenStyle.SolidLine))
         painter.setBrush(QtCore.Qt.BrushStyle.NoBrush)
         painter.drawRect(self.rect())
         label = self.labelRect()

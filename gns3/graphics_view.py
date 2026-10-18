@@ -439,7 +439,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
     def groupSelectedNodes(self):
         """Create a named topology container from selected sibling elements."""
-        self._groups.group()
+        self._groups.requestGroup()
 
     def ungroupSelectedNodes(self):
         self._groups.ungroup()
@@ -462,6 +462,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         position = self.mapToScene(event.position().toPoint())
         adding_item = any((self._adding_link, self._adding_note, self._adding_rectangle, self._adding_ellipse, self._adding_line))
+        self._groups.selection_started = (self._groups.selection_pending and not adding_item and
+                                          event.button() == QtCore.Qt.MouseButton.LeftButton and
+                                          not event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier)
         if event.button() == QtCore.Qt.MouseButton.LeftButton and not adding_item and not self._dragging and not event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier:
             if self._groups.beginResize(position):
                 event.accept()
@@ -623,6 +626,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._groups.collapseSelection()
         self._groups.save(self._groups.selected() + detached)
         self.toggleUiDeviceMenu()
+        if self._groups.selection_started:
+            self._groups.selection_started = False
+            self._groups.finishSelection()
 
     def wheelEvent(self, event):
         """
@@ -659,6 +665,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QKeyEvent
         """
 
+        if event.key() == QtCore.Qt.Key.Key_Escape and self._groups.selection_pending:
+            self._groups.selection_pending = False
+            self._main_window.uiStatusBar.clearMessage()
+            event.accept()
+            return
         if event.key() == QtCore.Qt.Key.Key_Escape and self._groups.editing:
             self._groups.save()
             self._groups.leave()

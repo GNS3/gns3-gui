@@ -750,26 +750,30 @@ def test_drag_out_of_nested_group_uses_nearest_containing_ancestor(canvas, outsi
     assert node.parentItem() is (None if outside_outer else outer)
 
 
-def test_template_drop_highlight_border_is_continuous_and_temporary(canvas):
+@pytest.mark.parametrize("selected,editing", [(False, False), (True, False), (False, True), (True, True)])
+def test_template_drop_highlight_border_is_continuous_and_temporary(canvas, selected, editing):
     from gns3.qt import QtGui
     container = group(canvas, [drawing(canvas)])
     canvas.scene().clearSelection()
+    container.setSelected(selected)
+    container.setEditing(editing)
     container.setPos(20, 20)
     container.setDimensions(160, 100)
 
-    def border_colors():
+    def border_colors(x=180):
         image = QtGui.QImage(200, 150, QtGui.QImage.Format.Format_ARGB32)
         image.fill(QtGui.QColor("white"))
         painter = QtGui.QPainter(image)
         canvas.scene().render(painter, QtCore.QRectF(0, 0, 200, 150), QtCore.QRectF(0, 0, 200, 150))
         painter.end()
-        return [image.pixelColor(180, y).name() for y in range(35, 100)]
+        return [image.pixelColor(x, y).name() for y in range(35, 100)]
 
-    assert "#ffffff" in border_colors()
+    assert set(border_colors()) == {"#3484c6"}
     canvas._groups.setDropTarget(container.mapToScene(container.rect().center()))
     assert set(border_colors()) == {"#3484c6"}
+    assert set(border_colors(181)) == {"#3484c6"}
     canvas._groups.clearDropTarget()
-    assert "#ffffff" in border_colors()
+    assert set(border_colors()) == {"#3484c6"}
 
 
 @pytest.mark.parametrize("move", [False, True])
@@ -877,3 +881,65 @@ def test_drag_back_into_original_group_clears_exit_preview(canvas):
     assert not canvas._groups._outside_nodes
     QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
     assert node.parentItem() is container
+
+
+@pytest.mark.parametrize("cancel_dialog", [False, True])
+def test_toolbar_groups_exact_rubber_band_selection_on_release(canvas, cancel_dialog):
+    from gns3.main_window import MainWindow
+    a, b = device(canvas, 100, 100), device(canvas, 220, 100)
+    note = drawing(canvas, "text", 100, 180)
+    outside = device(canvas, 600, 400)
+    main = canvas._main_window
+    main.uiAnnotationToolBar = QtWidgets.QToolBar(canvas.window())
+    main.uiAnnotateMenu = QtWidgets.QMenu(canvas.window())
+    canvas.window().addToolBar(main.uiAnnotationToolBar)
+    MainWindow._setupNodeGroupingActions(main)
+    canvas.window().show()
+    QtWidgets.QApplication.processEvents()
+    button = main.uiAnnotationToolBar.widgetForAction(main.uiGroupNodesAction)
+    result = None if cancel_dialog else ("Selected LAN", 400, 300)
+    with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties", return_value=result) as dialog:
+        QTest.mouseClick(button, QtCore.Qt.MouseButton.LeftButton)
+        assert canvas._groups.selection_pending and not dialog.called
+        start = canvas.mapFromScene(QtCore.QPointF(60, 60))
+        end = canvas.mapFromScene(QtCore.QPointF(350, 240))
+        QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+        QTest.mouseMove(canvas.viewport(), end)
+        assert not dialog.called
+        assert set(canvas._groups.selected()) == {a, b, note}
+        QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
+        dialog.assert_called_once()
+    if cancel_dialog:
+        assert not canvas._groups.groups()
+        assert set(canvas._groups.selected()) == {a, b, note}
+    else:
+        container = canvas._groups.groups()[0]
+        assert set(container.members()) == {a, b, note} and outside.parentItem() is None
+    assert not canvas._groups.selection_pending and not button.isDown()
+    # Ordinary selection after consuming the request must not reopen the dialog.
+    with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties") as dialog:
+        QTest.mouseClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=canvas.mapFromScene(outside.sceneBoundingRect().center()))
+        dialog.assert_not_called()
+
+
+@pytest.mark.parametrize("cancel_dialog", [False, True])
+def test_group_request_with_preselection_remains_immediate(canvas, cancel_dialog):
+    node = device(canvas, 100, 100)
+    node.setSelected(True)
+    result = None if cancel_dialog else ("LAN", 200, 150)
+    with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties", return_value=result) as dialog:
+        canvas.groupSelectedNodes()
+        dialog.assert_called_once()
+    assert not canvas._groups.selection_pending
+    assert bool(canvas._groups.groups()) is not cancel_dialog
+    assert node.isSelected() if cancel_dialog else node.parentItem() is not None
+
+
+def test_group_selection_empty_release_and_escape(canvas):
+    canvas.groupSelectedNodes()
+    with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties") as dialog:
+        QTest.mouseClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=QtCore.QPoint(30, 30))
+        assert canvas._groups.selection_pending
+        QTest.keyClick(canvas, QtCore.Qt.Key.Key_Escape)
+        assert not canvas._groups.selection_pending
+        dialog.assert_not_called()

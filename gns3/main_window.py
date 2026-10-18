@@ -1166,7 +1166,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             painter.setPen(pen)
             painter.drawRect(7, 7, 8, 8)
             painter.drawRect(17, 17, 8, 8)
-            pen.setStyle(QtCore.Qt.PenStyle.DashLine)
+            pen.setStyle(QtCore.Qt.PenStyle.SolidLine)
             painter.setPen(pen)
             painter.drawRect(2, 2, 28, 28)
             painter.end()
@@ -1174,8 +1174,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.uiGroupNodesAction.setIcon(icon)
         self.uiAnnotationToolBar.addAction(self.uiGroupNodesAction)
         button = self.uiAnnotationToolBar.widgetForAction(self.uiGroupNodesAction)
-        # The action performs one operation; it is not an active canvas tool.
-        # Avoid leaving a focused/pressed tool button after its dialog closes.
+        # A request creates one group, immediately or after the next selection.
+        # Keep the button released while the canvas waits for that selection.
         button.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
         button.setStatusTip(self.uiGroupNodesAction.statusTip())
 

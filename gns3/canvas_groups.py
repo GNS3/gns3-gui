@@ -14,6 +14,8 @@ class CanvasGroups:
     def __init__(self, view):
         self.view = view
         self.editing = None
+        self.selection_pending = False
+        self.selection_started = False
         self.restoring = False
         self._restore_pending = False
         self._resize = None
@@ -30,6 +32,8 @@ class CanvasGroups:
         return [item for item in self.view.scene().items() if isinstance(item, GroupItem)]
 
     def reset(self):
+        self.selection_pending = False
+        self.selection_started = False
         self.clearDropTarget()
         self.clearDrag()
         self._resize = None
@@ -111,6 +115,22 @@ class CanvasGroups:
         if result:
             name, width, height = result
             self.add(name, items, parent=items[0].parentItem(), width=width, height=height)
+
+    def requestGroup(self):
+        """Group an existing selection, or wait for the next completed selection."""
+        self.selection_pending = not bool(self.selected())
+        if not self.selection_pending:
+            self.group()
+            return
+        self.view.setFocus()
+        self.view._main_window.uiStatusBar.showMessage("Select elements to group; release the mouse to create a group. Esc to cancel")
+
+    def finishSelection(self):
+        if self.selection_pending and self.selected():
+            # Consume the request before opening a modal (which changes focus).
+            self.selection_pending = False
+            self.view._main_window.uiStatusBar.clearMessage()
+            self.group()
 
     def rename(self, group):
         result = GroupPropertiesDialog.getProperties(self.view, group.name, group.rect().width(), group.rect().height())
