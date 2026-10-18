@@ -115,3 +115,44 @@ lateral acompanha a prévia e a restauração. O botão de Apply fica desabilita
 para um nome vazio e não é exibido na criação, onde ainda não há um container
 existente para pré-visualizar. Testes cobrem a presença condicional da ação,
 a prévia, a confirmação e a reversão.
+
+## Imagens maiores que o limite do JSON
+
+O erro “Maximum request body size 1048576 exceeded” se refere ao corpo JSON,
+não à largura/altura desenhada. A imagem é embutida como base64 no SVG; reduzir
+apenas suas dimensões visuais não reduz esses bytes.
+
+Quando o corpo serializado alcança 900.000 bytes, o cliente salva o SVG completo
+em um arquivo temporário e o envia pelo endpoint nativo de streaming
+`POST /projects/{id}/files/project-files/images/{sha256}.svg`. Somente depois
+manda o POST/PUT do desenho com o nome desse recurso, um JSON pequeno. Isso
+preserva os pixels, as dimensões e os metadados, sem compressão com perdas nem
+alteração no limite global do servidor. O arquivo temporário local é removido
+após o upload, inclusive em caso de falha. O fluxo existente de POST antes de
+PUT continua valendo.
+
+A API de arquivos não cria diretórios. Em projetos vazios, o cliente inicializa
+o armazenamento nativo com um desenho transparente de 1×1, removido após o
+upload, antes de concluir o desenho real. Arquivos obsoletos seguem a limpeza
+normal de imagens do servidor. Não é uma nova API de containers nem uma mudança
+no servidor.
+
+O conteúdo raster também é envolvido por um elemento SVG `g`. Isso evita que
+a otimização de imagens simples do servidor extraia apenas o bitmap e regenere
+suas dimensões originais, perdendo as dimensões e os metadados do desenho. O SVG
+é serializado com namespace padrão para continuar compatível com o leitor v2.
+
+Teste integrado (somente contra um servidor descartável separado):
+
+```bash
+python3 scripts/check_large_drawing.py --server http://127.0.0.1:3099
+```
+
+Validado em GNS3 server 2.2.61 com pixels aleatórios sem perdas e SVG maior que
+1 MiB: upload por arquivo, POST/PUT compactos, pixels intactos, dimensões após
+recarga e exportação do recurso. Ao final só há o desenho real no projeto; o
+projeto descartável é excluído. A suíte completa terminou com 297 aprovados e
+1 ignorado, mantendo o aviso anterior de `tarfile`.
+
+A cobertura do diálogo também aciona o botão Apply real e verifica os valores
+enviados à prévia, sem aceitar ou fechar o diálogo.

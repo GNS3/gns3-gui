@@ -23,6 +23,9 @@ import math
 import xml.etree.ElementTree as ET
 from ..qt import QtSvgWidgets, QtCore, QtGui, QtWidgets
 from ..qt.qimage_svg_renderer import QImageSvgRenderer
+
+ET.register_namespace('', 'http://www.w3.org/2000/svg')
+ET.register_namespace('xlink', 'http://www.w3.org/1999/xlink')
 from .drawing_item import DrawingItem
 
 
@@ -47,6 +50,7 @@ class ImageItem(QtSvgWidgets.QGraphicsSvgItem, DrawingItem):
         if self._image_path:
             self._image_renderer = QImageSvgRenderer(image_path)
             self.setSharedRenderer(self._image_renderer)
+            self.fromSvg(self._image_renderer.svg())
 
         # By default center the image
         if pos is None:
@@ -82,10 +86,21 @@ class ImageItem(QtSvgWidgets.QGraphicsSvgItem, DrawingItem):
             painter.restore()
 
     def fromSvg(self, svg):
+        root = ET.fromstring(svg)
+        # The v2 server extracts direct image children into raster files and
+        # regenerates their intrinsic size, losing drawing dimensions/metadata.
+        # A group preserves the complete SVG without changing its rendering.
+        images = [child for child in root if child.tag.rsplit('}', 1)[-1] == 'image']
+        for child in images:
+            index = list(root).index(child)
+            root.remove(child)
+            wrapper = ET.Element('{http://www.w3.org/2000/svg}g')
+            wrapper.append(child)
+            root.insert(index, wrapper)
+        svg = ET.tostring(root, encoding='unicode')
         renderer = QImageSvgRenderer(svg)
         self.setSharedRenderer(renderer)
         self._image_renderer = renderer
-        root = ET.fromstring(svg)
         self.keep_aspect = root.get('data-gns3-keep-aspect', 'true') != 'false'
 
     def setDimensions(self, width, height):

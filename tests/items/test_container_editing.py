@@ -36,3 +36,18 @@ def test_edit_container_context_action_only_while_editing(canvas):
     with patch.object(canvas._groups, 'rename') as edit:
         action.trigger()
         edit.assert_called_once_with(container)
+
+
+def test_apply_button_uses_current_dialog_fields(canvas):
+    from gns3.dialogs.group_properties_dialog import GroupPropertiesDialog
+    preview = MagicMock()
+    dialog = GroupPropertiesDialog(canvas, 'LAN', 200, 150, preview=preview)
+    dialog.nameEdit.setText('Preview LAN')
+    dialog.widthEdit.setValue(700)
+    dialog.styleEditor.shape_buttons['triangle'].click()
+    dialog.applyButton.click()
+    preview.assert_called_once()
+    values = preview.call_args.args[0]
+    assert values[:3] == ('Preview LAN', 700, 150)
+    assert values[3]['shape'] == 'triangle'
+    assert dialog.result() != QtWidgets.QDialog.DialogCode.Accepted

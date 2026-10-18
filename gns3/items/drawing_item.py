@@ -19,6 +19,11 @@ from ..qt import QtCore, QtWidgets, qslot, QtGui, sip_is_deleted
 from .utils import colorFromSvg
 
 import uuid
+import hashlib
+import base64
+import json
+import tempfile
+from pathlib import Path
 import logging
 import binascii
 log = logging.getLogger(__name__)
@@ -84,7 +89,66 @@ class DrawingItem:
             # UUID alone does not mean the server has created the drawing yet.
             self._create_pending = True
             self._hash_svg = None  # creation always needs the complete SVG
-            self._project.post("/drawings", self._createDrawingCallback, body=self.__json__())
+            self._sendDrawing("post", "/drawings", self._createDrawingCallback, self.__json__())
+
+    def _sendDrawing(self, method, path, callback, body, **kwargs):
+        """Stream oversized SVGs as project assets, then send a small reference.
+
+        The v2 JSON endpoint is limited to 1 MiB; the raw file route streams its
+        body. Content-addressed SVGs retain dimensions, pixels and metadata and
+        are included by the server's existing project export machinery.
+        """
+        svg = body.get('svg')
+        if not isinstance(svg, str) or len(json.dumps(body).encode('utf-8')) < 900000:
+            getattr(self._project, method)(path, callback, body=body, **kwargs)
+            return
+        payload = svg.encode('utf-8')
+        filename = hashlib.sha256(payload).hexdigest() + '.svg'
+        with tempfile.NamedTemporaryFile(prefix='gns3-drawing-', suffix='.svg', delete=False) as temporary:
+            temporary.write(payload)
+            source = Path(temporary.name)
+        project = self._project
+        seed_id = str(uuid.uuid4())
+
+        def uploaded(result, error=False, **ignored):
+            source.unlink(missing_ok=True)
+            project.delete("/drawings/" + seed_id, None)
+            if sip_is_deleted(self):
+                return
+            if error:
+                self._hash_svg = None
+                callback(result, error=True)
+                return
+            compact = dict(body, svg=filename)
+            getattr(project, method)(path, callback, body=compact, **kwargs)
+
+        def prepared(result, error=False, **ignored):
+            if error:
+                source.unlink(missing_ok=True)
+                self._hash_svg = None
+                callback(result, error=True)
+                return
+            project.post('/files/project-files/images/' + filename, uploaded, body=source)
+
+        # The raw file API cannot create missing directories. A transparent
+        # native image drawing initializes the server's pictures store even in
+        # an otherwise empty project; it is removed after the streamed upload.
+        pixel = QtGui.QImage(1, 1, QtGui.QImage.Format.Format_ARGB32)
+        pixel.fill(QtCore.Qt.GlobalColor.transparent)
+        data = QtCore.QByteArray()
+        buffer = QtCore.QBuffer(data)
+        buffer.open(QtCore.QIODeviceBase.OpenModeFlag.WriteOnly)
+        pixel.save(buffer, 'PNG')
+        seed = ('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1" height="1">'
+                '<image width="1" height="1" xlink:href="data:image/png;base64,' +
+                base64.b64encode(bytes(data)).decode() + '"/><!--' + ' ' * 600 + '--></svg>')
+        try:
+            project.post('/drawings', prepared, body=dict(drawing_id=seed_id, x=0, y=0, z=-1000, svg=seed))
+        except Exception:
+            source.unlink(missing_ok=True)
+            project.delete('/drawings/' + seed_id, None)
+            self._hash_svg = None
+            raise
 
     def _createDrawingCallback(self, result, error=False, **kwargs):
         """
@@ -124,7 +188,7 @@ class DrawingItem:
                 self._update_pending = True
                 self.create()
                 return
-            self._project.put("/drawings/" + self._id, self.updateDrawingCallback, body=self.__json__(), showProgress=False)
+            self._sendDrawing("put", "/drawings/" + self._id, self.updateDrawingCallback, self.__json__(), showProgress=False)
 
     @qslot
     def updateDrawingCallback(self, result, error=False, **kwargs):
