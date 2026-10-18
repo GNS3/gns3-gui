@@ -84,6 +84,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.setupUi(self)
         self._setupNodeGroupingActions()
+        self._setupNavigationActions()
         self.setUnifiedTitleAndToolBarOnMac(True)
 
         # These widgets will be disabled when no project is loaded
@@ -1136,6 +1137,45 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def resizeEvent(self, event):
         self._notif_dialog.resize()
         super().resizeEvent(event)
+
+    def _setupNavigationActions(self):
+        """Keep toolbar state synchronized with empty-canvas mouse gestures."""
+        self._navigation_actions = QtGui.QActionGroup(self)
+        self._navigation_actions.setExclusive(True)
+        for mode, title, help_text, cursor_shape in (
+            ("hand", "Hand", "Hand: drag empty canvas with the left mouse button to pan", QtCore.Qt.CursorShape.OpenHandCursor),
+            ("selection", "Selection", "Selection: drag a rectangle with the right mouse button; release for actions", QtCore.Qt.CursorShape.ArrowCursor),
+        ):
+            action = QtGui.QAction(title, self)
+            action.setObjectName("ui" + title + "Action")
+            action.setCheckable(True)
+            action.setToolTip(help_text)
+            action.setStatusTip(help_text)
+            # Native cursor artwork follows the desktop's pointer theme.
+            pixmap = QtGui.QCursor(cursor_shape).pixmap()
+            if pixmap.isNull():
+                pixmap = QtGui.QPixmap(32, 32)
+                pixmap.fill(QtCore.Qt.GlobalColor.transparent)
+                painter = QtGui.QPainter(pixmap)
+                painter.setPen(QtGui.QPen(QtGui.QColor("#3484c6"), 2))
+                painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+                points = ([(9, 28), (5, 17), (8, 15), (12, 19), (12, 5), (15, 5),
+                           (15, 15), (18, 8), (21, 9), (20, 16), (24, 12), (27, 14),
+                           (25, 24), (22, 28)] if mode == "hand" else
+                          [(7, 3), (7, 27), (13, 21), (18, 29), (22, 27), (17, 19), (26, 19)])
+                painter.drawPolygon(QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in points]))
+                painter.end()
+            action.setIcon(QtGui.QIcon(pixmap))
+            self._navigation_actions.addAction(action)
+            self.uiAnnotationToolBar.addAction(action)
+            button = self.uiAnnotationToolBar.widgetForAction(action)
+            button.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+            button.setStatusTip(help_text)
+            action.triggered.connect(lambda checked=False, mode=mode: self.uiGraphicsView.setNavigationMode(mode))
+            self.uiGraphicsView.navigationModeChanged.connect(
+                lambda current, mode=mode, action=action: action.setChecked(current == mode))
+            setattr(self, action.objectName(), action)
+        self.uiGraphicsView.setNavigationMode("hand")
 
     def _setupNodeGroupingActions(self):
         """Momentary canvas commands, with hover icons and status-bar help."""

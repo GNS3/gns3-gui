@@ -190,3 +190,30 @@ A regressão percorre vários eventos nos quatro cantos de uma imagem rotacionad
 verifica que o renderer é o mesmo durante o arraste, que não há nova decodificação
 nesse período e que ela ocorre uma vez na soltura. A suíte completa desta revisão
 terminou com **304 aprovados e 1 ignorado**, com o aviso preexistente de `tarfile`.
+
+## Navegação e seleção com o mouse
+
+A ferramenta **Hand** é o modo inicial. Arrastar uma região vazia com o botão
+esquerdo desloca a view; o cursor passa de mão aberta para mão fechada durante o
+arraste. Arrastar sobre um elemento continua movendo o próprio elemento.
+Os botões Hand e Selection na barra superior indicam o modo atual e oferecem
+descrições no tooltip e na barra de status. Clicar no vazio com o esquerdo ativa
+Hand; iniciar um gesto com o direito ativa Selection.
+
+A seleção com o direito usa sempre um retângulo, inclusive sobre dispositivos.
+Um clique sem arraste não seleciona o item. Ctrl preserva a seleção anterior ao
+adicionar outro retângulo. Ao soltar com elementos selecionados, o menu de ações
+abre e oferece **Create container**, reutilizando o diálogo e a validação de
+parentesco existentes. A seleção de filhos de um container fechado é promovida
+ao container, preservando sua hierarquia.
+
+A criação pelo botão Container elements mantém a exceção de selecionar com o
+esquerdo antes de abrir o diálogo. Desenho de formas, links e redimensionamento
+continuam usando seus gestos próprios. Shift+esquerdo e botão do meio também
+continuam disponíveis para navegar.
+
+Tecnicamente, o retângulo é um QRubberBand no viewport. Seu polígono é convertido
+para coordenadas da cena para consultar as formas dos itens, respeitando zoom e
+scroll. O menu é aberto apenas ao soltar; o evento nativo de menu do mouse é
+consumido para evitar uma segunda abertura ou seleção pontual involuntária.
+A navegação altera somente as barras da view; não modifica posições exportadas.

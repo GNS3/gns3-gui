@@ -76,6 +76,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
     :param parent: parent widget
     """
 
+    navigationModeChanged = QtCore.Signal(str)
+
     # Class-level constants for default colors
     DEFAULT_DRAWING_GRID_COLOR = QtGui.QColor(208, 208, 208)  # #D0D0D0
     DEFAULT_NODE_GRID_COLOR = QtGui.QColor(190, 190, 190)     # #BEBEBE
@@ -97,6 +99,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._shape_preview = None
         self._shape_origin = None
         self._newlink = None
+        self._navigation_mode = "hand"
+        self._selection_origin = None
+        self._selection_band = None
+        self._selection_previous = []
         self._dragging = False
         self._groups = CanvasGroups(self)
         self._grid_size = 75
@@ -117,6 +123,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # set the custom flags for this view
         self.setDragMode(QtWidgets.QGraphicsView.DragMode.RubberBandDrag)
+        self.setCursor(QtCore.Qt.CursorShape.OpenHandCursor)
         self.setMouseTracking(True)
         self.setAcceptDrops(True)
         self.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
@@ -478,6 +485,34 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if isinstance(item, GroupItem):
                 self._groups.rename(item)
 
+    def setNavigationMode(self, mode):
+        """Navigation affects empty canvas gestures; elements remain movable."""
+        if mode not in ("hand", "selection"):
+            raise ValueError("Unknown canvas navigation mode")
+        self._navigation_mode = mode
+        self.setCursor(QtCore.Qt.CursorShape.OpenHandCursor if mode == "hand"
+                       else QtCore.Qt.CursorShape.ArrowCursor)
+        self.navigationModeChanged.emit(mode)
+
+    def _updateSelectionRectangle(self, position):
+        rect = QtCore.QRect(self._selection_origin, position).normalized()
+        self._selection_band.setGeometry(rect)
+        if rect.width() < QtWidgets.QApplication.startDragDistance() and rect.height() < QtWidgets.QApplication.startDragDistance():
+            return
+        path = QtGui.QPainterPath()
+        path.addPolygon(self.mapToScene(rect))
+        self.scene().setSelectionArea(path, self.viewportTransform())
+        # Closed containers are selected as a unit, never by their hidden children.
+        for item in list(self.scene().selectedItems()):
+            target = self._groups.target(item)
+            if target is not item:
+                item.setSelected(False)
+                if target is not None:
+                    target.setSelected(True)
+        for item in self._selection_previous:
+            item.setSelected(True)
+        self._groups.collapseSelection()
+
     def mousePressEvent(self, event):
         """
         Handles all mouse press events.
@@ -487,6 +522,29 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         position = self.mapToScene(event.position().toPoint())
         adding_item = any((self._adding_link, self._adding_note, self._adding_rectangle, self._adding_ellipse, self._adding_line))
+        if not adding_item and event.button() == QtCore.Qt.MouseButton.RightButton:
+            self.setNavigationMode("selection")
+            self._selection_origin = event.position().toPoint()
+            self._selection_previous = (self.scene().selectedItems() if
+                event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier else [])
+            self.scene().clearSelection()
+            self._selection_band = QtWidgets.QRubberBand(QtWidgets.QRubberBand.Shape.Rectangle, self.viewport())
+            self._selection_band.setGeometry(QtCore.QRect(self._selection_origin, QtCore.QSize()))
+            self._selection_band.show()
+            event.accept()
+            return
+        if (not adding_item and not self._groups.selection_pending and
+                event.button() == QtCore.Qt.MouseButton.LeftButton and
+                self.itemAt(event.position().toPoint()) is None):
+            if self._groups.editing is not None:
+                self._groups.save()
+                self._groups.leave()
+            self.setNavigationMode("hand")
+            self._last_mouse_position = self.mapFromGlobal(event.globalPosition())
+            self._dragging = True
+            self.setCursor(QtCore.Qt.CursorShape.ClosedHandCursor)
+            event.accept()
+            return
         self._groups.selection_started = (self._groups.selection_pending and not adding_item and
                                           event.button() == QtCore.Qt.MouseButton.LeftButton and
                                           not event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier)
@@ -588,6 +646,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QContextMenuEvent instance
         """
 
+        if event.reason() == QtGui.QContextMenuEvent.Reason.Mouse:
+            # Right-release owns the rectangle selection and opens exactly one menu.
+            event.accept()
+            return
+
         is_not_link = True
         is_not_logo = True
 
@@ -630,6 +693,23 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param: QMouseEvent instance
         """
 
+        if self._selection_origin is not None and event.button() == QtCore.Qt.MouseButton.RightButton:
+            self._updateSelectionRectangle(event.position().toPoint())
+            self._selection_band.hide()
+            self._selection_band.deleteLater()
+            self._selection_band = None
+            self._selection_origin = None
+            self._selection_previous = []
+            self.toggleUiDeviceMenu()
+            event.accept()
+            if self.scene().selectedItems():
+                self._showDeviceContextualMenu(event.globalPosition().toPoint())
+            return
+        if self._dragging:
+            self._dragging = False
+            self.setNavigationMode(self._navigation_mode)
+            event.accept()
+            return
         if self._shape_preview is not None and event.button() == QtCore.Qt.MouseButton.LeftButton:
             rect = QtCore.QRectF(self._shape_origin, self.mapToScene(event.position().toPoint())).normalized()
             kind = "rect" if self._adding_rectangle else "ellipse"
@@ -779,6 +859,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QMouseEvent instance
         """
 
+        if self._selection_origin is not None:
+            self._updateSelectionRectangle(event.position().toPoint())
+            event.accept()
+            return
         if self._shape_preview is not None:
             self._shape_preview.setRect(QtCore.QRectF(self._shape_origin, self.mapToScene(event.position().toPoint())).normalized())
             event.accept()
@@ -794,7 +878,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if hit:
                 self.setCursor(QtCore.Qt.CursorShape.SizeFDiagCursor if hit[1] in ("tl", "br") else QtCore.Qt.CursorShape.SizeBDiagCursor)
             elif self.cursor().shape() in (QtCore.Qt.CursorShape.SizeFDiagCursor, QtCore.Qt.CursorShape.SizeBDiagCursor):
-                self.unsetCursor()
+                self.setNavigationMode(self._navigation_mode)
         if self._dragging:
             # This if statement event checks to see if the user is dragging the scene
             # if so it sets the value of the scene scroll bars based on the change between
@@ -806,6 +890,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
             hBar.setValue(int(hBar.value() + (delta.x() if QtWidgets.QApplication.isRightToLeft() else -delta.x())))
             vBar.setValue(int(vBar.value() - delta.y()))
             self._last_mouse_position = mapped_global_pos
+            event.accept()
+            return
         if self._adding_link and self._newlink and self._newlink in self.scene().items():
             # update the mouse position when the user is adding a link.
             self._newlink.setMousePoint(self.mapToScene(event.position().toPoint()))
@@ -973,6 +1059,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             return
 
+        if self._groups.selected():
+            menu.addAction('Create container').triggered.connect(self.groupSelectedNodes)
         if self._groups.editing is not None and self._groups.editing.editing:
             menu.addAction('Edit container').triggered.connect(lambda: self.editContainer())
         groups = [item for item in items if isinstance(item, GroupItem)]
@@ -1922,6 +2010,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._groups.drawDragPreviews(painter)
 
     def focusOutEvent(self, event):
+        if self._selection_band is not None:
+            self._selection_band.hide()
+            self._selection_band.deleteLater()
+            self._selection_band = None
+            self._selection_origin = None
+            self._selection_previous = []
+        if self._dragging:
+            self._dragging = False
+            self.setNavigationMode(self._navigation_mode)
         if self._shape_preview is not None:
             self.cancelShapeDrawing()
         self._groups.clearDrag()

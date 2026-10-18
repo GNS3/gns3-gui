@@ -91,3 +91,19 @@ def test_group_toolbar_hover_reaches_status_bar(real_main_window):
     QTest.mouseMove(window.uiGraphicsView.viewport(), window.uiGraphicsView.viewport().rect().center())
     QtWidgets.QApplication.processEvents()
     assert not button.isDown() and not window.uiGroupNodesAction.isChecked()
+
+
+def test_navigation_toolbar_tracks_view_mode(real_main_window):
+    window = real_main_window
+    assert window.uiHandAction.isChecked()
+    for action in (window.uiHandAction, window.uiSelectionAction):
+        assert not action.icon().isNull()
+        assert action.statusTip()
+        button = window.uiAnnotationToolBar.widgetForAction(action)
+        assert button.statusTip() == action.statusTip()
+    window.uiSelectionAction.trigger()
+    assert window.uiGraphicsView._navigation_mode == 'selection'
+    assert not window.uiHandAction.isChecked()
+    window.uiGraphicsView.setNavigationMode('hand')
+    assert window.uiHandAction.isChecked()
+    assert not window.uiSelectionAction.isChecked()
