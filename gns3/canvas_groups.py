@@ -54,7 +54,7 @@ class CanvasGroups:
             try:
                 self.restore()
             except ValueError as error:
-                QtWidgets.QMessageBox.warning(self.view, "Canvas groups", str(error))
+                QtWidgets.QMessageBox.warning(self.view, "Canvas containers", str(error))
         QtCore.QTimer.singleShot(0, restore)
 
     def selected(self):
@@ -83,11 +83,12 @@ class CanvasGroups:
         position = bounds.topLeft() - QtCore.QPointF(margin_x, margin_y + GroupItem.TITLE_HEIGHT)
         return position, max(20, math.ceil(bounds.width() + 2 * margin_x)), max(20, math.ceil(bounds.height() + 2 * margin_y + GroupItem.TITLE_HEIGHT))
 
-    def add(self, name, items, parent=None, position=None, width=None, height=None):
+    def add(self, name, items, parent=None, position=None, width=None, height=None, style=None):
         initial_position, initial_width, initial_height = self.initialGeometry(items)
         group = GroupItem(name=name.strip(), width=width if width is not None else initial_width,
                           height=height if height is not None else initial_height,
                           project=self.view._topology.project())
+        group.setStyle(style)
         self.view.scene().addItem(group)
         self.view._topology.addDrawing(group)
         if parent:
@@ -108,13 +109,14 @@ class CanvasGroups:
             return
         parents = {item.parentItem() for item in items}
         if len(parents) != 1:
-            QtWidgets.QMessageBox.warning(self.view, "Group", "Select items inside the same container.")
+            QtWidgets.QMessageBox.warning(self.view, "Container", "Select items inside the same container.")
             return
         _, width, height = self.initialGeometry(items)
-        result = GroupPropertiesDialog.getProperties(self.view, "Group", width, height)
+        result = GroupPropertiesDialog.getProperties(self.view, "Container", width, height)
         if result:
-            name, width, height = result
-            self.add(name, items, parent=items[0].parentItem(), width=width, height=height)
+            name, width, height = result[:3]
+            self.add(name, items, parent=items[0].parentItem(), width=width, height=height,
+                     style=result[3] if len(result) > 3 else None)
 
     def requestGroup(self):
         """Group an existing selection, or wait for the next completed selection."""
@@ -123,7 +125,7 @@ class CanvasGroups:
             self.group()
             return
         self.view.setFocus()
-        self.view._main_window.uiStatusBar.showMessage("Select elements to group; release the mouse to create a group. Esc to cancel")
+        self.view._main_window.uiStatusBar.showMessage("Select elements for the container; release the mouse to create it. Esc to cancel")
 
     def finishSelection(self):
         if self.selection_pending and self.selected():
@@ -133,9 +135,11 @@ class CanvasGroups:
             self.group()
 
     def rename(self, group):
-        result = GroupPropertiesDialog.getProperties(self.view, group.name, group.rect().width(), group.rect().height())
+        result = GroupPropertiesDialog.getProperties(self.view, group.name, group.rect().width(), group.rect().height(), style=group.style)
         if result:
-            name, width, height = result
+            name, width, height = result[:3]
+            if len(result) > 3:
+                group.setStyle(result[3])
             group.name = name
             group.setToolTip(name)
             group.setDimensions(width, height)
@@ -228,7 +232,8 @@ class CanvasGroups:
             visible = viewport
             parent = node.parentItem()
             while isinstance(parent, GroupItem):
-                visible = visible.intersected(parent.mapToScene(parent.shape()))
+                visible = (visible.intersected(parent.mapToScene(parent.shape()))
+                           if parent.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemClipsChildrenToShape else visible)
                 parent = parent.parentItem()
             painter.save()
             painter.setClipPath(viewport.subtracted(visible), QtCore.Qt.ClipOperation.IntersectClip)
@@ -465,7 +470,7 @@ class CanvasGroups:
         for item in roots:
             members = [item] + (list(item.descendants()) if isinstance(item, GroupItem) else [])
             if any(getattr(child, "locked", lambda: False)() for child in members):
-                QtWidgets.QMessageBox.warning(self.view, "Group", "Unlock the container and its children first.")
+                QtWidgets.QMessageBox.warning(self.view, "Container", "Unlock the container and its children first.")
                 return True
         return False
 
@@ -582,6 +587,7 @@ class CanvasGroups:
                 copy = GroupItem(name=name, project=project, width=item.rect().width(), height=item.rect().height())
                 view.scene().addItem(copy)
                 view._topology.addDrawing(copy)
+                copy.setStyle(item.style)
                 copy.setPos(item.scenePos() + offset)
                 copy.setZValue(scene_z(item))
                 copy.setLocked(item.locked())
@@ -610,7 +616,7 @@ class CanvasGroups:
                         view._topology.removeDrawing(copy)
                         if copy.scene():
                             copy.scene().removeItem(copy)
-                QtWidgets.QMessageBox.warning(view, "Duplicate group", "Could not duplicate every device; copies were rolled back.")
+                QtWidgets.QMessageBox.warning(view, "Duplicate container", "Could not duplicate every device; copies were rolled back.")
                 return
             for original, copy in mapping.items():
                 parent, local, _ = snapshots[original]

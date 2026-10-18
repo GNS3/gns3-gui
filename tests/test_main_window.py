@@ -65,7 +65,7 @@ def test_group_toolbar_is_momentary_with_status_and_hover_icon(real_main_window)
     window = real_main_window
     action = window.uiGroupNodesAction
     button = window.uiAnnotationToolBar.widgetForAction(action)
-    assert action.statusTip() == "Group elements (Ctrl+G)"
+    assert action.statusTip() == "Container elements (Ctrl+G)"
     assert button.statusTip() == action.statusTip()
     assert not action.isCheckable()
     assert button.focusPolicy() == QtCore.Qt.FocusPolicy.NoFocus

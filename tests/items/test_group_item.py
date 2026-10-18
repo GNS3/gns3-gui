@@ -532,7 +532,7 @@ def test_summary_nested_groups_ports_and_group_actions(canvas, summary):
     assert row.parent().group is inner and row.parent().parent() is top
     assert row.child(0) is port_row
     menu = summary.groupMenu(inner)
-    assert [action.text() for action in menu.actions()] == ["Rename group", "Duplicate", "Delete"]
+    assert [action.text() for action in menu.actions()] == ["Rename container", "Duplicate", "Delete"]
     with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties", return_value=("LAN renamed", 220, 180)):
         menu.actions()[0].trigger()
     assert row.parent().text(0) == "LAN renamed"

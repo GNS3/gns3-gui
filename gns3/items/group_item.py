@@ -154,6 +154,8 @@ def read_group(svg):
             value = child.get(coordinate)
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
                 raise ValueError("Invalid canvas group coordinate")
+    from ..dialogs.container_style_widget import validated_style
+    data["style"] = validated_style(data.get("style"))
     return data
 
 
@@ -163,7 +165,9 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
     TITLE_HEIGHT = 24
     MIN_SIZE = 1
 
-    def __init__(self, name="Group", svg=None, width=120, height=80, **kwargs):
+    def __init__(self, name="Container", svg=None, width=120, height=80, **kwargs):
+        from ..dialogs.container_style_widget import validated_style
+        self.style = validated_style()
         self.name = name
         self._members = []
         self._origin = QtCore.QPointF()
@@ -207,11 +211,11 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
                 if data is None or data.get("revision", 0) < self._revision:
                     return
             except (ValueError, TypeError, ET.ParseError) as invalid:
-                QtWidgets.QMessageBox.warning(self._graphics_view, "Canvas group", str(invalid))
+                QtWidgets.QMessageBox.warning(self._graphics_view, "Canvas container", str(invalid))
                 return
         DrawingItem.updateDrawingCallback(self, result, error, **kwargs)
         if error:
-            QtWidgets.QMessageBox.warning(self._graphics_view, "Canvas group", result.get("message", "Could not save group"))
+            QtWidgets.QMessageBox.warning(self._graphics_view, "Canvas container", result.get("message", "Could not save group"))
 
     def members(self):
         return [child for child in self.childItems() if item_reference(child)]
@@ -265,24 +269,38 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         path.addRect(self.rect())
         return path
 
+    def setStyle(self, style):
+        from ..dialogs.container_style_widget import validated_style
+        self.prepareGeometryChange()
+        self.style = validated_style(style)
+        # Decorative triangle/ellipse must never hide a child on shape change.
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemClipsChildrenToShape, self.style['shape'] == 'rect')
+        self.update()
+
     def boundingRect(self):
-        return self.rect().adjusted(-5, -5, 5, 5)
+        margin = max(5, self.style['border_width'] / 2)
+        return self.rect().adjusted(-margin, -margin, margin, margin)
 
     def paint(self, painter, option, widget=None):
         painter.save()
-        color = QtGui.QColor("#e53935" if self.exit_hover else "#3484c6")
         highlighted = self.drop_hover or self.exit_hover
-        painter.setPen(QtGui.QPen(color, 4 if highlighted else (2 if self.isSelected() else 1),
-                                  QtCore.Qt.PenStyle.SolidLine))
-        painter.setBrush(QtCore.Qt.BrushStyle.NoBrush)
-        painter.drawRect(self.rect())
-        label = self.labelRect()
-        painter.drawText(label, QtCore.Qt.AlignmentFlag.AlignLeft |
-                         QtCore.Qt.AlignmentFlag.AlignTop,
-                         self.name + (" [editing]" if self.editing else ""))
+        color = QtGui.QColor('#e53935' if self.exit_hover else '#3484c6') if highlighted else QtGui.QColor(self.style['border_color'])
+        width = max(4, self.style['border_width']) if highlighted else max(2 if self.isSelected() else 0, self.style['border_width'])
+        painter.setPen(QtGui.QPen(color, width, QtCore.Qt.PenStyle.SolidLine if highlighted else QtCore.Qt.PenStyle(self.style['border_style'])))
+        painter.setBrush(QtGui.QColor(self.style['fill_color']))
+        if self.style['shape'] == 'ellipse':
+            painter.drawEllipse(self.rect())
+        elif self.style['shape'] == 'triangle':
+            r = self.rect()
+            painter.drawPolygon(QtGui.QPolygonF([QtCore.QPointF(r.center().x(), r.top()), r.bottomRight(), r.bottomLeft()]))
+        else:
+            painter.drawRect(self.rect())
+        painter.setPen(QtGui.QColor('#3484c6'))
+        painter.drawText(self.labelRect(), QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignTop,
+                         self.name + (' [editing]' if self.editing else ''))
         if self.isSelected():
-            painter.setPen(QtGui.QPen(color, 0))
-            painter.setBrush(QtGui.QColor("white"))
+            painter.setPen(QtGui.QPen(QtGui.QColor('#3484c6'), 0))
+            painter.setBrush(QtGui.QColor('white'))
             for corner in self.corners().values():
                 painter.drawRect(QtCore.QRectF(corner.x() - 4, corner.y() - 4, 8, 8))
         painter.restore()
@@ -357,6 +375,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         metadata.text = json.dumps({"version": GROUP_VERSION, "revision": self._revision, "name": self.name,
                                     "drawing_id": self.drawing_id(), "identity": self._canvas_id,
                                     "origin": {"x": self.scenePos().x(), "y": self.scenePos().y()},
+                                    "style": self.style,
                                     "size": {"width": self.rect().width(), "height": self.rect().height()},
                                     "children": children}, ensure_ascii=False, allow_nan=False)
         # An older GUI can still render the name, even without understanding
@@ -369,6 +388,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         data = read_group(svg)
         if data is None:
             raise ValueError("Missing canvas group metadata")
+        self.setStyle(data["style"])
         self.name = data["name"].strip()
         self._revision = data.get("revision", 0)
         self._saved_id = data.get("drawing_id")
@@ -385,5 +405,5 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
     def setRotation(self, rotation):
         # Container axes stay parallel to the canvas; children retain rotations.
         if rotation:
-            raise ValueError("Canvas groups support translation, not rotation")
+            raise ValueError("Canvas containers support translation, not rotation")
         super().setRotation(rotation)

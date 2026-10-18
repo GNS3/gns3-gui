@@ -1140,8 +1140,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def _setupNodeGroupingActions(self):
         """Momentary canvas commands, with hover icons and status-bar help."""
         for name, text, shortcut, callback in (
-            ("uiGroupNodesAction", "Group elements", "Ctrl+G", self.uiGraphicsView.groupSelectedNodes),
-            ("uiUngroupNodesAction", "Ungroup elements", "Ctrl+Shift+G", self.uiGraphicsView.ungroupSelectedNodes),
+            ("uiGroupNodesAction", "Container elements", "Ctrl+G", self.uiGraphicsView.groupSelectedNodes),
+            ("uiUngroupNodesAction", "Unpack container", "Ctrl+Shift+G", self.uiGraphicsView.ungroupSelectedNodes),
         ):
             action = QtGui.QAction(text, self.uiGraphicsView)
             action.setObjectName(name)

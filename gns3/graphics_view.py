@@ -955,9 +955,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         groups = [item for item in items if isinstance(item, GroupItem)]
         if groups:
-            for text, callback in (("Enter group", lambda: self.enterGroup(groups[0])),
-                                   ("Rename group", self.renameGroup),
-                                   ("Ungroup", self.ungroupSelectedNodes)):
+            for text, callback in (("Enter container", lambda: self.enterGroup(groups[0])),
+                                   ("Rename container", self.renameGroup),
+                                   ("Unpack container", self.ungroupSelectedNodes)):
                 action = menu.addAction(text)
                 action.triggered.connect(callback)
 

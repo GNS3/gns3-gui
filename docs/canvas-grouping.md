@@ -29,7 +29,7 @@ O servidor GNS3 e os simuladores são instalados/configurados separadamente.
 
 1. Selecione dispositivos, notas, formas, imagens ou grupos com Ctrl+clique ou
    seleção retangular. Os elementos precisam estar no mesmo nível da hierarquia.
-2. Clique no botão **Group elements** na barra superior, ou pressione **Ctrl+G**
+2. Clique no botão **Container elements** na barra superior, ou pressione **Ctrl+G**
    com foco no canvas. Informe um nome, por exemplo **LAN 1**, e ajuste largura
    e altura se desejar. Os valores iniciais contêm os elementos selecionados,
    com 30% de espaço extra no total (15% em cada lado) e uma faixa de 24 unidades para o título.
@@ -38,7 +38,7 @@ O servidor GNS3 e os simuladores são instalados/configurados separadamente.
    passam a ser relativas à origem do grupo.
 4. Selecione esse grupo junto de outros elementos e agrupe novamente para criar
    um contêiner pai. Não há um limite de um único nível.
-5. Dê duplo clique no corpo do contêiner, ou use **Enter group** no menu de contexto, para
+5. Dê duplo clique no corpo do contêiner, ou use **Enter container** no menu de contexto, para
    selecionar/mover seus filhos. Dê outro duplo clique para entrar em um grupo
    interno. **Esc** ou clicar fora do grupo encerra a edição e remove o indicador.
 6. Na edição do grupo, os comandos de alinhamento operam nas coordenadas locais
@@ -48,7 +48,7 @@ O servidor GNS3 e os simuladores são instalados/configurados separadamente.
    desaparecem ao soltar o mouse ou perder o foco e não pertencem à topologia.
    A grade também usa as coordenadas locais; o encaixe nas guias tem prioridade.
 7. Dê duplo clique no **nome** para abrir as propriedades e renomear o grupo,
-   ou use **Rename group** no menu de contexto. A mesma janela permite editar
+   ou use **Rename container** no menu de contexto. A mesma janela permite editar
    as dimensões fixas. Mover os filhos não redimensiona a moldura.
    Selecione o grupo e arraste qualquer um dos quatro cantos para redimensionar;
    os filhos mantêm posição e escala. Ao arrastar os cantos esquerdo/superior,
@@ -76,7 +76,7 @@ A moldura tem dimensões fixas e recorta seus descendentes, incluindo grupos
 aninhados. A região do contêiner vai de `(0, 0)` até `(largura, altura)`.
 No **Topology Summary**, os grupos aparecem como pastas na hierarquia dos
 respectivos dispositivos e portas. O menu de contexto de um grupo oferece
-**Rename group**, **Duplicate** e **Delete**, usando as mesmas operações
+**Rename container**, **Duplicate** e **Delete**, usando as mesmas operações
 recursivas do canvas; Delete no teclado também funciona para o grupo selecionado.
 Duplo clique no nome do grupo nessa árvore também abre suas propriedades.
 O botão superior mostra ajuda na barra de status ao passar o mouse e usa ícones
@@ -315,7 +315,7 @@ grupos, incluindo a árvore lateral e a restauração dos metadados.
 
 ### Criação pela barra superior após selecionar
 
-O botão **Group elements** e Ctrl+G usam `CanvasGroups.requestGroup()`. Quando
+O botão **Container elements** e Ctrl+G usam `CanvasGroups.requestGroup()`. Quando
 já há uma seleção válida, o diálogo abre imediatamente. Sem seleção, o pedido
 fica pendente: selecione os elementos com o retângulo de seleção e solte o
 botão esquerdo. O diálogo abre uma única vez, com os elementos selecionados

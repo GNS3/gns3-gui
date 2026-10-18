@@ -3,13 +3,21 @@
 """Name and fixed canvas dimensions, shared by group creation and editing."""
 
 from ..qt import QtWidgets
+from .container_style_widget import ContainerStyleWidget
 
 
 class GroupPropertiesDialog(QtWidgets.QDialog):
-    def __init__(self, parent, name, width, height):
+    def __init__(self, parent, name, width, height, style=None):
         super().__init__(parent)
-        self.setWindowTitle("Group properties")
-        layout = QtWidgets.QFormLayout(self)
+        self.setWindowTitle("Container properties")
+        outer = QtWidgets.QVBoxLayout(self)
+        self.tabs = QtWidgets.QTabWidget(self)
+        general = QtWidgets.QWidget(self)
+        layout = QtWidgets.QFormLayout(general)
+        self.tabs.addTab(general, 'General')
+        self.styleEditor = ContainerStyleWidget(style, self)
+        self.tabs.addTab(self.styleEditor, 'Style')
+        outer.addWidget(self.tabs)
         self.nameEdit = QtWidgets.QLineEdit(name, self)
         self.nameEdit.setObjectName("groupName")
         self.widthEdit = QtWidgets.QDoubleSpinBox(self)
@@ -32,7 +40,7 @@ class GroupPropertiesDialog(QtWidgets.QDialog):
             QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel, self)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
-        layout.addRow(buttons)
+        outer.addWidget(buttons)
         ok = buttons.button(QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self.nameEdit.textChanged.connect(lambda text: ok.setEnabled(bool(text.strip())))
         ok.setEnabled(bool(name.strip()))
@@ -40,8 +48,8 @@ class GroupPropertiesDialog(QtWidgets.QDialog):
         self.nameEdit.setFocus()
 
     @classmethod
-    def getProperties(cls, parent, name, width, height):
-        dialog = cls(parent, name, width, height)
+    def getProperties(cls, parent, name, width, height, style=None):
+        dialog = cls(parent, name, width, height, style)
         if dialog.exec() != QtWidgets.QDialog.DialogCode.Accepted:
             return None
-        return dialog.nameEdit.text().strip(), dialog.widthEdit.value(), dialog.heightEdit.value()
+        return dialog.nameEdit.text().strip(), dialog.widthEdit.value(), dialog.heightEdit.value(), dialog.styleEditor.style()
