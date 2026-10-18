@@ -16,7 +16,7 @@ from ..qt import QtCore, QtGui, QtWidgets
 from .drawing_item import DrawingItem
 
 GROUP_METADATA = "gns3-canvas-group"
-GROUP_VERSION = 1
+GROUP_VERSION = 2
 ITEM_METADATA = "gns3-canvas-item"
 
 
@@ -116,7 +116,7 @@ def read_group(svg):
     if metadata is None:
         return None
     data = json.loads(metadata.text or "")
-    if not isinstance(data, dict) or data.get("version") != GROUP_VERSION:
+    if not isinstance(data, dict) or type(data.get("version")) is not int or data["version"] not in (1, GROUP_VERSION):
         raise ValueError("Unsupported canvas group version")
     if not isinstance(data.get("name"), str) or not data["name"].strip():
         raise ValueError("A canvas group must have a name")
@@ -133,6 +133,14 @@ def read_group(svg):
         or not math.isfinite(origin[axis]) for axis in ("x", "y")
     ):
         raise ValueError("Invalid canvas group origin")
+    if data["version"] >= 2:
+        size = data.get("size")
+        if not isinstance(size, dict) or any(
+            isinstance(size.get(axis), bool) or not isinstance(size.get(axis), (int, float))
+            or not math.isfinite(size[axis]) or not 1 <= size[axis] <= 1000000
+            for axis in ("width", "height")
+        ):
+            raise ValueError("Invalid canvas group dimensions")
     seen = set()
     for child in data["children"]:
         if not isinstance(child, dict) or child.get("type") not in ("node", "drawing", "group"):
@@ -152,7 +160,10 @@ def read_group(svg):
 class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
     """A drawable container whose direct children use its origin as (0, 0)."""
 
-    def __init__(self, name="Group", svg=None, **kwargs):
+    TITLE_HEIGHT = 24
+    MIN_SIZE = 1
+
+    def __init__(self, name="Group", svg=None, width=120, height=80, **kwargs):
         self.name = name
         self._members = []
         self._origin = QtCore.QPointF()
@@ -160,9 +171,12 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         self._revision = 0
         self._ready = False
         self.editing = False
+        self._legacy_bounds = False
         super().__init__(**kwargs)
         self._ready = True
         self.setFiltersChildEvents(True)
+        self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemClipsChildrenToShape, True)
+        self.setDimensions(width, height)
         self.setToolTip(name)
         if svg:
             self.fromSvg(svg)
@@ -204,20 +218,51 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
             if isinstance(child, GroupItem):
                 yield from child.descendants()
 
+    def setDimensions(self, width, height):
+        """Resize the frame only. Child positions and scales are independent."""
+        if not all(math.isfinite(value) and self.MIN_SIZE <= value <= 1000000 for value in (width, height)):
+            raise ValueError("Group dimensions must be between 1 and 1000000")
+        self.setRect(0, 0, width, height)
+        self.update()
+
     def refreshBounds(self):
-        if not self._ready:
-            return
-        bounds = self.childrenBoundingRect()
-        if bounds.isEmpty():
-            bounds = QtCore.QRectF(0, 0, 120, 60)
-        # Leave room for the name without changing the local coordinate origin.
-        width = QtGui.QFontMetricsF(QtGui.QFont()).horizontalAdvance(self.name) + 16
-        rect = bounds.adjusted(-12, -30, 12, 12)
-        rect.setWidth(max(rect.width(), width))
-        self.setRect(rect)
-        parent = self.parentItem()
-        if isinstance(parent, GroupItem):
-            parent.refreshBounds()
+        # Called by legacy geometry/update paths. Moving a child must never
+        # modify a fixed frame, including during asynchronous API callbacks.
+        if self._ready:
+            self.update()
+
+    def migrateLegacyBounds(self):
+        """Freeze a v1 auto-sized container once without moving its contents."""
+        if not self._legacy_bounds:
+            return False
+        bounds = self.childrenBoundingRect().adjusted(-12, -30, 12, 12)
+        offset = bounds.topLeft()
+        position = self.mapToScene(offset)
+        members = [(child, child.pos() - offset) for child in self.members()]
+        set_scene_position(self, position)
+        for child, local in members:
+            reparent(child, self, local)
+        self.setDimensions(max(20, bounds.width()), max(20, bounds.height()))
+        self._legacy_bounds = False
+        return True
+
+    def labelRect(self):
+        return QtCore.QRectF(8, 2, max(0, self.rect().width() - 16), self.TITLE_HEIGHT - 2)
+
+    def corners(self):
+        rect = self.rect()
+        return {"tl": rect.topLeft(), "tr": rect.topRight(),
+                "bl": rect.bottomLeft(), "br": rect.bottomRight()}
+
+    def shape(self):
+        # Qt uses this same exact rectangle to clip painting and hit-testing of
+        # descendants. Handles do not enlarge the child clipping region.
+        path = QtGui.QPainterPath()
+        path.addRect(self.rect())
+        return path
+
+    def boundingRect(self):
+        return self.rect().adjusted(-5, -5, 5, 5)
 
     def paint(self, painter, option, widget=None):
         painter.save()
@@ -226,10 +271,15 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
                                   QtCore.Qt.PenStyle.DashLine))
         painter.setBrush(QtCore.Qt.BrushStyle.NoBrush)
         painter.drawRect(self.rect())
-        label = self.rect().adjusted(6, 2, -6, 0)
+        label = self.labelRect()
         painter.drawText(label, QtCore.Qt.AlignmentFlag.AlignLeft |
                          QtCore.Qt.AlignmentFlag.AlignTop,
                          self.name + (" [editing]" if self.editing else ""))
+        if self.isSelected():
+            painter.setPen(QtGui.QPen(color, 0))
+            painter.setBrush(QtGui.QColor("white"))
+            for corner in self.corners().values():
+                painter.drawRect(QtCore.QRectF(corner.x() - 4, corner.y() - 4, 8, 8))
         painter.restore()
 
     def setEditing(self, editing):
@@ -262,13 +312,17 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         return False
 
     def mouseDoubleClickEvent(self, event):
-        self._graphics_view.enterGroup(self)
+        if self.labelRect().contains(event.pos()):
+            self._graphics_view.renameGroup(self)
+        else:
+            self._graphics_view.enterGroup(self)
         event.accept()
 
     def itemChange(self, change, value):
         if not self._ready:
             return QtWidgets.QGraphicsItem.itemChange(self, change, value)
         if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionChange and self._allow_snap_to_grid:
+            value = self._graphics_view._groups.snapPosition(self, value)
             if self.locked() or any(getattr(child, "locked", lambda: False)() for child in self.descendants()):
                 return self.pos()
         if change in (QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionHasChanged,
@@ -298,6 +352,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         metadata.text = json.dumps({"version": GROUP_VERSION, "revision": self._revision, "name": self.name,
                                     "drawing_id": self.drawing_id(), "identity": self._canvas_id,
                                     "origin": {"x": self.scenePos().x(), "y": self.scenePos().y()},
+                                    "size": {"width": self.rect().width(), "height": self.rect().height()},
                                     "children": children}, ensure_ascii=False, allow_nan=False)
         # An older GUI can still render the name, even without understanding
         # containers. Topology node/drawing coordinates remain useful to it.
@@ -314,6 +369,9 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         self._saved_id = data.get("drawing_id")
         self._canvas_id = data.get("identity", self.drawing_id())
         self._members = data["children"]
+        self._legacy_bounds = data["version"] == 1
+        if not self._legacy_bounds:
+            self.setDimensions(data["size"]["width"], data["size"]["height"])
         self._origin = QtCore.QPointF(data["origin"]["x"], data["origin"]["y"])
         set_scene_position(self, self._origin)
         self.setToolTip(self.name)

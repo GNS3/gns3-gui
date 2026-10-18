@@ -58,3 +58,36 @@ def test_node_grouping_actions(real_main_window):
     assert group.shortcut().toString() == "Ctrl+G"
     assert ungroup.shortcut().toString() == "Ctrl+Shift+G"
     assert group.shortcutContext() == QtCore.Qt.ShortcutContext.WidgetShortcut
+
+
+def test_group_toolbar_is_momentary_with_status_and_hover_icon(real_main_window):
+    from gns3.qt import QtGui, QtCore
+    window = real_main_window
+    action = window.uiGroupNodesAction
+    button = window.uiAnnotationToolBar.widgetForAction(action)
+    assert action.statusTip() == "Group elements (Ctrl+G)"
+    assert button.statusTip() == action.statusTip()
+    assert not action.isCheckable()
+    assert button.focusPolicy() == QtCore.Qt.FocusPolicy.NoFocus
+    icon = action.icon()
+    normal = icon.pixmap(32, 32, QtGui.QIcon.Mode.Normal).toImage()
+    active = icon.pixmap(32, 32, QtGui.QIcon.Mode.Active).toImage()
+    assert normal != active
+    button.setDown(True)
+    action.trigger()
+    assert not button.isDown() and not action.isChecked()
+
+
+def test_group_toolbar_hover_reaches_status_bar(real_main_window):
+    from PyQt6.QtTest import QTest
+    from gns3.qt import QtWidgets
+    window = real_main_window
+    window.show()
+    QtWidgets.QApplication.processEvents()
+    button = window.uiAnnotationToolBar.widgetForAction(window.uiGroupNodesAction)
+    QTest.mouseMove(button, button.rect().center())
+    QtWidgets.QApplication.processEvents()
+    assert window.uiStatusBar.currentMessage() == window.uiGroupNodesAction.statusTip()
+    QTest.mouseMove(window.uiGraphicsView.viewport(), window.uiGraphicsView.viewport().rect().center())
+    QtWidgets.QApplication.processEvents()
+    assert not button.isDown() and not window.uiGroupNodesAction.isChecked()

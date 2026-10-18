@@ -47,6 +47,7 @@ class Topology(QtCore.QObject):
     Topology.
     """
     node_added_signal = QtCore.Signal(int)
+    hierarchy_changed_signal = QtCore.Signal()
     project_changed_signal = QtCore.Signal()
 
     def __init__(self):
@@ -434,6 +435,7 @@ class Topology(QtCore.QObject):
 
         if drawing in self._drawings:
             self._drawings.remove(drawing)
+            self.hierarchy_changed_signal.emit()
 
     def getDrawingFromUuid(self, drawing_id):
         """

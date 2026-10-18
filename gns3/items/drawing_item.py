@@ -260,6 +260,11 @@ class DrawingItem:
             mid_y = self.boundingRect().height() / 2
             value.setY((grid_size * round((value.y()+mid_y)/grid_size)) - mid_y)
 
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionChange and self._allow_snap_to_grid:
+            from .group_item import GroupItem
+            if isinstance(self.parentItem(), GroupItem):
+                value = self._main_window.uiGraphicsView._groups.snapPosition(self, value)
+
         if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemSelectedChange:
             if not value:
                 self.updateDrawing()

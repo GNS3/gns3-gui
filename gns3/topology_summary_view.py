@@ -23,6 +23,7 @@ from .qt import QtGui, QtCore, QtWidgets, qslot, sip_is_deleted
 from .node import Node
 from .topology import Topology
 from .items.node_item import NodeItem
+from .items.group_item import GroupItem
 from .items.link_item import LinkItem
 from .packet_capture import PacketCapture
 from .utils import natural_sort_key
@@ -108,7 +109,8 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
         else:
             self.setText(1, "none")
         self.refreshLinks()
-        self._parent.invisibleRootItem().sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
+        self._parent.refreshGroupVisibility()
+        (self.parent() or self._parent.invisibleRootItem()).sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
 
     def refreshLinks(self):
         """
@@ -153,12 +155,32 @@ class TopologyNodeItem(QtWidgets.QTreeWidgetItem):
 
         tree = self.treeWidget()
         if not sip_is_deleted(tree):
-            tree.takeTopLevelItem(tree.indexOfTopLevelItem(self))
-            tree.nodes_id.remove(self._node.id())
+            parent = self.parent()
+            if parent:
+                parent.takeChild(parent.indexOfChild(self))
+            else:
+                tree.takeTopLevelItem(tree.indexOfTopLevelItem(self))
+            tree.nodes_id.discard(self._node.id())
+            tree._node_items.pop(self._node.id(), None)
+            tree.refreshGroupVisibility()
 
     def __lt__(self, otherItem):
         column = self.treeWidget().sortColumn()
         return natural_sort_key(str(self.text(column))) < natural_sort_key(str(otherItem.text(column)))
+
+
+class TopologyGroupItem(QtWidgets.QTreeWidgetItem):
+    """A summary row for the same persistent container used by the canvas."""
+
+    def __init__(self, group):
+        super().__init__()
+        self.group = group
+        self.setIcon(0, QtWidgets.QApplication.style().standardIcon(QtWidgets.QStyle.StandardPixmap.SP_DirIcon))
+        self.setExpanded(True)
+
+    def __lt__(self, other):
+        column = self.treeWidget().sortColumn()
+        return natural_sort_key(self.text(column)) < natural_sort_key(other.text(column))
 
 
 class TopologySummaryView(QtWidgets.QTreeWidget):
@@ -173,8 +195,11 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
 
         super().__init__(parent)
         self.nodes_id = set()
+        self._node_items = {}
+        self._group_items = {}
         self._topology = Topology.instance()
         self._topology.node_added_signal.connect(self._nodeAddedSlot)
+        self._topology.hierarchy_changed_signal.connect(self.refreshHierarchy)
         self._topology.project_changed_signal.connect(self._projectChangedSlot)
         self.itemSelectionChanged.connect(self._itemSelectionChangedSlot)
         self.show_only_devices_with_capture = False
@@ -190,17 +215,85 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
 
         self.clear()
 
+    def clear(self):
+        """Canvas reset also clears the tree directly, outside project signals."""
+        super().clear()
+        self.nodes_id.clear()
+        self._node_items.clear()
+        self._group_items.clear()
+
     def refreshAllLinks(self, source_child=None):
         """
         Refreshes all links for all items.
         """
 
-        root = self.invisibleRootItem()
-        for index in range(0, root.childCount()):
-            child = root.child(index)
-            if source_child and source_child == child:
-                continue
-            child.refreshLinks()
+        for child in list(self._node_items.values()):
+            if source_child is not child:
+                child.refreshLinks()
+        self.refreshGroupVisibility()
+
+    def refreshGroupVisibility(self):
+        """Preserve existing capture/filter behavior within nested groups."""
+        filtered = self.show_only_devices_with_capture or self.show_only_devices_with_filters
+
+        def visible(row):
+            if isinstance(row, TopologyGroupItem):
+                children = [visible(row.child(index)) for index in range(row.childCount())]
+                row.setHidden(bool(filtered and not any(children)))
+            return not row.isHidden()
+        for row in self._group_items.values():
+            if row.parent() is None:
+                visible(row)
+
+    @qslot
+    def refreshHierarchy(self, *args):
+        """Reparent existing rows, retaining ports, expansion and selection."""
+        from .main_window import MainWindow
+        view = MainWindow.instance().uiGraphicsView
+        if not isinstance(view, QtWidgets.QGraphicsView):
+            return
+        groups = {item.drawing_id(): item for item in view.scene().items() if isinstance(item, GroupItem)}
+        nodes = {item.node().id(): item for item in view.scene().items() if isinstance(item, NodeItem)}
+        blocker = QtCore.QSignalBlocker(self)
+        current = self.currentItem()
+        old_rows = list(self._group_items.values()) + list(self._node_items.values())
+        expanded = {id(row): row.isExpanded() for row in old_rows}
+        for row in old_rows:
+            parent = row.parent()
+            if parent:
+                parent.takeChild(parent.indexOfChild(row))
+            else:
+                self.takeTopLevelItem(self.indexOfTopLevelItem(row))
+        self._group_items = {identity: self._group_items.get(identity) or TopologyGroupItem(group)
+                             for identity, group in groups.items()}
+        for identity, row in self._group_items.items():
+            group = groups[identity]
+            row.group = group
+            row.setText(0, group.name)
+            row.setText(1, "Group")
+            parent = group.parentItem()
+            parent_row = self._group_items.get(parent.drawing_id()) if isinstance(parent, GroupItem) else None
+            if parent_row:
+                parent_row.addChild(row)
+            else:
+                self.addTopLevelItem(row)
+        for identity, row in self._node_items.items():
+            node = nodes.get(identity)
+            parent = node.parentItem() if node else None
+            parent_row = self._group_items.get(parent.drawing_id()) if isinstance(parent, GroupItem) else None
+            if parent_row:
+                parent_row.addChild(row)
+            else:
+                self.addTopLevelItem(row)
+        for row in list(self._group_items.values()) + list(self._node_items.values()):
+            row.setExpanded(expanded.get(id(row), isinstance(row, TopologyGroupItem)))
+            row.sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
+        self.invisibleRootItem().sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
+        if current and any(current is row for row in old_rows) and current.treeWidget() is self:
+            self.setCurrentItem(current)
+        self.refreshGroupVisibility()
+        self.resizeColumnToContents(0)
+        del blocker
 
     @qslot
     def _nodeAddedSlot(self, base_node_id, *args):
@@ -224,7 +317,8 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         if node.id() in self.nodes_id:
             return
         self.nodes_id.add(node.id())
-        TopologyNodeItem(self, node)
+        self._node_items[node.id()] = TopologyNodeItem(self, node)
+        self.refreshHierarchy()
         self.resizeColumnToContents(0)
 
     @qslot
@@ -237,11 +331,17 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         if current_item:
             from .main_window import MainWindow
             view = MainWindow.instance().uiGraphicsView
+            if isinstance(current_item, TopologyGroupItem):
+                self._selectGroup(current_item.group)
+                return
+            view._groups.leave()
+            view.scene().clearSelection()
             for item in view.scene().items():
-                if isinstance(item, NodeItem):
-                    item.setSelected(False)
-                    if isinstance(current_item, TopologyNodeItem) and item.node().id() == current_item.node().id():
-                        item.setSelected(True)
+                if isinstance(item, NodeItem) and isinstance(current_item, TopologyNodeItem) and item.node().id() == current_item.node().id():
+                    parent = item.parentItem()
+                    if isinstance(parent, GroupItem):
+                        view.enterGroup(parent)
+                    item.setSelected(True)
                 elif isinstance(item, LinkItem):
                     item.setHovered(False)
                     if not isinstance(current_item, TopologyNodeItem):
@@ -249,11 +349,41 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
                         if item.link() == link:
                             item.setHovered(True)
 
+    def _selectGroup(self, group):
+        from .main_window import MainWindow
+        view = MainWindow.instance().uiGraphicsView
+        view._groups.leave()
+        view.scene().clearSelection()
+        group.setSelected(True)
+
+    def groupMenu(self, group):
+        """Use the same validated operations as the canvas, including recursion."""
+        from .main_window import MainWindow
+        view = MainWindow.instance().uiGraphicsView
+        menu = QtWidgets.QMenu(self)
+
+        def run(callback):
+            self._selectGroup(group)
+            callback()
+        for text, callback in (("Rename group", lambda: view.renameGroup(group)),
+                               ("Duplicate", view.duplicateActionSlot),
+                               ("Delete", view.deleteActionSlot)):
+            menu.addAction(text).triggered.connect(lambda checked=False, callback=callback: run(callback))
+        return menu
+
     @qslot
     def _itemDoubleClickedSlot(self, current_item, *args):
         """
         When user double click on an element we center the topology on it
         """
+        if isinstance(current_item, TopologyGroupItem):
+            from .main_window import MainWindow
+            view = MainWindow.instance().uiGraphicsView
+            if not args or args[0] == 0:
+                view.renameGroup(current_item.group)
+            else:
+                view.centerOn(current_item.group)
+            return
         if current_item != 0:
             from .main_window import MainWindow
             view = MainWindow.instance().uiGraphicsView
@@ -274,7 +404,13 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         :param event: QContextMenuEvent instance
         """
 
-        self._showContextualMenu(event.globalPos())
+        row = self.itemAt(event.pos())
+        if row:
+            self.setCurrentItem(row)
+        if isinstance(row, TopologyGroupItem):
+            self.groupMenu(row.group).exec(event.globalPos())
+        else:
+            self._showContextualMenu(event.globalPos())
 
     def _showContextualMenu(self, pos):
         """
@@ -426,6 +562,13 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         # only deleting a link or node is supported for now
         if event.key() == QtCore.Qt.Key.Key_Delete:
             current_item = self.currentItem()
+            if current_item is None:
+                return
+            if isinstance(current_item, TopologyGroupItem):
+                self._selectGroup(current_item.group)
+                view.deleteActionSlot()
+                event.accept()
+                return
             if isinstance(current_item, TopologyNodeItem):
                 current_item.node().delete()
             else:

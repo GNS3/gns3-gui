@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Canvas hierarchy operations, separate from the legacy device command code."""
 
-from .qt import QtCore, QtWidgets, sip
+from .qt import QtCore, QtGui, QtWidgets, sip
+from .dialogs.group_properties_dialog import GroupPropertiesDialog
+import math
 from .items.group_item import GroupItem, item_reference, reparent
 from .items.node_item import NodeItem
 from .items.drawing_item import DrawingItem
@@ -14,11 +16,16 @@ class CanvasGroups:
         self.editing = None
         self.restoring = False
         self._restore_pending = False
+        self._resize = None
+        self._drag_item = None
+        self.guide_parent = None
 
     def groups(self):
         return [item for item in self.view.scene().items() if isinstance(item, GroupItem)]
 
     def reset(self):
+        self.clearDrag()
+        self._resize = None
         self.editing = None
         self._restore_pending = False
 
@@ -54,23 +61,31 @@ class CanvasGroups:
             current = current.parentItem()
         return target
 
-    def add(self, name, items, parent=None, position=None):
-        group = GroupItem(name=name.strip(), project=self.view._topology.project())
+    @staticmethod
+    def initialGeometry(items):
+        """Ten percent on each side, plus a reserved title row at the top."""
+        bounds = items[0].sceneBoundingRect()
+        for item in items[1:]:
+            bounds = bounds.united(item.sceneBoundingRect())
+        margin_x = max(2, bounds.width() * .1)
+        margin_y = max(2, bounds.height() * .1)
+        position = bounds.topLeft() - QtCore.QPointF(margin_x, margin_y + GroupItem.TITLE_HEIGHT)
+        return position, max(20, math.ceil(bounds.width() + 2 * margin_x)), max(20, math.ceil(bounds.height() + 2 * margin_y + GroupItem.TITLE_HEIGHT))
+
+    def add(self, name, items, parent=None, position=None, width=None, height=None):
+        initial_position, initial_width, initial_height = self.initialGeometry(items)
+        group = GroupItem(name=name.strip(), width=width if width is not None else initial_width,
+                          height=height if height is not None else initial_height,
+                          project=self.view._topology.project())
         self.view.scene().addItem(group)
         self.view._topology.addDrawing(group)
         if parent:
             reparent(group, parent)
-        if position is None:
-            bounds = items[0].sceneBoundingRect()
-            for item in items[1:]:
-                bounds = bounds.united(item.sceneBoundingRect())
-            position = bounds.topLeft()
         from .items.group_item import set_scene_position
-        set_scene_position(group, position)
+        set_scene_position(group, initial_position if position is None else position)
         for item in items:
             item.setSelected(False)
             reparent(item, group)
-        group.refreshBounds()
         group.setSelected(True)
         group.create()
         self.save([group])
@@ -84,10 +99,127 @@ class CanvasGroups:
         if len(parents) != 1:
             QtWidgets.QMessageBox.warning(self.view, "Group", "Select items inside the same container.")
             return
-        name, ok = QtWidgets.QInputDialog.getText(self.view, "Group", "Group name:")
-        if not ok or not name.strip():
+        _, width, height = self.initialGeometry(items)
+        result = GroupPropertiesDialog.getProperties(self.view, "Group", width, height)
+        if result:
+            name, width, height = result
+            self.add(name, items, parent=items[0].parentItem(), width=width, height=height)
+
+    def rename(self, group):
+        result = GroupPropertiesDialog.getProperties(self.view, group.name, group.rect().width(), group.rect().height())
+        if result:
+            name, width, height = result
+            group.name = name
+            group.setToolTip(name)
+            group.setDimensions(width, height)
+            self.save([group])
+
+    def notifyHierarchy(self):
+        self.view._topology.hierarchy_changed_signal.emit()
+
+    def clearDrag(self):
+        self._drag_item = None
+        self.guide_parent = None
+        self.view.viewport().update()
+
+    def beginDrag(self, item):
+        self.clearDrag()
+        if isinstance(item, QtWidgets.QGraphicsTextItem) and item.textInteractionFlags() & QtCore.Qt.TextInteractionFlag.TextEditorInteraction:
             return
-        self.add(name, items, parent=items[0].parentItem())
+        if item is not None and item_reference(item) and isinstance(item.parentItem(), GroupItem):
+            if item.parentItem().editing and item.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable:
+                self._drag_item = item
+
+    def showGuides(self):
+        item = self._drag_item
+        if item is not None and not sip.isdeleted(item) and isinstance(item.parentItem(), GroupItem):
+            self.guide_parent = item.parentItem()
+            self.view.viewport().update()
+
+    def snapPosition(self, item, value):
+        if item is not self._drag_item or self.guide_parent is not item.parentItem():
+            return value
+        center = item.mapRectToParent(item.boundingRect()).center() - item.pos()
+        target = self.guide_parent.rect().center()
+        tolerance = 6 / max(.01, self.view.transform().m11())
+        value = QtCore.QPointF(value)
+        if abs(value.x() + center.x() - target.x()) <= tolerance:
+            value.setX(target.x() - center.x())
+        if abs(value.y() + center.y() - target.y()) <= tolerance:
+            value.setY(target.y() - center.y())
+        return value
+
+    def drawGuides(self, painter):
+        group = self.guide_parent
+        if group is None or sip.isdeleted(group) or group.scene() is None:
+            return
+        painter.save()
+        current = group
+        while isinstance(current, GroupItem):
+            path = current.mapToScene(current.shape())
+            painter.setClipPath(path, QtCore.Qt.ClipOperation.IntersectClip)
+            current = current.parentItem()
+        pen = QtGui.QPen(QtGui.QColor("#e53935"), 0, QtCore.Qt.PenStyle.DashLine)
+        pen.setCosmetic(True)
+        painter.setPen(pen)
+        rect = group.rect()
+        center = rect.center()
+        painter.drawLine(group.mapToScene(QtCore.QPointF(center.x(), 0)),
+                         group.mapToScene(QtCore.QPointF(center.x(), rect.height())))
+        painter.drawLine(group.mapToScene(QtCore.QPointF(0, center.y())),
+                         group.mapToScene(QtCore.QPointF(rect.width(), center.y())))
+        painter.restore()
+
+    def resizeHandleAt(self, position):
+        for group in self.groups():
+            if not group.isSelected() or group.locked():
+                continue
+            # A nested group's handles cannot be reached through an ancestor's clip.
+            ancestor = group.parentItem()
+            visible = True
+            while isinstance(ancestor, GroupItem):
+                if not ancestor.shape().contains(ancestor.mapFromScene(position)):
+                    visible = False
+                    break
+                ancestor = ancestor.parentItem()
+            if not visible:
+                continue
+            screen = self.view.mapFromScene(position)
+            for corner, point in group.corners().items():
+                delta = self.view.mapFromScene(group.mapToScene(point)) - screen
+                if max(abs(delta.x()), abs(delta.y())) <= 7:
+                    return group, corner
+        return None
+
+    def beginResize(self, position):
+        hit = self.resizeHandleAt(position)
+        if hit is None:
+            return False
+        group, corner = hit
+        self.clearDrag()
+        self._resize = (group, corner, QtCore.QPointF(position), group.scenePos(), group.rect(),
+                        [(child, child.pos()) for child in group.members()])
+        return True
+
+    def resizeTo(self, position):
+        from .items.group_item import set_scene_position
+        group, corner, start, origin, rect, members = self._resize
+        delta = position - start
+        left = min(delta.x(), rect.width() - GroupItem.MIN_SIZE) if "l" in corner else 0
+        top = min(delta.y(), rect.height() - GroupItem.MIN_SIZE) if "t" in corner else 0
+        right = max(GroupItem.MIN_SIZE, rect.width() + delta.x()) if "r" in corner else rect.width()
+        bottom = max(GroupItem.MIN_SIZE, rect.height() + delta.y()) if "b" in corner else rect.height()
+        offset = QtCore.QPointF(left, top)
+        set_scene_position(group, origin + offset)
+        for child, local in members:
+            reparent(child, group, local - offset)
+        group.setDimensions(min(1000000, right - left), min(1000000, bottom - top))
+
+    def endResize(self):
+        if self._resize is not None:
+            group = self._resize[0]
+            self._resize = None
+            self.save([group])
 
     def ungroup(self):
         groups = [item for item in self.selected() if isinstance(item, GroupItem)]
@@ -124,6 +256,7 @@ class CanvasGroups:
             "Editing {} — coordinates relative to group origin; Esc to leave".format(group.name))
 
     def leave(self):
+        self.clearDrag()
         for group in self.groups():
             group.setEditing(False)
         self.editing = None
@@ -167,6 +300,7 @@ class CanvasGroups:
             if isinstance(item, GroupItem):
                 item.refreshBounds()
                 item.updateDrawing()
+        self.notifyHierarchy()
 
     def hasLocked(self, roots):
         for item in roots:
@@ -224,6 +358,7 @@ class CanvasGroups:
 
         for group in groups:
             visit(group)
+        migrated = []
         self.restoring = True
         try:
             for group in groups:
@@ -237,6 +372,8 @@ class CanvasGroups:
                     reparent(child, group, position)
                     if isinstance(child, GroupItem):
                         attach(child)
+                if group.migrateLegacyBounds():
+                    migrated.append(group)
                 group.refreshBounds()
             for group in groups:
                 if group not in owners:
@@ -245,9 +382,10 @@ class CanvasGroups:
             self.restoring = False
         # GNS3 regenerates node/drawing IDs on portable import and Save As.
         # Repair references once, then return to strict ID-based ownership.
-        for group in remapped:
+        for group in set(remapped + migrated):
             group._saved_id = group.drawing_id()
             group.updateDrawing()
+        self.notifyHierarchy()
 
     def duplicate(self, roots):
         """Copy the complete tree, remapping every node/drawing/group identity.
@@ -271,7 +409,7 @@ class CanvasGroups:
         snapshots = {item: (item.parentItem(), item.pos(), item.scenePos()) for item in all_items}
         for item in all_items:
             if isinstance(item, GroupItem):
-                copy = GroupItem(name=item.name, project=project)
+                copy = GroupItem(name=item.name, project=project, width=item.rect().width(), height=item.rect().height())
                 view.scene().addItem(copy)
                 view._topology.addDrawing(copy)
                 copy.setPos(item.scenePos() + offset)
@@ -308,6 +446,10 @@ class CanvasGroups:
                 parent, local, _ = snapshots[original]
                 if parent in mapping:
                     reparent(copy, mapping[parent], local)
+                elif isinstance(parent, GroupItem) and not sip.isdeleted(parent) and parent.scene() is view.scene():
+                    # Duplicating a nested group/drawing creates a sibling in
+                    # that same container, including from the summary panel.
+                    reparent(copy, parent, local + offset)
             for original, copy in mapping.items():
                 if isinstance(copy, DrawingItem):
                     copy.create()

@@ -115,6 +115,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # set the custom flags for this view
         self.setDragMode(QtWidgets.QGraphicsView.DragMode.RubberBandDrag)
+        self.setMouseTracking(True)
         self.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         self.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.setResizeAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorViewCenter)
@@ -445,14 +446,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def enterGroup(self, group):
         self._groups.enter(group)
 
-    def renameGroup(self):
-        for group in self._groups.selected():
-            if isinstance(group, GroupItem):
-                name, ok = QtWidgets.QInputDialog.getText(self, "Rename group", "Group name:", text=group.name)
-                if ok and name.strip():
-                    group.name = name.strip()
-                    group.setToolTip(group.name)
-                    self._groups.save([group])
+    def renameGroup(self, group=None):
+        groups = [group] if isinstance(group, GroupItem) else self._groups.selected()
+        for item in groups:
+            if isinstance(item, GroupItem):
+                self._groups.rename(item)
 
     def mousePressEvent(self, event):
         """
@@ -461,6 +459,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QMouseEvent instance
         """
 
+        position = self.mapToScene(event.position().toPoint())
+        adding_item = any((self._adding_link, self._adding_note, self._adding_rectangle, self._adding_ellipse, self._adding_line))
+        if event.button() == QtCore.Qt.MouseButton.LeftButton and not adding_item and not self._dragging and not event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier:
+            if self._groups.beginResize(position):
+                event.accept()
+                return
+            editing = self._groups.editing
+            if editing is not None and not editing.shape().contains(editing.mapFromScene(position)):
+                self._groups.save()
+                self._groups.leave()
         is_not_link = True
         is_not_logo = True
 
@@ -538,6 +546,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if event.button() == QtCore.Qt.MouseButton.LeftButton and not self._adding_link:
             self._groups.collapseSelection()
+        if event.button() == QtCore.Qt.MouseButton.LeftButton and not self._adding_link:
+            self._groups.beginDrag(item)
         self.toggleUiDeviceMenu()
 
     def contextMenuEvent(self, event):
@@ -589,6 +599,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param: QMouseEvent instance
         """
 
+        self._groups.clearDrag()
+        if self._groups._resize is not None:
+            self._groups.endResize()
+            event.accept()
+            return
         if not self._adding_link:
             self._groups.collapseSelection()
 
@@ -664,6 +679,18 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QMouseEvent instance
         """
 
+        if self._groups._resize is not None:
+            self._groups.resizeTo(self.mapToScene(event.position().toPoint()))
+            event.accept()
+            return
+        if event.buttons() & QtCore.Qt.MouseButton.LeftButton and not self._dragging and not self._adding_link:
+            self._groups.showGuides()
+        if not event.buttons() and not self._adding_link:
+            hit = self._groups.resizeHandleAt(self.mapToScene(event.position().toPoint()))
+            if hit:
+                self.setCursor(QtCore.Qt.CursorShape.SizeFDiagCursor if hit[1] in ("tl", "br") else QtCore.Qt.CursorShape.SizeBDiagCursor)
+            elif self.cursor().shape() in (QtCore.Qt.CursorShape.SizeFDiagCursor, QtCore.Qt.CursorShape.SizeBDiagCursor):
+                self.unsetCursor()
         if self._dragging:
             # This if statement event checks to see if the user is dragging the scene
             # if so it sets the value of the scene scroll bars based on the change between
@@ -703,6 +730,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if not self._adding_link:
             group = self._groups.target(item)
+            if isinstance(group, GroupItem) and group.labelRect().contains(group.mapFromScene(self.mapToScene(event.position().toPoint()))):
+                self.renameGroup(group)
+                event.accept()
+                return
             if isinstance(group, GroupItem) and not group.editing:
                 self.enterGroup(group)
                 event.accept()
@@ -1736,6 +1767,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._drawing_grid_color = self.DEFAULT_DRAWING_GRID_COLOR
         self._node_grid_color = self.DEFAULT_NODE_GRID_COLOR
         self.viewport().update()
+
+    def drawForeground(self, painter, rect):
+        super().drawForeground(painter, rect)
+        self._groups.drawGuides(painter)
+
+    def focusOutEvent(self, event):
+        self._groups.clearDrag()
+        self._groups.endResize()
+        super().focusOutEvent(event)
 
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)

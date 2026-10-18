@@ -218,13 +218,13 @@ def test_hierarchy_validation_is_atomic(canvas):
 def test_name_dialog_cancel_and_empty_name(canvas):
     a = device(canvas)
     a.setSelected(True)
-    for answer in (("LAN", False), ("   ", True)):
-        with patch.object(QtWidgets.QInputDialog, "getText", return_value=answer):
-            canvas.groupSelectedNodes()
-        assert a.parentItem() is None
-    with patch.object(QtWidgets.QInputDialog, "getText", return_value=(" LAN 1 ", True)):
+    with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties", return_value=None):
+        canvas.groupSelectedNodes()
+    assert a.parentItem() is None
+    with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties", return_value=("LAN 1", 250, 160)):
         canvas.groupSelectedNodes()
     assert a.parentItem().name == "LAN 1"
+    assert a.parentItem().rect().width() == 250
 
 
 def test_enter_nested_group_edit_child_and_escape(canvas):
@@ -319,11 +319,17 @@ def test_async_duplicate_failure_rolls_back_successful_copies(canvas):
 def test_invalid_metadata_and_stale_acknowledgment(canvas):
     container = group(canvas, [drawing(canvas)])
     svg = container.toSvg()
-    for bad in (svg.replace('"version": 1', '"version": 99'),
-                svg.replace('"x": 0.5', '"x": NaN')):
-        if bad != svg:
-            with pytest.raises(ValueError):
-                read_group(bad)
+    import copy
+    import xml.etree.ElementTree as ET
+    for key, value in (("version", 99), ("size", {"width": -1, "height": 100}),
+                       ("origin", {"x": float("nan"), "y": 0})):
+        data = copy.deepcopy(read_group(svg))
+        data[key] = value
+        root = ET.fromstring(svg)
+        metadata = next(element for element in root.iter() if element.get("id") == "gns3-canvas-group")
+        metadata.text = json.dumps(data)
+        with pytest.raises(ValueError):
+            read_group(ET.tostring(root, encoding="unicode"))
     payload = container.__json__()
     payload["svg"] = container.toSvg()
     old_position = container.pos()
@@ -352,3 +358,199 @@ def test_drag_closed_nested_container_and_double_click_one_level(canvas):
     assert outer.editing and not inner.editing
     QTest.mouseDClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
     assert inner.editing and canvas._groups.editing is inner
+
+
+def test_fixed_dimensions_margin_and_child_clipping(canvas):
+    from gns3.qt import QtGui
+    from gns3.items.group_item import set_scene_position
+    child = drawing(canvas, x=0, y=0)
+    _, width, height = canvas._groups.initialGeometry([child])
+    assert width >= child.sceneBoundingRect().width() * 1.2
+    assert height >= child.sceneBoundingRect().height() * 1.2 + GroupItem.TITLE_HEIGHT
+    container = group(canvas, [child])
+    assert container.rect().width() == width and container.rect().height() == height
+    rect = container.rect()
+    child.setPos(child.pos() + QtCore.QPointF(400, 300))
+    assert container.rect() == rect
+    set_scene_position(container, QtCore.QPointF(0, 0))
+    container.setDimensions(100, 100)
+    child.setRect(0, 0, 80, 40)
+    child.setPen(QtGui.QPen(QtCore.Qt.PenStyle.NoPen))
+    child.setBrush(QtGui.QColor("#ff0000"))
+    child.setPos(80, 40)
+    image = QtGui.QImage(160, 120, QtGui.QImage.Format.Format_ARGB32)
+    image.fill(QtGui.QColor("white"))
+    painter = QtGui.QPainter(image)
+    canvas.scene().render(painter, QtCore.QRectF(0, 0, 160, 120), QtCore.QRectF(0, 0, 160, 120))
+    painter.end()
+    assert image.pixelColor(90, 60).name() == "#ff0000"
+    assert image.pixelColor(130, 60).name() == "#ffffff"
+    assert container.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemClipsChildrenToShape
+
+
+@pytest.mark.parametrize("corner,delta,expected", [
+    ("br", (30, 20), (230, 180)), ("tl", (30, 20), (170, 140)),
+    ("tr", (30, 20), (230, 140)), ("bl", (30, 20), (170, 180)),
+])
+def test_resize_each_corner_preserves_child_scene_position(canvas, corner, delta, expected):
+    child = drawing(canvas)
+    container = canvas._groups.add("Fixed", [child], position=QtCore.QPointF(-100, -80), width=200, height=160)
+    before = child.scenePos()
+    QtWidgets.QApplication.processEvents()
+    point = canvas.mapFromScene(container.mapToScene(container.corners()[corner]))
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=point)
+    assert canvas._groups._resize is not None
+    QTest.mouseMove(canvas.viewport(), point + QtCore.QPoint(*delta))
+    QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=point + QtCore.QPoint(*delta))
+    assert (container.rect().width(), container.rect().height()) == expected
+    assert child.scenePos() == before
+    assert canvas._groups._resize is None
+    saved = read_group(container.toSvg())
+    assert saved["size"] == {"width": expected[0], "height": expected[1]}
+    loaded = GroupItem(svg=container.toSvg())
+    assert loaded.rect() == container.rect()
+
+
+def test_title_double_click_renames_and_outside_click_clears_editing(canvas):
+    a, b = device(canvas), device(canvas, 100)
+    container = group(canvas, [a, b])
+    QtWidgets.QApplication.processEvents()
+    title = canvas.mapFromScene(container.mapToScene(container.labelRect().center()))
+    with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties", return_value=("Renamed", 300, 200)):
+        QTest.mouseDClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=title)
+    assert container.name == "Renamed" and container.rect().width() == 300
+    canvas.enterGroup(container)
+    outside = canvas.mapFromScene(container.mapToScene(QtCore.QPointF(-30, -30)))
+    QTest.mouseClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=outside)
+    assert canvas._groups.editing is None and not container.editing
+
+
+def test_direct_parent_guides_snap_and_disappear_on_release(canvas):
+    node = device(canvas)
+    inner = group(canvas, [node])
+    outer = group(canvas, [inner, drawing(canvas, x=300)], "Site")
+    inner.setDimensions(200, 160)
+    canvas.enterGroup(inner)
+    QtWidgets.QApplication.processEvents()
+    start = canvas.mapFromScene(node.sceneBoundingRect().center())
+    destination = canvas.mapFromScene(inner.mapToScene(inner.rect().center())) + QtCore.QPoint(3, -2)
+    before_svg = inner.toSvg()
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+    QTest.mouseMove(canvas.viewport(), destination)
+    assert canvas._groups.guide_parent is inner
+    assert canvas._groups.guide_parent is not outer
+    center = node.mapRectToParent(node.boundingRect()).center()
+    assert center == inner.rect().center()
+    assert len(inner.members()) == 1
+    # Guides are view-only, never serialized as topology elements.
+    assert "e53935" not in inner.toSvg() and "guide" not in inner.toSvg()
+    QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=destination)
+    assert canvas._groups.guide_parent is None
+    assert canvas._groups._drag_item is None
+
+
+def test_v1_group_migrates_once_to_fixed_frame(canvas):
+    import xml.etree.ElementTree as ET
+    node = device(canvas)
+    container = group(canvas, [node])
+    before = node.scenePos()
+    root = ET.fromstring(container.toSvg())
+    metadata = next(element for element in root.iter() if element.get("id") == "gns3-canvas-group")
+    data = json.loads(metadata.text)
+    data["version"] = 1
+    data.pop("size")
+    metadata.text = json.dumps(data)
+    container.fromSvg(ET.tostring(root, encoding="unicode"))
+    canvas._groups.restore()
+    assert node.scenePos() == before
+    rect = container.rect()
+    node.setPos(node.pos() + QtCore.QPointF(400, 400))
+    assert container.rect() == rect
+    assert read_group(container.toSvg())["version"] == 2
+
+
+@pytest.fixture
+def summary(canvas):
+    from gns3.topology_summary_view import TopologySummaryView
+    # Use real (synchronous in tests) topology signals, not MagicMock.connect.
+    canvas._topology.hierarchy_changed_signal = QtCore.Signal()
+    with patch("gns3.topology_summary_view.Topology.instance", return_value=canvas._topology):
+        tree = TopologySummaryView(None)
+    yield tree
+    tree.deleteLater()
+
+
+def add_summary_node(summary, canvas, node, identity):
+    node.node().id.return_value = identity
+    node.node().links.return_value = []
+    node.node().consoleType.return_value = "none"
+    canvas._topology.getNode.return_value = node.node()
+    summary._nodeAddedSlot(identity)
+    return summary._node_items[identity]
+
+
+def test_summary_nested_groups_ports_and_group_actions(canvas, summary):
+    from gns3.topology_summary_view import TopologyGroupItem
+    node = device(canvas)
+    row = add_summary_node(summary, canvas, node, 12)
+    # Preserve an existing port row while the device changes hierarchy.
+    port_row = QtWidgets.QTreeWidgetItem(row, ["Ethernet0"])
+    inner = group(canvas, [node], "LAN 1")
+    outer = group(canvas, [inner, drawing(canvas, x=300)], "Site")
+    assert summary.topLevelItemCount() == 1
+    top = summary.topLevelItem(0)
+    assert isinstance(top, TopologyGroupItem) and top.group is outer
+    assert row.parent().group is inner and row.parent().parent() is top
+    assert row.child(0) is port_row
+    menu = summary.groupMenu(inner)
+    assert [action.text() for action in menu.actions()] == ["Rename group", "Duplicate", "Delete"]
+    with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties", return_value=("LAN renamed", 220, 180)):
+        menu.actions()[0].trigger()
+    assert row.parent().text(0) == "LAN renamed"
+    with patch("gns3.canvas_groups.GroupPropertiesDialog.getProperties", return_value=("Site renamed", 600, 400)):
+        summary._itemDoubleClickedSlot(top, 0)
+    assert outer.name == "Site renamed" and top.text(0) == "Site renamed"
+    with patch.object(canvas, "duplicateActionSlot") as duplicate:
+        summary.groupMenu(inner).actions()[1].trigger()
+        duplicate.assert_called_once()
+        assert canvas._groups.selected() == [inner]
+    with patch.object(canvas, "deleteActionSlot") as delete:
+        summary.groupMenu(inner).actions()[2].trigger()
+        delete.assert_called_once()
+        assert canvas._groups.selected() == [inner]
+    row.setExpanded(True)
+    canvas._groups.save([outer])
+    assert row.isExpanded() and row.child(0) is port_row
+
+
+def test_summary_filters_and_nested_node_removal(canvas, summary):
+    a, b = device(canvas), device(canvas, 100)
+    row_a = add_summary_node(summary, canvas, a, 13)
+    row_b = add_summary_node(summary, canvas, b, 14)
+    container = group(canvas, [a, b])
+    summary.show_only_devices_with_capture = True
+    summary.refreshAllLinks()
+    assert summary._group_items[container.drawing_id()].isHidden()
+    summary.show_only_devices_with_capture = False
+    summary.refreshAllLinks()
+    assert not summary._group_items[container.drawing_id()].isHidden()
+    row_a._deletedNodeSlot()
+    assert 13 not in summary._node_items and 13 not in summary.nodes_id
+    assert row_b.parent() is summary._group_items[container.drawing_id()]
+    summary._projectChangedSlot()
+    assert summary.topLevelItemCount() == 0
+    assert not summary.nodes_id and not summary._group_items
+
+
+def test_duplicate_nested_group_retains_parent_and_fixed_dimensions(canvas):
+    inner = group(canvas, [drawing(canvas)], "LAN")
+    outer = group(canvas, [inner, drawing(canvas, x=300)], "Site")
+    inner.setDimensions(140, 110)
+    canvas.enterGroup(outer)
+    inner.setSelected(True)
+    canvas.duplicateActionSlot()
+    copy = canvas._groups.selected()[0]
+    assert copy is not inner and isinstance(copy, GroupItem)
+    assert copy.parentItem() is outer
+    assert copy.pos() == inner.pos() + QtCore.QPointF(20, 20)
+    assert copy.rect() == inner.rect()

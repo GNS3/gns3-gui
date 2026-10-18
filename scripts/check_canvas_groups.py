@@ -24,6 +24,7 @@ from gns3.qt import QtWidgets, QtCore
 from gns3.main_window import MainWindow
 from gns3.graphics_view import GraphicsView
 from gns3.topology import Topology
+from gns3.topology_summary_view import TopologySummaryView
 from gns3.items.node_item import NodeItem
 from gns3.items.group_item import GroupItem, read_group
 from gns3.local_config import LocalConfig
@@ -86,11 +87,13 @@ def main():
         def item_for(data):
             node = MagicMock()
             node.node_id.return_value = data['node_id']
-            node.id.return_value = len(topo.nodes())
+            node.id.return_value = len(topo.nodes()) + 1
             node.name.return_value = data['name']
             node.x.return_value, node.y.return_value = data['x'], data['y']
             node.z.return_value = data.get('z',1)
             node.locked.return_value = False
+            node.links.return_value = []
+            node.consoleType.return_value = "none"
             node.initialized.return_value = False
             ports = []
             for number in range(8):
@@ -132,6 +135,16 @@ def main():
         image = view.createDrawingItem('image',400,80,0,svg='<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><circle cx="30" cy="30" r="25" fill="#42a5f5"/></svg>')
         inner = view._groups.add('LAN 1',nodes+[shape,note])
         outer = view._groups.add('Site São Paulo',[inner,image])
+        summary = TopologySummaryView(None)
+        for node in topo.nodes():
+            summary._nodeAddedSlot(node.id())
+        assert summary.topLevelItemCount() == 1
+        assert summary.topLevelItem(0).child(0).group is inner
+        outer_size = outer.rect().size()
+        inner.setDimensions(inner.rect().width() * .8, inner.rect().height() * .9)
+        view._groups.save([inner])
+        assert outer.rect().size() == outer_size
+        expected_sizes = {group.name: group.rect().size() for group in view._groups.groups()}
         before = nodes[0].scenePos()
         outer.setPos(outer.pos()+QtCore.QPointF(80,50))
         view._groups.save([outer])
@@ -142,6 +155,7 @@ def main():
         assert len(topo._project.call('GET','/nodes'))==4
         assert len(topo._project.call('GET','/links'))==2
         assert len(view._groups.groups())==4
+        assert all(group.rect().size() == expected_sizes[group.name] for group in view._groups.groups())
         copies=view._groups.selected()
         assert len(copies)==1 and isinstance(copies[0],GroupItem)
         # Export then import: GNS3 regenerates all IDs, including drawing IDs.
@@ -156,6 +170,7 @@ def main():
         project_ids.append(newid)
         imported=request('POST','/projects/'+newid+'/import',archive)
         request('POST','/projects/'+newid+'/open')
+        summary._projectChangedSlot()
         topo._project=Bridge(newid)
         topo._nodes.clear()
         topo._links.clear()
@@ -167,6 +182,8 @@ def main():
         view._groups.restore()
         groups=view._groups.groups()
         assert len(groups)==4
+        assert all(group.rect().size() == expected_sizes[group.name] for group in groups)
+        assert summary.topLevelItemCount() == 2
         assert len([group for group in groups if group.parentItem() is None])==2
         for group in groups:
             if group.name=='LAN 1':
@@ -189,6 +206,23 @@ def main():
         view.fitInView(view.scene().itemsBoundingRect().adjusted(-50,-50,50,50),QtCore.Qt.AspectRatioMode.KeepAspectRatio)
         app.processEvents()
         view.viewport().grab().save(str(output / 'hierarchy.png'))
+        summary.setColumnCount(2)
+        summary.setHeaderLabels(["Topology Summary", "Console"])
+        summary.resize(400, 600)
+        summary.show()
+        summary.expandAll()
+        app.processEvents()
+        summary.grab().save(str(output / 'topology-summary.png'))
+        # Capture the transient foreground separately from the saved project.
+        inner_group = next(group for group in groups if group.name == 'LAN 1')
+        direct_node = next(item for item in inner_group.members() if isinstance(item, NodeItem))
+        view.enterGroup(inner_group)
+        view._groups.beginDrag(direct_node)
+        view._groups.showGuides()
+        app.processEvents()
+        view.viewport().grab().save(str(output / 'alignment-guides.png'))
+        view._groups.clearDrag()
+        view._groups.leave()
         # Delete just one imported root recursively; its sibling copy remains.
         view.scene().clearSelection()
         root=next(group for group in groups if group.parentItem() is None)
