@@ -94,6 +94,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._adding_rectangle = False
         self._adding_ellipse = False
         self._adding_line = False
+        self._shape_preview = None
+        self._shape_origin = None
         self._newlink = None
         self._dragging = False
         self._groups = CanvasGroups(self)
@@ -204,6 +206,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         # reset the lock button
         self._main_window.uiLockAllAction.setChecked(False)
 
+        self.cancelShapeDrawing()
         # clear all objects on the scene
         self._groups.reset()
         self.scene().clear()
@@ -533,18 +536,16 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._main_window.uiAddNoteAction.setChecked(False)
             self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
             self._adding_note = False
-        elif event.button() == QtCore.Qt.MouseButton.LeftButton and self._adding_rectangle:
-            pos = self.mapToScene(event.position().toPoint())
-            self.createDrawingItem("rect", int(pos.x()), int(pos.y()), 1)
-            self._main_window.uiDrawRectangleAction.setChecked(False)
-            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
-            self._adding_rectangle = False
-        elif event.button() == QtCore.Qt.MouseButton.LeftButton and self._adding_ellipse:
-            pos = self.mapToScene(event.position().toPoint())
-            self.createDrawingItem("ellipse", int(pos.x()), int(pos.y()), 1)
-            self._main_window.uiDrawEllipseAction.setChecked(False)
-            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
-            self._adding_ellipse = False
+        elif event.button() == QtCore.Qt.MouseButton.LeftButton and (self._adding_rectangle or self._adding_ellipse):
+            self._shape_origin = self.mapToScene(event.position().toPoint())
+            self._shape_preview = (QtWidgets.QGraphicsRectItem() if self._adding_rectangle
+                                   else QtWidgets.QGraphicsEllipseItem())
+            self._shape_preview.setPen(QtGui.QPen(QtGui.QColor("#3484c6"), 1))
+            self._shape_preview.setBrush(QtGui.QColor(52, 132, 198, 40))
+            self._shape_preview.setZValue(1000000)
+            self.scene().addItem(self._shape_preview)
+            event.accept()
+            return
         elif event.button() == QtCore.Qt.MouseButton.LeftButton and self._adding_line:
             pos = self.mapToScene(event.position().toPoint())
             self.createDrawingItem("line", int(pos.x()), int(pos.y()), 1)
@@ -609,6 +610,20 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param: QMouseEvent instance
         """
 
+        if self._shape_preview is not None and event.button() == QtCore.Qt.MouseButton.LeftButton:
+            rect = QtCore.QRectF(self._shape_origin, self.mapToScene(event.position().toPoint())).normalized()
+            kind = "rect" if self._adding_rectangle else "ellipse"
+            self.cancelShapeDrawing()
+            if rect.width() >= 1 and rect.height() >= 1:
+                item = self.createDrawingItem(kind, rect.x(), rect.y(), 1, create=False)
+                item.setWidthAndHeight(rect.width(), rect.height())
+                if StyleEditorDialog(self, [item]).exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                    item.create()
+                    self._groups.save([item])
+                else:
+                    self.discardDraft(item)
+            event.accept()
+            return
         if self._groups._resize is not None:
             self._groups.clearDrag()
             self._groups.endResize()
@@ -635,6 +650,22 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if self._groups.selection_started:
             self._groups.selection_started = False
             self._groups.finishSelection()
+
+    def discardDraft(self, item):
+        """Discard a dialog draft without sending DELETE for an uncreated ID."""
+        self._topology.removeDrawing(item)
+        if item.scene() is self.scene():
+            self.scene().removeItem(item)
+
+    def cancelShapeDrawing(self):
+        if self._shape_preview is not None:
+            self.scene().removeItem(self._shape_preview)
+        self._shape_preview = None
+        self._shape_origin = None
+        self._adding_rectangle = self._adding_ellipse = False
+        self._main_window.uiDrawRectangleAction.setChecked(False)
+        self._main_window.uiDrawEllipseAction.setChecked(False)
+        self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
     def wheelEvent(self, event):
         """
@@ -697,6 +728,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QKeyEvent
         """
 
+        if event.key() == QtCore.Qt.Key.Key_Escape and self._shape_preview is not None:
+            self.cancelShapeDrawing()
+            event.accept()
+            return
         if event.key() == QtCore.Qt.Key.Key_Escape and self._groups.selection_pending:
             self._groups.selection_pending = False
             self._main_window.uiStatusBar.clearMessage()
@@ -724,6 +759,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QMouseEvent instance
         """
 
+        if self._shape_preview is not None:
+            self._shape_preview.setRect(QtCore.QRectF(self._shape_origin, self.mapToScene(event.position().toPoint())).normalized())
+            event.accept()
+            return
         if self._groups._resize is not None:
             self._groups.resizeTo(self.mapToScene(event.position().toPoint()))
             event.accept()

@@ -38,6 +38,8 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
         super().__init__(parent)
         self.setupUi(self)
+        self.uiWidthSpinBox.setMaximum(1000000)
+        self.uiHeightSpinBox.setMaximum(1000000)
 
         self._items = items
         self.uiColorPushButton.clicked.connect(self._setColorSlot)
@@ -147,7 +149,8 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
                 item.setHorizontalCornerRadius(corner_radius)
                 item.setVerticalCornerRadius(corner_radius)
             if isinstance(item, ShapeItem):
-                item.setWidthAndHeight(self.uiWidthSpinBox.value(), self.uiHeightSpinBox.value())
+                item.setWidthAndHeight(item.rect().width() if int(item.rect().width()) == self.uiWidthSpinBox.value() else self.uiWidthSpinBox.value(),
+                                       item.rect().height() if int(item.rect().height()) == self.uiHeightSpinBox.value() else self.uiHeightSpinBox.value())
             item.setRotation(self.uiRotationSpinBox.value())
 
     def done(self, result):
