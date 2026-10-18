@@ -19,6 +19,10 @@ class CanvasGroups:
         self._resize = None
         self._drag_item = None
         self._drag_nodes = {}
+        self._drag_targets = {}
+        self._exit_groups = set()
+        self._drag_hover_groups = set()
+        self._outside_nodes = set()
         self.guide_parent = None
         self.drop_target = None
 
@@ -121,6 +125,7 @@ class CanvasGroups:
         self.view._topology.hierarchy_changed_signal.emit()
 
     def clearDrag(self):
+        self.clearDragFeedback()
         self._drag_item = None
         self._drag_nodes = {}
         self.guide_parent = None
@@ -130,37 +135,102 @@ class CanvasGroups:
         self.clearDrag()
         if isinstance(item, QtWidgets.QGraphicsTextItem) and item.textInteractionFlags() & QtCore.Qt.TextInteractionFlag.TextEditorInteraction:
             return
-        if item is not None and item_reference(item) and isinstance(item.parentItem(), GroupItem):
-            if item.parentItem().editing and item.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable:
+        if item is not None and item_reference(item):
+            parent = item.parentItem()
+            editable = (parent is None and isinstance(item, NodeItem) or
+                        isinstance(parent, GroupItem) and parent.editing)
+            if editable and item.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable:
                 self._drag_item = item
                 self._drag_nodes = {node: node.scenePos() for node in self.view.scene().selectedItems()
                                     if isinstance(node, NodeItem) and node.parentItem() is item.parentItem()}
 
-    def endDrag(self):
-        """Detach moved devices whose centers were released outside their parent.
+    def clearDragFeedback(self):
+        for group in self._exit_groups | self._drag_hover_groups:
+            if not sip.isdeleted(group):
+                group.exit_hover = False
+                group.drop_hover = False
+                group.update()
+        self._exit_groups.clear()
+        self._drag_hover_groups.clear()
+        self._outside_nodes.clear()
+        self._drag_targets.clear()
 
-        Keep clipping during the gesture. For nested groups, promote to the
-        nearest containing ancestor, or the canvas if none contains the center.
-        Reparenting preserves scene coordinates and network connections.
-        """
-        changed = []
+    def updateDrag(self):
+        """Preview ownership changes without modifying the persisted hierarchy."""
+        self.clearDragFeedback()
         for node, start in self._drag_nodes.items():
             if sip.isdeleted(node) or node.scene() is not self.view.scene() or node.scenePos() == start:
                 continue
             parent = node.parentItem()
-            if not isinstance(parent, GroupItem):
-                continue
             center = node.mapToScene(node.boundingRect().center())
-            if parent.shape().contains(parent.mapFromScene(center)):
+            if isinstance(parent, GroupItem) and not parent.shape().contains(parent.mapFromScene(center)):
+                parent.exit_hover = True
+                self._exit_groups.add(parent)
+                self._outside_nodes.add(node)
+                parent.update()
+            destination = self.groupAt(center)
+            self._drag_targets[node] = destination
+            if destination is not None and destination is not parent:
+                destination.drop_hover = True
+                self._drag_hover_groups.add(destination)
+                destination.update()
+            if node is self._drag_item:
+                self.guide_parent = destination
+        self.view.viewport().update()
+
+    def endDrag(self):
+        """Commit the previewed parent on release, preserving position and links."""
+        self.updateDrag()
+        changed = []
+        for node, destination in self._drag_targets.items():
+            parent = node.parentItem()
+            if destination is parent:
                 continue
-            destination = parent.parentItem()
-            while isinstance(destination, GroupItem) and not destination.shape().contains(destination.mapFromScene(center)):
-                destination = destination.parentItem()
             reparent(node, destination)
-            changed.extend((parent, node))
+            changed.append(node)
+            if parent is not None:
+                changed.append(parent)
         self.clearDrag()
         # Include an old parent that is now empty in the release's single save.
         return changed
+
+    def drawDragPreviews(self, painter):
+        """Paint the exiting symbol/labels outside ancestor clips, view-only.
+
+        The actual device stays parented until release. Only the clipped-away
+        pixels are painted here, leaving other overflowing children clipped.
+        """
+        for node in self._outside_nodes:
+            if sip.isdeleted(node) or node.scene() is not self.view.scene():
+                continue
+            viewport = QtGui.QPainterPath()
+            viewport.addPolygon(self.view.mapToScene(self.view.viewport().rect()))
+            visible = viewport
+            parent = node.parentItem()
+            while isinstance(parent, GroupItem):
+                visible = visible.intersected(parent.mapToScene(parent.shape()))
+                parent = parent.parentItem()
+            painter.save()
+            painter.setClipPath(viewport.subtracted(visible), QtCore.Qt.ClipOperation.IntersectClip)
+            painter.setWorldTransform(node.sceneTransform(), True)
+
+            def paint(item):
+                if not item.isVisible():
+                    return
+                painter.save()
+                painter.setOpacity(painter.opacity() * item.opacity())
+                option = QtWidgets.QStyleOptionGraphicsItem()
+                option.exposedRect = item.boundingRect()
+                item.paint(painter, option)
+                for child in sorted(item.childItems(), key=lambda child: child.zValue()):
+                    painter.save()
+                    painter.setWorldTransform(child.itemTransform(item)[0], True)
+                    paint(child)
+                    painter.restore()
+                painter.restore()
+
+            paint(node)
+            painter.restore()
 
     def showGuides(self):
         item = self._drag_item
@@ -169,7 +239,7 @@ class CanvasGroups:
             self.view.viewport().update()
 
     def snapPosition(self, item, value):
-        if item is not self._drag_item or self.guide_parent is not item.parentItem():
+        if self.guide_parent is None or item is not self._drag_item or self.guide_parent is not item.parentItem():
             return value
         center = item.mapRectToParent(item.boundingRect()).center() - item.pos()
         target = self.guide_parent.rect().center()

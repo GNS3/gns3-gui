@@ -172,6 +172,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         self._ready = False
         self.editing = False
         self.drop_hover = False
+        self.exit_hover = False
         self._legacy_bounds = False
         super().__init__(**kwargs)
         self._ready = True
@@ -269,9 +270,10 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
 
     def paint(self, painter, option, widget=None):
         painter.save()
-        color = QtGui.QColor("#3484c6")
-        painter.setPen(QtGui.QPen(color, 4 if self.drop_hover else (2 if self.isSelected() else 1),
-                                  QtCore.Qt.PenStyle.SolidLine if self.drop_hover else QtCore.Qt.PenStyle.DashLine))
+        color = QtGui.QColor("#e53935" if self.exit_hover else "#3484c6")
+        highlighted = self.drop_hover or self.exit_hover
+        painter.setPen(QtGui.QPen(color, 4 if highlighted else (2 if self.isSelected() else 1),
+                                  QtCore.Qt.PenStyle.SolidLine if highlighted else QtCore.Qt.PenStyle.DashLine))
         painter.setBrush(QtCore.Qt.BrushStyle.NoBrush)
         painter.drawRect(self.rect())
         label = self.labelRect()

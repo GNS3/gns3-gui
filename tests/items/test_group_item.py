@@ -717,7 +717,7 @@ def test_device_drag_outside_group_detaches_on_release_and_persists(canvas, summ
     QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
     QTest.mouseMove(canvas.viewport(), start + delta)
     before_release = node.scenePos()
-    assert node.parentItem() is container  # Remains clipped until release.
+    assert node.parentItem() is container  # Ownership changes only on release.
     QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start + delta)
     assert node.parentItem() is None and node.scenePos() == before_release
     assert read_group(container.toSvg())["children"] == []
@@ -791,3 +791,89 @@ def test_device_click_or_partial_overflow_keeps_group_membership(canvas, move):
     QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
     assert node.parentItem() is container
     assert read_group(container.toSvg())["children"][0]["id"] == node.node().node_id()
+
+
+def test_exiting_device_preview_is_unclipped_without_exposing_other_children(canvas, tmp_path):
+    from gns3.qt import QtGui
+    from gns3.qt.qimage_svg_renderer import QImageSvgRenderer
+    symbol = tmp_path / "drag-symbol.svg"
+    symbol.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="#00ff00"/></svg>')
+    renderer = QImageSvgRenderer(str(symbol))
+    node, hidden = device(canvas), device(canvas)
+    node.setSharedRenderer(renderer)
+    hidden.setSharedRenderer(renderer)
+    container = group(canvas, [node, hidden])
+    container.setPos(20, 20)
+    container.setDimensions(100, 100)
+    node.setPos(60, 40)
+    hidden.setPos(160, 80)
+    label = QtWidgets.QGraphicsRectItem(0, 0, 10, 10, node)
+    label.setPos(0, 45)
+    label.setBrush(QtGui.QColor("red"))
+    label.setPen(QtGui.QPen(QtCore.Qt.PenStyle.NoPen))
+    canvas.enterGroup(container)
+    QtWidgets.QApplication.processEvents()
+    start = canvas.mapFromScene(node.sceneBoundingRect().center())
+    end = start + QtCore.QPoint(50, 0)
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+    QTest.mouseMove(canvas.viewport(), end)
+    assert container.exit_hover and node in canvas._groups._outside_nodes
+    assert node.parentItem() is container
+    assert "exit_hover" not in container.toSvg()
+    image = QtGui.QImage(300, 200, QtGui.QImage.Format.Format_ARGB32)
+    image.fill(QtGui.QColor("white"))
+    painter = QtGui.QPainter(image)
+    canvas.scene().render(painter, QtCore.QRectF(0, 0, 300, 200), QtCore.QRectF(0, 0, 300, 200))
+    canvas._groups.drawDragPreviews(painter)
+    painter.end()
+    assert image.pixelColor(165, 95).name() == "#00ff00"
+    assert image.pixelColor(135, 110).name() == "#ff0000"
+    assert image.pixelColor(190, 110).name() == "#ffffff"
+    assert image.pixelColor(120, 40).name() == "#e53935"
+    QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
+    assert node.parentItem() is None and not container.exit_hover
+    assert not canvas._groups._outside_nodes
+
+
+@pytest.mark.parametrize("from_group", [False, True])
+def test_existing_device_drop_into_group_previews_and_persists(canvas, summary, from_group):
+    node = device(canvas, 30, 50)
+    row = add_summary_node(summary, canvas, node, 301)
+    source = group(canvas, [node], "Source") if from_group else None
+    target = group(canvas, [drawing(canvas, x=280, y=120)], "Target")
+    if source:
+        canvas.enterGroup(source)
+    else:
+        canvas.scene().clearSelection()
+    QtWidgets.QApplication.processEvents()
+    start = canvas.mapFromScene(node.sceneBoundingRect().center())
+    end = canvas.mapFromScene(target.mapToScene(target.rect().center()))
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+    QTest.mouseMove(canvas.viewport(), end)
+    position = node.scenePos()
+    assert node.parentItem() is source
+    assert target.drop_hover and canvas._groups.guide_parent is target
+    if source:
+        assert source.exit_hover
+    QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
+    assert node.parentItem() is target and node.scenePos() == position
+    assert row.parent().group is target
+    assert not target.drop_hover and (source is None or not source.exit_hover)
+    canvas._groups.restore()
+    assert node.parentItem() is target
+
+
+def test_drag_back_into_original_group_clears_exit_preview(canvas):
+    node = device(canvas, 100, 100)
+    container = group(canvas, [node])
+    canvas.enterGroup(container)
+    QtWidgets.QApplication.processEvents()
+    start = canvas.mapFromScene(node.sceneBoundingRect().center())
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+    QTest.mouseMove(canvas.viewport(), start + QtCore.QPoint(200, 0))
+    assert container.exit_hover
+    QTest.mouseMove(canvas.viewport(), start)
+    assert not container.exit_hover and not container.drop_hover
+    assert not canvas._groups._outside_nodes
+    QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+    assert node.parentItem() is container

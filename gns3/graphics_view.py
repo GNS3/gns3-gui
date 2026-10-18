@@ -720,6 +720,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 for child in item.childItems():
                     child.update()
             super().mouseMoveEvent(event)
+            if event.buttons() & QtCore.Qt.MouseButton.LeftButton and not self._dragging and not self._adding_link:
+                self._groups.updateDrag()
 
     def mouseDoubleClickEvent(self, event):
         """
@@ -1813,6 +1815,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def drawForeground(self, painter, rect):
         super().drawForeground(painter, rect)
         self._groups.drawGuides(painter)
+        self._groups.drawDragPreviews(painter)
 
     def focusOutEvent(self, event):
         self._groups.clearDrag()
