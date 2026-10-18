@@ -362,9 +362,10 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
                 painter.drawRect(QtCore.QRectF(corner.x() - 4, corner.y() - 4, 8, 8))
         painter.restore()
 
-    def setEditing(self, editing):
+    def setEditing(self, editing, allow_child_events=False):
+        """Only the active container is editing; ancestors merely pass events."""
         self.editing = editing
-        self.setFiltersChildEvents(not editing)
+        self.setFiltersChildEvents(not (editing or allow_child_events))
         self.update()
 
     def sceneEventFilter(self, watched, event):

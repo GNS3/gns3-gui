@@ -68,7 +68,10 @@ class CanvasGroups:
         current = item.parentItem() if item else None
         while current is not None:
             if isinstance(current, GroupItem) and not current.editing:
-                target = current
+                # Ancestors of the active container pass interaction through
+                # without becoming additional editing containers themselves.
+                if self.editing is None or not current.isAncestorOf(self.editing):
+                    target = current
             current = current.parentItem()
         return target
 
@@ -430,7 +433,7 @@ class CanvasGroups:
             current = current.parentItem()
         self.view.scene().clearSelection()
         for current in ancestors:
-            current.setEditing(True)
+            current.setEditing(current is group, allow_child_events=True)
         self.editing = group
         self.view._main_window.uiStatusBar.showMessage(
             "Editing {} — coordinates relative to group origin; Esc to leave".format(group.name))

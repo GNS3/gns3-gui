@@ -241,9 +241,19 @@ prioriza o descendente em relação ao seu ancestral. Esse gesto é tratado na
 view e consumido antes do encaminhamento aos itens, evitando que o container
 externo intercepte a entrada no interno. As camadas persistidas não são
 alteradas. A movimentação simples mantém a regra de mover o container fechado
-como uma unidade; entrar no interno abre também seus ancestrais.
+como uma unidade. Ao entrar no interno, seus ancestrais apenas permitem a
+passagem dos eventos: somente o container ativo entra em edição e exibe
+**[editing]**. Trocar de container ou sair da edição restaura os filtros de
+eventos dos demais. Isso separa o estado de edição do acesso aos descendentes,
+sem mudar camadas ou o formato salvo.
 
 Os testes cobrem menu em área vazia durante edição, primeira ação Edit,
 clique direito sobre dispositivo, seleção por arraste e duplo clique em
 container aninhado com ancestral aberto ou fechado, inclusive quando o interno
 tem um valor de camada menor.
+
+A regressão de edição simultânea é coberta também com três níveis de
+containers: apenas um fica ativo, o dispositivo interno continua acessível,
+a troca do nível de edição fecha o anterior e Esc restaura o comportamento
+dos containers fechados. Os atributos dos ancestrais não ficam disponíveis
+pela ação Edit enquanto apenas o filho está em edição.

@@ -91,4 +91,27 @@ def test_double_click_enters_deepest_container_without_parent_propagation(canvas
         QTest.mouseDClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=pos)
         enter.assert_called_once_with(inner)
     assert canvas._groups.editing is inner
-    assert outer.editing and inner.editing
+    assert not outer.editing and inner.editing
+
+
+def test_only_active_container_edits_while_ancestors_pass_child_events(canvas):
+    from test_group_item import group
+    node = device(canvas)
+    inner = group(canvas, [node], name='Inner')
+    middle = group(canvas, [inner], name='Middle')
+    outer = group(canvas, [middle], name='Outer')
+    canvas.enterGroup(inner)
+    assert [item for item in canvas._groups.groups() if item.editing] == [inner]
+    assert canvas._groups.target(node) is node
+    for ancestor in (middle, outer):
+        assert not ancestor.filtersChildEvents()
+        with patch.object(canvas._groups, 'rename') as rename:
+            canvas.editContainer(ancestor)
+            rename.assert_not_called()
+    canvas.enterGroup(middle)
+    assert middle.editing and not inner.editing and not outer.editing
+    assert inner.filtersChildEvents()
+    assert canvas._groups.target(node) is inner
+    canvas._groups.leave()
+    assert all(not item.editing and item.filtersChildEvents() for item in (inner, middle, outer))
+    assert canvas._groups.target(node) is outer

@@ -232,7 +232,7 @@ def test_enter_nested_group_edit_child_and_escape(canvas):
     inner = group(canvas, [a, b])
     outer = group(canvas, [inner, drawing(canvas, x=400)], "Site")
     canvas.enterGroup(inner)
-    assert inner.editing and outer.editing
+    assert inner.editing and not outer.editing
     QtWidgets.QApplication.processEvents()
     initial = a.pos()
     start = canvas.mapFromScene(a.sceneBoundingRect().center())
@@ -384,7 +384,7 @@ def test_drag_closed_nested_container_and_double_click_inner(canvas):
     assert outer.isSelected() and not inner.isSelected() and not a.isSelected()
     start = canvas.mapFromScene(a.sceneBoundingRect().center())
     QTest.mouseDClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
-    assert outer.editing and inner.editing
+    assert not outer.editing and inner.editing
     assert canvas._groups.editing is inner
 
 
