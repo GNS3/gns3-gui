@@ -30,18 +30,30 @@ O servidor GNS3 e os simuladores são instalados/configurados separadamente.
 1. Selecione dispositivos, notas, formas, imagens ou grupos com Ctrl+clique ou
    seleção retangular. Os elementos precisam estar no mesmo nível da hierarquia.
 2. Clique no botão **Group elements** na barra superior, ou pressione **Ctrl+G**
-   com foco no canvas. Informe um nome, por exemplo **LAN 1**.
+   com foco no canvas. Informe um nome, por exemplo **LAN 1**, e ajuste largura
+   e altura se desejar. Os valores iniciais contêm os elementos selecionados,
+   com margem de 10% em cada lado e uma faixa de 24 unidades para o título.
 3. O novo elemento aparece com nome e moldura tracejada. Arrastar um membro do
    grupo fechado seleciona e move o contêiner inteiro. As posições dos filhos
    passam a ser relativas à origem do grupo.
 4. Selecione esse grupo junto de outros elementos e agrupe novamente para criar
    um contêiner pai. Não há um limite de um único nível.
-5. Dê duplo clique no contêiner, ou use **Enter group** no menu de contexto, para
+5. Dê duplo clique no corpo do contêiner, ou use **Enter group** no menu de contexto, para
    selecionar/mover seus filhos. Dê outro duplo clique para entrar em um grupo
-   interno. **Esc** encerra a edição e volta ao nível principal.
+   interno. **Esc** ou clicar fora do grupo encerra a edição e remove o indicador.
 6. Na edição do grupo, os comandos de alinhamento operam nas coordenadas locais
-   dos filhos selecionados. A grade também usa essas coordenadas locais.
-7. Use **Rename group** no menu de contexto para mudar o nome.
+   dos filhos selecionados. Durante o arraste de um filho direto, duas guias
+   vermelhas tracejadas marcam os eixos centrais do pai. O centro do elemento
+   encaixa a até 6 pixels de cada eixo; a tolerância acompanha o zoom. As guias
+   desaparecem ao soltar o mouse ou perder o foco e não pertencem à topologia.
+   A grade também usa as coordenadas locais; o encaixe nas guias tem prioridade.
+7. Dê duplo clique no **nome** para abrir as propriedades e renomear o grupo,
+   ou use **Rename group** no menu de contexto. A mesma janela permite editar
+   as dimensões fixas. Mover os filhos não redimensiona a moldura.
+   Selecione o grupo e arraste qualquer um dos quatro cantos para redimensionar;
+   os filhos mantêm posição e escala. Ao arrastar os cantos esquerdo/superior,
+   a origem e as coordenadas locais são compensadas para preservar as posições
+   dos filhos na cena. Dimensões menores recortam o conteúdo que excede a borda.
 8. **Duplicate** copia a árvore inteira com novas identidades e recria os links
    internos entre os dispositivos copiados. Links para dispositivos externos
    permanecem somente no original. As cópias ficam deslocadas 20 unidades.
@@ -52,7 +64,15 @@ O servidor GNS3 e os simuladores são instalados/configurados separadamente.
     grupo, seus filhos passam ao contêiner pai.
 
 Salvar/reabrir e exportar/importar preservam os grupos, os nomes e a hierarquia.
-A moldura cresce para envolver o conteúdo; não é uma máscara de recorte.
+A moldura tem dimensões fixas e recorta seus descendentes, incluindo grupos
+aninhados. A região do contêiner vai de `(0, 0)` até `(largura, altura)`.
+No **Topology Summary**, os grupos aparecem como pastas na hierarquia dos
+respectivos dispositivos e portas. O menu de contexto de um grupo oferece
+**Rename group**, **Duplicate** e **Delete**, usando as mesmas operações
+recursivas do canvas; Delete no teclado também funciona para o grupo selecionado.
+Duplo clique no nome do grupo nessa árvore também abre suas propriedades.
+O botão superior é uma ação momentânea: mostra ajuda na barra de status ao
+passar o mouse e usa ícones diferentes para estado normal e hover.
 O contêiner suporta translação, não rotação/escala do conjunto. Os desenhos
 filhos preservam suas rotações individuais. Rótulos de dispositivos/portas
 continuam pertencendo aos respectivos objetos; links são relações entre nós,
@@ -64,16 +84,18 @@ mantém seu tratamento próprio.
 A GUI é cliente: o servidor grava `.gns3`, cria snapshots e produz `.gns3p`.
 Esta implementação registra cada grupo como um desenho próprio em
 `topology.drawings`. Seu SVG contém um bloco `<metadata id="gns3-canvas-group">`
-com a extensão de formato versão 1. Exemplo do conteúdo JSON:
+com a extensão de formato versão 2. A versão 1 anterior é carregada e migrada
+uma única vez, congelando sua moldura sem deslocar o conteúdo. Exemplo do conteúdo JSON:
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "revision": 3,
   "name": "LAN 1",
   "drawing_id": "UUID-atual-do-grupo",
   "identity": "UUID-estavel-do-grupo",
   "origin": {"x": 100.5, "y": 80},
+  "size": {"width": 600, "height": 400},
   "children": [
     {"type": "node", "id": "UUID-do-no", "key": "SW1", "x": 0, "y": 0},
     {"type": "drawing", "id": "UUID-da-nota", "key": "UUID-estavel", "x": 40, "y": 90},
@@ -128,10 +150,10 @@ são mantidos no histórico, mas essa implementação foi substituída.
   `gns3/modules` integra os tipos de dispositivo. `LocalConfig` guarda
   preferências locais. O servidor executa os simuladores e persiste o projeto.
 - `GroupItem` é um item gráfico e um `DrawingItem` persistente com nome, UUID,
-  moldura e filhos reais via `setParentItem`. Eventos de um grupo fechado são
+  moldura fixa, recorte por `ItemClipsChildrenToShape` e filhos reais via `setParentItem`. Eventos de um grupo fechado são
   encaminhados ao contêiner; no modo de edição, os filhos recebem os eventos.
 - `CanvasGroups` concentra criação, edição, desagrupamento, validação do grafo,
-  restauração, gravação e cópia assíncrona. A duplicação aguarda todos os novos
+  restauração, gravação, redimensionamento, guias temporárias e cópia assíncrona. A duplicação aguarda todos os novos
   IDs de dispositivos antes de gravar a árvore. Em falha de duplicação de um
   dispositivo, solicita rollback das cópias bem-sucedidas; não há transação
   multinó nativa no servidor.
@@ -144,6 +166,12 @@ são mantidos no histórico, mas essa implementação foi substituída.
   descartam reconhecimentos SVG antigos que chegarem após uma edição mais nova.
 - Desenhos só ganham metadados de identidade ao participarem de grupos;
   projetos sem agrupamento conservam sua serialização anterior.
+- `GroupPropertiesDialog` compartilha nome e dimensões entre criação e edição.
+  `TopologySummaryView` mantém as linhas existentes de dispositivos e portas ao
+  reparentear a árvore por meio do sinal `hierarchy_changed_signal`, preservando
+  seleção, expansão e filtros. As guias são desenhadas em `drawForeground` da
+  view, sem criar itens nem campos persistentes. O snap ocorre na mudança de
+  posição apenas enquanto o elemento é o filho direto sendo arrastado.
 
 O zoom existente usa `AnchorUnderMouse` e Ctrl+roda em `wheelEvent`, com limites
 entre 10% e 1000%. `ShapeItem` implementa redimensionamento pelas bordas;
@@ -174,12 +202,17 @@ python3 scripts/check_canvas_groups.py \
 ```
 
 O script cria e remove somente os projetos de teste que ele próprio criou.
-Deixa uma exportação `.gns3p` e uma captura do canvas no diretório de saída.
+Deixa uma exportação `.gns3p` e capturas do canvas, do Topology Summary e das
+guias temporárias no diretório de saída.
 A suíte e esse teste não substituem a avaliação manual de usabilidade com a
 sua topologia real.
 
-Resultado desta revisão: **204 testes aprovados, 1 ignorado**. O aviso existente
-é uma depreciação de `tarfile` no teste do instalador de atualizações. O teste
-integrado passou com servidor 2.2.61, duplicação de dispositivos e links,
-exportação/importação de quatro grupos aninhados, recuperação dos IDs e
-exclusão recursiva. Os projetos descartáveis foram removidos ao final.
+Resultado desta revisão: a suíte também cobre os quatro cantos, recorte em
+renderização, dimensões fixas após mover os filhos, migração da versão 1,
+propriedades, saída por clique externo, snap ao pai direto, integração da árvore
+e ajuda/estado do botão por eventos reais de hover. O teste integrado passou
+com servidor 2.2.61, verificando dimensões e hierarquia também após duplicação
+e exportação/importação. Os projetos descartáveis são removidos ao final.
+
+Suíte final desta revisão: **217 aprovados, 1 ignorado**, com o aviso existente
+de depreciação de `tarfile` no teste do instalador de atualizações.
