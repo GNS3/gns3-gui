@@ -239,3 +239,42 @@ concluir a associação dos filhos e a recriação dos links internos. A reprodu
 a causa e os testes estão em [group-duplication-fix.md](group-duplication-fix.md).
 A validação posterior terminou com **226 aprovados e 1 ignorado**, além do teste
 com servidor 2.2.61, agora usando o transporte Qt assíncrono para a duplicação.
+
+### Destaque sólido e saída de dispositivos por arraste
+
+Ao arrastar um dispositivo novo da lista de templates sobre um grupo, o
+contorno temporário agora usa uma linha **sólida** de quatro unidades de largura.
+Ao sair da área ou soltar o dispositivo, volta ao contorno tracejado normal.
+As guias de centro continuam temporárias e tracejadas; elas têm outra função.
+O destaque continua restrito ao arraste de dispositivos novos.
+
+Para retirar um dispositivo existente, entre no grupo e arraste o dispositivo
+para fora. A retirada acontece ao soltar o botão do mouse, quando o **centro do
+símbolo** está fora do retângulo do pai direto. Deixar apenas parte do símbolo
+para fora mantém o dispositivo no grupo e preserva o recorte. Um clique sem
+movimento também não altera a hierarquia.
+
+Em um grupo aninhado, o dispositivo passa ao ancestral mais próximo cujo
+retângulo ainda contenha seu centro. Se nenhum ancestral o contiver, passa a
+pertencer diretamente ao canvas. Isso permite sair de um grupo interno sem
+sair automaticamente de um contêiner externo maior. Essa interação se aplica
+a dispositivos; o arraste de notas, formas, imagens e grupos mantém o
+comportamento anterior.
+
+No código, `CanvasGroups.beginDrag()` registra as posições dos dispositivos
+selecionados no mesmo pai. `endDrag()` avalia os que realmente mudaram de posição,
+depois de o Qt terminar de processar a soltura em `GraphicsView.mouseReleaseEvent()`.
+Durante o gesto, o dispositivo continua filho do grupo e sujeito ao recorte.
+O helper `reparent()` preserva a posição no canvas e a camada visual; os links
+continuam ligados aos mesmos dispositivos. O salvamento inclui o dispositivo,
+o pai anterior, mesmo que tenha ficado vazio, e os ancestrais envolvidos.
+Assim os metadados persistidos e o Topology Summary refletem a nova hierarquia.
+As guias e o estado de arraste são limpos ao final.
+
+Não foi necessário alterar o formato de arquivo nem a API do servidor. Os
+testes usam eventos reais de mouse nas quatro bordas, verificam a árvore lateral
+e a restauração dos metadados, a posição, os links e a saída de grupos aninhados.
+Também verificam cliques sem movimento, recorte parcial e a renderização do
+contorno contínuo durante o destaque, seguida da volta ao tracejado.
+Resultado desta revisão: **235 testes aprovados e 1 ignorado**, com o aviso já
+existente de depreciação de `tarfile` no teste do instalador de atualizações.

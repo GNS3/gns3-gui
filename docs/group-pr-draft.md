@@ -17,6 +17,12 @@ center guides help align a dragged child to its immediate parent. Dragging a new
 device template over a group highlights that destination and inserts the returned
 node into it after the server confirms creation.
 
+The drop-target border is temporarily thicker and solid. When an existing device
+is dragged out of its group, releasing its symbol center outside the parent
+detaches it while preserving its scene position and links. In a nested hierarchy,
+the device moves to the nearest containing ancestor, or to the canvas if none
+contains it. Partial overflow remains clipped until the center leaves the frame.
+
 The canvas uses Qt parent/child items rather than a selection association. The
 implementation keeps the existing menus and tools, adding a toolbar action with
 Ctrl+G and Ctrl+Shift+G for ungrouping. Name and dimension fields share one dialog.
