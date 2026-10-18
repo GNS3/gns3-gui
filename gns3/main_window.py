@@ -1141,17 +1141,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """Add canvas actions without editing generated Qt Designer code.
 
         Shortcuts belong to the canvas, avoiding conflicts in text fields and
-        dialogs. Membership is intentionally local to the open project session.
+        dialogs. Group hierarchy is saved in the project through drawing metadata.
         """
         for name, text, shortcut, callback in (
-            ("uiGroupNodesAction", "Group devices", "Ctrl+G", self.uiGraphicsView.groupSelectedNodes),
-            ("uiUngroupNodesAction", "Ungroup devices", "Ctrl+Shift+G", self.uiGraphicsView.ungroupSelectedNodes),
+            ("uiGroupNodesAction", "Group elements", "Ctrl+G", self.uiGraphicsView.groupSelectedNodes),
+            ("uiUngroupNodesAction", "Ungroup elements", "Ctrl+Shift+G", self.uiGraphicsView.ungroupSelectedNodes),
         ):
             action = QtGui.QAction(text, self.uiGraphicsView)
             action.setObjectName(name)
             action.setShortcut(QtGui.QKeySequence(shortcut))
             action.setShortcutContext(QtCore.Qt.ShortcutContext.WidgetShortcut)
-            action.setToolTip("{} ({}) — current project session".format(text, shortcut))
+            action.setToolTip("{} ({})".format(text, shortcut))
             action.triggered.connect(callback)
             self.uiGraphicsView.addAction(action)
             self.uiAnnotateMenu.addAction(action)
@@ -1161,7 +1161,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         pixmap = QtGui.QPixmap(32, 32)
         pixmap.fill(QtCore.Qt.GlobalColor.transparent)
         painter = QtGui.QPainter(pixmap)
-        pen = QtGui.QPen(self.palette().color(QtGui.QPalette.ColorRole.WindowText), 2)
+        pen = QtGui.QPen(QtGui.QColor("#3484c6"), 2)
         painter.setPen(pen)
         painter.drawRect(7, 7, 8, 8)
         painter.drawRect(17, 17, 8, 8)

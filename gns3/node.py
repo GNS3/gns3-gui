@@ -500,16 +500,23 @@ class Node(BaseNode):
         self.deleted_signal.emit()
         self._module.removeNode(self)
 
-    def duplicate(self, x, y, z):
+    def duplicate(self, x, y, z, callback=None):
         """
         Duplicates this node.
+
+        :param callback: optional completion hook for container copies; receives
+                         the new node response and an error flag, after logging.
         """
 
         params = {"x": int(x),
                   "y": int(y),
                   "z": int(z)}
 
-        self.post("/duplicate", self._duplicateCallback, body=params, timeout=None, showProgress=False)
+        def completed(result, error=False, **kwargs):
+            self._duplicateCallback(result, error, **kwargs)
+            if callback:
+                callback(result, error=error)
+        self.post("/duplicate", completed, body=params, timeout=None, showProgress=False)
 
     def _duplicateCallback(self, result, error=False, **kwargs):
         """
@@ -608,9 +615,10 @@ class Node(BaseNode):
         Sync the remote object with the node_item
         """
 
-        data = {"x": int(node_item.pos().x()),
-                "y": int(node_item.pos().y()),
-                "z": int(node_item.zValue()),
+        from .items.group_item import scene_z
+        data = {"x": int(node_item.scenePos().x()),
+                "y": int(node_item.scenePos().y()),
+                "z": int(scene_z(node_item)),
                 "symbol": node_item.symbol(),
                 "locked": node_item.locked()}
 

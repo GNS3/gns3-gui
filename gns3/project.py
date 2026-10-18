@@ -17,7 +17,7 @@
 
 import os
 import json
-from .qt import QtCore, qpartial, QtNetwork, QtWebSockets, qslot
+from .qt import QtCore, qpartial, QtNetwork, QtWebSockets, QtWidgets, qslot
 
 from gns3.controller import Controller
 from gns3.topology import Topology
@@ -578,6 +578,11 @@ class Project(QtCore.QObject):
         topo = Topology.instance()
         for drawing in result:
             topo.createDrawing(drawing)
+        try:
+            topo._main_window.uiGraphicsView._groups.restore()
+        except ValueError as error:
+            log.error("Cannot restore canvas groups: %s", error)
+            QtWidgets.QMessageBox.warning(topo._main_window, "Canvas groups", str(error))
         self.project_loaded_signal.emit()
 
     def close(self, local_server_shutdown=False):
@@ -718,10 +723,15 @@ class Project(QtCore.QObject):
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is None:
                 Topology.instance().createDrawing(result["event"])
+            view = Topology.instance()._main_window.uiGraphicsView
+            view._groups.scheduleRestore()
         elif result["action"] == "drawing.updated":
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is not None:
                 drawing.updateDrawingCallback(result["event"])
+                from .items.group_item import GroupItem
+                if isinstance(drawing, GroupItem):
+                    Topology.instance()._main_window.uiGraphicsView._groups.scheduleRestore()
         elif result["action"] == "drawing.deleted":
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is not None:

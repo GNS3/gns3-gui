@@ -17,13 +17,17 @@
 
 import pytest
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 
 @pytest.fixture
 def real_main_window():
     from gns3.main_window import MainWindow
-    return MainWindow()
+    with patch.object(MainWindow, "run_later"):
+        window = MainWindow()
+    yield window
+    window._local_config_timer.stop()
+    window.deleteLater()
 
 
 def test_main_window_settings_changed_signal(real_main_window):
