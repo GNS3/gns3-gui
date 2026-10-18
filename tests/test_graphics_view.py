@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from unittest.mock import MagicMock, patch
+import pytest
+from gns3.qt import QtCore, QtGui, QtWidgets
 from gns3.graphics_view import GraphicsView
 from gns3.node import Node
 
@@ -32,3 +34,81 @@ def test_console_to_node_vncviewer_and_ipv6():
         view.consoleToNode(node)
         assert warning_mock.called
         assert warning_mock.call_args[0][1] == 'TightVNC'
+
+
+@pytest.fixture
+def zoom_view(main_window):
+    window = QtWidgets.QMainWindow()
+    central = QtWidgets.QWidget(window)
+    window.setCentralWidget(central)
+    view = GraphicsView(central)
+    view._main_window = main_window
+    view._topology = MagicMock()
+    view.setGeometry(0, 0, 800, 600)
+    window.resize(820, 620)
+    window.show()
+    QtWidgets.QApplication.processEvents()
+    yield view
+    window.close()
+
+
+def wheel(view, position, delta, modifiers=QtCore.Qt.KeyboardModifier.ControlModifier):
+    event = QtGui.QWheelEvent(QtCore.QPointF(position), QtCore.QPointF(view.viewport().mapToGlobal(position)),
+                             QtCore.QPoint(), QtCore.QPoint(0, delta), QtCore.Qt.MouseButton.NoButton,
+                             modifiers, QtCore.Qt.ScrollPhase.NoScrollPhase, False)
+    QtWidgets.QApplication.sendEvent(view.viewport(), event)
+    return event
+
+
+@pytest.mark.parametrize("position", [QtCore.QPoint(80, 90), QtCore.QPoint(690, 480)])
+@pytest.mark.parametrize("scene_size", [(2000, 1000), (100, 80)])
+@pytest.mark.parametrize("initial_scale", [.2, 1, 5])
+def test_control_wheel_keeps_scene_point_under_event_position(zoom_view, position, scene_size, initial_scale):
+    view = zoom_view
+    view.setSceneSize(*scene_size)
+    view.scale(initial_scale, initial_scale)
+    original_scene = view.scene().sceneRect()
+    view.centerOn(original_scene.bottomRight())
+    point = view.mapToScene(position)
+    # No mouse-move event: cached/global cursor coordinates must not decide zoom.
+    for delta in (120, 120, -120, -120):
+        assert wheel(view, position, delta).isAccepted()
+        error = view.mapFromScene(point) - position
+        assert abs(error.x()) <= 2 and abs(error.y()) <= 2
+    assert view.transform().m11() == pytest.approx(initial_scale)
+    assert view.scene().sceneRect() == original_scene
+    assert view.transformationAnchor() == QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse
+    assert view._topology.project().setZoom.call_args.args == (round(initial_scale * 100),)
+
+
+def test_wheel_zoom_limits_do_not_move_view_or_save_project(zoom_view):
+    view = zoom_view
+    position = QtCore.QPoint(120, 100)
+    for scale, delta in ((.1, -120), (10, 120)):
+        view.resetTransform()
+        view.scale(scale, scale)
+        before = view.viewportTransform()
+        view._topology.project().reset_mock()
+        wheel(view, position, delta)
+        assert view.viewportTransform() == before
+        view._topology.project().update.assert_not_called()
+
+
+def test_wheel_without_control_scrolls_without_zooming(zoom_view):
+    view = zoom_view
+    bar = view.verticalScrollBar()
+    bar.setValue((bar.minimum() + bar.maximum()) // 2)
+    before = bar.value()
+    wheel(view, QtCore.QPoint(100, 100), -120, QtCore.Qt.KeyboardModifier.NoModifier)
+    assert view.transform().m11() == 1
+    assert bar.value() > before
+    view._topology.project().update.assert_not_called()
+
+
+def test_project_scene_size_resets_navigation_padding(zoom_view):
+    view = zoom_view
+    view.setSceneSize(100, 80)
+    wheel(view, QtCore.QPoint(100, 100), -120)
+    assert view.sceneRect() != view.scene().sceneRect()
+    view.setSceneSize(2000, 1000)
+    assert view.sceneRect() == view.scene().sceneRect()
