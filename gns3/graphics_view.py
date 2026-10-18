@@ -103,6 +103,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._selection_origin = None
         self._selection_band = None
         self._selection_previous = []
+        self._selection_before_press = []
+        self._selection_dragged = False
         self._dragging = False
         self._groups = CanvasGroups(self)
         self._grid_size = 75
@@ -499,6 +501,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._selection_band.setGeometry(rect)
         if rect.width() < QtWidgets.QApplication.startDragDistance() and rect.height() < QtWidgets.QApplication.startDragDistance():
             return
+        self._selection_dragged = True
         path = QtGui.QPainterPath()
         path.addPolygon(self.mapToScene(rect))
         self.scene().setSelectionArea(path, self.viewportTransform())
@@ -525,6 +528,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not adding_item and event.button() == QtCore.Qt.MouseButton.RightButton:
             self.setNavigationMode("selection")
             self._selection_origin = event.position().toPoint()
+            self._selection_dragged = False
+            self._selection_before_press = self.scene().selectedItems()
             self._selection_previous = (self.scene().selectedItems() if
                 event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier else [])
             self.scene().clearSelection()
@@ -695,11 +700,26 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if self._selection_origin is not None and event.button() == QtCore.Qt.MouseButton.RightButton:
             self._updateSelectionRectangle(event.position().toPoint())
+            if not self._selection_dragged:
+                # A stationary right click is a context request, never a
+                # rectangle selection. Restore a pre-existing multi-selection.
+                item = self._groups.target(self.itemAt(event.position().toPoint()))
+                if isinstance(item, LabelItem):
+                    item = item.parentItem()
+                if item is None and self._groups.editing is not None:
+                    item = self._groups.editing
+                self.scene().clearSelection()
+                if item in self._selection_before_press:
+                    for selected in self._selection_before_press:
+                        selected.setSelected(True)
+                elif item is not None and not isinstance(item, (LinkItem, LogoItem)):
+                    item.setSelected(True)
             self._selection_band.hide()
             self._selection_band.deleteLater()
             self._selection_band = None
             self._selection_origin = None
             self._selection_previous = []
+            self._selection_before_press = []
             self.toggleUiDeviceMenu()
             event.accept()
             if self.scene().selectedItems():
@@ -921,7 +941,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
         item = self.itemAt(event.position().toPoint())
 
         if not self._adding_link:
-            group = self._groups.target(item)
+            # Double-click addresses the deepest visible container directly.
+            # Normal movement still resolves to a closed ancestor as a unit.
+            position = self.mapToScene(event.position().toPoint())
+            containers = [candidate for candidate in self.scene().items(position)
+                          if isinstance(candidate, GroupItem) and
+                          candidate.shape().contains(candidate.mapFromScene(position))]
+            group = next((candidate for candidate in containers if not any(
+                candidate.isAncestorOf(other) for other in containers)), None)
             if isinstance(group, GroupItem) and group.labelRect().contains(group.mapFromScene(self.mapToScene(event.position().toPoint()))):
                 self.renameGroup(group)
                 event.accept()
@@ -1059,10 +1086,10 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             return
 
+        if self._groups.editing is not None and self._groups.editing.editing:
+            menu.addAction('Edit').triggered.connect(lambda: self.editContainer())
         if self._groups.selected():
             menu.addAction('Create container').triggered.connect(self.groupSelectedNodes)
-        if self._groups.editing is not None and self._groups.editing.editing:
-            menu.addAction('Edit container').triggered.connect(lambda: self.editContainer())
         groups = [item for item in items if isinstance(item, GroupItem)]
         if groups:
             for text, callback in (("Enter container", lambda: self.enterGroup(groups[0])),

@@ -34,10 +34,10 @@ def test_right_rectangle_selects_and_opens_menu(canvas):
     assert 'Create container' in [a.text() for a in menu.actions()]
 
 
-def test_right_click_does_not_select_single_item(canvas):
+def test_right_click_opens_item_context_without_rectangle_selection(canvas):
     node = device(canvas)
     canvas._showDeviceContextualMenu = MagicMock()
     pos = canvas.mapFromScene(node.sceneBoundingRect().center())
     QTest.mouseClick(canvas.viewport(), QtCore.Qt.MouseButton.RightButton, pos=pos)
-    assert not node.isSelected()
-    canvas._showDeviceContextualMenu.assert_not_called()
+    assert node.isSelected()
+    canvas._showDeviceContextualMenu.assert_called_once()

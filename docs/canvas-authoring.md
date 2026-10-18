@@ -201,7 +201,8 @@ descrições no tooltip e na barra de status. Clicar no vazio com o esquerdo ati
 Hand; iniciar um gesto com o direito ativa Selection.
 
 A seleção com o direito usa sempre um retângulo, inclusive sobre dispositivos.
-Um clique sem arraste não seleciona o item. Ctrl preserva a seleção anterior ao
+Um clique direito sem arraste abre o menu tradicional do item sob o cursor;
+a seleção de área continua exigindo arraste. Ctrl preserva a seleção anterior ao
 adicionar outro retângulo. Ao soltar com elementos selecionados, o menu de ações
 abre e oferece **Create container**, reutilizando o diálogo e a validação de
 parentesco existentes. A seleção de filhos de um container fechado é promovida
@@ -224,3 +225,25 @@ legível em temas escuros sem alterar o restante do diálogo. A verificação
 automatizada de contraste dos campos numéricos também cobre esse controle.
 
 Validação desta etapa: suíte completa com 308 testes aprovados e um ignorado.
+
+## Menus e containers aninhados
+
+O clique direito sem arraste volta a abrir as ações do dispositivo ou container
+sob o cursor. Se o item já pertencia à seleção, ela é preservada. Durante a
+edição de um container, o menu oferece **Edit** como primeira ação para abrir
+seus atributos; clicar numa área vazia durante essa edição também permite
+acessar o menu do container ativo. Arrastar o direito mantém a seleção por
+retângulo e o menu da seleção ao soltar. O evento nativo de menu continua sendo
+consumido para evitar uma abertura duplicada.
+
+O duplo clique consulta as formas dos containers visíveis sob o cursor e
+prioriza o descendente em relação ao seu ancestral. Esse gesto é tratado na
+view e consumido antes do encaminhamento aos itens, evitando que o container
+externo intercepte a entrada no interno. As camadas persistidas não são
+alteradas. A movimentação simples mantém a regra de mover o container fechado
+como uma unidade; entrar no interno abre também seus ancestrais.
+
+Os testes cobrem menu em área vazia durante edição, primeira ação Edit,
+clique direito sobre dispositivo, seleção por arraste e duplo clique em
+container aninhado com ancestral aberto ou fechado, inclusive quando o interno
+tem um valor de camada menor.

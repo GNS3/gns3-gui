@@ -368,7 +368,7 @@ def test_invalid_metadata_and_stale_acknowledgment(canvas):
     assert container.pos() == old_position + QtCore.QPointF(30, 40)
 
 
-def test_drag_closed_nested_container_and_double_click_one_level(canvas):
+def test_drag_closed_nested_container_and_double_click_inner(canvas):
     a, b = device(canvas, 100, 80), device(canvas, 200, 80)
     inner = group(canvas, [a, b])
     outer = group(canvas, [inner, drawing(canvas, x=400)], "Site")
@@ -384,9 +384,8 @@ def test_drag_closed_nested_container_and_double_click_one_level(canvas):
     assert outer.isSelected() and not inner.isSelected() and not a.isSelected()
     start = canvas.mapFromScene(a.sceneBoundingRect().center())
     QTest.mouseDClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
-    assert outer.editing and not inner.editing
-    QTest.mouseDClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
-    assert inner.editing and canvas._groups.editing is inner
+    assert outer.editing and inner.editing
+    assert canvas._groups.editing is inner
 
 
 def test_fixed_dimensions_margin_and_child_clipping(canvas):
