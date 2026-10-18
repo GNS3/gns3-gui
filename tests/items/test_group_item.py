@@ -701,3 +701,93 @@ def test_template_hover_prefers_nested_group_and_clears_on_leave(canvas):
                                QtCore.Qt.MouseButton.LeftButton, QtCore.Qt.KeyboardModifier.NoModifier)
     canvas.dragMoveEvent(move)
     assert not inner.drop_hover and canvas._groups.guide_parent is None
+
+
+@pytest.mark.parametrize("delta", [QtCore.QPoint(240, 0), QtCore.QPoint(-240, 0),
+                                    QtCore.QPoint(0, 200), QtCore.QPoint(0, -200)])
+def test_device_drag_outside_group_detaches_on_release_and_persists(canvas, summary, delta):
+    node = device(canvas, 100, 100)
+    row = add_summary_node(summary, canvas, node, 201)
+    container = group(canvas, [node])
+    link = MagicMock()
+    node._links.append(link)
+    canvas.enterGroup(container)
+    QtWidgets.QApplication.processEvents()
+    start = canvas.mapFromScene(node.sceneBoundingRect().center())
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+    QTest.mouseMove(canvas.viewport(), start + delta)
+    before_release = node.scenePos()
+    assert node.parentItem() is container  # Remains clipped until release.
+    QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start + delta)
+    assert node.parentItem() is None and node.scenePos() == before_release
+    assert read_group(container.toSvg())["children"] == []
+    assert row.parent() is None
+    assert link.adjust.called and node.node().setGraphics.called
+    canvas._groups.restore()
+    assert node.parentItem() is None
+    assert not canvas._groups._drag_nodes and canvas._groups.guide_parent is None
+
+
+@pytest.mark.parametrize("outside_outer", [False, True])
+def test_drag_out_of_nested_group_uses_nearest_containing_ancestor(canvas, outside_outer):
+    node = device(canvas, 100, 100)
+    inner = group(canvas, [node])
+    outer = group(canvas, [inner, drawing(canvas, x=400, y=300)], "Site")
+    canvas.enterGroup(inner)
+    QtWidgets.QApplication.processEvents()
+    start = canvas.mapFromScene(node.sceneBoundingRect().center())
+    target = outer.mapToScene(outer.rect().center())
+    if outside_outer:
+        target = outer.mapToScene(outer.rect().bottomRight() + QtCore.QPointF(40, 40))
+    end = canvas.mapFromScene(target)
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+    QTest.mouseMove(canvas.viewport(), end)
+    before_release = node.scenePos()
+    QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
+    assert node.parentItem() is (None if outside_outer else outer)
+    assert node.scenePos() == before_release and inner.members() == []
+    canvas._groups.restore()
+    assert node.parentItem() is (None if outside_outer else outer)
+
+
+def test_template_drop_highlight_border_is_continuous_and_temporary(canvas):
+    from gns3.qt import QtGui
+    container = group(canvas, [drawing(canvas)])
+    canvas.scene().clearSelection()
+    container.setPos(20, 20)
+    container.setDimensions(160, 100)
+
+    def border_colors():
+        image = QtGui.QImage(200, 150, QtGui.QImage.Format.Format_ARGB32)
+        image.fill(QtGui.QColor("white"))
+        painter = QtGui.QPainter(image)
+        canvas.scene().render(painter, QtCore.QRectF(0, 0, 200, 150), QtCore.QRectF(0, 0, 200, 150))
+        painter.end()
+        return [image.pixelColor(180, y).name() for y in range(35, 100)]
+
+    assert "#ffffff" in border_colors()
+    canvas._groups.setDropTarget(container.mapToScene(container.rect().center()))
+    assert set(border_colors()) == {"#3484c6"}
+    canvas._groups.clearDropTarget()
+    assert "#ffffff" in border_colors()
+
+
+@pytest.mark.parametrize("move", [False, True])
+def test_device_click_or_partial_overflow_keeps_group_membership(canvas, move):
+    node = device(canvas, 100, 100)
+    container = group(canvas, [node])
+    canvas.enterGroup(container)
+    QtWidgets.QApplication.processEvents()
+    start = canvas.mapFromScene(node.sceneBoundingRect().center())
+    end = start
+    if move:
+        # Part of the symbol overflows, but its center remains inside.
+        center = container.mapToScene(QtCore.QPointF(container.rect().right() - 2,
+                                                    container.rect().center().y()))
+        end = canvas.mapFromScene(center)
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+    if move:
+        QTest.mouseMove(canvas.viewport(), end)
+    QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
+    assert node.parentItem() is container
+    assert read_group(container.toSvg())["children"][0]["id"] == node.node().node_id()

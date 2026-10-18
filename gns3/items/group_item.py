@@ -271,7 +271,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         painter.save()
         color = QtGui.QColor("#3484c6")
         painter.setPen(QtGui.QPen(color, 4 if self.drop_hover else (2 if self.isSelected() else 1),
-                                  QtCore.Qt.PenStyle.DashLine))
+                                  QtCore.Qt.PenStyle.SolidLine if self.drop_hover else QtCore.Qt.PenStyle.DashLine))
         painter.setBrush(QtCore.Qt.BrushStyle.NoBrush)
         painter.drawRect(self.rect())
         label = self.labelRect()

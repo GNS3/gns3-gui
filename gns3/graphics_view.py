@@ -600,8 +600,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param: QMouseEvent instance
         """
 
-        self._groups.clearDrag()
         if self._groups._resize is not None:
+            self._groups.clearDrag()
             self._groups.endResize()
             event.accept()
             return
@@ -619,8 +619,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 item.setSelected(True)
             super().mouseReleaseEvent(event)
 
+        detached = self._groups.endDrag()
         self._groups.collapseSelection()
-        self._groups.save()
+        self._groups.save(self._groups.selected() + detached)
         self.toggleUiDeviceMenu()
 
     def wheelEvent(self, event):

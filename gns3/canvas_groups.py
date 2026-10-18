@@ -18,6 +18,7 @@ class CanvasGroups:
         self._restore_pending = False
         self._resize = None
         self._drag_item = None
+        self._drag_nodes = {}
         self.guide_parent = None
         self.drop_target = None
 
@@ -121,6 +122,7 @@ class CanvasGroups:
 
     def clearDrag(self):
         self._drag_item = None
+        self._drag_nodes = {}
         self.guide_parent = None
         self.view.viewport().update()
 
@@ -131,6 +133,34 @@ class CanvasGroups:
         if item is not None and item_reference(item) and isinstance(item.parentItem(), GroupItem):
             if item.parentItem().editing and item.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable:
                 self._drag_item = item
+                self._drag_nodes = {node: node.scenePos() for node in self.view.scene().selectedItems()
+                                    if isinstance(node, NodeItem) and node.parentItem() is item.parentItem()}
+
+    def endDrag(self):
+        """Detach moved devices whose centers were released outside their parent.
+
+        Keep clipping during the gesture. For nested groups, promote to the
+        nearest containing ancestor, or the canvas if none contains the center.
+        Reparenting preserves scene coordinates and network connections.
+        """
+        changed = []
+        for node, start in self._drag_nodes.items():
+            if sip.isdeleted(node) or node.scene() is not self.view.scene() or node.scenePos() == start:
+                continue
+            parent = node.parentItem()
+            if not isinstance(parent, GroupItem):
+                continue
+            center = node.mapToScene(node.boundingRect().center())
+            if parent.shape().contains(parent.mapFromScene(center)):
+                continue
+            destination = parent.parentItem()
+            while isinstance(destination, GroupItem) and not destination.shape().contains(destination.mapFromScene(center)):
+                destination = destination.parentItem()
+            reparent(node, destination)
+            changed.extend((parent, node))
+        self.clearDrag()
+        # Include an old parent that is now empty in the release's single save.
+        return changed
 
     def showGuides(self):
         item = self._drag_item
