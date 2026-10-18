@@ -63,7 +63,7 @@ def wheel(view, position, delta, modifiers=QtCore.Qt.KeyboardModifier.ControlMod
 @pytest.mark.parametrize("position", [QtCore.QPoint(80, 90), QtCore.QPoint(690, 480)])
 @pytest.mark.parametrize("scene_size", [(2000, 1000), (100, 80)])
 @pytest.mark.parametrize("initial_scale", [.2, 1, 5])
-def test_control_wheel_keeps_scene_point_under_event_position(zoom_view, position, scene_size, initial_scale):
+def test_control_wheel_centers_selected_scene_region(zoom_view, position, scene_size, initial_scale):
     view = zoom_view
     view.setSceneSize(*scene_size)
     view.scale(initial_scale, initial_scale)
@@ -73,7 +73,7 @@ def test_control_wheel_keeps_scene_point_under_event_position(zoom_view, positio
     # No mouse-move event: cached/global cursor coordinates must not decide zoom.
     for delta in (120, 120, -120, -120):
         assert wheel(view, position, delta).isAccepted()
-        error = view.mapFromScene(point) - position
+        error = view.mapFromScene(point) - view.viewport().rect().center()
         assert abs(error.x()) <= 2 and abs(error.y()) <= 2
     assert view.transform().m11() == pytest.approx(initial_scale)
     assert view.scene().sceneRect() == original_scene
@@ -112,3 +112,37 @@ def test_project_scene_size_resets_navigation_padding(zoom_view):
     assert view.sceneRect() != view.scene().sceneRect()
     view.setSceneSize(2000, 1000)
     assert view.sceneRect() == view.scene().sceneRect()
+
+
+def test_zoom_acknowledgments_preserve_navigation_and_viewport_geometry(zoom_view):
+    view = zoom_view
+    view.setSceneSize(2000, 1000)
+    wheel(view, QtCore.QPoint(700, 400), 120)
+    before = view.viewportTransform()
+    bounds = view.sceneRect()
+    viewport = view.viewport().geometry()
+    for _ in range(3):
+        view.setSceneSize(2000, 1000)
+        QtWidgets.QApplication.processEvents()
+        assert view.viewportTransform() == before
+        assert view.sceneRect() == bounds
+        assert view.viewport().geometry() == viewport
+
+
+def test_zoom_between_opposite_regions_without_scrollbars(zoom_view):
+    view = zoom_view
+    view.setSceneSize(4000, 2000)
+    left, right = QtCore.QPointF(-1000, 0), QtCore.QPointF(1000, 0)
+    view.scale(.2, .2)
+    view.centerOn(0, 0)
+    wheel(view, view.mapFromScene(left), 120)
+    for _ in range(3):
+        wheel(view, view._wheel_zoom_position, 120)
+        assert (view.mapFromScene(left) - view.viewport().rect().center()).manhattanLength() <= 2
+        view.setSceneSize(4000, 2000)  # Project update/notification echoes.
+    for _ in range(6):
+        wheel(view, QtCore.QPoint(100, 100), -120)
+    position = view.mapFromScene(right)
+    assert view.viewport().rect().contains(position)
+    wheel(view, position, 120)
+    assert (view.mapFromScene(right) - view.viewport().rect().center()).manhattanLength() <= 2
