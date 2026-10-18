@@ -19,7 +19,7 @@
 Text editor to edit Note items.
 """
 
-from ..qt import QtCore, QtWidgets, qslot, sip_is_deleted
+from ..qt import QtCore, QtGui, QtWidgets, qslot, sip_is_deleted
 from ..ui.text_editor_dialog_ui import Ui_TextEditorDialog
 
 
@@ -59,6 +59,56 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
             self.uiApplyTextToAllItemsCheckBox.setChecked(True)
             self.uiApplyTextToAllItemsCheckBox.hide()
 
+        # Prefer fonts already used by this project, then common installed
+        # families. Unavailable project families remain selectable: Qt supplies
+        # a local substitute without changing the saved family name.
+        self.fontFamily = QtWidgets.QComboBox(self)
+        self.fontFamily.setEditable(True)
+        used = {item.font().family() for item in first_item.scene().items()
+                if isinstance(item, QtWidgets.QGraphicsTextItem)} if first_item.scene() else set()
+        used.add(first_item.font().family())
+        installed = sorted(QtGui.QFontDatabase.families())
+        common = [name for name in ['Arial', 'Helvetica', 'Times New Roman', 'Courier New',
+                                   'Liberation Sans', 'Liberation Serif', 'DejaVu Sans', 'Noto Sans'] if name in installed]
+        self.fontFamily.addItems(list(dict.fromkeys(sorted(used) + common + installed)))
+        self.fontSize = QtWidgets.QDoubleSpinBox(self)
+        self.fontSize.setRange(1, 512)
+        self.underline = QtWidgets.QCheckBox('Underline', self)
+        self.bold = QtWidgets.QCheckBox('Bold', self)
+        self.italic = QtWidgets.QCheckBox('Italic', self)
+        typography = QtWidgets.QFormLayout()
+        typography.addRow('Font:', self.fontFamily)
+        typography.addRow('Size:', self.fontSize)
+        row = QtWidgets.QHBoxLayout()
+        for field in (self.bold, self.italic, self.underline):
+            row.addWidget(field)
+        typography.addRow(row)
+        self.layout().insertLayout(0, typography)
+        self.loadFontControls(first_item.font())
+        self.fontFamily.currentTextChanged.connect(self.updateFontPreview)
+        self.fontSize.valueChanged.connect(self.updateFontPreview)
+        for field in (self.bold, self.italic, self.underline):
+            field.toggled.connect(self.updateFontPreview)
+
+    def loadFontControls(self, font):
+        blockers = [QtCore.QSignalBlocker(field) for field in
+                    (self.fontFamily, self.fontSize, self.bold, self.italic, self.underline)]
+        self.fontFamily.setCurrentText(font.family())
+        self.fontSize.setValue(font.pointSizeF() if font.pointSizeF() > 0 else 12)
+        self.bold.setChecked(font.bold())
+        self.italic.setChecked(font.italic())
+        self.underline.setChecked(font.underline())
+        del blockers
+
+    def updateFontPreview(self, *args):
+        font = QtGui.QFont(self.uiPlainTextEdit.font())
+        font.setFamily(self.fontFamily.currentText())
+        font.setPointSizeF(self.fontSize.value())
+        font.setBold(self.bold.isChecked())
+        font.setItalic(self.italic.isChecked())
+        font.setUnderline(self.underline.isChecked())
+        self.uiPlainTextEdit.setFont(font)
+
     def _setColor(self, color):
         self._color = color
         self.uiColorPushButton.setStyleSheet("background-color: rgba({}, {}, {}, {});".format(color.red(),
@@ -80,6 +130,7 @@ class TextEditorDialog(QtWidgets.QDialog, Ui_TextEditorDialog):
                                                           options=QtWidgets.QFontDialog.FontDialogOption.DontUseNativeDialog)
         if ok:
             self.uiPlainTextEdit.setFont(selected_font)
+            self.loadFontControls(selected_font)
 
     @qslot
     def _setColorSlot(self, *args):

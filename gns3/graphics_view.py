@@ -528,14 +528,18 @@ class GraphicsView(QtWidgets.QGraphicsView):
             #QtWidgets.QApplication.sendEvent(self, context_event)
         elif event.button() == QtCore.Qt.MouseButton.LeftButton and self._adding_note:
             pos = self.mapToScene(event.position().toPoint())
-            note = self.createDrawingItem("text", int(pos.x()), int(pos.y()), 2)
-            pos_x = note.pos().x()
-            pos_y = note.pos().y() - (note.boundingRect().height() / 2)
-            note.setPos(pos_x, pos_y)
-            note.editText()
+            note = self.createDrawingItem("text", pos.x(), pos.y(), 2, create=False)
+            note.setPlainText("Note")
             self._main_window.uiAddNoteAction.setChecked(False)
             self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
             self._adding_note = False
+            dialog = TextEditorDialog(self, [note])
+            dialog.uiPlainTextEdit.selectAll()
+            if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted and note.toPlainText().strip():
+                note.create()
+                self._groups.save([note])
+            else:
+                self.discardDraft(note)
         elif event.button() == QtCore.Qt.MouseButton.LeftButton and (self._adding_rectangle or self._adding_ellipse):
             self._shape_origin = self.mapToScene(event.position().toPoint())
             self._shape_preview = (QtWidgets.QGraphicsRectItem() if self._adding_rectangle

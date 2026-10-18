@@ -40,3 +40,19 @@ A duplicação copia o estilo. Nenhuma nova API de servidor é necessária.
 Testes verificam exclusividade/acessibilidade dos ícones, valores padrões,
 round-trip dos três formatos, filhos sem deslocamento e alças em todos os cantos.
 Suíte após essa etapa: 278 aprovados e 1 ignorado.
+
+## Notas com tipografia na criação
+
+Criar uma nota abre o editor com texto inicial selecionado, fonte/tamanho/cor
+atuais e controles diretos de família, tamanho, negrito, itálico e sublinhado.
+O seletor prioriza as famílias já usadas nos textos do projeto, depois famílias
+comuns instaladas, e mantém disponíveis as demais fontes locais. Famílias de
+projetos que não estejam instaladas ficam na lista; o Qt faz a substituição
+local, sem incorporar arquivos de fonte nem instalar novas fontes.
+
+A caixa de texto mostra a prévia da tipografia. O diálogo de fontes completo
+continua disponível e sincroniza os controles. Cor e transparência usam o
+seletor já existente. Confirmar uma nota não vazia cria o desenho; cancelar ou
+confirmar conteúdo vazio descarta o rascunho. Família, tamanho e sublinhado são
+preservados pelo SVG existente. Testes cobrem confirmação/cancelamento, padrões
+e round-trip da tipografia.
