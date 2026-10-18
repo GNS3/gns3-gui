@@ -1,63 +1,74 @@
-# Zoom direcionado pela posição do mouse
+# Zoom para focar regiões da topologia
 
 ## Uso
 
-Posicione o mouse sobre a parte da topologia que deseja examinar e use
-**Ctrl + roda do mouse**. O ponto sob o cursor permanece na mesma posição da
-tela enquanto a escala aumenta ou diminui. É possível aproximar uma região,
-configurar os elementos e afastar novamente sem reposicioná-la pelas barras
-de rolagem. Se mudar o cursor de lugar, o próximo passo de zoom usa esse novo
-ponto como referência.
+Posicione o mouse sobre a região que deseja configurar e use **Ctrl + roda
+para cima**. O ponto escolhido vai para o **centro da janela**. Os passos
+seguintes da roda, mantendo o mouse no mesmo lugar, aproximam essa região sem
+escolher outro ponto a cada passo. Mover o mouse permite escolher um novo foco.
 
-A roda sem Ctrl continua rolando a view. A velocidade do zoom, a faixa de
-10% a 1000%, os comandos existentes da barra/menu e o percentual salvo no
-projeto são preservados.
+Use **Ctrl + roda para baixo** para ampliar a visão ao redor da região atual.
+Depois, posicione o mouse sobre o outro lado da topologia e aproxime novamente.
+Não é necessário reposicionar a região pelas barras de rolagem. A roda sem Ctrl
+continua rolando a view. A faixa de zoom permanece entre 10% e 1000%.
+
+## Revisão a partir do vídeo
+
+A primeira implementação preservava o ponto sob o cursor na mesma posição da
+tela. O vídeo enviado mostrou que a interação desejada era diferente: trazer
+a região escolhida para o centro. A correção agora usa `centerOn()` com a
+coordenada da cena escolhida no primeiro evento da sequência. O foco é guardado
+para os passos seguintes; sem isso, depois da centralização, o mesmo pixel do
+mouse já apontaria para outra região e cada passo deslocaria novamente a cena.
+
+Também foi identificado um problema no ciclo de atualização do projeto:
+
+1. O scroll altera a escala e salva o percentual no projeto.
+2. A resposta HTTP e as notificações emitem a atualização do projeto.
+3. `Topology._projectUpdatedSlot()` chama `GraphicsView.setSceneSize()`.
+4. Essa função apagava a área local de navegação, mesmo quando as dimensões
+   eram iguais. A view voltava a sofrer os limites de rolagem e o alinhamento
+   automático do Qt, mudando novamente sua posição e a geometria das barras.
+
+`setSceneSize()` agora ignora dimensões que já estão aplicadas. A área de
+navegação só é limpa quando as dimensões realmente mudam ou ao limpar/trocar
+um projeto. As confirmações de zoom deixam de desfazer a navegação e provocar
+as alternâncias de geometria que causavam saltos e contribuíam para a borda
+piscando. Ao terminar cada passo de zoom, o viewport também recebe um pedido
+completo de repintura, para atualizar o canvas após a transformação.
 
 ## Implementação
 
-`GraphicsView` já configurava o Qt com `AnchorUnderMouse`, mas o caminho de
-`wheelEvent()` chamava `scaleView()` somente com um fator de escala. Não havia
-compensação explícita usando a posição daquele evento. Além disso, quando a
-cena escalada cabe inteira na janela, o alinhamento automático e os limites
-das barras do Qt restringem a translação necessária para manter o cursor fixo.
+`wheelEvent()` passa o foco escolhido para `scaleView()`. A ancoragem automática
+do Qt fica temporariamente desativada durante a escala e a centralização, e
+sua configuração anterior é restaurada ao final. O afastamento mantém um foco
+central estável, evitando acumular arredondamentos das barras a cada passo.
 
-O evento agora passa sua posição local à função `scaleView(scale_factor,
-anchor=...)`. A função guarda a coordenada da cena sob aquele pixel, desativa
-temporariamente a ancoragem automática, aplica a escala e calcula a diferença
-entre a coordenada anterior e a nova. Uma translação da view compensa essa
-diferença. Ao final, a configuração anterior de ancoragem é restaurada.
-Os comandos que não passam `anchor` continuam usando o caminho anterior.
-
-Para permitir a compensação perto das bordas ou com uma cena pequena, a view
-ganha uma área de navegação que inclui o viewport pretendido com uma margem.
-Essa extensão pertence apenas ao `QGraphicsView`: o `sceneRect` da cena, as
-dimensões salvas do projeto e as posições dos elementos não são alterados.
-As barras podem oferecer espaço vazio ao redor da topologia para permitir
-essa navegação. `setSceneSize()` limpa a extensão local ao carregar ou alterar
-as dimensões de uma cena.
-
-Pedidos fora dos limites de escala são rejeitados antes de mudar a view e não
-geram uma atualização redundante do projeto. Eventos sem deslocamento vertical
-também não geram zoom. Eventos Ctrl+roda são consumidos para não produzir
-rolagem adicional junto da aproximação.
+Uma margem de navegação na view permite centralizar regiões nas bordas ou
+em cenas pequenas. Ela não altera o retângulo da cena, as dimensões salvas do
+projeto nem as posições dos dispositivos. Pedidos fora dos limites não alteram
+a view nem geram atualização redundante do projeto. Os comandos de zoom que
+não passam um foco explícito continuam com o caminho existente.
 
 ## Validação
 
-Os testes enviam `QWheelEvent` ao viewport real, sem um evento prévio de
-movimento do mouse. Isso verifica que a posição do próprio evento decide o
-zoom. São usados dois pontos afastados do centro, cenas de 2000×1000 e 100×80,
-escalas iniciais de 20%, 100% e 500%, e uma sequência de aproximação e afastamento
-perto dos limites de rolagem. A tolerância é de dois pixels, por causa da
-quantização das barras de rolagem do Qt.
+Os testes usam eventos reais de roda no viewport Qt, pontos fora do centro,
+cenas de 2000×1000 e 100×80, escalas iniciais de 20%, 100% e 500%, aproximação
+e afastamento. A região deve permanecer no centro com tolerância de dois pixels
+pela quantização das barras do Qt.
 
-Também são verificados os limites de escala, a rolagem sem Ctrl, o percentual
-enviado ao projeto, a restauração da configuração de ancoragem e a limpeza da
-área de navegação ao redefinir o tamanho da cena.
+A regressão das confirmações do servidor reaplica as mesmas dimensões várias
+vezes depois do zoom e verifica que a transformação, a área de navegação e a
+geometria do viewport não mudam. Outro teste aproxima a região esquerda,
+afasta até a região direita estar visível e então centraliza essa outra região,
+sem manipular barras de rolagem. Também permanecem os testes dos limites,
+rolagem sem Ctrl, percentual salvo, restauração da ancoragem e troca de tamanho.
 
 ```bash
 QT_QPA_PLATFORM=offscreen python3 -m pytest -q
 ```
 
-Resultado: **262 testes aprovados, 1 ignorado**. Permanece o aviso já existente
-de depreciação de `tarfile` no teste de instalação de atualizações. Os testes
-exercitam a view Qt; não dependem de mudanças nem de uma nova API no servidor.
+Resultado da revisão: **264 aprovados, 1 ignorado**, com o aviso preexistente
+de `tarfile`. A geometria e a navegação foram verificadas na view Qt offscreen;
+a confirmação visual do comportamento no ambiente desktop pode ser feita
+repetindo o percurso do vídeo depois de reiniciar a GUI.
