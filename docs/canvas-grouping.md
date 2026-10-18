@@ -32,7 +32,7 @@ O servidor GNS3 e os simuladores são instalados/configurados separadamente.
 2. Clique no botão **Group elements** na barra superior, ou pressione **Ctrl+G**
    com foco no canvas. Informe um nome, por exemplo **LAN 1**, e ajuste largura
    e altura se desejar. Os valores iniciais contêm os elementos selecionados,
-   com margem de 10% em cada lado e uma faixa de 24 unidades para o título.
+   com 30% de espaço extra no total (15% em cada lado) e uma faixa de 24 unidades para o título.
 3. O novo elemento aparece com nome e moldura tracejada. Arrastar um membro do
    grupo fechado seleciona e move o contêiner inteiro. As posições dos filhos
    passam a ser relativas à origem do grupo.
@@ -62,6 +62,14 @@ O servidor GNS3 e os simuladores são instalados/configurados separadamente.
 10. **Ctrl+Shift+G** ou **Ungroup** dissolve apenas o contêiner selecionado,
     preservando os filhos e suas posições na cena. Se ele era filho de outro
     grupo, seus filhos passam ao contêiner pai.
+
+Arrastar um dispositivo novo da barra de templates sobre um grupo destaca sua
+borda e mostra as guias centrais. Ao soltar, o dispositivo é criado pelo servidor
+e inserido naquele grupo; em áreas aninhadas, o grupo visível mais interno é o
+destino. O destaque não é ativado por arquivos de projeto e desaparece ao sair
+ou concluir o drop. O grupo pode estar fechado, sem entrar em modo de edição.
+
+Os campos Width/Height têm fundo branco e texto preto, independentemente do tema.
 
 Salvar/reabrir e exportar/importar preservam os grupos, os nomes e a hierarquia.
 A moldura tem dimensões fixas e recorta seus descendentes, incluindo grupos
@@ -153,7 +161,8 @@ são mantidos no histórico, mas essa implementação foi substituída.
   moldura fixa, recorte por `ItemClipsChildrenToShape` e filhos reais via `setParentItem`. Eventos de um grupo fechado são
   encaminhados ao contêiner; no modo de edição, os filhos recebem os eventos.
 - `CanvasGroups` concentra criação, edição, desagrupamento, validação do grafo,
-  restauração, gravação, redimensionamento, guias temporárias e cópia assíncrona. A duplicação aguarda todos os novos
+  restauração, gravação, redimensionamento, guias temporárias e cópia assíncrona. Desenhos aguardam o reconhecimento de criação antes de enviar updates,
+  evitando PUTs para IDs ainda não registrados no servidor. A duplicação aguarda todos os novos
   IDs de dispositivos antes de gravar a árvore. Em falha de duplicação de um
   dispositivo, solicita rollback das cópias bem-sucedidas; não há transação
   multinó nativa no servidor.
@@ -214,5 +223,10 @@ e ajuda/estado do botão por eventos reais de hover. O teste integrado passou
 com servidor 2.2.61, verificando dimensões e hierarquia também após duplicação
 e exportação/importação. Os projetos descartáveis são removidos ao final.
 
-Suíte final desta revisão: **217 aprovados, 1 ignorado**, com o aviso existente
+Suíte final desta revisão: **223 aprovados, 1 ignorado**, com o aviso existente
 de depreciação de `tarfile` no teste do instalador de atualizações.
+
+O relato técnico sobre as limitações encontradas no contrato GUI/servidor, a
+análise do 404 e a proposta de suporte nativo estão em
+[group-server-integration.md](group-server-integration.md). Um texto em inglês
+para discussão em PR está em [group-pr-draft.md](group-pr-draft.md).
