@@ -77,6 +77,15 @@ and track cleanup when a node or compute operation fails. A future GUI adapter
 could then retain this interaction model while replacing the SVG transport with
 the native API.
 
+The HTTP client also retains in-flight reply wrappers until completion. Requests
+without a timeout or progress dialog could otherwise lose Python signal callbacks
+to garbage collection, leaving device copies on the canvas before the hierarchy
+and internal links were rebuilt. Regression coverage forces collection with real
+Qt replies and exercises duplication from the summary menu. The disposable-server
+check now uses the actual asynchronous Qt HTTP transport for node duplication.
+Copied root groups receive distinct names such as `Copy of LAN 1` and
+`Copy 2 of LAN 1`, while nested groups retain their names.
+
 The implementation notes and a concrete server-side proposal are in
 `docs/group-server-integration.md`. No server-side group API is implemented by
 this GUI change, and that remains the main architectural point for review.

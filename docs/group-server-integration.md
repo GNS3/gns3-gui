@@ -321,3 +321,13 @@ terminou com seis dispositivos e duas conexões após a duplicação, confirmou 
 POSTs atrasados, exportou/importou quatro grupos aninhados e excluiu uma das
 árvores. Projetos e template de teste foram removidos. Isso não valida todos
 os emuladores nem substitui o log da sessão em que a captura foi produzida.
+
+### Duplicação: perda de callbacks no cliente
+
+Uma revisão posterior reproduziu outro problema: o servidor criava os novos
+dispositivos, mas algumas respostas HTTP perdiam seus callbacks Python antes de
+terminar. A GUI esperava esses callbacks para associar os filhos e recriar os
+links. O cliente HTTP agora mantém referências às respostas até `finished`.
+Isso foi corrigido sem mudança no contrato do servidor; a investigação e a
+validação com HTTP Qt real estão em
+[group-duplication-fix.md](group-duplication-fix.md).

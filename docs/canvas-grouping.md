@@ -230,3 +230,12 @@ O relato técnico sobre as limitações encontradas no contrato GUI/servidor, a
 análise do 404 e a proposta de suporte nativo estão em
 [group-server-integration.md](group-server-integration.md). Um texto em inglês
 para discussão em PR está em [group-pr-draft.md](group-pr-draft.md).
+
+### Correção posterior da duplicação
+
+As cópias recebem nomes como `Copy of LAN 1` e `Copy 2 of LAN 1`; os grupos
+internos mantêm seus nomes. Foi corrigida a perda dos callbacks HTTP que impedia
+concluir a associação dos filhos e a recriação dos links internos. A reprodução,
+a causa e os testes estão em [group-duplication-fix.md](group-duplication-fix.md).
+A validação posterior terminou com **226 aprovados e 1 ignorado**, além do teste
+com servidor 2.2.61, agora usando o transporte Qt assíncrono para a duplicação.
