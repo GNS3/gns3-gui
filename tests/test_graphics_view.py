@@ -63,7 +63,7 @@ def wheel(view, position, delta, modifiers=QtCore.Qt.KeyboardModifier.ControlMod
 @pytest.mark.parametrize("position", [QtCore.QPoint(80, 90), QtCore.QPoint(690, 480)])
 @pytest.mark.parametrize("scene_size", [(2000, 1000), (100, 80)])
 @pytest.mark.parametrize("initial_scale", [.2, 1, 5])
-def test_control_wheel_centers_selected_scene_region(zoom_view, position, scene_size, initial_scale):
+def test_control_wheel_preserves_point_under_current_cursor(zoom_view, position, scene_size, initial_scale):
     view = zoom_view
     view.setSceneSize(*scene_size)
     view.scale(initial_scale, initial_scale)
@@ -73,7 +73,7 @@ def test_control_wheel_centers_selected_scene_region(zoom_view, position, scene_
     # No mouse-move event: cached/global cursor coordinates must not decide zoom.
     for delta in (120, 120, -120, -120):
         assert wheel(view, position, delta).isAccepted()
-        error = view.mapFromScene(point) - view.viewport().rect().center()
+        error = view.mapFromScene(point) - position
         assert abs(error.x()) <= 2 and abs(error.y()) <= 2
     assert view.transform().m11() == pytest.approx(initial_scale)
     assert view.scene().sceneRect() == original_scene
@@ -129,20 +129,30 @@ def test_zoom_acknowledgments_preserve_navigation_and_viewport_geometry(zoom_vie
         assert view.viewport().geometry() == viewport
 
 
-def test_zoom_between_opposite_regions_without_scrollbars(zoom_view):
+def test_zoom_uses_current_cursor_on_every_step(zoom_view):
     view = zoom_view
     view.setSceneSize(4000, 2000)
-    left, right = QtCore.QPointF(-1000, 0), QtCore.QPointF(1000, 0)
-    view.scale(.2, .2)
-    view.centerOn(0, 0)
-    wheel(view, view.mapFromScene(left), 120)
-    for _ in range(3):
-        wheel(view, view._wheel_zoom_position, 120)
-        assert (view.mapFromScene(left) - view.viewport().rect().center()).manhattanLength() <= 2
-        view.setSceneSize(4000, 2000)  # Project update/notification echoes.
-    for _ in range(6):
-        wheel(view, QtCore.QPoint(100, 100), -120)
-    position = view.mapFromScene(right)
-    assert view.viewport().rect().contains(position)
-    wheel(view, position, 120)
-    assert (view.mapFromScene(right) - view.viewport().rect().center()).manhattanLength() <= 2
+    original = view.scene().sceneRect()
+    for position, delta in [(QtCore.QPoint(100, 150), 120),
+                            (QtCore.QPoint(700, 450), 120),
+                            (QtCore.QPoint(150, 400), -120),
+                            (QtCore.QPoint(650, 100), -120)]:
+        point = view.mapToScene(position)
+        wheel(view, position, delta)
+        view.setSceneSize(4000, 2000)  # Preserve the fix for server echoes.
+        error = view.mapFromScene(point) - position
+        assert abs(error.x()) <= 2 and abs(error.y()) <= 2
+    assert view.scene().sceneRect() == original
+
+
+def test_wheel_steps_are_gentler_and_proportional(zoom_view):
+    view = zoom_view
+    wheel(view, QtCore.QPoint(100, 100), 60)
+    half = view.transform().m11()
+    assert 1 < half < 1.05
+    wheel(view, QtCore.QPoint(100, 100), 60)
+    full = view.transform().m11()
+    assert full == pytest.approx(half ** 2)
+    assert 1 < full < 1.1
+    wheel(view, QtCore.QPoint(100, 100), -120)
+    assert view.transform().m11() == pytest.approx(1)
