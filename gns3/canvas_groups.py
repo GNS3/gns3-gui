@@ -135,15 +135,23 @@ class CanvasGroups:
             self.group()
 
     def rename(self, group):
-        result = GroupPropertiesDialog.getProperties(self.view, group.name, group.rect().width(), group.rect().height(), style=group.style)
-        if result:
-            name, width, height = result[:3]
-            if len(result) > 3:
-                group.setStyle(result[3])
+        original = (group.name, group.rect().width(), group.rect().height(), dict(group.style))
+
+        def preview(values):
+            name, width, height = values[:3]
+            if len(values) > 3:
+                group.setStyle(values[3])
             group.name = name
             group.setToolTip(name)
             group.setDimensions(width, height)
+            self.notifyHierarchy()
+
+        result = GroupPropertiesDialog.getProperties(self.view, *original[:3], style=group.style, preview=preview)
+        if result:
+            preview(result)
             self.save([group])
+        else:
+            preview(original)  # Apply is a local preview, Cancel restores it.
 
     def notifyHierarchy(self):
         self.view._topology.hierarchy_changed_signal.emit()

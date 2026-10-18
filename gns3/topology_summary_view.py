@@ -362,6 +362,9 @@ class TopologySummaryView(QtWidgets.QTreeWidget):
         view = MainWindow.instance().uiGraphicsView
         menu = QtWidgets.QMenu(self)
 
+        if group.editing:
+            menu.addAction('Edit container').triggered.connect(lambda: view.editContainer(group))
+
         def run(callback):
             self._selectGroup(group)
             callback()

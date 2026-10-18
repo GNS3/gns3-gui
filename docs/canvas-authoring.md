@@ -100,3 +100,18 @@ A espessura da borda das formas aceita zero também na definição Qt Designer.
 Espessura zero significa NoPen, em vez da linha cosmética de um pixel que o Qt
 normalmente desenha com width=0. O container segue a mesma regra; destaques de
 arraste continuam sendo indicações temporárias, independentes do estilo salvo.
+
+## Edit container e Apply
+
+O menu de contexto do canvas oferece Edit container somente enquanto houver
+um container em edição. A ação também aparece na linha correspondente do
+Topology Summary nesse estado, sem sair da edição para abrir as propriedades.
+Os comandos anteriores de renomear e o duplo clique continuam disponíveis.
+
+Ao editar um container existente, Apply mostra nome, dimensões e estilo no
+canvas sem fechar o diálogo. Essa prévia é local: OK confirma e salva; Cancel
+restaura os valores que existiam ao abrir, inclusive depois de Apply. A árvore
+lateral acompanha a prévia e a restauração. O botão de Apply fica desabilitado
+para um nome vazio e não é exibido na criação, onde ainda não há um container
+existente para pré-visualizar. Testes cobrem a presença condicional da ação,
+a prévia, a confirmação e a reversão.

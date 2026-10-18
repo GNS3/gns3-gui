@@ -7,7 +7,7 @@ from .container_style_widget import ContainerStyleWidget
 
 
 class GroupPropertiesDialog(QtWidgets.QDialog):
-    def __init__(self, parent, name, width, height, style=None):
+    def __init__(self, parent, name, width, height, style=None, preview=None):
         super().__init__(parent)
         self.setWindowTitle("Container properties")
         outer = QtWidgets.QVBoxLayout(self)
@@ -37,19 +37,28 @@ class GroupPropertiesDialog(QtWidgets.QDialog):
         layout.addRow("Width:", self.widthEdit)
         layout.addRow("Height:", self.heightEdit)
         buttons = QtWidgets.QDialogButtonBox(
-            QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel, self)
+            QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel | QtWidgets.QDialogButtonBox.StandardButton.Apply, self)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         outer.addWidget(buttons)
+        apply = buttons.button(QtWidgets.QDialogButtonBox.StandardButton.Apply)
+        apply.setVisible(preview is not None)
+        if preview is not None:
+            apply.clicked.connect(lambda: preview(self.properties()))
+        self.applyButton = apply
         ok = buttons.button(QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self.nameEdit.textChanged.connect(lambda text: ok.setEnabled(bool(text.strip())))
         ok.setEnabled(bool(name.strip()))
+        self.nameEdit.textChanged.connect(lambda text: apply.setEnabled(bool(text.strip())))
         self.nameEdit.selectAll()
         self.nameEdit.setFocus()
 
+    def properties(self):
+        return self.nameEdit.text().strip(), self.widthEdit.value(), self.heightEdit.value(), self.styleEditor.styleData()
+
     @classmethod
-    def getProperties(cls, parent, name, width, height, style=None):
-        dialog = cls(parent, name, width, height, style)
+    def getProperties(cls, parent, name, width, height, style=None, preview=None):
+        dialog = cls(parent, name, width, height, style, preview)
         if dialog.exec() != QtWidgets.QDialog.DialogCode.Accepted:
             return None
-        return dialog.nameEdit.text().strip(), dialog.widthEdit.value(), dialog.heightEdit.value(), dialog.styleEditor.styleData()
+        return dialog.properties()

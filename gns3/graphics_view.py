@@ -467,6 +467,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
     def enterGroup(self, group):
         self._groups.enter(group)
 
+    def editContainer(self, container=None):
+        container = container if isinstance(container, GroupItem) else self._groups.editing
+        if container is not None and container.editing:
+            self._groups.rename(container)
+
     def renameGroup(self, group=None):
         groups = [group] if isinstance(group, GroupItem) else self._groups.selected()
         for item in groups:
@@ -968,6 +973,8 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if not items:
             return
 
+        if self._groups.editing is not None and self._groups.editing.editing:
+            menu.addAction('Edit container').triggered.connect(lambda: self.editContainer())
         groups = [item for item in items if isinstance(item, GroupItem)]
         if groups:
             for text, callback in (("Enter container", lambda: self.enterGroup(groups[0])),
