@@ -98,6 +98,8 @@ class CanvasGroups:
         for item in items:
             item.setSelected(False)
             reparent(item, group)
+        if group.style['shape'] != 'rect':
+            group.fitMembers()
         group.setSelected(True)
         group.create()
         self.save([group])
@@ -136,14 +138,20 @@ class CanvasGroups:
 
     def rename(self, group):
         original = (group.name, group.rect().width(), group.rect().height(), dict(group.style))
+        positions = {item: item.pos() for item in group.members()}
 
         def preview(values):
             name, width, height = values[:3]
             if len(values) > 3:
-                group.setStyle(values[3])
+                group.setStyle(values[3], fit=False)
             group.name = name
             group.setToolTip(name)
             group.setDimensions(width, height)
+            for item, position in positions.items():
+                if not sip.isdeleted(item) and item.parentItem() is group:
+                    reparent(item, group, position)
+            if group.style['shape'] != original[3]['shape']:
+                group.fitMembers()
             self.notifyHierarchy()
 
         result = GroupPropertiesDialog.getProperties(self.view, *original[:3], style=group.style, preview=preview)

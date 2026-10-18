@@ -345,9 +345,9 @@ seleção vazia e continuidade dos contornos em seleção, edição e hover.
 ### Aparência e criação dos elementos visuais
 
 As propriedades do container agora abrem em General e oferecem a aba Style
-com retângulo, triângulo ou elipse, borda e fundo configuráveis. Formas não
-retangulares não recortam os filhos; a área retangular de interação e as quatro
-alças são preservadas. O guia atualizado de formas por arraste, tipografia de
+com retângulo, triângulo ou elipse, borda e fundo configuráveis. A área funcional acompanha a forma e os filhos que ficariam fora são movidos
+para dentro ao trocar o formato. As quatro alças continuam disponíveis nos
+cantos do retângulo de dimensionamento, sem escalar os filhos. O guia atualizado de formas por arraste, tipografia de
 notas e imagens redimensionáveis está em [canvas-authoring.md](canvas-authoring.md).
 Os identificadores internos `group` permanecem por compatibilidade, enquanto a
 interface usa Container.

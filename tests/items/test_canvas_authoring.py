@@ -61,9 +61,10 @@ def test_container_style_roundtrip_and_rectangular_resize_bounds(canvas, shape):
     copy = GroupItem(svg=svg)
     assert copy.style == container.style
     assert read_group(svg)['style']['shape'] == shape
-    assert node.scenePos() == position
+    assert container.shape().contains(node.mapRectToParent(node.boundingRect().united(node.childrenBoundingRect())))
+    position = node.scenePos()
     assert bool(container.flags() & QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemClipsChildrenToShape) is (shape == 'rect')
-    assert container.shape().contains(container.rect().topLeft() + QtCore.QPointF(1, 1))
+    assert container.shape().contains(container.rect().topLeft() + QtCore.QPointF(1, 1)) is (shape == 'rect')
     canvas.enterGroup(container)
     container.setSelected(True)
     container.setDimensions(500, 350)

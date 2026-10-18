@@ -255,7 +255,12 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         return True
 
     def labelRect(self):
-        return QtCore.QRectF(8, 2, max(0, self.rect().width() - 16), self.TITLE_HEIGHT - 2)
+        width, height = self.rect().width(), self.rect().height()
+        if self.style['shape'] == 'triangle':
+            return QtCore.QRectF(width * .4, height * .25, width * .2, self.TITLE_HEIGHT - 2)
+        if self.style['shape'] == 'ellipse':
+            return QtCore.QRectF(width * .25, height * .15, width * .5, self.TITLE_HEIGHT - 2)
+        return QtCore.QRectF(8, 2, max(0, width - 16), self.TITLE_HEIGHT - 2)
 
     def corners(self):
         rect = self.rect()
@@ -263,19 +268,71 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
                 "bl": rect.bottomLeft(), "br": rect.bottomRight()}
 
     def shape(self):
-        # Qt uses this same exact rectangle to clip painting and hit-testing of
-        # descendants. Handles do not enlarge the child clipping region.
+        """Functional hit/drop/exit area matches the painted outline."""
         path = QtGui.QPainterPath()
-        path.addRect(self.rect())
+        if self.style['shape'] == 'ellipse':
+            path.addEllipse(self.rect())
+        elif self.style['shape'] == 'triangle':
+            r = self.rect()
+            path.moveTo(r.center().x(), r.top())
+            path.lineTo(r.bottomRight())
+            path.lineTo(r.bottomLeft())
+            path.closeSubpath()
+        else:
+            path.addRect(self.rect())
         return path
 
-    def setStyle(self, style):
+    def setStyle(self, style, fit=True):
         from ..dialogs.container_style_widget import validated_style
+        previous = self.style['shape']
         self.prepareGeometryChange()
         self.style = validated_style(style)
-        # Decorative triangle/ellipse must never hide a child on shape change.
         self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemClipsChildrenToShape, self.style['shape'] == 'rect')
+        if fit and previous != self.style['shape']:
+            self.fitMembers()
         self.update()
+
+    def fitMembers(self):
+        """Translate overflowing direct children into the convex outline.
+
+        Never scale children. If an item cannot fit anywhere, grow the frame
+        proportionally just enough to fit its complete bounds (labels included).
+        """
+        members = self.members()
+        if not members:
+            return
+        bounds = {item: item.mapRectToParent(item.boundingRect().united(item.childrenBoundingRect())) for item in members}
+        width, height = self.rect().width(), self.rect().height()
+        kind = self.style['shape']
+        factor = 1
+        for rect in bounds.values():
+            x, y = (rect.width() + 4) / width, (rect.height() + 4) / height
+            needed = (x + y) / .96 if kind == 'triangle' else math.hypot(x, y) / .96 if kind == 'ellipse' else max(x, y)
+            factor = max(factor, needed)
+        if factor > 1:
+            self.setDimensions(min(1000000, width * factor), min(1000000, height * factor))
+        path = self.shape()
+        frame = self.rect()
+        for item, rect in bounds.items():
+            rect = rect.adjusted(-2, -2, 2, 2)
+            if path.contains(rect):
+                continue
+            target = frame.center()
+            if kind == 'triangle':
+                target.setY((frame.height() + rect.width() * frame.height() / frame.width()) / 2)
+            delta = target - rect.center()
+            if not path.contains(rect.translated(delta)):
+                # A child larger than the supported million-unit frame cannot
+                # be hidden or scaled: leave it accessible for manual adjustment.
+                continue
+            lo, hi = 0., 1.
+            for _ in range(40):
+                middle = (lo + hi) / 2
+                if path.contains(rect.translated(delta * middle)):
+                    hi = middle
+                else:
+                    lo = middle
+            reparent(item, self, item.pos() + delta * min(1, hi + .000001))
 
     def boundingRect(self):
         margin = max(5, self.style['border_width'] / 2)
@@ -388,7 +445,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         data = read_group(svg)
         if data is None:
             raise ValueError("Missing canvas container metadata")
-        self.setStyle(data["style"])
+        self.setStyle(data["style"], fit=False)
         self.name = data["name"].strip()
         self._revision = data.get("revision", 0)
         self._saved_id = data.get("drawing_id")

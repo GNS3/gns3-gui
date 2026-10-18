@@ -27,18 +27,32 @@ O diálogo abre em General e tem uma aba Style. Três botões exclusivos, com
 alfa para borda/fundo, espessura e estilos incluindo sem borda. O padrão é o
 retângulo, fundo transparente e borda azul sólida.
 
-A forma é decorativa: coordenadas, área de interação, detecção de saída/entrada
-e alças dos quatro cantos continuam retangulares. Triângulos e elipses não
-recortam filhos, evitando que uma mudança de forma esconda dispositivos. O
-retângulo conserva seu recorte anterior. Redimensionar o container não move
-nem escala os filhos. Destaques temporários azul/vermelho prevalecem durante
-arrastes e não são persistidos.
+O contorno de interação, seleção e detecção de saída/entrada acompanha o formato
+escolhido. Ao mudar a forma, filhos cujos limites visuais ficam fora são
+transladados para dentro, incluindo rótulos e desenhos. Não são escalados nem
+removidos. Elementos que já cabem permanecem no lugar. Se um filho não couber
+em nenhum ponto, o frame cresce proporcionalmente o necessário para acomodá-lo,
+até o limite de dimensões suportado. Não é um algoritmo de distribuição sem
+sobreposições: o objetivo é manter o conteúdo dentro e acessível.
+
+A implementação usa o path convexo de retângulo, triângulo ou elipse. Uma busca
+binária encontra um deslocamento suficiente na direção de um ponto interior,
+com margem para arredondamentos das coordenadas enviadas ao servidor. A troca
+pela aba Style faz a prévia com Apply; Cancel restaura também as posições dos
+filhos e as dimensões originais. Carregar metadados existentes não executa uma
+nova distribuição, preservando o layout salvo.
+
+O retângulo mínimo de pintura exigido pelo Qt continua existindo internamente;
+ele não é mais a área funcional das formas não retangulares. As quatro alças
+permanecem nos cantos desse retângulo para permitir redimensionar o frame mesmo
+onde não há preenchimento do triângulo/elipse. A regra anterior de não recortar
+filhos nessas formas é mantida; o ajuste é geométrico, não uma ocultação.
 
 O dicionário opcional `style` nos metadados SVG guarda forma, cores, espessura e
 tipo de borda, com validação ao importar. Arquivos sem esse campo usam o padrão.
 A duplicação copia o estilo. Nenhuma nova API de servidor é necessária.
 Testes verificam exclusividade/acessibilidade dos ícones, valores padrões,
-round-trip dos três formatos, filhos sem deslocamento e alças em todos os cantos.
+round-trip dos três formatos, encaixe dos filhos e alças em todos os cantos.
 Suíte após essa etapa: 278 aprovados e 1 ignorado.
 
 ## Notas com tipografia na criação
