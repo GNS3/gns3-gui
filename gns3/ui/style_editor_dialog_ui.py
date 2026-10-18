@@ -38,7 +38,7 @@ class Ui_StyleEditorDialog(object):
         self.uiBorderWidthLabel.setObjectName("uiBorderWidthLabel")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.uiBorderWidthLabel)
         self.uiBorderWidthSpinBox = QtWidgets.QSpinBox(parent=self.uiStyleSettingsGroupBox)
-        self.uiBorderWidthSpinBox.setMinimum(1)
+        self.uiBorderWidthSpinBox.setMinimum(0)
         self.uiBorderWidthSpinBox.setMaximum(100)
         self.uiBorderWidthSpinBox.setProperty("value", 2)
         self.uiBorderWidthSpinBox.setObjectName("uiBorderWidthSpinBox")

@@ -286,7 +286,7 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
         highlighted = self.drop_hover or self.exit_hover
         color = QtGui.QColor('#e53935' if self.exit_hover else '#3484c6') if highlighted else QtGui.QColor(self.style['border_color'])
         width = max(4, self.style['border_width']) if highlighted else max(2 if self.isSelected() else 0, self.style['border_width'])
-        painter.setPen(QtGui.QPen(color, width, QtCore.Qt.PenStyle.SolidLine if highlighted else QtCore.Qt.PenStyle(self.style['border_style'])))
+        painter.setPen(QtGui.QPen(color, width, QtCore.Qt.PenStyle.SolidLine if highlighted else (QtCore.Qt.PenStyle.NoPen if self.style['border_width'] == 0 else QtCore.Qt.PenStyle(self.style['border_style']))))
         painter.setBrush(QtGui.QColor(self.style['fill_color']))
         if self.style['shape'] == 'ellipse':
             painter.drawEllipse(self.rect())

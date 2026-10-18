@@ -13,6 +13,7 @@ class ImagePropertiesDialog(QtWidgets.QDialog):
         for field, value in [(self.widthEdit, width), (self.heightEdit, height)]:
             field.setRange(1, 1000000)
             field.setDecimals(2)
+            field.setStyleSheet('QDoubleSpinBox, QDoubleSpinBox QLineEdit { background-color: white; color: black; selection-background-color: #3484c6; selection-color: white; }')
             field.setValue(value)
         self.keepAspect = QtWidgets.QCheckBox('Keep aspect ratio', self)
         self.keepAspect.setChecked(True)

@@ -40,6 +40,9 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         self.setupUi(self)
         self.uiWidthSpinBox.setMaximum(1000000)
         self.uiHeightSpinBox.setMaximum(1000000)
+        self.uiBorderWidthSpinBox.setMinimum(0)
+        for field in (self.uiWidthSpinBox, self.uiHeightSpinBox, self.uiBorderWidthSpinBox):
+            field.setStyleSheet('QSpinBox, QSpinBox QLineEdit { background-color: white; color: black; selection-background-color: #3484c6; selection-color: white; }')
 
         self._items = items
         self.uiColorPushButton.clicked.connect(self._setColorSlot)
@@ -130,6 +133,8 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         """
 
         border_style = QtCore.Qt.PenStyle(self.uiBorderStyleComboBox.itemData(self.uiBorderStyleComboBox.currentIndex()))
+        if self.uiBorderWidthSpinBox.value() == 0:
+            border_style = QtCore.Qt.PenStyle.NoPen
         pen = QtGui.QPen(self._border_color, self.uiBorderWidthSpinBox.value(), border_style, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
         if self._color:
             brush = QtGui.QBrush(self._color)

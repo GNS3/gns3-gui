@@ -91,3 +91,12 @@ são incorporadas: a aparência pode variar em sistemas sem a família original.
 Na revisão visual, os seletores de cor ganharam texto contrastante e o fundo
 sem preenchimento é explicitamente identificado como Transparent. Perder o
 foco durante o desenho também cancela a prévia, evitando um fantasma órfão.
+
+## Correções de legibilidade e bordas
+
+Os campos de largura e altura de formas/imagens usam fundo branco, texto preto
+e seleção azul, com estilo restrito a esses campos e seus editores internos.
+A espessura da borda das formas aceita zero também na definição Qt Designer.
+Espessura zero significa NoPen, em vez da linha cosmética de um pixel que o Qt
+normalmente desenha com width=0. O container segue a mesma regra; destaques de
+arraste continuam sendo indicações temporárias, independentes do estilo salvo.
