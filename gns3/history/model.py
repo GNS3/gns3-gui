@@ -52,7 +52,10 @@ def canonical(kind, data):
     if kind == 'drawings':
         if not isinstance(result.get('svg'), str):
             raise ValueError('Missing history drawing SVG')
-        root = ET.fromstring(result['svg'])
+        try:
+            root = ET.fromstring(result['svg'])
+        except ET.ParseError as error:
+            raise ValueError('Invalid history drawing SVG') from error
         metadata = next((e for e in root.iter() if e.get('id') == 'gns3-canvas-group'), None)
         if metadata is not None:
             data = json.loads(metadata.text)
@@ -135,7 +138,7 @@ class HistoryDocument:
             else:
                 self.state[key] = copy.deepcopy(change['after'])
         self.entries[self.cursor:] = []
-        self.entries.append({'description': description(changes, hint), 'changes': changes})
+        self.entries.append({'description': description(changes, hint)[:512], 'changes': changes})
         if len(self.entries) > LIMIT:
             del self.entries[:len(self.entries) - LIMIT]
         self.cursor = len(self.entries)
@@ -146,6 +149,21 @@ class HistoryDocument:
         self.entries = []
         self.cursor = 0
         self.revision += 1
+
+    def rebind_links(self, mapping):
+        """GNS3 allocates fresh link UUIDs on POST, including compensation."""
+        def rewrite(value):
+            if isinstance(value, str):
+                return UUID_TOKEN.sub(lambda match: mapping.get(match.group(), match.group()), value)
+            if isinstance(value, list):
+                return [rewrite(v) for v in value]
+            if isinstance(value, dict):
+                return {rewrite(k): rewrite(v) for k, v in value.items()}
+            return value
+        self.state = rewrite(self.state)
+        self.entries = rewrite(self.entries)
+        self.revision += 1
+        return rewrite
 
     def payload(self):
         # Values are replaced, never mutated by the recorder; shallow snapshots

@@ -6,6 +6,14 @@ import xml.etree.ElementTree as ET
 from ..qt import QtCore
 from .model import canonical, resource, IDS
 
+# Built-in network objects report "started" permanently and have no power
+# lifecycle. Applying VM stop restrictions to them would make undo unusable.
+ALWAYS_ON = {'ethernet_switch', 'ethernet_hub', 'cloud', 'nat', 'frame_relay_switch', 'atm_switch'}
+
+
+def running(value):
+    return value.get('status') in ('started', 'suspended') and value.get('node_type') not in ALWAYS_ON
+
 
 def connections(value):
     return sorted((n['node_id'], n['adapter_number'], n['port_number']) for n in value['nodes'])
@@ -41,7 +49,10 @@ class Replay:
     GUI application and cursor mutation belong to the caller, not HTTP callbacks.
     """
     def __init__(self, request, changes, finished):
-        self.request = request
+        self.transport = request
+        self.identities = {}
+        self.uncertain_link = None
+        self.link_ids = set()
         self.changes = copy.deepcopy(changes)
         self.finished = finished
         self.raw = {}
@@ -65,6 +76,23 @@ class Replay:
     def start(self):
         self._preflight_next()
 
+    def request(self, method, path, callback, body=None):
+        physical = path
+        if path.startswith('/links/'):
+            identity = path.split('/')[-1]
+            physical = '/links/' + self.identities.get(identity, identity)
+        def received(result, error=False, **kwargs):
+            if not error and isinstance(result, dict) and 'link_id' in result:
+                if method == 'POST' and path == '/links':
+                    logical = body['link_id']
+                    if logical != result['link_id']:
+                        self.identities[logical] = result['link_id']
+                else:
+                    logical = path.split('/')[-1]
+                result = dict(result, link_id=logical)
+            callback(result, error=error, **kwargs)
+        self.transport(method, physical, received, body=body)
+
     def _later(self, function):
         QtCore.QTimer.singleShot(0, function)
 
@@ -79,11 +107,16 @@ class Replay:
             return
         # Verify there are no unrecorded connections about to be cascade-deleted.
         removing = {resource(key)[1] for key, c in self.changes.items() if key.startswith('nodes/') and c['after'] is None}
-        if removing:
+        creating_links = [c['after'] for key, c in self.changes.items()
+                          if key.startswith('links/') and c['before'] is None and c['after'] is not None]
+        if removing or creating_links:
             def links(result, error=False, **kw):
                 if error:
                     return self._stop('Cannot verify connections before deleting a device')
                 for value in result:
+                    self.link_ids.add(value['link_id'])
+                    if any(connections(value) == connections(after) for after in creating_links):
+                        return self._stop('A connection already occupies the interfaces being restored', trustworthy=False)
                     if any(n['node_id'] in removing for n in value['nodes']):
                         key = 'links/' + value['link_id']
                         if key not in self.changes or self.changes[key]['after'] is not None:
@@ -100,11 +133,14 @@ class Replay:
                 return self._stop('Cannot read {}: {}'.format(key, result.get('message', 'request failed')))
             value = None
         else:
-            value = canonical(resource(key)[0], result)
+            try:
+                value = canonical(resource(key)[0], result)
+            except (ValueError, KeyError, TypeError):
+                return self._stop('Invalid server state for ' + key, trustworthy=False)
             self.raw[key] = result
         if value != expected:
             return self._stop('The server state has changed for {}. History was not applied.'.format(key), trustworthy=False)
-        if key.startswith('nodes/') and value is not None and result.get('status') in ('started', 'suspended'):
+        if key.startswith('nodes/') and value is not None and running(result):
             after = self.changes[key]['after']
             fields = set(value) if after is None else {f for f in value.keys() | after.keys() if value.get(f) != after.get(f)}
             visual = {'x', 'y', 'z', 'label', 'locked', 'symbol'}
@@ -117,7 +153,7 @@ class Replay:
     def _running_endpoint(self, key, result, error):
         # A node being restored by the same operation does not exist yet and is
         # already checked in changes; other endpoint devices must be available.
-        if error or result.get('status') in ('started', 'suspended'):
+        if error or running(result):
             return self._stop('Stop the connected devices before changing their connections')
         self._later(self._preflight_next)
 
@@ -149,6 +185,8 @@ class Replay:
         path = '/' + (kind if method == 'POST' else key)
         def completed(result, error=False, **kw):
             if error:
+                if method == 'POST' and kind == 'links':
+                    self.uncertain_link = (key, body)
                 return self._fail('{} {}: {}'.format(method, key, result.get('message', 'request failed')))
             try:
                 value = None if method == 'DELETE' else canonical(kind, result)
@@ -169,7 +207,10 @@ class Replay:
         key = self.queue.pop(0)
         expected = self.original.get(key) if self.rolling_back else self.changes[key]['after']
         def verified(result, error=False, **kw):
-            value = None if error and result.get('status') == 404 else canonical(resource(key)[0], result) if not error else False
+            try:
+                value = None if error and result.get('status') == 404 else canonical(resource(key)[0], result) if not error else False
+            except (ValueError, KeyError, TypeError):
+                value = False
             if value != expected:
                 if self.rolling_back:
                     return self._stop(self.error + '\nCompensation could not be verified. Clear history after reviewing the topology.', False)
@@ -184,6 +225,18 @@ class Replay:
         self.error = message
         self.rolling_back = True
         self.queue = list(self.changes)
+        if self.uncertain_link:
+            key, body = self.uncertain_link
+            def discovered(result, error=False, **kwargs):
+                if error:
+                    return self._stop(message + '\nCannot locate a possibly created connection.', False)
+                matches = [v for v in result if v['link_id'] not in self.link_ids and connections(v) == connections(body)]
+                if len(matches) > 1:
+                    return self._stop(message + '\nAmbiguous connection after a failed creation.', False)
+                if matches:
+                    self.identities[resource(key)[1]] = matches[0]['link_id']
+                self._recover_next()
+            return self.transport('GET', '/links', discovered)
         self._recover_next()
 
     def _recover_next(self):

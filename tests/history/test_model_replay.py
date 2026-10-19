@@ -234,14 +234,14 @@ def test_failed_compensation_is_untrustworthy():
 
 
 def test_server_divergence_and_running_nodes_prevent_destructive_replay():
-    a = node()
+    a = dict(node(), node_type='qemu')
     server = Server({key('nodes', a): node(x=5)})
     assert not replay(server, delta('nodes', a, None))[2]
     assert all(c[0] == 'GET' for c in server.calls)
     server = Server({key('nodes', a): a})
     server.started.add(a['node_id'])
     assert not replay(server, delta('nodes', a, None))[0]
-    assert replay(server, delta('nodes', a, node(x=30)))[0]  # Layout remains editable.
+    assert replay(server, delta('nodes', a, dict(a, x=30)))[0]  # Layout remains editable.
 
 
 def test_unrecorded_incident_link_blocks_node_deletion():

@@ -10,11 +10,28 @@ from ..qt import QtCore
 from .model import HistoryDocument
 
 MAX_BYTES = 64 * 1024 * 1024
-SLOTS = ('gns3-gui-history-A.json.gz', 'gns3-gui-history-B.json.gz')
+# Avoid .json/.gz: MIME guessing enables JSON parsing or transparent HTTP gzip
+# decoding. The checked gzip payload is an opaque project asset, not HTTP gzip.
+SLOTS = ('gns3-gui-history-A.history', 'gns3-gui-history-B.history')
 
 
 def encode(payload):
-    content = json.dumps(payload, ensure_ascii=False, separators=(',', ':'), allow_nan=False).encode('utf-8')
+    # A moved image can have the same multi-megabyte SVG in 100 deltas. Store
+    # each distinct SVG once; immutable strings can be shared on decoding too.
+    assets = {}
+    def pack(value):
+        if isinstance(value, list):
+            return [pack(v) for v in value]
+        if isinstance(value, dict):
+            result = {k: pack(v) for k, v in value.items()}
+            if isinstance(value.get('svg'), str):
+                digest = hashlib.sha256(value['svg'].encode('utf-8')).hexdigest()
+                assets[digest] = value['svg']
+                result['svg'] = {'asset': digest}
+            return result
+        return value
+    envelope = {'codec': 1, 'document': pack(payload), 'assets': assets}
+    content = json.dumps(envelope, ensure_ascii=False, separators=(',', ':'), allow_nan=False).encode('utf-8')
     if len(content) > MAX_BYTES:
         raise ValueError('History exceeds the 64 MiB safety limit; clear history to continue saving')
     checksum = hashlib.sha256(content).hexdigest().encode('ascii')
@@ -38,11 +55,29 @@ def decode(raw):
     checksum, document = content.split(b'\n', 1)
     if checksum.decode('ascii') != hashlib.sha256(document).hexdigest():
         raise ValueError('History checksum does not match')
-    return HistoryDocument.load(json.loads(document))
+    payload = json.loads(document)
+    if isinstance(payload, dict) and 'codec' in payload:
+        if payload['codec'] != 1 or not isinstance(payload.get('assets'), dict):
+            raise ValueError('Unsupported history asset codec')
+        assets = payload['assets']
+        for digest, svg in assets.items():
+            if not isinstance(svg, str) or hashlib.sha256(svg.encode('utf-8')).hexdigest() != digest:
+                raise ValueError('Invalid history SVG asset')
+        def unpack(value):
+            if isinstance(value, list):
+                return [unpack(v) for v in value]
+            if isinstance(value, dict):
+                result = {k: unpack(v) for k, v in value.items()}
+                if isinstance(value.get('svg'), dict):
+                    result['svg'] = assets[value['svg']['asset']]
+                return result
+            return value
+        payload = unpack(payload['document'])
+    return HistoryDocument.load(payload)
 
 
 class _Signals(QtCore.QObject):
-    finished = QtCore.Signal(object, object)
+    finished = QtCore.pyqtSignal(object, object)
 
 
 class Work(QtCore.QRunnable):
