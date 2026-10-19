@@ -107,3 +107,14 @@ def test_navigation_toolbar_tracks_view_mode(real_main_window):
     window.uiGraphicsView.setNavigationMode('hand')
     assert window.uiHandAction.isChecked()
     assert not window.uiSelectionAction.isChecked()
+
+
+def test_line_toolbar_switches_between_authoring_tools(real_main_window):
+    window = real_main_window
+    window.uiDrawLineAction.trigger()
+    assert window.uiGraphicsView._adding_line
+    assert window.uiDrawLineAction.isChecked()
+    window.uiDrawRectangleAction.trigger()
+    assert window.uiGraphicsView._adding_rectangle
+    assert not window.uiGraphicsView._adding_line
+    assert not window.uiDrawLineAction.isChecked()
