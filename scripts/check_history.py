@@ -177,16 +177,35 @@ def main():
         history.navigate(membership_cursor)
         settled(history)
         assert group.pos() == origin and first.scenePos() == position
-        history.begin()
-        from gns3.items.group_item import reparent
-        reparent(first, None)
-        first.setPos(800, 800)
-        view._groups.save([group, first])
-        history.end()
+        from PyQt6.QtTest import QTest
+        window.resize(1100, 800)
+        window.show()
+        view.centerOn(group)
+        view.enterGroup(group)
+        app.processEvents()
+        start = view.mapFromScene(first.sceneBoundingRect().center())
+        end = view.mapFromScene(group.mapToScene(QtCore.QPointF(group.rect().right() + 100, 100)))
+        QTest.mousePress(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+        QTest.mouseMove(view.viewport(), end)
+        assert first.parentItem() is group
+        QTest.mouseRelease(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
+        assert first.parentItem() is None
+        detached_position = first.scenePos()
         settled(history)
+        assert len(history.document.entries[-1]['changes']) == 2, history.document.entries[-1]
+        assert 'membership' in history.document.entries[-1]['description']
         history.navigate(membership_cursor)
         settled(history)
         assert first.parentItem() is topo.getDrawingFromUuid(group_id)
+        assert first.scenePos() == position
+        history.navigate(membership_cursor + 1)
+        settled(history)
+        assert first.parentItem() is None and first.scenePos() == detached_position
+        stored = request('GET', '/projects/' + pid + '/nodes/' + a['node_id'])
+        assert (stored['x'], stored['y']) == (int(detached_position.x()), int(detached_position.y()))
+        history.navigate(membership_cursor)
+        settled(history)
+        assert first.parentItem() is group and first.scenePos() == position
         # Flush before export, close/reopen, then replay the persisted cursor.
         flushed = []
         history.flush(lambda ok: flushed.append(ok))

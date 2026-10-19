@@ -186,3 +186,32 @@ Referências do servidor inspecionadas:
 [arquivos de projeto](https://github.com/GNS3/gns3-server/blob/v2.2.61/gns3server/handlers/api/controller/project_handler.py),
 [exportação](https://github.com/GNS3/gns3-server/blob/v2.2.61/gns3server/controller/export_project.py),
 [importação](https://github.com/GNS3/gns3-server/blob/v2.2.61/gns3server/controller/import_project.py).
+
+## Correções após validação de uso (arraste pela borda)
+
+O teste de integração agora utiliza eventos reais de mouse para retirar um
+aparelho conectado do container, inclusive com um link sobreposto ao símbolo.
+A operação deve guardar os dois deltas: posição do dispositivo e SVG de
+associação do container. Undo e redo verificam também as coordenadas no servidor.
+
+Foram corrigidos três pontos:
+
+- `itemAt()` pode encontrar um link que ignora eventos de mouse, enquanto o Qt
+  entrega o gesto ao dispositivo abaixo. O acompanhamento do arraste agora usa
+  `mouseGrabberItem()`, mantendo a detecção de saída pela borda.
+- Reparenting chamava NodeItem.setPos e atualizava o cache como se as coordenadas
+  já estivessem confirmadas. Preservamos as coordenadas confirmadas durante a
+  troca de pai visual, permitindo que save envie a posição e registre ambos os
+  deltas na mesma ação.
+- O GNS3 Server omite SVG em drawing.updated quando seu conteúdo não mudou.
+  Eventos parciais agora são combinados com o estado confirmado; isso conserva
+  os metadados de associação e evita `Missing history drawing SVG`.
+
+Também foi removida a chamada a setPos em QGraphicsSceneMouseEvent: o binding
+Qt6 não oferece esse setter. Os handlers de arraste da classe base utilizam as
+posições de cena originais. Um teste captura explicitamente exceções dos eventos
+Qt, pois um traceback em um slot pode não reprovar automaticamente o pytest.
+
+Validação após as correções: **497 testes passaram, 1 ignorado**, e o roteiro
+com GNS3 Server 2.2.61, HTTP Qt e WebSockets passou com arraste, undo/redo,
+persistência, exportação/importação e imagens grandes.

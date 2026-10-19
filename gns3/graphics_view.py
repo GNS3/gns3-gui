@@ -665,7 +665,11 @@ class GraphicsView(QtWidgets.QGraphicsView):
         if event.button() == QtCore.Qt.MouseButton.LeftButton and not self._adding_link:
             self._groups.collapseSelection()
         if event.button() == QtCore.Qt.MouseButton.LeftButton and not self._adding_link:
-            self._groups.beginDrag(item)
+            # A non-interactive link may cover the symbol at itemAt(), while Qt
+            # delivers the press to the device below it. Track Qt's actual mouse
+            # owner so crossing a container border still commits membership.
+            grabber = self.scene().mouseGrabberItem()
+            self._groups.beginDrag(self._groups.target(grabber) if grabber is not None else item)
         self.toggleUiDeviceMenu()
 
     def contextMenuEvent(self, event):

@@ -368,7 +368,10 @@ def test_invalid_metadata_and_stale_acknowledgment(canvas):
     assert container.pos() == old_position + QtCore.QPointF(30, 40)
 
 
-def test_drag_closed_nested_container_and_double_click_inner(canvas):
+def test_drag_closed_nested_container_and_double_click_inner(canvas, monkeypatch):
+    import sys
+    errors = []
+    monkeypatch.setattr(sys, 'excepthook', lambda *args: errors.append(args))
     a, b = device(canvas, 100, 80), device(canvas, 200, 80)
     inner = group(canvas, [a, b])
     outer = group(canvas, [inner, drawing(canvas, x=400)], "Site")
@@ -386,6 +389,7 @@ def test_drag_closed_nested_container_and_double_click_inner(canvas):
     QTest.mouseDClick(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
     assert not outer.editing and inner.editing
     assert canvas._groups.editing is inner
+    assert not errors
 
 
 def test_fixed_dimensions_margin_and_child_clipping(canvas):
@@ -942,3 +946,39 @@ def test_group_selection_empty_release_and_escape(canvas):
         QTest.keyClick(canvas, QtCore.Qt.Key.Key_Escape)
         assert not canvas._groups.selection_pending
         dialog.assert_not_called()
+
+
+def test_drag_through_ignored_overlay_tracks_mouse_owner(canvas):
+    node = device(canvas, 100, 100)
+    container = group(canvas, [node])
+    canvas.enterGroup(container)
+    center = node.sceneBoundingRect().center()
+    overlay = QtWidgets.QGraphicsRectItem(center.x() - 100, center.y() - 2, 200, 4)
+    overlay.setZValue(10000)
+    overlay.setAcceptedMouseButtons(QtCore.Qt.MouseButton.NoButton)
+    canvas.scene().addItem(overlay)
+    QtWidgets.QApplication.processEvents()
+    start = canvas.mapFromScene(center)
+    assert canvas.itemAt(start) is overlay
+    QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+    assert canvas._groups._drag_item is node
+    end = start + QtCore.QPoint(240, 0)
+    QTest.mouseMove(canvas.viewport(), end)
+    QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
+    assert node.parentItem() is None
+    assert read_group(container.toSvg())['children'] == []
+
+
+def test_reparent_does_not_acknowledge_unsaved_device_coordinates(canvas):
+    node = device(canvas, 100, 100)
+    container = group(canvas, [node])
+    settings = {'x': 100, 'y': 100}
+    node.node().settings.return_value = settings
+    node.node().setSettingValue.side_effect = lambda key, value: settings.update({key: value})
+    # Native Qt dragging bypasses the Python setPos override. Reparenting must
+    # preserve that dirty position until the normal save path sends it.
+    QtWidgets.QGraphicsItem.setPos(node, node.pos() + QtCore.QPointF(240, 20))
+    position = node.scenePos()
+    reparent(node, None)
+    assert node.scenePos() == position
+    assert settings == {'x': 100, 'y': 100}

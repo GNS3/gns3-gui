@@ -86,6 +86,9 @@ def reparent(item, parent, local_position=None):
     if item is parent or (parent and item.isAncestorOf(parent)):
         raise ValueError("A group cannot contain itself or an ancestor")
     old_parent = item.parentItem()
+    from .node_item import NodeItem
+    settings = item.node().settings() if isinstance(item, NodeItem) else {}
+    confirmed = {key: settings[key] for key in ('x', 'y') if key in settings} if isinstance(settings, dict) else {}
     position = item.scenePos()
     z = scene_z(item)
     allowed = getattr(item, "_allow_snap_to_grid", True)
@@ -97,6 +100,11 @@ def reparent(item, parent, local_position=None):
         item.setZValue(z - (scene_z(parent) if parent else 0))
     finally:
         item._allow_snap_to_grid = allowed
+        # NodeItem.setPos caches coordinates. Reparenting only changes the Qt
+        # transform; it must not acknowledge a new position before save() sends
+        # it, otherwise detaching a dragged node silently skips its position PUT.
+        for key, value in confirmed.items():
+            item.node().setSettingValue(key, value)
     if isinstance(old_parent, GroupItem):
         old_parent.refreshBounds()
     if isinstance(parent, GroupItem):
@@ -370,8 +378,9 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
 
     def sceneEventFilter(self, watched, event):
         # A closed container owns mouse interaction with its descendants. Keep
-        # the original scene positions, but translate item-local event positions
-        # before invoking Qt's normal selection and multiple-item drag handlers.
+        # the original scene positions for Qt's normal selection and drag
+        # handlers. QGraphicsSceneMouseEvent exposes no position setters in Qt6;
+        # the base item drag implementation uses scene/button-down positions.
         handlers = {
             QtCore.QEvent.Type.GraphicsSceneMousePress: QtWidgets.QGraphicsItem.mousePressEvent,
             QtCore.QEvent.Type.GraphicsSceneMouseMove: QtWidgets.QGraphicsItem.mouseMoveEvent,
@@ -383,7 +392,6 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
             return True
         handler = handlers.get(event.type())
         if handler:
-            event.setPos(self.mapFromScene(event.scenePos()))
             handler(self, event)
             return True
         if event.type() == QtCore.QEvent.Type.GraphicsSceneContextMenu:

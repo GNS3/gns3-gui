@@ -57,3 +57,13 @@ component as implemented in the final response.
 - Implementation and validation are complete. The delivery step uses the same
   commits on both branches; verify their remote tips before handing off.
 - Architecture, recovery limits and reproduction commands: README.md in this folder.
+
+## Correção de regressões após uso
+
+- Corrigidos o setter inexistente do evento Qt6 e os eventos drawing.updated
+  sem SVG, preservando o estado confirmado e seus metadados.
+- Arraste usa o mouseGrabberItem real quando um link se sobrepõe ao dispositivo.
+- Reparenting conserva coordenadas confirmadas até o envio ao servidor, evitando
+  que a posição deixe de integrar a operação de remoção do container.
+- Regressão automatizada: 497 passaram, 1 ignorado; roteiro real de arraste e
+  undo/redo executado contra GNS3 Server 2.2.61 com WebSockets.
