@@ -538,6 +538,13 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._selection_band.show()
             event.accept()
             return
+        # Handles extend outside the item's shape. Claim them before blank-canvas
+        # panning, which relies on itemAt() and cannot see that outer hit area.
+        if (event.button() == QtCore.Qt.MouseButton.LeftButton and not adding_item and
+                not self._dragging and not event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier):
+            if self._groups.beginResize(position):
+                event.accept()
+                return
         if (not adding_item and not self._groups.selection_pending and
                 event.button() == QtCore.Qt.MouseButton.LeftButton and
                 self.itemAt(event.position().toPoint()) is None):
@@ -554,9 +561,6 @@ class GraphicsView(QtWidgets.QGraphicsView):
                                           event.button() == QtCore.Qt.MouseButton.LeftButton and
                                           not event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier)
         if event.button() == QtCore.Qt.MouseButton.LeftButton and not adding_item and not self._dragging and not event.modifiers() & QtCore.Qt.KeyboardModifier.ShiftModifier:
-            if self._groups.beginResize(position):
-                event.accept()
-                return
             editing = self._groups.editing
             if editing is not None and not editing.shape().contains(editing.mapFromScene(position)):
                 self._groups.save()
