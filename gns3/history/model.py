@@ -213,9 +213,10 @@ class HistoryDocument:
         for key, value in state.items():
             kind, identity = resource(key)
             normalized = canonical(kind, value)
-            if normalized != value or normalized[IDS[kind]] != identity:
+            if normalized.keys() != value.keys() or normalized[IDS[kind]] != identity:
                 raise ValueError('Invalid history state')
             result.state[key] = normalized
+        entries = copy.deepcopy(entries)
         for entry in entries:
             if (not isinstance(entry, dict) or not isinstance(entry.get('description'), str) or
                     not 0 < len(entry['description']) <= 512 or not isinstance(entry.get('changes'), dict) or not entry['changes']):
@@ -224,10 +225,13 @@ class HistoryDocument:
                 kind, identity = resource(key)
                 if not isinstance(change, dict) or set(change) != {'before', 'after'} or change['before'] == change['after']:
                     raise ValueError('Invalid history delta')
-                for value in change.values():
-                    if value is not None and (canonical(kind, value) != value or value[IDS[kind]] != identity):
-                        raise ValueError('Invalid history resource in operation')
-        result.entries = copy.deepcopy(entries)
+                for side, value in change.items():
+                    if value is not None:
+                        normalized = canonical(kind, value)
+                        if normalized.keys() != value.keys() or normalized[IDS[kind]] != identity:
+                            raise ValueError('Invalid history resource in operation')
+                        change[side] = normalized
+        result.entries = entries
         result.cursor = cursor
         result.revision = data.get('revision', 0)
         if type(result.revision) is not int or result.revision < 0:

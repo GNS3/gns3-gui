@@ -274,3 +274,25 @@ def test_runtime_is_not_captured_and_container_revision_is_not_an_edit():
     base['svg'] = '<svg><metadata id="gns3-canvas-group">{"revision":1,"name":"LAN"}</metadata></svg>'
     other = dict(base, svg=base['svg'].replace('"revision":1', '"revision":5'))
     assert canonical('drawings', base) == canonical('drawings', other)
+
+
+def test_saved_container_load_normalizes_xml_prefixes_without_losing_operations():
+    import xml.etree.ElementTree as ET
+    namespaces = dict(ET._namespace_map)
+    try:
+        ET.register_namespace('', 'http://www.w3.org/2000/svg')
+        a = dict(drawing(), svg='<svg xmlns="http://www.w3.org/2000/svg"><metadata id="gns3-canvas-group">{"revision":3,"name":"LAN","children":[]}</metadata><rect width="100" height="80"/></svg>')
+        doc = HistoryDocument(identity('project'))
+        doc.record(delta('drawings', None, a))
+        doc.record(delta('drawings', a, dict(a, x=40)))
+        payload = doc.payload()
+        ET.register_namespace('other', 'http://www.w3.org/2000/svg')
+        loaded = HistoryDocument.load(payload)
+        assert len(loaded.entries) == loaded.cursor == 2
+        actual = canonical('drawings', dict(a, x=40))
+        assert loaded.state == {key('drawings', a): actual}
+        assert loaded.remap_import(doc.project_id, loaded.state) is loaded
+        assert HistoryDocument.load(loaded.payload()).payload() == loaded.payload()
+    finally:
+        ET._namespace_map.clear()
+        ET._namespace_map.update(namespaces)
