@@ -115,6 +115,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.setMainWindow(self)
         topology.project_changed_signal.connect(self._projectChangedSlot)
+        from .history.ui import HistoryUI
+        self._history_ui = HistoryUI(self)
         Controller.instance().setParent(self)
         LocalServer.instance().setParent(self)
 
@@ -1251,12 +1253,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param event: QCloseEvent
         """
 
-        if Topology.instance().project():
+        if Topology.instance().project() and not getattr(self, "_history_exit_ready", False):
             reply = QtWidgets.QMessageBox.question(self, "Confirm Exit", "Are you sure you want to exit GNS3?",
                                                    QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
             if reply == QtWidgets.QMessageBox.StandardButton.No:
                 event.ignore()
                 return
+
+        project = Topology.instance().project()
+        history = getattr(project, "history", None)
+        if history is not None and history.ready and not getattr(self, "_history_exit_ready", False):
+            event.ignore()
+            def flushed(ok):
+                if ok:
+                    self._history_exit_ready = True
+                    self.close()
+                else:
+                    history.failed.emit("GNS3 was not closed because its project history could not be saved.")
+            history.flush(flushed)
+            return
 
         progress = Progress.instance()
         progress.setAllowCancelQuery(True)

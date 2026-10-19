@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
+import logging
 
 from unittest.mock import MagicMock, patch
 
@@ -23,10 +24,13 @@ from unittest.mock import MagicMock, patch
 @pytest.fixture
 def real_main_window():
     from gns3.main_window import MainWindow
+    handlers = set(logging.getLogger().handlers)
     with patch.object(MainWindow, "run_later"):
         window = MainWindow()
     yield window
     window._local_config_timer.stop()
+    for handler in set(logging.getLogger().handlers) - handlers:
+        logging.getLogger().removeHandler(handler)
     window.deleteLater()
 
 
@@ -118,3 +122,70 @@ def test_line_toolbar_switches_between_authoring_tools(real_main_window):
     assert window.uiGraphicsView._adding_rectangle
     assert not window.uiGraphicsView._adding_line
     assert not window.uiDrawLineAction.isChecked()
+
+
+def test_history_toolbar_order_and_reopened_dialog(real_main_window):
+    from tests.history.test_session import session, edit, settled
+    window = real_main_window
+    toolbar = window.uiControlToolBar.actions()
+    index = toolbar.index(window.uiSnapshotAction)
+    assert toolbar[index - 3:index] == [window.uiUndoAction, window.uiHistoryAction, window.uiRedoAction]
+    assert window.uiUndoAction.shortcut().toString() == 'Ctrl+Z'
+    assert window.uiRedoAction.shortcut().toString() == 'Ctrl+Y'
+    owner, history, server = session()
+    window._history_ui.history = history
+    history.changed.connect(window._history_ui.refresh)
+    from tests.history.test_model_replay import node
+    edit(history, server, 'POST', '/nodes', node())
+    settled(history)
+    assert window.uiUndoAction.isEnabled() and not window.uiRedoAction.isEnabled()
+    ui = window._history_ui
+    ui.showHistory()
+    assert ui.dialog.operations.count() == 2
+    ui.dialog.reject()
+    assert ui.dialog is None
+    ui.showHistory()
+    window.uiUndoAction.trigger()
+    settled(history)
+    assert ui.dialog.operations.currentRow() == 0
+    assert window.uiRedoAction.isEnabled() and not window.uiUndoAction.isEnabled()
+    with patch('gns3.history.ui.QtWidgets.QMessageBox.question', return_value=__import__('gns3.qt', fromlist=['QtWidgets']).QtWidgets.QMessageBox.StandardButton.Yes):
+        ui.dialog.clearHistory()
+    settled(history)
+    assert not history.document.entries and not server.state
+    ui.dialog.reject()
+    history.changed.disconnect(ui.refresh)
+    ui.history = None
+
+
+def test_history_shortcuts_preserve_native_text_undo(real_main_window):
+    from PyQt6.QtTest import QTest
+    from gns3.qt import QtCore, QtWidgets
+    from tests.history.test_session import session, edit, settled
+    from tests.history.test_model_replay import node
+    window = real_main_window
+    owner, history, server = session()
+    window._history_ui.history = history
+    history.changed.connect(window._history_ui.refresh)
+    edit(history, server, 'POST', '/nodes', node())
+    settled(history)
+    text = QtWidgets.QLineEdit(window)
+    text.setGeometry(10, 10, 150, 30)
+    window.show()
+    text.show()
+    window.activateWindow()
+    text.setFocus()
+    QTest.qWait(10)
+    text.insert('edit')
+    QTest.keyClick(text, QtCore.Qt.Key.Key_Z, QtCore.Qt.KeyboardModifier.ControlModifier)
+    assert text.text() == '' and history.document.cursor == 1
+    text.hide()
+    window.uiGraphicsView.setFocus()
+    QTest.keyClick(window.uiGraphicsView, QtCore.Qt.Key.Key_Z, QtCore.Qt.KeyboardModifier.ControlModifier)
+    settled(history)
+    assert history.document.cursor == 0
+    QTest.keyClick(window.uiGraphicsView, QtCore.Qt.Key.Key_Y, QtCore.Qt.KeyboardModifier.ControlModifier)
+    settled(history)
+    assert history.document.cursor == 1
+    history.changed.disconnect(window._history_ui.refresh)
+    window._history_ui.history = None
