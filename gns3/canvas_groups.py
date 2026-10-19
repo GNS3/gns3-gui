@@ -1,4 +1,4 @@
-from .history.session import action as history_action
+from .history.session import action as history_action, current_history
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Canvas hierarchy operations, separate from the legacy device command code."""
@@ -22,6 +22,7 @@ class CanvasGroups:
         self._resize = None
         self._drag_item = None
         self._drag_nodes = {}
+        self._drag_roots = {}
         self._drag_targets = {}
         self._exit_groups = set()
         self._drag_hover_groups = set()
@@ -174,6 +175,7 @@ class CanvasGroups:
         self.clearDragFeedback()
         self._drag_item = None
         self._drag_nodes = {}
+        self._drag_roots = {}
         self.guide_parent = None
         self.view.viewport().update()
 
@@ -182,6 +184,7 @@ class CanvasGroups:
         if isinstance(item, QtWidgets.QGraphicsTextItem) and item.textInteractionFlags() & QtCore.Qt.TextInteractionFlag.TextEditorInteraction:
             return
         if item is not None and item_reference(item):
+            self._drag_roots = {root: root.scenePos() for root in self.selected()}
             parent = item.parentItem()
             editable = (parent is None and isinstance(item, NodeItem) or
                         isinstance(parent, GroupItem) and parent.editing)
@@ -228,14 +231,39 @@ class CanvasGroups:
         """Commit the previewed parent on release, preserving position and links."""
         self.updateDrag()
         changed = []
+        memberships = []
+        moved = [root for root, position in self._drag_roots.items() if root.scenePos() != position]
         for node, destination in self._drag_targets.items():
             parent = node.parentItem()
             if destination is parent:
                 continue
+            memberships.append((node, parent, destination))
             reparent(node, destination)
             changed.append(node)
             if parent is not None:
                 changed.append(parent)
+        label = None
+        if len(memberships) == 1:
+            node, parent, destination = memberships[0]
+            name = node.node().name()
+            if destination is None:
+                label = 'Remove device {} from container {}'.format(name, parent.name)
+            elif parent is None:
+                label = 'Add device {} to container {}'.format(name, destination.name)
+            else:
+                label = 'Move device {} from container {} to container {}'.format(name, parent.name, destination.name)
+        elif memberships:
+            label = 'Move selection and update container membership ({} devices)'.format(len(memberships))
+        elif len(moved) == 1:
+            if isinstance(moved[0], GroupItem):
+                label = 'Move container ' + moved[0].name
+            elif isinstance(moved[0], NodeItem):
+                label = 'Move device ' + moved[0].node().name()
+        elif moved:
+            label = 'Move selection ({} elements)'.format(len(moved))
+        history = current_history(self.view)
+        if history is not None and label:
+            history.describe_gesture(label)
         self.clearDrag()
         # Include an old parent that is now empty in the release's single save.
         return changed
@@ -404,6 +432,9 @@ class CanvasGroups:
     def endResize(self):
         if self._resize is not None:
             group = self._resize[0]
+            history = current_history(self.view)
+            if history is not None and group.rect() != self._resize[4]:
+                history.describe_gesture('Resize container ' + group.name)
             self._resize = None
             self.save([group])
 

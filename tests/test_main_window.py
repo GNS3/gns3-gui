@@ -189,3 +189,30 @@ def test_history_shortcuts_preserve_native_text_undo(real_main_window):
     assert history.document.cursor == 1
     history.changed.disconnect(window._history_ui.refresh)
     window._history_ui.history = None
+
+
+def test_old_project_and_archived_recovery_do_not_open_startup_dialogs(real_main_window):
+    from tests.history.test_session import session, edit, settled
+    from tests.history.test_model_replay import node, key, drain
+    from gns3.topology import Topology
+    owner, history, server = session()
+    edit(history, server, 'POST', '/nodes', node())
+    settled(history)
+    server.state[key('nodes', node())]['x'] = 123
+    topology = MagicMock()
+    topology.project.return_value = owner
+    ui = real_main_window._history_ui
+    with patch.object(Topology, 'instance', return_value=topology):
+        ui.bind()
+        loaded = []
+        history.load(dict(server.state), lambda: loaded.append(True))
+        drain(lambda: bool(loaded))
+        settled(history)
+        assert history.recovery_message
+        assert not ui._messages
+        ui.showHistory()
+        assert 'New changes are recorded normally' in ui.dialog.status.text()
+        ui.dialog.reject()
+        history.changed.disconnect(ui.refresh)
+        history.failed.disconnect(ui.error)
+        ui.history = None

@@ -98,7 +98,6 @@ class HistoryUI(QtCore.QObject):
             try:
                 self.history.changed.disconnect(self.refresh)
                 self.history.failed.disconnect(self.error)
-                self.history.recovered.disconnect(self.information)
             except (TypeError, RuntimeError):
                 pass
         if self.dialog is not None:
@@ -111,7 +110,6 @@ class HistoryUI(QtCore.QObject):
         if self.history is not None:
             self.history.changed.connect(self.refresh)
             self.history.failed.connect(self.error)
-            self.history.recovered.connect(self.information)
         self.refresh()
 
     def refresh(self):
@@ -162,9 +160,6 @@ class HistoryUI(QtCore.QObject):
 
     def error(self, message):
         self.message(message, QtWidgets.QMessageBox.Icon.Warning)
-
-    def information(self, message):
-        self.message(message, QtWidgets.QMessageBox.Icon.Information)
 
     def message(self, message, icon):
         box = QtWidgets.QMessageBox(icon, 'Topology history', message,
