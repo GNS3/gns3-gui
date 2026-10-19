@@ -134,8 +134,8 @@ para arquivos `gns3-gui-history-recovery-<SHA256>.history` na raiz do projeto.
 Somente depois da confirmação dessas cópias, uma nova sequência usa a topologia
 atual como referência e volta a registrar ações. Os registros incompatíveis
 continuam preservados nos arquivos de recuperação; não ficam disponíveis para
-undo sobre um estado diferente. A GUI mostra uma mensagem informativa e mantém
-a explicação no diálogo History.
+undo sobre um estado diferente. A explicação fica no próprio diálogo History, sem interromper a abertura
+com um popup de recuperação.
 
 Falha de leitura ou de preservação mantém os slots originais intocados e informa
 o erro, sem substituir um arquivo cujo conteúdo não pôde ser preservado. O codec
@@ -252,3 +252,39 @@ ação e verifica seu undo/redo após fechar e reabrir duas vezes.
 
 Resultado da suíte após esta correção de persistência: **502 passaram, 1 ignorado**.
 O aviso de depreciação de tarfile pertence ao teste de atualização já existente.
+
+
+## Revisões de containers, visibilidade e identificação dos gestos
+
+A sequência de saída pela borda com undo/redo podia reutilizar na GUI uma revisão
+canônica zero em lugar da revisão real retornada pelo servidor. Um eco atrasado
+com associação antiga era então aceito: o dispositivo podia voltar a ser filho
+do container mantendo coordenadas externas à sua área recortada, desaparecendo
+do canvas sem ser excluído da topologia.
+
+O replay agora retém o SVG físico verificado quando ele representa o mesmo estado
+canônico. A GUI recebe sua revisão real, a próxima edição incrementa corretamente
+e o gravador ignora ecos anteriores à última revisão confirmada. Listas iniciais
+de projeto continuam autoritativas, inclusive quando uma revisão foi reduzida
+por restauração de snapshot. O manifesto persistido continua excluindo revisões
+internas de transporte.
+
+As descrições de arraste e resize usam o gesto concluído, com nome do dispositivo
+e dos containers de origem/destino. Movimentos internos, saídas, entradas,
+movimentos de frames e redimensionamentos não dependem da quantidade ou ordem
+dos callbacks. A classificação de fallback também considera origem e tamanho
+separadamente, sem a descrição ambígua "Move or change container". Diferenças
+numéricas equivalentes (100 e 100.0) nos metadados não geram operações falsas.
+
+Uma topologia populada criada antes do histórico, sem slots, abre com referência
+inicial vazia e sem popup. Se existirem slots incompatíveis de testes anteriores,
+a recuperação ainda preserva seus bytes; somente uma nota no diálogo History
+explica a nova sequência. Erros reais de comunicação ou preservação continuam
+sendo apresentados.
+
+O roteiro real foi ampliado para seis arrastes sucessivos com espera por eventos
+WebSocket, verificação dos pixels do símbolo no viewport, descrições idênticas,
+undo/redo, reabertura e uma topologia antiga populada sem slots de histórico.
+
+Validação desta revisão: **509 testes passaram, 1 ignorado**, além do roteiro
+com GNS3 Server 2.2.61, notificações WebSocket e verificação visual por pixels.

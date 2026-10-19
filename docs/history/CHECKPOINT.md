@@ -83,3 +83,20 @@ component as implemented in the final response.
   cenários anteriores de exportação/importação, containers e imagens grandes.
 - Código, testes e documentação completos; publicar os mesmos commits em
   codex/feature-history e codex/canvas-all-improvements no fork autorizado.
+
+
+## Regressão de visibilidade e descrições após undo/redo
+
+- Reproduzida reanexação tardia de um dispositivo arrastado para fora: a GUI
+  recebia revisão canônica zero no replay e aceitava ecos de associação antigos.
+- SVG verificado mantém revisão física na GUI; ecos anteriores são ignorados
+  pelo histórico. A carga inicial continua aceitando a revisão real do servidor.
+- Descrições de gestos de arraste/resize agora são explícitas e estáveis, com
+  fallback semântico e normalização de números equivalentes nos metadados.
+- Recuperação deixa nota em History sem popup na abertura; topologias antigas
+  populadas sem histórico foram verificadas com referência vazia e sem aviso.
+- Cenário real: seis saídas consecutivas com undo/redo, pintura do símbolo no
+  viewport e notificações reais; reabertura/exportação/importação preservadas.
+- Suíte final: 509 passaram, 1 ignorado; commits devem ser integrados às três
+  branches atuais (canvas-improvements, codex/canvas-all-improvements e
+  codex/feature-history) sem reescrever commits preexistentes.

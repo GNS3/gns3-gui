@@ -141,6 +141,7 @@ def main():
         first = next(item for item in view.scene().items() if hasattr(item, 'node') and item.node() is topo.getNodeFromUuid(a['node_id']))
         second = next(item for item in view.scene().items() if hasattr(item, 'node') and item.node() is topo.getNodeFromUuid(b['node_id']))
         group = GroupItem(name='LAN', project=project, width=400, height=300)
+        group.setStyle(dict(group.style, fill_color='#ffb559c9'))
         view.scene().addItem(group)
         topo.addDrawing(group)
         history.begin('Create container')
@@ -193,7 +194,7 @@ def main():
         detached_position = first.scenePos()
         settled(history)
         assert len(history.document.entries[-1]['changes']) == 2, history.document.entries[-1]
-        assert 'membership' in history.document.entries[-1]['description']
+        assert history.document.entries[-1]['description'] == 'Remove device A from container LAN'
         history.navigate(membership_cursor)
         settled(history)
         assert first.parentItem() is topo.getDrawingFromUuid(group_id)
@@ -206,6 +207,34 @@ def main():
         history.navigate(membership_cursor)
         settled(history)
         assert first.parentItem() is group and first.scenePos() == position
+        # Repeated native drags must stay visible after queued websocket events.
+        for attempt in range(6):
+            view.enterGroup(group)
+            app.processEvents()
+            start = view.mapFromScene(first.sceneBoundingRect().center())
+            end = view.mapFromScene(group.mapToScene(QtCore.QPointF(group.rect().right() + 100, 100)))
+            QTest.mousePress(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+            QTest.mouseMove(view.viewport(), end)
+            QTest.qWait(40)
+            QTest.mouseRelease(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
+            settled(history)
+            QTest.qWait(100)
+            assert first.parentItem() is None, 'outside device was reattached'
+            assert not group.shape().contains(group.mapFromScene(first.mapToScene(first.boundingRect().center())))
+            assert history.document.entries[-1]['description'] == 'Remove device A from container LAN'
+            assert first.isVisible() and first.scene() is view.scene()
+            image = view.viewport().grab().toImage()
+            rect = view.mapFromScene(first.sceneBoundingRect()).boundingRect()
+            colored = 0
+            for y in range(rect.top(), rect.bottom()):
+                for x in range(rect.left(), rect.right()):
+                    if image.rect().contains(x, y):
+                        color = image.pixelColor(x, y)
+                        colored += max(color.red(), color.green(), color.blue()) - min(color.red(), color.green(), color.blue()) > 10
+            assert colored > 30, ('device disappeared', attempt, colored, first.scenePos())
+            history.navigate(membership_cursor)
+            settled(history)
+            assert first.parentItem() is group
         # Flush before export, close/reopen, then replay the persisted cursor.
         flushed = []
         history.flush(lambda ok: flushed.append(ok))
@@ -307,6 +336,32 @@ def main():
             recovered.history.navigate(1)
             settled(recovered.history)
             assert request('GET', '/projects/' + newid + '/drawings/' + foreign['drawing_id'])['x'] == 950
+        # A populated topology created before history has no history slots.
+        # Opening it must establish a quiet baseline and keep every device visible.
+        legacy_id = request('POST', '/projects', {'name': 'Disposable pre-history topology'})['project_id']
+        ids.append(legacy_id)
+        legacy_node = request('POST', '/projects/' + legacy_id + '/nodes',
+                              dict(node_type='ethernet_switch', compute_id='local', name='Legacy A', x=100, y=100))
+        legacy_frame = str(uuid.uuid4())
+        from gns3.dialogs.container_style_widget import validated_style
+        data = dict(version=2, revision=41, name='Legacy LAN', drawing_id=legacy_frame, identity=legacy_frame,
+                    origin={'x': 80, 'y': 80}, size={'width': 300, 'height': 200}, style=validated_style(),
+                    children=[dict(type='node', id=legacy_node['node_id'], key='Legacy A', x=20, y=20)])
+        import xml.etree.ElementTree as ET
+        root = ET.Element('svg', {'xmlns': 'http://www.w3.org/2000/svg', 'width': '300', 'height': '200'})
+        ET.SubElement(root, 'metadata', {'id': 'gns3-canvas-group'}).text = json.dumps(data)
+        ET.SubElement(root, 'text').text = 'Legacy LAN'
+        request('POST', '/projects/' + legacy_id + '/drawings',
+                dict(drawing_id=legacy_frame, svg=ET.tostring(root, encoding='unicode'), x=80, y=80))
+        legacy = attach(legacy_id)
+        messages_before = len(window._history_ui._messages)
+        legacy._listNodesCallback(request('GET', '/projects/' + legacy_id + '/nodes'))
+        wait(lambda: legacy.history.ready)
+        settled(legacy.history)
+        assert not legacy.history.recovery_message and not legacy.history.document.entries
+        assert len(window._history_ui._messages) == messages_before
+        assert len(topo.nodes()) == 1 and len(view._groups.groups()[0].members()) == 1
+        assert view._groups.groups()[0]._revision == 41
         print('PASS: real server + Qt canvas CRUD, grouped moves, device/link restoration, container movement/resize/membership, persistent reopen and portable import/replay, oversized images, WebSocket echoes, archived recovery and repeated reopen', flush=True)
     except Exception:
         import traceback
