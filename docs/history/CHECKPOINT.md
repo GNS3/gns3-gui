@@ -22,8 +22,9 @@ there is no reason to duplicate them with cherry-picks.
 
 ## Work remaining
 
-1. Implement/verify bounded linear model, delta validation and import remapping.
-2. Implement async replay preflight, ordered CRUD, compensation and verification.
+1. DONE: bounded linear model, validation and conservative import remapping.
+2. DONE: async replay preflight, dependency-ordered CRUD, compensation and verification.
+   19 core tests pass, including applied-write timeouts and failed compensation.
 3. Integrate confirmed GUI requests, gesture/dialog grouping and project lifecycle.
 4. Add durable project-file storage, export/close flush and history UI/shortcuts.
 5. Add integration/regression tests, documentation, fast-forward complete branch
@@ -39,3 +40,6 @@ component as implemented in the final response.
 - https://github.com/GNS3/gns3-server/blob/v2.2.61/gns3server/handlers/api/controller/project_handler.py
 - https://github.com/GNS3/gns3-server/blob/v2.2.61/gns3server/controller/export_project.py
 - https://github.com/GNS3/gns3-server/blob/v2.2.61/gns3server/controller/import_project.py
+
+Current working tree also contains request/gesture integration and storage-session
+code under development; these are not yet validated or ready to publish.
