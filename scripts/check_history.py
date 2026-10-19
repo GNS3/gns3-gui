@@ -275,7 +275,39 @@ def main():
         settled(imported.history)
         assert topo.getDrawingFromUuid(large_id) is not None
         assert base64.b64encode(bytes(png)).decode() in request('GET', '/projects/' + newid + '/drawings/' + large_id)['svg']
-        print('PASS: real server + Qt canvas CRUD, grouped moves, device/link restoration, container movement/resize/membership, persistent reopen and portable import/replay, oversized images, WebSocket echoes', flush=True)
+        # Reproduce a stale persisted history after editing with another client.
+        # Preserve exact original slots, resume recording, then reopen twice.
+        import hashlib
+        old_slots = [request('GET', '/projects/' + newid + '/files/' + name, raw=True) for name in SLOTS]
+        topo.setProject(None)
+        foreign = request('POST', '/projects/' + newid + '/drawings',
+                          dict(svg='<svg width="40" height="40"><rect width="40" height="40"/></svg>', x=900, y=900))
+        recovered = attach(newid)
+        recovered._listNodesCallback(request('GET', '/projects/' + newid + '/nodes'))
+        wait(lambda: recovered.history.ready)
+        settled(recovered.history)
+        assert recovered.history.recovery_message and not recovered.history.document.entries
+        for raw in old_slots:
+            name = 'gns3-gui-history-recovery-' + hashlib.sha256(raw).hexdigest() + '.history'
+            assert request('GET', '/projects/' + newid + '/files/' + name, raw=True) == raw
+        edit(recovered, 'PUT', '/drawings/' + foreign['drawing_id'], {'x': 950})
+        for cycle in range(2):
+            recovered.close()
+            wait(lambda: recovered._closed and topo.project() is None)
+            request('POST', '/projects/' + newid + '/open')
+            recovered = attach(newid)
+            recovered._listNodesCallback(request('GET', '/projects/' + newid + '/nodes'))
+            wait(lambda: recovered.history.ready)
+            settled(recovered.history)
+            assert not recovered.history.recovery_message
+            assert len(recovered.history.document.entries) == recovered.history.document.cursor == 1
+            recovered.history.navigate(0)
+            settled(recovered.history)
+            assert request('GET', '/projects/' + newid + '/drawings/' + foreign['drawing_id'])['x'] == 900
+            recovered.history.navigate(1)
+            settled(recovered.history)
+            assert request('GET', '/projects/' + newid + '/drawings/' + foreign['drawing_id'])['x'] == 950
+        print('PASS: real server + Qt canvas CRUD, grouped moves, device/link restoration, container movement/resize/membership, persistent reopen and portable import/replay, oversized images, WebSocket echoes, archived recovery and repeated reopen', flush=True)
     except Exception:
         import traceback
         traceback.print_exc()

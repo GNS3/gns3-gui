@@ -67,3 +67,19 @@ component as implemented in the final response.
   que a posição deixe de integrar a operação de remoção do container.
 - Regressão automatizada: 497 passaram, 1 ignorado; roteiro real de arraste e
   undo/redo executado contra GNS3 Server 2.2.61 com WebSockets.
+
+## Recuperação de persistência após divergência
+
+- Causa confirmada: uma falha de correspondência dos dois slots mantinha invalid
+  e bloqueava também a gravação de todas as operações seguintes.
+- SVGs de estado e deltas são normalizados antes da validação, conservando a
+  cadeia quando a diferença era apenas representação de namespace XML.
+- Slots incompatíveis/corrompidos são preservados byte a byte em cópias
+  gns3-gui-history-recovery-<SHA256>.history antes de estabelecer nova referência.
+  Falha de leitura ou backup mantém os originais intocados.
+- Mensagem informativa explica a recuperação; novos registros voltam a funcionar.
+- Validação: 502 passaram, 1 ignorado; servidor GNS3 2.2.61 verificou backup exato,
+  retomada dos registros e undo/redo após duas reaberturas consecutivas, além dos
+  cenários anteriores de exportação/importação, containers e imagens grandes.
+- Código, testes e documentação completos; publicar os mesmos commits em
+  codex/feature-history e codex/canvas-all-improvements no fork autorizado.

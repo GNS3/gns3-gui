@@ -128,9 +128,19 @@ modificações no GNS3 Server.
 Na abertura, ambos os slots são lidos. Usa-se a revisão válida mais recente cujo
 manifesto corresponde à topologia real; um slot corrompido pode ser ignorado se
 outro ainda corresponde ao estado. Um histórico antigo divergente não é executado.
-Projetos sem esses arquivos começam com histórico vazio. Conteúdo inválido ou
-versão desconhecida desabilita somente a navegação do histórico e permite limpar
-os registros após revisão da topologia.
+Projetos sem esses arquivos começam com histórico vazio. Se nenhum slot lido
+puder ser usado com segurança, os bytes originais de todos os slots são copiados
+para arquivos `gns3-gui-history-recovery-<SHA256>.history` na raiz do projeto.
+Somente depois da confirmação dessas cópias, uma nova sequência usa a topologia
+atual como referência e volta a registrar ações. Os registros incompatíveis
+continuam preservados nos arquivos de recuperação; não ficam disponíveis para
+undo sobre um estado diferente. A GUI mostra uma mensagem informativa e mantém
+a explicação no diálogo History.
+
+Falha de leitura ou de preservação mantém os slots originais intocados e informa
+o erro, sem substituir um arquivo cujo conteúdo não pôde ser preservado. O codec
+normaliza os SVGs de estado e deltas antes de comparar a cadeia, evitando rejeitar
+um histórico válido só porque outro registro de namespace XML mudou os prefixos.
 
 Importação e Save As podem trocar todos os UUIDs. O remapeamento usa nomes/tipos
 únicos dos dispositivos, endpoints dos links e correspondência exata dos desenhos.
@@ -148,13 +158,16 @@ o histórico importado.
   interface indisponível pode impedir a restauração e produzir erro explícito.
 - Mudanças persistentes de outro cliente, restauração de snapshot ou edição manual
   podem tornar os registros incompatíveis. Nenhuma entrada é inventada para essas
-  operações externas: o histórico precisa ser limpo quando houver divergência.
+  operações externas: a navegação pode ser bloqueada durante a sessão. Na próxima
+  abertura, uma divergência persistente passa pela recuperação com cópias preservadas.
 - Importação com identidades ambíguas, alteração externa de desenhos/propriedades,
-  reset de MACs ou migração de computes sem correspondência segura pode bloquear
-  a recuperação do histórico. A topologia continua abrindo; não se adivinham
+  reset de MACs ou migração de computes sem correspondência segura pode impedir
+  a reutilização dos registros anteriores. Eles são arquivados antes de iniciar
+  uma nova sequência. A topologia continua abrindo; não se adivinham
   correspondências nem se aplicam deltas sobre recursos possivelmente diferentes.
 - Encerramento abrupto pode deixar apenas o slot anterior. Se seu manifesto não
-  corresponder à topologia, o histórico é bloqueado em vez de executar dados obsoletos.
+  corresponder à topologia, os arquivos são preservados e uma nova referência
+  é gravada, em vez de executar dados obsoletos ou desativar novos registros.
 
 ## Validação reproduzível
 
@@ -215,3 +228,27 @@ Qt, pois um traceback em um slot pode não reprovar automaticamente o pytest.
 Validação após as correções: **497 testes passaram, 1 ignorado**, e o roteiro
 com GNS3 Server 2.2.61, HTTP Qt e WebSockets passou com arraste, undo/redo,
 persistência, exportação/importação e imagens grandes.
+
+
+## Recuperação de persistência e continuidade dos registros
+
+A versão anterior mantinha `invalid` quando os dois manifestos não correspondiam
+à topologia. Isso também desabilitava `begin`/`record`/`persist`, de modo que cada
+nova abertura encontrava os mesmos arquivos obsoletos. O novo caminho de carga
+faz a recuperação descrita acima, sem alterar a topologia nem apagar as operações
+antigas. O número de revisão da nova referência supera o de todos os candidatos
+válidos, evitando que um slot anterior prevaleça na abertura seguinte.
+
+A comparação agora normaliza representações SVG equivalentes também nos deltas,
+antes de validar a cadeia, e conserva todas as operações quando o histórico é
+compatível. Falhas de backup ou leitura nunca autorizam a substituição dos slots.
+As cópias de recuperação são arquivos normais do projeto e acompanham sua exportação.
+
+Testes adicionais verificam os bytes exatos das duas cópias, falha de backup,
+slot ilegível, retomada do registro, troca de prefixos XML e duas reaberturas
+consecutivas com undo e redo. O roteiro de servidor real também cria uma
+incompatibilidade com uma edição externa, recupera o histórico, grava uma nova
+ação e verifica seu undo/redo após fechar e reabrir duas vezes.
+
+Resultado da suíte após esta correção de persistência: **502 passaram, 1 ignorado**.
+O aviso de depreciação de tarfile pertence ao teste de atualização já existente.
