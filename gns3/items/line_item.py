@@ -84,6 +84,26 @@ class LineItem(QtWidgets.QGraphicsLineItem, DrawingItem):
         element.set('stroke-opacity', str(self.pen().color().alphaF()))
         return ET.tostring(svg, encoding='unicode')
 
+    def __json__(self):
+        # The drawing API accepts integer positions. Keep the fractional part
+        # in the SVG endpoints so an acknowledgment cannot shift a line drawn
+        # or moved at high zoom. Works with rotated lines and Qt parents too.
+        position = self.scenePos()
+        origin = QtCore.QPointF(round(position.x()), round(position.y()))
+        if position != origin:
+            points = [self.mapToScene(point) for point in (self.line().p1(), self.line().p2())]
+            allowed = self._allow_snap_to_grid
+            self._allow_snap_to_grid = False
+            try:
+                parent = self.parentItem()
+                self.setPos(parent.mapFromScene(origin) if parent else origin)
+                self.setLine(QtCore.QLineF(*(self.mapFromScene(point) for point in points)))
+            finally:
+                self._allow_snap_to_grid = allowed
+        data = super().__json__()
+        data['x'], data['y'] = round(self.scenePos().x()), round(self.scenePos().y())
+        return data
+
     def fromSvg(self, svg):
         root = ET.fromstring(svg)
         element = next((child for child in root.iter()

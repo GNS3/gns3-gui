@@ -45,6 +45,16 @@ def make_line(view, delta=(200, 100)):
     return item
 
 
+def move_pointer(view, point):
+    # Offscreen QTest.mouseMove without buttons can depend on the global cursor
+    # left by another window. Dispatch the real Qt tracking event directly.
+    event = QtGui.QMouseEvent(QtCore.QEvent.Type.MouseMove, QtCore.QPointF(point),
+                             QtCore.QPointF(view.viewport().mapToGlobal(point)),
+                             QtCore.Qt.MouseButton.NoButton, QtCore.Qt.MouseButton.NoButton,
+                             QtCore.Qt.KeyboardModifier.NoModifier)
+    QtWidgets.QApplication.sendEvent(view.viewport(), event)
+
+
 @pytest.mark.parametrize('zoom', [.2, 1, 5])
 @pytest.mark.parametrize('accept', [False, True])
 def test_two_clicks_preview_and_style_transaction(line_canvas, zoom, accept):
@@ -75,18 +85,19 @@ def test_two_clicks_preview_and_style_transaction(line_canvas, zoom, accept):
 
     with patch.object(LinePropertiesDialog, 'exec', new=properties):
         view.addLine(True)
-        QTest.mouseMove(view.viewport(), a)
+        move_pointer(view, a)
         QTest.mouseClick(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=a)
         assert view._lines.origin == start
         assert not view._dragging
         assert not any(isinstance(item, LineItem) for item in view.scene().items())
-        QTest.mouseMove(view.viewport(), b)
+        move_pointer(view, b)
         assert view._lines.preview.line() == QtCore.QLineF(start, end)
         assert len(view._lines.preview.childItems()) == 1  # Mark the first endpoint.
         assert not calls
         QTest.mouseClick(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=b)
         assert len(calls) == 1
     assert view._lines.preview is None and not view._adding_line
+    view.toggleUiDeviceMenu.assert_called_once()
     assert not view._main_window.uiDrawLineAction.isChecked()
     items = [item for item in view.scene().items() if isinstance(item, LineItem)]
     assert len(items) == int(accept)
@@ -153,6 +164,18 @@ def test_repeated_same_point_keeps_draft_until_distinct_second_click(line_canvas
     assert view._adding_line and view._lines.preview is not None
 
 
+def test_second_click_delivered_as_double_click_finishes_line(line_canvas):
+    view = line_canvas
+    view.addLine(True)
+    a, b = QtCore.QPoint(120, 100), QtCore.QPoint(125, 105)
+    QTest.mouseClick(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=a)
+    with patch.object(LinePropertiesDialog, 'exec', return_value=QtWidgets.QDialog.DialogCode.Accepted) as dialog:
+        QTest.mouseDClick(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=b)
+        QTest.mouseRelease(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=b)
+        dialog.assert_called_once()
+    assert not view._adding_line
+
+
 @pytest.mark.parametrize('index', [0, 1])
 @pytest.mark.parametrize('delta', [(200, 0), (0, -160), (-200, -100), (200, -100)])
 @pytest.mark.parametrize('rotation', [0, 25, 90])
@@ -193,11 +216,23 @@ def test_outer_endpoint_hit_does_not_start_hand_pan(line_canvas):
     item = make_line(view, (200, 0))
     start = view.mapFromScene(item.mapToScene(item.line().p1())) - QtCore.QPoint(6, 6)
     assert view.itemAt(start) is None
-    QTest.mouseMove(view.viewport(), start)
+    move_pointer(view, start)
     assert view.cursor().shape() == QtCore.Qt.CursorShape.CrossCursor
     QTest.mousePress(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
     assert view._lines._resize is not None and not view._dragging
     QTest.mouseRelease(view.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+
+
+def test_endpoint_hidden_by_another_item_does_not_steal_its_click(line_canvas):
+    view = line_canvas
+    item = make_line(view)
+    position = item.mapToScene(item.line().p1())
+    cover = QtWidgets.QGraphicsRectItem(-10, -10, 20, 20)
+    cover.setPos(position)
+    cover.setZValue(100)
+    view.scene().addItem(cover)
+    assert view.itemAt(view.mapFromScene(position)) is cover
+    assert view._lines.endpointAt(position) is None
 
 
 def test_body_drag_moves_both_endpoints_and_persists(line_canvas):
@@ -287,3 +322,16 @@ def test_svg_precision_negative_endpoints_opacity_and_nonzero_viewport(line_canv
     assert copy.line() == item.line()
     assert copy.pen().color() == item.pen().color()
     assert copy.pen().width() == 9 and copy.pen().style() == QtCore.Qt.PenStyle.DotLine
+
+
+def test_fractional_line_origin_survives_integer_api_acknowledgment(line_canvas):
+    item = make_line(line_canvas)
+    item.setPos(-56.2, 19.8)
+    item.setRotation(25)
+    item.setLine(-.125, 2.625, 180.75, -90.375)
+    expected = [item.mapToScene(point) for point in (item.line().p1(), item.line().p2())]
+    data = item.__json__()
+    assert isinstance(data['x'], int) and isinstance(data['y'], int)
+    item.updateDrawingCallback(data)
+    for point, target in zip((item.line().p1(), item.line().p2()), expected):
+        assert (item.mapToScene(point) - target).manhattanLength() < 1e-8

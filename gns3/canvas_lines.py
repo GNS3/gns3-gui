@@ -65,11 +65,15 @@ class CanvasLines:
 
     def endpointAt(self, position):
         groups = getattr(self.view, "_groups", None)
-        for item in self.view.scene().items():
+        pixel = self.view.mapFromScene(position)
+        top = self.view.itemAt(pixel)
+        for item in self.view.scene().selectedItems():
             if not isinstance(item, LineItem) or not item.isSelected() or not item.isVisible() or item.locked():
                 continue
             if groups is not None and groups.target(item) is not item:
                 continue
+            if top is not None and top is not item and not top.isAncestorOf(item) and not item.isAncestorOf(top):
+                continue  # Do not grab an endpoint hidden by another element.
             ancestor = item.parentItem()
             while ancestor is not None:
                 if getattr(ancestor, "locked", lambda: False)():
@@ -80,7 +84,6 @@ class CanvasLines:
                 ancestor = ancestor.parentItem()
             if ancestor is not None:
                 continue
-            pixel = self.view.mapFromScene(position)
             endpoints = (item.line().p1(), item.line().p2())
             distances = [(self.view.mapFromScene(item.mapToScene(point)) - pixel).manhattanLength()
                          for point in endpoints]
@@ -141,6 +144,7 @@ class CanvasLines:
                     item.create()
                 else:
                     self.view.discardDraft(item)
+                self.view.toggleUiDeviceMenu()
             event.accept()
             return True
         adding = any((self.view._adding_link, self.view._adding_note,

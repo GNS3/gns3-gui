@@ -970,6 +970,9 @@ class GraphicsView(QtWidgets.QGraphicsView):
         :param event: QMouseEvent instance
         """
 
+        if self._adding_line and self._lines.press(event):
+            return
+
         item = self.itemAt(event.position().toPoint())
 
         if not self._adding_link:
