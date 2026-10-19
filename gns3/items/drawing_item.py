@@ -109,11 +109,23 @@ class DrawingItem:
             source = Path(temporary.name)
         project = self._project
         seed_id = str(uuid.uuid4())
+        from ..history.session import HistorySession
+        history = getattr(project, "history", None)
+        release_history = history.hold() if isinstance(history, HistorySession) else lambda: None
+        if isinstance(history, HistorySession):
+            history.auxiliary.add("drawings/" + seed_id)
+        original_callback = callback
+        def callback(*args, **kwargs):
+            try:
+                original_callback(*args, **kwargs)
+            finally:
+                release_history()
 
         def uploaded(result, error=False, **ignored):
             source.unlink(missing_ok=True)
             project.delete("/drawings/" + seed_id, None)
             if sip_is_deleted(self):
+                release_history()
                 return
             if error:
                 self._hash_svg = None
@@ -148,6 +160,7 @@ class DrawingItem:
             source.unlink(missing_ok=True)
             project.delete('/drawings/' + seed_id, None)
             self._hash_svg = None
+            release_history()
             raise
 
     def _createDrawingCallback(self, result, error=False, **kwargs):

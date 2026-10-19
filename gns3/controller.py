@@ -251,6 +251,28 @@ class Controller(QtCore.QObject):
         """
 
         if self._http_client:
+            # Project, node, template and link writes all converge here. Only
+            # initialized sessions and explicitly supported resource paths wrap
+            # callbacks; console/lifecycle/import requests retain their behavior.
+            from .topology import Topology
+            from .history.session import HistorySession
+            topology = getattr(Topology, "_instance", None)
+            project = topology.project() if topology is not None else None
+            history = getattr(project, "history", None)
+            prefix = "/projects/{}/".format(project.id()) if isinstance(history, HistorySession) else None
+            if prefix and path.startswith(prefix):
+                relative = path[len(prefix) - 1:]
+                callback = args[0] if args else kwargs.get("callback")
+                wrapped = history.capture(method, relative, callback, kwargs.get("body"))
+                if isinstance(wrapped, tuple) and wrapped[0] == "ignored":
+                    return
+                if isinstance(wrapped, tuple) and wrapped[0] == "blocked":
+                    QtCore.QTimer.singleShot(0, wrapped[1])
+                    return
+                if args:
+                    args = (wrapped,) + args[1:]
+                else:
+                    kwargs["callback"] = wrapped
             return self._http_client.createHTTPQuery(method, path, *args, **kwargs)
 
     @staticmethod

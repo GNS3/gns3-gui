@@ -1,3 +1,4 @@
+from .history.session import action as history_action
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Canvas hierarchy operations, separate from the legacy device command code."""
@@ -108,6 +109,7 @@ class CanvasGroups:
         self.save([group])
         return group
 
+    @history_action('Create container')
     def group(self):
         items = self.selected()
         if not items:
@@ -139,6 +141,7 @@ class CanvasGroups:
             self.view._main_window.uiStatusBar.clearMessage()
             self.group()
 
+    @history_action('Change container properties')
     def rename(self, group):
         original = (group.name, group.rect().width(), group.rect().height(), dict(group.style))
         positions = {item: item.pos() for item in group.members()}
@@ -404,6 +407,7 @@ class CanvasGroups:
             self._resize = None
             self.save([group])
 
+    @history_action('Unpack container')
     def ungroup(self):
         groups = [item for item in self.selected() if isinstance(item, GroupItem)]
         if self.hasLocked(groups):
@@ -493,7 +497,7 @@ class CanvasGroups:
                 return True
         return False
 
-    def restore(self):
+    def restore(self, persist=True):
         """Validate the whole graph before attaching any saved children.
 
         Drawing lists can arrive in arbitrary order. Dangling references are
@@ -565,11 +569,13 @@ class CanvasGroups:
             self.restoring = False
         # GNS3 regenerates node/drawing IDs on portable import and Save As.
         # Repair references once, then return to strict ID-based ownership.
-        for group in set(remapped + migrated):
-            group._saved_id = group.drawing_id()
-            group.updateDrawing()
+        if persist:
+            for group in set(remapped + migrated):
+                group._saved_id = group.drawing_id()
+                group.updateDrawing()
         self.notifyHierarchy()
 
+    @history_action('Duplicate selection')
     def duplicate(self, roots):
         """Copy the complete tree, remapping every node/drawing/group identity.
 

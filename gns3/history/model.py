@@ -88,16 +88,37 @@ def drawing_type(data):
 
 
 def description(changes, hint=None):
+    groups = []
+    membership = False
+    for key, change in changes.items():
+        if key.startswith('drawings/'):
+            values = []
+            for value in (change['before'], change['after']):
+                root = ET.fromstring(value['svg']) if value else []
+                meta = next((e for e in root.iter() if e.get('id') == 'gns3-canvas-group'), None) if value else None
+                values.append(json.loads(meta.text) if meta is not None else None)
+            if any(values):
+                groups.append(values)
+                if all(values):
+                    membership |= {(v['type'], v['id']) for v in values[0].get('children', [])} != {
+                        (v['type'], v['id']) for v in values[1].get('children', [])}
     if hint:
-        return hint
+        names = ', '.join((after or before).get('name', 'container') for before, after in groups[:2])
+        return hint + (' ' + names if names and 'container' in hint.lower() else '')
     nodes = [(key, c) for key, c in changes.items() if key.startswith('nodes/')]
     if nodes and any(c['before'] is None or c['after'] is None for _, c in nodes):
         added = nodes[0][1]['before'] is None
         names = ', '.join((c['after'] or c['before']).get('name', key) for key, c in nodes[:3])
         return ('New device ' if added else 'Delete device ') + names
     if len(changes) > 1:
-        if nodes and any(key.startswith('drawings/') for key in changes):
+        if membership:
             return 'Move selection and update container membership'
+        if groups:
+            return 'Move or change container ' + (groups[0][1] or groups[0][0]).get('name', '')
+        if all(c['before'] and c['after'] and
+               {f for f in c['before'].keys() | c['after'].keys() if c['before'].get(f) != c['after'].get(f)} <= {'x', 'y', 'z'}
+               for c in changes.values()):
+            return 'Move selection ({} elements)'.format(len(changes))
         return 'Change selection ({} elements)'.format(len(changes))
     key, change = next(iter(changes.items()))
     before, after = change['before'], change['after']
@@ -108,6 +129,8 @@ def description(changes, hint=None):
         endpoints = ' to '.join('{} ({}:{})'.format(n['node_id'], n['adapter_number'], n['port_number']) for n in ends)
         return ('Create link from ' if before is None else 'Delete link from ' if after is None else 'Change link ') + endpoints
     noun = value.get('name', 'device') if kind == 'nodes' else drawing_type(value)
+    if groups:
+        noun += ' ' + (groups[0][1] or groups[0][0]).get('name', '')
     if before is None:
         return ('New ' if kind == 'nodes' else 'Draw ') + noun
     if after is None:
@@ -116,6 +139,13 @@ def description(changes, hint=None):
     if changed <= {'x', 'y', 'z'}:
         return 'Move ' + noun
     if kind == 'drawings' and 'svg' in changed:
+        if groups and all(groups[0]):
+            before_group, after_group = groups[0]
+            if before_group.get('size') != after_group.get('size'):
+                return 'Resize ' + noun
+            if membership:
+                return 'Update membership of ' + noun
+            return 'Change {} properties'.format(noun)
         return 'Resize or change ' + noun
     return 'Change {} properties'.format(noun)
 

@@ -61,6 +61,7 @@ from .items.drawing_item import DrawingItem
 from .items.rectangle_item import RectangleItem
 from .items.line_item import LineItem
 from .canvas_lines import CanvasLines
+from .history.session import action as history_action, gesture as history_gesture
 from .items.ellipse_item import EllipseItem
 from .items.image_item import ImageItem
 from .items.logo_item import  LogoItem
@@ -341,6 +342,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self.setCursor(QtCore.Qt.CursorShape.CrossCursor)
             self.setFocus()
 
+    @history_action('Import image')
     def addImage(self, image_path):
         """
         Adds an image.
@@ -482,21 +484,25 @@ class GraphicsView(QtWidgets.QGraphicsView):
             self._newlink = None
             self.addLink(source_item.node(), source_port, destination_item.node(), destination_port)
 
+    @history_action('Create container')
     def groupSelectedNodes(self):
         """Create a named topology container from selected sibling elements."""
         self._groups.requestGroup()
 
+    @history_action('Unpack container')
     def ungroupSelectedNodes(self):
         self._groups.ungroup()
 
     def enterGroup(self, group):
         self._groups.enter(group)
 
+    @history_action('Change container properties')
     def editContainer(self, container=None):
         container = container if isinstance(container, GroupItem) else self._groups.editing
         if container is not None and container.editing:
             self._groups.rename(container)
 
+    @history_action('Change container properties')
     def renameGroup(self, group=None):
         groups = [group] if isinstance(group, GroupItem) else self._groups.selected()
         for item in groups:
@@ -532,6 +538,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             item.setSelected(True)
         self._groups.collapseSelection()
 
+    @history_gesture("press")
     def mousePressEvent(self, event):
         """
         Handles all mouse press events.
@@ -711,6 +718,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         else:
             super().contextMenuEvent(event)
 
+    @history_gesture("release")
     def mouseReleaseEvent(self, event):
         """
         Handles all mouse release events.
@@ -963,6 +971,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             if event.buttons() & QtCore.Qt.MouseButton.LeftButton and not self._dragging and not self._adding_link:
                 self._groups.updateDrag()
 
+    @history_action(None)
     def mouseDoubleClickEvent(self, event):
         """
         Handles all mouse double click events.
@@ -1009,6 +1018,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 return
         super().mouseDoubleClickEvent(event)
 
+    @history_action('Change device properties')
     def configureSlot(self, items=None):
         """
         Opens the node properties dialog.
@@ -1769,12 +1779,14 @@ class GraphicsView(QtWidgets.QGraphicsView):
             return "line"
         return "image"
 
+    @history_action('Duplicate selection')
     def duplicateActionSlot(self):
         """Duplicate selected topology trees with new identities throughout."""
         roots = self._groups.selected()
         if roots:
             self._groups.duplicate(roots)
 
+    @history_action('Change shape properties')
     def styleActionSlot(self):
         """
         Slot to receive events from the style action in the
@@ -1795,6 +1807,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             style_dialog.show()
             style_dialog.exec()
 
+    @history_action('Change note properties')
     def textEditActionSlot(self):
         """
         Slot to receive events from the text edit action in the
@@ -1846,12 +1859,15 @@ class GraphicsView(QtWidgets.QGraphicsView):
             item._allow_snap_to_grid = allowed
         self._groups.save(items)
 
+    @history_action('Align selection horizontally')
     def horizontalAlignmentSlot(self):
         self._alignSelection(True)
 
+    @history_action('Align selection vertically')
     def verticalAlignmentSlot(self):
         self._alignSelection(False)
 
+    @history_action('Raise selection')
     def raiseLayerActionSlot(self):
         """
         Slot to receive events from the raise one layer action in the
@@ -1867,6 +1883,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 self._groups.save([item])
                 item.update()
 
+    @history_action('Lower selection')
     def lowerLayerActionSlot(self):
         """
         Slot to receive events from the lower one layer action in the
@@ -1882,6 +1899,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 self._groups.save([item])
                 item.update()
 
+    @history_action('Change selection locks')
     def lockActionSlot(self):
         """
         Slot to receive events from the lock action in the
@@ -1898,6 +1916,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                     self._groups.save([item])
                 item.update()
 
+    @history_action(None)
     def deleteActionSlot(self):
         """Delete selected containers and all descendants through their APIs."""
         roots = self._groups.selected()
@@ -1953,6 +1972,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
             raise ModuleError("Please select a server")
         return server
 
+    @history_action(None)
     def createNodeFromTemplateId(self, template_id, pos, group=None):
         """Create through the existing API, then attach the returned node ID.
 
@@ -2076,6 +2096,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._groups.drawGuides(painter)
         self._groups.drawDragPreviews(painter)
 
+    @history_gesture("focus")
     def focusOutEvent(self, event):
 
         self._lines.focusOut()

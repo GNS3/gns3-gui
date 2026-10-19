@@ -233,6 +233,9 @@ class Replay:
                 matches = [v for v in result if v['link_id'] not in self.link_ids and connections(v) == connections(body)]
                 if len(matches) > 1:
                     return self._stop(message + '\nAmbiguous connection after a failed creation.', False)
+                if not matches and any(v['link_id'] not in self.link_ids and
+                                       set(connections(v)) < set(connections(body)) for v in result):
+                    return self._stop(message + '\nA connection creation may still be incomplete. Review the topology before clearing history.', False)
                 if matches:
                     self.identities[resource(key)[1]] = matches[0]['link_id']
                 self._recover_next()
