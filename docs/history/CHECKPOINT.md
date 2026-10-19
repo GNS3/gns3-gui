@@ -20,15 +20,16 @@ there is no reason to duplicate them with cherry-picks.
   if a required compute/image/interface is unavailable; it must never claim that
   arbitrary emulated data has been backed up.
 
-## Work remaining
+## Component checkpoints
 
 1. DONE: bounded linear model, validation and conservative import remapping.
 2. DONE: async replay preflight, dependency-ordered CRUD, compensation and verification.
-   19 core tests pass, including applied-write timeouts and failed compensation.
-3. Integrate confirmed GUI requests, gesture/dialog grouping and project lifecycle.
-4. Add durable project-file storage, export/close flush and history UI/shortcuts.
-5. Add integration/regression tests, documentation, fast-forward complete branch
-   and push both branches to https://github.com/redlintles/gns3-gui-fork.
+   Core tests cover applied-write timeouts, allocated UUIDs and failed compensation.
+3. DONE: confirmed request capture, gesture/dialog grouping and project lifecycle.
+4. DONE: checked two-slot project-file storage, export/close flush and history UI/shortcuts.
+5. DONE: regression review, integration tests and architecture/limitations documentation.
+6. Delivery: fast-forward the complete branch and push both refs together to
+   https://github.com/redlintles/gns3-gui-fork; remote refs confirm publication.
 
 Keep updating this file at component checkpoints. Never describe an unfinished
 component as implemented in the final response.
@@ -41,5 +42,18 @@ component as implemented in the final response.
 - https://github.com/GNS3/gns3-server/blob/v2.2.61/gns3server/controller/export_project.py
 - https://github.com/GNS3/gns3-server/blob/v2.2.61/gns3server/controller/import_project.py
 
-Current working tree also contains request/gesture integration and storage-session
-code under development; these are not yet validated or ready to publish.
+## Integration checkpoint
+
+- Full suite: 492 passed, 1 skipped; existing tarfile deprecation warning.
+- Real GNS3 Server 2.2.61: CRUD, grouped moves, node/link restoration,
+  container movement/resize/membership, reopen, portable export/import/replay,
+  and oversized image replay passed using the actual Qt HTTP client and canvas.
+- Extended run passed with WebSocket notifications, Project export/close flush,
+  container movement/resize and oversized images enabled.
+- Link POST ignores link_id on this server. Replay now rebinds the whole history
+  to returned IDs, including compensation and lost-acknowledgment discovery.
+- Storage uses .history (checked, compressed binary); .json/.gz suffixes trigger
+  MIME parsing or transparent HTTP decoding in the existing client.
+- Implementation and validation are complete. The delivery step uses the same
+  commits on both branches; verify their remote tips before handing off.
+- Architecture, recovery limits and reproduction commands: README.md in this folder.
