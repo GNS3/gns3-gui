@@ -176,6 +176,11 @@ class HistorySession(QtCore.QObject):
         key = kind + '/' + data[IDS[kind]]
         if key in self.auxiliary:
             return
+        if not deleted:
+            # drawing.updated intentionally omits SVG when it did not change.
+            # Merge partial notifications with the confirmed resource, retaining
+            # the container's membership metadata as well as its geometry.
+            data = dict(self._raw_state.get(key, self.document.state.get(key, {})), **data)
         value = None if deleted else canonical(kind, data)
         self._raw_state[key] = copy.deepcopy(data)
         old = self.document.state.get(key)

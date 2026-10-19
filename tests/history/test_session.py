@@ -362,3 +362,52 @@ def test_navigation_failure_persists_last_successful_intermediate_cursor():
     assert history.document.cursor == 1 and not history.invalid
     assert history._saved_revision == history.document.revision
     assert server.state[key('nodes', a)]['x'] == 0
+
+
+@pytest.mark.parametrize('raw_cached', [False, True])
+def test_partial_drawing_notifications_retain_confirmed_svg(raw_cached):
+    shape = drawing()
+    owner, history, server = session(FileServer({key('drawings', shape): shape}))
+    if raw_cached:
+        history.observe('drawings', shape)
+    history.begin()
+    patch = {'drawing_id': shape['drawing_id'], 'x': 50}
+    history.observe('drawings', patch, external=True)
+    edit(history, server, 'PUT', '/' + key('drawings', shape), {'x': 50})
+    history.end()
+    settled(history)
+    assert not history.invalid and len(history.document.entries) == 1
+    assert history.document.state[key('drawings', shape)]['svg'] == shape['svg']
+    assert history._raw_state[key('drawings', shape)]['svg'] == shape['svg']
+    history.navigate(0)
+    settled(history)
+    assert history.document.state[key('drawings', shape)] == shape
+
+
+def test_detachment_and_partial_container_echo_are_one_reversible_operation():
+    import json
+    a = node('A', x=20)
+    def container(children):
+        metadata = {'revision': 1, 'name': 'LAN', 'children': children}
+        svg = '<svg><metadata id="gns3-canvas-group">' + json.dumps(metadata) + '</metadata><rect width="100" height="80"/></svg>'
+        return dict(drawing('LAN'), svg=svg)
+    before = canonical('drawings', container([{'type': 'node', 'id': a['node_id']}]))
+    after = canonical('drawings', container([]))
+    owner, history, server = session(FileServer({key('nodes', a): a, key('drawings', before): before}))
+    history.begin()
+    edit(history, server, 'PUT', '/' + key('nodes', a), {'x': 500})
+    history.observe('drawings', {'drawing_id': before['drawing_id'], 'x': 0}, external=True)
+    edit(history, server, 'PUT', '/' + key('drawings', before), {'svg': after['svg']})
+    history.end()
+    settled(history)
+    assert len(history.document.entries) == 1
+    assert len(history.document.entries[0]['changes']) == 2
+    assert 'membership' in history.document.entries[0]['description']
+    history.navigate(0)
+    settled(history)
+    assert history.document.state[key('nodes', a)]['x'] == 20
+    assert history.document.state[key('drawings', before)] == before
+    history.navigate(1)
+    settled(history)
+    assert history.document.state[key('nodes', a)]['x'] == 500
+    assert history.document.state[key('drawings', before)] == after
