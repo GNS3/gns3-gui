@@ -21,6 +21,15 @@ RESOURCE = re.compile(r'^(nodes|links|drawings)/([a-fA-F0-9-]{36})$')
 UUID_TOKEN = re.compile(r'(?<![a-fA-F0-9-])[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}(?![a-fA-F0-9-])')
 
 
+def group_metadata(value):
+    svg = value.get('svg', '') if value else ''
+    if 'gns3-canvas-group' not in svg:
+        return None
+    root = ET.fromstring(svg)
+    metadata = next((e for e in root.iter() if e.get('id') == 'gns3-canvas-group'), None)
+    return json.loads(metadata.text) if metadata is not None else None
+
+
 def resource(key):
     match = RESOURCE.fullmatch(key)
     if not match:
@@ -60,6 +69,19 @@ def canonical(kind, data):
         if metadata is not None:
             data = json.loads(metadata.text)
             data['revision'] = 0  # Transport echo ordering is not a user edit.
+            def numbers(value):
+                if isinstance(value, dict):
+                    return {key: numbers(v) for key, v in value.items()}
+                if isinstance(value, list):
+                    return [numbers(v) for v in value]
+                return int(value) if isinstance(value, float) and value.is_integer() else value
+            data = numbers(data)
+            for dimension in ('width', 'height'):
+                if dimension in root.attrib:
+                    try:
+                        root.set(dimension, str(numbers(float(root.get(dimension)))))
+                    except ValueError:
+                        pass  # Preserve meaningful SVG units, e.g. "100px".
             metadata.text = json.dumps(data, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
             result['svg'] = ET.tostring(root, encoding='unicode')
     # Reject non-JSON values and NaN before they reach disk or a server request.
@@ -104,7 +126,7 @@ def description(changes, hint=None):
                         (v['type'], v['id']) for v in values[1].get('children', [])}
     if hint:
         names = ', '.join((after or before).get('name', 'container') for before, after in groups[:2])
-        return hint + (' ' + names if names and 'container' in hint.lower() else '')
+        return hint + (' — ' + names if names and (hint.lower().endswith('container') or hint == 'Change container properties') else '')
     nodes = [(key, c) for key, c in changes.items() if key.startswith('nodes/')]
     if nodes and any(c['before'] is None or c['after'] is None for _, c in nodes):
         added = nodes[0][1]['before'] is None
@@ -114,7 +136,16 @@ def description(changes, hint=None):
         if membership:
             return 'Move selection and update container membership'
         if groups:
-            return 'Move or change container ' + (groups[0][1] or groups[0][0]).get('name', '')
+            before_group, after_group = groups[0]
+            name = (after_group or before_group).get('name', '')
+            if before_group and after_group:
+                if before_group.get('size') != after_group.get('size'):
+                    return 'Resize container ' + name
+                if any(before_group.get(field) != after_group.get(field) for field in ('name', 'style')):
+                    return 'Change container properties — ' + name
+                if before_group.get('origin') != after_group.get('origin'):
+                    return 'Move container ' + name
+            return 'Move selection within container ' + name
         if all(c['before'] and c['after'] and
                {f for f in c['before'].keys() | c['after'].keys() if c['before'].get(f) != c['after'].get(f)} <= {'x', 'y', 'z'}
                for c in changes.values()):
@@ -145,7 +176,9 @@ def description(changes, hint=None):
                 return 'Resize ' + noun
             if membership:
                 return 'Update membership of ' + noun
-            return 'Change {} properties'.format(noun)
+            if before_group.get('origin') != after_group.get('origin'):
+                return 'Move ' + noun
+            return 'Change container properties — ' + after_group.get('name', '')
         return 'Resize or change ' + noun
     return 'Change {} properties'.format(noun)
 

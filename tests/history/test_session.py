@@ -502,3 +502,28 @@ def test_unreadable_slot_is_never_replaced_by_recovery():
     drain(lambda: bool(done))
     assert reopened.invalid and 'could not be read' in reopened.invalid
     assert server.files == originals
+
+
+def test_delayed_container_revision_cannot_restore_previous_membership():
+    import json
+    def frame(revision, members):
+        metadata = {'revision': revision, 'name': 'LAN', 'children': members}
+        return dict(drawing('LAN'), svg='<svg><metadata id="gns3-canvas-group">' + json.dumps(metadata) + '</metadata><rect/></svg>')
+    original = frame(20, [{'type': 'node', 'id': node()['node_id']}])
+    current = frame(22, [])
+    owner, history, server = session(FileServer({key('drawings', original): original}))
+    history.observe('drawings', original)
+    history.begin()
+    edit(history, server, 'PUT', '/' + key('drawings', original), {'svg': current['svg']})
+    # A queued notification from before undo/redo can arrive after the new ack.
+    history.observe('drawings', frame(21, [{'type': 'node', 'id': node()['node_id']}]), external=True)
+    history.end()
+    settled(history)
+    assert not history.invalid and len(history.document.entries) == 1
+    assert history.document.state[key('drawings', current)] == canonical('drawings', current)
+    history.observe('drawings', original, external=True)
+    assert not history.invalid
+    assert history.document.state[key('drawings', current)] == canonical('drawings', current)
+    history.ready = False  # Fresh server lists/snapshot loads establish a new baseline.
+    history.observe('drawings', original)
+    assert history.document.state[key('drawings', original)] == canonical('drawings', original)

@@ -296,3 +296,30 @@ def test_saved_container_load_normalizes_xml_prefixes_without_losing_operations(
     finally:
         ET._namespace_map.clear()
         ET._namespace_map.update(namespaces)
+
+
+def test_container_numeric_formatting_is_not_an_edit():
+    a = dict(drawing(), svg='<svg width="100" height="80"><metadata id="gns3-canvas-group">{"revision":1,"name":"LAN","origin":{"x":10,"y":20},"size":{"width":100,"height":80},"children":[]}</metadata><rect/></svg>')
+    b = dict(a, svg=a['svg'].replace('100', '100.0').replace('80', '80.0').replace(':10,', ':10.0,').replace(':20}', ':20.0}'))
+    assert canonical('drawings', a) == canonical('drawings', b)
+
+
+def test_container_move_and_resize_descriptions_do_not_depend_on_secondary_node_updates():
+    import json
+    def frame(origin, size):
+        data = {'revision': 0, 'name': 'LAN', 'origin': {'x': origin, 'y': 0},
+                'size': {'width': size, 'height': 80}, 'children': []}
+        return dict(drawing(), x=origin, svg='<svg><metadata id="gns3-canvas-group">' + json.dumps(data) + '</metadata><rect/></svg>')
+    before, moved, resized = frame(0, 100), frame(30, 100), frame(0, 200)
+    for related in (False, True):
+        doc = HistoryDocument(identity('project'))
+        changes = delta('drawings', before, moved)
+        if related:
+            changes.update(delta('nodes', node(), node(x=30)))
+        doc.record(changes)
+        assert doc.entries[-1]['description'] == 'Move container LAN'
+        changes = delta('drawings', before, resized)
+        if related:
+            changes.update(delta('nodes', node(), node(x=30)))
+        doc.record(changes)
+        assert doc.entries[-1]['description'] == 'Resize container LAN'

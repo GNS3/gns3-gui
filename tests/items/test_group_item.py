@@ -982,3 +982,69 @@ def test_reparent_does_not_acknowledge_unsaved_device_coordinates(canvas):
     reparent(node, None)
     assert node.scenePos() == position
     assert settings == {'x': 100, 'y': 100}
+
+
+def test_selected_device_remains_painted_after_leaving_clipped_container(canvas):
+    from gns3.qt import QtGui
+    node = device(canvas, 100, 100)
+    container = group(canvas, [node])
+    node.setSelected(True)
+    def painted():
+        rect = node.sceneBoundingRect().adjusted(-2, -2, 2, 2)
+        image = QtGui.QImage(100, 100, QtGui.QImage.Format.Format_ARGB32)
+        image.fill(QtGui.QColor('white'))
+        painter = QtGui.QPainter(image)
+        canvas.scene().render(painter, QtCore.QRectF(0, 0, 100, 100), rect)
+        painter.end()
+        return sum(image.pixelColor(x, y) != QtGui.QColor('white') for y in range(100) for x in range(100))
+    assert painted() > 50
+    QtWidgets.QGraphicsItem.setPos(node, node.pos() + QtCore.QPointF(400, 100))
+    assert painted() == 0
+    reparent(node, None)
+    assert node.isVisible() and node.scene() is canvas.scene()
+    assert painted() > 50
+
+
+def test_dragged_device_viewport_cache_survives_unclipping(canvas):
+    from gns3.qt import QtGui
+    canvas._main_window.uiShowGridAction.isChecked.return_value = False
+    node = device(canvas, 100, 100)
+    group(canvas, [node])
+    canvas.window().show()
+    canvas.centerOn(node.scenePos() + QtCore.QPointF(100, 0))
+    node.setSelected(True)
+    def painted():
+        QtWidgets.QApplication.processEvents()
+        image = canvas.viewport().grab().toImage()
+        rect = canvas.mapFromScene(node.sceneBoundingRect()).boundingRect()
+        background = image.pixelColor(image.width() - 3, 3)
+        return sum(image.pixelColor(x, y) != background
+                   for y in range(rect.top(), rect.bottom()) for x in range(rect.left(), rect.right())
+                   if image.rect().contains(x, y))
+    assert painted() > 20
+    QtWidgets.QGraphicsItem.setPos(node, node.pos() + QtCore.QPointF(180, 0))
+    assert painted() == 0
+    reparent(node, None)
+    assert painted() > 20
+
+
+def test_history_replay_keeps_server_revision_on_live_container(canvas):
+    from gns3.history.session import HistorySession
+    from gns3.history.model import canonical
+    from tests.history.test_session import Project
+    owner = Project('revision-regression')
+    history = HistorySession(owner)
+    frame = GroupItem(name='LAN', width=100, height=80)
+    frame._revision = 19
+    canvas.scene().addItem(frame)
+    physical = dict(frame.__json__(), svg=frame.toSvg())
+    key = 'drawings/' + frame.drawing_id()
+    history._raw_state[key] = physical
+    canvas._topology.project.return_value = owner
+    canvas._topology.getDrawingFromUuid.return_value = frame
+    canvas._topology._main_window = canvas._main_window
+    owner._event_received = lambda event, **kwargs: frame.updateDrawingCallback(event['event'])
+    from gns3.topology import Topology
+    with patch.object(Topology, 'instance', return_value=canvas._topology):
+        history._apply_gui({key: canonical('drawings', physical)})
+    assert frame._revision == 19

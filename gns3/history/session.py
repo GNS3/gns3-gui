@@ -5,7 +5,7 @@ import functools
 import inspect
 import re
 from ..qt import QtCore
-from .model import HistoryDocument, canonical, resource, IDS, KINDS, description, state_from_lists
+from .model import HistoryDocument, canonical, resource, IDS, KINDS, description, state_from_lists, group_metadata
 from .replay import Replay
 from .storage import background, encode, decode, SLOTS, recovery_copy
 
@@ -103,6 +103,15 @@ class HistorySession(QtCore.QObject):
                                       callback, body=body, showProgress=False, ignoreErrors=True, **kwargs)
 
     def _request(self, method, path, callback=None, body=None):
+        original_callback = callback
+        def callback(result, error=False, **kwargs):
+            match = WRITE.fullmatch(path)
+            if not error and match and isinstance(result, dict):
+                kind = match.group(1)
+                if IDS[kind] in result:
+                    self._raw_state[kind + '/' + result[IDS[kind]]] = copy.deepcopy(result)
+            if original_callback:
+                original_callback(result, error=error, **kwargs)
         if method in ('POST', 'PUT') and path.startswith('/drawings') and body and 'svg' in body:
             # Reuse the existing lossless large-SVG transport, including its
             # transparent directory seed, without recording its implementation.
@@ -139,6 +148,11 @@ class HistorySession(QtCore.QObject):
     def end(self):
         self.depth = max(0, self.depth - 1)
         self._schedule_finalize()
+
+    def describe_gesture(self, label):
+        """Use the user's completed gesture, independent of callback ordering."""
+        if self.active is not None:
+            self.active['label'] = label
 
     def hold(self):
         """Keep file-upload/creation pipelines in one pending logical operation."""
@@ -178,6 +192,11 @@ class HistorySession(QtCore.QObject):
         key = kind + '/' + data[IDS[kind]]
         if key in self.auxiliary:
             return
+        if self.ready and not deleted and kind == 'drawings':
+            incoming = group_metadata(data)
+            previous = group_metadata(self._raw_state.get(key))
+            if incoming and previous and incoming.get('revision', 0) < previous.get('revision', 0):
+                return  # A delayed websocket/HTTP echo must not resurrect old membership.
         if not deleted:
             # drawing.updated intentionally omits SVG when it did not change.
             # Merge partial notifications with the confirmed resource, retaining
@@ -346,7 +365,14 @@ class HistorySession(QtCore.QObject):
                 if not force and old.get(key) == value and live is not None:
                     continue
                 raw = copy.deepcopy(self._raw_state.get(key, value))
+                physical_svg = raw.get('svg') if kind == 'drawings' and group_metadata(raw) else None
+                if physical_svg and canonical(kind, raw) != value:
+                    physical_svg = None
                 raw.update(value)
+                if physical_svg:
+                    # Revisions are excluded from semantic history, but the
+                    # live item must retain the verified transport revision.
+                    raw['svg'] = physical_svg
                 if kind == 'nodes' and key not in self._raw_state:
                     # Recreated node callbacks retain the complete API response.
                     raw.setdefault('status', 'stopped')
@@ -554,9 +580,8 @@ class HistorySession(QtCore.QObject):
                 self.document = HistoryDocument(self.project.id(), self.document.state)
                 self.document.revision = revision
                 self.ready = True
-                self.recovery_message = ('Earlier history does not match this topology. Its original files were '
-                                         'preserved as gns3-gui-history-recovery-*.history in the project. '
-                                         'New changes are being recorded from the current topology.')
+                self.recovery_message = ('Previous entries were archived because they no longer match this topology. '
+                                         'New changes are recorded normally.')
                 self.recovered.emit(self.recovery_message)
                 self.persist()
                 self.changed.emit()
