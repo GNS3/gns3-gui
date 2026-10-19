@@ -36,8 +36,8 @@ class HistoryDialog(QtWidgets.QDialog):
 
     def refresh(self):
         doc = self.history.document
-        self.status.setText(self.history.invalid or 'State {} of {}{}'.format(
-            doc.cursor, len(doc.entries), ' — waiting for server' if self.history.busy else ''))
+        state = 'State {} of {}{}'.format(doc.cursor, len(doc.entries), ' — waiting for server' if self.history.busy else '')
+        self.status.setText(self.history.invalid or (self.history.recovery_message + '\n' + state).strip())
         blocker = QtCore.QSignalBlocker(self.operations)
         self.operations.clear()
         labels = ['Initial retained state'] + [entry['description'] for entry in doc.entries]
@@ -98,6 +98,7 @@ class HistoryUI(QtCore.QObject):
             try:
                 self.history.changed.disconnect(self.refresh)
                 self.history.failed.disconnect(self.error)
+                self.history.recovered.disconnect(self.information)
             except (TypeError, RuntimeError):
                 pass
         if self.dialog is not None:
@@ -110,6 +111,7 @@ class HistoryUI(QtCore.QObject):
         if self.history is not None:
             self.history.changed.connect(self.refresh)
             self.history.failed.connect(self.error)
+            self.history.recovered.connect(self.information)
         self.refresh()
 
     def refresh(self):
@@ -159,7 +161,13 @@ class HistoryUI(QtCore.QObject):
         self.dialog.activateWindow()
 
     def error(self, message):
-        box = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Warning, 'Topology history', message,
+        self.message(message, QtWidgets.QMessageBox.Icon.Warning)
+
+    def information(self, message):
+        self.message(message, QtWidgets.QMessageBox.Icon.Information)
+
+    def message(self, message, icon):
+        box = QtWidgets.QMessageBox(icon, 'Topology history', message,
                                     QtWidgets.QMessageBox.StandardButton.Ok, self.window)
         self._messages.append(box)
         box.finished.connect(lambda: self._messages.remove(box) if box in self._messages else None)

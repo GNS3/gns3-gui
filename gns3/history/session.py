@@ -7,7 +7,7 @@ import re
 from ..qt import QtCore
 from .model import HistoryDocument, canonical, resource, IDS, KINDS, description, state_from_lists
 from .replay import Replay
-from .storage import background, encode, decode, SLOTS
+from .storage import background, encode, decode, SLOTS, recovery_copy
 
 WRITE = re.compile(r'^/(nodes|links|drawings)(?:/([a-fA-F0-9-]{36}))?$')
 CREATE = re.compile(r'^/(?:templates/[a-fA-F0-9-]{36}|nodes/[a-fA-F0-9-]{36}/duplicate)$')
@@ -53,6 +53,7 @@ def action(label=None):
 class HistorySession(QtCore.QObject):
     changed = QtCore.pyqtSignal()
     failed = QtCore.pyqtSignal(str)
+    recovered = QtCore.pyqtSignal(str)
 
     def __init__(self, project, request=None):
         super().__init__(project)
@@ -61,6 +62,7 @@ class HistorySession(QtCore.QObject):
         self.ready = False
         self.replaying = False
         self.invalid = ''
+        self.recovery_message = ''
         self.pending = 0
         self.depth = 0
         self.active = None
@@ -459,10 +461,11 @@ class HistorySession(QtCore.QObject):
     def load(self, state, callback):
         self.ready = False
         self.invalid = ''
+        self.recovery_message = ''
         self._save_error = ''
         self._saved_revision = 0
         self.document = HistoryDocument(self.project.id(), state)
-        slots, errors = [], []
+        slots, errors, read_errors = [], [], []
         def read(index):
             if index == len(SLOTS):
                 def decode_slots():
@@ -478,10 +481,18 @@ class HistorySession(QtCore.QObject):
                 if not error and raw_body:
                     slots.append(raw_body)
                 elif error and result.get('status') != 404:
-                    errors.append(result.get('message', 'Cannot read history'))
+                    read_errors.append(result.get('message', 'Cannot read history'))
                 read(index + 1)
             self._raw('GET', '/files/' + SLOTS[index], received)
         def decoded(result, error):
+            if read_errors:
+                # Do not replace a slot whose bytes could not be read/backed up.
+                self.invalid = 'History files could not be read; reconnect and reopen the project: ' + '; '.join(read_errors)
+                self.ready = True
+                self.failed.emit(self.invalid)
+                self.changed.emit()
+                callback()
+                return
             documents = []
             if result is not None:
                 documents, problems = result
@@ -523,13 +534,53 @@ class HistorySession(QtCore.QObject):
                     return
                 self.document = loaded
                 self._saved_revision = loaded.revision
-            elif errors or slots:
+            elif slots:
+                # An old manifest must not disable recording forever. Preserve
+                # every original slot before writing a new authoritative baseline.
+                return self._recover_saved_history(slots, candidates, callback)
+            elif errors:
                 self.invalid = 'History could not be recovered safely: ' + '; '.join(errors)
                 self.failed.emit(self.invalid)
             self.ready = True
             self.changed.emit()
             callback()
         read(0)
+
+    def _recover_saved_history(self, slots, candidates, callback):
+        remaining = list(dict.fromkeys(slots))
+        def next_file():
+            if not remaining:
+                revision = max((doc.revision for doc in candidates), default=0) + 1
+                self.document = HistoryDocument(self.project.id(), self.document.state)
+                self.document.revision = revision
+                self.ready = True
+                self.recovery_message = ('Earlier history does not match this topology. Its original files were '
+                                         'preserved as gns3-gui-history-recovery-*.history in the project. '
+                                         'New changes are being recorded from the current topology.')
+                self.recovered.emit(self.recovery_message)
+                self.persist()
+                self.changed.emit()
+                callback()
+                return
+            raw = remaining.pop(0)
+            def prepared(result, error):
+                if error:
+                    return failed(error)
+                name, path = result
+                def uploaded(result, error=False, **kwargs):
+                    path.unlink(missing_ok=True)
+                    if error:
+                        return failed(result.get('message', 'Cannot preserve previous history'))
+                    next_file()
+                self._raw('POST', '/files/' + name, uploaded, body=path)
+            background(lambda: recovery_copy(raw), prepared)
+        def failed(message):
+            self.invalid = 'Cannot preserve previous history; the original slots were left untouched: ' + message
+            self.ready = True
+            self.failed.emit(self.invalid)
+            self.changed.emit()
+            callback()
+        next_file()
 
     def persist(self):
         if not self.ready or self.invalid or self._saving or self.document.revision == self._saved_revision:

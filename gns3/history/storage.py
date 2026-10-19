@@ -98,3 +98,11 @@ class Work(QtCore.QRunnable):
 
 def background(function, callback):
     QtCore.QThreadPool.globalInstance().start(Work(function, callback))
+
+
+def recovery_copy(raw):
+    """Preserve exact bytes, even from an obsolete or corrupt history codec."""
+    name = 'gns3-gui-history-recovery-' + hashlib.sha256(raw).hexdigest() + '.history'
+    with tempfile.NamedTemporaryFile(prefix='gns3-history-recovery-', delete=False) as file:
+        file.write(raw)
+        return name, Path(file.name)

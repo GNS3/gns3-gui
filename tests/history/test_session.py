@@ -33,7 +33,7 @@ class FileServer(Server):
             elif path in self.files and method == 'GET':
                 callback({}, raw_body=self.files[path])
             else:
-                callback(dict(status=409 if self.reject_upload else 404, message='Cannot access file'), error=True)
+                callback(dict(status=409 if self.reject_upload and method == 'POST' else 404, message='Cannot access file'), error=True)
             return
         super().request(method, path, callback, body, **kwargs)
 
@@ -318,7 +318,7 @@ def test_controller_captures_writes_without_an_explicit_callback(controller):
     assert history.can_undo
 
 
-def test_corrupt_saved_manifest_blocks_replay_until_clear():
+def test_stale_manifest_preserves_original_and_resumes_recording():
     owner, history, server = session()
     edit(history, server, 'POST', '/nodes', node())
     settled(history)
@@ -329,10 +329,17 @@ def test_corrupt_saved_manifest_blocks_replay_until_clear():
     owner2, reopened, _ = session(server)
     reopened.load(actual, lambda: loaded.append(True))
     drain(lambda: bool(loaded))
-    assert reopened.invalid and not reopened.navigate(0)
-    reopened.clear()
     settled(reopened)
-    assert not reopened.invalid and server.state == actual
+    assert not reopened.invalid and reopened.document.cursor == 0
+    assert not reopened.can_undo and reopened.recovery_message
+    assert server.state == actual
+    assert any('history-recovery-' in path for path in server.files)
+    edit(reopened, server, 'PUT', '/' + key('nodes', node()), {'x': 910})
+    settled(reopened)
+    assert reopened.can_undo
+    reopened.navigate(0)
+    settled(reopened)
+    assert server.state == actual
 
 
 def test_gui_apply_failure_never_claims_success_or_leaves_replay_locked():
@@ -411,3 +418,87 @@ def test_detachment_and_partial_container_echo_are_one_reversible_operation():
     settled(history)
     assert history.document.state[key('nodes', a)]['x'] == 500
     assert history.document.state[key('drawings', before)] == after
+
+
+def test_recovered_history_survives_two_reopens_and_preserves_both_slots():
+    owner, original, server = session()
+    edit(original, server, 'POST', '/nodes', node())
+    settled(original)
+    edit(original, server, 'PUT', '/' + key('nodes', node()), {'x': 10})
+    settled(original)
+    originals = dict(server.files)
+    server.state[key('nodes', node())]['x'] = 400
+    owner2, recovered, _ = session(server)
+    done = []
+    recovered.load(copy.deepcopy(server.state), lambda: done.append(True))
+    drain(lambda: bool(done))
+    settled(recovered)
+    copies = {path: raw for path, raw in server.files.items() if 'history-recovery-' in path}
+    assert set(copies.values()) == set(originals.values())
+    assert not recovered.invalid and not recovered.document.entries
+    edit(recovered, server, 'PUT', '/' + key('nodes', node()), {'x': 450})
+    settled(recovered)
+    for cycle in range(2):
+        owner3, reopened, _ = session(server)
+        done.clear()
+        reopened.load(copy.deepcopy(server.state), lambda: done.append(True))
+        drain(lambda: bool(done))
+        assert not reopened.invalid and not reopened.recovery_message
+        assert reopened.document.cursor == 1 and reopened.can_undo
+        reopened.navigate(0)
+        settled(reopened)
+        assert server.state[key('nodes', node())]['x'] == 400
+        reopened.navigate(1)
+        settled(reopened)
+        assert server.state[key('nodes', node())]['x'] == 450
+    assert copies == {path: raw for path, raw in server.files.items() if 'history-recovery-' in path}
+
+
+def test_failed_recovery_upload_never_overwrites_original_slots():
+    owner, history, server = session()
+    edit(history, server, 'POST', '/nodes', node())
+    settled(history)
+    before = dict(server.files)
+    server.state[key('nodes', node())]['x'] = 999
+    server.reject_upload = True
+    owner2, reopened, _ = session(server)
+    done = []
+    reopened.load(copy.deepcopy(server.state), lambda: done.append(True))
+    drain(lambda: bool(done))
+    assert reopened.invalid and 'left untouched' in reopened.invalid
+    assert server.files == before
+    assert not reopened.can_undo
+
+
+def test_corrupt_or_newer_version_slots_are_archived_before_recording_resumes():
+    owner, history, server = session()
+    server.files['/files/' + SLOTS[0]] = b'unsupported or truncated file'
+    done = []
+    history.load({}, lambda: done.append(True))
+    drain(lambda: bool(done))
+    settled(history)
+    assert not history.invalid and history.recovery_message
+    assert b'unsupported or truncated file' in [raw for name, raw in server.files.items() if 'history-recovery-' in name]
+    edit(history, server, 'POST', '/nodes', node())
+    settled(history)
+    assert history.can_undo
+
+
+def test_unreadable_slot_is_never_replaced_by_recovery():
+    owner, history, server = session()
+    edit(history, server, 'POST', '/nodes', node())
+    settled(history)
+    originals = dict(server.files)
+    server.state[key('nodes', node())]['x'] = 500
+    owner2, reopened, _ = session(server)
+    def transport(method, path, callback=None, **kwargs):
+        if method == 'GET' and path == '/files/' + SLOTS[0]:
+            callback({'status': 403, 'message': 'Access denied'}, error=True)
+        else:
+            server.request(method, path, callback, **kwargs)
+    reopened._transport = transport
+    done = []
+    reopened.load(copy.deepcopy(server.state), lambda: done.append(True))
+    drain(lambda: bool(done))
+    assert reopened.invalid and 'could not be read' in reopened.invalid
+    assert server.files == originals
