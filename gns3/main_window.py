@@ -83,6 +83,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._settings = {}
 
         self.setupUi(self)
+        self._setupNodeGroupingActions()
+        self._setupNavigationActions()
         self.setUnifiedTitleAndToolBarOnMac(True)
 
         # These widgets will be disabled when no project is loaded
@@ -113,6 +115,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         topology = Topology.instance()
         topology.setMainWindow(self)
         topology.project_changed_signal.connect(self._projectChangedSlot)
+        from .history.ui import HistoryUI
+        self._history_ui = HistoryUI(self)
         Controller.instance().setParent(self)
         LocalServer.instance().setParent(self)
 
@@ -1136,6 +1140,93 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self._notif_dialog.resize()
         super().resizeEvent(event)
 
+    def _setupNavigationActions(self):
+        """Keep toolbar state synchronized with empty-canvas mouse gestures."""
+        self._navigation_actions = QtGui.QActionGroup(self)
+        self._navigation_actions.setExclusive(True)
+        for mode, title, help_text, cursor_shape in (
+            ("hand", "Hand", "Hand: drag empty canvas with the left mouse button to pan", QtCore.Qt.CursorShape.OpenHandCursor),
+            ("selection", "Selection", "Selection: drag a rectangle with the right mouse button; release for actions", QtCore.Qt.CursorShape.ArrowCursor),
+        ):
+            action = QtGui.QAction(title, self)
+            action.setObjectName("ui" + title + "Action")
+            action.setCheckable(True)
+            action.setToolTip(help_text)
+            action.setStatusTip(help_text)
+            # Native cursor artwork follows the desktop's pointer theme.
+            pixmap = QtGui.QCursor(cursor_shape).pixmap()
+            if pixmap.isNull():
+                pixmap = QtGui.QPixmap(32, 32)
+                pixmap.fill(QtCore.Qt.GlobalColor.transparent)
+                painter = QtGui.QPainter(pixmap)
+                painter.setPen(QtGui.QPen(QtGui.QColor("#3484c6"), 2))
+                painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+                points = ([(9, 28), (5, 17), (8, 15), (12, 19), (12, 5), (15, 5),
+                           (15, 15), (18, 8), (21, 9), (20, 16), (24, 12), (27, 14),
+                           (25, 24), (22, 28)] if mode == "hand" else
+                          [(7, 3), (7, 27), (13, 21), (18, 29), (22, 27), (17, 19), (26, 19)])
+                painter.drawPolygon(QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in points]))
+                painter.end()
+            action.setIcon(QtGui.QIcon(pixmap))
+            self._navigation_actions.addAction(action)
+            self.uiAnnotationToolBar.addAction(action)
+            button = self.uiAnnotationToolBar.widgetForAction(action)
+            button.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+            button.setStatusTip(help_text)
+            action.triggered.connect(lambda checked=False, mode=mode: self.uiGraphicsView.setNavigationMode(mode))
+            self.uiGraphicsView.navigationModeChanged.connect(
+                lambda current, mode=mode, action=action: action.setChecked(current == mode))
+            setattr(self, action.objectName(), action)
+        self.uiGraphicsView.setNavigationMode("hand")
+
+    def _setupNodeGroupingActions(self):
+        """Momentary canvas commands, with hover icons and status-bar help."""
+        for name, text, shortcut, callback in (
+            ("uiGroupNodesAction", "Container elements", "Ctrl+G", self.uiGraphicsView.groupSelectedNodes),
+            ("uiUngroupNodesAction", "Unpack container", "Ctrl+Shift+G", self.uiGraphicsView.ungroupSelectedNodes),
+        ):
+            action = QtGui.QAction(text, self.uiGraphicsView)
+            action.setObjectName(name)
+            action.setCheckable(False)
+            action.setShortcut(QtGui.QKeySequence(shortcut))
+            action.setShortcutContext(QtCore.Qt.ShortcutContext.WidgetShortcut)
+            action.setToolTip("{} ({})".format(text, shortcut))
+            action.setStatusTip("{} ({})".format(text, shortcut))
+            action.triggered.connect(callback)
+            self.uiGraphicsView.addAction(action)
+            self.uiAnnotateMenu.addAction(action)
+            setattr(self, name, action)
+
+        icon = QtGui.QIcon()
+        for mode, color in ((QtGui.QIcon.Mode.Normal, "#68737d"),
+                            (QtGui.QIcon.Mode.Active, "#3484c6"),
+                            (QtGui.QIcon.Mode.Disabled, "#aeb4b9")):
+            pixmap = QtGui.QPixmap(32, 32)
+            pixmap.fill(QtCore.Qt.GlobalColor.transparent)
+            painter = QtGui.QPainter(pixmap)
+            pen = QtGui.QPen(QtGui.QColor(color), 2)
+            painter.setPen(pen)
+            painter.drawRect(7, 7, 8, 8)
+            painter.drawRect(17, 17, 8, 8)
+            pen.setStyle(QtCore.Qt.PenStyle.SolidLine)
+            painter.setPen(pen)
+            painter.drawRect(2, 2, 28, 28)
+            painter.end()
+            icon.addPixmap(pixmap, mode, QtGui.QIcon.State.Off)
+        self.uiGroupNodesAction.setIcon(icon)
+        self.uiAnnotationToolBar.addAction(self.uiGroupNodesAction)
+        button = self.uiAnnotationToolBar.widgetForAction(self.uiGroupNodesAction)
+        # A request creates one group, immediately or after the next selection.
+        # Keep the button released while the canvas waits for that selection.
+        button.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+        button.setStatusTip(self.uiGroupNodesAction.statusTip())
+
+        def released():
+            button.setDown(False)
+            button.setChecked(False)
+            button.clearFocus()
+        self.uiGroupNodesAction.triggered.connect(released)
+
     def keyPressEvent(self, event):
         """
         Handles all key press events for the main window.
@@ -1162,12 +1253,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param event: QCloseEvent
         """
 
-        if Topology.instance().project():
+        if Topology.instance().project() and not getattr(self, "_history_exit_ready", False):
             reply = QtWidgets.QMessageBox.question(self, "Confirm Exit", "Are you sure you want to exit GNS3?",
                                                    QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
             if reply == QtWidgets.QMessageBox.StandardButton.No:
                 event.ignore()
                 return
+
+        project = Topology.instance().project()
+        history = getattr(project, "history", None)
+        if history is not None and history.ready and not getattr(self, "_history_exit_ready", False):
+            event.ignore()
+            def flushed(ok):
+                if ok:
+                    self._history_exit_ready = True
+                    self.close()
+                else:
+                    history.failed.emit("GNS3 was not closed because its project history could not be saved.")
+            history.flush(flushed)
+            return
 
         progress = Progress.instance()
         progress.setAllowCancelQuery(True)

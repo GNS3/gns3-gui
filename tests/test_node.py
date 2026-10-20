@@ -145,7 +145,7 @@ def test_updatePorts_PortChange(vpcs_device):
 
 def test_node_setGraphics(vpcs_device):
     node = MagicMock(
-        pos=MagicMock(
+        scenePos=MagicMock(
             return_value=MagicMock(
                 x=MagicMock(
                     return_value=10

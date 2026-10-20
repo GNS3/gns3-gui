@@ -60,7 +60,8 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
         # node label
         self._node_label = None
 
-        self.setPos(QtCore.QPointF(self._node.x(), self._node.y()))
+        from .group_item import set_scene_position
+        set_scene_position(self, QtCore.QPointF(self._node.x(), self._node.y()))
 
         # Temporary symbol during loading
         renderer = QImageSvgRenderer(":/icons/reload.svg")
@@ -157,6 +158,11 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
             self._initialized = True
             self.updateNode()
 
+        from .group_item import GroupItem
+        parent = self.parentItem()
+        if isinstance(parent, GroupItem):
+            parent.refreshBounds()
+
     def node(self):
         """
         Returns the node attached to this node item.
@@ -168,8 +174,8 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
 
     def setPos(self, *args):
         super().setPos(*args)
-        self._node.setSettingValue("x", int(self.x()))
-        self._node.setSettingValue("y", int(self.y()))
+        self._node.setSettingValue("x", int(self.scenePos().x()))
+        self._node.setSettingValue("y", int(self.scenePos().y()))
 
     @qslot
     def addLink(self, link_item, *args):
@@ -223,7 +229,8 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
         :param base_node_id: base node identifier (integer)
         """
 
-        self.setPos(QtCore.QPointF(self._node.x(), self._node.y()))
+        from .group_item import set_scene_position
+        set_scene_position(self, QtCore.QPointF(self._node.x(), self._node.y()))
         self.setSymbol(self._node.symbol())
         self.update()
 
@@ -265,8 +272,14 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
         """
 
         self.setSymbol(self._node.settings().get("symbol"))
-        self.setPos(self._node.settings().get("x", 0), self._node.settings().get("y", 0))
-        self.setZValue(self._node.settings().get("z", 0))
+        from .group_item import set_scene_position, scene_z, GroupItem
+        # A delayed websocket echo may describe the position before this drag.
+        # Keep the native Qt position until release saves it, including devices
+        # carried by a moving container. Other server attributes still update.
+        if not self._main_window.uiGraphicsView._groups.isDragging(self):
+            set_scene_position(self, QtCore.QPointF(self._node.settings().get("x", 0), self._node.settings().get("y", 0)))
+        parent = self.parentItem()
+        self.setZValue(self._node.settings().get("z", 0) - (scene_z(parent) if isinstance(parent, GroupItem) else 0))
         self.setLocked(self._node.settings().get("locked", False))
         self._updateLabel()
 
@@ -284,8 +297,14 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
 
         if not self.scene():
             return
+        from .group_item import GroupItem, reparent
+        parent = self.parentItem()
+        if isinstance(parent, GroupItem):
+            reparent(self, None)
         if self in self.scene().items():
             self.scene().removeItem(self)
+        if isinstance(parent, GroupItem) and not parent.deleting():
+            parent.updateDrawing()
 
     @qslot
     def serverErrorSlot(self, base_node_id, message, *args):
@@ -478,6 +497,11 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
             mid_y = self.boundingRect().height() / 2
             value.setY((grid_size * round((value.y() + mid_y) / grid_size)) - mid_y)
 
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionChange and self._allow_snap_to_grid:
+            from .group_item import GroupItem
+            if isinstance(self.parentItem(), GroupItem):
+                value = self._main_window.uiGraphicsView._groups.snapPosition(self, value)
+
         # dynamically change the renderer when this node item is selected/unselected.
         if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemSelectedChange:
             if value:
@@ -485,6 +509,12 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
             else:
                 self.graphicsEffect().setEnabled(False)
                 self.updateNode()
+
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionHasChanged:
+            from .group_item import GroupItem
+            parent = self.parentItem()
+            if isinstance(parent, GroupItem):
+                parent.refreshBounds()
 
         # adjust link item positions when this node is moving or has changed.
         if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionChange or change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionHasChanged:

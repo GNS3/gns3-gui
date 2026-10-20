@@ -17,12 +17,14 @@
 
 import os
 import json
-from .qt import QtCore, qpartial, QtNetwork, QtWebSockets, qslot
+from .qt import QtCore, qpartial, QtNetwork, QtWebSockets, QtWidgets, qslot
 
 from gns3.controller import Controller
 from gns3.topology import Topology
 from gns3.local_config import LocalConfig
 from gns3.settings import GRAPHICS_VIEW_SETTINGS
+from .history.session import HistorySession
+from .history.model import HistoryDocument
 from gns3.utils import parse_version
 
 import logging
@@ -84,6 +86,7 @@ class Project(QtCore.QObject):
         self._websocket = QtWebSockets.QWebSocket()
 
         super().__init__()
+        self.history = HistorySession(self)
 
     def name(self):
         """
@@ -324,11 +327,19 @@ class Project(QtCore.QObject):
         """
         Duplicate a project
         """
-        Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id),
-                                   qpartial(self._duplicateCallback, callback),
-                                   body={"name": name, "path": path},
-                                   progressText="Duplicating project '{}'...".format(name),
-                                   timeout=None)
+        def dispatch(ok=True):
+            if not ok:
+                self.history.failed.emit("Project was not duplicated because its history could not be saved.")
+                return
+            Controller.instance().post("/projects/{project_id}/duplicate".format(project_id=self._id),
+                                       qpartial(self._duplicateCallback, callback),
+                                       body={"name": name, "path": path},
+                                       progressText="Duplicating project '{}'...".format(name),
+                                       timeout=None)
+        if self.history.ready:
+            self.history.flush(dispatch)
+        else:
+            dispatch()
 
     def _duplicateCallback(self, callback, result, error=False, **kwargs):
         if error:
@@ -436,8 +447,17 @@ class Project(QtCore.QObject):
         Full arg list in createHTTPQuery
         """
 
-        path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
-        Controller.instance().createHTTPQuery(method, path, callback, body=body, **kwargs)
+        full_path = "/projects/{project_id}{path}".format(project_id=self._id, path=path)
+        def dispatch(ok=True):
+            if not ok:
+                if callback:
+                    callback({"message": "Project history could not be saved; retry before exporting."}, error=True)
+                return
+            Controller.instance().createHTTPQuery(method, full_path, callback, body=body, **kwargs)
+        if method == "GET" and path.startswith("/export") and self.history.ready:
+            self.history.flush(dispatch)
+        else:
+            dispatch()
 
     def create(self):
         """
@@ -496,6 +516,9 @@ class Project(QtCore.QObject):
                 self._startListenNotifications()
 
         self.project_updated_signal.emit()
+        self.history.document = HistoryDocument(self.id())
+        self.history.ready = True
+        self.history.changed.emit()
         self.project_loaded_signal.emit()
 
     def _parseResponse(self, result):
@@ -543,6 +566,9 @@ class Project(QtCore.QObject):
             return
 
         self._parseResponse(result)
+        self.history.ready = False
+        self.history.invalid = ''
+        self.history.document = HistoryDocument(self.id())
 
         if self._closed:
             self._closed = False
@@ -559,6 +585,7 @@ class Project(QtCore.QObject):
             return
         topo = Topology.instance()
         for node in result:
+            self.history.observe("nodes", node)
             topo.createNode(node)
         self.get("/links", self._listLinksCallback)
 
@@ -568,6 +595,7 @@ class Project(QtCore.QObject):
             return
         topo = Topology.instance()
         for link in result:
+            self.history.observe("links", link)
             topo.createLink(link)
         self.get("/drawings", self._listDrawingsCallback)
 
@@ -577,14 +605,30 @@ class Project(QtCore.QObject):
             return
         topo = Topology.instance()
         for drawing in result:
+            self.history.observe("drawings", drawing)
             topo.createDrawing(drawing)
-        self.project_loaded_signal.emit()
+        try:
+            topo._main_window.uiGraphicsView._groups.restore(persist=False)
+        except ValueError as error:
+            log.error("Cannot restore canvas groups: %s", error)
+            QtWidgets.QMessageBox.warning(topo._main_window, "Canvas groups", str(error))
+        self.history.load(dict(self.history.document.state), self.project_loaded_signal.emit)
 
     def close(self, local_server_shutdown=False):
         """Close project"""
 
         if self._closed or self._closing:
             return
+        if self.history.ready and not getattr(self, "_history_close_ready", False):
+            def flushed(ok):
+                if ok:
+                    self._history_close_ready = True
+                    self.close(local_server_shutdown=local_server_shutdown)
+                else:
+                    self.history.failed.emit("Project was not closed because its history could not be saved.")
+            self.history.flush(flushed)
+            return
+        self._history_close_ready = False
         self._closing = True
         if self._id:
             self.project_about_to_close_signal.emit()
@@ -686,6 +730,13 @@ class Project(QtCore.QObject):
             return
 
     def _event_received(self, result, *args, **kwargs):
+        event = result.get("action", "")
+        kind = {"node": "nodes", "link": "links", "drawing": "drawings"}.get(event.split(".")[0])
+        if kind and not kwargs.get("history_replay"):
+            if self.history.replaying:
+                return  # Replay applies verified resources through this same path.
+            if event.endswith((".created", ".updated", ".deleted")):
+                self.history.observe(kind, result["event"], deleted=event.endswith(".deleted"), external=True)
 
         # Log only relevant events
         if result["action"] not in ("ping"):
@@ -702,6 +753,7 @@ class Project(QtCore.QObject):
             node = Topology.instance().getNodeFromUuid(result["event"]["node_id"])
             if node is not None:
                 node.delete(skip_controller=True)
+                Topology.instance().removeNode(node)
         elif result["action"] == "link.created":
             link = Topology.instance().getLinkFromUuid(result["event"]["link_id"])
             if link is None:
@@ -718,10 +770,15 @@ class Project(QtCore.QObject):
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is None:
                 Topology.instance().createDrawing(result["event"])
+            view = Topology.instance()._main_window.uiGraphicsView
+            view._groups.scheduleRestore()
         elif result["action"] == "drawing.updated":
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is not None:
                 drawing.updateDrawingCallback(result["event"])
+                from .items.group_item import GroupItem
+                if isinstance(drawing, GroupItem):
+                    Topology.instance()._main_window.uiGraphicsView._groups.scheduleRestore()
         elif result["action"] == "drawing.deleted":
             drawing = Topology.instance().getDrawingFromUuid(result["event"]["drawing_id"])
             if drawing is not None:

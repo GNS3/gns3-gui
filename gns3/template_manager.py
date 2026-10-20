@@ -185,7 +185,7 @@ class TemplateManager(QtCore.QObject):
                 self.created_signal.emit(template_id)
         self.templates_changed_signal.emit()
 
-    def createNodeFromTemplateId(self, project, template_id, x, y):
+    def createNodeFromTemplateId(self, project, template_id, x, y, callback=None):
         """
         Creates a new node from a template.
         """
@@ -210,8 +210,13 @@ class TemplateManager(QtCore.QObject):
                 return False
             params["compute_id"] = server.id()
 
+        def completed(result, error=False, **kwargs):
+            self._createNodeFromTemplateCallback(result, error, **kwargs)
+            if callback:
+                callback(result, error=error)
+
         self._controller.post("/projects/{project_id}/templates/{template_id}".format(project_id=project.id(), template_id=template_id),
-                              self._createNodeFromTemplateCallback,
+                              completed,
                               params,
                               showProgress=False,
                               timeout=None)

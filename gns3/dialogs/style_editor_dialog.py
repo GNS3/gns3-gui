@@ -38,6 +38,11 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
 
         super().__init__(parent)
         self.setupUi(self)
+        self.uiWidthSpinBox.setMaximum(1000000)
+        self.uiHeightSpinBox.setMaximum(1000000)
+        self.uiBorderWidthSpinBox.setMinimum(0)
+        for field in (self.uiWidthSpinBox, self.uiHeightSpinBox, self.uiBorderWidthSpinBox):
+            field.setStyleSheet('QSpinBox, QSpinBox QLineEdit { background-color: white; color: black; selection-background-color: #3484c6; selection-color: white; }')
 
         self._items = items
         self.uiColorPushButton.clicked.connect(self._setColorSlot)
@@ -128,6 +133,8 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
         """
 
         border_style = QtCore.Qt.PenStyle(self.uiBorderStyleComboBox.itemData(self.uiBorderStyleComboBox.currentIndex()))
+        if self.uiBorderWidthSpinBox.value() == 0:
+            border_style = QtCore.Qt.PenStyle.NoPen
         pen = QtGui.QPen(self._border_color, self.uiBorderWidthSpinBox.value(), border_style, QtCore.Qt.PenCapStyle.RoundCap, QtCore.Qt.PenJoinStyle.RoundJoin)
         if self._color:
             brush = QtGui.QBrush(self._color)
@@ -147,7 +154,8 @@ class StyleEditorDialog(QtWidgets.QDialog, Ui_StyleEditorDialog):
                 item.setHorizontalCornerRadius(corner_radius)
                 item.setVerticalCornerRadius(corner_radius)
             if isinstance(item, ShapeItem):
-                item.setWidthAndHeight(self.uiWidthSpinBox.value(), self.uiHeightSpinBox.value())
+                item.setWidthAndHeight(item.rect().width() if int(item.rect().width()) == self.uiWidthSpinBox.value() else self.uiWidthSpinBox.value(),
+                                       item.rect().height() if int(item.rect().height()) == self.uiHeightSpinBox.value() else self.uiHeightSpinBox.value())
             item.setRotation(self.uiRotationSpinBox.value())
 
     def done(self, result):

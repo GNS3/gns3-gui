@@ -15,10 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..qt import QtCore, QtWidgets, qslot, QtGui
+from ..qt import QtCore, QtWidgets, qslot, QtGui, sip_is_deleted
 from .utils import colorFromSvg
 
 import uuid
+import hashlib
+import base64
+import json
+import tempfile
+from pathlib import Path
 import logging
 import binascii
 log = logging.getLogger(__name__)
@@ -44,10 +49,16 @@ class DrawingItem:
     def __init__(self, project=None, pos=None, drawing_id=None, svg=None, z=0, locked=False, rotation=0, **kws):
         self._id = drawing_id
         self._deleting = False
+        self._server_created = drawing_id is not None
+        self._create_pending = False
+        self._update_pending = False
+        self._delete_on_create = False
         self._allow_snap_to_grid = True
         self._locked = locked
         if self._id is None:
             self._id = str(uuid.uuid4())
+        self._canvas_id = self._id
+        self._canvas_identity_saved = False
         self.setFlags(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable | QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsFocusable | QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsSelectable | QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges)
 
         from ..main_window import MainWindow
@@ -73,8 +84,84 @@ class DrawingItem:
         return self._id
 
     def create(self):
-        if self._project:
-            self._project.post("/drawings", self._createDrawingCallback, body=self.__json__())
+        if self._project and not self._server_created and not self._create_pending and not self.deleting():
+            # POST/PUT can use different HTTP connections. A client-generated
+            # UUID alone does not mean the server has created the drawing yet.
+            self._create_pending = True
+            self._hash_svg = None  # creation always needs the complete SVG
+            self._sendDrawing("post", "/drawings", self._createDrawingCallback, self.__json__())
+
+    def _sendDrawing(self, method, path, callback, body, **kwargs):
+        """Stream oversized SVGs as project assets, then send a small reference.
+
+        The v2 JSON endpoint is limited to 1 MiB; the raw file route streams its
+        body. Content-addressed SVGs retain dimensions, pixels and metadata and
+        are included by the server's existing project export machinery.
+        """
+        svg = body.get('svg')
+        if not isinstance(svg, str) or len(json.dumps(body).encode('utf-8')) < 900000:
+            getattr(self._project, method)(path, callback, body=body, **kwargs)
+            return
+        payload = svg.encode('utf-8')
+        filename = hashlib.sha256(payload).hexdigest() + '.svg'
+        with tempfile.NamedTemporaryFile(prefix='gns3-drawing-', suffix='.svg', delete=False) as temporary:
+            temporary.write(payload)
+            source = Path(temporary.name)
+        project = self._project
+        seed_id = str(uuid.uuid4())
+        from ..history.session import HistorySession
+        history = getattr(project, "history", None)
+        release_history = history.hold() if isinstance(history, HistorySession) else lambda: None
+        if isinstance(history, HistorySession):
+            history.auxiliary.add("drawings/" + seed_id)
+        original_callback = callback
+        def callback(*args, **kwargs):
+            try:
+                original_callback(*args, **kwargs)
+            finally:
+                release_history()
+
+        def uploaded(result, error=False, **ignored):
+            source.unlink(missing_ok=True)
+            project.delete("/drawings/" + seed_id, None)
+            if sip_is_deleted(self):
+                release_history()
+                return
+            if error:
+                self._hash_svg = None
+                callback(result, error=True)
+                return
+            compact = dict(body, svg=filename)
+            getattr(project, method)(path, callback, body=compact, **kwargs)
+
+        def prepared(result, error=False, **ignored):
+            if error:
+                source.unlink(missing_ok=True)
+                self._hash_svg = None
+                callback(result, error=True)
+                return
+            project.post('/files/project-files/images/' + filename, uploaded, body=source)
+
+        # The raw file API cannot create missing directories. A transparent
+        # native image drawing initializes the server's pictures store even in
+        # an otherwise empty project; it is removed after the streamed upload.
+        pixel = QtGui.QImage(1, 1, QtGui.QImage.Format.Format_ARGB32)
+        pixel.fill(QtCore.Qt.GlobalColor.transparent)
+        data = QtCore.QByteArray()
+        buffer = QtCore.QBuffer(data)
+        buffer.open(QtCore.QIODeviceBase.OpenModeFlag.WriteOnly)
+        pixel.save(buffer, 'PNG')
+        seed = ('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1" height="1">'
+                '<image width="1" height="1" xlink:href="data:image/png;base64,' +
+                base64.b64encode(bytes(data)).decode() + '"/><!--' + ' ' * 600 + '--></svg>')
+        try:
+            project.post('/drawings', prepared, body=dict(drawing_id=seed_id, x=0, y=0, z=-1000, svg=seed))
+        except Exception:
+            source.unlink(missing_ok=True)
+            project.delete('/drawings/' + seed_id, None)
+            self._hash_svg = None
+            release_history()
+            raise
 
     def _createDrawingCallback(self, result, error=False, **kwargs):
         """
@@ -85,15 +172,36 @@ class DrawingItem:
         :returns: Boolean success or not
         """
 
+        if sip_is_deleted(self):
+            return False
+        self._create_pending = False
         if error:
+            self._server_created = False
             log.error("Error while creating drawing: {}".format(result["message"]))
             return False
+        self._server_created = True
         self._id = result["drawing_id"]
-        self.updateDrawingCallback(result)
+        if self.deleting() and self._delete_on_create:
+            # Deletion while POST was pending must not leave an orphan behind.
+            self._project.delete("/drawings/" + self._id, None)
+        elif self.deleting():
+            return
+        elif self._update_pending:
+            # Preserve edits made while POST was in flight; do not apply its
+            # old coordinates/SVG before flushing the newest complete state.
+            self._update_pending = False
+            self._hash_svg = None
+            self.updateDrawing()
+        else:
+            self.updateDrawingCallback(result)
 
     def updateDrawing(self):
         if self._id and not self.deleting() and self._project:
-            self._project.put("/drawings/" + self._id, self.updateDrawingCallback, body=self.__json__(), showProgress=False)
+            if not self._server_created:
+                self._update_pending = True
+                self.create()
+                return
+            self._sendDrawing("put", "/drawings/" + self._id, self.updateDrawingCallback, self.__json__(), showProgress=False)
 
     @qslot
     def updateDrawingCallback(self, result, error=False, **kwargs):
@@ -105,20 +213,27 @@ class DrawingItem:
         :returns: Boolean success or not
         """
 
+        if self.deleting():
+            return
         if error:
             if "doesn't exist" in result.get("message", ""):
                 log.warning("Drawing not found on server, recreating: {}".format(self._id))
-                self._id = None
+                self._server_created = False
+                self._hash_svg = None
                 self.create()
                 return True
             log.error("Error while updating drawing: {}".format(result["message"]))
             return False
-        self.setPos(QtCore.QPointF(result["x"], result["y"]))
-        self.setZValue(result["z"])
+        from .group_item import set_scene_position, scene_z, GroupItem
+        set_scene_position(self, QtCore.QPointF(result["x"], result["y"]))
+        parent = self.parentItem()
+        self.setZValue(result["z"] - (scene_z(parent) if isinstance(parent, GroupItem) else 0))
         self.setLocked(result["locked"])
         self.setRotation(result["rotation"])
         if "svg" in result:
             self.fromSvg(result["svg"])
+        if isinstance(parent, GroupItem):
+            parent.refreshBounds()
 
     def handleKeyPressEvent(self, event):
         """
@@ -166,15 +281,19 @@ class DrawingItem:
         self._allow_snap_to_grid = True
 
     def __json__(self):
+        from .group_item import scene_z, with_identity, GroupItem
         data = {
             "drawing_id": self._id,
-            "x": int(self.pos().x()),
-            "y": int(self.pos().y()),
-            "z": int(self.zValue()),
+            "x": int(self.scenePos().x()),
+            "y": int(self.scenePos().y()),
+            "z": int(scene_z(self)),
             "locked": self._locked,
             "rotation": int(self.rotation())
         }
         svg = self.toSvg()
+        if not isinstance(self, GroupItem) and (isinstance(self.parentItem(), GroupItem) or self._canvas_identity_saved):
+            svg = with_identity(svg, self._canvas_id)
+            self._canvas_identity_saved = True
         hash_svg = binascii.crc32(svg.encode())
         if hash_svg != self._hash_svg:
             data["svg"] = svg
@@ -223,13 +342,25 @@ class DrawingItem:
         """
 
         self.setDeleting()
+        self._delete_on_create = self._create_pending and not skip_controller
+        from .group_item import GroupItem, reparent
+        parent = self.parentItem()
+        if isinstance(parent, GroupItem):
+            reparent(self, None)
         self.scene().removeItem(self)
         from ..topology import Topology
         Topology.instance().removeDrawing(self)
-        if self._id and not skip_controller:
+        if self._id and self._project and not skip_controller and self._server_created:
             self._project.delete("/drawings/" + self._id, None)
+        if isinstance(parent, GroupItem) and not parent.deleting():
+            parent.updateDrawing()
 
     def itemChange(self, change, value):
+        from .group_item import GroupItem
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionHasChanged:
+            parent = self.parentItem()
+            if isinstance(parent, GroupItem):
+                parent.refreshBounds()
 
         if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionChange and self._main_window.uiSnapToGridAction.isChecked() \
                 and self._allow_snap_to_grid:
@@ -238,6 +369,11 @@ class DrawingItem:
             value.setX((grid_size * round((value.x() + mid_x) / grid_size)) - mid_x)
             mid_y = self.boundingRect().height() / 2
             value.setY((grid_size * round((value.y()+mid_y)/grid_size)) - mid_y)
+
+        if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemPositionChange and self._allow_snap_to_grid:
+            from .group_item import GroupItem
+            if isinstance(self.parentItem(), GroupItem):
+                value = self._main_window.uiGraphicsView._groups.snapPosition(self, value)
 
         if change == QtWidgets.QGraphicsItem.GraphicsItemChange.ItemSelectedChange:
             if not value:

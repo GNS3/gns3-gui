@@ -47,6 +47,7 @@ class Topology(QtCore.QObject):
     Topology.
     """
     node_added_signal = QtCore.Signal(int)
+    hierarchy_changed_signal = QtCore.Signal()
     project_changed_signal = QtCore.Signal()
 
     def __init__(self):
@@ -434,6 +435,7 @@ class Topology(QtCore.QObject):
 
         if drawing in self._drawings:
             self._drawings.remove(drawing)
+            self.hierarchy_changed_signal.emit()
 
     def getDrawingFromUuid(self, drawing_id):
         """
@@ -561,6 +563,12 @@ class Topology(QtCore.QObject):
             log.error(str(e))
             return
         try:
+            from .items.group_item import read_group
+            group = read_group(drawing_data["svg"])
+        except (ValueError, TypeError) as error:
+            log.error("Invalid canvas group: %s", error)
+            return
+        try:
             # If SVG is more complex we consider it as an image
             if len(svg[0]) != 0:
                 type = "image"
@@ -579,6 +587,8 @@ class Topology(QtCore.QObject):
         except IndexError:
             # If unknow we render it as a raw SVG image
             type = "image"
+        if group is not None:
+            type = "group"
         self._main_window.uiGraphicsView.createDrawingItem(type, drawing_data["x"], drawing_data["y"], drawing_data["z"], locked=drawing_data["locked"], rotation=drawing_data["rotation"], drawing_id=drawing_data["drawing_id"], svg=drawing_data["svg"])
 
     @staticmethod
