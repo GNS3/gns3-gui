@@ -213,6 +213,12 @@ class GroupItem(QtWidgets.QGraphicsRectItem, DrawingItem):
     def updateDrawingCallback(self, result, error=False, **kwargs):
         if sip_is_deleted(self) or self.deleting():
             return
+        if not error and self._graphics_view._groups.isDragging(self):
+            # Equal-revision acknowledgments can still carry the origin from
+            # before the native drag. On release updateDrawing advances the
+            # revision, allowing the normal stale-response check to reject it.
+            QtCore.QTimer.singleShot(16, lambda: self.updateDrawingCallback(result, error, **kwargs))
+            return
         if not error and "svg" in result:
             try:
                 data = read_group(result["svg"])

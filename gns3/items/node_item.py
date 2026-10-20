@@ -273,7 +273,11 @@ class NodeItem(QtSvgWidgets.QGraphicsSvgItem):
 
         self.setSymbol(self._node.settings().get("symbol"))
         from .group_item import set_scene_position, scene_z, GroupItem
-        set_scene_position(self, QtCore.QPointF(self._node.settings().get("x", 0), self._node.settings().get("y", 0)))
+        # A delayed websocket echo may describe the position before this drag.
+        # Keep the native Qt position until release saves it, including devices
+        # carried by a moving container. Other server attributes still update.
+        if not self._main_window.uiGraphicsView._groups.isDragging(self):
+            set_scene_position(self, QtCore.QPointF(self._node.settings().get("x", 0), self._node.settings().get("y", 0)))
         parent = self.parentItem()
         self.setZValue(self._node.settings().get("z", 0) - (scene_z(parent) if isinstance(parent, GroupItem) else 0))
         self.setLocked(self._node.settings().get("locked", False))

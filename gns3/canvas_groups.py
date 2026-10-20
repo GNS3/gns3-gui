@@ -50,14 +50,25 @@ class CanvasGroups:
         project = self.view._topology.project()
 
         def restore():
-            self._restore_pending = False
             if sip.isdeleted(self.view) or self.view._topology.project() is not project:
+                self._restore_pending = False
                 return
+            if self._drag_roots or self._resize is not None:
+                # Delayed drawing echoes must not restore saved coordinates or
+                # clipping parents while the user owns a geometry gesture.
+                QtCore.QTimer.singleShot(16, restore)
+                return
+            self._restore_pending = False
             try:
                 self.restore()
             except ValueError as error:
                 QtWidgets.QMessageBox.warning(self.view, "Canvas containers", str(error))
         QtCore.QTimer.singleShot(0, restore)
+
+    def isDragging(self, item):
+        """A native Qt drag owns the scene positions of its complete subtree."""
+        return any(not sip.isdeleted(root) and (root is item or root.isAncestorOf(item))
+                   for root in self._drag_roots)
 
     def selected(self):
         """Topology selection only; never select both an ancestor and child."""

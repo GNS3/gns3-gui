@@ -1005,12 +1005,18 @@ def test_selected_device_remains_painted_after_leaving_clipped_container(canvas)
     assert painted() > 50
 
 
-def test_dragged_device_viewport_cache_survives_unclipping(canvas):
+@pytest.mark.parametrize("zoom", [0.25, 0.5, 1, 2])
+@pytest.mark.parametrize("origin", [(100, 100), (100, -800)])
+def test_dragged_device_viewport_cache_survives_unclipping(canvas, zoom, origin):
     from gns3.qt import QtGui
     canvas._main_window.uiShowGridAction.isChecked.return_value = False
-    node = device(canvas, 100, 100)
+    node = device(canvas, *origin)
+    from gns3.qt.qimage_svg_renderer import QImageSvgRenderer
+    node.setSharedRenderer(QImageSvgRenderer(":/symbols/firewall.svg"))
     group(canvas, [node])
     canvas.window().show()
+    canvas.scale(zoom, zoom)
+    canvas.setSceneRect(QtCore.QRectF(-2000, -2000, 4000, 4000))
     canvas.centerOn(node.scenePos() + QtCore.QPointF(100, 0))
     node.setSelected(True)
     def painted():
@@ -1021,11 +1027,15 @@ def test_dragged_device_viewport_cache_survives_unclipping(canvas):
         return sum(image.pixelColor(x, y) != background
                    for y in range(rect.top(), rect.bottom()) for x in range(rect.left(), rect.right())
                    if image.rect().contains(x, y))
-    assert painted() > 20
+    assert painted() > 0
     QtWidgets.QGraphicsItem.setPos(node, node.pos() + QtCore.QPointF(180, 0))
     assert painted() == 0
+    node.graphicsEffect().setEnabled(False)
+    painted()
+    node.graphicsEffect().setEnabled(True)
+    painted()
     reparent(node, None)
-    assert painted() > 20
+    assert painted() > 0
 
 
 def test_history_replay_keeps_server_revision_on_live_container(canvas):
@@ -1048,3 +1058,58 @@ def test_history_replay_keeps_server_revision_on_live_container(canvas):
     with patch.object(Topology, 'instance', return_value=canvas._topology):
         history._apply_gui({key: canonical('drawings', physical)})
     assert frame._revision == 19
+
+
+@pytest.mark.parametrize('container_drag', [False, True])
+def test_late_node_echo_does_not_reposition_native_drag(canvas, container_drag):
+    node = device(canvas, 100, 100)
+    frame = group(canvas, [node])
+    canvas.enterGroup(frame)
+    root = frame if container_drag else node
+    root.setSelected(True)
+    canvas._groups.beginDrag(root)
+    QtWidgets.QGraphicsItem.setPos(root, root.pos() + QtCore.QPointF(300, 0))
+    position = node.scenePos()
+    node.node().settings.return_value = {'x': 100, 'y': 100, 'z': 1, 'locked': False}
+    node.setSymbol = MagicMock()
+    node._updateLabel = MagicMock()
+    node.updatedSlot()
+    assert node.scenePos() == position
+    canvas._groups.clearDrag()
+    node.updatedSlot()
+    assert node.scenePos() == QtCore.QPointF(100, 100)
+
+
+def test_queued_membership_restore_waits_for_completed_drag(canvas):
+    node = device(canvas, 100, 100)
+    frame = group(canvas, [node])
+    frame._members = read_group(frame.toSvg())['children']
+    canvas.enterGroup(frame)
+    node.setSelected(True)
+    canvas._groups.beginDrag(node)
+    QtWidgets.QGraphicsItem.setPos(node, node.pos() + QtCore.QPointF(300, 0))
+    position = node.scenePos()
+    canvas._groups.scheduleRestore()
+    QTest.qWait(35)
+    assert node.scenePos() == position
+    changed = canvas._groups.endDrag()
+    canvas._groups.save(changed)
+    QTest.qWait(35)
+    assert node.parentItem() is None and node.scenePos() == position
+    assert frame._members == [] and not canvas._groups._restore_pending
+
+
+def test_late_container_echo_does_not_reset_dragged_subtree(canvas):
+    node = device(canvas, 100, 100)
+    frame = group(canvas, [node])
+    response = dict(frame.__json__(), svg=frame.toSvg())
+    frame.setSelected(True)
+    canvas._groups.beginDrag(frame)
+    QtWidgets.QGraphicsItem.setPos(frame, frame.pos() + QtCore.QPointF(300, 0))
+    position = node.scenePos()
+    frame.updateDrawingCallback(response)
+    assert node.scenePos() == position
+    canvas._groups.clearDrag()
+    canvas._groups.save([frame])
+    QTest.qWait(35)
+    assert node.scenePos() == position
