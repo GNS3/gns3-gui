@@ -100,3 +100,23 @@ component as implemented in the final response.
 - Suíte final: 509 passaram, 1 ignorado; commits devem ser integrados às três
   branches atuais (canvas-improvements, codex/canvas-all-improvements e
   codex/feature-history) sem reescrever commits preexistentes.
+
+## Corrida assíncrona ao sair de um container persistido
+
+- Reproduzido com container carregado do servidor e símbolo firewall: um evento
+  node.updated atrasado reposicionava o item real durante o arraste, enquanto a
+  prévia externa ao recorte permanecia no destino. O rastreamento confirmou
+  NodeItem.updatedSlot como origem da mudança de posição.
+- A posição de dispositivos arrastados, inclusive descendentes de containers
+  movidos, pertence ao gesto até a liberação do mouse. Outros atributos recebidos
+  continuam sendo aplicados; fora do gesto as posições do servidor são aceitas.
+- Restaurações agendadas de associações aguardam o término de arraste/resize,
+  evitando reaplicar posições locais e pais de recorte durante o gesto.
+- Testes Qt cobrem ecos atrasados, movimento de descendentes, restauração
+  enfileirada e pintura com diferentes zooms e coordenadas fora da cena original.
+- Ecos do próprio container também aguardam o fim do gesto; o avanço da
+  revisão no save rejeita a origem antiga, sem deslocar a árvore de filhos.
+  O teste dedicado falhava antes da correção.
+- Suíte: 520 passaram, 1 ignorado; aviso de tarfile preexistente.
+- Servidor GNS3 2.2.61 + X11 virtual: 30 remoções/undos com símbolo visível,
+  reabertura, exportação/importação e os demais cenários completos passaram.

@@ -288,3 +288,29 @@ undo/redo, reabertura e uma topologia antiga populada sem slots de histórico.
 
 Validação desta revisão: **509 testes passaram, 1 ignorado**, além do roteiro
 com GNS3 Server 2.2.61, notificações WebSocket e verificação visual por pixels.
+
+### Delayed notifications during container exit gestures
+
+Native Qt dragging changes the item's scene position before the release writes
+that position to the server. A delayed `node.updated` notification can still
+contain the previous coordinates. Applying those coordinates during the gesture
+moves the real item independently of the unclipped drag preview. The GUI now
+preserves the dragged scene position until release saves it; this includes
+descendants carried by a moving container. Other node attributes still update
+normally, and server position notifications outside a gesture retain their
+existing behavior.
+
+Acknowledgments for a dragged container also wait until release, when the
+normal revision check rejects its outdated origin. Queued hierarchy restoration
+also waits until dragging/resizing has ended. This prevents saved local
+coordinates and clipping parents from being reapplied in
+the middle of the user's gesture. The normal release path saves position and
+membership together; the history format and persistence files are unchanged.
+
+Regression coverage includes actual viewport pixels at several zoom levels and
+outside the original scene bounds, delayed node notifications, and queued
+membership restoration. The server check repeats removal/undo on a loaded
+pre-history container with a firewall symbol and verifies visibility after the
+HTTP/WebSocket responses, alongside the reopen and portable-import checks.
+
+Validation: **520 tests passed, 1 skipped**, plus the real-server X11 checks.
