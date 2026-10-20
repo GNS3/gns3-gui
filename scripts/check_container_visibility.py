@@ -194,10 +194,46 @@ def main():
         from PyQt6.QtTest import QTest
         QTest.qWait(1600)
         check('00-grouped')
+        original_rect = view.mapFromScene(a.sceneBoundingRect()).boundingRect()
+        original_rect.translate(view.viewport().mapToGlobal(QtCore.QPoint()))
         drag(a, QtCore.QPointF(-240,0))
+        outside_rect = view.mapFromScene(a.sceneBoundingRect()).boundingRect()
+        outside_rect.translate(view.viewport().mapToGlobal(QtCore.QPoint()))
         del a
         gc.collect()
         check('01-detach-first')
+        target_first = history.document.cursor
+        def shortcut(key, cursor):
+            view.setFocus()
+            app.processEvents()
+            mouse(lambda: pyautogui.hotkey('ctrl', key))
+            wait(lambda: history.document.cursor == cursor)
+            settled(history)
+            QTest.qWait(50)
+        def absent(rect, name):
+            image = ImageGrab.grab(xdisplay=os.environ['DISPLAY'])
+            image.save(evidence / (name + '.png'))
+            colored = sum(max(image.getpixel((x,y))[:3])-min(image.getpixel((x,y))[:3]) > 10
+                          for y in range(rect.top()+2, rect.bottom()-2)
+                          for x in range(rect.left()+2, rect.right()-2))
+            live = [i for i in view.scene().items() if isinstance(i, NodeItem) and i.node().node_id() == identities[0]]
+            assert len(live) == 1, ('duplicate graphics UUID', name, len(live))
+            current = view.mapFromScene(live[0].sceneBoundingRect()).boundingRect()
+            current.translate(view.viewport().mapToGlobal(QtCore.QPoint()))
+            visible_pixels = sum(max(image.getpixel((x,y))[:3])-min(image.getpixel((x,y))[:3]) > 10
+                                 for y in range(current.top()+2, current.bottom()-2)
+                                 for x in range(current.left()+2, current.right()-2))
+            assert visible_pixels > 30, ('missing current symbol', name, visible_pixels)
+            diagnostic.write(name + ' ' + str(dict(pixels_in_old_position=colored, pixels_in_current_position=visible_pixels, graphics_count=len(live),
+                parent=bool(live[0].parentItem()), position=(live[0].scenePos().x(),live[0].scenePos().y()))) + '\n')
+            diagnostic.flush()
+            return colored
+        for attempt in range(6):
+            shortcut('z', target_first - 1)
+            undo_pixels = absent(outside_rect, 'replay-%02d-undo' % attempt)
+            shortcut('y', target_first)
+            redo_pixels = absent(original_rect, 'replay-%02d-redo' % attempt)
+            assert undo_pixels < 10 and redo_pixels < 10, ('stale visual clone', attempt, undo_pixels, redo_pixels)
         drag(b, QtCore.QPointF(240,0))
         del b
         gc.collect()

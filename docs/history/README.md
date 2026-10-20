@@ -328,3 +328,13 @@ antes/depois, screenshots, hipóteses descartadas, invariantes de limpeza,
 normalização de console_type em hubs sem console e comandos para repetir os testes.
 Validação final: **535 testes aprovados, 1 ignorado**, com servidor real, X11,
 Wayland aninhado, undo/redo e persistência após reabrir.
+
+### Clone visual durante replay de associação a containers
+
+A imagem duplicada após Ctrl+Z/Ctrl+Y era um rastro de pintura: a mudança de
+posição e de pai com clipping deixava a região anterior sem repintura. Os helpers
+de geometria invalidam agora as regiões anterior/atual, incluindo filhos, sem
+alterar o formato do histórico nem os recursos do servidor. Veja o
+[relatório com reprodução, screenshots e testes](CONTAINER_REPLAY_GHOST_INVESTIGATION.md).
+Validação: **537 aprovados, 1 ignorado**; PyAutoGUI em Wayland aninhado e X11
+verificou seis ciclos Undo/Redo com zero pixels de símbolo nas posições antigas.

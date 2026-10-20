@@ -141,3 +141,14 @@ component as implemented in the final response.
 - Relatório: CONTAINER_VISIBILITY_INVESTIGATION.md. Roteiro:
   scripts/check_container_visibility.py. Publicação nas três branches atuais
   usa os mesmos hashes, sem reescrever histórico Git.
+
+## Clone visual após Undo/Redo de saída de container — retomada 20/10/2026
+
+- Worktree temporário perdido na interrupção; correção e testes reconstruídos.
+- Reproduzido no primeiro Ctrl+Z: 1.883 pixels antigos, um item por UUID.
+- Causa: região antiga omitida pela invalidação Qt ao trocar pai com clipping.
+- Helpers de geometria invalidam regiões anterior/atual, incluindo filhos.
+- Dois testes Qt falham no baseline e passam corrigidos; suíte 537/1 ignorado.
+- PyAutoGUI: seis ciclos Undo/Redo em Wayland aninhado e X11 sem rastros.
+- Ambiente disponível: Ubuntu 24.04.5, conforme o pedido atualizado.
+- Relatório e screenshots: CONTAINER_REPLAY_GHOST_INVESTIGATION.md.
