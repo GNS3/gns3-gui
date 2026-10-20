@@ -1113,3 +1113,107 @@ def test_late_container_echo_does_not_reset_dragged_subtree(canvas):
     canvas._groups.save([frame])
     QTest.qWait(35)
     assert node.scenePos() == position
+
+
+def test_multiple_detached_devices_survive_scene_index_updates(canvas):
+    from gns3.qt.qimage_svg_renderer import QImageSvgRenderer
+    canvas._main_window.uiShowGridAction.isChecked.return_value = False
+    a, b = device(canvas, 100, 100), device(canvas, 200, 100)
+    for node in [a, b]:
+        node.setSharedRenderer(QImageSvgRenderer(':/symbols/hub.svg'))
+    frame = group(canvas, [a, b])
+    canvas.window().show()
+    canvas.centerOn(150, 100)
+    canvas.enterGroup(frame)
+    QtWidgets.QApplication.processEvents()
+    for node, position in [(a, QtCore.QPointF(100, 250)), (b, QtCore.QPointF(200, -50))]:
+        start = canvas.mapFromScene(node.sceneBoundingRect().center())
+        end = canvas.mapFromScene(position)
+        QTest.mousePress(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=start)
+        QTest.mouseMove(canvas.viewport(), end)
+        QTest.qWait(100)
+        QTest.mouseRelease(canvas.viewport(), QtCore.Qt.MouseButton.LeftButton, pos=end)
+        assert node.parentItem() is None
+        QtWidgets.QApplication.processEvents()
+        device(canvas, 300, 200)
+        QtWidgets.QApplication.processEvents()
+        image = canvas.viewport().grab().toImage()
+        for root in [n for n in [a, b] if n.parentItem() is None]:
+            assert root in canvas.scene().items(root.sceneBoundingRect())
+            rect = canvas.mapFromScene(root.sceneBoundingRect()).boundingRect()
+            colored = sum(max(image.pixelColor(x,y).getRgb()[:3])-min(image.pixelColor(x,y).getRgb()[:3]) > 10
+                          for y in range(rect.top(),rect.bottom()) for x in range(rect.left(),rect.right()) if image.rect().contains(x,y))
+            assert colored > 20, (root.scenePos(), colored)
+
+
+def test_scene_owns_detached_devices_without_python_references(canvas):
+    import gc
+    import weakref
+    from gns3.qt import sip
+    nodes = [device(canvas, 100, 100), device(canvas, 200, 100)]
+    frame = group(canvas, nodes)
+    references = [weakref.ref(node) for node in nodes]
+    for node in nodes:
+        reparent(node, None)
+        assert not sip.ispyowned(node), 'The scene must own detached graphics items'
+    del node, nodes
+    gc.collect()
+    assert all(reference() is not None for reference in references)
+    for reference in references:
+        assert reference().scene() is canvas.scene()
+    retained = references[0]()
+    canvas.scene().clear()
+    assert sip.isdeleted(retained), 'Scene cleanup must still delete the graphics item'
+
+
+def test_detach_does_not_destroy_graphic_when_last_local_reference_expires(canvas):
+    import gc
+    import weakref
+    from gns3.qt import sip
+    frame = GroupItem()
+    canvas.scene().addItem(frame)
+    item = QtWidgets.QGraphicsRectItem(0, 0, 20, 20, frame)
+    reference = weakref.ref(item)
+    reparent(item, None)
+    del item
+    gc.collect()
+    assert reference() is not None
+    retained = reference()
+    assert retained in canvas.scene().items()
+    # Real removal must still return ownership to Python and permit cleanup.
+    canvas.scene().removeItem(retained)
+    assert sip.ispyowned(retained)
+    del retained
+    gc.collect()
+    assert reference() is None
+
+
+def test_off_scene_detach_remains_python_owned():
+    import gc
+    import weakref
+    from gns3.qt import sip
+    frame = QtWidgets.QGraphicsRectItem()
+    item = QtWidgets.QGraphicsRectItem(frame)
+    reference = weakref.ref(item)
+    reparent(item, None)
+    assert sip.ispyowned(item)
+    del item
+    gc.collect()
+    assert reference() is None
+
+
+@pytest.mark.parametrize('kind', ['rect', 'ellipse', 'text', 'image', 'group'])
+def test_detached_drawings_and_nested_groups_are_owned_by_scene(canvas, kind):
+    from gns3.qt import sip
+    child = GroupItem() if kind == 'group' else drawing(canvas, kind=kind)
+    if child.scene() is None:
+        canvas.scene().addItem(child)
+    parent = group(canvas, [child])
+    for _ in range(5):
+        reparent(child, None)
+        assert not sip.ispyowned(child)
+        reparent(child, parent)
+        assert not sip.ispyowned(child)
+    reparent(child, None)
+    canvas.scene().clear()
+    assert sip.isdeleted(child)

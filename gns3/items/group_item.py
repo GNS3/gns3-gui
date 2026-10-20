@@ -12,7 +12,7 @@ import json
 import math
 import xml.etree.ElementTree as ET
 
-from ..qt import QtCore, QtGui, QtWidgets, sip_is_deleted
+from ..qt import QtCore, QtGui, QtWidgets, sip, sip_is_deleted
 from .drawing_item import DrawingItem
 
 GROUP_METADATA = "gns3-canvas-group"
@@ -95,6 +95,12 @@ def reparent(item, parent, local_position=None):
     item._allow_snap_to_grid = False
     try:
         item.setParentItem(parent)
+        if parent is None and item.scene() is not None:
+            # SIP's setParentItem(None) transfers ownership back to Python,
+            # even when the C++ item remains in a QGraphicsScene. Without this
+            # transfer, releasing temporary drag/restore references deletes the
+            # graphic while its server/model resource still exists.
+            sip.transferto(item, item.scene())
         item.setPos(local_position if local_position is not None else
                     (parent.mapFromScene(position) if parent else position))
         item.setZValue(z - (scene_z(parent) if parent else 0))
