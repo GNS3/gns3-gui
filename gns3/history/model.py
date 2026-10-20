@@ -58,6 +58,12 @@ def canonical(kind, data):
                 raise ValueError('Invalid link interface')
     if kind == 'nodes' and not all(isinstance(result.get(field), str) for field in ('name', 'node_type', 'compute_id')):
         raise ValueError('Incomplete node definition')
+    if (kind == 'nodes' and result['node_type'] in
+            {'cloud', 'nat', 'ethernet_hub', 'frame_relay_switch', 'atm_switch'}
+            and result.get('console_type') in (None, 'none')):
+        # These builtin nodes have no console. Server 2.2 can report null at
+        # creation and "none" after reopening the same unchanged project.
+        result['console_type'] = 'none'
     if kind == 'drawings':
         if not isinstance(result.get('svg'), str):
             raise ValueError('Missing history drawing SVG')
@@ -246,7 +252,8 @@ class HistoryDocument:
         for key, value in state.items():
             kind, identity = resource(key)
             normalized = canonical(kind, value)
-            if normalized.keys() != value.keys() or normalized[IDS[kind]] != identity:
+            # Normalization may add semantic defaults, never drop unknown input fields.
+            if value.keys() - normalized.keys() or normalized[IDS[kind]] != identity:
                 raise ValueError('Invalid history state')
             result.state[key] = normalized
         entries = copy.deepcopy(entries)
@@ -261,7 +268,7 @@ class HistoryDocument:
                 for side, value in change.items():
                     if value is not None:
                         normalized = canonical(kind, value)
-                        if normalized.keys() != value.keys() or normalized[IDS[kind]] != identity:
+                        if value.keys() - normalized.keys() or normalized[IDS[kind]] != identity:
                             raise ValueError('Invalid history resource in operation')
                         change[side] = normalized
         result.entries = entries

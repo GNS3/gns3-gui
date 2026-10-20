@@ -323,3 +323,39 @@ def test_container_move_and_resize_descriptions_do_not_depend_on_secondary_node_
             changes.update(delta('nodes', node(), node(x=30)))
         doc.record(changes)
         assert doc.entries[-1]['description'] == 'Resize container LAN'
+
+
+@pytest.mark.parametrize('node_type', ['cloud', 'nat', 'ethernet_hub', 'frame_relay_switch', 'atm_switch'])
+def test_non_console_builtin_history_survives_server_console_default(node_type):
+    original = dict(node(), node_type=node_type, console_type=None)
+    reopened = dict(original, console_type='none')
+    assert canonical('nodes', original) == canonical('nodes', reopened)
+    missing = dict(original)
+    del missing['console_type']
+    assert canonical('nodes', missing) == canonical('nodes', reopened)
+    history = HistoryDocument(identity('project'), {key('nodes', original): canonical('nodes', original)})
+    changed = dict(original, x=100)
+    history.record(delta('nodes', original, changed), 'Move device')
+    payload = copy.deepcopy(history.payload())
+    for value in payload['state'].values():
+        value['console_type'] = None
+    for entry in payload['entries']:
+        for change in entry['changes'].values():
+            change['before']['console_type'] = None
+            change['after']['console_type'] = None
+    loaded = HistoryDocument.load(payload)
+    assert loaded.state == {key('nodes', changed): canonical('nodes', dict(changed, console_type='none'))}
+    assert loaded.cursor == 1
+    for value in payload['state'].values():
+        del value['console_type']
+    for entry in payload['entries']:
+        for change in entry['changes'].values():
+            del change['before']['console_type']
+            del change['after']['console_type']
+    assert HistoryDocument.load(payload).state == loaded.state
+
+
+def test_console_normalization_preserves_real_console_changes():
+    original = dict(node(), node_type='qemu', console_type=None)
+    assert canonical('nodes', original) != canonical('nodes', dict(original, console_type='none'))
+    assert canonical('nodes', dict(original, console_type='telnet')) != canonical('nodes', dict(original, console_type='vnc'))
