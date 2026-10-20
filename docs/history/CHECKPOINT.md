@@ -120,3 +120,24 @@ component as implemented in the final response.
 - Suíte: 520 passaram, 1 ignorado; aviso de tarfile preexistente.
 - Servidor GNS3 2.2.61 + X11 virtual: 30 remoções/undos com símbolo visível,
   reabertura, exportação/importação e os demais cenários completos passaram.
+
+## Causa definitiva do desaparecimento de itens após desanexação
+
+- Confirmado no PyQt/SIP: setParentItem(None) torna o item Python-owned mesmo
+  permanecendo na cena. Ao liberar referências temporárias, o gráfico C++ é
+  destruído, mas Node e recurso do servidor continuam existindo.
+- Helper reparent transfere a propriedade para a cena quando desanexa um item
+  que ainda pertence a ela. Rascunhos, removeItem e clear mantêm suas regras.
+- Testes anteriores retinham referências fortes e mascaravam a falha. Novos
+  testes e o roteiro nativo usam weakref, del e gc.collect entre as ações.
+- Versão anterior reproduziu a falha na primeira remoção: item gráfico destruído,
+  model_exists=True e server_exists=True. Screenshots antes/depois preservadas.
+- Oito hubs, inserções/remoções sucessivas, undo/redo e reabertura foram validados
+  com PyAutoGUI e screenshots externas em X11 e em Qt Wayland aninhado.
+- Detectado também console_type null -> "none" ao reabrir hubs sem console;
+  normalização semântica conserva históricos válidos, inclusive campos ausentes.
+- Suíte final: 535 aprovados, 1 ignorado. Roteiro completo de histórico, servidor,
+  exportação/importação e recuperação também passou.
+- Relatório: CONTAINER_VISIBILITY_INVESTIGATION.md. Roteiro:
+  scripts/check_container_visibility.py. Publicação nas três branches atuais
+  usa os mesmos hashes, sem reescrever histórico Git.

@@ -314,3 +314,17 @@ pre-history container with a firewall symbol and verifies visibility after the
 HTTP/WebSocket responses, alongside the reopen and portable-import checks.
 
 Validation: **520 tests passed, 1 skipped**, plus the real-server X11 checks.
+
+### Desaparecimento após remover dispositivos de containers: causa identificada
+
+A causa era a transferência de propriedade do item gráfico para Python ao chamar
+`setParentItem(None)`, embora ele continuasse na cena. A liberação de referências
+apagava o gráfico C++, preservando dispositivo e histórico. O helper agora mantém
+a cena como dona. Os testes usam referências fracas e coleta explícita para não
+mascarar o problema, além de PyAutoGUI e capturas externas sem forçar repintura.
+
+O [relatório completo](CONTAINER_VISIBILITY_INVESTIGATION.md) registra reprodução
+antes/depois, screenshots, hipóteses descartadas, invariantes de limpeza,
+normalização de console_type em hubs sem console e comandos para repetir os testes.
+Validação final: **535 testes aprovados, 1 ignorado**, com servidor real, X11,
+Wayland aninhado, undo/redo e persistência após reabrir.
