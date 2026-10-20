@@ -64,8 +64,29 @@ def scene_z(item):
     return value
 
 
+def _painted_scene_bounds(item):
+    # Labels and nested children paint outside the owner's own boundingRect.
+    return item.mapRectToScene(item.boundingRect().united(item.childrenBoundingRect()))
+
+
+def _update_geometry_regions(item, previous_scene, previous_bounds):
+    # Item-based invalidation can be clipped by a newly assigned ancestor.
+    # Invalidate the old/new scene regions directly so replay cannot leave
+    # pixels at the previous position. Keep distant regions separate.
+    if previous_scene is not None and not previous_bounds.isEmpty():
+        previous_scene.update(previous_bounds)
+    scene = item.scene()
+    bounds = _painted_scene_bounds(item)
+    if (scene is not None and not bounds.isEmpty() and
+            (scene is not previous_scene or bounds != previous_bounds)):
+        scene.update(bounds)
+
+
 def set_scene_position(item, position):
     """Apply an API position without confusing scene and parent coordinates."""
+    previous_scene = item.scene()
+    previous_bounds = _painted_scene_bounds(item)
+    previous_position = item.scenePos()
     parent = item.parentItem()
     local = parent.mapFromScene(position) if parent else position
     # API acknowledgments and reparenting must never snap a second time.
@@ -75,6 +96,8 @@ def set_scene_position(item, position):
         item.setPos(local)
     finally:
         item._allow_snap_to_grid = allowed
+    if item.scenePos() != previous_position:
+        _update_geometry_regions(item, previous_scene, previous_bounds)
 
 
 def reparent(item, parent, local_position=None):
@@ -86,6 +109,8 @@ def reparent(item, parent, local_position=None):
     if item is parent or (parent and item.isAncestorOf(parent)):
         raise ValueError("A group cannot contain itself or an ancestor")
     old_parent = item.parentItem()
+    previous_scene = item.scene()
+    previous_bounds = _painted_scene_bounds(item)
     from .node_item import NodeItem
     settings = item.node().settings() if isinstance(item, NodeItem) else {}
     confirmed = {key: settings[key] for key in ('x', 'y') if key in settings} if isinstance(settings, dict) else {}
@@ -111,6 +136,8 @@ def reparent(item, parent, local_position=None):
         # it, otherwise detaching a dragged node silently skips its position PUT.
         for key, value in confirmed.items():
             item.node().setSettingValue(key, value)
+    if old_parent is not parent or _painted_scene_bounds(item) != previous_bounds:
+        _update_geometry_regions(item, previous_scene, previous_bounds)
     if isinstance(old_parent, GroupItem):
         old_parent.refreshBounds()
     if isinstance(parent, GroupItem):

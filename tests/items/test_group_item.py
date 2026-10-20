@@ -1217,3 +1217,40 @@ def test_detached_drawings_and_nested_groups_are_owned_by_scene(canvas, kind):
     reparent(child, None)
     canvas.scene().clear()
     assert sip.isdeleted(child)
+
+
+@pytest.mark.parametrize('zoom', [1, 1.41])
+def test_replay_reparent_erases_old_symbol_and_label_regions(canvas, zoom):
+    from gns3.qt import QtGui
+    from gns3.qt.qimage_svg_renderer import QImageSvgRenderer
+    node = device(canvas, 100, 100)
+    node.setSharedRenderer(QImageSvgRenderer(':/symbols/hub.svg'))
+    label = QtWidgets.QGraphicsTextItem('Hub', node)
+    label.setPos(0, -25)
+    frame = group(canvas, [node])
+    reparent(node, None)
+    set_scene_position(node, QtCore.QPointF(350, 100))
+    node.setSelected(True)
+    canvas.window().resize(900, 700)
+    canvas.window().show()
+    canvas.scale(zoom, zoom)
+    canvas.centerOn(200, 100)
+    QTest.qWait(30)
+    old_symbol = canvas.mapFromScene(node.sceneBoundingRect().center())
+    old_label = canvas.mapFromScene(label.sceneBoundingRect().center())
+    regions = []
+
+    class PaintRegions(QtCore.QObject):
+        def eventFilter(self, watched, event):
+            if event.type() == QtCore.QEvent.Type.Paint:
+                regions.append(QtGui.QRegion(event.region()))
+            return False
+
+    observer = PaintRegions(canvas)
+    canvas.viewport().installEventFilter(observer)
+    set_scene_position(node, QtCore.QPointF(100, 100))
+    reparent(node, frame)
+    QTest.qWait(30)
+    assert node.parentItem() is frame
+    assert any(region.contains(old_symbol) for region in regions)
+    assert any(region.contains(old_label) for region in regions)
