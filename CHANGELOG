@@ -1,5 +1,14 @@
 # Change Log
 
+## 3.1.0a7 21/10/2026
+
+* Import config.zip into the node working directory instead of the global image directory. Ref #3718
+* Add button to advertise the web-ui
+* fix: gns3 --install-mime-types
+* Remove deleted project from recent projects immediately
+* Fix vmrun detection for native 64-bit VMware Workstation (26H1+)
+* Bump pytest from 9.0.2 to 9.0.3
+
 ## 3.1.0a6 27/09/2026
 
 * no changes
