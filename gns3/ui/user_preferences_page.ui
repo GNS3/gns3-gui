@@ -20,20 +20,6 @@
       <string>Logged-in user information</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="3" column="0">
-       <widget class="QLabel" name="uiEmailLabel">
-        <property name="text">
-         <string>Email address:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="uiFullNameLabel">
-        <property name="text">
-         <string>Full name:</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="uiUsernameLabel">
         <property name="text">
@@ -48,10 +34,38 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="uiAuthSourceLabel">
+        <property name="text">
+         <string>Account type:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="uiAuthSourceLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="uiFullNameLabel">
+        <property name="text">
+         <string>Full name:</string>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="1">
        <widget class="QLineEdit" name="uiFullNameLineEdit">
         <property name="readOnly">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="uiEmailLabel">
+        <property name="text">
+         <string>Email address:</string>
         </property>
        </widget>
       </item>
