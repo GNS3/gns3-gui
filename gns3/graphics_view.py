@@ -120,7 +120,12 @@ class GraphicsView(QtWidgets.QGraphicsView):
         self._local_addresses = ['0.0.0.0', '127.0.0.1', 'localhost', '::1', '0:0:0:0:0:0:0:1', '::', QtNetwork.QHostInfo.localHostName()]
 
     def setSceneSize(self, width, height):
-        self.scene().setSceneRect(-(width / 2), -(height / 2), width, height)
+        rect = QtCore.QRectF(-(width / 2), -(height / 2), width, height)
+        if self.scene().sceneRect() == rect:
+            return  # Zoom acknowledgments echo these unchanged dimensions.
+        self.scene().setSceneRect(rect)
+        # Discard navigation-only padding when loading/resizing a project.
+        self.setSceneRect(QtCore.QRectF())
 
     def setZoom(self, zoom):
         """
@@ -197,6 +202,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         # reset zoom / scale
         self.resetTransform()
+        self.setSceneRect(QtCore.QRectF())
 
 
     def _loadSettings(self):
@@ -584,24 +590,50 @@ class GraphicsView(QtWidgets.QGraphicsView):
 
         if event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
             delta = event.angleDelta()
-            if delta is not None and delta.x() == 0:
+            if delta is not None and delta.x() == 0 and delta.y() != 0:
                 # CTRL is pressed then use the mouse wheel to zoom in or out.
-                self.scaleView(pow(2.0, (delta.y()/2) / 240.0))
-                self._topology.project().setZoom(round(self.transform().m11() * 100))
-                self._topology.project().update()
+                position = event.position().toPoint()
+                # Smaller proportional steps; every event uses the current cursor.
+                if self.scaleView(pow(2.0, delta.y() / 960.0), anchor=position):
+                    project = self._topology.project()
+                    if project is not None:
+                        project.setZoom(round(self.transform().m11() * 100))
+                        project.update()
+            event.accept()
         else:
             super().wheelEvent(event)
 
-    def scaleView(self, scale_factor):
+    def scaleView(self, scale_factor, anchor=None):
         """
-        Scales the view (zoom in and out).
+        Scale around the current cursor without moving its scene point on screen.
+
+        Wheel zoom uses the event position rather than Qt's cached mouse anchor.
+        View-only padding allows anchoring at scene edges and when the scaled
+        project is smaller than the viewport; the project's scene is unchanged.
         """
 
         factor = self.transform().scale(scale_factor, scale_factor).mapRect(QtCore.QRectF(0, 0, 1, 1)).width()
         if factor < 0.10 or factor > 10:
-            return
-        self.scale(scale_factor, scale_factor)
+            return False
+        if anchor is None:
+            self.scale(scale_factor, scale_factor)
+        else:
+            position = self.mapToScene(anchor)
+            previous_anchor = self.transformationAnchor()
+            self.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor)
+            try:
+                self.scale(scale_factor, scale_factor)
+                width, height = self.viewport().width() / factor, self.viewport().height() / factor
+                visible = QtCore.QRectF(position.x() - anchor.x() / factor,
+                                       position.y() - anchor.y() / factor, width, height)
+                self.setSceneRect(self.sceneRect().united(visible.adjusted(-width, -height, width, height)))
+                correction = self.mapToScene(anchor) - position
+                self.translate(correction.x(), correction.y())
+            finally:
+                self.setTransformationAnchor(previous_anchor)
         self._main_window.uiStatusBar.showMessage("Zoom: {}%".format(round(self.transform().m11() * 100)), 5000)
+        self.viewport().update()
+        return True
 
     def keyPressEvent(self, event):
         """
