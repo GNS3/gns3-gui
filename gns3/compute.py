@@ -237,7 +237,8 @@ class Compute:
         :param value: capabilities (dictionary)
         """
 
-        self._capabilities = value
+        if value:
+            self._capabilities = value
 
     def setLastError(self, last_error):
         self._last_error = last_error
