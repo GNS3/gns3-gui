@@ -47,3 +47,19 @@ def test_main_window_settings_changed_slot(real_main_window):
     real_main_window._appliance_manager = manager
     real_main_window.settingsChangedSlot()
     assert instance.refresh.called
+
+
+def test_navigation_toolbar_tracks_view_mode(real_main_window):
+    window = real_main_window
+    assert window.uiHandAction.isChecked()
+    for action in (window.uiHandAction, window.uiSelectionAction):
+        assert not action.icon().isNull()
+        assert action.statusTip()
+        button = window.uiAnnotationToolBar.widgetForAction(action)
+        assert button.statusTip() == action.statusTip()
+    window.uiSelectionAction.trigger()
+    assert window.uiGraphicsView._navigation_mode == 'selection'
+    assert not window.uiHandAction.isChecked()
+    window.uiGraphicsView.setNavigationMode('hand')
+    assert window.uiHandAction.isChecked()
+    assert not window.uiSelectionAction.isChecked()
