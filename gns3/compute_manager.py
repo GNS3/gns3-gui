@@ -120,10 +120,10 @@ class ComputeManager(QtCore.QObject):
         self._computes[compute_id].setUser(compute["user"])
         if "connected" in compute:
             self._computes[compute_id].setConnected(compute["connected"])
-            self._computes[compute_id].setCpuUsagePercent(compute["cpu_usage_percent"])
-            self._computes[compute_id].setMemoryUsagePercent(compute["memory_usage_percent"])
-            self._computes[compute_id].setDiskUsagePercent(compute["disk_usage_percent"])
-            self._computes[compute_id].setCapabilities(compute["capabilities"])
+            self._computes[compute_id].setCpuUsagePercent(compute.get("cpu_usage_percent"))
+            self._computes[compute_id].setMemoryUsagePercent(compute.get("memory_usage_percent"))
+            self._computes[compute_id].setDiskUsagePercent(compute.get("disk_usage_percent"))
+            self._computes[compute_id].setCapabilities(compute.get("capabilities"))
             self._computes[compute_id].setLastError(compute.get("last_error"))
 
         if new_node:
