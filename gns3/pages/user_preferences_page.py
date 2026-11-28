@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2025 GNS3 Technologies Inc.
 #
@@ -19,17 +18,18 @@
 Configuration page for user preferences.
 """
 
-from gns3.qt import QtWidgets, qslot, sip_is_deleted
-from ..ui.user_preferences_page_ui import Ui_UserPreferencesPageWidget
+import logging
+
 from gns3.controller import Controller
 from gns3.dialogs.password_dialog import PasswordDialog
+from gns3.qt import QtWidgets, qslot, sip_is_deleted
 
-import logging
+from ..ui.user_preferences_page_ui import Ui_UserPreferencesPageWidget
+
 log = logging.getLogger(__name__)
 
 
 class UserPreferencesPage(QtWidgets.QWidget, Ui_UserPreferencesPageWidget):
-
     """
     QWidget configuration page for user preferences.
     """
@@ -39,6 +39,7 @@ class UserPreferencesPage(QtWidgets.QWidget, Ui_UserPreferencesPageWidget):
         super().__init__()
         self.setupUi(self)
 
+        self._auth_source = None
         self.uiChangePasswordPushButton.clicked.connect(self._changePasswordSlot)
         self.uiCopyAccessTokenPushButton.clicked.connect(self._copyAccessTokenSlot)
         self.uiChangePasswordPushButton.setEnabled(False)
@@ -56,7 +57,25 @@ class UserPreferencesPage(QtWidgets.QWidget, Ui_UserPreferencesPageWidget):
         self.uiUsernameLineEdit.setText(result.get("username", "N/A"))
         self.uiFullNameLineEdit.setText(result.get("full_name", "N/A"))
         self.uiEmailLineEdit.setText(result.get("email", "N/A"))
-        self.uiChangePasswordPushButton.setEnabled(True)
+
+        auth_source = result.get("auth_source", "local")
+        self._auth_source = auth_source
+
+        if auth_source == "ldap":
+            self.uiAuthSourceLineEdit.setText(
+                self.tr("Directory account (LDAP / Active Directory)")
+            )
+            self.uiChangePasswordPushButton.setEnabled(True)
+            self.uiChangePasswordPushButton.setToolTip(
+                self.tr(
+                    "Password is managed by your organization's directory (LDAP/Active Directory)"
+                )
+            )
+        else:
+            self.uiAuthSourceLineEdit.setText(self.tr("Local account"))
+            self.uiChangePasswordPushButton.setEnabled(True)
+            self.uiChangePasswordPushButton.setToolTip("")
+
         self.uiCopyAccessTokenPushButton.setEnabled(True)
 
     def _disconnectSlot(self):
@@ -65,9 +84,12 @@ class UserPreferencesPage(QtWidgets.QWidget, Ui_UserPreferencesPageWidget):
         """
 
         self.uiUsernameLineEdit.clear()
+        self.uiAuthSourceLineEdit.clear()
         self.uiFullNameLineEdit.clear()
         self.uiEmailLineEdit.clear()
+        self._auth_source = None
         self.uiChangePasswordPushButton.setEnabled(False)
+        self.uiChangePasswordPushButton.setToolTip("")
         self.uiCopyAccessTokenPushButton.setEnabled(False)
 
     def loadPreferences(self):
@@ -78,7 +100,9 @@ class UserPreferencesPage(QtWidgets.QWidget, Ui_UserPreferencesPageWidget):
         if Controller.instance().connected():
             Controller.instance().get("/access/users/me", self._getUserInfoCallback)
         else:
-            log.error("Cannot load the user information in the preferences dialog: not connected to the controller")
+            log.error(
+                "Cannot load the user information in the preferences dialog: not connected to the controller"
+            )
 
     @qslot
     def _getUserInfoCallback(self, result, error=False, **kwargs):
@@ -90,7 +114,11 @@ class UserPreferencesPage(QtWidgets.QWidget, Ui_UserPreferencesPageWidget):
             return
         if error:
             if "message" in result:
-                log.error("Error while getting the logged-in user information: {}".format(result["message"]))
+                log.error(
+                    "Error while getting the logged-in user information: {}".format(
+                        result["message"]
+                    )
+                )
             return
         self._populateWidgets(result)
 
@@ -99,18 +127,28 @@ class UserPreferencesPage(QtWidgets.QWidget, Ui_UserPreferencesPageWidget):
         Saves the user preferences.
         """
 
-        pass
-
     def _changePasswordSlot(self):
         """
         Slot to change the user password.
         """
 
+        if self._auth_source == "ldap":
+            QtWidgets.QMessageBox.information(
+                self,
+                self.tr("Change password"),
+                self.tr(
+                    "Password is managed by your organization's directory (LDAP/Active Directory)."
+                ),
+            )
+            return
+
         dialog = PasswordDialog(self)
         if dialog.exec():
             password = dialog.getPassword()
             new_settings = {"password": password}
-            Controller.instance().put("/access/users/me", self._saveUserSettingsCallback, new_settings)
+            Controller.instance().put(
+                "/access/users/me", self._saveUserSettingsCallback, new_settings
+            )
 
     def _saveUserSettingsCallback(self, result, error=False, **kwargs):
         """
@@ -121,10 +159,12 @@ class UserPreferencesPage(QtWidgets.QWidget, Ui_UserPreferencesPageWidget):
             QtWidgets.QMessageBox.critical(
                 self,
                 "Save user settings",
-                "Error while saving user settings: {}".format(result["message"])
+                "Error while saving user settings: {}".format(result["message"]),
             )
         else:
-            QtWidgets.QMessageBox.information(self, "Change password", "New password saved successfully")
+            QtWidgets.QMessageBox.information(
+                self, "Change password", "New password saved successfully"
+            )
 
     def _copyAccessTokenSlot(self):
         """
